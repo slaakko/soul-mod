@@ -3,18 +3,9 @@
 // Distributed under the MIT license
 // =================================
 
-#include <iostream>
+import std.core;
 
 int main(int argc, const char** argv)
 {
-    try
-    {
 
-    }
-    catch (const std::exception& ex)
-    {
-        std::cerr << ex.what() << std::endl;
-        return 1;
-    }
-    return 0;
 }

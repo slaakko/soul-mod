@@ -1,0 +1,31 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.slg.lxr.file.lxr;
+
+import soul.cpp.token;
+import soul.cpp.op.token;
+import soul.punctuation.token;
+import soul.tool.token;
+import soul.cpp.keyword;
+import soul.tool.keyword;
+import soul.tool.expr;
+
+lexer LexerFileLexer
+{
+	rules
+	{
+		"{separators}" {}
+		"{id}" { int kw = GetKeywordToken(token.match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+		"\." { return DOT; }
+		";" { return SEMICOLON; }
+		"\{" { return LBRACE; }
+		"\}" { return RBRACE; }
+		"\(" { return LPAREN; }
+		"\)" { return RPAREN; }
+		"{stringliteral}" { return STRINGLIT; }
+		"{integerliteral}" { return INTLIT; }
+	}
+}
