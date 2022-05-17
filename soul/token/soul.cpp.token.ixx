@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/token/soul.cpp.token' using soul lexer generator version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/token/soul.cpp.token' using soul lexer generator version 4.0.0
 
 export module soul.cpp.token;
 
@@ -61,5 +61,10 @@ constexpr int64_t RETURN = (static_cast<int64_t>(tokenSetID) << 32) | 49;
 constexpr int64_t GOTO = (static_cast<int64_t>(tokenSetID) << 32) | 50;
 constexpr int64_t TRY = (static_cast<int64_t>(tokenSetID) << 32) | 51;
 constexpr int64_t CATCH = (static_cast<int64_t>(tokenSetID) << 32) | 52;
+constexpr int64_t ID = (static_cast<int64_t>(tokenSetID) << 32) | 53;
+constexpr int64_t INTEGER_LITERAL = (static_cast<int64_t>(tokenSetID) << 32) | 54;
+constexpr int64_t FLOATING_LITERAL = (static_cast<int64_t>(tokenSetID) << 32) | 55;
+constexpr int64_t CHAR_LITERAL = (static_cast<int64_t>(tokenSetID) << 32) | 56;
+constexpr int64_t STRING_LITERAL = (static_cast<int64_t>(tokenSetID) << 32) | 57;
 
 } // soul::cpp::token

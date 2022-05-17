@@ -9,7 +9,7 @@ import std.core;
 import soul.lexer.lexeme;
 import soul.token.parser;
 
-export namespace soul {
+export namespace soul::lexer {
 
 const int64_t CONTINUE_TOKEN = -2;
 const int64_t INVALID_TOKEN = -1;
@@ -18,6 +18,8 @@ const int64_t END_TOKEN = 0;
 template<typename Char, typename LexerBaseT>
 struct Token
 {
+    using CharType = Char;
+
     Token(LexerBaseT* lexer_) : match(), lexer(lexer_), id(INVALID_TOKEN), line(1) {}
     Token(int64_t id_, LexerBaseT* lexer_) : match(), lexer(lexer_), id(id_), line(1) {}
     Token(int64_t id_, const Lexeme<Char>& match_, LexerBaseT* lexer_, int line_) : match(match_), lexer(lexer_), id(id_), line(line_) {}
@@ -41,4 +43,4 @@ struct Token
     int line;
 };
 
-} // namespace soul
+} // namespace soul::lexer

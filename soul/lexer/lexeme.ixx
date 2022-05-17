@@ -7,7 +7,7 @@ export module soul.lexer.lexeme;
 
 import std.core;
 
-export namespace soul {
+export namespace soul::lexer {
 
 template<typename Char>
 struct Lexeme
@@ -59,5 +59,5 @@ struct LexemeCompare
     }
 };
 
-} // namespace soul
+} // namespace soul::lexer
 

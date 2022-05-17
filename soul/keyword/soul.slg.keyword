@@ -1,0 +1,11 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+import soul.tool.token;
+
+keywords soul.slg.keyword
+{
+    ("tokens", TOKENS), ("keywords", KEYWORDS), ("expressions", EXPRESSIONS), ("lexer", LEXER), ("variables", VARIABLES), ("actions", ACTIONS), ("project", PROJECT)
+}

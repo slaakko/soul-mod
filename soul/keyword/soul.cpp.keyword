@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-using tokens soul.cpp.token;
+import soul.cpp.token;
 
 keywords soul.cpp.keyword
 {

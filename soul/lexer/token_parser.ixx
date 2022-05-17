@@ -10,7 +10,7 @@ import util.unicode;
 
 using namespace util;
 
-export namespace soul {
+export namespace soul::lexer {
 
 template<typename Char>
 constexpr std::string ToString(const Char* begin, const Char* end)
@@ -521,4 +521,4 @@ bool ParseBool(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
     }
 }
 
-} // namespace soul
+} // namespace soul::lexer

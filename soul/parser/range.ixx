@@ -5,7 +5,7 @@
 
 export module soul.parser.range;
 
-namespace soul {
+namespace soul::parser {
 
 struct Range
 {
@@ -13,4 +13,4 @@ struct Range
     int last;
 };
 
-} // namespace parser
+} // namespace soul::parser

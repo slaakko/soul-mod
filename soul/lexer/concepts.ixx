@@ -8,7 +8,7 @@ export module soul.lexer.concepts;
 import std.core;
 import soul.lexer.base;
 
-export namespace soul {
+export namespace soul::lexer {
 
 template<typename T>
 concept LexicalIterator = requires(T it, int64_t pos)
@@ -32,4 +32,4 @@ concept RuleStack = requires(Stack stack, int ruleId)
     stack.PopRule();
 };
 
-} // namespace soul
+} // namespace soul::lexer

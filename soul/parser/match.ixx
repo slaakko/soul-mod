@@ -5,7 +5,7 @@
 
 export module soul.parser.match;
 
-export namespace soul {
+export namespace soul::parser {
 
 struct Match
 {
@@ -15,4 +15,4 @@ struct Match
     void* value;
 };
 
-} // namespace parser;
+} // namespace soul::parser;

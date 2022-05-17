@@ -1,0 +1,44 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.slg.token.file.par;
+
+import soul.cpp.token;
+import soul.punctuation.token;
+import soul.tool.token;
+import soul.ast.slg;
+import soul.slg.common.par;
+import soul.slg.token.par;
+
+parser TokenFileParser
+{
+    main;
+    using CommonParser.QualifiedId;
+
+    TokenFile(var std::unique_ptr<soul::ast::slg::TokenFile> tokenFile, var std::unique_ptr<soul::ast::slg::TokenCollection> tokenCollection) : soul::ast::slg::TokenFile*
+        ::= 
+        (   
+            TOKENS{ tokenFile.reset(new soul::ast::slg::TokenFile(lexer.FileName())); }
+            QualifiedId:tokenCollectionName!{ tokenCollection.reset(new soul::ast::slg::TokenCollection(tokenCollectionName)); }
+			LBRACE! 
+			(Token:token{ tokenCollection->AddToken(token); } % COMMA)?
+			RBRACE!
+        )
+        {
+            tokenFile->SetTokenCollection(tokenCollection.release());
+            return tokenFile.release();
+        }
+        ;
+
+    Token(var std::string name, var std::string info) : soul::ast::slg::Token*
+        ::= 
+        (
+            LPAREN ID!{ name = util::ToUtf8(lexer.GetToken(pos).ToString()); } COMMA! STRING_LITERAL!{ info = ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)); } RPAREN!
+        )
+        {
+            return new soul::ast::slg::Token(name, info);
+        }
+        ;
+}

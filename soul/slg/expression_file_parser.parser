@@ -1,0 +1,48 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.slg.expression.file.par;
+
+import soul.cpp.token;
+import soul.cpp.op.token;
+import soul.punctuation.token;
+import soul.tool.token;
+import soul.ast.slg;
+import soul.slg.common.par;
+import soul.slg.token.par;
+
+parser ExpressionFileParser
+{
+    main;
+    using CommonParser.QualifiedId;
+    using CommonParser.ExprString;
+
+    ExpressionFile(var std::unique_ptr<soul::ast::slg::ExpressionFile> expressionFile, var std::unique_ptr<soul::ast::slg::ExpressionCollection> expressionCollection) :
+        soul::ast::slg::ExpressionFile*
+        ::=
+        (
+            empty{ expressionFile.reset(new soul::ast::slg::ExpressionFile(lexer.FileName())); }
+            EXPRESSIONS
+            QualifiedId:expressionCollectionName!{ expressionCollection.reset(new soul::ast::slg::ExpressionCollection(expressionCollectionName)); }
+            LBRACE! 
+            (Expression:expression{ expressionCollection->AddExpression(expression); } % COMMA)?
+            RBRACE!
+        )
+        {
+            expressionFile->SetExpressionCollection(expressionCollection.release());
+            return expressionFile.release();
+        }
+        ;
+
+    Expression(var std::string name, var int line) : soul::ast::slg::Expression*
+        ::= 
+        (
+            ID{ auto token = lexer.GetToken(pos); name = util::ToUtf8(token.ToString()); line = token.line; } ASSIGN! ExprString:exprString! SEMICOLON! 
+        )
+        {
+            return new soul::ast::slg::Expression(name, exprString, line);
+        }
+        ;
+}

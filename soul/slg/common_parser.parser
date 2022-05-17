@@ -1,0 +1,42 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.slg.common.par;
+
+import soul.cpp.token;
+import soul.punctuation.token;
+import soul.ast.spg;
+import soul.slg.token.par;
+
+parser CommonParser
+{
+	QualifiedId(var std::string str) : std::string
+		::= (ID{ str.append(util::ToUtf8(lexer.GetToken(pos).ToString())); } (DOT ID{ str.append(1, '.').append(util::ToUtf8(lexer.GetToken(pos).ToString())); })*){ return str; }
+		;
+
+	ExportModule(var std::unique_ptr<soul::ast::spg::ExportModule> exp) : soul::ast::spg::ExportModule*
+		::= 
+		(
+			EXPORT MODULE QualifiedId:moduleName{ exp.reset(new soul::ast::spg::ExportModule(moduleName)); } SEMICOLON!
+		)
+		{
+			return exp.release();
+		}
+		;
+
+	Import(var std::unique_ptr<soul::ast::spg::Import> imp) : soul::ast::spg::Import*
+		::= 
+		(
+			IMPORT QualifiedId:moduleName{ imp.reset(new soul::ast::spg::Import(moduleName)); } SEMICOLON!
+		)
+		{
+			return imp.release();
+		}
+		;
+
+	ExprString : std::string
+		::= STRING_LITERAL!{ return MakeExprStringValue(lexer.FileName(), lexer.GetToken(pos)); }
+		;
+}

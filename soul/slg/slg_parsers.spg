@@ -1,0 +1,5 @@
+project slg.parsers;
+parser <common_parser.parser>;
+parser <expression_file_parser.parser>;
+parser <keyword_file_parser.parser>;
+parser <token_file_parser.parser>;

@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/token/soul.tool.token' using soul lexer generator version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/token/soul.tool.token' using soul lexer generator version 4.0.0
 
 export module soul.tool.token;
 
@@ -23,5 +23,6 @@ constexpr int64_t EMPTY = (static_cast<int64_t>(tokenSetID) << 32) | 11;
 constexpr int64_t ANY = (static_cast<int64_t>(tokenSetID) << 32) | 12;
 constexpr int64_t VAR = (static_cast<int64_t>(tokenSetID) << 32) | 13;
 constexpr int64_t FILEPATH = (static_cast<int64_t>(tokenSetID) << 32) | 14;
+constexpr int64_t PROJECT = (static_cast<int64_t>(tokenSetID) << 32) | 15;
 
 } // soul::tool::token

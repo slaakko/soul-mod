@@ -26,10 +26,13 @@ void ThrowUnicodeException(const std::string& message_);
 
 std::u32string ToUtf32(const std::string& utf8Str);
 std::u32string ToUtf32(const std::u16string& utf16Str);
+inline const std::u32string& ToUtf32(const std::u32string& utf32Str) { return utf32Str; }
 std::u16string ToUtf16(const std::u32string& utf32Str);
-std::u16string ToUtf16(const std::string& utf8Str);
+inline const std::u16string& ToUtf16(const std::u16string& utf16Str) { return utf16Str; }
+std::u16string ToUtf16(const std::string& u8str);
 std::string ToUtf8(const std::u32string& utf32Str);
 std::string ToUtf8(const std::u16string& utf16Str);
+inline const std::string& ToUtf8(const std::string& utf8Str) { return utf8Str; }
 
 class Utf8ToUtf32Engine
 {

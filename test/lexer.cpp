@@ -2,7 +2,7 @@ import std.core;
 import soul.lexer;
 import soul.parser;
 
-using namespace soul;
+using namespace soul::lexer;
 
 const int64_t ID = 1234;
 

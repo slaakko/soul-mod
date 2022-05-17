@@ -161,14 +161,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="base.ixx" />
+    <ClCompile Include="classmap.ixx" />
     <ClCompile Include="concepts.ixx" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="error.ixx" />
     <ClCompile Include="keyword.ixx" />
     <ClCompile Include="lexeme.ixx" />
     <ClCompile Include="lexer.ixx" />
+    <ClCompile Include="source_pos.ixx" />
+    <ClCompile Include="span.ixx" />
     <ClCompile Include="token.ixx" />
     <ClCompile Include="token_parser.ixx" />
+    <ClCompile Include="variables.cpp" />
+    <ClCompile Include="variables.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ast\ast.vcxproj">
+      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\util\util.vcxproj">
       <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
     </ProjectReference>

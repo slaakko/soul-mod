@@ -9,8 +9,8 @@ expressions soul.tool.expr
     newline = "\r\n|\n|\r";
     line_comment = "//[^\n\r]*{newline}";
     block_comment_begin = "/\*";
-    block_comment_end = "*/";
-    block_comment = "{block_comment_begin}([^*]|*[^/])*{block_comment_end}";
+    block_comment_end = "\*/";
+    block_comment = "{block_comment_begin}([^*]|\*[^/])*{block_comment_end}";
     comment = "{line_comment}|{block_comment}";
     separators = "({ws}|{comment})+";
     id = "{id_start}{id_cont}*";
@@ -28,7 +28,7 @@ expressions soul.tool.expr
     integer_suffix = "{unsigned_suffix}({long_long_suffix}|{long_suffix})?";
     integer_literal = "({octal_literal}|{decimal_literal}|{hex_literal}){integer_suffix}?";
     fraction = "{dec_digit}*\.{dec_digit}+|{dec_digit}+\.";
-    sign = "+|-";
+    sign = "\+|-";
     exponent = "(e|E){sign}?{dec_digit}+";
     floating_suffix="f|F|l|L";
     floating_literal = "({fraction}{exponent}?|{dec_digit}+{exponent}){floating_suffix}?";

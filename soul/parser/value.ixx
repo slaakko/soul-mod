@@ -5,7 +5,7 @@
 
 export module soul.parser.value;
 
-export namespace soul {
+export namespace soul::parser {
 
 template<class T>
 struct Value
@@ -14,4 +14,4 @@ struct Value
     T value;
 };
 
-} // namespace parser
+} // namespace soul::parser

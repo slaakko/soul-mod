@@ -1,0 +1,533 @@
+
+// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/expression_file_parser.parser' using soul parser generator spg version 4.0.0
+
+export module soul.slg.expression.file.par;
+
+import std.core;
+import util;
+import soul.lexer;
+import soul.parser;
+import soul.cpp.token;
+import soul.cpp.op.token;
+import soul.punctuation.token;
+import soul.tool.token;
+import soul.ast.slg;
+import soul.slg.common.par;
+import soul.slg.token.par;
+
+using namespace soul::cpp::token;
+using namespace soul::cpp::op::token;
+using namespace soul::punctuation::token;
+using namespace soul::tool::token;
+using namespace soul::ast::slg;
+using namespace soul::slg::common::par;
+using namespace soul::slg::token::par;
+
+export namespace soul::slg::expression::file::par {
+
+template<typename Lexer>
+struct ExpressionFileParser
+{
+    static std::unique_ptr<soul::ast::slg::ExpressionFile> Parse(Lexer& lexer);
+    static soul::parser::Match ExpressionFile(Lexer& lexer);
+    static soul::parser::Match Expression(Lexer& lexer);
+};
+
+template<typename Lexer>
+std::unique_ptr<soul::ast::slg::ExpressionFile> ExpressionFileParser<Lexer>::Parse(Lexer& lexer)
+{
+    std::unique_ptr<soul::ast::slg::ExpressionFile> value;
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (lexer.Log())
+    {
+        lexer.Log()->WriteBeginRule(util::ToUtf32("parse"));
+        lexer.Log()->IncIndent();
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    ++lexer;
+    soul::parser::Match match = ExpressionFileParser<Lexer>::ExpressionFile(lexer);
+    value.reset(static_cast<soul::ast::slg::ExpressionFile*>(match.value));
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (lexer.Log())
+    {
+        lexer.Log()->DecIndent();
+        lexer.Log()->WriteEndRule(util::ToUtf32("parse"));
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (match.hit)
+    {
+        if (*lexer == soul::lexer::END_TOKEN)
+        {
+            return value;
+        }
+        else
+        {
+            lexer.ThrowFarthestError();
+        }
+    }
+    else
+    {
+        lexer.ThrowFarthestError();
+    }
+    return value;
+}
+
+template<typename Lexer>
+soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, util::ToUtf32("ExpressionFile"));
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    std::unique_ptr<soul::ast::slg::ExpressionFile> expressionFile = std::unique_ptr<soul::ast::slg::ExpressionFile>();
+    std::unique_ptr<soul::ast::slg::ExpressionCollection> expressionCollection = std::unique_ptr<soul::ast::slg::ExpressionCollection>();
+    std::unique_ptr<soul::parser::Value<std::string>> expressionCollectionName;
+    std::unique_ptr<soul::ast::slg::Expression> expression;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch6 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch7 = &match;
+                                {
+                                    int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match(true);
+                                    if (match.hit)
+                                    {
+                                        expressionFile.reset(new soul::ast::slg::ExpressionFile(lexer.FileName()));
+                                    }
+                                    *parentMatch7 = match;
+                                }
+                                *parentMatch6 = match;
+                            }
+                            if (match.hit)
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch8 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    if (*lexer == EXPRESSIONS)
+                                    {
+                                        ++lexer;
+                                        match.hit = true;
+                                    }
+                                    *parentMatch8 = match;
+                                }
+                                *parentMatch6 = match;
+                            }
+                            *parentMatch5 = match;
+                        }
+                        if (match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch9 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch10 = &match;
+                                {
+                                    int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match(true);
+                                    soul::parser::Match* parentMatch11 = &match;
+                                    {
+                                        int64_t pos = lexer.GetPos();
+                                        soul::parser::Match match = CommonParser<Lexer>::QualifiedId(lexer);
+                                        expressionCollectionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            *parentMatch11 = match;
+                                        }
+                                        else
+                                        {
+                                            lexer.ThrowExpectationFailure(pos, "QualifiedId");
+                                        }
+                                    }
+                                    if (match.hit)
+                                    {
+                                        expressionCollection.reset(new soul::ast::slg::ExpressionCollection(expressionCollectionName->value));
+                                    }
+                                    *parentMatch10 = match;
+                                }
+                                *parentMatch9 = match;
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    if (match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch12 = &match;
+                        {
+                            soul::parser::Match match(true);
+                            soul::parser::Match* parentMatch13 = &match;
+                            {
+                                int64_t pos = lexer.GetPos();
+                                soul::parser::Match match(false);
+                                if (*lexer == LBRACE)
+                                {
+                                    ++lexer;
+                                    match.hit = true;
+                                }
+                                if (match.hit)
+                                {
+                                    *parentMatch13 = match;
+                                }
+                                else
+                                {
+                                    lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(LBRACE));
+                                }
+                            }
+                            *parentMatch12 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch14 = &match;
+                    {
+                        soul::parser::Match match(true);
+                        int64_t save = lexer.GetPos();
+                        soul::parser::Match* parentMatch15 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch16 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch17 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch18 = &match;
+                                    {
+                                        int64_t pos = lexer.GetPos();
+                                        soul::parser::Match match = ExpressionFileParser<Lexer>::Expression(lexer);
+                                        expression.reset(static_cast<soul::ast::slg::Expression*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            expressionCollection->AddExpression(expression.release());
+                                        }
+                                        *parentMatch18 = match;
+                                    }
+                                    *parentMatch17 = match;
+                                }
+                                if (match.hit)
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch19 = &match;
+                                    {
+                                        soul::parser::Match match(true);
+                                        soul::parser::Match* parentMatch20 = &match;
+                                        {
+                                            while (true)
+                                            {
+                                                int64_t save = lexer.GetPos();
+                                                {
+                                                    soul::parser::Match match(false);
+                                                    soul::parser::Match* parentMatch21 = &match;
+                                                    {
+                                                        soul::parser::Match match(false);
+                                                        if (*lexer == COMMA)
+                                                        {
+                                                            ++lexer;
+                                                            match.hit = true;
+                                                        }
+                                                        *parentMatch21 = match;
+                                                    }
+                                                    if (match.hit)
+                                                    {
+                                                        soul::parser::Match match(false);
+                                                        soul::parser::Match* parentMatch22 = &match;
+                                                        {
+                                                            soul::parser::Match match(false);
+                                                            soul::parser::Match* parentMatch23 = &match;
+                                                            {
+                                                                int64_t pos = lexer.GetPos();
+                                                                soul::parser::Match match = ExpressionFileParser<Lexer>::Expression(lexer);
+                                                                expression.reset(static_cast<soul::ast::slg::Expression*>(match.value));
+                                                                if (match.hit)
+                                                                {
+                                                                    expressionCollection->AddExpression(expression.release());
+                                                                }
+                                                                *parentMatch23 = match;
+                                                            }
+                                                            *parentMatch22 = match;
+                                                        }
+                                                        *parentMatch21 = match;
+                                                    }
+                                                    if (match.hit)
+                                                    {
+                                                        *parentMatch20 = match;
+                                                    }
+                                                    else
+                                                    {
+                                                        lexer.SetPos(save);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        *parentMatch19 = match;
+                                    }
+                                    *parentMatch17 = match;
+                                }
+                                *parentMatch16 = match;
+                            }
+                            if (match.hit)
+                            {
+                                *parentMatch15 = match;
+                            }
+                            else
+                            {
+                                lexer.SetPos(save);
+                            }
+                        }
+                        *parentMatch14 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch24 = &match;
+                {
+                    soul::parser::Match match(true);
+                    soul::parser::Match* parentMatch25 = &match;
+                    {
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        if (*lexer == RBRACE)
+                        {
+                            ++lexer;
+                            match.hit = true;
+                        }
+                        if (match.hit)
+                        {
+                            *parentMatch25 = match;
+                        }
+                        else
+                        {
+                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(RBRACE));
+                        }
+                    }
+                    *parentMatch24 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            expressionFile->SetExpressionCollection(expressionCollection.release());
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, util::ToUtf32("ExpressionFile"));
+                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, expressionFile.release());
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, util::ToUtf32("ExpressionFile"));
+        else soul::lexer::WriteFailureToLog(lexer, util::ToUtf32("ExpressionFile"));
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
+soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, util::ToUtf32("Expression"));
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    std::string name = std::string();
+    int line = int();
+    std::unique_ptr<soul::parser::Value<std::string>> exprString;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match(false);
+                            if (*lexer == ID)
+                            {
+                                ++lexer;
+                                match.hit = true;
+                            }
+                            if (match.hit)
+                            {
+                                auto token = lexer.GetToken(pos);
+                                name = util::ToUtf8(token.ToString());
+                                line = token.line;
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    if (match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch6 = &match;
+                        {
+                            soul::parser::Match match(true);
+                            soul::parser::Match* parentMatch7 = &match;
+                            {
+                                int64_t pos = lexer.GetPos();
+                                soul::parser::Match match(false);
+                                if (*lexer == ASSIGN)
+                                {
+                                    ++lexer;
+                                    match.hit = true;
+                                }
+                                if (match.hit)
+                                {
+                                    *parentMatch7 = match;
+                                }
+                                else
+                                {
+                                    lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(ASSIGN));
+                                }
+                            }
+                            *parentMatch6 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch8 = &match;
+                    {
+                        soul::parser::Match match(true);
+                        soul::parser::Match* parentMatch9 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = CommonParser<Lexer>::ExprString(lexer);
+                            exprString.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                            if (match.hit)
+                            {
+                                *parentMatch9 = match;
+                            }
+                            else
+                            {
+                                lexer.ThrowExpectationFailure(pos, "ExprString");
+                            }
+                        }
+                        *parentMatch8 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch10 = &match;
+                {
+                    soul::parser::Match match(true);
+                    soul::parser::Match* parentMatch11 = &match;
+                    {
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        if (*lexer == SEMICOLON)
+                        {
+                            ++lexer;
+                            match.hit = true;
+                        }
+                        if (match.hit)
+                        {
+                            *parentMatch11 = match;
+                        }
+                        else
+                        {
+                            lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(SEMICOLON));
+                        }
+                    }
+                    *parentMatch10 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, util::ToUtf32("Expression"));
+                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, new soul::ast::slg::Expression(name, exprString->value, line));
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, util::ToUtf32("Expression"));
+        else soul::lexer::WriteFailureToLog(lexer, util::ToUtf32("Expression"));
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+} // namespace soul::slg::expression::file::par

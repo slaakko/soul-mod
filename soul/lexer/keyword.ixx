@@ -9,7 +9,7 @@ import std.core;
 import soul.lexer.token;
 import soul.lexer.lexeme;
 
-export namespace soul {
+export namespace soul::lexer {
 
 template<typename Char>
 constexpr const Char* StrEnd(const Char* s)
@@ -61,4 +61,4 @@ private:
     std::map<Lexeme<Char>, int64_t, LexemeCompare<Char>> keywordMap;
 };
 
-} // namespace soul
+} // namespace soul::lexer

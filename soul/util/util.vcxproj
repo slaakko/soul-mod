@@ -127,7 +127,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings>5050;4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -147,7 +147,7 @@
       <EnableModules>true</EnableModules>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings>5050;4267;4244</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -160,6 +160,8 @@
   <ItemGroup>
     <ClCompile Include="ansi.cpp" />
     <ClCompile Include="ansi.ixx" />
+    <ClCompile Include="binary_resource_ptr.cpp" />
+    <ClCompile Include="binary_resource_ptr.ixx" />
     <ClCompile Include="binary_stream_reader.cpp" />
     <ClCompile Include="binary_stream_reader.ixx" />
     <ClCompile Include="binary_stream_writer.cpp" />
@@ -173,6 +175,10 @@
     <ClCompile Include="compression.ixx" />
     <ClCompile Include="container.cpp" />
     <ClCompile Include="container.ixx" />
+    <ClCompile Include="deflate_stream.cpp" />
+    <ClCompile Include="deflate_stream.ixx" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="error.ixx" />
     <ClCompile Include="fiber.cpp" />
     <ClCompile Include="fiber.ixx" />
     <ClCompile Include="file_stream.cpp" />
@@ -203,6 +209,8 @@
     <ClCompile Include="stream.cpp" />
     <ClCompile Include="stream.ixx" />
     <ClCompile Include="synchronized_queue.ixx" />
+    <ClCompile Include="system.cpp" />
+    <ClCompile Include="system.ixx" />
     <ClCompile Include="text_util.cpp" />
     <ClCompile Include="text_util.ixx" />
     <ClCompile Include="time.cpp" />
@@ -214,6 +222,10 @@
     <ClCompile Include="util.ixx" />
     <ClCompile Include="uuid.cpp" />
     <ClCompile Include="uuid.ixx" />
+    <ClCompile Include="ZLibInterface.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ZLibInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
