@@ -15,10 +15,10 @@ class ParsingException : public std::runtime_error
 public:
     ParsingException(const std::string& message_, const std::string& fileName_, const SourcePos& sourcePos_);
     const std::string& Project() const { return project; }
+    void SetProject(const std::string& project_);
     const std::string& Message() const { return message; }
     const std::string& FileName() const { return fileName; }
     const SourcePos& GetSourcePos() const { return sourcePos; }
-    void SetProject(const std::string& project_);
 private:
     std::string project;
     std::string message;

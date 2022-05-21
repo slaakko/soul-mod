@@ -12,13 +12,15 @@ export import soul.lexer.keyword;
 export import soul.lexer.base;
 export import soul.lexer.classmap;
 export import soul.lexer.variables;
-export import soul.lexer.span;
 export import soul.lexer.error;
 export import soul.lexer.source.pos;
+export import soul.lexer.parsing.log;
+export import soul.lexer.xml.parsing.log;
 
 import std.core;
 import util.unicode;
 import soul.ast.slg;
+import soul.token.parser;
 
 using namespace util;
 
@@ -107,7 +109,8 @@ public:
         tokenCollection(nullptr),
         keywordMap(nullptr),
         ruleNameVecPtr(nullptr),
-        farthestPos(GetPos())
+        farthestPos(GetPos()),
+        log(nullptr)
     {
         ComputeLineStarts();
     }
@@ -333,6 +336,23 @@ public:
         SourcePos sourcePos = GetSourcePos(farthestPos);
         throw ParsingException(GetError(farthestPos), fileName, sourcePos);
     }
+    void SetLog(ParsingLog* log_) 
+    { 
+        log = log_; 
+    }
+    ParsingLog* Log() const 
+    { 
+        return log; 
+    }
+    std::string RestOfLine(int maxLineLength) const
+    {
+        std::string restOfLine(util::ToUtf8(current->match.ToString()) + ToString(current->match.end, pos) + ToString(pos, LineEnd(end, pos)));
+        if (maxLineLength != 0)
+        {
+            restOfLine = restOfLine.substr(0, maxLineLength);
+        }
+        return restOfLine;
+    }
 private:
     void NextToken()
     {
@@ -460,11 +480,39 @@ private:
     std::vector<int> farthestRuleContext;
     std::vector<const Char*> lineStarts;
     std::vector<std::string>* ruleNameVecPtr;
+    ParsingLog* log;
 };
 
 inline std::string GetEndTokenInfo()
 {
     return "end-of-file";
+}
+
+template<typename Lexer>
+void WriteBeginRuleToLog(Lexer& lexer, const std::string& ruleName)
+{
+    lexer.Log()->WriteBeginRule(ruleName);
+    lexer.Log()->IncIndent();
+    lexer.Log()->WriteTry(lexer.RestOfLine(lexer.Log()->MaxLineLength()));
+    lexer.Log()->IncIndent();
+}
+
+template<typename Lexer>
+void WriteSuccessToLog(Lexer& lexer, int64_t matchPos, const std::string& ruleName)
+{
+    lexer.Log()->DecIndent();
+    lexer.Log()->WriteSuccess(util::ToUtf8(lexer.GetToken(matchPos).ToString()));
+    lexer.Log()->DecIndent();
+    lexer.Log()->WriteEndRule(ruleName);
+}
+
+template<typename Lexer>
+void WriteFailureToLog(Lexer& lexer, const std::string& ruleName)
+{
+    lexer.Log()->DecIndent();
+    lexer.Log()->WriteFail();
+    lexer.Log()->DecIndent();
+    lexer.Log()->WriteEndRule(ruleName);
 }
 
 } // namespace soul::lexer

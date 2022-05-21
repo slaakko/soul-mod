@@ -1,0 +1,142 @@
+
+// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/literal_parser.parser' using soul parser generator spg version 4.0.0
+
+module soul.cpp.literal.par;
+
+import util;
+import soul.cpp.token;
+import soul.cpp.op.token;
+import soul.lex.slg;
+
+using namespace soul::cpp::token;
+using namespace soul::cpp::op::token;
+using namespace soul::lex::slg;
+
+namespace soul::cpp::literal::par {
+
+template<typename Lexer>
+soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::parser::Match match(false);
+    int64_t pos = lexer.GetPos();
+    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
+    switch (*lexer)
+    {
+        case INTEGER_LITERAL:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
+                }
+            }
+            break;
+        }
+        case FLOATING_LITERAL:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
+                }
+            }
+            break;
+        }
+        case CHAR_LITERAL:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
+                }
+            }
+            break;
+        }
+        case STRING_LITERAL:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
+                }
+            }
+            break;
+        }
+        case TRUE:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
+                }
+            }
+            break;
+        }
+        case FALSE:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
+                }
+            }
+            break;
+        }
+        case NULLPTR:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
+                }
+            }
+            break;
+        }
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
+        else soul::lexer::WriteFailureToLog(lexer, "Literal");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template struct LiteralParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
+
+} // namespace soul::cpp::literal::par

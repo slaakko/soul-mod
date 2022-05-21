@@ -81,7 +81,7 @@ void ThisNode::Write(CodeFormatter& formatter)
     formatter.Write("this");
 }
 
-IdExprNode::IdExprNode(const std::string& value_) : Node(), value(value_)
+IdExprNode::IdExprNode(const std::string& id_) : Node(), id(id_)
 {
 }
 
@@ -92,7 +92,7 @@ void IdExprNode::Accept(Visitor& visitor)
 
 void IdExprNode::Write(CodeFormatter& formatter)
 {
-    formatter.Write(value);
+    formatter.Write(id);
 }
 
 IndexExprNode::IndexExprNode(Node* child_, Node* index_) : UnaryNode(child_), index(index_)
@@ -252,6 +252,10 @@ void PostDecrementNode::Write(CodeFormatter& formatter)
 std::string PostDecrementNode::ToString() const
 {
     return Child()->ToString() + "--";
+}
+
+CppCastNode::CppCastNode()
+{
 }
 
 StaticCastNode::StaticCastNode() : CppCastNode()
@@ -1099,8 +1103,30 @@ void ReturnStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(";");
 }
 
-ForRangeDeclarationNode::ForRangeDeclarationNode(TypeIdNode* typeId_, const std::string& declarator_) : Node(), typeId(typeId_), declarator(declarator_)
+ConditionWithDeclaratorNode::ConditionWithDeclaratorNode(TypeIdNode* type_, const std::string& declarator_, Node* expression_) : 
+    Node(), type(type_), declarator(declarator_), expression(expression_)
 {
+}
+
+void ConditionWithDeclaratorNode::Write(CodeFormatter& formatter)
+{
+    type->Write(formatter);
+    formatter.Write(" " + declarator + " = ");
+    expression->Write(formatter);
+}
+
+void ConditionWithDeclaratorNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+ForRangeDeclarationNode::ForRangeDeclarationNode() : Node(), typeId(new TypeIdNode()), declarator()
+{
+}
+
+void ForRangeDeclarationNode::SetDeclarator(const std::string& declarator_)
+{
+    declarator = declarator_;
 }
 
 void ForRangeDeclarationNode::Accept(Visitor& visitor)
@@ -1143,6 +1169,10 @@ void RangeForStatementNode::Write(CodeFormatter& formatter)
     stmt->Write(formatter);
 }
 
+DeclarationStatementNode::DeclarationStatementNode(Node* declaration_)
+{
+}
+
 void DeclarationStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1154,8 +1184,8 @@ void DeclarationStatementNode::Write(CodeFormatter& formatter)
     formatter.WriteLine(";");
 }
 
-ExceptionDeclarationNode::ExceptionDeclarationNode(TypeIdNode* typeId_, const std::string& declarator_, bool catchAll_) :
-    Node(), typeId(typeId_), declarator(declarator_), catchAll(catchAll_)
+ExceptionDeclarationNode::ExceptionDeclarationNode() :
+    Node(), typeId(new TypeIdNode()), declarator(), catchAll(false)
 {
 }
 
@@ -1220,13 +1250,384 @@ void TryStatementNode::Write(CodeFormatter& formatter)
     }
 }
 
+AssignInitNode::AssignInitNode(Node* assignmentExpr_) : Node(), assignmentExpr(assignmentExpr_)
+{
+}
+
+void AssignInitNode::Add(AssignInitNode* subInit)
+{
+    subInits.push_back(std::unique_ptr<AssignInitNode>(subInit));
+}
+
+void AssignInitNode::Write(CodeFormatter& formatter)
+{
+    if (assignmentExpr)
+    {
+        assignmentExpr->Write(formatter);
+    }
+    else
+    {
+        formatter.Write("{ ");
+        bool first = true;
+        for (const auto& subInit : subInits)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                formatter.Write(", ");
+            }
+            subInit->Write(formatter);
+        }
+        formatter.Write(" }");
+    }
+}
+
+std::string AssignInitNode::ToString() const
+{
+    if (assignmentExpr)
+    {
+        return assignmentExpr->ToString();
+    }
+    else
+    {
+        std::string str;
+        str.append("{ ");
+        bool first = true;
+        for (const auto& subInit : subInits)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                str.append(", ");
+            }
+            str.append(subInit->ToString());
+        }
+        str.append(" }");
+        return str;
+    }
+}
+
+void AssignInitNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+InitializerNode::InitializerNode(AssignInitNode* assignInit_) : assignInit(assignInit_)
+{
+}
+
+void InitializerNode::Add(Node* expr)
+{
+    expressionList.push_back(std::unique_ptr<Node>(expr));
+}
+
+void InitializerNode::Write(CodeFormatter& formatter)
+{
+    if (assignInit)
+    {
+        formatter.Write(" = ");
+        assignInit->Write(formatter);
+    }
+    else if (!expressionList.empty())
+    {
+        formatter.Write("(");
+        bool first = true;
+        for (const auto& expr : expressionList)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                formatter.Write(", ");
+            }
+            expr->Write(formatter);
+        }
+        formatter.Write(")");
+    }
+}
+
+std::string InitializerNode::ToString() const
+{
+    std::string str;
+    if (assignInit)
+    {
+        return " = " + assignInit->ToString();
+    }
+    else if (!expressionList.empty())
+    {
+        str.append("(");
+        bool first = true;
+        for (const auto& expr : expressionList)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                str.append(", ");
+            }
+            str.append(expr->ToString());
+        }
+        str.append(")");
+    }
+    return str;
+}
+
+void InitializerNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+InitDeclaratorNode::InitDeclaratorNode(const std::string& declarator_, InitializerNode* initializer_) : declarator(declarator_), initializer(initializer_)
+{
+}
+
+void InitDeclaratorNode::Write(CodeFormatter& formatter)
+{
+    formatter.Write(declarator);
+    if (initializer)
+    {
+        initializer->Write(formatter);
+    }
+}
+
+std::string InitDeclaratorNode::ToString() const
+{
+    std::string str;
+    str.append(declarator);
+    if (initializer)
+    {
+        str.append(initializer->ToString());
+    }
+    return str;
+}
+
+void InitDeclaratorNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+InitDeclaratorListNode::InitDeclaratorListNode() : Node()
+{
+}
+
+void InitDeclaratorListNode::Add(InitDeclaratorNode* initDeclarator)
+{
+    initDeclarators.push_back(std::unique_ptr<InitDeclaratorNode>(initDeclarator));
+}
+
+void InitDeclaratorListNode::Write(CodeFormatter& formatter)
+{
+    bool first = true;
+    for (const auto& initDeclarator : initDeclarators)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            formatter.Write(", ");
+        }
+        initDeclarator->Write(formatter);
+    }
+}
+
+std::string InitDeclaratorListNode::ToString() const
+{
+    std::string str;
+    bool first = true;
+    for (const auto& initDeclarator : initDeclarators)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            str.append(", ");
+        }
+        str.append(initDeclarator->ToString());
+    }
+    return str;
+}
+
+void InitDeclaratorListNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+DeclSpecifierNode::DeclSpecifierNode(const std::string& name_) : Node(), name(name_)
+{
+}
+
+TypedefNode::TypedefNode() : DeclSpecifierNode("typedef")
+{
+}
+
+void TypedefNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void TypedefNode::Write(CodeFormatter& formatter)
+{
+    formatter.Write(Name());
+}
+
+std::string TypedefNode::ToString() const
+{
+    return Name();
+}
+
+TypeSpecifierNode::TypeSpecifierNode(const std::string& name_) : DeclSpecifierNode(name_)
+{
+}
+
+void TypeSpecifierNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void TypeSpecifierNode::Write(CodeFormatter& formatter)
+{
+    formatter.Write(Name());
+}
+
+ConstNode::ConstNode() : TypeSpecifierNode("const")
+{
+}
+
+void ConstNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+VolatileNode::VolatileNode() : TypeSpecifierNode("volatile")
+{
+}
+
+void VolatileNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+TypeNameNode::TypeNameNode(const std::string& name_) : TypeSpecifierNode(name_), isTemplate(false)
+{
+}
+
+void TypeNameNode::AddTemplateArgument(Node* templateArgument)
+{
+    templateArguments.push_back(std::unique_ptr<Node>(templateArgument));
+}
+
+std::string TypeNameNode::ToString() const
+{
+    std::string str(Name());
+    if (isTemplate)
+    {
+        str.append("<");
+        bool first = true;
+        for (const auto& templateArgument : templateArguments)
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                str.append(", ");
+            }
+            str.append(templateArgument->ToString());
+        }
+        str.append(">");
+    }
+    return str;
+}
+
+void TypeNameNode::Write(CodeFormatter& formatter)
+{
+    formatter.Write(ToString());
+}
+
+void TypeNameNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+TypeNode::TypeNode() : Node()
+{
+}
+
+void TypeNode::Add(TypeSpecifierNode* typeSpecifier)
+{
+    typeSpecifiers.push_back(std::unique_ptr<TypeSpecifierNode>(typeSpecifier));
+}
+
+std::string TypeNode::ToString() const
+{
+    std::string str;
+    bool first = true;
+    for (const auto& typeSpecifier : typeSpecifiers)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            str.append(1, ' ');
+        }
+        str.append(typeSpecifier->ToString());
+    }
+    return str;
+}
+
+void TypeNode::Write(CodeFormatter& formatter)
+{
+    formatter.Write(ToString());
+}
+
+void TypeNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+StorageClassSpecifierNode::StorageClassSpecifierNode(const std::string& name_) : DeclSpecifierNode(name_)
+{
+}
+
+void StorageClassSpecifierNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void StorageClassSpecifierNode::Write(CodeFormatter& formatter)
+{
+    formatter.Write(Name());
+}
+
+std::string StorageClassSpecifierNode::ToString() const
+{
+    return Name();
+}
+
 TypeIdNode::TypeIdNode() : Node()
 {
 }
 
-void TypeIdNode::Add(TypeSpecifier* typeSpecifier)
+void TypeIdNode::Add(TypeSpecifierNode* typeSpecifier)
 {
-    typeSpecifiers.push_back(std::unique_ptr<TypeSpecifier>(typeSpecifier));
+    typeSpecifiers.push_back(std::unique_ptr<TypeSpecifierNode>(typeSpecifier));
 }
 
 void TypeIdNode::SetDeclarator(const std::string& declarator_)
@@ -1275,6 +1676,441 @@ std::string TypeIdNode::ToString() const
     }
     str.append(declarator);
     return str;
+}
+
+SimpleDeclarationNode::SimpleDeclarationNode() : Node()
+{
+}
+
+void SimpleDeclarationNode::Add(DeclSpecifierNode* declSpecifier)
+{
+    declSpecifiers.push_back(std::unique_ptr<DeclSpecifierNode>(declSpecifier));
+}
+
+void SimpleDeclarationNode::SetInitDeclaratorList(InitDeclaratorListNode* initDeclaratorList_)
+{
+    initDeclaratorList.reset(initDeclaratorList_);
+}
+
+void SimpleDeclarationNode::Write(CodeFormatter& formatter)
+{
+    bool first = true;
+    for (const auto& declSpecifier : declSpecifiers)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            formatter.Write(" ");
+        }
+        declSpecifier->Write(formatter);
+    }
+    if (!declSpecifiers.empty())
+    {
+        formatter.Write(" ");
+    }
+    if (initDeclaratorList)
+    {
+        initDeclaratorList->Write(formatter);
+    }
+}
+
+void SimpleDeclarationNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+UsingObjectNode::UsingObjectNode(const std::string& name_) : Node(), name(name_)
+{
+}
+
+NamespaceAliasNode::NamespaceAliasNode(const std::string& aliasName_, const std::string& namespaceName_) : 
+    UsingObjectNode("namespaceAlias"), aliasName(aliasName_), namespaceName(namespaceName_)
+{
+}
+
+void NamespaceAliasNode::Write(CodeFormatter& formatter)
+{
+    formatter.WriteLine("namespace " + aliasName + " = " + namespaceName + ";");
+}
+
+void NamespaceAliasNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+UsingDeclarationNode::UsingDeclarationNode(const std::string& usingId_) : UsingObjectNode("usingDeclaration"), usingId(usingId_)
+{
+}
+
+void UsingDeclarationNode::Write(CodeFormatter& formatter)
+{
+    formatter.WriteLine("using " + usingId + ";");
+}
+
+void UsingDeclarationNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+UsingDirectiveNode::UsingDirectiveNode(const std::string& usingNs_) : UsingObjectNode("usingDirective"), usingNs(usingNs_)
+{
+}
+
+void UsingDirectiveNode::Write(CodeFormatter& formatter)
+{
+    formatter.WriteLine("using namespace " + usingNs + ";");
+}
+
+void UsingDirectiveNode::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void DefaultVisitor::Visit(IndexExprNode& node)
+{
+    node.Child()->Accept(*this);
+    node.Index()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(InvokeNode& node)
+{
+    node.Child()->Accept(*this);
+    for (const auto& arg : node.Args())
+    {
+        arg->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(MemberAccessNode& node)
+{
+    node.Child()->Accept(*this);
+    node.Member()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(PtrMemberAccessNode& node)
+{
+    node.Child()->Accept(*this);
+    node.Member()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(PostIncrementNode& node)
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(PostDecrementNode& node)
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(PostCastNode& node)
+{
+    node.Child()->Accept(*this);
+    node.GetCppCastNode()->Accept(*this);
+    node.Type()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(TypeIdExprNode& node) 
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(PreIncrementNode& node)
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(PreDecrementNode& node)
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(UnaryOpExprNode& node) 
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(SizeOfNode& node) 
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(CastNode& node)
+{
+    node.Child()->Accept(*this);
+    node.Type()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(BinaryOpExprNode& node)
+{
+    node.Left()->Accept(*this);
+    node.Right()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ConditionalNode& node)
+{
+    node.Condition()->Accept(*this);
+    node.ThenExpr()->Accept(*this);
+    node.ElseExpr()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ThrowExprNode& node)
+{
+    node.Exception()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(NewNode& node)
+{
+    for (const auto& placementNode : node.Placement())
+    {
+        placementNode->Accept(*this);
+    }
+    node.TypeId()->Accept(*this);
+    for (const auto& initializerNode : node.Initializer())
+    {
+        initializerNode->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(DeleteNode& node)
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ParenExprNode& node)
+{
+    node.Child()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(LabeledStatementNode& node)
+{
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(CaseStatementNode& node)
+{
+    node.CaseExpr()->Accept(*this);
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(DefaultStatementNode& node)
+{
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ExpressionStatementNode& node)
+{
+    node.Expr()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(CompoundStatementNode& node)
+{
+    for (const auto& stmt : node.Statements())
+    {
+        stmt->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(IfStatementNode& node)
+{
+    node.Cond()->Accept(*this);
+    node.ThenStmt()->Accept(*this);
+    if (node.ElseStmt())
+    {
+        node.ElseStmt()->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(SwitchStatementNode& node)
+{
+    node.Cond()->Accept(*this);
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(WhileStatementNode& node)
+{
+    node.Cond()->Accept(*this);
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(DoStatementNode& node)
+{
+    node.Cond()->Accept(*this);
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ForStatementNode& node)
+{
+    if (node.Init())
+    {
+        node.Init()->Accept(*this);
+    }
+    if (node.Cond())
+    {
+        node.Cond()->Accept(*this);
+    }
+    if (node.Iter())
+    {
+        node.Iter()->Accept(*this);
+    }
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ReturnStatementNode& node)
+{
+    if (node.Expr())
+    {
+        node.Expr()->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(ConditionWithDeclaratorNode& node)
+{
+    node.Type()->Accept(*this);
+    node.Expression()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ForRangeDeclarationNode& node) 
+{
+    node.TypeId()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(RangeForStatementNode& node)
+{
+    node.Declaration()->Accept(*this);
+    node.Container()->Accept(*this);
+    node.Stmt()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(DeclarationStatementNode& node)
+{
+    node.Declaration()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(ExceptionDeclarationNode& node)
+{
+    if (node.TypeId())
+    {
+        node.TypeId()->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(HandlerNode& node)
+{
+    node.ExceptionDeclaration()->Accept(*this);
+    node.HandlerBlock()->Accept(*this);
+}
+
+void DefaultVisitor::Visit(TryStatementNode& node)
+{
+    node.TryBlock()->Accept(*this);
+    for (const auto& handler : node.Handlers())
+    {
+        handler->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(AssignInitNode& node)
+{
+    if (node.AssignmentExpr())
+    {
+        node.AssignmentExpr()->Accept(*this);
+    }
+    for (const auto& subInit : node.SubInits())
+    {
+        subInit->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(InitializerNode& node)
+{
+    if (node.GetAssignInit())
+    {
+        node.GetAssignInit()->Accept(*this);
+    }
+    for (const auto& expr : node.GetExpressionList())
+    {
+        expr->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(InitDeclaratorNode& node)
+{
+    if (node.GetInitializer())
+    {
+        node.GetInitializer()->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(InitDeclaratorListNode& node)
+{
+    for (const auto& initDeclarator : node.InitDeclarators())
+    {
+        initDeclarator->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(TypeNameNode& node)
+{
+    for (const auto& templateArg : node.TemplateArgs())
+    {
+        templateArg->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(TypeNode& node)
+{
+    for (const auto& typeSpecifier : node.TypeSpecifiers())
+    {
+        typeSpecifier->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(TypeIdNode& node)
+{
+    for (const auto& typeSpecifier : node.TypeSpecifiers())
+    {
+        typeSpecifier->Accept(*this);
+    }
+}
+
+void DefaultVisitor::Visit(SimpleDeclarationNode& node)
+{
+    for (const auto& declSpecifier : node.DeclSpecifiers())
+    {
+        declSpecifier->Accept(*this);
+    }
+    node.GetInitDeclaratorList()->Accept(*this);
+}
+
+CodeEvaluationVisitor::CodeEvaluationVisitor() : hasReturn(false), hasPass(false), hasSourcePos(false), hasVars(false)
+{
+}
+
+void CodeEvaluationVisitor::Visit(ReturnStatementNode& node)
+{
+    DefaultVisitor::Visit(node);
+    hasReturn = true;
+}
+
+void CodeEvaluationVisitor::Visit(IdExprNode& node)
+{
+    Visitor::Visit(node);
+    if (node.Id() == "pass")
+    {
+        hasPass = true;
+    }
+    else if (node.Id() == "sourcePos")
+    {
+        hasSourcePos = true;
+    }
+    else if (node.Id() == "vars")
+    {
+        hasVars = true;
+    }
 }
 
 } // namespace soul::ast::cpp

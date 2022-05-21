@@ -1,0 +1,7 @@
+project cpp.parsers;
+parser <declaration_parser.parser>;
+parser <declarator_parser.parser>;
+parser <expression_parser.parser>;
+parser <identifier_parser.parser>;
+parser <literal_parser.parser>;
+parser <statement_parser.parser>;

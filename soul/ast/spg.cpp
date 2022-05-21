@@ -35,7 +35,7 @@ ExportModule::ExportModule(const std::string& moduleName_) : moduleName(moduleNa
 {
 }
 
-Import::Import(const std::string& moduleName_) : moduleName(moduleName_)
+Import::Import(const std::string& moduleName_, ImportPrefix prefix_) : moduleName(moduleName_), prefix(prefix_)
 {
 }
 

@@ -13,7 +13,7 @@ export namespace soul::ast::slg {
 
 enum class FileKind
 {
-    tokenFile, keywordFile, expressionFile, lexerFile
+    tokenFile, keywordFile, expressionFile, lexerFile, slgFile
 };
 
 class File
@@ -30,7 +30,7 @@ private:
 
 enum class CollectionKind
 {
-    tokenCollection, keywordCollection, expressionCollection
+    tokenCollection, keywordCollection, expressionCollection, lexer
 };
 
 class Collection
@@ -217,16 +217,14 @@ private:
     std::map<int, Action*> actionMap;
 };
 
-class Lexer
+class Lexer : public Collection
 {
 public:
     Lexer(const std::string& name_);
-    const std::string& Name() const { return name; }
     void AddRule(Rule* rule);
     void AddVariable(Variable* variable);
     void AddAction(Action* action);
 private:
-    std::string name;
     std::vector<std::unique_ptr<Rule>> rules;
     std::vector<std::unique_ptr<Variable>> variables;
     Actions actions;
@@ -246,6 +244,76 @@ private:
     std::unique_ptr<soul::ast::spg::ExportModule> exportModule;
     std::vector<std::unique_ptr<soul::ast::spg::Import>> imports;
     std::unique_ptr<Lexer> lexer;
+};
+
+enum class SlgFileDeclarationKind
+{
+    tokenFileDeclaration, keywordFileDeclaration, expressionFileDeclaration, lexerFileDeclararation
+};
+
+class SlgFileDeclaration
+{
+public:
+    SlgFileDeclaration(SlgFileDeclarationKind kind_, const std::string& filePath_);
+    virtual ~SlgFileDeclaration();
+    SlgFileDeclarationKind Kind() const { return kind; }
+    const std::string& FilePath() const { return filePath; }
+private:
+    SlgFileDeclarationKind kind;
+    std::string filePath;
+};
+
+class TokenFileDeclaration : public SlgFileDeclaration
+{
+public:
+    TokenFileDeclaration(const std::string& filePath_);
+};
+
+class KeywordFileDeclaration : public SlgFileDeclaration
+{
+public:
+    KeywordFileDeclaration(const std::string& filePath_);
+};
+
+class ExpressionFileDeclaration : public SlgFileDeclaration
+{
+public:
+    ExpressionFileDeclaration(const std::string& filePath_);
+};
+
+class LexerFileDeclaration : public SlgFileDeclaration
+{
+public:
+    LexerFileDeclaration(const std::string& filePath_);
+};
+
+class SlgFile : public File
+{
+public:
+    SlgFile(const std::string& filePath_);
+    void SetProjectName(const std::string& projectName_);
+    const std::string& ProjectName() const { return projectName; }
+    void AddDeclaration(SlgFileDeclaration* declaration);
+    const std::vector<std::unique_ptr<SlgFileDeclaration>>& Declarations() const { return declarations; }
+    void AddTokenFile(TokenFile* tokenFile);
+    const std::vector<std::unique_ptr<TokenFile>>& TokenFiles() const { return tokenFiles; }
+    void AddKeywordFile(KeywordFile* keywordFile);
+    const std::vector<std::unique_ptr<KeywordFile>>& KeywordFiles() const { return keywordFiles; }
+    void AddExpressionFile(ExpressionFile* expressionFile);
+    const std::vector<std::unique_ptr<ExpressionFile>>& ExpressionFiles() const { return expressionFiles; }
+    void AddLexerFile(LexerFile* lexerFile);
+    const std::vector<std::unique_ptr<LexerFile>>& LexerFiles() const { return lexerFiles; }
+    const std::vector<Collection*>& Collections() const { return collections; }
+    Collection* GetCollection(const std::string& name) const;
+private:
+    std::string projectName;
+    std::vector<std::unique_ptr<SlgFileDeclaration>> declarations;
+    std::vector<std::unique_ptr<TokenFile>> tokenFiles;
+    std::vector<std::unique_ptr<KeywordFile>> keywordFiles;
+    std::vector<std::unique_ptr<ExpressionFile>> expressionFiles;
+    std::vector<std::unique_ptr<LexerFile>> lexerFiles;
+    std::vector<Collection*> collections;
+    std::map<std::string, Collection*> collectionMap;
 };
 
 } // namespace soul::ast::slg

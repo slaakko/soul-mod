@@ -5,15 +5,18 @@
 
 export module soul.slg.keyword.file.par;
 
-import soul.cpp.token;
-import soul.punctuation.token;
-import soul.tool.token;
-import soul.ast.slg;
-import soul.slg.common.par;
-import soul.slg.token.par;
+[interface]import soul.ast.slg;
+[implementation]import soul.cpp.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.slg.common.par;
+[implementation]import soul.slg.token.par;
+[implementation]import soul.lex.slg;
 
 parser KeywordFileParser
 {
+    uselexer soul::lex::slg::SlgLexer<char32_t>;
+
     main;
     using CommonParser.QualifiedId;
     using CommonParser.Import;

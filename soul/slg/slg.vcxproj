@@ -126,7 +126,7 @@
       <EnableModules>true</EnableModules>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -147,7 +147,7 @@
       <EnableModules>true</EnableModules>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,11 +158,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\util\util.vcxproj">
+      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\cpp\cpp.vcxproj">
+      <Project>{3cabfe79-d9b3-44a2-99a1-d4aca28481ab}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\lexer\lexer.vcxproj">
       <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\lex\lex.vcxproj">
+      <Project>{69f93e57-1621-43b9-8b9b-c33c1c079da9}</Project>
     </ProjectReference>
     <ProjectReference Include="..\parser\parser.vcxproj">
       <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
@@ -170,22 +179,29 @@
     <ProjectReference Include="..\token\token.vcxproj">
       <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="classmap.cpp" />
     <ClCompile Include="classmap.ixx" />
+    <ClCompile Include="common_parser.cpp" />
     <ClCompile Include="common_parser.ixx" />
+    <ClCompile Include="expression_file_parser.cpp" />
     <ClCompile Include="expression_file_parser.ixx" />
     <ClCompile Include="file_parsers.cpp" />
     <ClCompile Include="file_parsers.ixx" />
+    <ClCompile Include="keyword_file_parser.cpp" />
     <ClCompile Include="keyword_file_parser.ixx" />
+    <ClCompile Include="lexer_file_parser.cpp" />
+    <ClCompile Include="lexer_file_parser.ixx" />
+    <ClCompile Include="lexer_generator.cpp" />
+    <ClCompile Include="lexer_generator.ixx" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="slg_lexer.cpp" />
-    <ClCompile Include="slg_lexer.ixx" />
+    <ClCompile Include="slg_file_parser.cpp" />
+    <ClCompile Include="slg_file_parser.ixx" />
+    <ClCompile Include="token_file_parser.cpp" />
     <ClCompile Include="token_file_parser.ixx" />
+    <ClCompile Include="token_module_generator.cpp" />
+    <ClCompile Include="token_module_generator.ixx" />
     <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>
@@ -193,8 +209,7 @@
     <None Include="expression_file_parser.parser" />
     <None Include="keyword_file_parser.parser" />
     <None Include="lexer_file_parser.parser" />
-    <None Include="slg_lexer.lexer" />
-    <None Include="slg_lexer.slg" />
+    <None Include="slg_file_parser.parser" />
     <None Include="slg_parsers.spg" />
     <None Include="token_file_parser.parser" />
   </ItemGroup>

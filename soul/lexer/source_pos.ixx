@@ -11,22 +11,27 @@ export namespace soul::lexer {
 
 struct SourcePos
 {
-    SourcePos() : pos(-1), line(0), col(0) {}
-    SourcePos(int line_, int col_) : pos(-1), line(line_), col(col_) {}
-    SourcePos(int64_t pos_, int line_, int col_) : pos(pos_), line(line_), col(col_) {}
+    SourcePos() : pos(-1), file(-1), line(0), col(0) {}
+    SourcePos(int line_, int col_) : pos(-1), file(-1), line(line_), col(col_) {}
+    SourcePos(int file_, int line_, int col_) : pos(-1), file(file_), line(line_), col(col_) {}
+    SourcePos(int64_t pos_, int line_, int col_) : pos(pos_), file(-1), line(line_), col(col_) {}
+    SourcePos(int64_t pos_, int file_, int line_, int col_) : pos(pos_), file(file_), line(line_), col(col_) {}
     bool IsValid() const { return line != 0; }
     int64_t pos;
+    int file;
     int line;
     int col;
 };
 
 inline bool operator==(const SourcePos& left, const SourcePos& right)
 {
-    return left.line == right.line && left.col == right.col;
+    return left.file == right.file && left.line == right.line && left.col == right.col;
 }
 
 inline bool operator<(const SourcePos& left, const SourcePos& right)
 {
+    if (left.file < right.file) return true;
+    if (left.file > right.file) return false;
     if (left.line < right.line) return true;
     if (left.line > right.line) return false;
     return left.col < right.col;

@@ -82,9 +82,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>soul.lexerd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>soul.lexer</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -127,7 +129,7 @@
       <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -149,7 +151,7 @@
       <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -168,19 +170,22 @@
     <ClCompile Include="keyword.ixx" />
     <ClCompile Include="lexeme.ixx" />
     <ClCompile Include="lexer.ixx" />
+    <ClCompile Include="parsing_log.cpp" />
+    <ClCompile Include="parsing_log.ixx" />
     <ClCompile Include="source_pos.ixx" />
-    <ClCompile Include="span.ixx" />
     <ClCompile Include="token.ixx" />
     <ClCompile Include="token_parser.ixx" />
     <ClCompile Include="variables.cpp" />
     <ClCompile Include="variables.ixx" />
+    <ClCompile Include="xml_parsing_log.cpp" />
+    <ClCompile Include="xml_parsing_log.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\util\util.vcxproj">
+      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

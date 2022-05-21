@@ -5,20 +5,29 @@
 
 export module soul.slg.lex.file.par;
 
-import soul.cpp.token;
-import soul.punctuation.token;
-import soul.tool.token;
-import soul.ast.slg;
-import soul.slg.common.par;
-import soul.slg.token.par;
+[interface]import soul.ast.slg;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.slg.common.par;
+[implementation]import soul.slg.token.par;
+[implementation]import soul.cpp.statement.par;
+[implementation]import soul.cpp.declarator.par;
+[implementation]import soul.ast.cpp;
+[implementation]import soul.lex.slg;
 
 parser LexerFileParser
 {
+    uselexer soul::lex::slg::SlgLexer<char32_t>;
+
     main;
     using CommonParser.QualifiedId;
     using CommonParser.ExportModule;
     using CommonParser.Import;
     using CommonParser.ExprString;
+    using StatementParser.CompoundStatement;
+    using DeclaratorParser.TypeId;
 
     LexerFile(var std::unique_ptr<soul::ast::slg::LexerFile> lexerFile, var std::unique_ptr<soul::ast::slg::Lexer> lxr) : soul::ast::slg::LexerFile*
         ::= 
@@ -85,7 +94,7 @@ parser LexerFileParser
     Variable(var std::string name) : soul::ast::slg::Variable*
         ::= 
         (
-            TypeId:type ID{ varName = util::ToUtf8(lexer.GetToken(pos).ToString()); } SEMICOLON!
+            TypeId:type ID{ name = util::ToUtf8(lexer.GetToken(pos).ToString()); } SEMICOLON!
         )
         {
             return new soul::ast::slg::Variable(type, name);

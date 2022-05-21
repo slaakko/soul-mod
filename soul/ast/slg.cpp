@@ -157,7 +157,7 @@ Action* Actions::GetAction(int id) const
     }
 }
 
-Lexer::Lexer(const std::string& name_) : name(name_)
+Lexer::Lexer(const std::string& name_) : Collection(CollectionKind::lexer, name_)
 {
 }
 
@@ -193,6 +193,105 @@ void LexerFile::AddImport(soul::ast::spg::Import* imp)
 void LexerFile::SetLexer(Lexer* lexer_)
 {
     lexer.reset(lexer_);
+}
+
+SlgFileDeclaration::SlgFileDeclaration(SlgFileDeclarationKind kind_, const std::string& filePath_) : kind(kind_), filePath(filePath_)
+{
+}
+
+SlgFileDeclaration::~SlgFileDeclaration()
+{
+}
+
+TokenFileDeclaration::TokenFileDeclaration(const std::string& filePath_) : SlgFileDeclaration(SlgFileDeclarationKind::tokenFileDeclaration, filePath_)
+{
+}
+
+KeywordFileDeclaration::KeywordFileDeclaration(const std::string& filePath_) : SlgFileDeclaration(SlgFileDeclarationKind::keywordFileDeclaration, filePath_)
+{
+}
+
+ExpressionFileDeclaration::ExpressionFileDeclaration(const std::string& filePath_) : SlgFileDeclaration(SlgFileDeclarationKind::expressionFileDeclaration, filePath_)
+{
+}
+
+LexerFileDeclaration::LexerFileDeclaration(const std::string& filePath_) : SlgFileDeclaration(SlgFileDeclarationKind::lexerFileDeclararation, filePath_)
+{
+}
+
+SlgFile::SlgFile(const std::string& filePath_) : File(FileKind::slgFile, filePath_)
+{
+}
+
+void SlgFile::SetProjectName(const std::string& projectName_)
+{
+    projectName = projectName_;
+}
+
+void SlgFile::AddDeclaration(SlgFileDeclaration* declaration)
+{
+    declarations.push_back(std::unique_ptr<SlgFileDeclaration>(declaration));
+}
+
+void SlgFile::AddTokenFile(TokenFile* tokenFile)
+{
+    tokenFiles.push_back(std::unique_ptr<TokenFile>(tokenFile));
+    auto it = collectionMap.find(tokenFile->GetTokenCollection()->Name());
+    if (it != collectionMap.cend())
+    {
+        throw std::runtime_error("token collection '" + tokenFile->GetTokenCollection()->Name() + "' already added to SLG file '" + FilePath() + "'");
+    }
+    collectionMap[tokenFile->GetTokenCollection()->Name()] = tokenFile->GetTokenCollection();
+    collections.push_back(tokenFile->GetTokenCollection());
+}
+
+void SlgFile::AddKeywordFile(KeywordFile* keywordFile)
+{
+    keywordFiles.push_back(std::unique_ptr<KeywordFile>(keywordFile));
+    auto it = collectionMap.find(keywordFile->GetKeywordCollection()->Name());
+    if (it != collectionMap.cend())
+    {
+        throw std::runtime_error("keyword collection '" + keywordFile->GetKeywordCollection()->Name() + "' already added to SLG file '" + FilePath() + "'");
+    }
+    collectionMap[keywordFile->GetKeywordCollection()->Name()] = keywordFile->GetKeywordCollection();
+    collections.push_back(keywordFile->GetKeywordCollection());
+}
+
+void SlgFile::AddExpressionFile(ExpressionFile* expressionFile)
+{
+    expressionFiles.push_back(std::unique_ptr<ExpressionFile>(expressionFile));
+    auto it = collectionMap.find(expressionFile->GetExpressionCollection()->Name());
+    if (it != collectionMap.cend())
+    {
+        throw std::runtime_error("expression collection '" + expressionFile->GetExpressionCollection()->Name() + "' already added to SLG file '" + FilePath() + "'");
+    }
+    collectionMap[expressionFile->GetExpressionCollection()->Name()] = expressionFile->GetExpressionCollection();
+    collections.push_back(expressionFile->GetExpressionCollection());
+}
+
+void SlgFile::AddLexerFile(LexerFile* lexerFile)
+{
+    lexerFiles.push_back(std::unique_ptr<LexerFile>(lexerFile));
+    auto it = collectionMap.find(lexerFile->GetLexer()->Name());
+    if (it != collectionMap.cend())
+    {
+        throw std::runtime_error("lexer '" + lexerFile->GetLexer()->Name() + "' already added to SLG file '" + FilePath() + "'");
+    }
+    collectionMap[lexerFile->GetLexer()->Name()] = lexerFile->GetLexer();
+    collections.push_back(lexerFile->GetLexer());
+}
+
+Collection* SlgFile::GetCollection(const std::string& name) const
+{
+    auto it = collectionMap.find(name);
+    if (it != collectionMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        throw std::runtime_error("collection '" + name + "' not found");
+    }
 }
 
 } // namespace soul::ast::slg

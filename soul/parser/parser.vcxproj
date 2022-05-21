@@ -78,9 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>soul.parserd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>soul.parser</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,6 +126,7 @@
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
       <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -144,6 +147,7 @@
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
       <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -158,6 +162,11 @@
     <ClCompile Include="parser.ixx" />
     <ClCompile Include="range.ixx" />
     <ClCompile Include="value.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\util\util.vcxproj">
+      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

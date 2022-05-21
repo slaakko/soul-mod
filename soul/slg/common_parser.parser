@@ -5,13 +5,17 @@
 
 export module soul.slg.common.par;
 
-import soul.cpp.token;
-import soul.punctuation.token;
-import soul.ast.spg;
-import soul.slg.token.par;
+[interface]import soul.ast.spg;
+[implementation]import soul.cpp.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.slg.token.par;
+[implementation]import soul.lex.slg;
 
 parser CommonParser
 {
+	uselexer soul::lex::slg::SlgLexer<char32_t>;
+
 	QualifiedId(var std::string str) : std::string
 		::= (ID{ str.append(util::ToUtf8(lexer.GetToken(pos).ToString())); } (DOT ID{ str.append(1, '.').append(util::ToUtf8(lexer.GetToken(pos).ToString())); })*){ return str; }
 		;
@@ -26,17 +30,27 @@ parser CommonParser
 		}
 		;
 
-	Import(var std::unique_ptr<soul::ast::spg::Import> imp) : soul::ast::spg::Import*
+	Import(var std::unique_ptr<soul::ast::spg::Import> imp, var soul::ast::spg::ImportPrefix prefix) : soul::ast::spg::Import*
 		::= 
 		(
-			IMPORT QualifiedId:moduleName{ imp.reset(new soul::ast::spg::Import(moduleName)); } SEMICOLON!
+			(ImportPrefix:importPrefix{ prefix = importPrefix; } | empty{ prefix = soul::ast::spg::ImportPrefix::interfacePrefix; })
+			IMPORT QualifiedId:moduleName{ imp.reset(new soul::ast::spg::Import(moduleName, prefix)); } SEMICOLON!
 		)
 		{
 			return imp.release();
 		}
 		;
 
+    ImportPrefix : soul::ast::spg::ImportPrefix
+        ::= IMPLEMENTATION_PREFIX{ return soul::ast::spg::ImportPrefix::implementationPrefix; }
+        |   INTERFACE_PREFIX{ return soul::ast::spg::ImportPrefix::interfacePrefix; }
+        ;
+
 	ExprString : std::string
 		::= STRING_LITERAL!{ return MakeExprStringValue(lexer.FileName(), lexer.GetToken(pos)); }
+		;
+
+	FilePath : std::string
+		::= FILEPATH{ return MakeFilePath(lexer.FileName(), lexer.GetToken(pos)); }
 		;
 }

@@ -1,0 +1,266 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp.statement.par;
+
+[interface]import soul.ast.cpp;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.cpp.declaration.par;
+[implementation]import soul.cpp.declarator.par;
+[implementation]import soul.cpp.expression.par;
+[implementation]import soul.lex.slg;
+
+parser StatementParser
+{
+    uselexer soul::lex::slg::SlgLexer<char32_t>;
+
+    using DeclarationParser.SimpleDeclaration;
+    using DeclarationParser.BlockDeclaration;
+    using DeclaratorParser.TypeId;
+    using DeclaratorParser.TypeSpecifierSeq;
+    using DeclaratorParser.Declarator;
+    using DeclaratorParser.AbstractDeclarator;
+    using ExpressionParser.Expression;
+    using ExpressionParser.ConstantExpression;
+    using ExpressionParser.AssignmentExpression;
+
+    Statement : soul::ast::cpp::StatementNode*
+        ::= LabeledStatement:labeledStatement{ return labeledStatement; }
+        |   EmptyStatement:emptyStatement{ return emptyStatement; }
+        |   CompoundStatement:compoundStatement{ return compoundStatement; }
+        |   SelectionStatement:selectionStatement{ return selectionStatement; }
+        |   IterationStatement:iterationStatement{ return iterationStatement; }
+        |   JumpStatement:jumpStatement{ return jumpStatement; }
+        |   DeclarationStatement:declarationStatement{ return declarationStatement; }
+        |   TryStatement:tryStatement{ return tryStatement; }
+        |   ExpressionStatement:expressionStatement{ return expressionStatement; }  
+        ;
+
+    LabeledStatement(var std::string label) : soul::ast::cpp::StatementNode*
+        ::= ID{ label = util::ToUtf8(lexer.GetToken(pos).ToString()); } COLON Statement:stmt1!{ return new soul::ast::cpp::LabeledStatementNode(label, stmt1); }
+        |   CASE ConstantExpression:caseExpr! COLON! Statement:stmt2!{ return new soul::ast::cpp::CaseStatementNode(caseExpr, stmt2); }
+        |   DEFAULT COLON! Statement:stmt3!{ return new soul::ast::cpp::DefaultStatementNode(stmt3); }
+        ;
+
+    EmptyStatement : soul::ast::cpp::StatementNode*
+        ::= SEMICOLON{ return new soul::ast::cpp::EmptyStatementNode(); }
+        ;
+
+    CompoundStatement(var std::unique_ptr<soul::ast::cpp::CompoundStatementNode> compoundStatement) : soul::ast::cpp::CompoundStatementNode*
+        ::= 
+        (
+            LBRACE{ compoundStatement.reset(new soul::ast::cpp::CompoundStatementNode()); }
+            (Statement:stmt{ compoundStatement->Add(stmt); })*
+            RBRACE!
+        )
+        {
+            return compoundStatement.release();
+        }
+        ;
+
+    SelectionStatement : soul::ast::cpp::StatementNode*
+        ::= IfStatement:ifStatement{ return ifStatement; }
+        |   SwitchStatement:switchStatement{ return switchStatement; }
+        ;
+
+    IfStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            IF LPAREN! Condition:cond! RPAREN! Statement:thenS! (ELSE Statement:elseS)?
+        )
+        {
+            return new soul::ast::cpp::IfStatementNode(cond, thenS, elseS);
+        }
+        ;
+
+    SwitchStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            SWITCH LPAREN! Condition:cond! RPAREN! Statement:stmt!
+        )
+        {
+            return new soul::ast::cpp::SwitchStatementNode(cond, stmt);
+        }
+        ;
+
+    IterationStatement : soul::ast::cpp::StatementNode*
+        ::= WhileStatement:whileStatement{ return whileStatement; }
+        |   DoStatement:doStatement{ return doStatement; }
+        |   RangeForStatement:rangeForStatement{ return rangeForStatement; }
+        |   ForStatement:forStatement{ return forStatement; }
+        ;
+
+    WhileStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            WHILE LPAREN! Condition:cond! RPAREN! Statement:stmt!
+        )
+        {
+            return new soul::ast::cpp::WhileStatementNode(cond, stmt);
+        }
+        ;
+
+    DoStatement : soul::ast::cpp::StatementNode*
+        ::=
+        (
+            DO Statement:stmt! WHILE! LPAREN! Expression:cond! RPAREN! SEMICOLON!
+        )
+        {
+            return new soul::ast::cpp::DoStatementNode(cond, stmt);
+        }
+        ;
+
+    RangeForStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            FOR LPAREN ForRangeDeclaration:forRangeDeclaration COLON Expression:container! RPAREN! Statement:stmt!
+        )
+        {
+            return new soul::ast::cpp::RangeForStatementNode(forRangeDeclaration, container, stmt);
+        }
+        ;
+
+    ForRangeDeclaration(var std::unique_ptr<soul::ast::cpp::ForRangeDeclarationNode> forRangeDeclaration) : soul::ast::cpp::ForRangeDeclarationNode*
+        ::= 
+        (
+            empty{ forRangeDeclaration.reset(new soul::ast::cpp::ForRangeDeclarationNode()); }
+            TypeSpecifierSeq(forRangeDeclaration->TypeId()):typeSpecifierSeq Declarator:declarator{ forRangeDeclaration->SetDeclarator(declarator); }
+        )
+        {
+            return forRangeDeclaration.release();
+        }
+        ;
+
+    ForStatement : soul::ast::cpp::StatementNode*
+        ::= FOR LPAREN ForInitStatement:forInitStatement Condition:cond? SEMICOLON Expression:loopExpr? RPAREN! Statement:stmt!
+        {
+            return new soul::ast::cpp::ForStatementNode(forInitStatement, cond, loopExpr, stmt);
+        }
+        ;
+
+    ForInitStatement : soul::ast::cpp::Node*
+        ::= EmptyStatement:emptyStatement{ return emptyStatement; }
+        |   ExpressionStatement:expressionStatement{ return expressionStatement; }
+        |   SimpleDeclaration:simpleDeclaration{ return simpleDeclaration; }
+        ;
+
+    JumpStatement : soul::ast::cpp::StatementNode*
+        ::= BreakStatement:breakStatement{ return breakStatement; }
+        |   ContinueStatement:continueStatement{ return continueStatement; }
+        |   ReturnStatement:returnStatement{ return returnStatement; }
+        |   GotoStatement:gotoStatement{ return gotoStatement; }
+        ;
+    
+    BreakStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            BREAK SEMICOLON!
+        )
+        { 
+            return new soul::ast::cpp::BreakStatementNode(); 
+        }
+        ;
+
+    ContinueStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            CONTINUE SEMICOLON!
+        )
+        {
+            return new soul::ast::cpp::ContinueStatementNode(); 
+        }
+        ;
+
+    ReturnStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            RETURN Expression:returnValue? SEMICOLON!
+        )
+        { 
+            return new soul::ast::cpp::ReturnStatementNode(returnValue); 
+        }
+        ;
+
+    GotoStatement(var std::string target) : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            GOTO ID!{ target = util::ToUtf8(lexer.GetToken(pos).ToString()); } SEMICOLON!
+        )
+        { 
+            return new soul::ast::cpp::GotoStatementNode(target); 
+        }
+        ;
+
+    DeclarationStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            BlockDeclaration:declaration
+        )
+        { 
+            return new soul::ast::cpp::DeclarationStatementNode(declaration); 
+        }
+        ;
+
+    Condition : soul::ast::cpp::Node*
+        ::= 
+        (   TypeId:typeId Declarator:declarator ASSIGN AssignmentExpression:assignmentExpr{ return new soul::ast::cpp::ConditionWithDeclaratorNode(typeId, declarator, assignmentExpr); }
+        |   Expression:expr{ return expr; }
+        )
+        ;
+
+    TryStatement(var std::unique_ptr<soul::ast::cpp::TryStatementNode> tryStatement) : soul::ast::cpp::StatementNode*
+        ::=
+        (   
+            TRY 
+            CompoundStatement:tryBlock{ tryStatement.reset(new soul::ast::cpp::TryStatementNode(tryBlock)); }
+            HandlerSeq(tryStatement.get()):handlerSeq!
+        )
+        {
+            return tryStatement.release();
+        }
+        ;
+
+    HandlerSeq(soul::ast::cpp::TryStatementNode* tryStatement)
+        ::= 
+        (
+            Handler:handler!{ tryStatement->Add(handler); } HandlerSeq(tryStatement):handlerSeq?
+        )
+        ;
+
+    Handler : soul::ast::cpp::HandlerNode*
+        ::= 
+        (
+            CATCH LPAREN! ExceptionDeclaration:exceptionDeclaration! RPAREN! CompoundStatement:catchBlock!
+        )
+        {
+            return new soul::ast::cpp::HandlerNode(exceptionDeclaration, catchBlock);
+        }
+        ;
+
+    ExceptionDeclaration(var std::unique_ptr<soul::ast::cpp::ExceptionDeclarationNode> exceptionDeclaration) : soul::ast::cpp::ExceptionDeclarationNode*
+        ::= empty{ exceptionDeclaration.reset(new soul::ast::cpp::ExceptionDeclarationNode()); }
+        (   TypeSpecifierSeq(exceptionDeclaration->TypeId()):typeSpecifierSeq
+            (   Declarator:declarator{ exceptionDeclaration->TypeId()->SetDeclarator(declarator); }
+            |   AbstractDeclarator:abstractDeclarator{ exceptionDeclaration->TypeId()->SetDeclarator(abstractDeclarator); }
+            )?
+        |   ELLIPSIS{ exceptionDeclaration->SetCatchAll(); }
+        )
+        {
+            return exceptionDeclaration.release();
+        }
+        ;
+
+    ExpressionStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            Expression:expr SEMICOLON!
+        )
+        { 
+            return new soul::ast::cpp::ExpressionStatementNode(expr); 
+        }
+        ;
+}

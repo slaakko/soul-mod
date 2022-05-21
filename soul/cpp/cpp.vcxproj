@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>soul.cppd</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>soul.cpp</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -106,6 +112,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
+      <EnableModules>true</EnableModules>
+      <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -121,6 +134,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <EnableModules>true</EnableModules>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -131,7 +150,48 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="identifier_parser.parser" />
+    <None Include="cpp_parsers.spg" />
+    <None Include="declaration_parser.parser" />
+    <None Include="declarator_parser.parser" />
     <None Include="expression_parser.parser" />
+    <None Include="literal_parser.parser" />
+    <None Include="statement_parser.parser" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="declaration_parser.cpp" />
+    <ClCompile Include="declarator_parser.cpp" />
+    <ClCompile Include="expression_parser.cpp" />
+    <ClCompile Include="identifier_parser.cpp" />
+    <ClCompile Include="identifier_parser.ixx" />
+    <ClCompile Include="declaration_parser.ixx" />
+    <ClCompile Include="declarator_parser.ixx" />
+    <ClCompile Include="expression_parser.ixx" />
+    <ClCompile Include="literal_parser.cpp" />
+    <ClCompile Include="literal_parser.ixx" />
+    <ClCompile Include="parsers.ixx" />
+    <ClCompile Include="statement_parser.cpp" />
+    <ClCompile Include="statement_parser.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\util\util.vcxproj">
+      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ast\ast.vcxproj">
+      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\lexer\lexer.vcxproj">
+      <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\lex\lex.vcxproj">
+      <Project>{69f93e57-1621-43b9-8b9b-c33c1c079da9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\parser\parser.vcxproj">
+      <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\token\token.vcxproj">
+      <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

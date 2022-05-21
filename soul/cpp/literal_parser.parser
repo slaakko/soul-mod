@@ -1,0 +1,26 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp.literal.par;
+
+[interface]import soul.ast.cpp;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.lex.slg;
+
+parser LiteralParser
+{
+    uselexer soul::lex::slg::SlgLexer<char32_t>;
+
+    Literal : soul::ast::cpp::LiteralNode*
+        ::= INTEGER_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   FLOATING_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   CHAR_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   STRING_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   TRUE{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   FALSE { return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   NULLPTR{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        ;
+}

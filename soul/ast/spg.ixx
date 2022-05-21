@@ -20,13 +20,20 @@ private:
     std::string moduleName;
 };
 
+enum class ImportPrefix
+{
+    interfacePrefix, implementationPrefix
+};
+
 class Import
 {
 public:
-    Import(const std::string& moduleName_);
+    Import(const std::string& moduleName_, ImportPrefix prefix_);
     const std::string& ModuleName() const { return moduleName; }
+    ImportPrefix Prefix() const { return prefix; }
 private:
     std::string moduleName;
+    ImportPrefix prefix;
 };
 
 } // namespace soul::ast::spg

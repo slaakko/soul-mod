@@ -1,0 +1,31 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp.identifier.par;
+
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.lex.slg;
+
+parser CppIdentifierParser
+{
+    uselexer soul::lex::slg::SlgLexer<char32_t>;
+
+    CppIdentifier : std::string
+        ::= ID{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+        ;
+
+    QualifiedCppId(var std::string str) : std::string
+        ::= 
+        (
+            (COLON_COLON{ str.append("::"); })? 
+            ID{ str.append(util::ToUtf8(lexer.GetToken(pos).ToString())); } 
+            (COLON_COLON ID{ str.append("::").append(util::ToUtf8(lexer.GetToken(pos).ToString())); })*
+        )
+        {
+            return str;
+        }
+        ;
+}
