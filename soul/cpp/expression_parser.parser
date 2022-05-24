@@ -114,7 +114,7 @@ parser ExpressionParser
         ::= 
         (   ExclusiveOrExpression:left{ expr.reset(left); }
             (
-                BIT_OR ExclusiveOrExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitor_, expr.release(), right)); }
+                PIPE ExclusiveOrExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitor_, expr.release(), right)); }
             )*
         )
         {
@@ -126,7 +126,7 @@ parser ExpressionParser
         ::=
         (   AndExpression:left{ expr.reset(left); }
             (
-                BIT_XOR AndExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitxor, expr.release(), right)); }
+                CARET AndExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitxor, expr.release(), right)); }
             )*
         )
         {
@@ -448,9 +448,9 @@ parser ExpressionParser
         |   ASSIGN{ return "="; }
         |   EXCLAMATION{ return "!"; }
         |   TILDE{ return "~"; }
-        |   BIT_OR{ return "|"; }
         |   AMP{ return "&"; }
-        |   BIT_XOR{ return "^"; }
+        |   CARET{ return "^"; }
+        |   PIPE{ return "|"; }
         |   REM{ return "%"; }
         |   DIV{ return "/"; }
         |   STAR{ return "*"; }

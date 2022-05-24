@@ -150,10 +150,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="re_lexer.cpp" />
+    <ClCompile Include="re_lexer.ixx" />
     <ClCompile Include="slg_lexer.cpp" />
     <ClCompile Include="slg_lexer.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="re_lexer.lexer" />
+    <None Include="re_lexer.slg" />
     <None Include="slg_lexer.lexer" />
     <None Include="slg_lexer.slg" />
   </ItemGroup>

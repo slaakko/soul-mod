@@ -1149,7 +1149,7 @@ soul::parser::Match ExpressionParser<Lexer>::InclusiveOrExpression(Lexer& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match(false);
-                                        if (*lexer == BIT_OR)
+                                        if (*lexer == PIPE)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -1280,7 +1280,7 @@ soul::parser::Match ExpressionParser<Lexer>::ExclusiveOrExpression(Lexer& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match(false);
-                                        if (*lexer == BIT_XOR)
+                                        if (*lexer == CARET)
                                         {
                                             ++lexer;
                                             match.hit = true;
@@ -7509,7 +7509,7 @@ soul::parser::Match ExpressionParser<Lexer>::Operator(Lexer& lexer)
                                                                 {
                                                                     int64_t pos = lexer.GetPos();
                                                                     soul::parser::Match match(false);
-                                                                    if (*lexer == BIT_OR)
+                                                                    if (*lexer == AMP)
                                                                     {
                                                                         ++lexer;
                                                                         match.hit = true;
@@ -7520,7 +7520,7 @@ soul::parser::Match ExpressionParser<Lexer>::Operator(Lexer& lexer)
                                                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                                                             #endif // SOUL_PARSER_DEBUG_SUPPORT
-                                                                            return soul::parser::Match(true, new soul::parser::Value<std::string>("|"));
+                                                                            return soul::parser::Match(true, new soul::parser::Value<std::string>("&"));
                                                                         }
                                                                     }
                                                                     *parentMatch106 = match;
@@ -7542,7 +7542,7 @@ soul::parser::Match ExpressionParser<Lexer>::Operator(Lexer& lexer)
                                                             {
                                                                 int64_t pos = lexer.GetPos();
                                                                 soul::parser::Match match(false);
-                                                                if (*lexer == AMP)
+                                                                if (*lexer == CARET)
                                                                 {
                                                                     ++lexer;
                                                                     match.hit = true;
@@ -7553,7 +7553,7 @@ soul::parser::Match ExpressionParser<Lexer>::Operator(Lexer& lexer)
                                                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                                                         #endif // SOUL_PARSER_DEBUG_SUPPORT
-                                                                        return soul::parser::Match(true, new soul::parser::Value<std::string>("&"));
+                                                                        return soul::parser::Match(true, new soul::parser::Value<std::string>("^"));
                                                                     }
                                                                 }
                                                                 *parentMatch108 = match;
@@ -7575,7 +7575,7 @@ soul::parser::Match ExpressionParser<Lexer>::Operator(Lexer& lexer)
                                                         {
                                                             int64_t pos = lexer.GetPos();
                                                             soul::parser::Match match(false);
-                                                            if (*lexer == BIT_XOR)
+                                                            if (*lexer == PIPE)
                                                             {
                                                                 ++lexer;
                                                                 match.hit = true;
@@ -7586,7 +7586,7 @@ soul::parser::Match ExpressionParser<Lexer>::Operator(Lexer& lexer)
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Operator");
                                                                     #endif // SOUL_PARSER_DEBUG_SUPPORT
-                                                                    return soul::parser::Match(true, new soul::parser::Value<std::string>("^"));
+                                                                    return soul::parser::Match(true, new soul::parser::Value<std::string>("|"));
                                                                 }
                                                             }
                                                             *parentMatch110 = match;

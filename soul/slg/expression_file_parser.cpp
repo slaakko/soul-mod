@@ -201,98 +201,39 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
                     soul::parser::Match* parentMatch14 = &match;
                     {
                         soul::parser::Match match(true);
-                        int64_t save = lexer.GetPos();
                         soul::parser::Match* parentMatch15 = &match;
                         {
-                            soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch16 = &match;
+                            while (true)
                             {
-                                soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch17 = &match;
+                                int64_t save = lexer.GetPos();
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch18 = &match;
+                                    soul::parser::Match* parentMatch16 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = ExpressionFileParser<Lexer>::Expression(lexer);
-                                        expression.reset(static_cast<soul::ast::slg::Expression*>(match.value));
-                                        if (match.hit)
+                                        soul::parser::Match match(false);
+                                        soul::parser::Match* parentMatch17 = &match;
                                         {
-                                            expressionCollection->AddExpression(expression.release());
-                                        }
-                                        *parentMatch18 = match;
-                                    }
-                                    *parentMatch17 = match;
-                                }
-                                if (match.hit)
-                                {
-                                    soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch19 = &match;
-                                    {
-                                        soul::parser::Match match(true);
-                                        soul::parser::Match* parentMatch20 = &match;
-                                        {
-                                            while (true)
+                                            int64_t pos = lexer.GetPos();
+                                            soul::parser::Match match = ExpressionFileParser<Lexer>::Expression(lexer);
+                                            expression.reset(static_cast<soul::ast::slg::Expression*>(match.value));
+                                            if (match.hit)
                                             {
-                                                int64_t save = lexer.GetPos();
-                                                {
-                                                    soul::parser::Match match(false);
-                                                    soul::parser::Match* parentMatch21 = &match;
-                                                    {
-                                                        soul::parser::Match match(false);
-                                                        if (*lexer == COMMA)
-                                                        {
-                                                            ++lexer;
-                                                            match.hit = true;
-                                                        }
-                                                        *parentMatch21 = match;
-                                                    }
-                                                    if (match.hit)
-                                                    {
-                                                        soul::parser::Match match(false);
-                                                        soul::parser::Match* parentMatch22 = &match;
-                                                        {
-                                                            soul::parser::Match match(false);
-                                                            soul::parser::Match* parentMatch23 = &match;
-                                                            {
-                                                                int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = ExpressionFileParser<Lexer>::Expression(lexer);
-                                                                expression.reset(static_cast<soul::ast::slg::Expression*>(match.value));
-                                                                if (match.hit)
-                                                                {
-                                                                    expressionCollection->AddExpression(expression.release());
-                                                                }
-                                                                *parentMatch23 = match;
-                                                            }
-                                                            *parentMatch22 = match;
-                                                        }
-                                                        *parentMatch21 = match;
-                                                    }
-                                                    if (match.hit)
-                                                    {
-                                                        *parentMatch20 = match;
-                                                    }
-                                                    else
-                                                    {
-                                                        lexer.SetPos(save);
-                                                        break;
-                                                    }
-                                                }
+                                                expressionCollection->AddExpression(expression.release());
                                             }
+                                            *parentMatch17 = match;
                                         }
-                                        *parentMatch19 = match;
+                                        *parentMatch16 = match;
                                     }
-                                    *parentMatch17 = match;
+                                    if (match.hit)
+                                    {
+                                        *parentMatch15 = match;
+                                    }
+                                    else
+                                    {
+                                        lexer.SetPos(save);
+                                        break;
+                                    }
                                 }
-                                *parentMatch16 = match;
-                            }
-                            if (match.hit)
-                            {
-                                *parentMatch15 = match;
-                            }
-                            else
-                            {
-                                lexer.SetPos(save);
                             }
                         }
                         *parentMatch14 = match;
@@ -304,10 +245,10 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
             if (match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch24 = &match;
+                soul::parser::Match* parentMatch18 = &match;
                 {
                     soul::parser::Match match(true);
-                    soul::parser::Match* parentMatch25 = &match;
+                    soul::parser::Match* parentMatch19 = &match;
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
@@ -318,14 +259,14 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
                         }
                         if (match.hit)
                         {
-                            *parentMatch25 = match;
+                            *parentMatch19 = match;
                         }
                         else
                         {
                             lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(RBRACE));
                         }
                     }
-                    *parentMatch24 = match;
+                    *parentMatch18 = match;
                 }
                 *parentMatch2 = match;
             }

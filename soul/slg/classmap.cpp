@@ -11,26 +11,23 @@ namespace soul::slg {
 
 using namespace util;
 
-void MakeClassMap(const std::string& root, const std::string& classMapName, int32_t upperBound)
+void MakeCompressedClassMap(const std::string& root, const std::string& classMapName)
 {
     std::string classMapFileName = Path::Combine(root, classMapName);
     std::string compressedClassMapFileName = Path::Combine(root, classMapName + ".compressed");
     FileStream inputFileStream(classMapFileName, OpenMode::read | OpenMode::binary);
-    int64_t size = inputFileStream.Size();
     BufferedStream bufferedInputFileStream(inputFileStream);
     BinaryStreamReader reader(bufferedInputFileStream);
+    int32_t size = reader.ReadInt();
     FileStream outputFileStream(compressedClassMapFileName, OpenMode::write | OpenMode::binary);
-    BufferedStream bufferedOutputFileStream(outputFileStream);
-    BinaryStreamWriter rawWriter(bufferedOutputFileStream);
+    BinaryStreamWriter rawWriter(outputFileStream);
     rawWriter.Write(size);
-    rawWriter.Write(upperBound);
-    DeflateStream compressedStream(CompressionMode::compress, bufferedOutputFileStream);
-    BufferedStream bufferedCompressedStream(compressedStream);
-    BinaryStreamWriter writer(bufferedCompressedStream);
+    DeflateStream compressedStream(CompressionMode::compress, outputFileStream);
+    BinaryStreamWriter writer(compressedStream);
     for (int64_t i = 0; i < size; ++i)
     {
-        uint8_t x = reader.ReadByte();
-        writer.Write(x);
+        uint32_t cls = reader.ReadInt();
+        writer.Write(cls);
     }
 }
 

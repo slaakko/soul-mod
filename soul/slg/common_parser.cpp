@@ -535,24 +535,11 @@ soul::parser::Match CommonParser<Lexer>::ExprString(Lexer& lexer)
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match(true);
-        soul::parser::Match* parentMatch1 = &match;
+        soul::parser::Match match(false);
+        if (*lexer == STRING_LITERAL)
         {
-            int64_t pos = lexer.GetPos();
-            soul::parser::Match match(false);
-            if (*lexer == STRING_LITERAL)
-            {
-                ++lexer;
-                match.hit = true;
-            }
-            if (match.hit)
-            {
-                *parentMatch1 = match;
-            }
-            else
-            {
-                lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(STRING_LITERAL));
-            }
+            ++lexer;
+            match.hit = true;
         }
         if (match.hit)
         {

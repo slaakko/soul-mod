@@ -30,7 +30,9 @@ parser ExpressionFileParser
             EXPRESSIONS
             QualifiedId:expressionCollectionName!{ expressionCollection.reset(new soul::ast::slg::ExpressionCollection(expressionCollectionName)); }
             LBRACE! 
-            (Expression:expression{ expressionCollection->AddExpression(expression); } % COMMA)?
+            (
+				Expression:expression{ expressionCollection->AddExpression(expression); }
+			)*
             RBRACE!
         )
         {

@@ -28,6 +28,9 @@ constexpr int64_t AMP = (static_cast<int64_t>(tokenSetID) << 32) | 16;
 constexpr int64_t DOLLAR = (static_cast<int64_t>(tokenSetID) << 32) | 17;
 constexpr int64_t EXCLAMATION = (static_cast<int64_t>(tokenSetID) << 32) | 18;
 constexpr int64_t TILDE = (static_cast<int64_t>(tokenSetID) << 32) | 19;
-constexpr int64_t PRODUCES = (static_cast<int64_t>(tokenSetID) << 32) | 20;
+constexpr int64_t CARET = (static_cast<int64_t>(tokenSetID) << 32) | 20;
+constexpr int64_t PIPE = (static_cast<int64_t>(tokenSetID) << 32) | 21;
+constexpr int64_t PRODUCES = (static_cast<int64_t>(tokenSetID) << 32) | 22;
+constexpr int64_t BACKSLASH = (static_cast<int64_t>(tokenSetID) << 32) | 23;
 
 } // soul::punctuation::token

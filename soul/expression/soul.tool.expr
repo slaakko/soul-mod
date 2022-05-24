@@ -13,7 +13,7 @@ expressions soul.tool.expr
     block_comment = "{block_comment_begin}([^*]|\*[^/])*{block_comment_end}";
     comment = "{line_comment}|{block_comment}";
     separators = "({ws}|{comment})+";
-    id = "{id_start}{id_cont}*";
+    id = "{unicode_id_start}{unicode_id_cont}*";
     dec_digit="[0-9]";
     octal_digit="[0-7]";
     hex_digit="[0-9a-fA-F]";

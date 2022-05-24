@@ -176,6 +176,9 @@
     <ProjectReference Include="..\parser\parser.vcxproj">
       <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\re\re.vcxproj">
+      <Project>{2ead4772-f534-4fee-b2b3-76c73de0b89a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\token\token.vcxproj">
       <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
     </ProjectReference>
@@ -196,12 +199,14 @@
     <ClCompile Include="lexer_generator.cpp" />
     <ClCompile Include="lexer_generator.ixx" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="regular_expression_parser.cpp" />
+    <ClCompile Include="regular_expression_parser.ixx" />
     <ClCompile Include="slg_file_parser.cpp" />
     <ClCompile Include="slg_file_parser.ixx" />
     <ClCompile Include="token_file_parser.cpp" />
     <ClCompile Include="token_file_parser.ixx" />
-    <ClCompile Include="token_module_generator.cpp" />
-    <ClCompile Include="token_module_generator.ixx" />
+    <ClCompile Include="token_generator.cpp" />
+    <ClCompile Include="token_generator.ixx" />
     <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>
@@ -212,6 +217,10 @@
     <None Include="slg_file_parser.parser" />
     <None Include="slg_parsers.spg" />
     <None Include="token_file_parser.parser" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\lex\soul.lex.re.classmap.rc" />
+    <ResourceCompile Include="..\lex\soul.lex.slg.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

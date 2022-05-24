@@ -8,6 +8,7 @@ import util;
 import soul.ast.slg;
 import soul.slg.file.parsers;
 import soul.slg.lexer.generator;
+import soul.slg.classmap;
 
 void Init()
 {
@@ -19,22 +20,39 @@ void Done()
     util::Done();
 }
 
+std::string Version()
+{
+    return "4.0.0";
+}
+
 void PrintHelp()
 {
-    
+    std::cout << "Soul Lexer Generator (slg) version " << Version() << std::endl;
+    std::cout << "Usage: slg [options] { FILE.slg }" << std::endl;
+    std::cout << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << std::endl;
+    std::cout << "--help | -h" << std::endl;
+    std::cout << "  Print help and exit." << std::endl;
+    std::cout << std::endl;
+    std::cout << "--verbose | -v" << std::endl;
+    std::cout << "  Be verbose." << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, const char** argv)
 {
-/*
-    std::string root = GetFullPath("C:\\work\\soul-mod\\soul\\slg");
-    std::string classMapName = "soul.slg.lex.classmap";
-    MakeClassMap(root, classMapName, 0x110000);
-    MakeResourceFile(root, classMapName);
-*/
     try
     {
         Init();
+
+/*
+        std::string root = util::GetFullPath("C:\\work\\soul-mod\\soul\\lex");
+        std::string classMapName = "soul.lex.slg.classmap";
+        //std::string classMapName = "soul.lex.re.classmap";
+        soul::slg::MakeCompressedClassMap(root, classMapName);
+        soul::slg::MakeResourceFile(root, classMapName);
+*/
         bool verbose = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)

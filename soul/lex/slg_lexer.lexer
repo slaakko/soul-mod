@@ -29,8 +29,8 @@ lexer SlgLexer
         "&&" { return AMP_AMP; }
         "\.\*"{ return DOT_STAR; }
         "->\*"{ return ARROW_STAR; }
-        "\|" { return BIT_OR; }
-        "^" { return BIT_XOR; }
+        "\|" { return PIPE; }
+        "^" { return CARET; }
         "&" { return AMP; }
         "==" { return EQ; }
         "!=" { return NEQ; }

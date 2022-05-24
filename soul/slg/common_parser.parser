@@ -47,7 +47,7 @@ parser CommonParser
         ;
 
 	ExprString : std::string
-		::= STRING_LITERAL!{ return MakeExprStringValue(lexer.FileName(), lexer.GetToken(pos)); }
+		::= STRING_LITERAL{ return MakeExprStringValue(lexer.FileName(), lexer.GetToken(pos)); }
 		;
 
 	FilePath : std::string
