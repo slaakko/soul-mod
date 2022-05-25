@@ -22,6 +22,8 @@ bind
 *.release
 *.log
 *.ast
+*.classmap
+*.org
 bootstrap
 lib
 trace
