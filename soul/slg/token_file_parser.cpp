@@ -7,14 +7,14 @@ import util;
 import soul.cpp.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.slg.common.par;
+import soul.common.common.par;
 import soul.slg.token.par;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
-using namespace soul::slg::common::par;
+using namespace soul::common::common::par;
 using namespace soul::slg::token::par;
 using namespace soul::lex::slg;
 

@@ -164,6 +164,9 @@
     <ProjectReference Include="..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\common\common.vcxproj">
+      <Project>{00815563-d4cd-40c0-83e9-dc21c0024e70}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\cpp\cpp.vcxproj">
       <Project>{3cabfe79-d9b3-44a2-99a1-d4aca28481ab}</Project>
     </ProjectReference>
@@ -186,8 +189,6 @@
   <ItemGroup>
     <ClCompile Include="classmap.cpp" />
     <ClCompile Include="classmap.ixx" />
-    <ClCompile Include="common_parser.cpp" />
-    <ClCompile Include="common_parser.ixx" />
     <ClCompile Include="expression_file_parser.cpp" />
     <ClCompile Include="expression_file_parser.ixx" />
     <ClCompile Include="file_parsers.cpp" />
@@ -210,7 +211,6 @@
     <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="common_parser.parser" />
     <None Include="expression_file_parser.parser" />
     <None Include="keyword_file_parser.parser" />
     <None Include="lexer_file_parser.parser" />

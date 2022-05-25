@@ -1,10 +1,10 @@
 project slg.parsers;
-parser <common_parser.parser>;
 parser <expression_file_parser.parser>;
 parser <lexer_file_parser.parser>;
 parser <keyword_file_parser.parser>;
 parser <slg_file_parser.parser>;
 parser <token_file_parser.parser>;
+parser <../common/common_parser.parser>;
 parser <../cpp/declaration_parser.parser>;
 parser <../cpp/declarator_parser.parser>;
 parser <../cpp/expression_parser.parser>;

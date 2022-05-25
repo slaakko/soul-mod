@@ -38,6 +38,8 @@ struct SlgLexer_Variables : public soul::lexer::Variables
 template<typename Char>
 struct SlgLexer
 {
+    using Variables = SlgLexer_Variables;
+
     static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lxr)
     {
         ClassMap<Char>* classmap = lxr.GetClassMap();
@@ -50,8 +52,8 @@ struct SlgLexer
                 {
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 1;
                     }
@@ -72,12 +74,11 @@ struct SlgLexer
                         return 5;
                     }
                     case 7:
-                    case 11:
-                    case 12:
+                    case 8:
+                    case 10:
+                    case 14:
                     case 15:
-                    case 20:
-                    case 21:
-                    case 22:
+                    case 18:
                     case 23:
                     case 24:
                     case 25:
@@ -88,124 +89,127 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
+                    case 33:
+                    case 34:
+                    case 35:
                     {
                         return 6;
                     }
-                    case 13:
+                    case 16:
                     {
                         return 7;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 8;
                     }
-                    case 16:
+                    case 19:
                     {
                         return 9;
                     }
-                    case 17:
+                    case 20:
                     {
                         return 10;
                     }
-                    case 18:
+                    case 21:
                     {
                         return 11;
                     }
-                    case 19:
+                    case 22:
                     {
                         return 12;
                     }
-                    case 33:
-                    case 34:
                     case 36:
+                    case 37:
+                    case 39:
                     {
                         return 13;
                     }
-                    case 35:
+                    case 38:
                     {
                         return 14;
                     }
-                    case 37:
+                    case 40:
                     {
                         return 15;
                     }
-                    case 38:
+                    case 41:
                     {
                         return 16;
                     }
-                    case 39:
+                    case 42:
                     {
                         return 17;
                     }
-                    case 40:
+                    case 43:
                     {
                         return 18;
                     }
-                    case 41:
+                    case 44:
                     {
                         return 19;
                     }
-                    case 42:
+                    case 45:
                     {
                         return 20;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 21;
                     }
-                    case 44:
+                    case 47:
                     {
                         return 22;
                     }
-                    case 45:
+                    case 48:
                     {
                         return 23;
                     }
-                    case 46:
+                    case 49:
                     {
                         return 24;
                     }
-                    case 47:
+                    case 50:
                     {
                         return 25;
                     }
-                    case 48:
+                    case 51:
                     {
                         return 26;
                     }
-                    case 49:
+                    case 52:
                     {
                         return 27;
                     }
-                    case 50:
+                    case 53:
                     {
                         return 28;
                     }
-                    case 51:
+                    case 54:
                     {
                         return 29;
                     }
-                    case 52:
+                    case 55:
                     {
                         return 30;
                     }
-                    case 53:
+                    case 56:
                     {
                         return 31;
                     }
-                    case 54:
+                    case 57:
                     {
                         return 32;
                     }
-                    case 55:
+                    case 58:
                     {
                         return 33;
                     }
-                    case 56:
+                    case 59:
                     {
                         return 34;
                     }
-                    case 57:
+                    case 60:
                     {
                         return 35;
                     }
@@ -299,7 +303,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 54:
+                    case 57:
                     {
                         return 36;
                     }
@@ -519,7 +523,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 43:
+                    case 46:
                     {
                         return 37;
                     }
@@ -571,7 +575,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 43:
+                    case 46:
                     {
                         return 38;
                     }
@@ -623,7 +627,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 43:
+                    case 46:
                     {
                         return 39;
                     }
@@ -675,7 +679,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 43:
+                    case 46:
                     {
                         return 40;
                     }
@@ -727,11 +731,11 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 41:
+                    case 44:
                     {
                         return 41;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 42;
                     }
@@ -804,11 +808,11 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 40:
+                    case 43:
                     {
                         return 43;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 44;
                     }
@@ -902,11 +906,11 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 38:
+                    case 41:
                     {
                         return 45;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 46;
                     }
@@ -958,7 +962,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 43:
+                    case 46:
                     {
                         return 47;
                     }
@@ -1046,13 +1050,13 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
                     case 39:
-                    case 40:
-                    case 41:
                     case 42:
+                    case 43:
                     case 44:
                     case 45:
-                    case 46:
                     case 47:
                     case 48:
                     case 49:
@@ -1064,18 +1068,21 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 48;
                     }
-                    case 37:
+                    case 40:
                     {
                         return 49;
                     }
-                    case 38:
+                    case 41:
                     {
                         return 50;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 51;
                     }
@@ -1143,9 +1150,9 @@ struct SlgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
                     case 39:
                     case 40:
-                    case 41:
                     case 42:
                     case 43:
                     case 44:
@@ -1162,10 +1169,13 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 48;
                     }
-                    case 38:
+                    case 41:
                     {
                         return 50;
                     }
@@ -1254,13 +1264,13 @@ struct SlgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
                     case 39:
                     case 40:
-                    case 41:
                     case 42:
+                    case 43:
                     case 44:
                     case 45:
-                    case 46:
                     case 47:
                     case 48:
                     case 49:
@@ -1272,14 +1282,17 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 48;
                     }
-                    case 38:
+                    case 41:
                     {
                         return 50;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 52;
                     }
@@ -1347,9 +1360,9 @@ struct SlgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
                     case 39:
                     case 40:
-                    case 41:
                     case 42:
                     case 43:
                     case 44:
@@ -1366,10 +1379,13 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 48;
                     }
-                    case 38:
+                    case 41:
                     {
                         return 50;
                     }
@@ -1420,9 +1436,9 @@ struct SlgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
                     case 39:
                     case 40:
-                    case 41:
                     case 42:
                     case 43:
                     case 44:
@@ -1439,10 +1455,13 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 48;
                     }
-                    case 38:
+                    case 41:
                     {
                         return 50;
                     }
@@ -1473,41 +1492,41 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 11:
+                    case 14:
                     {
                         return 53;
                     }
-                    case 12:
+                    case 15:
                     {
                         return 54;
                     }
-                    case 13:
+                    case 16:
                     {
                         return 55;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 56;
                     }
-                    case 17:
+                    case 20:
                     {
                         return 57;
                     }
-                    case 25:
+                    case 28:
                     {
                         return 58;
                     }
-                    case 26:
+                    case 29:
                     {
                         return 59;
                     }
-                    case 33:
-                    case 34:
+                    case 36:
+                    case 37:
                     {
                         return 60;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 61;
                     }
@@ -1538,33 +1557,33 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 13:
+                    case 16:
                     {
                         return 55;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 56;
                     }
-                    case 17:
+                    case 20:
                     {
                         return 57;
                     }
-                    case 25:
+                    case 28:
                     {
                         return 58;
                     }
-                    case 26:
+                    case 29:
                     {
                         return 59;
                     }
-                    case 33:
-                    case 34:
+                    case 36:
+                    case 37:
                     {
                         return 60;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 61;
                     }
@@ -1578,22 +1597,22 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 17:
+                    case 20:
                     {
                         return 57;
                     }
-                    case 25:
+                    case 28:
                     {
                         return 58;
                     }
-                    case 26:
+                    case 29:
                     {
                         return 59;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 60;
                     }
@@ -1607,18 +1626,18 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 18:
+                    case 21:
                     {
                         return 62;
                     }
-                    case 19:
+                    case 22:
                     {
                         return 63;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 64;
                     }
@@ -1649,26 +1668,26 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 64;
                     }
-                    case 15:
+                    case 18:
                     {
                         return 65;
                     }
-                    case 16:
+                    case 19:
                     {
                         return 66;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 67;
                     }
-                    case 28:
+                    case 31:
                     {
                         return 68;
                     }
@@ -1766,10 +1785,10 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 64;
                     }
@@ -1783,10 +1802,10 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 64;
                     }
@@ -1800,18 +1819,18 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 18:
+                    case 21:
                     {
                         return 62;
                     }
-                    case 19:
+                    case 22:
                     {
                         return 63;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 64;
                     }
@@ -1842,34 +1861,34 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 15:
+                    case 18:
                     {
                         return 65;
                     }
-                    case 16:
+                    case 19:
                     {
                         return 66;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 67;
                     }
-                    case 28:
+                    case 31:
                     {
                         return 68;
                     }
-                    case 25:
+                    case 28:
                     {
                         return 69;
                     }
-                    case 26:
+                    case 29:
                     {
                         return 70;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 71;
                     }
@@ -1900,34 +1919,34 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 15:
+                    case 18:
                     {
                         return 65;
                     }
-                    case 16:
+                    case 19:
                     {
                         return 66;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 67;
                     }
-                    case 28:
+                    case 31:
                     {
                         return 68;
                     }
-                    case 25:
+                    case 28:
                     {
                         return 69;
                     }
-                    case 26:
+                    case 29:
                     {
                         return 70;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 71;
                     }
@@ -1941,18 +1960,18 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 18:
+                    case 21:
                     {
                         return 72;
                     }
-                    case 19:
+                    case 22:
                     {
                         return 73;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 74;
                     }
@@ -1983,26 +2002,26 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 15:
+                    case 18:
                     {
                         return 65;
                     }
-                    case 16:
+                    case 19:
                     {
                         return 66;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 67;
                     }
-                    case 28:
+                    case 31:
                     {
                         return 68;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 74;
                     }
@@ -2016,10 +2035,10 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 74;
                     }
@@ -2033,10 +2052,10 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 74;
                     }
@@ -2050,18 +2069,18 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 18:
+                    case 21:
                     {
                         return 72;
                     }
-                    case 19:
+                    case 22:
                     {
                         return 73;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 74;
                     }
@@ -2092,11 +2111,11 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 15:
+                    case 18:
                     {
                         return 75;
                     }
-                    case 16:
+                    case 19:
                     {
                         return 76;
                     }
@@ -2127,7 +2146,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 16:
+                    case 19:
                     {
                         return 77;
                     }
@@ -2179,7 +2198,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 15:
+                    case 18:
                     {
                         return 78;
                     }
@@ -2231,11 +2250,11 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 15:
+                    case 18:
                     {
                         return 75;
                     }
-                    case 16:
+                    case 19:
                     {
                         return 76;
                     }
@@ -2249,9 +2268,6 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -2262,6 +2278,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 79;
                     }
@@ -2292,17 +2311,14 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 13:
+                    case 16:
                     {
                         return 55;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 56;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -2313,6 +2329,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 79;
                     }
@@ -2326,9 +2345,6 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -2339,6 +2355,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 79;
                     }
@@ -2369,30 +2388,30 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 13:
+                    case 16:
                     {
                         return 55;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 56;
                     }
-                    case 17:
+                    case 20:
                     {
                         return 57;
                     }
-                    case 25:
+                    case 28:
                     {
                         return 58;
                     }
-                    case 26:
+                    case 29:
                     {
                         return 59;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 80;
                     }
@@ -2423,30 +2442,30 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 13:
+                    case 16:
                     {
                         return 55;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 56;
                     }
-                    case 17:
+                    case 20:
                     {
                         return 57;
                     }
-                    case 25:
+                    case 28:
                     {
                         return 58;
                     }
-                    case 26:
+                    case 29:
                     {
                         return 59;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 80;
                     }
@@ -2477,15 +2496,15 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 19:
+                    case 22:
                     {
                         return 81;
                     }
-                    case 38:
+                    case 41:
                     {
                         return 82;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 83;
                     }
@@ -2610,11 +2629,11 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 18:
+                    case 21:
                     {
                         return 85;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 86;
                     }
@@ -2687,10 +2706,10 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 71;
                     }
@@ -2698,7 +2717,7 @@ struct SlgLexer
                     {
                         return 87;
                     }
-                    case 17:
+                    case 20:
                     {
                         return 88;
                     }
@@ -2712,7 +2731,7 @@ struct SlgLexer
             {
                 switch (cls)
                 {
-                    case 17:
+                    case 20:
                     {
                         return 89;
                     }
@@ -2794,15 +2813,15 @@ struct SlgLexer
                         return 90;
                     }
                     case 7:
-                    case 11:
-                    case 12:
-                    case 13:
+                    case 8:
+                    case 9:
+                    case 10:
                     case 14:
                     case 15:
                     case 16:
-                    case 20:
-                    case 21:
-                    case 22:
+                    case 17:
+                    case 18:
+                    case 19:
                     case 23:
                     case 24:
                     case 25:
@@ -2817,6 +2836,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 91;
                     }
@@ -2848,15 +2870,15 @@ struct SlgLexer
                 switch (cls)
                 {
                     case 7:
-                    case 11:
-                    case 12:
-                    case 13:
+                    case 8:
+                    case 9:
+                    case 10:
                     case 14:
                     case 15:
                     case 16:
-                    case 20:
-                    case 21:
-                    case 22:
+                    case 17:
+                    case 18:
+                    case 19:
                     case 23:
                     case 24:
                     case 25:
@@ -2871,6 +2893,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 91;
                     }
@@ -2942,6 +2967,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3038,6 +3066,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3068,20 +3099,20 @@ struct SlgLexer
                     case 8:
                     case 9:
                     case 10:
-                    case 15:
-                    case 16:
-                    case 17:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 18:
                     case 19:
-                    case 24:
-                    case 25:
-                    case 26:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 27:
                     case 28:
-                    case 33:
-                    case 34:
+                    case 29:
+                    case 31:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -3100,6 +3131,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 95;
                     }
@@ -3107,60 +3141,60 @@ struct SlgLexer
                     {
                         return 96;
                     }
-                    case 11:
+                    case 14:
                     {
                         return 97;
                     }
-                    case 12:
+                    case 15:
                     {
                         return 98;
                     }
-                    case 13:
+                    case 16:
                     {
                         return 99;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 100;
                     }
-                    case 20:
+                    case 23:
                     {
                         return 101;
                     }
-                    case 21:
+                    case 24:
                     {
                         return 102;
                     }
-                    case 22:
+                    case 25:
                     {
                         return 103;
                     }
-                    case 23:
+                    case 26:
                     {
                         return 104;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 105;
                     }
-                    case 29:
+                    case 32:
                     {
                         return 106;
                     }
-                    case 30:
+                    case 33:
                     {
                         return 107;
                     }
-                    case 31:
+                    case 34:
                     {
                         return 108;
                     }
-                    case 32:
+                    case 35:
                     {
                         return 109;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 110;
                     }
@@ -3209,9 +3243,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -3230,6 +3264,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3237,8 +3274,8 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 111;
                     }
@@ -3287,9 +3324,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -3308,6 +3345,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3315,8 +3355,8 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 111;
                     }
@@ -3388,6 +3428,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3463,6 +3506,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3513,9 +3559,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -3534,6 +3580,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3541,10 +3590,10 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 112;
                     }
@@ -3591,9 +3640,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -3612,6 +3661,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3619,10 +3671,10 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 112;
                     }
@@ -3669,9 +3721,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -3690,6 +3742,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3697,10 +3752,10 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 112;
                     }
@@ -3772,6 +3827,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3847,6 +3905,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3922,6 +3983,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -3997,6 +4061,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4072,6 +4139,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4113,9 +4183,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4134,6 +4204,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4141,9 +4214,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4154,6 +4224,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 113;
                     }
@@ -4191,9 +4264,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4212,6 +4285,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4219,9 +4295,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4232,6 +4305,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 114;
                     }
@@ -4269,9 +4345,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4290,6 +4366,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4297,9 +4376,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4310,6 +4386,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 115;
                     }
@@ -4347,9 +4426,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4368,6 +4447,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4375,9 +4457,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4388,6 +4467,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 116;
                     }
@@ -4425,9 +4507,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4446,6 +4528,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4453,9 +4538,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4466,6 +4548,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 117;
                     }
@@ -4503,9 +4588,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4524,6 +4609,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4531,9 +4619,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4544,6 +4629,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 118;
                     }
@@ -4581,9 +4669,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4602,6 +4690,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4609,9 +4700,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4622,6 +4710,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 119;
                     }
@@ -4659,9 +4750,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4680,6 +4771,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4687,9 +4781,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4700,6 +4791,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 120;
                     }
@@ -4771,6 +4865,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4812,9 +4909,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4833,6 +4930,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4840,9 +4940,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4853,6 +4950,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 121;
                     }
@@ -4890,9 +4990,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4911,6 +5011,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4918,9 +5021,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -4931,6 +5031,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 122;
                     }
@@ -4968,9 +5071,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -4989,6 +5092,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -4996,9 +5102,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -5009,6 +5112,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 123;
                     }
@@ -5046,9 +5152,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -5067,6 +5173,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -5074,9 +5183,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -5087,6 +5193,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 124;
                     }
@@ -5158,6 +5267,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -5199,9 +5311,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -5220,6 +5332,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -5227,9 +5342,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -5240,6 +5352,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 125;
                     }
@@ -5277,9 +5392,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -5298,6 +5413,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -5305,9 +5423,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -5318,6 +5433,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 125;
                     }
@@ -5355,9 +5473,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -5376,6 +5494,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -5383,9 +5504,6 @@ struct SlgLexer
                     {
                         return 94;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -5396,6 +5514,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 125;
                     }
@@ -5484,6 +5605,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -5559,6 +5683,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 93;
                     }
@@ -5598,15 +5725,15 @@ struct SlgLexer
                         return 2;
                     }
                     case 7:
-                    case 11:
-                    case 12:
-                    case 13:
+                    case 8:
+                    case 9:
+                    case 10:
                     case 14:
                     case 15:
                     case 16:
-                    case 20:
-                    case 21:
-                    case 22:
+                    case 17:
+                    case 18:
+                    case 19:
                     case 23:
                     case 24:
                     case 25:
@@ -5621,6 +5748,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 91;
                     }
@@ -5696,6 +5826,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -5792,6 +5925,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -5822,20 +5958,20 @@ struct SlgLexer
                     case 8:
                     case 9:
                     case 10:
-                    case 15:
-                    case 16:
-                    case 17:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 18:
                     case 19:
-                    case 24:
-                    case 25:
-                    case 26:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 27:
                     case 28:
-                    case 33:
-                    case 34:
+                    case 29:
+                    case 31:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -5854,6 +5990,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 130;
                     }
@@ -5861,60 +6000,60 @@ struct SlgLexer
                     {
                         return 131;
                     }
-                    case 11:
+                    case 14:
                     {
                         return 132;
                     }
-                    case 12:
+                    case 15:
                     {
                         return 133;
                     }
-                    case 13:
+                    case 16:
                     {
                         return 134;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 135;
                     }
-                    case 20:
+                    case 23:
                     {
                         return 136;
                     }
-                    case 21:
+                    case 24:
                     {
                         return 137;
                     }
-                    case 22:
+                    case 25:
                     {
                         return 138;
                     }
-                    case 23:
+                    case 26:
                     {
                         return 139;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 140;
                     }
-                    case 29:
+                    case 32:
                     {
                         return 141;
                     }
-                    case 30:
+                    case 33:
                     {
                         return 142;
                     }
-                    case 31:
+                    case 34:
                     {
                         return 143;
                     }
-                    case 32:
+                    case 35:
                     {
                         return 144;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 145;
                     }
@@ -5963,9 +6102,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -5984,6 +6123,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -5991,8 +6133,8 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 146;
                     }
@@ -6041,9 +6183,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -6062,6 +6204,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6069,8 +6214,8 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 146;
                     }
@@ -6142,6 +6287,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6217,6 +6365,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6267,9 +6418,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -6288,6 +6439,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6295,10 +6449,10 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 147;
                     }
@@ -6345,9 +6499,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -6366,6 +6520,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6373,10 +6530,10 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 147;
                     }
@@ -6423,9 +6580,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -6444,6 +6601,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6451,10 +6611,10 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 147;
                     }
@@ -6526,6 +6686,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6601,6 +6764,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6676,6 +6842,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6751,6 +6920,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6826,6 +6998,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6867,9 +7042,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -6888,6 +7063,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6895,9 +7073,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -6908,6 +7083,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 148;
                     }
@@ -6945,9 +7123,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -6966,6 +7144,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -6973,9 +7154,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -6986,6 +7164,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 149;
                     }
@@ -7023,9 +7204,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7044,6 +7225,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7051,9 +7235,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7064,6 +7245,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 150;
                     }
@@ -7101,9 +7285,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7122,6 +7306,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7129,9 +7316,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7142,6 +7326,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 151;
                     }
@@ -7179,9 +7366,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7200,6 +7387,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7207,9 +7397,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7220,6 +7407,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 152;
                     }
@@ -7257,9 +7447,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7278,6 +7468,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7285,9 +7478,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7298,6 +7488,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 153;
                     }
@@ -7335,9 +7528,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7356,6 +7549,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7363,9 +7559,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7376,6 +7569,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 154;
                     }
@@ -7413,9 +7609,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7434,6 +7630,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7441,9 +7640,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7454,6 +7650,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 155;
                     }
@@ -7525,6 +7724,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7566,9 +7768,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7587,6 +7789,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7594,9 +7799,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7607,6 +7809,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 156;
                     }
@@ -7644,9 +7849,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7665,6 +7870,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7672,9 +7880,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7685,6 +7890,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 157;
                     }
@@ -7722,9 +7930,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7743,6 +7951,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7750,9 +7961,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7763,6 +7971,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 158;
                     }
@@ -7800,9 +8011,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7821,6 +8032,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7828,9 +8042,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7841,6 +8052,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 159;
                     }
@@ -7912,6 +8126,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7953,9 +8170,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -7974,6 +8191,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -7981,9 +8201,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -7994,6 +8211,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 160;
                     }
@@ -8031,9 +8251,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -8052,6 +8272,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -8059,9 +8282,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -8072,6 +8292,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 160;
                     }
@@ -8109,9 +8332,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -8130,6 +8353,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -8137,9 +8363,6 @@ struct SlgLexer
                     {
                         return 129;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -8150,6 +8373,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 160;
                     }
@@ -8238,6 +8464,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -8313,6 +8542,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 128;
                     }
@@ -8352,15 +8584,15 @@ struct SlgLexer
                         return 2;
                     }
                     case 7:
-                    case 11:
-                    case 12:
-                    case 13:
+                    case 8:
+                    case 9:
+                    case 10:
                     case 14:
                     case 15:
                     case 16:
-                    case 20:
-                    case 21:
-                    case 22:
+                    case 17:
+                    case 18:
+                    case 19:
                     case 23:
                     case 24:
                     case 25:
@@ -8372,8 +8604,11 @@ struct SlgLexer
                     case 31:
                     case 32:
                     case 33:
+                    case 34:
                     case 35:
                     case 36:
+                    case 38:
+                    case 39:
                     {
                         return 91;
                     }
@@ -8381,7 +8616,7 @@ struct SlgLexer
                     {
                         return 126;
                     }
-                    case 34:
+                    case 37:
                     {
                         return 161;
                     }
@@ -8417,15 +8652,15 @@ struct SlgLexer
                         return 2;
                     }
                     case 7:
-                    case 11:
-                    case 12:
-                    case 13:
+                    case 8:
+                    case 9:
+                    case 10:
                     case 14:
                     case 15:
                     case 16:
-                    case 20:
-                    case 21:
-                    case 22:
+                    case 17:
+                    case 18:
+                    case 19:
                     case 23:
                     case 24:
                     case 25:
@@ -8440,6 +8675,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 91;
                     }
@@ -8471,15 +8709,15 @@ struct SlgLexer
                 switch (cls)
                 {
                     case 7:
-                    case 11:
-                    case 12:
-                    case 13:
+                    case 8:
+                    case 9:
+                    case 10:
                     case 14:
                     case 15:
                     case 16:
-                    case 20:
-                    case 21:
-                    case 22:
+                    case 17:
+                    case 18:
+                    case 19:
                     case 23:
                     case 24:
                     case 25:
@@ -8494,6 +8732,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 91;
                     }
@@ -8524,7 +8765,7 @@ struct SlgLexer
                 }
                 switch (cls)
                 {
-                    case 43:
+                    case 46:
                     {
                         return 162;
                     }
@@ -8584,7 +8825,7 @@ struct SlgLexer
                     {
                         return 164;
                     }
-                    case 43:
+                    case 46:
                     {
                         return 165;
                     }
@@ -8676,6 +8917,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -8753,6 +8997,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 168;
                     }
@@ -8791,9 +9038,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -8839,6 +9086,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -8848,8 +9098,8 @@ struct SlgLexer
                     }
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -8923,6 +9173,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -9004,6 +9257,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 168;
                     }
@@ -9084,6 +9340,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 176;
                     }
@@ -9167,6 +9426,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 180;
                     }
@@ -9205,9 +9467,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9253,6 +9515,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 176;
                     }
@@ -9272,8 +9537,8 @@ struct SlgLexer
                     {
                         return 184;
                     }
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 185;
                     }
@@ -9308,9 +9573,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9356,6 +9621,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 176;
                     }
@@ -9375,8 +9643,8 @@ struct SlgLexer
                     {
                         return 184;
                     }
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 185;
                     }
@@ -9456,6 +9724,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 176;
                     }
@@ -9539,6 +9810,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 180;
                     }
@@ -9577,9 +9851,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9625,6 +9899,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -9633,8 +9910,8 @@ struct SlgLexer
                         return 167;
                     }
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -9677,9 +9954,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9725,6 +10002,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -9734,8 +10014,8 @@ struct SlgLexer
                     }
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -9774,9 +10054,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9822,6 +10102,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -9831,8 +10114,8 @@ struct SlgLexer
                     }
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -9913,6 +10196,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 176;
                     }
@@ -9951,9 +10237,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9999,6 +10285,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -10007,8 +10296,8 @@ struct SlgLexer
                         return 167;
                     }
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -10051,9 +10340,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -10099,6 +10388,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -10108,8 +10400,8 @@ struct SlgLexer
                     }
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -10190,6 +10482,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 176;
                     }
@@ -10228,9 +10523,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -10276,6 +10571,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -10284,8 +10582,8 @@ struct SlgLexer
                         return 167;
                     }
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -10328,9 +10626,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -10376,6 +10674,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -10385,8 +10686,8 @@ struct SlgLexer
                     }
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -10425,9 +10726,9 @@ struct SlgLexer
                     case 3:
                     case 4:
                     case 7:
+                    case 8:
+                    case 9:
                     case 10:
-                    case 11:
-                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -10473,6 +10774,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -10482,8 +10786,8 @@ struct SlgLexer
                     }
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 170;
                     }
@@ -10558,6 +10862,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -10632,6 +10939,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 166;
                     }
@@ -10713,6 +11023,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 190;
                     }
@@ -10790,6 +11103,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 190;
                     }
@@ -10821,8 +11137,8 @@ struct SlgLexer
                 switch (cls)
                 {
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 1;
                     }
@@ -10881,8 +11197,8 @@ struct SlgLexer
                 {
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 1;
                     }
@@ -10919,8 +11235,8 @@ struct SlgLexer
                 {
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 1;
                     }
@@ -10996,6 +11312,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11092,6 +11411,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11122,20 +11444,20 @@ struct SlgLexer
                     case 8:
                     case 9:
                     case 10:
-                    case 15:
-                    case 16:
-                    case 17:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 18:
                     case 19:
-                    case 24:
-                    case 25:
-                    case 26:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 27:
                     case 28:
-                    case 33:
-                    case 34:
+                    case 29:
+                    case 31:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -11154,6 +11476,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 196;
                     }
@@ -11161,60 +11486,60 @@ struct SlgLexer
                     {
                         return 197;
                     }
-                    case 11:
+                    case 14:
                     {
                         return 198;
                     }
-                    case 12:
+                    case 15:
                     {
                         return 199;
                     }
-                    case 13:
+                    case 16:
                     {
                         return 200;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 201;
                     }
-                    case 20:
+                    case 23:
                     {
                         return 202;
                     }
-                    case 21:
+                    case 24:
                     {
                         return 203;
                     }
-                    case 22:
+                    case 25:
                     {
                         return 204;
                     }
-                    case 23:
+                    case 26:
                     {
                         return 205;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 206;
                     }
-                    case 29:
+                    case 32:
                     {
                         return 207;
                     }
-                    case 30:
+                    case 33:
                     {
                         return 208;
                     }
-                    case 31:
+                    case 34:
                     {
                         return 209;
                     }
-                    case 32:
+                    case 35:
                     {
                         return 210;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 211;
                     }
@@ -11263,9 +11588,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -11284,6 +11609,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11291,8 +11619,8 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 212;
                     }
@@ -11341,9 +11669,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -11362,6 +11690,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11369,8 +11700,8 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 212;
                     }
@@ -11442,6 +11773,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11517,6 +11851,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11567,9 +11904,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -11588,6 +11925,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11595,10 +11935,10 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 213;
                     }
@@ -11645,9 +11985,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -11666,6 +12006,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11673,10 +12016,10 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 213;
                     }
@@ -11723,9 +12066,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -11744,6 +12087,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11751,10 +12097,10 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 213;
                     }
@@ -11826,6 +12172,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11901,6 +12250,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -11976,6 +12328,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12051,6 +12406,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12126,6 +12484,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12167,9 +12528,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12188,6 +12549,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12195,9 +12559,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12208,6 +12569,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 214;
                     }
@@ -12245,9 +12609,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12266,6 +12630,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12273,9 +12640,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12286,6 +12650,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 215;
                     }
@@ -12323,9 +12690,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12344,6 +12711,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12351,9 +12721,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12364,6 +12731,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 216;
                     }
@@ -12401,9 +12771,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12422,6 +12792,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12429,9 +12802,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12442,6 +12812,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 217;
                     }
@@ -12479,9 +12852,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12500,6 +12873,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12507,9 +12883,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12520,6 +12893,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 218;
                     }
@@ -12557,9 +12933,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12578,6 +12954,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12585,9 +12964,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12598,6 +12974,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 219;
                     }
@@ -12635,9 +13014,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12656,6 +13035,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12663,9 +13045,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12676,6 +13055,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 220;
                     }
@@ -12713,9 +13095,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12734,6 +13116,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12741,9 +13126,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12754,6 +13136,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 221;
                     }
@@ -12825,6 +13210,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12866,9 +13254,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12887,6 +13275,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12894,9 +13285,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12907,6 +13295,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 222;
                     }
@@ -12944,9 +13335,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -12965,6 +13356,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -12972,9 +13366,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -12985,6 +13376,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 223;
                     }
@@ -13022,9 +13416,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -13043,6 +13437,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13050,9 +13447,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -13063,6 +13457,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 224;
                     }
@@ -13100,9 +13497,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -13121,6 +13518,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13128,9 +13528,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -13141,6 +13538,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 225;
                     }
@@ -13212,6 +13612,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13253,9 +13656,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -13274,6 +13677,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13281,9 +13687,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -13294,6 +13697,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 226;
                     }
@@ -13331,9 +13737,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -13352,6 +13758,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13359,9 +13768,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -13372,6 +13778,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 226;
                     }
@@ -13409,9 +13818,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -13430,6 +13839,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13437,9 +13849,6 @@ struct SlgLexer
                     {
                         return 195;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -13450,6 +13859,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 226;
                     }
@@ -13538,6 +13950,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13613,6 +14028,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 194;
                     }
@@ -13692,6 +14110,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -13767,6 +14188,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -13814,20 +14238,20 @@ struct SlgLexer
                     case 8:
                     case 9:
                     case 10:
-                    case 15:
-                    case 16:
-                    case 17:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 18:
                     case 19:
-                    case 24:
-                    case 25:
-                    case 26:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 27:
                     case 28:
-                    case 33:
-                    case 34:
+                    case 29:
+                    case 31:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -13846,6 +14270,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 230;
                     }
@@ -13853,60 +14280,60 @@ struct SlgLexer
                     {
                         return 231;
                     }
-                    case 11:
+                    case 14:
                     {
                         return 232;
                     }
-                    case 12:
+                    case 15:
                     {
                         return 233;
                     }
-                    case 13:
+                    case 16:
                     {
                         return 234;
                     }
-                    case 14:
+                    case 17:
                     {
                         return 235;
                     }
-                    case 20:
+                    case 23:
                     {
                         return 236;
                     }
-                    case 21:
+                    case 24:
                     {
                         return 237;
                     }
-                    case 22:
+                    case 25:
                     {
                         return 238;
                     }
-                    case 23:
+                    case 26:
                     {
                         return 239;
                     }
-                    case 27:
+                    case 30:
                     {
                         return 240;
                     }
-                    case 29:
+                    case 32:
                     {
                         return 241;
                     }
-                    case 30:
+                    case 33:
                     {
                         return 242;
                     }
-                    case 31:
+                    case 34:
                     {
                         return 243;
                     }
-                    case 32:
+                    case 35:
                     {
                         return 244;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 245;
                     }
@@ -13959,9 +14386,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -13980,11 +14407,14 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 246;
                     }
@@ -14037,9 +14467,9 @@ struct SlgLexer
                     case 32:
                     case 33:
                     case 34:
+                    case 35:
+                    case 36:
                     case 37:
-                    case 38:
-                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -14058,11 +14488,14 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 35:
-                    case 36:
+                    case 38:
+                    case 39:
                     {
                         return 246;
                     }
@@ -14138,6 +14571,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -14213,6 +14649,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -14263,9 +14702,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -14284,13 +14723,16 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 247;
                     }
@@ -14341,9 +14783,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -14362,13 +14804,16 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 247;
                     }
@@ -14419,9 +14864,9 @@ struct SlgLexer
                     case 30:
                     case 31:
                     case 32:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 40:
                     case 41:
                     case 42:
@@ -14440,13 +14885,16 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 33:
-                    case 34:
-                    case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 247;
                     }
@@ -14522,6 +14970,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -14597,6 +15048,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -14672,6 +15126,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -14747,6 +15204,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -14822,6 +15282,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -14863,9 +15326,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -14884,12 +15347,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -14900,6 +15363,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 248;
                     }
@@ -14941,9 +15407,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -14962,12 +15428,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -14978,6 +15444,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 249;
                     }
@@ -15019,9 +15488,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15040,12 +15509,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15056,6 +15525,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 250;
                     }
@@ -15097,9 +15569,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15118,12 +15590,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15134,6 +15606,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 251;
                     }
@@ -15175,9 +15650,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15196,12 +15671,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15212,6 +15687,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 252;
                     }
@@ -15253,9 +15731,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15274,12 +15752,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15290,6 +15768,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 253;
                     }
@@ -15331,9 +15812,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15352,12 +15833,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15368,6 +15849,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 254;
                     }
@@ -15409,9 +15893,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15430,12 +15914,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15446,6 +15930,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 255;
                     }
@@ -15521,6 +16008,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -15562,9 +16052,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15583,12 +16073,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15599,6 +16089,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 256;
                     }
@@ -15640,9 +16133,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15661,12 +16154,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15677,6 +16170,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 257;
                     }
@@ -15718,9 +16214,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15739,12 +16235,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15755,6 +16251,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 258;
                     }
@@ -15796,9 +16295,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15817,12 +16316,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15833,6 +16332,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 259;
                     }
@@ -15908,6 +16410,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -15949,9 +16454,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -15970,12 +16475,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -15986,6 +16491,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 260;
                     }
@@ -16027,9 +16535,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -16048,12 +16556,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -16064,6 +16572,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 260;
                     }
@@ -16105,9 +16616,9 @@ struct SlgLexer
                     case 21:
                     case 22:
                     case 23:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 40:
                     case 41:
                     case 42:
@@ -16126,12 +16637,12 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
-                    case 24:
-                    case 25:
-                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -16142,6 +16653,9 @@ struct SlgLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     {
                         return 260;
                     }
@@ -16234,6 +16748,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -16309,6 +16826,9 @@ struct SlgLexer
                     case 55:
                     case 56:
                     case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 229;
                     }
@@ -16341,8 +16861,8 @@ struct SlgLexer
                 {
                     case 0:
                     case 1:
-                    case 8:
-                    case 9:
+                    case 11:
+                    case 12:
                     {
                         return 1;
                     }
@@ -16499,7 +17019,7 @@ struct SlgLexer
             }
             case 22:
             {
-                SlgLexer_Variables* vars = static_cast<SlgLexer_Variables*>(lxr.GetVariables());
+                auto vars = static_cast<Variables*>(lxr.GetVariables());
                 if (vars->leftAngleCount > 0) return INVALID_TOKEN;
                 lxr.Retract();
                 return SHIFT_RIGHT;

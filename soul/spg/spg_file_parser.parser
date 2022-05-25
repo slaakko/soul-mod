@@ -1,0 +1,39 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.spg.spg.file.par;
+
+[interface]import soul.ast.spg;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.common.common.par;
+[implementation]import soul.lex.spg;
+
+parser SpgFileParser
+{
+    uselexer soul::lex::spg::SpgLexer<char32_t>;
+
+    main;
+    using CommonParser.QualifiedId;
+	using CommonParser.FilePath;
+
+    SpgFile(var std::unique_ptr<soul::ast::spg::SpgFile> spgFile) : soul::ast::spg::SpgFile*
+        ::= 
+        (
+            PROJECT QualifiedId:projectName!{ spgFile.reset(new soul::ast::spg::SpgFile(lexer.FileName(), projectName)); } SEMICOLON!
+            (SpgFileDeclaration:declaration{ spgFile->AddDeclaration(declaration); })*
+        )
+        {
+            return spgFile.release();
+        }
+        ;
+
+	SpgFileDeclaration : soul::ast::spg::SpgFileDeclaration*
+		::= empty{ return nullptr; }
+		;
+
+}

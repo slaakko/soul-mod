@@ -1,0 +1,58 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.common.common.par;
+
+[interface]import soul.ast.common;
+[implementation]import soul.cpp.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.tool.token;
+[implementation]import soul.lex.slg;
+[implementation]import soul.lex.spg;
+[implementation]import soul.common.token.par;
+
+parser CommonParser
+{
+	uselexer soul::lex::slg::SlgLexer<char32_t>;
+	uselexer soul::lex::spg::SpgLexer<char32_t>; 
+
+	QualifiedId(var std::string str) : std::string
+		::= (ID{ str.append(util::ToUtf8(lexer.GetToken(pos).ToString())); } (DOT ID{ str.append(1, '.').append(util::ToUtf8(lexer.GetToken(pos).ToString())); })*){ return str; }
+		;
+
+	ExportModule(var std::unique_ptr<soul::ast::common::ExportModule> exp) : soul::ast::common::ExportModule*
+		::= 
+		(
+			EXPORT MODULE QualifiedId:moduleName{ exp.reset(new soul::ast::common::ExportModule(moduleName)); } SEMICOLON!
+		)
+		{
+			return exp.release();
+		}
+		;
+
+	Import(var std::unique_ptr<soul::ast::common::Import> imp, var soul::ast::common::ImportPrefix prefix) : soul::ast::common::Import*
+		::= 
+		(
+			(ImportPrefix:importPrefix{ prefix = importPrefix; } | empty{ prefix = soul::ast::common::ImportPrefix::interfacePrefix; })
+			IMPORT QualifiedId:moduleName{ imp.reset(new soul::ast::common::Import(moduleName, prefix)); } SEMICOLON!
+		)
+		{
+			return imp.release();
+		}
+		;
+
+    ImportPrefix : soul::ast::common::ImportPrefix
+        ::= IMPLEMENTATION_PREFIX{ return soul::ast::common::ImportPrefix::implementationPrefix; }
+        |   INTERFACE_PREFIX{ return soul::ast::common::ImportPrefix::interfacePrefix; }
+        ;
+
+	ExprString : std::string
+		::= STRING_LITERAL{ return MakeExprStringValue(lexer.FileName(), lexer.GetToken(pos)); }
+		;
+
+	FilePath : std::string
+		::= FILEPATH{ return MakeFilePath(lexer.FileName(), lexer.GetToken(pos)); }
+		;
+}

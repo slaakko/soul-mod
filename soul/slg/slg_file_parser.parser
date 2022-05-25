@@ -10,7 +10,7 @@ export module soul.slg.slg.file.par;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
-[implementation]import soul.slg.common.par;
+[implementation]import soul.common.common.par;
 [implementation]import soul.lex.slg;
 
 parser SlgFileParser
@@ -24,8 +24,7 @@ parser SlgFileParser
     SlgFile(var std::unique_ptr<soul::ast::slg::SlgFile> slgFile) : soul::ast::slg::SlgFile*
         ::= 
         (
-            empty{ slgFile.reset(new soul::ast::slg::SlgFile(lexer.FileName())); }
-            PROJECT QualifiedId:projectId! SEMICOLON!
+            PROJECT QualifiedId:projectName!{ slgFile.reset(new soul::ast::slg::SlgFile(lexer.FileName(), projectName)); } SEMICOLON!
             (SlgFileDeclaration:declaration{ slgFile->AddDeclaration(declaration); })*
         )
         {

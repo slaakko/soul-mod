@@ -92,6 +92,7 @@ class Lexer : public LexerBase<Char>
 public:
     using CharType = Char;
     using TokenType = Token<Char, LexerBase<Char>>;
+    using VariableClassType = Machine::Variables;
 
     Lexer(const Char* start_, const Char* end_, const std::string& fileName_) :
         flags(LexerFlags::none), 

@@ -135,6 +135,7 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(PARSER, "PARSER", "'parser'"));
         tokens.AddToken(new soul::ast::slg::Token(INCLUDE, "INCLUDE", "'include'"));
         tokens.AddToken(new soul::ast::slg::Token(MAIN, "MAIN", "'main'"));
+        tokens.AddToken(new soul::ast::slg::Token(USELEXER, "USELEXER", "'uselexer'"));
         tokens.AddToken(new soul::ast::slg::Token(START, "START", "'start'"));
         tokens.AddToken(new soul::ast::slg::Token(EMPTY, "EMPTY", "'empty'"));
         tokens.AddToken(new soul::ast::slg::Token(ANY, "ANY", "'any'"));

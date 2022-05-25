@@ -5,7 +5,7 @@
 
 module soul.slg.token.generator;
 
-import soul.ast.spg;
+import soul.ast.common;
 import util;
 
 namespace soul::slg {
@@ -23,7 +23,7 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
     formatter.WriteLine();
     formatter.WriteLine("import std.core;");
     formatter.WriteLine();
-    std::string tokenNamespaceName = soul::ast::spg::ToNamespaceName(tokenCollection->Name());
+    std::string tokenNamespaceName = soul::ast::common::ToNamespaceName(tokenCollection->Name());
     formatter.WriteLine("export namespace " + tokenNamespaceName + " {");
     formatter.WriteLine();
     formatter.WriteLine("constexpr int32_t tokenSetID = " + std::to_string(tokenCollection->Id()) + ";");

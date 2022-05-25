@@ -154,12 +154,16 @@
     <ClCompile Include="re_lexer.ixx" />
     <ClCompile Include="slg_lexer.cpp" />
     <ClCompile Include="slg_lexer.ixx" />
+    <ClCompile Include="spg_lexer.cpp" />
+    <ClCompile Include="spg_lexer.ixx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="re_lexer.lexer" />
     <None Include="re_lexer.slg" />
     <None Include="slg_lexer.lexer" />
     <None Include="slg_lexer.slg" />
+    <None Include="spg_lexer.lexer" />
+    <None Include="spg_lexer.slg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">

@@ -7,14 +7,14 @@ import util;
 import soul.cpp.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.slg.common.par;
+import soul.common.common.par;
 import soul.slg.token.par;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
-using namespace soul::slg::common::par;
+using namespace soul::common::common::par;
 using namespace soul::slg::token::par;
 using namespace soul::lex::slg;
 
@@ -382,7 +382,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    std::unique_ptr<soul::ast::spg::Import> imp;
+    std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -398,7 +398,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = CommonParser<Lexer>::Import(lexer);
-                        imp.reset(static_cast<soul::ast::spg::Import*>(match.value));
+                        imp.reset(static_cast<soul::ast::common::Import*>(match.value));
                         if (match.hit)
                         {
                             keywordFile->AddImport(imp.release());

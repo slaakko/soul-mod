@@ -9,7 +9,7 @@ import std.core;
 
 export namespace soul::slg {
 
-void MakeCompressedClassMap(const std::string& root, const std::string& classMapName);
-void MakeResourceFile(const std::string& root, const std::string& classMapName);
+void MakeCompressedClassMap(const std::string& root, const std::string& classMapName, bool verbose);
+void MakeResourceFile(const std::string& root, const std::string& classMapName, bool verbose);
 
 } // namespce soul::slg

@@ -19,15 +19,16 @@ constexpr int64_t ACTIONS = (static_cast<int64_t>(tokenSetID) << 32) | 7;
 constexpr int64_t PARSER = (static_cast<int64_t>(tokenSetID) << 32) | 8;
 constexpr int64_t INCLUDE = (static_cast<int64_t>(tokenSetID) << 32) | 9;
 constexpr int64_t MAIN = (static_cast<int64_t>(tokenSetID) << 32) | 10;
-constexpr int64_t START = (static_cast<int64_t>(tokenSetID) << 32) | 11;
-constexpr int64_t EMPTY = (static_cast<int64_t>(tokenSetID) << 32) | 12;
-constexpr int64_t ANY = (static_cast<int64_t>(tokenSetID) << 32) | 13;
-constexpr int64_t VAR = (static_cast<int64_t>(tokenSetID) << 32) | 14;
-constexpr int64_t FILEPATH = (static_cast<int64_t>(tokenSetID) << 32) | 15;
-constexpr int64_t PROJECT = (static_cast<int64_t>(tokenSetID) << 32) | 16;
-constexpr int64_t IMPLEMENTATION_PREFIX = (static_cast<int64_t>(tokenSetID) << 32) | 17;
-constexpr int64_t INTERFACE_PREFIX = (static_cast<int64_t>(tokenSetID) << 32) | 18;
-constexpr int64_t CHARACTER = (static_cast<int64_t>(tokenSetID) << 32) | 19;
-constexpr int64_t ESCAPE = (static_cast<int64_t>(tokenSetID) << 32) | 20;
+constexpr int64_t USELEXER = (static_cast<int64_t>(tokenSetID) << 32) | 11;
+constexpr int64_t START = (static_cast<int64_t>(tokenSetID) << 32) | 12;
+constexpr int64_t EMPTY = (static_cast<int64_t>(tokenSetID) << 32) | 13;
+constexpr int64_t ANY = (static_cast<int64_t>(tokenSetID) << 32) | 14;
+constexpr int64_t VAR = (static_cast<int64_t>(tokenSetID) << 32) | 15;
+constexpr int64_t FILEPATH = (static_cast<int64_t>(tokenSetID) << 32) | 16;
+constexpr int64_t PROJECT = (static_cast<int64_t>(tokenSetID) << 32) | 17;
+constexpr int64_t IMPLEMENTATION_PREFIX = (static_cast<int64_t>(tokenSetID) << 32) | 18;
+constexpr int64_t INTERFACE_PREFIX = (static_cast<int64_t>(tokenSetID) << 32) | 19;
+constexpr int64_t CHARACTER = (static_cast<int64_t>(tokenSetID) << 32) | 20;
+constexpr int64_t ESCAPE = (static_cast<int64_t>(tokenSetID) << 32) | 21;
 
 } // soul::tool::token

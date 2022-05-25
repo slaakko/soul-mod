@@ -37,6 +37,8 @@ struct RegExLexer_Variables : public soul::lexer::Variables
 template<typename Char>
 struct RegExLexer
 {
+    using Variables = RegExLexer_Variables;
+
     static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lxr)
     {
         ClassMap<Char>* classmap = lxr.GetClassMap();
@@ -122,10 +124,12 @@ struct RegExLexer
                     case 30:
                     case 31:
                     case 32:
+                    case 33:
+                    case 34:
                     {
                         return 15;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 16;
                     }
@@ -214,6 +218,8 @@ struct RegExLexer
                     case 30:
                     case 31:
                     case 32:
+                    case 33:
+                    case 34:
                     {
                         return 15;
                     }
@@ -281,71 +287,73 @@ struct RegExLexer
                     case 13:
                     case 14:
                     case 15:
-                    case 20:
-                    case 23:
-                    case 32:
+                    case 16:
+                    case 17:
+                    case 22:
+                    case 25:
                     case 34:
-                    case 35:
+                    case 36:
+                    case 37:
                     {
                         return 17;
                     }
-                    case 16:
+                    case 18:
                     {
                         return 18;
                     }
-                    case 17:
+                    case 19:
                     {
                         return 19;
                     }
-                    case 18:
+                    case 20:
                     {
                         return 20;
                     }
-                    case 19:
+                    case 21:
                     {
                         return 21;
                     }
-                    case 21:
+                    case 23:
                     {
                         return 22;
                     }
-                    case 22:
+                    case 24:
                     {
                         return 23;
                     }
-                    case 24:
+                    case 26:
                     {
                         return 24;
                     }
-                    case 25:
+                    case 27:
                     {
                         return 25;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 26;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 27;
                     }
-                    case 28:
+                    case 30:
                     {
                         return 28;
                     }
-                    case 29:
+                    case 31:
                     {
                         return 29;
                     }
-                    case 30:
+                    case 32:
                     {
                         return 30;
                     }
-                    case 31:
+                    case 33:
                     {
                         return 31;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 32;
                     }
@@ -392,71 +400,73 @@ struct RegExLexer
                     case 13:
                     case 14:
                     case 15:
-                    case 20:
-                    case 23:
-                    case 32:
+                    case 16:
+                    case 17:
+                    case 22:
+                    case 25:
                     case 34:
-                    case 35:
+                    case 36:
+                    case 37:
                     {
                         return 17;
                     }
-                    case 16:
+                    case 18:
                     {
                         return 18;
                     }
-                    case 17:
+                    case 19:
                     {
                         return 19;
                     }
-                    case 18:
+                    case 20:
                     {
                         return 20;
                     }
-                    case 19:
+                    case 21:
                     {
                         return 21;
                     }
-                    case 21:
+                    case 23:
                     {
                         return 22;
                     }
-                    case 22:
+                    case 24:
                     {
                         return 23;
                     }
-                    case 24:
+                    case 26:
                     {
                         return 24;
                     }
-                    case 25:
+                    case 27:
                     {
                         return 25;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 26;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 27;
                     }
-                    case 28:
+                    case 30:
                     {
                         return 28;
                     }
-                    case 29:
+                    case 31:
                     {
                         return 29;
                     }
-                    case 30:
+                    case 32:
                     {
                         return 30;
                     }
-                    case 31:
+                    case 33:
                     {
                         return 31;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 33;
                     }
@@ -503,71 +513,73 @@ struct RegExLexer
                     case 13:
                     case 14:
                     case 15:
-                    case 20:
-                    case 23:
-                    case 32:
+                    case 16:
+                    case 17:
+                    case 22:
+                    case 25:
                     case 34:
-                    case 35:
+                    case 36:
+                    case 37:
                     {
                         return 17;
                     }
-                    case 16:
+                    case 18:
                     {
                         return 18;
                     }
-                    case 17:
+                    case 19:
                     {
                         return 19;
                     }
-                    case 18:
+                    case 20:
                     {
                         return 20;
                     }
-                    case 19:
+                    case 21:
                     {
                         return 21;
                     }
-                    case 21:
+                    case 23:
                     {
                         return 22;
                     }
-                    case 22:
+                    case 24:
                     {
                         return 23;
                     }
-                    case 24:
+                    case 26:
                     {
                         return 24;
                     }
-                    case 25:
+                    case 27:
                     {
                         return 25;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 26;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 27;
                     }
-                    case 28:
+                    case 30:
                     {
                         return 28;
                     }
-                    case 29:
+                    case 31:
                     {
                         return 29;
                     }
-                    case 30:
+                    case 32:
                     {
                         return 30;
                     }
-                    case 31:
+                    case 33:
                     {
                         return 31;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 34;
                     }
@@ -598,59 +610,59 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 16:
+                    case 18:
                     {
                         return 35;
                     }
-                    case 17:
+                    case 19:
                     {
                         return 36;
                     }
-                    case 18:
+                    case 20:
                     {
                         return 37;
                     }
-                    case 21:
+                    case 23:
                     {
                         return 38;
                     }
-                    case 22:
+                    case 24:
                     {
                         return 39;
                     }
-                    case 24:
+                    case 26:
                     {
                         return 40;
                     }
-                    case 25:
+                    case 27:
                     {
                         return 41;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 42;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 43;
                     }
-                    case 28:
+                    case 30:
                     {
                         return 44;
                     }
-                    case 29:
+                    case 31:
                     {
                         return 45;
                     }
-                    case 30:
+                    case 32:
                     {
                         return 46;
                     }
-                    case 31:
+                    case 33:
                     {
                         return 47;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 48;
                     }
@@ -681,51 +693,51 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 16:
+                    case 18:
                     {
                         return 35;
                     }
-                    case 17:
+                    case 19:
                     {
                         return 36;
                     }
-                    case 21:
+                    case 23:
                     {
                         return 38;
                     }
-                    case 22:
+                    case 24:
                     {
                         return 39;
                     }
-                    case 24:
+                    case 26:
                     {
                         return 40;
                     }
-                    case 25:
+                    case 27:
                     {
                         return 41;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 42;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 43;
                     }
-                    case 28:
+                    case 30:
                     {
                         return 44;
                     }
-                    case 29:
+                    case 31:
                     {
                         return 45;
                     }
-                    case 30:
+                    case 32:
                     {
                         return 46;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 49;
                     }
@@ -756,47 +768,47 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 16:
+                    case 18:
                     {
                         return 35;
                     }
-                    case 17:
+                    case 19:
                     {
                         return 36;
                     }
-                    case 21:
+                    case 23:
                     {
                         return 38;
                     }
-                    case 22:
+                    case 24:
                     {
                         return 39;
                     }
-                    case 24:
+                    case 26:
                     {
                         return 40;
                     }
-                    case 25:
+                    case 27:
                     {
                         return 41;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 42;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 43;
                     }
-                    case 28:
+                    case 30:
                     {
                         return 44;
                     }
-                    case 29:
+                    case 31:
                     {
                         return 45;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 50;
                     }
@@ -810,39 +822,39 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 16:
+                    case 18:
                     {
                         return 35;
                     }
-                    case 17:
+                    case 19:
                     {
                         return 36;
                     }
-                    case 21:
+                    case 23:
                     {
                         return 38;
                     }
-                    case 22:
+                    case 24:
                     {
                         return 39;
                     }
-                    case 25:
+                    case 27:
                     {
                         return 41;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 42;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 43;
                     }
-                    case 28:
+                    case 30:
                     {
                         return 44;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 51;
                     }
@@ -856,19 +868,19 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 25:
+                    case 27:
                     {
                         return 41;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 42;
                     }
-                    case 27:
+                    case 29:
                     {
                         return 43;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 52;
                     }
@@ -882,11 +894,11 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 25:
+                    case 27:
                     {
                         return 41;
                     }
-                    case 26:
+                    case 28:
                     {
                         return 42;
                     }
@@ -917,7 +929,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 53;
                     }
@@ -948,7 +960,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 54;
                     }
@@ -979,7 +991,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 55;
                     }
@@ -1031,7 +1043,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 56;
                     }
@@ -1062,7 +1074,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 53;
                     }
@@ -1093,7 +1105,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 57;
                     }
@@ -1124,7 +1136,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 56;
                     }
@@ -1155,7 +1167,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 58;
                     }
@@ -1186,7 +1198,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 57;
                     }
@@ -1217,7 +1229,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 59;
                     }
@@ -1248,7 +1260,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 58;
                     }
@@ -1279,7 +1291,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 60;
                     }
@@ -1310,7 +1322,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 59;
                     }
@@ -1341,7 +1353,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 60;
                     }
@@ -1372,11 +1384,11 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 24:
+                    case 26:
                     {
                         return 40;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 61;
                     }
@@ -1407,11 +1419,11 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 24:
+                    case 26:
                     {
                         return 40;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 62;
                     }
@@ -1442,7 +1454,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 63;
                     }
@@ -1473,7 +1485,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 64;
                     }
@@ -1504,7 +1516,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 55;
                     }
@@ -1518,12 +1530,12 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 66;
                     }
@@ -1537,12 +1549,12 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 67;
                     }
@@ -1556,8 +1568,8 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
@@ -1588,12 +1600,12 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 68;
                     }
@@ -1624,12 +1636,12 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 69;
                     }
@@ -1660,7 +1672,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 62;
                     }
@@ -1674,12 +1686,12 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 66;
                     }
@@ -1693,14 +1705,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 70;
                     }
@@ -1714,14 +1726,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 71;
                     }
@@ -1735,14 +1747,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 72;
                     }
@@ -1756,14 +1768,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 73;
                     }
@@ -1794,7 +1806,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 63;
                     }
@@ -1808,18 +1820,18 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 75;
                     }
@@ -1833,18 +1845,18 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 76;
                     }
@@ -1858,14 +1870,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
@@ -1896,18 +1908,18 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 77;
                     }
@@ -1938,18 +1950,18 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 69;
                     }
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
@@ -1963,18 +1975,18 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 75;
                     }
@@ -2005,7 +2017,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 53;
                     }
@@ -2036,7 +2048,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 56;
                     }
@@ -2067,7 +2079,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 57;
                     }
@@ -2098,7 +2110,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 58;
                     }
@@ -2129,7 +2141,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 59;
                     }
@@ -2160,7 +2172,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 60;
                     }
@@ -2191,7 +2203,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 60;
                     }
@@ -2222,11 +2234,11 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 24:
+                    case 26:
                     {
                         return 40;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 78;
                     }
@@ -2257,11 +2269,11 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 24:
+                    case 26:
                     {
                         return 40;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 62;
                     }
@@ -2292,12 +2304,12 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 79;
                     }
@@ -2328,12 +2340,12 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 80;
                     }
@@ -2364,8 +2376,8 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
@@ -2396,12 +2408,12 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 23:
-                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 65;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 79;
                     }
@@ -2432,18 +2444,18 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 54;
                     }
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 81;
                     }
@@ -2457,14 +2469,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 82;
                     }
@@ -2478,14 +2490,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 83;
                     }
@@ -2499,14 +2511,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 84;
                     }
@@ -2520,14 +2532,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 85;
                     }
@@ -2541,14 +2553,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 86;
                     }
@@ -2562,14 +2574,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 87;
                     }
@@ -2583,14 +2595,14 @@ struct RegExLexer
             {
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 88;
                     }
@@ -2621,7 +2633,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 64;
                     }
@@ -2652,18 +2664,18 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 54;
                     }
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 70;
                     }
@@ -2694,18 +2706,18 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 89;
                     }
@@ -2736,18 +2748,18 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 90;
                     }
@@ -2778,14 +2790,14 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
@@ -2816,18 +2828,18 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 20:
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
                     case 27:
+                    case 28:
+                    case 29:
                     {
                         return 74;
                     }
-                    case 33:
+                    case 35:
                     {
                         return 89;
                     }
@@ -2858,7 +2870,7 @@ struct RegExLexer
                 }
                 switch (cls)
                 {
-                    case 33:
+                    case 35:
                     {
                         return 54;
                     }

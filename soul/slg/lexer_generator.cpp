@@ -12,6 +12,7 @@ import soul.slg.token.generator;
 import soul.slg.regular.expression.parser;
 import soul.ast.re;
 import soul.ast.cpp;
+import soul.ast.common;
 
 namespace soul::slg {
 
@@ -195,7 +196,7 @@ void MakeClassPartition(soul::ast::re::LexerContext& lexerContext)
 */
 }
 
-void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& root)
+void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& root, bool verbose)
 {
     std::vector<int32_t> classMapVec(0x110000, -1);
     for (soul::ast::re::Class* cls : lexerContext.Partition())
@@ -221,7 +222,7 @@ void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& 
     if (file->Kind() == soul::ast::slg::FileKind::lexerFile)
     {
         soul::ast::slg::LexerFile* lexerFile = static_cast<soul::ast::slg::LexerFile*>(file);
-        soul::ast::spg::ExportModule* mod = lexerFile->GetExportModule();
+        soul::ast::common::ExportModule* mod = lexerFile->GetExportModule();
         moduleName = mod->ModuleName();
     }
     else
@@ -240,9 +241,13 @@ void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& 
     {
         writer.Write(x);
     }
+    if (verbose)
+    {
+        std::cout << "==> " << classMapFileName << std::endl;
+    }
 }
 
-void CompressClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& root)
+void CompressClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& root, bool verbose)
 {
     std::string moduleName;
     soul::ast::slg::Lexer* lexer = lexerContext.GetLexer();
@@ -250,7 +255,7 @@ void CompressClassMap(soul::ast::re::LexerContext& lexerContext, const std::stri
     if (file->Kind() == soul::ast::slg::FileKind::lexerFile)
     {
         soul::ast::slg::LexerFile* lexerFile = static_cast<soul::ast::slg::LexerFile*>(file);
-        soul::ast::spg::ExportModule* mod = lexerFile->GetExportModule();
+        soul::ast::common::ExportModule* mod = lexerFile->GetExportModule();
         moduleName = mod->ModuleName();
     }
     else
@@ -258,8 +263,8 @@ void CompressClassMap(soul::ast::re::LexerContext& lexerContext, const std::stri
         throw std::runtime_error("lexer file expected");
     }
     std::string classMapName = moduleName + ".classmap";
-    MakeCompressedClassMap(root, classMapName);
-    MakeResourceFile(root, classMapName);
+    MakeCompressedClassMap(root, classMapName, verbose);
+    MakeResourceFile(root, classMapName, verbose);
 }
 
 void MakeMasterNfa(soul::ast::re::LexerContext& lexerContext)
@@ -361,7 +366,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     if (file->Kind() == soul::ast::slg::FileKind::lexerFile)
     {
         lexerFile = static_cast<soul::ast::slg::LexerFile*>(file);
-        soul::ast::spg::ExportModule* mod = lexerFile->GetExportModule();
+        soul::ast::common::ExportModule* mod = lexerFile->GetExportModule();
         moduleName = mod->ModuleName();
     }
     else
@@ -391,13 +396,13 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
         soul::ast::slg::Collection* collection = slgFile->GetCollection(imprt->ModuleName());
         if (collection->Kind() == soul::ast::slg::CollectionKind::tokenCollection)
         {
-            interfaceFormatter.WriteLine("using namespace " + soul::ast::spg::ToNamespaceName(collection->Name()) + ";");
-            sourceFormatter.WriteLine("using namespace " + soul::ast::spg::ToNamespaceName(collection->Name()) + ";");
+            interfaceFormatter.WriteLine("using namespace " + soul::ast::common::ToNamespaceName(collection->Name()) + ";");
+            sourceFormatter.WriteLine("using namespace " + soul::ast::common::ToNamespaceName(collection->Name()) + ";");
         }
     }
     interfaceFormatter.WriteLine();
     sourceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("export namespace " + soul::ast::spg::ToNamespaceName(moduleName) + " {");
+    interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("std::mutex& MakeLexerMtx();");
     interfaceFormatter.WriteLine();
@@ -409,7 +414,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("soul::ast::slg::TokenCollection* GetTokens();");
     interfaceFormatter.WriteLine();
-    sourceFormatter.WriteLine("namespace " + soul::ast::spg::ToNamespaceName(moduleName) + " {");
+    sourceFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     sourceFormatter.WriteLine();
     sourceFormatter.WriteLine("soul::ast::slg::TokenCollection* GetTokens()");
     sourceFormatter.WriteLine("{");
@@ -435,6 +440,8 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("struct " + lexer->Name());
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
+    interfaceFormatter.WriteLine("using Variables = " + lexer->VariableClassName() + ";");
+    interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lxr)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
@@ -549,11 +556,19 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
                 }
                 if (visitor.HasVars())
                 {
+/*
                     soul::ast::cpp::DeclarationStatementNode* declarationStmt = new soul::ast::cpp::DeclarationStatementNode(
                         new soul::ast::cpp::InitDeclaratorNode(lexer->VariableClassName() + "* vars",
                             new soul::ast::cpp::InitializerNode(
                                 new soul::ast::cpp::AssignInitNode(
                                     new soul::ast::cpp::IdExprNode("static_cast<" + lexer->VariableClassName() + "*>(lxr.GetVariables())")))));
+                    rule->Code()->InsertFront(declarationStmt);
+*/
+                    soul::ast::cpp::DeclarationStatementNode* declarationStmt = new soul::ast::cpp::DeclarationStatementNode(
+                        new soul::ast::cpp::InitDeclaratorNode("auto vars",
+                            new soul::ast::cpp::InitializerNode(
+                                new soul::ast::cpp::AssignInitNode(
+                                    new soul::ast::cpp::IdExprNode("static_cast<Variables*>(lxr.GetVariables())")))));
                     rule->Code()->InsertFront(declarationStmt);
                 }
             }
@@ -610,7 +625,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("} // namespace " + soul::ast::spg::ToNamespaceName(moduleName));
+    interfaceFormatter.WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(moduleName));
     if (verbose)
     {
         std::cout << "==> " << interfaceFilePath << std::endl;
@@ -761,7 +776,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     sourceFormatter.WriteLine("}");
 
     sourceFormatter.WriteLine();
-    sourceFormatter.WriteLine("} // namespace " + soul::ast::spg::ToNamespaceName(moduleName));
+    sourceFormatter.WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(moduleName));
 
     if (verbose)
     {
@@ -820,8 +835,8 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, soul::ast::slg::LexerFile* 
     MakeCanonicalClasses(lexerContext);
     MakeClassPartition(lexerContext);
     std::string root = util::Path::GetDirectoryName(slgFile->FilePath());
-    MakeClassMap(lexerContext, root);
-    CompressClassMap(lexerContext, root);
+    MakeClassMap(lexerContext, root, verbose);
+    CompressClassMap(lexerContext, root, verbose);
     MakeMasterNfa(lexerContext);
     MakeDfa(lexerContext);
     WriteLexer(lexerContext, slgFile, root, verbose);
@@ -829,6 +844,10 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, soul::ast::slg::LexerFile* 
 
 void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
 {
+    if (verbose)
+    {
+        std::cout << "generating lexers for project '" << slgFile->ProjectName() << "'..." << std::endl;
+    }
     std::string filePath = util::GetFullPath(slgFile->FilePath());
     std::string dir = util::Path::GetDirectoryName(filePath);
     for (const auto& declaration : slgFile->Declarations())
@@ -885,6 +904,10 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
     for (const auto& lexerFile : slgFile->LexerFiles())
     {
         GenerateLexer(slgFile, lexerFile.get(), verbose);
+    }
+    if (verbose)
+    {
+        std::cout << "lexers for project '" << slgFile->ProjectName() << "' generated successfully." << std::endl;
     }
 }
 

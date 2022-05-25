@@ -11,7 +11,7 @@ namespace soul::slg {
 
 using namespace util;
 
-void MakeCompressedClassMap(const std::string& root, const std::string& classMapName)
+void MakeCompressedClassMap(const std::string& root, const std::string& classMapName, bool verbose)
 {
     std::string classMapFileName = Path::Combine(root, classMapName);
     std::string compressedClassMapFileName = Path::Combine(root, classMapName + ".compressed");
@@ -29,15 +29,23 @@ void MakeCompressedClassMap(const std::string& root, const std::string& classMap
         uint32_t cls = reader.ReadInt();
         writer.Write(cls);
     }
+    if (verbose)
+    {
+        std::cout << "==> " << compressedClassMapFileName << std::endl;
+    }
 }
 
-void MakeResourceFile(const std::string& root, const std::string& classMapName)
+void MakeResourceFile(const std::string& root, const std::string& classMapName, bool verbose)
 {
     std::string resourceFileName = Path::Combine(root, classMapName + ".rc");
     std::string compressedClassMapFileName = Path::Combine(root, classMapName + ".compressed");
     std::ofstream resourceFile(resourceFileName);
     CodeFormatter formatter(resourceFile);
     formatter.WriteLine(classMapName + " RCDATA \"" + compressedClassMapFileName + "\"");
+    if (verbose)
+    {
+        std::cout << "==> " << resourceFileName << std::endl;
+    }
 }
 
 } // namespace soul::slg
