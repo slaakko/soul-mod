@@ -43,19 +43,19 @@ parser StatementParser
         ;
 
     LabeledStatement(var std::string label) : soul::ast::cpp::StatementNode*
-        ::= ID{ label = util::ToUtf8(lexer.GetToken(pos).ToString()); } COLON Statement:stmt1!{ return new soul::ast::cpp::LabeledStatementNode(label, stmt1); }
-        |   CASE ConstantExpression:caseExpr! COLON! Statement:stmt2!{ return new soul::ast::cpp::CaseStatementNode(caseExpr, stmt2); }
-        |   DEFAULT COLON! Statement:stmt3!{ return new soul::ast::cpp::DefaultStatementNode(stmt3); }
+        ::= ID{ label = util::ToUtf8(lexer.GetToken(pos).ToString()); } COLON Statement:stmt1!{ return new soul::ast::cpp::LabeledStatementNode(lexer.GetSourcePos(pos), label, stmt1); }
+        |   CASE ConstantExpression:caseExpr! COLON! Statement:stmt2!{ return new soul::ast::cpp::CaseStatementNode(lexer.GetSourcePos(pos), caseExpr, stmt2); }
+        |   DEFAULT COLON! Statement:stmt3!{ return new soul::ast::cpp::DefaultStatementNode(lexer.GetSourcePos(pos), stmt3); }
         ;
 
     EmptyStatement : soul::ast::cpp::StatementNode*
-        ::= SEMICOLON{ return new soul::ast::cpp::EmptyStatementNode(); }
+        ::= SEMICOLON{ return new soul::ast::cpp::EmptyStatementNode(lexer.GetSourcePos(pos)); }
         ;
 
     CompoundStatement(var std::unique_ptr<soul::ast::cpp::CompoundStatementNode> compoundStatement) : soul::ast::cpp::CompoundStatementNode*
         ::= 
         (
-            LBRACE{ compoundStatement.reset(new soul::ast::cpp::CompoundStatementNode()); }
+            LBRACE{ compoundStatement.reset(new soul::ast::cpp::CompoundStatementNode(lexer.GetSourcePos(pos))); }
             (Statement:stmt{ compoundStatement->Add(stmt); })*
             RBRACE!
         )
@@ -75,7 +75,7 @@ parser StatementParser
             IF LPAREN! Condition:cond! RPAREN! Statement:thenS! (ELSE Statement:elseS)?
         )
         {
-            return new soul::ast::cpp::IfStatementNode(cond, thenS, elseS);
+            return new soul::ast::cpp::IfStatementNode(lexer.GetSourcePos(pos), cond, thenS, elseS);
         }
         ;
 
@@ -85,7 +85,7 @@ parser StatementParser
             SWITCH LPAREN! Condition:cond! RPAREN! Statement:stmt!
         )
         {
-            return new soul::ast::cpp::SwitchStatementNode(cond, stmt);
+            return new soul::ast::cpp::SwitchStatementNode(lexer.GetSourcePos(pos), cond, stmt);
         }
         ;
 
@@ -102,7 +102,7 @@ parser StatementParser
             WHILE LPAREN! Condition:cond! RPAREN! Statement:stmt!
         )
         {
-            return new soul::ast::cpp::WhileStatementNode(cond, stmt);
+            return new soul::ast::cpp::WhileStatementNode(lexer.GetSourcePos(pos), cond, stmt);
         }
         ;
 
@@ -112,7 +112,7 @@ parser StatementParser
             DO Statement:stmt! WHILE! LPAREN! Expression:cond! RPAREN! SEMICOLON!
         )
         {
-            return new soul::ast::cpp::DoStatementNode(cond, stmt);
+            return new soul::ast::cpp::DoStatementNode(lexer.GetSourcePos(pos), cond, stmt);
         }
         ;
 
@@ -122,14 +122,14 @@ parser StatementParser
             FOR LPAREN ForRangeDeclaration:forRangeDeclaration COLON Expression:container! RPAREN! Statement:stmt!
         )
         {
-            return new soul::ast::cpp::RangeForStatementNode(forRangeDeclaration, container, stmt);
+            return new soul::ast::cpp::RangeForStatementNode(lexer.GetSourcePos(pos), forRangeDeclaration, container, stmt);
         }
         ;
 
     ForRangeDeclaration(var std::unique_ptr<soul::ast::cpp::ForRangeDeclarationNode> forRangeDeclaration) : soul::ast::cpp::ForRangeDeclarationNode*
         ::= 
         (
-            empty{ forRangeDeclaration.reset(new soul::ast::cpp::ForRangeDeclarationNode()); }
+            empty{ forRangeDeclaration.reset(new soul::ast::cpp::ForRangeDeclarationNode(lexer.GetSourcePos(pos))); }
             TypeSpecifierSeq(forRangeDeclaration->TypeId()):typeSpecifierSeq Declarator:declarator{ forRangeDeclaration->SetDeclarator(declarator); }
         )
         {
@@ -140,7 +140,7 @@ parser StatementParser
     ForStatement : soul::ast::cpp::StatementNode*
         ::= FOR LPAREN ForInitStatement:forInitStatement Condition:cond? SEMICOLON Expression:loopExpr? RPAREN! Statement:stmt!
         {
-            return new soul::ast::cpp::ForStatementNode(forInitStatement, cond, loopExpr, stmt);
+            return new soul::ast::cpp::ForStatementNode(lexer.GetSourcePos(pos), forInitStatement, cond, loopExpr, stmt);
         }
         ;
 
@@ -163,7 +163,7 @@ parser StatementParser
             BREAK SEMICOLON!
         )
         { 
-            return new soul::ast::cpp::BreakStatementNode(); 
+            return new soul::ast::cpp::BreakStatementNode(lexer.GetSourcePos(pos)); 
         }
         ;
 
@@ -173,7 +173,7 @@ parser StatementParser
             CONTINUE SEMICOLON!
         )
         {
-            return new soul::ast::cpp::ContinueStatementNode(); 
+            return new soul::ast::cpp::ContinueStatementNode(lexer.GetSourcePos(pos)); 
         }
         ;
 
@@ -183,7 +183,7 @@ parser StatementParser
             RETURN Expression:returnValue? SEMICOLON!
         )
         { 
-            return new soul::ast::cpp::ReturnStatementNode(returnValue); 
+            return new soul::ast::cpp::ReturnStatementNode(lexer.GetSourcePos(pos), returnValue); 
         }
         ;
 
@@ -193,7 +193,7 @@ parser StatementParser
             GOTO ID!{ target = util::ToUtf8(lexer.GetToken(pos).ToString()); } SEMICOLON!
         )
         { 
-            return new soul::ast::cpp::GotoStatementNode(target); 
+            return new soul::ast::cpp::GotoStatementNode(lexer.GetSourcePos(pos), target); 
         }
         ;
 
@@ -203,13 +203,16 @@ parser StatementParser
             BlockDeclaration:declaration
         )
         { 
-            return new soul::ast::cpp::DeclarationStatementNode(declaration); 
+            return new soul::ast::cpp::DeclarationStatementNode(lexer.GetSourcePos(pos), declaration); 
         }
         ;
 
     Condition : soul::ast::cpp::Node*
         ::= 
-        (   TypeId:typeId Declarator:declarator ASSIGN AssignmentExpression:assignmentExpr{ return new soul::ast::cpp::ConditionWithDeclaratorNode(typeId, declarator, assignmentExpr); }
+        (   TypeId:typeId Declarator:declarator ASSIGN AssignmentExpression:assignmentExpr
+            { 
+                return new soul::ast::cpp::ConditionWithDeclaratorNode(lexer.GetSourcePos(pos), typeId, declarator, assignmentExpr); 
+            }
         |   Expression:expr{ return expr; }
         )
         ;
@@ -218,7 +221,7 @@ parser StatementParser
         ::=
         (   
             TRY 
-            CompoundStatement:tryBlock{ tryStatement.reset(new soul::ast::cpp::TryStatementNode(tryBlock)); }
+            CompoundStatement:tryBlock{ tryStatement.reset(new soul::ast::cpp::TryStatementNode(lexer.GetSourcePos(pos), tryBlock)); }
             HandlerSeq(tryStatement.get()):handlerSeq!
         )
         {
@@ -239,12 +242,12 @@ parser StatementParser
             CATCH LPAREN! ExceptionDeclaration:exceptionDeclaration! RPAREN! CompoundStatement:catchBlock!
         )
         {
-            return new soul::ast::cpp::HandlerNode(exceptionDeclaration, catchBlock);
+            return new soul::ast::cpp::HandlerNode(lexer.GetSourcePos(pos), exceptionDeclaration, catchBlock);
         }
         ;
 
     ExceptionDeclaration(var std::unique_ptr<soul::ast::cpp::ExceptionDeclarationNode> exceptionDeclaration) : soul::ast::cpp::ExceptionDeclarationNode*
-        ::= empty{ exceptionDeclaration.reset(new soul::ast::cpp::ExceptionDeclarationNode()); }
+        ::= empty{ exceptionDeclaration.reset(new soul::ast::cpp::ExceptionDeclarationNode(lexer.GetSourcePos(pos))); }
         (   TypeSpecifierSeq(exceptionDeclaration->TypeId()):typeSpecifierSeq
             (   Declarator:declarator{ exceptionDeclaration->TypeId()->SetDeclarator(declarator); }
             |   AbstractDeclarator:abstractDeclarator{ exceptionDeclaration->TypeId()->SetDeclarator(abstractDeclarator); }
@@ -262,7 +265,7 @@ parser StatementParser
             Expression:expr SEMICOLON!
         )
         { 
-            return new soul::ast::cpp::ExpressionStatementNode(expr); 
+            return new soul::ast::cpp::ExpressionStatementNode(lexer.GetSourcePos(pos), expr); 
         }
         ;
 }

@@ -18,6 +18,7 @@ export module soul.spg.parser.file.parser;
 [implementation]import soul.ast.cpp;
 [implementation]import soul.spg.parsing.util;
 [implementation]import soul.spg.token.parser;
+[implementation]import soul.spg.error;
 
 parser ParserFileParser
 {
@@ -40,49 +41,55 @@ parser ParserFileParser
             empty{ parserFile.reset(new soul::ast::spg::ParserFile(lexer.FileName())); }
             ExportModule:exportModuleDeclaration{ parserFile->SetExportModule(exportModuleDeclaration); }
             (Import:importDeclaration{ parserFile->AddImport(importDeclaration); })*
-            (Parser:par{ parserFile->AddParser(par); })*
+            (Parser:parser{ parserFile->AddParser(parser); })*
         )
         {
             return parserFile.release();
         }
         ;
 
-    Parser(var std::unique_ptr<soul::ast::spg::GrammarParser> par) : soul::ast::spg::GrammarParser*
+    Parser(var std::unique_ptr<soul::ast::spg::GrammarParser> parser) : soul::ast::spg::GrammarParser*
         ::= 
         (
-            ParserKeyword:parserKeyword ID{ par.reset(new soul::ast::spg::GrammarParser(util::ToUtf8(lexer.GetToken(pos).ToString()))); }
+            ParserKeyword:parserKeyword ID{ parser.reset(new soul::ast::spg::GrammarParser(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString()))); }
             LBRACE! 
-            ParserStatement(par.get()):statement*
+            ParserStatement(parser.get()):statement*
             RBRACE!
         )
         {
-            return par.release();
+            return parser.release();
         }
         ;
 
-    ParserStatement(soul::ast::spg::GrammarParser* par)
-        ::= LexerStatement(par):lexerStatement
-        |   MainStatement(par):mainStatement
-        |   UsingStatement(par):usingStatement
-        |   RuleStatement(par):ruleStatement
+    ParserStatement(soul::ast::spg::GrammarParser* parser)
+        ::= LexerStatement(parser):lexerStatement
+        |   MainStatement(parser):mainStatement
+        |   UsingStatement(parser):usingStatement
+        |   RuleStatement(parser):ruleStatement
         ;
 
-    LexerStatement(soul::ast::spg::GrammarParser* par)
-        ::= LexerKeyword:lexerKeyword TypeId:lexerTypeId! SEMICOLON!{ par->AddLexer(lexerTypeId); }
+    LexerStatement(soul::ast::spg::GrammarParser* parser)
+        ::= LexerKeyword:lexerKeyword TypeId:lexerTypeId! SEMICOLON!{ parser->AddLexer(lexerTypeId); }
         ;
 
-    MainStatement(soul::ast::spg::GrammarParser* par)
-        ::= MAIN SEMICOLON!{ par->SetMain(); }
+    MainStatement(soul::ast::spg::GrammarParser* parser)
+        ::= MAIN SEMICOLON!{ parser->SetMain(); }
         ;
 
-    UsingStatement(soul::ast::spg::GrammarParser* par)
-        ::= USING QualifiedId:parserRuleId! SEMICOLON!{ par->AddUsing(parserRuleId); }
-        ;
-
-    RuleStatement(soul::ast::spg::GrammarParser* par, var std::unique_ptr<soul::ast::spg::RuleParser> rule)
+    UsingStatement(soul::ast::spg::GrammarParser* parser)
         ::= 
         (
-            ID{ rule.reset(new soul::ast::spg::RuleParser(util::ToUtf8(lexer.GetToken(pos).ToString()))); }
+            USING QualifiedId:parserRuleId! SEMICOLON!
+        )
+        { 
+            parser->AddUsing(lexer.GetSourcePos(pos), parserRuleId); 
+        }
+        ;
+
+    RuleStatement(soul::ast::spg::GrammarParser* parser, var std::unique_ptr<soul::ast::spg::RuleParser> rule)
+        ::= 
+        (
+            ID{ rule.reset(new soul::ast::spg::RuleParser(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString()))); }
             ParametersAndVariables(rule.get()):paramsAndVars?
             ReturnType:returnType?
             PRODUCES
@@ -92,7 +99,12 @@ parser ParserFileParser
         {
             rule->SetDefinition(definition);
             rule->SetReturnType(returnType);
-            par->AddRule(rule.release());
+            soul::ast::spg::RuleParser* rulePtr = rule.get();
+            bool succeeded = parser->AddRule(rule.release());
+            if (!succeeded)
+            {
+                soul::spg::error::ThrowRuleNameNotUnique(lexer.FileName(), rulePtr);
+            }
         }
         ;
 
@@ -101,8 +113,8 @@ parser ParserFileParser
         ;
 
     ParamOrVariable : soul::ast::spg::ParamVar*
-        ::= VAR TypeId:varType Declarator:varName{ return new soul::ast::spg::Variable(varType, varName); }
-        |   TypeId:paramType Declarator:paramName{ return new soul::ast::spg::Parameter(paramType, paramName); }
+        ::= VAR TypeId:varType Declarator:varName{ return new soul::ast::spg::Variable(lexer.GetSourcePos(pos), varType, varName); }
+        |   TypeId:paramType Declarator:paramName{ return new soul::ast::spg::Parameter(lexer.GetSourcePos(pos), paramType, paramName); }
         ;
 
     ReturnType : soul::ast::cpp::TypeIdNode*
@@ -118,7 +130,7 @@ parser ParserFileParser
         (
             Sequence:left{ value.reset(left); } 
             (
-                PIPE Sequence:right!{ value.reset(new soul::ast::spg::AlternativeParser(value.release(), right)); }
+                PIPE Sequence:right!{ value.reset(new soul::ast::spg::AlternativeParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )*
         )
         {
@@ -131,7 +143,7 @@ parser ParserFileParser
         (
             Difference:left{ value.reset(left); }
             (
-                Difference:right{ value.reset(new soul::ast::spg::SequenceParser(value.release(), right)); }
+                Difference:right{ value.reset(new soul::ast::spg::SequenceParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )*
         )
         {
@@ -144,7 +156,7 @@ parser ParserFileParser
         (
             List:left{ value.reset(left); }
             (
-                MINUS List:right!{ value.reset(new soul::ast::spg::DifferenceParser(value.release(), right)); }
+                MINUS List:right!{ value.reset(new soul::ast::spg::DifferenceParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )*
         )
         {
@@ -157,7 +169,7 @@ parser ParserFileParser
         (
             Prefix:left{ value.reset(left); }
             (
-                REM Prefix:right!{ value.reset(new soul::ast::spg::ListParser(value.release(), right)); }
+                REM Prefix:right!{ value.reset(new soul::ast::spg::ListParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )?
         )
         {
@@ -166,16 +178,16 @@ parser ParserFileParser
         ;
 
     Prefix : soul::ast::spg::Parser*
-        ::= AMP Postfix:lookaheadp{ return new soul::ast::spg::LookaheadParser(lookaheadp); }
+        ::= AMP Postfix:lookaheadp{ return new soul::ast::spg::LookaheadParser(lexer.GetSourcePos(pos), lookaheadp); }
         |   Postfix:postfix{ return postfix; }
         ;
 
     Postfix(var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
         ::= 
         (   Primary:primary{ value.reset(primary); }
-            (   STAR{ value.reset(new soul::ast::spg::KleeneParser(value.release())); }
-            |   PLUS{ value.reset(new soul::ast::spg::PositiveParser(value.release())); }
-            |   QUEST{ value.reset(new soul::ast::spg::OptionalParser(value.release())); }
+            (   STAR{ value.reset(new soul::ast::spg::KleeneParser(lexer.GetSourcePos(pos), value.release())); }
+            |   PLUS{ value.reset(new soul::ast::spg::PositiveParser(lexer.GetSourcePos(pos), value.release())); }
+            |   QUEST{ value.reset(new soul::ast::spg::OptionalParser(lexer.GetSourcePos(pos), value.release())); }
             )?
         )
         {
@@ -191,7 +203,7 @@ parser ParserFileParser
             |   Grouping:grouping{ value.reset(grouping); }
             )
             (
-                EXCLAMATION{ value.reset(new soul::ast::spg::ExpectationParser(value.release())); }
+                EXCLAMATION{ value.reset(new soul::ast::spg::ExpectationParser(lexer.GetSourcePos(pos), value.release())); }
             )?
             (
                 (
@@ -201,7 +213,7 @@ parser ParserFileParser
                     )?
                 )
                 {
-                    value.reset(new soul::ast::spg::ActionParser(value.release(), successCode, failureCode));
+                    value.reset(new soul::ast::spg::ActionParser(lexer.GetSourcePos(pos), value.release(), successCode, failureCode));
                 }
             )?
         )
@@ -214,7 +226,11 @@ parser ParserFileParser
         ::= 
         (
             Nonterminal:nt{ ruleName = nt; nonterminalPos = pos; }
-            (   LPAREN{ pass = soul::lexer::NoWhiteSpaceBetweenTokens(lexer.GetToken(nonterminalPos), lexer.GetToken(pos)); args.reset(new soul::ast::cpp::ExprListNode()); }
+            (   LPAREN
+                { 
+                    pass = soul::lexer::NoWhiteSpaceBetweenTokens(lexer.GetToken(nonterminalPos), lexer.GetToken(pos)); 
+                    args.reset(new soul::ast::cpp::ExprListNode(lexer.GetSourcePos(pos))); 
+                }
                 ExpressionList(args.get()):arguments 
                 RPAREN
             )? 
@@ -222,7 +238,7 @@ parser ParserFileParser
             ID!
             {
                 std::string instanceName = util::ToUtf8(lexer.GetToken(pos).ToString());
-                return new soul::ast::spg::NonterminalParser(ruleName, instanceName, args.release());
+                return new soul::ast::spg::NonterminalParser(lexer.GetSourcePos(pos), ruleName, instanceName, args.release());
             }
         )
         ;
@@ -230,20 +246,23 @@ parser ParserFileParser
     Nonterminal : std::string
         ::= 
         (
-            ID{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+            ID
         )
+        { 
+            return util::ToUtf8(lexer.GetToken(pos).ToString()); 
+        }
         ;
 
     Primitive : soul::ast::spg::Parser*
         ::= 
-        (   EMPTY{ return new soul::ast::spg::EmptyParser(); }
-        |   ANY{ return new soul::ast::spg::AnyParser(); }
-        |   ID{ return new soul::ast::spg::TokenParser(util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   CHAR_LITERAL{ return new soul::ast::spg::CharParser(soul::spg::token::parser::ParseCharLiteral(lexer.FileName(), lexer.GetToken(pos))); }
+        (   EMPTY{ return new soul::ast::spg::EmptyParser(lexer.GetSourcePos(pos)); }
+        |   ANY{ return new soul::ast::spg::AnyParser(lexer.GetSourcePos(pos)); }
+        |   ID{ return new soul::ast::spg::TokenParser(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   CHAR_LITERAL{ return new soul::ast::spg::CharParser(lexer.GetSourcePos(pos), soul::spg::token::parser::ParseCharLiteral(lexer.FileName(), lexer.GetToken(pos))); }
         |   STRING_LITERAL
             { 
                 std::u32string str = soul::spg::token::parser::ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)); 
-                return soul::spg::parsing::util::MakeParserFromStrLiteral(str); 
+                return soul::spg::parsing::util::MakeParserFromStrLiteral(lexer.GetSourcePos(pos), str); 
             }
         )
         ;
@@ -256,7 +275,7 @@ parser ParserFileParser
             RPAREN!
         )
         {
-            return new soul::ast::spg::GroupingParser(alt);
+            return new soul::ast::spg::GroupingParser(lexer.GetSourcePos(pos), alt);
         }
         ;
 }

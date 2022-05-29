@@ -17,12 +17,12 @@ parser LiteralParser
     lexer soul::lex::spg::SpgLexer<char32_t>;
 
     Literal : soul::ast::cpp::LiteralNode*
-        ::= INTEGER_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   FLOATING_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   CHAR_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   STRING_LITERAL{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   TRUE{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   FALSE { return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   NULLPTR{ return new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        ::= INTEGER_LITERAL{ return new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   FLOATING_LITERAL{ return new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   CHAR_LITERAL{ return new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   STRING_LITERAL{ return new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   TRUE{ return new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   FALSE { return new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   NULLPTR{ return new soul::ast::cpp::LiteralNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
         ;
 }

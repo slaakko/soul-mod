@@ -540,7 +540,11 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     for (const auto& rule : lexer->Rules())
     {
         interfaceFormatter.WriteLine("case " + std::to_string(rule->Index()) + ":");
-        rule->Code()->InsertFront(new soul::ast::cpp::ExpressionStatementNode(new soul::ast::cpp::InvokeNode(new soul::ast::cpp::IdExprNode("lexer.Retract"))));
+        soul::ast::SourcePos sourcePos; // todo
+        rule->Code()->InsertFront(
+            new soul::ast::cpp::ExpressionStatementNode(sourcePos, 
+                new soul::ast::cpp::InvokeNode(sourcePos, 
+                    new soul::ast::cpp::IdExprNode(sourcePos, "lexer.Retract"))));
         if (rule->Action() != -1)
         {
             soul::ast::slg::Action* action = lexer->GetActions().GetAction(rule->Action());
@@ -556,11 +560,11 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
                 }
                 if (visitor.HasVars())
                 {
-                    soul::ast::cpp::DeclarationStatementNode* declarationStmt = new soul::ast::cpp::DeclarationStatementNode(
-                        new soul::ast::cpp::InitDeclaratorNode("auto vars",
-                            new soul::ast::cpp::InitializerNode(
-                                new soul::ast::cpp::AssignInitNode(
-                                    new soul::ast::cpp::IdExprNode("static_cast<Variables*>(lexer.GetVariables())")))));
+                    soul::ast::cpp::DeclarationStatementNode* declarationStmt = new soul::ast::cpp::DeclarationStatementNode(sourcePos,
+                        new soul::ast::cpp::InitDeclaratorNode(sourcePos, "auto vars",
+                            new soul::ast::cpp::InitializerNode(sourcePos,
+                                new soul::ast::cpp::AssignInitNode(sourcePos,
+                                    new soul::ast::cpp::IdExprNode(sourcePos, "static_cast<Variables*>(lexer.GetVariables())")))));
                     rule->Code()->InsertFront(declarationStmt);
                 }
             }
@@ -569,7 +573,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
                 throw std::runtime_error("action " + std::to_string(rule->Action()) + " not found");
             }
         }
-        rule->Code()->Add(new soul::ast::cpp::BreakStatementNode());
+        rule->Code()->Add(new soul::ast::cpp::BreakStatementNode(sourcePos));
         rule->Code()->Write(interfaceFormatter);
     }
     interfaceFormatter.DecIndent();

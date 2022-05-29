@@ -159,6 +159,8 @@
     <ClCompile Include="code_generator.ixx" />
     <ClCompile Include="code_modifier.cpp" />
     <ClCompile Include="code_modifier.ixx" />
+    <ClCompile Include="error.cpp" />
+    <ClCompile Include="error.ixx" />
     <ClCompile Include="file_parsers.cpp" />
     <ClCompile Include="file_parsers.ixx" />
     <ClCompile Include="linking.cpp" />

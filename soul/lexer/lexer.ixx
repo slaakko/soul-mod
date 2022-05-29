@@ -5,6 +5,7 @@
 
 export module soul.lexer;
 
+import soul.ast.source.pos;
 export import soul.lexer.concepts;
 export import soul.lexer.lexeme;
 export import soul.lexer.token;
@@ -13,7 +14,6 @@ export import soul.lexer.base;
 export import soul.lexer.classmap;
 export import soul.lexer.variables;
 export import soul.lexer.error;
-export import soul.lexer.source.pos;
 export import soul.lexer.parsing.log;
 export import soul.lexer.xml.parsing.log;
 export import soul.lexer.file.map;
@@ -284,7 +284,7 @@ public:
     {
         return pos >> 32;
     }
-    SourcePos GetSourcePos(int64_t pos) const
+    soul::ast::SourcePos GetSourcePos(int64_t pos) const
     {
         const Char* s = start;
         int line = GetLine(pos);
@@ -294,7 +294,7 @@ public:
         }
         Token token = GetToken(pos);
         int col = static_cast<int>(token.match.begin - s + 1);
-        return SourcePos(pos, file, line, col);
+        return soul::ast::SourcePos(pos, file, line, col);
     }
     std::string ErrorLines(int64_t pos) const
     {
@@ -314,7 +314,7 @@ public:
     }
     void ThrowExpectationFailure(int64_t pos, const std::string& name)
     {
-        SourcePos sourcePos = GetSourcePos(pos);
+        soul::ast::SourcePos sourcePos = GetSourcePos(pos);
         throw ParsingException("parsing error at '" + fileName + ":" + std::to_string(sourcePos.line) + "': " + name + " expected:\n" + ErrorLines(pos), fileName, sourcePos);
     }
     std::string GetParserStateStr() const
@@ -343,7 +343,7 @@ public:
     }
     void ThrowFarthestError()
     {
-        SourcePos sourcePos = GetSourcePos(farthestPos);
+        soul::ast::SourcePos sourcePos = GetSourcePos(farthestPos);
         throw ParsingException(GetError(farthestPos), fileName, sourcePos);
     }
     void SetLog(ParsingLog* log_) 

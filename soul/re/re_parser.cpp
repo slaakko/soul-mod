@@ -1226,7 +1226,6 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 7);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case LPAREN:

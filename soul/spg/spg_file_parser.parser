@@ -43,7 +43,7 @@ parser SpgFileParser
             (EXTERN{ external = true; } | empty{ external = false; }) ParserKeyword:parserKeyword FilePath:filePath! SEMICOLON!
         )
         {
-            return new soul::ast::spg::ParserFileDeclaration(filePath, external);
+            return new soul::ast::spg::ParserFileDeclaration(lexer.GetSourcePos(pos), filePath, external);
         }
         ;
 

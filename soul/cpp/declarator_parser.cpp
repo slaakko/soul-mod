@@ -54,7 +54,7 @@ soul::parser::Match DeclaratorParser<Lexer>::InitDeclaratorList(Lexer& lexer)
                     soul::parser::Match match(true);
                     if (match.hit)
                     {
-                        initDeclaratorList.reset(new soul::ast::cpp::InitDeclaratorListNode);
+                        initDeclaratorList.reset(new soul::ast::cpp::InitDeclaratorListNode(lexer.GetSourcePos(pos)));
                     }
                     *parentMatch3 = match;
                 }
@@ -239,7 +239,7 @@ soul::parser::Match DeclaratorParser<Lexer>::InitDeclarator(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitDeclarator");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::InitDeclaratorNode(declarator->value, initializer.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::InitDeclaratorNode(lexer.GetSourcePos(pos), declarator->value, initializer.release()));
             }
         }
         *parentMatch0 = match;
@@ -753,7 +753,7 @@ soul::parser::Match DeclaratorParser<Lexer>::TypeId(Lexer& lexer)
             soul::parser::Match match(true);
             if (match.hit)
             {
-                typeId.reset(new soul::ast::cpp::TypeIdNode);
+                typeId.reset(new soul::ast::cpp::TypeIdNode(lexer.GetSourcePos(pos)));
             }
             *parentMatch1 = match;
         }
@@ -906,7 +906,7 @@ soul::parser::Match DeclaratorParser<Lexer>::Type(Lexer& lexer)
             soul::parser::Match match(true);
             if (match.hit)
             {
-                type.reset(new soul::ast::cpp::TypeNode);
+                type.reset(new soul::ast::cpp::TypeNode(lexer.GetSourcePos(pos)));
             }
             *parentMatch1 = match;
         }
@@ -1994,7 +1994,7 @@ soul::parser::Match DeclaratorParser<Lexer>::Initializer(Lexer& lexer)
                             initializerClause.reset(static_cast<soul::ast::cpp::AssignInitNode*>(match.value));
                             if (match.hit)
                             {
-                                initializer.reset(new soul::ast::cpp::InitializerNode(initializerClause.release()));
+                                initializer.reset(new soul::ast::cpp::InitializerNode(lexer.GetSourcePos(pos), initializerClause.release()));
                             }
                             *parentMatch5 = match;
                         }
@@ -2027,7 +2027,7 @@ soul::parser::Match DeclaratorParser<Lexer>::Initializer(Lexer& lexer)
                                     }
                                     if (match.hit)
                                     {
-                                        initializer.reset(new soul::ast::cpp::InitializerNode(nullptr));
+                                        initializer.reset(new soul::ast::cpp::InitializerNode(lexer.GetSourcePos(pos), nullptr));
                                     }
                                     *parentMatch9 = match;
                                 }
@@ -2130,7 +2130,7 @@ soul::parser::Match DeclaratorParser<Lexer>::InitializerClause(Lexer& lexer)
                         expr.reset(static_cast<soul::ast::cpp::Node*>(match.value));
                         if (match.hit)
                         {
-                            assignInit.reset(new soul::ast::cpp::AssignInitNode(expr.release()));
+                            assignInit.reset(new soul::ast::cpp::AssignInitNode(lexer.GetSourcePos(pos), expr.release()));
                         }
                         *parentMatch4 = match;
                     }
@@ -2159,7 +2159,7 @@ soul::parser::Match DeclaratorParser<Lexer>::InitializerClause(Lexer& lexer)
                                         }
                                         if (match.hit)
                                         {
-                                            assignInit.reset(new soul::ast::cpp::AssignInitNode(nullptr));
+                                            assignInit.reset(new soul::ast::cpp::AssignInitNode(lexer.GetSourcePos(pos), nullptr));
                                         }
                                         *parentMatch8 = match;
                                     }
@@ -2232,7 +2232,7 @@ soul::parser::Match DeclaratorParser<Lexer>::InitializerClause(Lexer& lexer)
                                     }
                                     if (match.hit)
                                     {
-                                        assignInit.reset(new soul::ast::cpp::AssignInitNode(nullptr));
+                                        assignInit.reset(new soul::ast::cpp::AssignInitNode(lexer.GetSourcePos(pos), nullptr));
                                     }
                                     *parentMatch14 = match;
                                 }

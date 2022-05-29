@@ -34,7 +34,7 @@ parser ExpressionParser
         (
             AssignmentExpression:left{ expr.reset(left); } 
             (
-                COMMA AssignmentExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::comma, expr.release(), right)); }
+                COMMA AssignmentExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::comma, expr.release(), right)); }
             )*
         )
         {
@@ -47,7 +47,7 @@ parser ExpressionParser
         ;
 
     AssignmentExpression : soul::ast::cpp::Node*
-        ::= LogicalOrExpression:left AssignmentOp:op AssignmentExpression:right!{ return new soul::ast::cpp::BinaryOpExprNode(op, left, right); }
+        ::= LogicalOrExpression:left AssignmentOp:op AssignmentExpression:right!{ return new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, left, right); }
         |   ConditionalExpression:conditionalExpr{ return conditionalExpr; }
         |   ThrowExpression:throwExpr{ return throwExpr; }
         ;
@@ -70,7 +70,7 @@ parser ExpressionParser
         ::= 
         (   LogicalOrExpression:left{ expr.reset(left); }
             (
-                QUEST Expression:thenExpr! COLON AssignmentExpression:elseExpr!{ expr.reset(new soul::ast::cpp::ConditionalNode(expr.release(), thenExpr, elseExpr)); }
+                QUEST Expression:thenExpr! COLON AssignmentExpression:elseExpr!{ expr.reset(new soul::ast::cpp::ConditionalNode(lexer.GetSourcePos(pos), expr.release(), thenExpr, elseExpr)); }
             )?
         )
         {
@@ -84,7 +84,7 @@ parser ExpressionParser
             THROW AssignmentExpression:exception?
         )
         {
-            return new soul::ast::cpp::ThrowExprNode(exception);
+            return new soul::ast::cpp::ThrowExprNode(lexer.GetSourcePos(pos), exception);
         }
         ;
 
@@ -92,7 +92,7 @@ parser ExpressionParser
         ::= 
         (   LogicalAndExpression:left{ expr.reset(left); }
             (
-                DISJUNCTION LogicalAndExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::or_, expr.release(), right)); }
+                DISJUNCTION LogicalAndExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::or_, expr.release(), right)); }
             )*
         )
         {
@@ -104,7 +104,7 @@ parser ExpressionParser
         ::=
         (   InclusiveOrExpression:left{ expr.reset(left); }
             (   
-                AMP_AMP InclusiveOrExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::and_, expr.release(), right)); }
+                AMP_AMP InclusiveOrExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::and_, expr.release(), right)); }
             )*
         )
         {
@@ -116,7 +116,7 @@ parser ExpressionParser
         ::= 
         (   ExclusiveOrExpression:left{ expr.reset(left); }
             (
-                PIPE ExclusiveOrExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitor_, expr.release(), right)); }
+                PIPE ExclusiveOrExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::bitor_, expr.release(), right)); }
             )*
         )
         {
@@ -128,7 +128,7 @@ parser ExpressionParser
         ::=
         (   AndExpression:left{ expr.reset(left); }
             (
-                CARET AndExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitxor, expr.release(), right)); }
+                CARET AndExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::bitxor, expr.release(), right)); }
             )*
         )
         {
@@ -140,7 +140,7 @@ parser ExpressionParser
         ::=
         (   EqualityExpression:left{ expr.reset(left); }
             (
-                AMP EqualityExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitand_, expr.release(), right)); }
+                AMP EqualityExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::bitand_, expr.release(), right)); }
             )*
         )
         {
@@ -152,7 +152,7 @@ parser ExpressionParser
         ::= 
         (   RelationalExpression:left{ expr.reset(left); }
             (
-                EqOp:op RelationalExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(op, expr.release(), right)); }
+                EqOp:op RelationalExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, expr.release(), right)); }
             )*
         )
         {
@@ -169,7 +169,7 @@ parser ExpressionParser
         ::=
         (   ShiftExpression:left{ expr.reset(left); }
             (
-                RelOp:op ShiftExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(op, expr.release(), right)); }
+                RelOp:op ShiftExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, expr.release(), right)); }
             )*
         )
         {
@@ -188,7 +188,7 @@ parser ExpressionParser
         ::=
         (   AdditiveExpression:left{ expr.reset(left); }
             (
-                ShiftOp:op AdditiveExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(op, expr.release(), right)); }
+                ShiftOp:op AdditiveExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, expr.release(), right)); }
             )*
         )
         {
@@ -205,7 +205,7 @@ parser ExpressionParser
         ::= 
         (   MultiplicativeExpression:left{ expr.reset(left); }
             (
-                AddOp:op MultiplicativeExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(op, expr.release(), right)); }
+                AddOp:op MultiplicativeExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, expr.release(), right)); }
             )*
         )
         {
@@ -222,7 +222,7 @@ parser ExpressionParser
         ::=
         (   PmExpression:left{ expr.reset(left); }
             (
-                MulOp:op PmExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(op, expr.release(), right)); }
+                MulOp:op PmExpression:right!{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, expr.release(), right)); }
             )*
         )
         {
@@ -240,7 +240,7 @@ parser ExpressionParser
         ::= 
         (   CastExpression:left{ expr.reset(left); }
             (
-                PmOp:op CastExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(op, expr.release(), right)); }
+                PmOp:op CastExpression:right{ expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, expr.release(), right)); }
             )*
         )
         {
@@ -255,7 +255,7 @@ parser ExpressionParser
 
     CastExpression(var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
         ::= 
-        (   LPAREN TypeId:typeId RPAREN CastExpression:castExpr{ expr.reset(new soul::ast::cpp::CastNode(typeId, castExpr)); }
+        (   LPAREN TypeId:typeId RPAREN CastExpression:castExpr{ expr.reset(new soul::ast::cpp::CastNode(lexer.GetSourcePos(pos), typeId, castExpr)); }
         |   UnaryExpression:unaryExpr{ expr.reset(unaryExpr); }
         )
         {
@@ -267,11 +267,11 @@ parser ExpressionParser
         ::= 
         (   PostfixExpression:postfixExpr{ expr.reset(postfixExpr); }
         |   PostCastExpression:postCastExpr{ expr.reset(postCastExpr); }
-        |   PLUS_PLUS UnaryExpression:u1!{ expr.reset(new soul::ast::cpp::PreIncrementNode(u1)); }
-        |   MINUS_MINUS UnaryExpression:u2!{ expr.reset(new soul::ast::cpp::PreIncrementNode(u2)); }
-        |   UnaryOperator:op CastExpression:castExpr!{ expr.reset(new soul::ast::cpp::UnaryOpExprNode(op, castExpr)); }
-        |   SIZEOF LPAREN TypeId:typeId! RPAREN{ expr.reset(new soul::ast::cpp::SizeOfNode(typeId, true)); }
-        |   SIZEOF UnaryExpression:u3!{ expr.reset(new soul::ast::cpp::SizeOfNode(u3, false)); }
+        |   PLUS_PLUS UnaryExpression:u1!{ expr.reset(new soul::ast::cpp::PreIncrementNode(lexer.GetSourcePos(pos), u1)); }
+        |   MINUS_MINUS UnaryExpression:u2!{ expr.reset(new soul::ast::cpp::PreDecrementNode(lexer.GetSourcePos(pos), u2)); }
+        |   UnaryOperator:op CastExpression:castExpr!{ expr.reset(new soul::ast::cpp::UnaryOpExprNode(lexer.GetSourcePos(pos), op, castExpr)); }
+        |   SIZEOF LPAREN TypeId:typeId! RPAREN{ expr.reset(new soul::ast::cpp::SizeOfNode(lexer.GetSourcePos(pos), typeId, true)); }
+        |   SIZEOF UnaryExpression:u3!{ expr.reset(new soul::ast::cpp::SizeOfNode(lexer.GetSourcePos(pos), u3, false)); }
         |   NewExpression:newExpr{ expr.reset(newExpr); }
         |   DeleteExpression:deleteExpr{ expr.reset(deleteExpr); }
         )
@@ -292,12 +292,12 @@ parser ExpressionParser
     PostfixExpression(var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
         ::= 
         (   PrimaryExpression:primaryExpr{ expr.reset(primaryExpr); }
-            (   LBRACKET Expression:index RBRACKET!{ expr.reset(new soul::ast::cpp::IndexExprNode(expr.release(), index)); }
-            |   LPAREN{ expr.reset(new soul::ast::cpp::InvokeNode(expr.release())); } ExpressionList(expr.get()):exprList? RPAREN!
-            |   DOT IdExpression:dotMember!{ expr.reset(new soul::ast::cpp::MemberAccessNode(expr.release(), dotMember)); }
-            |   ARROW IdExpression:arrowMember!{ expr.reset(new soul::ast::cpp::PtrMemberAccessNode(expr.release(), arrowMember)); }
-            |   PLUS_PLUS{ expr.reset(new soul::ast::cpp::PostIncrementNode(expr.release())); }
-            |   MINUS_MINUS{ expr.reset(new soul::ast::cpp::PostDecrementNode(expr.release())); }
+            (   LBRACKET Expression:index RBRACKET!{ expr.reset(new soul::ast::cpp::IndexExprNode(lexer.GetSourcePos(pos), expr.release(), index)); }
+            |   LPAREN{ expr.reset(new soul::ast::cpp::InvokeNode(lexer.GetSourcePos(pos), expr.release())); } ExpressionList(expr.get()):exprList? RPAREN!
+            |   DOT IdExpression:dotMember!{ expr.reset(new soul::ast::cpp::MemberAccessNode(lexer.GetSourcePos(pos), expr.release(), dotMember)); }
+            |   ARROW IdExpression:arrowMember!{ expr.reset(new soul::ast::cpp::PtrMemberAccessNode(lexer.GetSourcePos(pos), expr.release(), arrowMember)); }
+            |   PLUS_PLUS{ expr.reset(new soul::ast::cpp::PostIncrementNode(lexer.GetSourcePos(pos), expr.release())); }
+            |   MINUS_MINUS{ expr.reset(new soul::ast::cpp::PostDecrementNode(lexer.GetSourcePos(pos), expr.release())); }
             )*
         )
         {
@@ -308,13 +308,13 @@ parser ExpressionParser
     PostCastExpression(var std::unique_ptr<soul::ast::cpp::CppCastNode> cppCastNode) : soul::ast::cpp::Node*
         ::= 
         (
-            (   STATIC_CAST{ cppCastNode.reset(new soul::ast::cpp::StaticCastNode()); }
-            |   DYNAMIC_CAST{ cppCastNode.reset(new soul::ast::cpp::DynamicCastNode()); }
-            |   REINTERPRET_CAST{ cppCastNode.reset(new soul::ast::cpp::ReinterpretCastNode()); }
-            |   CONST_CAST{ cppCastNode.reset(new soul::ast::cpp::ConstCastNode()); }
+            (   STATIC_CAST{ cppCastNode.reset(new soul::ast::cpp::StaticCastNode(lexer.GetSourcePos(pos))); }
+            |   DYNAMIC_CAST{ cppCastNode.reset(new soul::ast::cpp::DynamicCastNode(lexer.GetSourcePos(pos))); }
+            |   REINTERPRET_CAST{ cppCastNode.reset(new soul::ast::cpp::ReinterpretCastNode(lexer.GetSourcePos(pos))); }
+            |   CONST_CAST{ cppCastNode.reset(new soul::ast::cpp::ConstCastNode(lexer.GetSourcePos(pos))); }
             )
-            LANGLE! TypeId:typeId! RANGLE! LPAREN! Expression:expr! RPAREN!{ return new soul::ast::cpp::PostCastNode(cppCastNode.release(), typeId, expr); }
-        |   TYPEID LPAREN! Expression:typeIdExpr! RPAREN!{ return new soul::ast::cpp::TypeIdExprNode(typeIdExpr); }
+            LANGLE! TypeId:typeId! RANGLE! LPAREN! Expression:expr! RPAREN!{ return new soul::ast::cpp::PostCastNode(lexer.GetSourcePos(pos), cppCastNode.release(), typeId, expr); }
+        |   TYPEID LPAREN! Expression:typeIdExpr! RPAREN!{ return new soul::ast::cpp::TypeIdExprNode(lexer.GetSourcePos(pos), typeIdExpr); }
         )
         ;
 
@@ -324,16 +324,16 @@ parser ExpressionParser
 
     PrimaryExpression(var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
         ::= Literal:literal{ return literal; }
-        |   THIS{ return new soul::ast::cpp::ThisNode(); }
-        |   LPAREN Expression:parenExpr RPAREN{ return new soul::ast::cpp::ParenExprNode(parenExpr); }
+        |   THIS{ return new soul::ast::cpp::ThisNode(lexer.GetSourcePos(pos)); }
+        |   LPAREN Expression:parenExpr RPAREN{ return new soul::ast::cpp::ParenExprNode(lexer.GetSourcePos(pos), parenExpr); }
         |   IdExpression:idExpr{ return idExpr; }
         ;
 
     IdExpression(var std::string str) : soul::ast::cpp::IdExprNode*
         ::= 
-        (   QualifiedCppId:id1{ str = id1; } COLON_COLON OperatorFunctionId:ofId1{ str.append("::").append(ofId1); return new soul::ast::cpp::IdExprNode(str); }
-        |   empty{ str.clear(); } (COLON_COLON{ str.append("::"); })? OperatorFunctionId:ofId2{ str.append(ofId2); return new soul::ast::cpp::IdExprNode(str); }
-        |   QualifiedCppId:id2{ return new soul::ast::cpp::IdExprNode(id2); }
+        (   QualifiedCppId:id1{ str = id1; } COLON_COLON OperatorFunctionId:ofId1{ str.append("::").append(ofId1); return new soul::ast::cpp::IdExprNode(lexer.GetSourcePos(pos), str); }
+        |   empty{ str.clear(); } (COLON_COLON{ str.append("::"); })? OperatorFunctionId:ofId2{ str.append(ofId2); return new soul::ast::cpp::IdExprNode(lexer.GetSourcePos(pos), str); }
+        |   QualifiedCppId:id2{ return new soul::ast::cpp::IdExprNode(lexer.GetSourcePos(pos), id2); }
         )
         ;
 
@@ -345,7 +345,7 @@ parser ExpressionParser
     NewExpression(var bool global, var std::unique_ptr<soul::ast::cpp::NewNode> newExprNode) : soul::ast::cpp::Node*
         ::= 
         (   (COLON_COLON{ global = true; })?
-            NEW{ newExprNode.reset(new soul::ast::cpp::NewNode(global)); }
+            NEW{ newExprNode.reset(new soul::ast::cpp::NewNode(lexer.GetSourcePos(pos), global)); }
             empty{ newExprNode->BeginAddToPlacement(); } NewPlacement(newExprNode.get()):placement? empty{ newExprNode->EndAddToPlacement(); }
             (NewTypeId:newTypeId{ newExprNode->SetParens(false); newExprNode->SetTypeId(newTypeId); } | LPAREN TypeId:ti RPAREN{ newExprNode->SetParens(true); newExprNode->SetTypeId(ti); })
             empty{ newExprNode->BeginAddToInitializer(); } NewInitializer(newExprNode.get()):initializer? empty{ newExprNode->EndAddToInitializer(); }
@@ -360,7 +360,7 @@ parser ExpressionParser
         ;
 
     NewTypeId(var std::unique_ptr<soul::ast::cpp::TypeIdNode> ti) : soul::ast::cpp::TypeIdNode*
-        ::= empty{ ti.reset(new soul::ast::cpp::TypeIdNode()); }
+        ::= empty{ ti.reset(new soul::ast::cpp::TypeIdNode(lexer.GetSourcePos(pos))); }
         (
             (TypeSpecifierSeq(ti.get()):typeSpecifierSeq | TypeName:typeName{ ti->Add(typeName); })
             (NewDeclarator:newDeclarator{ ti->SetDeclarator(newDeclarator); })?
@@ -404,7 +404,7 @@ parser ExpressionParser
             CastExpression:ptr
         )
         {
-            return new soul::ast::cpp::DeleteNode(global, isArray, ptr);
+            return new soul::ast::cpp::DeleteNode(lexer.GetSourcePos(pos), global, isArray, ptr);
         }
         ;
 

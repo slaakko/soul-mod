@@ -18,11 +18,11 @@ struct ParserFileParser
     static std::unique_ptr<soul::ast::spg::ParserFile> Parse(Lexer& lexer);
     static soul::parser::Match ParserFile(Lexer& lexer);
     static soul::parser::Match Parser(Lexer& lexer);
-    static soul::parser::Match ParserStatement(Lexer& lexer, soul::ast::spg::GrammarParser* par);
-    static soul::parser::Match LexerStatement(Lexer& lexer, soul::ast::spg::GrammarParser* par);
-    static soul::parser::Match MainStatement(Lexer& lexer, soul::ast::spg::GrammarParser* par);
-    static soul::parser::Match UsingStatement(Lexer& lexer, soul::ast::spg::GrammarParser* par);
-    static soul::parser::Match RuleStatement(Lexer& lexer, soul::ast::spg::GrammarParser* par);
+    static soul::parser::Match ParserStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match LexerStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match MainStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match UsingStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match RuleStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
     static soul::parser::Match ParametersAndVariables(Lexer& lexer, soul::ast::spg::RuleParser* rule);
     static soul::parser::Match ParamOrVariable(Lexer& lexer);
     static soul::parser::Match ReturnType(Lexer& lexer);

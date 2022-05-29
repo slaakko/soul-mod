@@ -105,7 +105,7 @@ soul::parser::Match ExpressionParser<Lexer>::Expression(Lexer& lexer)
                                                 right.reset(static_cast<soul::ast::cpp::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::comma, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::comma, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -282,7 +282,7 @@ soul::parser::Match ExpressionParser<Lexer>::AssignmentExpression(Lexer& lexer)
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AssignmentExpression");
                                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                                return soul::parser::Match(true, new soul::ast::cpp::BinaryOpExprNode(op->value, left.release(), right.release()));
+                                return soul::parser::Match(true, new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op->value, left.release(), right.release()));
                             }
                         }
                         *parentMatch6 = match;
@@ -378,7 +378,6 @@ soul::parser::Match ExpressionParser<Lexer>::AssignmentOp(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 33);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case ASSIGN:
@@ -678,7 +677,7 @@ soul::parser::Match ExpressionParser<Lexer>::ConditionalExpression(Lexer& lexer)
                                         }
                                         if (match.hit)
                                         {
-                                            expr.reset(new soul::ast::cpp::ConditionalNode(expr.release(), thenExpr.release(), elseExpr.release()));
+                                            expr.reset(new soul::ast::cpp::ConditionalNode(lexer.GetSourcePos(pos), expr.release(), thenExpr.release(), elseExpr.release()));
                                         }
                                         *parentMatch14 = match;
                                     }
@@ -792,7 +791,7 @@ soul::parser::Match ExpressionParser<Lexer>::ThrowExpression(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ThrowExpression");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::ThrowExprNode(exception.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::ThrowExprNode(lexer.GetSourcePos(pos), exception.release()));
             }
         }
         *parentMatch0 = match;
@@ -903,7 +902,7 @@ soul::parser::Match ExpressionParser<Lexer>::LogicalOrExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::or_, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::or_, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1048,7 +1047,7 @@ soul::parser::Match ExpressionParser<Lexer>::LogicalAndExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::and_, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::and_, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1180,7 +1179,7 @@ soul::parser::Match ExpressionParser<Lexer>::InclusiveOrExpression(Lexer& lexer)
                                                 right.reset(static_cast<soul::ast::cpp::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitor_, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::bitor_, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1325,7 +1324,7 @@ soul::parser::Match ExpressionParser<Lexer>::ExclusiveOrExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitxor, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::bitxor, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1470,7 +1469,7 @@ soul::parser::Match ExpressionParser<Lexer>::AndExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(soul::ast::cpp::Operator::bitand_, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), soul::ast::cpp::Operator::bitand_, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1612,7 +1611,7 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1680,7 +1679,6 @@ soul::parser::Match ExpressionParser<Lexer>::EqOp(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 42);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case EQ:
@@ -1813,7 +1811,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1881,7 +1879,6 @@ soul::parser::Match ExpressionParser<Lexer>::RelOp(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 44);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case LANGLE:
@@ -2040,7 +2037,7 @@ soul::parser::Match ExpressionParser<Lexer>::ShiftExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -2108,7 +2105,6 @@ soul::parser::Match ExpressionParser<Lexer>::ShiftOp(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 46);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case SHIFT_LEFT:
@@ -2241,7 +2237,7 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -2309,7 +2305,6 @@ soul::parser::Match ExpressionParser<Lexer>::AddOp(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 48);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case PLUS:
@@ -2442,7 +2437,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeExpression(Lexer& lex
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -2510,7 +2505,6 @@ soul::parser::Match ExpressionParser<Lexer>::MulOp(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 50);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case STAR:
@@ -2643,7 +2637,7 @@ soul::parser::Match ExpressionParser<Lexer>::PmExpression(Lexer& lexer)
                                                 right.reset(static_cast<soul::ast::cpp::Node*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -2711,7 +2705,6 @@ soul::parser::Match ExpressionParser<Lexer>::PmOp(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 52);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case DOT_STAR:
@@ -2843,7 +2836,7 @@ soul::parser::Match ExpressionParser<Lexer>::CastExpression(Lexer& lexer)
                             castExpr.reset(static_cast<soul::ast::cpp::Node*>(match.value));
                             if (match.hit)
                             {
-                                expr.reset(new soul::ast::cpp::CastNode(typeId.release(), castExpr.release()));
+                                expr.reset(new soul::ast::cpp::CastNode(lexer.GetSourcePos(pos), typeId.release(), castExpr.release()));
                             }
                             *parentMatch9 = match;
                         }
@@ -3045,7 +3038,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                                                             }
                                                             if (match.hit)
                                                             {
-                                                                expr.reset(new soul::ast::cpp::PreIncrementNode(u1.release()));
+                                                                expr.reset(new soul::ast::cpp::PreIncrementNode(lexer.GetSourcePos(pos), u1.release()));
                                                             }
                                                             *parentMatch16 = match;
                                                         }
@@ -3102,7 +3095,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                                                         }
                                                         if (match.hit)
                                                         {
-                                                            expr.reset(new soul::ast::cpp::PreIncrementNode(u2.release()));
+                                                            expr.reset(new soul::ast::cpp::PreDecrementNode(lexer.GetSourcePos(pos), u2.release()));
                                                         }
                                                         *parentMatch21 = match;
                                                     }
@@ -3155,7 +3148,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                                                     }
                                                     if (match.hit)
                                                     {
-                                                        expr.reset(new soul::ast::cpp::UnaryOpExprNode(op->value, castExpr.release()));
+                                                        expr.reset(new soul::ast::cpp::UnaryOpExprNode(lexer.GetSourcePos(pos), op->value, castExpr.release()));
                                                     }
                                                     *parentMatch26 = match;
                                                 }
@@ -3252,7 +3245,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new soul::ast::cpp::SizeOfNode(typeId.release(), true));
+                                                    expr.reset(new soul::ast::cpp::SizeOfNode(lexer.GetSourcePos(pos), typeId.release(), true));
                                                 }
                                                 *parentMatch36 = match;
                                             }
@@ -3309,7 +3302,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                                             }
                                             if (match.hit)
                                             {
-                                                expr.reset(new soul::ast::cpp::SizeOfNode(u3.release(), false));
+                                                expr.reset(new soul::ast::cpp::SizeOfNode(lexer.GetSourcePos(pos), u3.release(), false));
                                             }
                                             *parentMatch40 = match;
                                         }
@@ -3412,7 +3405,6 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryOperator(Lexer& lexer)
     soul::lexer::RuleGuard ruleGuard(lexer, 55);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
-    soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
     switch (*lexer)
     {
         case STAR:
@@ -3642,7 +3634,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                                                                     }
                                                                     if (match.hit)
                                                                     {
-                                                                        expr.reset(new soul::ast::cpp::IndexExprNode(expr.release(), index.release()));
+                                                                        expr.reset(new soul::ast::cpp::IndexExprNode(lexer.GetSourcePos(pos), expr.release(), index.release()));
                                                                     }
                                                                     *parentMatch16 = match;
                                                                 }
@@ -3675,7 +3667,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                                                                             }
                                                                             if (match.hit)
                                                                             {
-                                                                                expr.reset(new soul::ast::cpp::InvokeNode(expr.release()));
+                                                                                expr.reset(new soul::ast::cpp::InvokeNode(lexer.GetSourcePos(pos), expr.release()));
                                                                             }
                                                                             *parentMatch21 = match;
                                                                         }
@@ -3783,7 +3775,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                                                                         }
                                                                         if (match.hit)
                                                                         {
-                                                                            expr.reset(new soul::ast::cpp::MemberAccessNode(expr.release(), dotMember.release()));
+                                                                            expr.reset(new soul::ast::cpp::MemberAccessNode(lexer.GetSourcePos(pos), expr.release(), dotMember.release()));
                                                                         }
                                                                         *parentMatch29 = match;
                                                                     }
@@ -3840,7 +3832,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                                                                     }
                                                                     if (match.hit)
                                                                     {
-                                                                        expr.reset(new soul::ast::cpp::PtrMemberAccessNode(expr.release(), arrowMember.release()));
+                                                                        expr.reset(new soul::ast::cpp::PtrMemberAccessNode(lexer.GetSourcePos(pos), expr.release(), arrowMember.release()));
                                                                     }
                                                                     *parentMatch34 = match;
                                                                 }
@@ -3872,7 +3864,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                                                         }
                                                         if (match.hit)
                                                         {
-                                                            expr.reset(new soul::ast::cpp::PostIncrementNode(expr.release()));
+                                                            expr.reset(new soul::ast::cpp::PostIncrementNode(lexer.GetSourcePos(pos), expr.release()));
                                                         }
                                                         *parentMatch37 = match;
                                                     }
@@ -3900,7 +3892,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                                                     }
                                                     if (match.hit)
                                                     {
-                                                        expr.reset(new soul::ast::cpp::PostDecrementNode(expr.release()));
+                                                        expr.reset(new soul::ast::cpp::PostDecrementNode(lexer.GetSourcePos(pos), expr.release()));
                                                     }
                                                     *parentMatch39 = match;
                                                 }
@@ -4023,7 +4015,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostCastExpression(Lexer& lexer)
                                                         }
                                                         if (match.hit)
                                                         {
-                                                            cppCastNode.reset(new soul::ast::cpp::StaticCastNode);
+                                                            cppCastNode.reset(new soul::ast::cpp::StaticCastNode(lexer.GetSourcePos(pos)));
                                                         }
                                                         *parentMatch12 = match;
                                                     }
@@ -4046,7 +4038,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostCastExpression(Lexer& lexer)
                                                                 }
                                                                 if (match.hit)
                                                                 {
-                                                                    cppCastNode.reset(new soul::ast::cpp::DynamicCastNode);
+                                                                    cppCastNode.reset(new soul::ast::cpp::DynamicCastNode(lexer.GetSourcePos(pos)));
                                                                 }
                                                                 *parentMatch14 = match;
                                                             }
@@ -4074,7 +4066,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostCastExpression(Lexer& lexer)
                                                             }
                                                             if (match.hit)
                                                             {
-                                                                cppCastNode.reset(new soul::ast::cpp::ReinterpretCastNode);
+                                                                cppCastNode.reset(new soul::ast::cpp::ReinterpretCastNode(lexer.GetSourcePos(pos)));
                                                             }
                                                             *parentMatch16 = match;
                                                         }
@@ -4102,7 +4094,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostCastExpression(Lexer& lexer)
                                                         }
                                                         if (match.hit)
                                                         {
-                                                            cppCastNode.reset(new soul::ast::cpp::ConstCastNode);
+                                                            cppCastNode.reset(new soul::ast::cpp::ConstCastNode(lexer.GetSourcePos(pos)));
                                                         }
                                                         *parentMatch18 = match;
                                                     }
@@ -4291,7 +4283,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostCastExpression(Lexer& lexer)
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PostCastExpression");
                                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                                return soul::parser::Match(true, new soul::ast::cpp::PostCastNode(cppCastNode.release(), typeId.release(), expr.release()));
+                                return soul::parser::Match(true, new soul::ast::cpp::PostCastNode(lexer.GetSourcePos(pos), cppCastNode.release(), typeId.release(), expr.release()));
                             }
                         }
                         *parentMatch30 = match;
@@ -4414,7 +4406,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostCastExpression(Lexer& lexer)
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PostCastExpression");
                                         #endif SOUL_PARSER_DEBUG_SUPPORT
-                                        return soul::parser::Match(true, new soul::ast::cpp::TypeIdExprNode(typeIdExpr.release()));
+                                        return soul::parser::Match(true, new soul::ast::cpp::TypeIdExprNode(lexer.GetSourcePos(pos), typeIdExpr.release()));
                                     }
                                 }
                                 *parentMatch41 = match;
@@ -4618,7 +4610,7 @@ soul::parser::Match ExpressionParser<Lexer>::PrimaryExpression(Lexer& lexer)
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpression");
                                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                                    return soul::parser::Match(true, new soul::ast::cpp::ThisNode);
+                                    return soul::parser::Match(true, new soul::ast::cpp::ThisNode(lexer.GetSourcePos(pos)));
                                 }
                             }
                             *parentMatch5 = match;
@@ -4683,7 +4675,7 @@ soul::parser::Match ExpressionParser<Lexer>::PrimaryExpression(Lexer& lexer)
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpression");
                                         #endif SOUL_PARSER_DEBUG_SUPPORT
-                                        return soul::parser::Match(true, new soul::ast::cpp::ParenExprNode(parenExpr.release()));
+                                        return soul::parser::Match(true, new soul::ast::cpp::ParenExprNode(lexer.GetSourcePos(pos), parenExpr.release()));
                                     }
                                 }
                                 *parentMatch11 = match;
@@ -4824,7 +4816,7 @@ soul::parser::Match ExpressionParser<Lexer>::IdExpression(Lexer& lexer)
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IdExpression");
                                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                                    return soul::parser::Match(true, new soul::ast::cpp::IdExprNode(str));
+                                    return soul::parser::Match(true, new soul::ast::cpp::IdExprNode(lexer.GetSourcePos(pos), str));
                                 }
                             }
                             *parentMatch8 = match;
@@ -4922,7 +4914,7 @@ soul::parser::Match ExpressionParser<Lexer>::IdExpression(Lexer& lexer)
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IdExpression");
                                             #endif SOUL_PARSER_DEBUG_SUPPORT
-                                            return soul::parser::Match(true, new soul::ast::cpp::IdExprNode(str));
+                                            return soul::parser::Match(true, new soul::ast::cpp::IdExprNode(lexer.GetSourcePos(pos), str));
                                         }
                                     }
                                     *parentMatch18 = match;
@@ -4955,7 +4947,7 @@ soul::parser::Match ExpressionParser<Lexer>::IdExpression(Lexer& lexer)
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IdExpression");
                                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                                return soul::parser::Match(true, new soul::ast::cpp::IdExprNode(id2->value));
+                                return soul::parser::Match(true, new soul::ast::cpp::IdExprNode(lexer.GetSourcePos(pos), id2->value));
                             }
                         }
                         *parentMatch20 = match;
@@ -5161,7 +5153,7 @@ soul::parser::Match ExpressionParser<Lexer>::NewExpression(Lexer& lexer)
                                                     }
                                                     if (match.hit)
                                                     {
-                                                        newExprNode.reset(new soul::ast::cpp::NewNode(global));
+                                                        newExprNode.reset(new soul::ast::cpp::NewNode(lexer.GetSourcePos(pos), global));
                                                     }
                                                     *parentMatch14 = match;
                                                 }
@@ -5526,7 +5518,7 @@ soul::parser::Match ExpressionParser<Lexer>::NewTypeId(Lexer& lexer)
             soul::parser::Match match(true);
             if (match.hit)
             {
-                ti.reset(new soul::ast::cpp::TypeIdNode);
+                ti.reset(new soul::ast::cpp::TypeIdNode(lexer.GetSourcePos(pos)));
             }
             *parentMatch1 = match;
         }
@@ -6250,7 +6242,7 @@ soul::parser::Match ExpressionParser<Lexer>::DeleteExpression(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeleteExpression");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::DeleteNode(global, isArray, ptr.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::DeleteNode(lexer.GetSourcePos(pos), global, isArray, ptr.release()));
             }
         }
         *parentMatch0 = match;

@@ -7,9 +7,12 @@ module soul.spg.code.generator;
 
 import util;
 import soul.spg.code.modifier;
-import soul.spg.nonterminal.info;
+import soul.lexer.error;
+import soul.lexer.file.map;
 import soul.ast.common;
 import soul.ast.cpp;
+import soul.spg.nonterminal.info;
+import soul.spg.parsing.util;
 
 namespace soul::spg {
 
@@ -18,30 +21,10 @@ enum class CodeGenerationStage
     generateInterface, generateImplementation, generateTokenSwitch, beginGenerateTokenSwitch, endGenerateTokenSwitch 
 };
 
-class NonterminalCountingVisitor : public soul::ast::cpp::DefaultVisitor
-{
-public:
-    NonterminalCountingVisitor(std::vector<NonterminalInfo>& nonterminalInfos_) : nonterminalInfos(nonterminalInfos_) {}
-    void Visit(soul::ast::cpp::IdExprNode& node);
-private:
-    std::vector<NonterminalInfo>& nonterminalInfos;
-};
-
-void NonterminalCountingVisitor::Visit(soul::ast::cpp::IdExprNode& node)
-{
-    for (auto& info : nonterminalInfos)
-    {
-        if (node.Id() == info.name)
-        {
-            ++info.count;
-        }
-    }
-}
-
 class CodeGeneratorVisitor : public soul::ast::spg::DefaultVisitor
 {
 public:
-    CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_);
+    CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_, soul::lexer::FileMap& fileMap_);
     void Visit(soul::ast::spg::AlternativeParser& parser) override;
     void Visit(soul::ast::spg::SequenceParser& parser) override;
     void Visit(soul::ast::spg::DifferenceParser& parser) override;
@@ -76,11 +59,12 @@ private:
     int parentMatchNumber;
     int setParentMatchNumber;
     int sn;
+    soul::lexer::FileMap& fileMap;
 };
 
-CodeGeneratorVisitor::CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_) : 
+CodeGeneratorVisitor::CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_, soul::lexer::FileMap& fileMap_) :
     spgFile(spgFile_), verbose(verbose_), noDebugSupport(noDebugSupport_), version(version_), formatter(nullptr), 
-    stage(CodeGenerationStage::generateInterface), currentParser(nullptr), parentMatchNumber(0), setParentMatchNumber(-1), sn(0)
+    stage(CodeGenerationStage::generateInterface), currentParser(nullptr), parentMatchNumber(0), setParentMatchNumber(-1), sn(0), fileMap(fileMap_)
 {
 }
 
@@ -98,7 +82,6 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::AlternativeParser& parser)
             CodeGenerationStage prevStage = stage;
             stage = CodeGenerationStage::generateTokenSwitch;
             formatter->WriteLine("int64_t pos = lexer.GetPos();");
-            formatter->WriteLine("soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);");
             formatter->WriteLine("switch (*lexer)");
             formatter->WriteLine("{");
             formatter->IncIndent();
@@ -445,7 +428,8 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
         bool hasPass = codeEvaluationVisitor.HasPass();
         if (hasPass)
         {
-            throw std::runtime_error("token switch does not support pass");
+            std::string errorMessage = soul::lexer::MakeMessage("error", "token switch does not support 'pass'", parser.GetSourcePos(), fileMap);
+            throw std::runtime_error(errorMessage);
         }
         if (codeEvaluationVisitor.HasReturn())
         {
@@ -470,9 +454,8 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
             soul::ast::spg::NonterminalParser* nt = static_cast<soul::ast::spg::NonterminalParser*>(parser.Child());
             nonterminalName = nt->InstanceName();
         }
-        NonterminalCountingVisitor countingVisitor(nonterminalInfos);
-        parser.SuccessCode()->Accept(countingVisitor);
-        ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name());
+        soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
+        ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
         parser.SuccessCode()->Write(*formatter);
         stage = CodeGenerationStage::endGenerateTokenSwitch;
         parser.Child()->Accept(*this);
@@ -522,9 +505,8 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
             soul::ast::spg::NonterminalParser* nt = static_cast<soul::ast::spg::NonterminalParser*>(parser.Child());
             nonterminalName = nt->InstanceName();
         }
-        NonterminalCountingVisitor countingVisitor(nonterminalInfos);
-        parser.SuccessCode()->Accept(countingVisitor);
-        ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name());
+        soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
+        ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
         parser.SuccessCode()->Write(*formatter);
         if (parser.FailureCode())
         {
@@ -747,7 +729,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             bool found = false;
             for (const auto& info : nonterminalInfos)
             {
-                if (info.name == nonterminal->InstanceName())
+                if (info.nonterminalParser->InstanceName() == nonterminal->InstanceName())
                 {
                     found = true;
                     break;
@@ -766,14 +748,14 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
                     formatter->Write("std::unique_ptr<");
                     calledRule->ReturnType()->WriteNonPtrType(*formatter);
                     formatter->Write(">");
-                    nonterminalInfos.push_back(NonterminalInfo(nonterminal->InstanceName(), true));
+                    nonterminalInfos.push_back(NonterminalInfo(nonterminal, true));
                 }
                 else
                 {
                     formatter->Write("std::unique_ptr<soul::parser::Value<");
                     calledRule->ReturnType()->Write(*formatter);
                     formatter->Write(">>");
-                    nonterminalInfos.push_back(NonterminalInfo(nonterminal->InstanceName(), false));
+                    nonterminalInfos.push_back(NonterminalInfo(nonterminal, false));
                 }
                 formatter->WriteLine(" " + nonterminal->InstanceName() + ";");
             }
@@ -808,8 +790,18 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
         {
             if (info.ptrType && info.count > 1)
             {
-                std::cout << "warning: unique pointer value of nonterminal '" + info.name + "' used " + std::to_string(info.count) + " times in semantic actions of rule '" + 
-                    parser.Name() + "' of parser '" + parser.Grammar()->Name() << "'" << std::endl;
+                if (!soul::spg::parsing::util::IsListParserNonterminal(info))
+                {
+                    std::string message = soul::lexer::MakeMessage("warning",
+                        "unique pointer value of nonterminal '" + info.nonterminalParser->InstanceName() + "' used " + std::to_string(info.count) +
+                        " times in semantic actions of rule '" +
+                        parser.Name() + "' of parser '" + parser.Grammar()->Name() + "'", parser.GetSourcePos(), fileMap);
+                    for (const auto& sourcePos : info.sourcePositions)
+                    {
+                        message.append("\n").append(soul::lexer::MakeMessage("info", "see reference", sourcePos, fileMap));
+                    }
+                    std::cout << message << std::endl;
+                }
             }
         }
         if (parser.ReturnType() != nullptr && !parser.HasReturn())
@@ -1170,7 +1162,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
             {
                 auto firstTypeSpecifier = lexer->TypeSpecifiers()[0].get();
                 std::string charTypeName = "char";
-                if (firstTypeSpecifier->Kind() == soul::ast::cpp::TypeSpecifierNodeKind::typeNameNode)
+                if (firstTypeSpecifier->Kind() == soul::ast::cpp::NodeKind::typeNameNode)
                 {
                     soul::ast::cpp::TypeNameNode* lexerType = static_cast<soul::ast::cpp::TypeNameNode*>(firstTypeSpecifier);
                     if (lexerType->IsTemplate() && lexerType->TemplateArgs().size() > 0)
@@ -1195,9 +1187,9 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     }
 }
 
-void GenerateCode(soul::ast::spg::SpgFile* spgFile, bool verbose, bool noDebugSupport, const std::string& version)
+void GenerateCode(soul::ast::spg::SpgFile* spgFile, bool verbose, bool noDebugSupport, const std::string& version, soul::lexer::FileMap& fileMap)
 {
-    CodeGeneratorVisitor visitor(spgFile, verbose, noDebugSupport, version);
+    CodeGeneratorVisitor visitor(spgFile, verbose, noDebugSupport, version, fileMap);
     spgFile->Accept(visitor);
 }
 

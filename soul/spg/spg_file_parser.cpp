@@ -437,7 +437,7 @@ soul::parser::Match SpgFileParser<Lexer>::ParserFileDeclaration(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ParserFileDeclaration");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::spg::ParserFileDeclaration(filePath->value, external));
+                return soul::parser::Match(true, new soul::ast::spg::ParserFileDeclaration(lexer.GetSourcePos(pos), filePath->value, external));
             }
         }
         *parentMatch0 = match;

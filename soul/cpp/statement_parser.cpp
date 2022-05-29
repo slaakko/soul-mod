@@ -438,7 +438,7 @@ soul::parser::Match StatementParser<Lexer>::LabeledStatement(Lexer& lexer)
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LabeledStatement");
                                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                                return soul::parser::Match(true, new soul::ast::cpp::LabeledStatementNode(label, stmt1.release()));
+                                return soul::parser::Match(true, new soul::ast::cpp::LabeledStatementNode(lexer.GetSourcePos(pos), label, stmt1.release()));
                             }
                         }
                         *parentMatch7 = match;
@@ -557,7 +557,7 @@ soul::parser::Match StatementParser<Lexer>::LabeledStatement(Lexer& lexer)
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LabeledStatement");
                                         #endif SOUL_PARSER_DEBUG_SUPPORT
-                                        return soul::parser::Match(true, new soul::ast::cpp::CaseStatementNode(caseExpr.release(), stmt2.release()));
+                                        return soul::parser::Match(true, new soul::ast::cpp::CaseStatementNode(lexer.GetSourcePos(pos), caseExpr.release(), stmt2.release()));
                                     }
                                 }
                                 *parentMatch18 = match;
@@ -652,7 +652,7 @@ soul::parser::Match StatementParser<Lexer>::LabeledStatement(Lexer& lexer)
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LabeledStatement");
                                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                                    return soul::parser::Match(true, new soul::ast::cpp::DefaultStatementNode(stmt3.release()));
+                                    return soul::parser::Match(true, new soul::ast::cpp::DefaultStatementNode(lexer.GetSourcePos(pos), stmt3.release()));
                                 }
                             }
                             *parentMatch26 = match;
@@ -709,7 +709,7 @@ soul::parser::Match StatementParser<Lexer>::EmptyStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EmptyStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::EmptyStatementNode);
+                return soul::parser::Match(true, new soul::ast::cpp::EmptyStatementNode(lexer.GetSourcePos(pos)));
             }
         }
         *parentMatch0 = match;
@@ -768,7 +768,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatement(Lexer& lexer)
                         }
                         if (match.hit)
                         {
-                            compoundStatement.reset(new soul::ast::cpp::CompoundStatementNode);
+                            compoundStatement.reset(new soul::ast::cpp::CompoundStatementNode(lexer.GetSourcePos(pos)));
                         }
                         *parentMatch4 = match;
                     }
@@ -1170,7 +1170,7 @@ soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IfStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::IfStatementNode(cond.release(), thenS.release(), elseS.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::IfStatementNode(lexer.GetSourcePos(pos), cond.release(), thenS.release(), elseS.release()));
             }
         }
         *parentMatch0 = match;
@@ -1349,7 +1349,7 @@ soul::parser::Match StatementParser<Lexer>::SwitchStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SwitchStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::SwitchStatementNode(cond.release(), stmt.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::SwitchStatementNode(lexer.GetSourcePos(pos), cond.release(), stmt.release()));
             }
         }
         *parentMatch0 = match;
@@ -1675,7 +1675,7 @@ soul::parser::Match StatementParser<Lexer>::WhileStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "WhileStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::WhileStatementNode(cond.release(), stmt.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::WhileStatementNode(lexer.GetSourcePos(pos), cond.release(), stmt.release()));
             }
         }
         *parentMatch0 = match;
@@ -1920,7 +1920,7 @@ soul::parser::Match StatementParser<Lexer>::DoStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DoStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::DoStatementNode(cond.release(), stmt.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::DoStatementNode(lexer.GetSourcePos(pos), cond.release(), stmt.release()));
             }
         }
         *parentMatch0 = match;
@@ -2123,7 +2123,7 @@ soul::parser::Match StatementParser<Lexer>::RangeForStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RangeForStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::RangeForStatementNode(forRangeDeclaration.release(), container.release(), stmt.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::RangeForStatementNode(lexer.GetSourcePos(pos), forRangeDeclaration.release(), container.release(), stmt.release()));
             }
         }
         *parentMatch0 = match;
@@ -2177,7 +2177,7 @@ soul::parser::Match StatementParser<Lexer>::ForRangeDeclaration(Lexer& lexer)
                         soul::parser::Match match(true);
                         if (match.hit)
                         {
-                            forRangeDeclaration.reset(new soul::ast::cpp::ForRangeDeclarationNode);
+                            forRangeDeclaration.reset(new soul::ast::cpp::ForRangeDeclarationNode(lexer.GetSourcePos(pos)));
                         }
                         *parentMatch4 = match;
                     }
@@ -2448,7 +2448,7 @@ soul::parser::Match StatementParser<Lexer>::ForStatement(Lexer& lexer)
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ForStatement");
                         #endif SOUL_PARSER_DEBUG_SUPPORT
-                        return soul::parser::Match(true, new soul::ast::cpp::ForStatementNode(forInitStatement.release(), cond.release(), loopExpr.release(), stmt.release()));
+                        return soul::parser::Match(true, new soul::ast::cpp::ForStatementNode(lexer.GetSourcePos(pos), forInitStatement.release(), cond.release(), loopExpr.release(), stmt.release()));
                     }
                 }
                 *parentMatch17 = match;
@@ -2798,7 +2798,7 @@ soul::parser::Match StatementParser<Lexer>::BreakStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BreakStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::BreakStatementNode);
+                return soul::parser::Match(true, new soul::ast::cpp::BreakStatementNode(lexer.GetSourcePos(pos)));
             }
         }
         *parentMatch0 = match;
@@ -2884,7 +2884,7 @@ soul::parser::Match StatementParser<Lexer>::ContinueStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ContinueStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::ContinueStatementNode);
+                return soul::parser::Match(true, new soul::ast::cpp::ContinueStatementNode(lexer.GetSourcePos(pos)));
             }
         }
         *parentMatch0 = match;
@@ -3000,7 +3000,7 @@ soul::parser::Match StatementParser<Lexer>::ReturnStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ReturnStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::ReturnStatementNode(returnValue.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::ReturnStatementNode(lexer.GetSourcePos(pos), returnValue.release()));
             }
         }
         *parentMatch0 = match;
@@ -3130,7 +3130,7 @@ soul::parser::Match StatementParser<Lexer>::GotoStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "GotoStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::GotoStatementNode(target));
+                return soul::parser::Match(true, new soul::ast::cpp::GotoStatementNode(lexer.GetSourcePos(pos), target));
             }
         }
         *parentMatch0 = match;
@@ -3180,7 +3180,7 @@ soul::parser::Match StatementParser<Lexer>::DeclarationStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclarationStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::DeclarationStatementNode(declaration.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::DeclarationStatementNode(lexer.GetSourcePos(pos), declaration.release()));
             }
         }
         *parentMatch0 = match;
@@ -3283,7 +3283,7 @@ soul::parser::Match StatementParser<Lexer>::Condition(Lexer& lexer)
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Condition");
                                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                                return soul::parser::Match(true, new soul::ast::cpp::ConditionWithDeclaratorNode(typeId.release(), declarator->value, assignmentExpr.release()));
+                                return soul::parser::Match(true, new soul::ast::cpp::ConditionWithDeclaratorNode(lexer.GetSourcePos(pos), typeId.release(), declarator->value, assignmentExpr.release()));
                             }
                         }
                         *parentMatch8 = match;
@@ -3386,7 +3386,7 @@ soul::parser::Match StatementParser<Lexer>::TryStatement(Lexer& lexer)
                             tryBlock.reset(static_cast<soul::ast::cpp::CompoundStatementNode*>(match.value));
                             if (match.hit)
                             {
-                                tryStatement.reset(new soul::ast::cpp::TryStatementNode(tryBlock.release()));
+                                tryStatement.reset(new soul::ast::cpp::TryStatementNode(lexer.GetSourcePos(pos), tryBlock.release()));
                             }
                             *parentMatch5 = match;
                         }
@@ -3692,7 +3692,7 @@ soul::parser::Match StatementParser<Lexer>::Handler(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Handler");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::HandlerNode(exceptionDeclaration.release(), catchBlock.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::HandlerNode(lexer.GetSourcePos(pos), exceptionDeclaration.release(), catchBlock.release()));
             }
         }
         *parentMatch0 = match;
@@ -3737,7 +3737,7 @@ soul::parser::Match StatementParser<Lexer>::ExceptionDeclaration(Lexer& lexer)
             soul::parser::Match match(true);
             if (match.hit)
             {
-                exceptionDeclaration.reset(new soul::ast::cpp::ExceptionDeclarationNode);
+                exceptionDeclaration.reset(new soul::ast::cpp::ExceptionDeclarationNode(lexer.GetSourcePos(pos)));
             }
             *parentMatch1 = match;
         }
@@ -3955,7 +3955,7 @@ soul::parser::Match StatementParser<Lexer>::ExpressionStatement(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExpressionStatement");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new soul::ast::cpp::ExpressionStatementNode(expr.release()));
+                return soul::parser::Match(true, new soul::ast::cpp::ExpressionStatementNode(lexer.GetSourcePos(pos), expr.release()));
             }
         }
         *parentMatch0 = match;

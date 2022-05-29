@@ -7,7 +7,7 @@ module soul.spg.nonterminal.info;
 
 namespace soul::spg {
 
-NonterminalInfo::NonterminalInfo(const std::string& name_, bool ptrType_) : name(name_), ptrType(ptrType_), count(0)
+NonterminalInfo::NonterminalInfo(soul::ast::spg::NonterminalParser* nonterminalParser_, bool ptrType_) : nonterminalParser(nonterminalParser_), ptrType(ptrType_), count(0)
 {
 }
 

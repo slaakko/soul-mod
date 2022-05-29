@@ -29,7 +29,7 @@ parser DeclaratorParser
 
     InitDeclaratorList(var std::unique_ptr<soul::ast::cpp::InitDeclaratorListNode> initDeclaratorList) : soul::ast::cpp::InitDeclaratorListNode*
         ::= 
-        (   empty{ initDeclaratorList.reset(new soul::ast::cpp::InitDeclaratorListNode()); }
+        (   empty{ initDeclaratorList.reset(new soul::ast::cpp::InitDeclaratorListNode(lexer.GetSourcePos(pos))); }
             (InitDeclarator:initDeclarator{ initDeclaratorList->Add(initDeclarator); } % COMMA)
         )
         {
@@ -40,7 +40,7 @@ parser DeclaratorParser
     InitDeclarator : soul::ast::cpp::InitDeclaratorNode*
         ::= (Declarator:declarator Initializer:initializer?)
         {
-            return new soul::ast::cpp::InitDeclaratorNode(declarator, initializer);
+            return new soul::ast::cpp::InitDeclaratorNode(lexer.GetSourcePos(pos), declarator, initializer);
         }
         ;
 
@@ -74,7 +74,7 @@ parser DeclaratorParser
         ;
 
     TypeId(var std::unique_ptr<soul::ast::cpp::TypeIdNode> typeId) : soul::ast::cpp::TypeIdNode*
-        ::= empty{ typeId.reset(new soul::ast::cpp::TypeIdNode()); }
+        ::= empty{ typeId.reset(new soul::ast::cpp::TypeIdNode(lexer.GetSourcePos(pos))); }
         (
             (TypeSpecifierSeq(typeId.get()):typeSpecifierSeq | TypeName:typeName{ typeId->Add(typeName); })
             (AbstractDeclarator:abstractDeclarator{ typeId->SetDeclarator(abstractDeclarator); })?
@@ -85,7 +85,7 @@ parser DeclaratorParser
         ;
 
     Type(var std::unique_ptr<soul::ast::cpp::TypeNode> type) : soul::ast::cpp::TypeNode*
-        ::= empty{ type.reset(new soul::ast::cpp::TypeNode()); }
+        ::= empty{ type.reset(new soul::ast::cpp::TypeNode(lexer.GetSourcePos(pos))); }
         (   (TypeSpecifier:typeSpecifier{ type->Add(typeSpecifier); })+
         |   TypeName:typeName{ type->Add(typeName); }
         )
@@ -143,8 +143,8 @@ parser DeclaratorParser
 
     Initializer(var std::unique_ptr<soul::ast::cpp::InitializerNode> initializer) : soul::ast::cpp::InitializerNode*
         ::=
-        (   ASSIGN InitializerClause:initializerClause{ initializer.reset(new soul::ast::cpp::InitializerNode(initializerClause)); }
-        |   LPAREN{ initializer.reset(new soul::ast::cpp::InitializerNode(nullptr)); } ExpressionList(initializer.get()):exprList RPAREN
+        (   ASSIGN InitializerClause:initializerClause{ initializer.reset(new soul::ast::cpp::InitializerNode(lexer.GetSourcePos(pos), initializerClause)); }
+        |   LPAREN{ initializer.reset(new soul::ast::cpp::InitializerNode(lexer.GetSourcePos(pos), nullptr)); } ExpressionList(initializer.get()):exprList RPAREN
         )
         {
             return initializer.release();
@@ -153,9 +153,9 @@ parser DeclaratorParser
 
     InitializerClause(var std::unique_ptr<soul::ast::cpp::AssignInitNode> assignInit) : soul::ast::cpp::AssignInitNode*
         ::=
-        (   AssignmentExpression:expr{ assignInit.reset(new soul::ast::cpp::AssignInitNode(expr)); }
-        |   LBRACE{ assignInit.reset(new soul::ast::cpp::AssignInitNode(nullptr)); } InitializerList(assignInit.get()):initializerList RBRACE
-        |   LBRACE RBRACE{ assignInit.reset(new soul::ast::cpp::AssignInitNode(nullptr)); }
+        (   AssignmentExpression:expr{ assignInit.reset(new soul::ast::cpp::AssignInitNode(lexer.GetSourcePos(pos), expr)); }
+        |   LBRACE{ assignInit.reset(new soul::ast::cpp::AssignInitNode(lexer.GetSourcePos(pos), nullptr)); } InitializerList(assignInit.get()):initializerList RBRACE
+        |   LBRACE RBRACE{ assignInit.reset(new soul::ast::cpp::AssignInitNode(lexer.GetSourcePos(pos), nullptr)); }
         )
         {
             return assignInit.release();

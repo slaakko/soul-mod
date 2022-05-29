@@ -24,14 +24,15 @@ void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fil
             {
                 soul::ast::spg::ParserFileDeclaration* parserFileDeclaration = static_cast<soul::ast::spg::ParserFileDeclaration*>(declaration.get());
                 std::string parserFilePath = util::GetFullPath(util::Path::Combine(root, parserFileDeclaration->FilePath()));
-                std::unique_ptr<soul::ast::spg::ParserFile> parserFile = soul::spg::ParseParserFile(parserFilePath, fileMap, verbose, parserFileDeclaration->External());
+                std::unique_ptr<soul::ast::spg::ParserFile> parserFile = soul::spg::ParseParserFile(parserFilePath, parserFileDeclaration->GetSourcePos(), 
+                    fileMap, verbose, parserFileDeclaration->External());
                 spgFile->AddParserFile(parserFile.release());
                 break;
             }
         }
     }
-    Link(spgFile, verbose);
-    GenerateCode(spgFile, verbose, noDebugSupport, version);
+    Link(spgFile, verbose, fileMap);
+    GenerateCode(spgFile, verbose, noDebugSupport, version, fileMap);
     std::cout << "parsers for project '" << spgFile->ProjectName() << "' generated successfully." << std::endl;
 }
 
