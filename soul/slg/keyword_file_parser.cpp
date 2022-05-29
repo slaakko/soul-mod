@@ -1,24 +1,24 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/slg/keyword_file_parser.parser' using soul parser generator spg version 4.0.0
 
-module soul.slg.keyword.file.par;
+module soul.slg.keyword.file.parser;
 
 import util;
 import soul.cpp.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.common.common.par;
-import soul.slg.token.par;
+import soul.common.common.parser;
+import soul.slg.token.parser;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
-using namespace soul::common::common::par;
-using namespace soul::slg::token::par;
+using namespace soul::common::common::parser;
+using namespace soul::slg::token::parser;
 using namespace soul::lex::slg;
 
-namespace soul::slg::keyword::file::par {
+namespace soul::slg::keyword::file::parser {
 
 template<typename Lexer>
 std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<Lexer>::Parse(Lexer& lexer)
@@ -71,6 +71,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 11);
     std::unique_ptr<soul::ast::slg::KeywordFile> keywordFile = std::unique_ptr<soul::ast::slg::KeywordFile>();
     std::unique_ptr<soul::ast::slg::KeywordCollection> keywordCollection = std::unique_ptr<soul::ast::slg::KeywordCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> keywordCollectionName;
@@ -350,7 +351,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "KeywordFile");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, keywordFile.release());
             }
         }
@@ -382,6 +383,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 12);
     std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
     soul::parser::Match* parentMatch0 = &match;
@@ -445,6 +447,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Keyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 13);
     std::string str = std::string();
     std::string tokenName = std::string();
     soul::parser::Match match(false);
@@ -619,7 +622,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Keyword");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::ast::slg::Keyword(str, tokenName));
             }
         }
@@ -641,4 +644,4 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
 
 template struct KeywordFileParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::slg::keyword::file::par
+} // namespace soul::slg::keyword::file::parser

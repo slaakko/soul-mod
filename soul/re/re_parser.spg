@@ -1,2 +1,2 @@
-project re.par;
+project re.parser;
 parser <re_parser.parser>;

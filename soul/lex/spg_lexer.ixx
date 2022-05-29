@@ -33,6 +33,7 @@ struct SpgLexer_Variables : public soul::lexer::Variables
 {
     SpgLexer_Variables();
     int leftAngleCount;
+    bool matchFilePath;
 };
 
 template<typename Char>
@@ -40,9 +41,9 @@ struct SpgLexer
 {
     using Variables = SpgLexer_Variables;
 
-    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lxr)
+    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
-        ClassMap<Char>* classmap = lxr.GetClassMap();
+        ClassMap<Char>* classmap = lexer.GetClassMap();
         int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
@@ -51,13 +52,13 @@ struct SpgLexer
                 switch (cls)
                 {
                     case 0:
-                    case 1:
-                    case 11:
+                    case 2:
                     case 12:
+                    case 13:
                     {
                         return 1;
                     }
-                    case 3:
+                    case 1:
                     {
                         return 2;
                     }
@@ -74,12 +75,15 @@ struct SpgLexer
                         return 5;
                     }
                     case 7:
+                    {
+                        return 6;
+                    }
                     case 8:
-                    case 10:
-                    case 14:
+                    case 9:
+                    case 11:
                     case 15:
-                    case 18:
-                    case 23:
+                    case 16:
+                    case 19:
                     case 24:
                     case 25:
                     case 26:
@@ -92,10 +96,7 @@ struct SpgLexer
                     case 33:
                     case 34:
                     case 35:
-                    {
-                        return 6;
-                    }
-                    case 16:
+                    case 36:
                     {
                         return 7;
                     }
@@ -103,7 +104,7 @@ struct SpgLexer
                     {
                         return 8;
                     }
-                    case 19:
+                    case 18:
                     {
                         return 9;
                     }
@@ -119,17 +120,17 @@ struct SpgLexer
                     {
                         return 12;
                     }
-                    case 36:
-                    case 37:
-                    case 39:
+                    case 23:
                     {
                         return 13;
                     }
+                    case 37:
                     case 38:
+                    case 40:
                     {
                         return 14;
                     }
-                    case 40:
+                    case 39:
                     {
                         return 15;
                     }
@@ -221,10 +222,10 @@ struct SpgLexer
             }
             case 35:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(46, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(46, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -242,10 +243,10 @@ struct SpgLexer
             }
             case 34:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(45, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(45, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -263,10 +264,10 @@ struct SpgLexer
             }
             case 33:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(44, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(44, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -284,41 +285,10 @@ struct SpgLexer
             }
             case 32:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(43, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 57:
-                    {
-                        return 36;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 36:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(42, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(40, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -336,10 +306,10 @@ struct SpgLexer
             }
             case 31:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(40, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(39, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -357,10 +327,10 @@ struct SpgLexer
             }
             case 30:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(39, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(38, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -378,10 +348,10 @@ struct SpgLexer
             }
             case 29:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(38, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(37, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -399,10 +369,10 @@ struct SpgLexer
             }
             case 28:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(37, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(36, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -420,10 +390,10 @@ struct SpgLexer
             }
             case 27:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(36, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(35, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -441,10 +411,10 @@ struct SpgLexer
             }
             case 26:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(35, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(32, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -462,10 +432,10 @@ struct SpgLexer
             }
             case 25:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(32, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(31, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -483,10 +453,41 @@ struct SpgLexer
             }
             case 24:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(31, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(27, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 42:
+                    {
+                        return 36;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 36:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(50, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -504,10 +505,10 @@ struct SpgLexer
             }
             case 23:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(27, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(19, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -523,9 +524,435 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 46:
+                    case 1:
                     {
                         return 37;
+                    }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 38;
+                    }
+                    case 42:
+                    {
+                        return 39;
+                    }
+                    case 48:
+                    {
+                        return 40;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 40:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(21, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    {
+                        return 37;
+                    }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 38;
+                    }
+                    case 42:
+                    {
+                        return 41;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 41:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(53, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    {
+                        return 37;
+                    }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 38;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 39:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(17, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    {
+                        return 37;
+                    }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 38;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 38:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    {
+                        return 37;
+                    }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 38;
                     }
                     default:
                     {
@@ -535,10 +962,10 @@ struct SpgLexer
             }
             case 37:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(50, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(58, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -556,10 +983,10 @@ struct SpgLexer
             }
             case 22:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(30, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(30, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -575,9 +1002,9 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 46:
+                    case 42:
                     {
-                        return 38;
+                        return 42;
                     }
                     default:
                     {
@@ -585,12 +1012,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 38:
+            case 42:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(16, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(16, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -608,10 +1035,10 @@ struct SpgLexer
             }
             case 21:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(47, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -627,9 +1054,9 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 46:
+                    case 42:
                     {
-                        return 39;
+                        return 43;
                     }
                     default:
                     {
@@ -637,12 +1064,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 39:
+            case 43:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(15, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(56, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -660,10 +1087,10 @@ struct SpgLexer
             }
             case 20:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(14, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -679,9 +1106,13 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 46:
+                    case 42:
                     {
-                        return 40;
+                        return 44;
+                    }
+                    case 45:
+                    {
+                        return 45;
                     }
                     default:
                     {
@@ -689,12 +1120,33 @@ struct SpgLexer
                     }
                 }
             }
-            case 40:
+            case 45:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(56, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(9, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
+            case 44:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(55, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -712,10 +1164,10 @@ struct SpgLexer
             }
             case 19:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(14, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(12, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -731,13 +1183,13 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
+                    case 42:
+                    {
+                        return 46;
+                    }
                     case 44:
                     {
-                        return 41;
-                    }
-                    case 46:
-                    {
-                        return 42;
+                        return 47;
                     }
                     default:
                     {
@@ -745,12 +1197,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 42:
+            case 47:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(55, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(8, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -766,12 +1218,12 @@ struct SpgLexer
                 }
                 return -1;
             }
-            case 41:
+            case 46:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(9, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(57, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -789,66 +1241,10 @@ struct SpgLexer
             }
             case 18:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(12, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 43:
-                    {
-                        return 43;
-                    }
-                    case 46:
-                    {
-                        return 44;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 44:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(57, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 43:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(8, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(7, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -866,10 +1262,41 @@ struct SpgLexer
             }
             case 17:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(7, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(47, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 42:
+                    {
+                        return 48;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 48:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(15, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -887,10 +1314,10 @@ struct SpgLexer
             }
             case 16:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(20, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(43, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -908,11 +1335,7 @@ struct SpgLexer
                 {
                     case 41:
                     {
-                        return 45;
-                    }
-                    case 46:
-                    {
-                        return 46;
+                        return 49;
                     }
                     default:
                     {
@@ -920,33 +1343,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 46:
+            case 49:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(18, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 45:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(22, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(42, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -962,9 +1364,9 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 46:
+                    case 42:
                     {
-                        return 47;
+                        return 50;
                     }
                     default:
                     {
@@ -972,12 +1374,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 47:
+            case 50:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(54, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(6, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -995,10 +1397,10 @@ struct SpgLexer
             }
             case 15:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(19, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1014,607 +1416,43 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
                     case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 48;
-                    }
-                    case 40:
-                    {
-                        return 49;
-                    }
-                    case 41:
-                    {
-                        return 50;
-                    }
-                    case 46:
                     {
                         return 51;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 51:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(17, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
                     case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 48;
-                    }
-                    case 41:
-                    {
-                        return 50;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 50:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(6, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 49:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(21, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 48;
-                    }
-                    case 41:
-                    {
-                        return 50;
-                    }
-                    case 46:
                     {
                         return 52;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 52:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(53, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
                     case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 48;
-                    }
-                    case 41:
-                    {
-                        return 50;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 48:
-            {
-                switch (cls)
-                {
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 48;
-                    }
-                    case 41:
-                    {
-                        return 50;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 14:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 14:
                     {
                         return 53;
                     }
-                    case 15:
+                    case 18:
                     {
                         return 54;
                     }
-                    case 16:
+                    case 21:
                     {
                         return 55;
                     }
-                    case 17:
+                    case 29:
                     {
                         return 56;
                     }
-                    case 20:
+                    case 30:
                     {
                         return 57;
                     }
-                    case 28:
+                    case 37:
+                    case 38:
                     {
                         return 58;
                     }
-                    case 29:
+                    case 39:
+                    case 40:
                     {
                         return 59;
-                    }
-                    case 36:
-                    case 37:
-                    {
-                        return 60;
-                    }
-                    case 38:
-                    case 39:
-                    {
-                        return 61;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 61:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 16:
-                    {
-                        return 55;
-                    }
-                    case 17:
-                    {
-                        return 56;
-                    }
-                    case 20:
-                    {
-                        return 57;
-                    }
-                    case 28:
-                    {
-                        return 58;
-                    }
-                    case 29:
-                    {
-                        return 59;
-                    }
-                    case 36:
-                    case 37:
-                    {
-                        return 60;
-                    }
-                    case 38:
-                    case 39:
-                    {
-                        return 61;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 60:
-            {
-                switch (cls)
-                {
-                    case 20:
-                    {
-                        return 57;
-                    }
-                    case 28:
-                    {
-                        return 58;
-                    }
-                    case 29:
-                    {
-                        return 59;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 60;
                     }
                     default:
                     {
@@ -1624,22 +1462,83 @@ struct SpgLexer
             }
             case 59:
             {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 17:
+                    {
+                        return 53;
+                    }
+                    case 18:
+                    {
+                        return 54;
+                    }
+                    case 21:
+                    {
+                        return 55;
+                    }
+                    case 29:
+                    {
+                        return 56;
+                    }
+                    case 30:
+                    {
+                        return 57;
+                    }
+                    case 37:
+                    case 38:
+                    {
+                        return 58;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 59;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 58:
+            {
                 switch (cls)
                 {
                     case 21:
                     {
-                        return 62;
+                        return 55;
                     }
-                    case 22:
+                    case 29:
                     {
-                        return 63;
+                        return 56;
                     }
-                    case 36:
+                    case 30:
+                    {
+                        return 57;
+                    }
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
-                        return 64;
+                        return 58;
                     }
                     default:
                     {
@@ -1647,12 +1546,37 @@ struct SpgLexer
                     }
                 }
             }
-            case 64:
+            case 57:
             {
-                auto& token = lxr.CurrentToken();
+                switch (cls)
+                {
+                    case 22:
+                    {
+                        return 60;
+                    }
+                    case 23:
+                    {
+                        return 61;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 62;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 62:
+            {
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1668,28 +1592,28 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 36:
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
-                        return 64;
-                    }
-                    case 18:
-                    {
-                        return 65;
+                        return 62;
                     }
                     case 19:
                     {
-                        return 66;
+                        return 63;
                     }
-                    case 30:
+                    case 20:
                     {
-                        return 67;
+                        return 64;
                     }
                     case 31:
                     {
-                        return 68;
+                        return 65;
+                    }
+                    case 32:
+                    {
+                        return 66;
                     }
                     default:
                     {
@@ -1697,54 +1621,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 68:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 67:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
             case 66:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1762,10 +1644,31 @@ struct SpgLexer
             }
             case 65:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
+            case 64:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1783,56 +1686,52 @@ struct SpgLexer
             }
             case 63:
             {
-                switch (cls)
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
+                if (tokenId == CONTINUE_TOKEN)
                 {
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 64;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
                 }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
             }
-            case 62:
+            case 61:
             {
                 switch (cls)
                 {
-                    case 36:
                     case 37:
                     case 38:
                     case 39:
-                    {
-                        return 64;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 58:
-            {
-                switch (cls)
-                {
-                    case 21:
+                    case 40:
                     {
                         return 62;
                     }
-                    case 22:
+                    default:
                     {
-                        return 63;
+                        return -1;
                     }
-                    case 36:
+                }
+            }
+            case 60:
+            {
+                switch (cls)
+                {
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
-                        return 64;
+                        return 62;
                     }
                     default:
                     {
@@ -1840,12 +1739,37 @@ struct SpgLexer
                     }
                 }
             }
-            case 57:
+            case 56:
             {
-                auto& token = lxr.CurrentToken();
+                switch (cls)
+                {
+                    case 22:
+                    {
+                        return 60;
+                    }
+                    case 23:
+                    {
+                        return 61;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 62;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 55:
+            {
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1861,36 +1785,169 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 18:
-                    {
-                        return 65;
-                    }
                     case 19:
                     {
-                        return 66;
+                        return 63;
                     }
-                    case 30:
+                    case 20:
                     {
-                        return 67;
+                        return 64;
                     }
                     case 31:
                     {
-                        return 68;
+                        return 65;
                     }
-                    case 28:
+                    case 32:
                     {
-                        return 69;
+                        return 66;
                     }
                     case 29:
                     {
-                        return 70;
+                        return 67;
                     }
-                    case 36:
+                    case 30:
+                    {
+                        return 68;
+                    }
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    {
+                        return 69;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 69:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 19:
+                    {
+                        return 63;
+                    }
+                    case 20:
+                    {
+                        return 64;
+                    }
+                    case 31:
+                    {
+                        return 65;
+                    }
+                    case 32:
+                    {
+                        return 66;
+                    }
+                    case 29:
+                    {
+                        return 67;
+                    }
+                    case 30:
+                    {
+                        return 68;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 69;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 68:
+            {
+                switch (cls)
+                {
+                    case 22:
+                    {
+                        return 70;
+                    }
+                    case 23:
                     {
                         return 71;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 72;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 72:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 19:
+                    {
+                        return 63;
+                    }
+                    case 20:
+                    {
+                        return 64;
+                    }
+                    case 31:
+                    {
+                        return 65;
+                    }
+                    case 32:
+                    {
+                        return 66;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 72;
                     }
                     default:
                     {
@@ -1900,55 +1957,14 @@ struct SpgLexer
             }
             case 71:
             {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
                 switch (cls)
                 {
-                    case 18:
-                    {
-                        return 65;
-                    }
-                    case 19:
-                    {
-                        return 66;
-                    }
-                    case 30:
-                    {
-                        return 67;
-                    }
-                    case 31:
-                    {
-                        return 68;
-                    }
-                    case 28:
-                    {
-                        return 69;
-                    }
-                    case 29:
-                    {
-                        return 70;
-                    }
-                    case 36:
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
-                        return 71;
+                        return 72;
                     }
                     default:
                     {
@@ -1960,18 +1976,70 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 21:
-                    {
-                        return 72;
-                    }
-                    case 22:
-                    {
-                        return 73;
-                    }
-                    case 36:
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    {
+                        return 72;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 67:
+            {
+                switch (cls)
+                {
+                    case 22:
+                    {
+                        return 70;
+                    }
+                    case 23:
+                    {
+                        return 71;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 72;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 54:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 19:
+                    {
+                        return 73;
+                    }
+                    case 20:
                     {
                         return 74;
                     }
@@ -1983,10 +2051,10 @@ struct SpgLexer
             }
             case 74:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2002,119 +2070,58 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 18:
-                    {
-                        return 65;
-                    }
-                    case 19:
-                    {
-                        return 66;
-                    }
-                    case 30:
-                    {
-                        return 67;
-                    }
-                    case 31:
-                    {
-                        return 68;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 74;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 73:
-            {
-                switch (cls)
-                {
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 74;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 72:
-            {
-                switch (cls)
-                {
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 74;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 69:
-            {
-                switch (cls)
-                {
-                    case 21:
-                    {
-                        return 72;
-                    }
-                    case 22:
-                    {
-                        return 73;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 74;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 56:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 18:
+                    case 20:
                     {
                         return 75;
                     }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 75:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
+            case 73:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
                     case 19:
                     {
                         return 76;
@@ -2127,10 +2134,31 @@ struct SpgLexer
             }
             case 76:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
+            case 53:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2147,6 +2175,36 @@ struct SpgLexer
                 switch (cls)
                 {
                     case 19:
+                    {
+                        return 73;
+                    }
+                    case 20:
+                    {
+                        return 74;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 52:
+            {
+                switch (cls)
+                {
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 77;
                     }
@@ -2158,31 +2216,10 @@ struct SpgLexer
             }
             case 77:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 75:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2198,7 +2235,107 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
+                    case 17:
+                    {
+                        return 53;
+                    }
                     case 18:
+                    {
+                        return 54;
+                    }
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 77;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 51:
+            {
+                switch (cls)
+                {
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 77;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 14:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 17:
+                    {
+                        return 53;
+                    }
+                    case 18:
+                    {
+                        return 54;
+                    }
+                    case 21:
+                    {
+                        return 55;
+                    }
+                    case 29:
+                    {
+                        return 56;
+                    }
+                    case 30:
+                    {
+                        return 57;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 78;
                     }
@@ -2210,10 +2347,103 @@ struct SpgLexer
             }
             case 78:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 17:
+                    {
+                        return 53;
+                    }
+                    case 18:
+                    {
+                        return 54;
+                    }
+                    case 21:
+                    {
+                        return 55;
+                    }
+                    case 29:
+                    {
+                        return 56;
+                    }
+                    case 30:
+                    {
+                        return 57;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 78;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 13:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(24, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    {
+                        return 79;
+                    }
+                    case 23:
+                    {
+                        return 80;
+                    }
+                    case 42:
+                    {
+                        return 81;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 81:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(52, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2229,12 +2459,12 @@ struct SpgLexer
                 }
                 return -1;
             }
-            case 55:
+            case 80:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(29, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2248,54 +2478,14 @@ struct SpgLexer
                 {
                     token.match = prevMatch;
                 }
-                switch (cls)
-                {
-                    case 18:
-                    {
-                        return 75;
-                    }
-                    case 19:
-                    {
-                        return 76;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 54:
-            {
-                switch (cls)
-                {
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 79;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
+                return -1;
             }
             case 79:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(34, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2311,29 +2501,9 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 16:
+                    case 7:
                     {
-                        return 55;
-                    }
-                    case 17:
-                    {
-                        return 56;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 79;
+                        return 82;
                     }
                     default:
                     {
@@ -2341,38 +2511,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 53:
+            case 82:
             {
-                switch (cls)
-                {
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 79;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 13:
-            {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(11, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2386,101 +2530,14 @@ struct SpgLexer
                 {
                     token.match = prevMatch;
                 }
-                switch (cls)
-                {
-                    case 16:
-                    {
-                        return 55;
-                    }
-                    case 17:
-                    {
-                        return 56;
-                    }
-                    case 20:
-                    {
-                        return 57;
-                    }
-                    case 28:
-                    {
-                        return 58;
-                    }
-                    case 29:
-                    {
-                        return 59;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 80;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 80:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 16:
-                    {
-                        return 55;
-                    }
-                    case 17:
-                    {
-                        return 56;
-                    }
-                    case 20:
-                    {
-                        return 57;
-                    }
-                    case 28:
-                    {
-                        return 58;
-                    }
-                    case 29:
-                    {
-                        return 59;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 80;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
+                return -1;
             }
             case 12:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(24, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(23, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2498,65 +2555,9 @@ struct SpgLexer
                 {
                     case 22:
                     {
-                        return 81;
-                    }
-                    case 41:
-                    {
-                        return 82;
-                    }
-                    case 46:
-                    {
                         return 83;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 83:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(52, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 82:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(34, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 6:
+                    case 42:
                     {
                         return 84;
                     }
@@ -2568,10 +2569,10 @@ struct SpgLexer
             }
             case 84:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(11, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(51, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2587,12 +2588,12 @@ struct SpgLexer
                 }
                 return -1;
             }
-            case 81:
+            case 83:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(29, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(28, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2610,10 +2611,10 @@ struct SpgLexer
             }
             case 11:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(23, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(33, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2629,11 +2630,18 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 21:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 69;
+                    }
+                    case 7:
                     {
                         return 85;
                     }
-                    case 46:
+                    case 21:
                     {
                         return 86;
                     }
@@ -2645,10 +2653,24 @@ struct SpgLexer
             }
             case 86:
             {
-                auto& token = lxr.CurrentToken();
+                switch (cls)
+                {
+                    case 21:
+                    {
+                        return 87;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 87:
+            {
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(51, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(41, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2666,10 +2688,10 @@ struct SpgLexer
             }
             case 85:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(28, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(10, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2687,10 +2709,10 @@ struct SpgLexer
             }
             case 10:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(33, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2706,32 +2728,41 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
+                    case 4:
+                    {
+                        return 3;
+                    }
+                    case 5:
+                    {
+                        return 88;
+                    }
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 36:
                     case 37:
                     case 38:
                     case 39:
-                    {
-                        return 71;
-                    }
-                    case 6:
-                    {
-                        return 87;
-                    }
-                    case 20:
-                    {
-                        return 88;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 88:
-            {
-                switch (cls)
-                {
-                    case 20:
+                    case 40:
                     {
                         return 89;
                     }
@@ -2743,52 +2774,10 @@ struct SpgLexer
             }
             case 89:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(41, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 87:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(10, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 9:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2804,277 +2793,113 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 3:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
-                        return 2;
+                        return 89;
                     }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 88:
+            {
+                switch (cls)
+                {
+                    case 1:
                     case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 90;
                     }
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 3:
                     {
                         return 91;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 91:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 91;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 90:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 94:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 93:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
                     }
                     default:
                     {
@@ -3084,16 +2909,37 @@ struct SpgLexer
             }
             case 92:
             {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(4, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
+            case 91:
+            {
                 switch (cls)
                 {
-                    case 2:
+                    case 3:
                     {
-                        return 92;
+                        return 91;
                     }
                     case 0:
                     case 1:
-                    case 3:
-                    case 5:
+                    case 2:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -3102,17 +2948,310 @@ struct SpgLexer
                     case 11:
                     case 12:
                     case 13:
+                    case 14:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 32:
+                    case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 93;
+                    }
+                    case 5:
+                    {
+                        return 94;
+                    }
+                    case 15:
+                    {
+                        return 95;
+                    }
+                    case 16:
+                    {
+                        return 96;
+                    }
+                    case 17:
+                    {
+                        return 97;
+                    }
+                    case 18:
+                    {
+                        return 98;
+                    }
+                    case 24:
+                    {
+                        return 99;
+                    }
+                    case 25:
+                    {
+                        return 100;
+                    }
+                    case 26:
+                    {
+                        return 101;
+                    }
+                    case 27:
+                    {
+                        return 102;
+                    }
+                    case 31:
+                    {
+                        return 103;
+                    }
+                    case 33:
+                    {
+                        return 104;
+                    }
+                    case 34:
+                    {
+                        return 105;
+                    }
+                    case 35:
+                    {
+                        return 106;
+                    }
+                    case 36:
+                    {
+                        return 107;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 108;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 108:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
                     case 18:
                     case 19:
                     case 20:
                     case 21:
                     case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
                     case 28:
                     case 29:
+                    case 30:
                     case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 109;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 109:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 109;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 107:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -3135,66 +3274,172 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 95;
+                        return 90;
                     }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 106:
+            {
+                switch (cls)
+                {
+                    case 1:
                     case 4:
-                    {
-                        return 96;
-                    }
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 14:
-                    {
-                        return 97;
-                    }
                     case 15:
-                    {
-                        return 98;
-                    }
                     case 16:
-                    {
-                        return 99;
-                    }
                     case 17:
-                    {
-                        return 100;
-                    }
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
                     case 23:
-                    {
-                        return 101;
-                    }
                     case 24:
-                    {
-                        return 102;
-                    }
                     case 25:
-                    {
-                        return 103;
-                    }
                     case 26:
-                    {
-                        return 104;
-                    }
+                    case 27:
+                    case 28:
+                    case 29:
                     case 30:
-                    {
-                        return 105;
-                    }
+                    case 31:
                     case 32:
-                    {
-                        return 106;
-                    }
                     case 33:
-                    {
-                        return 107;
-                    }
                     case 34:
-                    {
-                        return 108;
-                    }
                     case 35:
-                    {
-                        return 109;
-                    }
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 105:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 110;
                     }
@@ -3208,12 +3453,170 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
                     {
                         return 92;
                     }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 110;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 104:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
                     case 3:
+                    {
+                        return 91;
+                    }
                     case 5:
+                    {
+                        return 92;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 110;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 103:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -3246,6 +3649,8 @@ struct SpgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -3268,14 +3673,406 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 102:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 101:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 100:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 99:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 98:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 111;
                     }
@@ -3289,12 +4086,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -3317,17 +4110,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -3349,55 +4131,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 38:
-                    case 39:
-                    {
-                        return 111;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 109:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 92;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -3411,189 +4154,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 108:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 107:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 112;
                     }
@@ -3607,12 +4167,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -3635,15 +4191,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -3665,138 +4212,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 112;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 106:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 92;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 112;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 105:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -3810,423 +4235,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 104:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 103:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 102:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 101:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 100:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 113;
                     }
@@ -4240,12 +4248,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4267,7 +4271,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -4289,13 +4293,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -4308,6 +4315,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 114;
                     }
@@ -4321,12 +4329,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4348,7 +4352,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -4370,13 +4374,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -4389,6 +4396,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 115;
                     }
@@ -4402,12 +4410,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4429,7 +4433,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -4451,13 +4455,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -4470,6 +4477,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 116;
                     }
@@ -4483,12 +4491,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4510,7 +4514,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -4532,13 +4536,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -4551,6 +4558,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 117;
                     }
@@ -4564,12 +4572,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4591,7 +4595,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -4613,13 +4617,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -4632,6 +4639,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 118;
                     }
@@ -4645,12 +4653,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4672,6 +4676,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -4694,13 +4711,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 97:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -4713,6 +4798,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 119;
                     }
@@ -4726,12 +4812,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4753,7 +4835,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -4775,13 +4857,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -4794,6 +4879,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 120;
                     }
@@ -4807,12 +4893,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4835,19 +4917,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -4869,78 +4938,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 99:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 92;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -4953,6 +4960,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 121;
                     }
@@ -4966,12 +4974,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -4993,7 +4997,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -5015,13 +5019,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -5034,6 +5041,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 122;
                     }
@@ -5047,12 +5055,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -5074,6 +5078,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -5096,13 +5113,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 96:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -5115,6 +5200,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 123;
                     }
@@ -5128,12 +5214,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -5155,6 +5237,198 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 123;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 95:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 123;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 94:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(4, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -5177,12 +5451,49 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 93;
+                        return 90;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 94;
+                        return 91;
                     }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 93:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
                     case 28:
                     case 29:
@@ -5196,6 +5507,178 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 90:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 90;
+                    }
+                    case 3:
+                    {
+                        return 91;
+                    }
+                    case 5:
+                    {
+                        return 92;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 9:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(1, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 4:
+                    {
+                        return 3;
+                    }
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 89;
+                    }
+                    case 5:
                     {
                         return 124;
                     }
@@ -5209,12 +5692,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -5270,584 +5749,29 @@ struct SpgLexer
                     case 58:
                     case 59:
                     case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 98:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 125;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 125:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
                     case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 125;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 97:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 125;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 96:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 95:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 92;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 93;
-                    }
-                    case 4:
-                    {
-                        return 94;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 8:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 3:
-                    {
-                        return 2;
-                    }
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 91;
-                    }
-                    case 4:
                     {
                         return 126;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 126:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 127;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
                     default:
                     {
                         return -1;
                     }
                 }
             }
-            case 129:
+            case 127:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(4, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -5863,16 +5787,18 @@ struct SpgLexer
                 }
                 return -1;
             }
-            case 128:
+            case 126:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
                     case 3:
-                    case 5:
+                    {
+                        return 126;
+                    }
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -5882,32 +5808,17 @@ struct SpgLexer
                     case 12:
                     case 13:
                     case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
                     case 19:
                     case 20:
                     case 21:
                     case 22:
                     case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
-                    case 31:
                     case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
                     case 37:
                     case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -5931,9 +5842,66 @@ struct SpgLexer
                     {
                         return 128;
                     }
-                    case 4:
+                    case 5:
                     {
                         return 129;
+                    }
+                    case 15:
+                    {
+                        return 130;
+                    }
+                    case 16:
+                    {
+                        return 131;
+                    }
+                    case 17:
+                    {
+                        return 132;
+                    }
+                    case 18:
+                    {
+                        return 133;
+                    }
+                    case 24:
+                    {
+                        return 134;
+                    }
+                    case 25:
+                    {
+                        return 135;
+                    }
+                    case 26:
+                    {
+                        return 136;
+                    }
+                    case 27:
+                    {
+                        return 137;
+                    }
+                    case 31:
+                    {
+                        return 138;
+                    }
+                    case 33:
+                    {
+                        return 139;
+                    }
+                    case 34:
+                    {
+                        return 140;
+                    }
+                    case 35:
+                    {
+                        return 141;
+                    }
+                    case 36:
+                    {
+                        return 142;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 143;
                     }
                     default:
                     {
@@ -5941,18 +5909,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 127:
+            case 143:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 0:
                     case 1:
-                    case 3:
-                    case 5:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -5961,17 +5923,194 @@ struct SpgLexer
                     case 11:
                     case 12:
                     case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
                     case 18:
                     case 19:
                     case 20:
                     case 21:
                     case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
                     case 28:
                     case 29:
+                    case 30:
                     case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 144;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 144:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 144;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 142:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -5994,66 +6133,172 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 130;
+                        return 125;
                     }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 141:
+            {
+                switch (cls)
+                {
+                    case 1:
                     case 4:
-                    {
-                        return 131;
-                    }
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 14:
-                    {
-                        return 132;
-                    }
                     case 15:
-                    {
-                        return 133;
-                    }
                     case 16:
-                    {
-                        return 134;
-                    }
                     case 17:
-                    {
-                        return 135;
-                    }
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
                     case 23:
-                    {
-                        return 136;
-                    }
                     case 24:
-                    {
-                        return 137;
-                    }
                     case 25:
-                    {
-                        return 138;
-                    }
                     case 26:
-                    {
-                        return 139;
-                    }
+                    case 27:
+                    case 28:
+                    case 29:
                     case 30:
-                    {
-                        return 140;
-                    }
+                    case 31:
                     case 32:
-                    {
-                        return 141;
-                    }
                     case 33:
-                    {
-                        return 142;
-                    }
                     case 34:
-                    {
-                        return 143;
-                    }
                     case 35:
-                    {
-                        return 144;
-                    }
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 140:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 145;
                     }
@@ -6067,12 +6312,170 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
                     {
                         return 127;
                     }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 145;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 139:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
                     case 3:
+                    {
+                        return 126;
+                    }
                     case 5:
+                    {
+                        return 127;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 145;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 138:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -6105,6 +6508,8 @@ struct SpgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -6127,14 +6532,406 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 137:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 136:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 135:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 134:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 133:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 146;
                     }
@@ -6148,12 +6945,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -6176,17 +6969,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -6208,55 +6990,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 38:
-                    case 39:
-                    {
-                        return 146;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 144:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 127;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -6270,189 +7013,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 143:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 142:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 147;
                     }
@@ -6466,12 +7026,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -6494,15 +7050,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -6524,138 +7071,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 147;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 141:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 127;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 147;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 140:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -6669,423 +7094,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 139:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 138:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 137:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 136:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 135:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 148;
                     }
@@ -7099,12 +7107,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7126,7 +7130,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -7148,13 +7152,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7167,6 +7174,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 149;
                     }
@@ -7180,12 +7188,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7207,7 +7211,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -7229,13 +7233,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7248,6 +7255,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 150;
                     }
@@ -7261,12 +7269,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7288,7 +7292,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -7310,13 +7314,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7329,6 +7336,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 151;
                     }
@@ -7342,12 +7350,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7369,7 +7373,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -7391,13 +7395,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7410,6 +7417,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 152;
                     }
@@ -7423,12 +7431,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7450,7 +7454,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -7472,13 +7476,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7491,6 +7498,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 153;
                     }
@@ -7504,12 +7512,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7531,6 +7535,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -7553,13 +7570,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 132:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7572,6 +7657,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 154;
                     }
@@ -7585,12 +7671,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7612,7 +7694,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -7634,13 +7716,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7653,6 +7738,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 155;
                     }
@@ -7666,12 +7752,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7694,19 +7776,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -7728,78 +7797,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 134:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 127;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -7812,6 +7819,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 156;
                     }
@@ -7825,12 +7833,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7852,7 +7856,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -7874,13 +7878,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7893,6 +7900,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 157;
                     }
@@ -7906,12 +7914,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -7933,6 +7937,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -7955,13 +7972,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 131:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -7974,6 +8059,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 158;
                     }
@@ -7987,93 +8073,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
+                    case 1:
                     case 4:
-                    {
-                        return 129;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 159;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 159:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
                     case 6:
                     case 7:
                     case 8:
@@ -8096,19 +8097,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -8130,310 +8118,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 129;
+                        return 126;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 133:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 127;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 160;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 160:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 160;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 132:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 160;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 131:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 127;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -8447,32 +8141,8 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
                     {
-                        return 128;
-                    }
-                    case 4:
-                    {
-                        return 129;
+                        return 158;
                     }
                     default:
                     {
@@ -8484,12 +8154,106 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
                     {
                         return 127;
                     }
-                    case 3:
-                    case 5:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 158;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 129:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(4, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -8546,11 +8310,300 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 128;
+                        return 125;
                     }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 128:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 125:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 125;
+                    }
+                    case 3:
+                    {
+                        return 126;
+                    }
+                    case 5:
+                    {
+                        return 127;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 8:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(1, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
                     case 4:
                     {
-                        return 129;
+                        return 3;
+                    }
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 39:
+                    case 40:
+                    {
+                        return 89;
+                    }
+                    case 5:
+                    {
+                        return 124;
+                    }
+                    case 38:
+                    {
+                        return 159;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 159:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(1, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 4:
+                    {
+                        return 3;
+                    }
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 89;
                     }
                     default:
                     {
@@ -8560,10 +8613,10 @@ struct SpgLexer
             }
             case 7:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -8579,89 +8632,16 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 3:
-                    {
-                        return 2;
-                    }
-                    case 7:
                     case 8:
                     case 9:
                     case 10:
-                    case 14:
+                    case 11:
                     case 15:
                     case 16:
                     case 17:
                     case 18:
                     case 19:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 38:
-                    case 39:
-                    {
-                        return 91;
-                    }
-                    case 4:
-                    {
-                        return 126;
-                    }
-                    case 37:
-                    {
-                        return 161;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 161:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 3:
-                    {
-                        return 2;
-                    }
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 23:
+                    case 20:
                     case 24:
                     case 25:
                     case 26:
@@ -8678,8 +8658,9 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
-                        return 91;
+                        return 89;
                     }
                     default:
                     {
@@ -8689,10 +8670,10 @@ struct SpgLexer
             }
             case 6:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(25, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -8708,35 +8689,9 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
+                    case 42:
                     {
-                        return 91;
+                        return 160;
                     }
                     default:
                     {
@@ -8744,43 +8699,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 5:
+            case 160:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(25, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 46:
-                    {
-                        return 162;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 162:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(48, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(48, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -8796,12 +8720,12 @@ struct SpgLexer
                 }
                 return -1;
             }
-            case 4:
+            case 5:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(26, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(26, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -8817,15 +8741,113 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 5:
+                    case 6:
+                    {
+                        return 161;
+                    }
+                    case 7:
+                    {
+                        return 162;
+                    }
+                    case 42:
                     {
                         return 163;
                     }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 163:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(49, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
+            case 162:
+            {
+                switch (cls)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
                     case 6:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 164;
                     }
-                    case 46:
+                    case 7:
                     {
                         return 165;
                     }
@@ -8837,36 +8859,18 @@ struct SpgLexer
             }
             case 165:
             {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(49, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                return -1;
-            }
-            case 164:
-            {
                 switch (cls)
                 {
+                    case 7:
+                    {
+                        return 165;
+                    }
                     case 0:
                     case 1:
                     case 2:
                     case 3:
                     case 4:
                     case 5:
-                    case 7:
                     case 8:
                     case 9:
                     case 10:
@@ -8935,90 +8939,10 @@ struct SpgLexer
             }
             case 167:
             {
-                switch (cls)
-                {
-                    case 6:
-                    {
-                        return 167;
-                    }
-                    case 0:
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 168;
-                    }
-                    case 5:
-                    {
-                        return 169;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 169:
-            {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -9034,13 +8958,100 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
+                    case 11:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 0:
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
+                    }
+                    case 6:
+                    {
+                        return 169;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 169:
+            {
+                switch (cls)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9090,20 +9101,13 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
                     }
                     case 6:
                     {
-                        return 167;
-                    }
-                    case 0:
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
                         return 170;
                     }
-                    case 5:
+                    case 7:
                     {
                         return 171;
                     }
@@ -9117,12 +9121,16 @@ struct SpgLexer
             {
                 switch (cls)
                 {
+                    case 7:
+                    {
+                        return 165;
+                    }
                     case 0:
                     case 1:
                     case 2:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
@@ -9179,34 +9187,29 @@ struct SpgLexer
                     {
                         return 166;
                     }
-                    case 5:
-                    {
-                        return 172;
-                    }
-                    case 6:
-                    {
-                        return 173;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 173:
-            {
-                switch (cls)
-                {
                     case 6:
                     {
                         return 167;
                     }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 170:
+            {
+                switch (cls)
+                {
                     case 0:
+                    {
+                        return 172;
+                    }
                     case 1:
-                    case 2:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
+                    case 6:
                     case 8:
                     case 9:
                     case 10:
@@ -9261,35 +9264,38 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 168;
+                        return 173;
                     }
-                    case 5:
-                    {
-                        return 169;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 172:
-            {
-                switch (cls)
-                {
-                    case 0:
+                    case 2:
                     {
                         return 174;
                     }
-                    case 1:
+                    case 7:
                     {
                         return 175;
                     }
-                    case 2:
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 175:
+            {
+                switch (cls)
+                {
+                    case 7:
+                    {
+                        return 175;
+                    }
+                    case 0:
+                    {
+                        return 176;
+                    }
+                    case 1:
                     case 3:
                     case 4:
                     case 5:
-                    case 7:
                     case 8:
                     case 9:
                     case 10:
@@ -9344,44 +9350,51 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 176;
-                    }
-                    case 6:
-                    {
                         return 177;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 177:
-            {
-                switch (cls)
-                {
-                    case 6:
-                    {
-                        return 177;
-                    }
-                    case 0:
+                    case 2:
                     {
                         return 178;
                     }
-                    case 1:
+                    case 6:
                     {
                         return 179;
                     }
-                    case 2:
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 179:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
                     case 11:
-                    case 12:
-                    case 13:
                     case 14:
                     case 15:
                     case 16:
@@ -9429,25 +9442,42 @@ struct SpgLexer
                     case 58:
                     case 59:
                     case 60:
+                    {
+                        return 173;
+                    }
+                    case 7:
+                    {
+                        return 175;
+                    }
+                    case 0:
                     {
                         return 180;
                     }
-                    case 5:
+                    case 2:
                     {
                         return 181;
                     }
+                    case 6:
+                    {
+                        return 182;
+                    }
+                    case 12:
+                    case 13:
+                    {
+                        return 183;
+                    }
                     default:
                     {
                         return -1;
                     }
                 }
             }
-            case 181:
+            case 183:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -9463,13 +9493,112 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
+                    case 11:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 173;
+                    }
+                    case 7:
+                    {
+                        return 175;
+                    }
+                    case 0:
+                    {
+                        return 180;
+                    }
+                    case 2:
+                    {
+                        return 181;
+                    }
+                    case 6:
+                    {
+                        return 182;
+                    }
+                    case 12:
+                    case 13:
+                    {
+                        return 183;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 182:
+            {
+                switch (cls)
+                {
+                    case 6:
+                    {
+                        return 170;
+                    }
+                    case 0:
+                    {
+                        return 172;
+                    }
+                    case 1:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -9519,134 +9648,15 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 176;
+                        return 173;
                     }
-                    case 6:
-                    {
-                        return 177;
-                    }
-                    case 0:
-                    {
-                        return 182;
-                    }
-                    case 1:
-                    {
-                        return 183;
-                    }
-                    case 5:
-                    {
-                        return 184;
-                    }
-                    case 11:
-                    case 12:
-                    {
-                        return 185;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 185:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
                     case 2:
-                    case 3:
-                    case 4:
+                    {
+                        return 174;
+                    }
                     case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 176;
-                    }
-                    case 6:
-                    {
-                        return 177;
-                    }
-                    case 0:
-                    {
-                        return 182;
-                    }
-                    case 1:
-                    {
-                        return 183;
-                    }
-                    case 5:
                     {
                         return 184;
-                    }
-                    case 11:
-                    case 12:
-                    {
-                        return 185;
                     }
                     default:
                     {
@@ -9658,180 +9668,94 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 5:
-                    {
-                        return 172;
-                    }
-                    case 0:
-                    {
-                        return 174;
-                    }
-                    case 1:
+                    case 7:
                     {
                         return 175;
                     }
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
+                    case 0:
                     {
                         return 176;
                     }
-                    case 6:
-                    {
-                        return 186;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 186:
-            {
-                switch (cls)
-                {
-                    case 6:
+                    case 1:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
                         return 177;
                     }
-                    case 0:
+                    case 2:
                     {
                         return 178;
                     }
-                    case 1:
+                    case 6:
                     {
                         return 179;
                     }
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 180;
-                    }
-                    case 5:
-                    {
-                        return 181;
-                    }
                     default:
                     {
                         return -1;
                     }
                 }
             }
-            case 183:
+            case 181:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -9847,14 +9771,14 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
-                    case 13:
+                    case 11:
                     case 14:
                     case 15:
                     case 16:
@@ -9903,25 +9827,25 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
                     }
                     case 6:
                     {
-                        return 167;
-                    }
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
+                        return 169;
                     }
                     case 0:
                     {
-                        return 187;
+                        return 185;
                     }
                     default:
                     {
@@ -9929,12 +9853,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 187:
+            case 185:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -9950,14 +9874,14 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
-                    case 13:
+                    case 11:
                     case 14:
                     case 15:
                     case 16:
@@ -10006,122 +9930,22 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
                     }
-                    case 6:
-                    {
-                        return 167;
-                    }
-                    case 0:
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 182:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 2:
-                    case 3:
-                    case 4:
                     case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
                     {
-                        return 166;
+                        return 165;
+                    }
+                    case 0:
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
                     }
                     case 6:
                     {
-                        return 167;
-                    }
-                    case 0:
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
+                        return 169;
                     }
                     default:
                     {
@@ -10131,93 +9955,10 @@ struct SpgLexer
             }
             case 180:
             {
-                switch (cls)
-                {
-                    case 0:
-                    {
-                        return 174;
-                    }
-                    case 1:
-                    {
-                        return 175;
-                    }
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 176;
-                    }
-                    case 6:
-                    {
-                        return 177;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 179:
-            {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -10233,14 +9974,14 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
-                    case 13:
+                    case 11:
                     case 14:
                     case 15:
                     case 16:
@@ -10289,25 +10030,22 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 0:
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
                     }
                     case 6:
                     {
-                        return 167;
-                    }
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
-                    }
-                    case 0:
-                    {
-                        return 187;
+                        return 169;
                     }
                     default:
                     {
@@ -10317,10 +10055,10 @@ struct SpgLexer
             }
             case 178:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -10336,13 +10074,106 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
+                    case 11:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
+                    }
+                    case 6:
+                    {
+                        return 169;
+                    }
+                    case 0:
+                    {
+                        return 185;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 177:
+            {
+                switch (cls)
+                {
+                    case 0:
+                    {
+                        return 172;
+                    }
+                    case 1:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -10392,22 +10223,15 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 173;
                     }
-                    case 6:
+                    case 2:
                     {
-                        return 167;
+                        return 174;
                     }
-                    case 0:
-                    case 1:
-                    case 11:
-                    case 12:
+                    case 7:
                     {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
+                        return 175;
                     }
                     default:
                     {
@@ -10417,93 +10241,10 @@ struct SpgLexer
             }
             case 176:
             {
-                switch (cls)
-                {
-                    case 0:
-                    {
-                        return 174;
-                    }
-                    case 1:
-                    {
-                        return 175;
-                    }
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 176;
-                    }
-                    case 6:
-                    {
-                        return 177;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 175:
-            {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -10519,14 +10260,14 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
-                    case 13:
+                    case 11:
                     case 14:
                     case 15:
                     case 16:
@@ -10575,25 +10316,22 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 0:
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
                     }
                     case 6:
                     {
-                        return 167;
-                    }
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
-                    }
-                    case 0:
-                    {
-                        return 187;
+                        return 169;
                     }
                     default:
                     {
@@ -10603,10 +10341,10 @@ struct SpgLexer
             }
             case 174:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -10622,14 +10360,14 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
                     case 8:
                     case 9:
                     case 10:
-                    case 13:
+                    case 11:
                     case 14:
                     case 15:
                     case 16:
@@ -10678,22 +10416,25 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
                     }
                     case 6:
                     {
-                        return 167;
+                        return 169;
                     }
                     case 0:
-                    case 1:
-                    case 11:
-                    case 12:
                     {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
+                        return 185;
                     }
                     default:
                     {
@@ -10701,34 +10442,24 @@ struct SpgLexer
                     }
                 }
             }
-            case 170:
+            case 173:
             {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
                 switch (cls)
                 {
-                    case 2:
+                    case 0:
+                    {
+                        return 172;
+                    }
+                    case 1:
                     case 3:
                     case 4:
-                    case 7:
+                    case 5:
+                    case 6:
                     case 8:
                     case 9:
                     case 10:
+                    case 11:
+                    case 12:
                     case 13:
                     case 14:
                     case 15:
@@ -10778,22 +10509,115 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 173;
+                    }
+                    case 2:
+                    {
+                        return 174;
+                    }
+                    case 7:
+                    {
+                        return 175;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 172:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 0:
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
                     }
                     case 6:
                     {
-                        return 167;
-                    }
-                    case 0:
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 170;
-                    }
-                    case 5:
-                    {
-                        return 171;
+                        return 169;
                     }
                     default:
                     {
@@ -10803,21 +10627,33 @@ struct SpgLexer
             }
             case 168:
             {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
                 switch (cls)
                 {
-                    case 0:
                     case 1:
-                    case 2:
                     case 3:
                     case 4:
                     case 5:
-                    case 7:
                     case 8:
                     case 9:
                     case 10:
                     case 11:
-                    case 12:
-                    case 13:
                     case 14:
                     case 15:
                     case 16:
@@ -10866,11 +10702,22 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    case 0:
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 168;
                     }
                     case 6:
                     {
-                        return 167;
+                        return 169;
                     }
                     default:
                     {
@@ -10888,7 +10735,7 @@ struct SpgLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 7:
+                    case 6:
                     case 8:
                     case 9:
                     case 10:
@@ -10943,11 +10790,11 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 166;
+                        return 164;
                     }
-                    case 6:
+                    case 7:
                     {
-                        return 167;
+                        return 165;
                     }
                     default:
                     {
@@ -10955,19 +10802,92 @@ struct SpgLexer
                     }
                 }
             }
-            case 163:
+            case 164:
+            {
+                switch (cls)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 164;
+                    }
+                    case 7:
+                    {
+                        return 165;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 161:
             {
                 switch (cls)
                 {
                     case 0:
                     {
-                        return 188;
+                        return 186;
                     }
                     case 1:
-                    {
-                        return 189;
-                    }
-                    case 2:
                     case 3:
                     case 4:
                     case 5:
@@ -11026,6 +10946,51 @@ struct SpgLexer
                     case 58:
                     case 59:
                     case 60:
+                    {
+                        return 187;
+                    }
+                    case 2:
+                    {
+                        return 188;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 188:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 1;
+                    }
+                    case 0:
+                    {
+                        return 189;
+                    }
+                    case 6:
                     {
                         return 190;
                     }
@@ -11039,75 +11004,13 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 0:
-                    {
-                        return 188;
-                    }
-                    case 1:
-                    {
-                        return 189;
-                    }
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
                     case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
                     {
-                        return 190;
+                        return 161;
+                    }
+                    case 7:
+                    {
+                        return 162;
                     }
                     default:
                     {
@@ -11117,10 +11020,10 @@ struct SpgLexer
             }
             case 189:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -11136,37 +11039,16 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 1:
-                    case 11:
+                    case 0:
+                    case 2:
                     case 12:
+                    case 13:
                     {
                         return 1;
-                    }
-                    case 0:
-                    {
-                        return 191;
-                    }
-                    case 5:
-                    {
-                        return 192;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 192:
-            {
-                switch (cls)
-                {
-                    case 5:
-                    {
-                        return 163;
                     }
                     case 6:
                     {
-                        return 164;
+                        return 190;
                     }
                     default:
                     {
@@ -11174,91 +11056,17 @@ struct SpgLexer
                     }
                 }
             }
-            case 191:
+            case 187:
             {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
                 switch (cls)
                 {
                     case 0:
+                    {
+                        return 186;
+                    }
                     case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 1;
-                    }
-                    case 5:
-                    {
-                        return 192;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 188:
-            {
-                auto& token = lxr.CurrentToken();
-                Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
-                if (tokenId == CONTINUE_TOKEN)
-                {
-                    token.id = CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 0:
-                    case 1:
-                    case 11:
-                    case 12:
-                    {
-                        return 1;
-                    }
-                    case 5:
-                    {
-                        return 192;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 3:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
                     case 3:
+                    case 4:
                     case 5:
                     case 6:
                     case 7:
@@ -11316,11 +11124,11 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 187;
                     }
-                    case 4:
+                    case 2:
                     {
-                        return 195;
+                        return 188;
                     }
                     default:
                     {
@@ -11328,12 +11136,128 @@ struct SpgLexer
                     }
                 }
             }
-            case 195:
+            case 186:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 0:
+                    case 2:
+                    case 12:
+                    case 13:
+                    {
+                        return 1;
+                    }
+                    case 6:
+                    {
+                        return 190;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 4:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 193:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(4, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -11349,16 +11273,18 @@ struct SpgLexer
                 }
                 return -1;
             }
-            case 194:
+            case 192:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
                     case 3:
-                    case 5:
+                    {
+                        return 192;
+                    }
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -11368,32 +11294,17 @@ struct SpgLexer
                     case 12:
                     case 13:
                     case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
                     case 19:
                     case 20:
                     case 21:
                     case 22:
                     case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
-                    case 31:
                     case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
                     case 37:
                     case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -11417,9 +11328,66 @@ struct SpgLexer
                     {
                         return 194;
                     }
-                    case 4:
+                    case 5:
                     {
                         return 195;
+                    }
+                    case 15:
+                    {
+                        return 196;
+                    }
+                    case 16:
+                    {
+                        return 197;
+                    }
+                    case 17:
+                    {
+                        return 198;
+                    }
+                    case 18:
+                    {
+                        return 199;
+                    }
+                    case 24:
+                    {
+                        return 200;
+                    }
+                    case 25:
+                    {
+                        return 201;
+                    }
+                    case 26:
+                    {
+                        return 202;
+                    }
+                    case 27:
+                    {
+                        return 203;
+                    }
+                    case 31:
+                    {
+                        return 204;
+                    }
+                    case 33:
+                    {
+                        return 205;
+                    }
+                    case 34:
+                    {
+                        return 206;
+                    }
+                    case 35:
+                    {
+                        return 207;
+                    }
+                    case 36:
+                    {
+                        return 208;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 209;
                     }
                     default:
                     {
@@ -11427,18 +11395,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 193:
+            case 209:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 0:
                     case 1:
-                    case 3:
-                    case 5:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -11447,17 +11409,194 @@ struct SpgLexer
                     case 11:
                     case 12:
                     case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
                     case 18:
                     case 19:
                     case 20:
                     case 21:
                     case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
                     case 28:
                     case 29:
+                    case 30:
                     case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 210;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 210:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 210;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 208:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -11480,66 +11619,172 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 196;
+                        return 191;
                     }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 207:
+            {
+                switch (cls)
+                {
+                    case 1:
                     case 4:
-                    {
-                        return 197;
-                    }
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 14:
-                    {
-                        return 198;
-                    }
                     case 15:
-                    {
-                        return 199;
-                    }
                     case 16:
-                    {
-                        return 200;
-                    }
                     case 17:
-                    {
-                        return 201;
-                    }
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
                     case 23:
-                    {
-                        return 202;
-                    }
                     case 24:
-                    {
-                        return 203;
-                    }
                     case 25:
-                    {
-                        return 204;
-                    }
                     case 26:
-                    {
-                        return 205;
-                    }
+                    case 27:
+                    case 28:
+                    case 29:
                     case 30:
-                    {
-                        return 206;
-                    }
+                    case 31:
                     case 32:
-                    {
-                        return 207;
-                    }
                     case 33:
-                    {
-                        return 208;
-                    }
                     case 34:
-                    {
-                        return 209;
-                    }
                     case 35:
-                    {
-                        return 210;
-                    }
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 206:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 211;
                     }
@@ -11553,12 +11798,170 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
                     {
                         return 193;
                     }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 211;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 205:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
                     case 3:
+                    {
+                        return 192;
+                    }
                     case 5:
+                    {
+                        return 193;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 211;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 204:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -11591,6 +11994,8 @@ struct SpgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -11613,14 +12018,406 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 203:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 202:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 201:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 200:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 199:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 212;
                     }
@@ -11634,12 +12431,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -11662,17 +12455,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -11694,55 +12476,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 38:
-                    case 39:
-                    {
-                        return 212;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 210:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 193;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -11756,189 +12499,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 209:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 208:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 213;
                     }
@@ -11952,12 +12512,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -11980,15 +12536,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -12010,138 +12557,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 213;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 207:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 193;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 213;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 206:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -12155,423 +12580,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 205:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 204:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 203:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 202:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 201:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 214;
                     }
@@ -12585,12 +12593,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -12612,7 +12616,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -12634,13 +12638,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -12653,6 +12660,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 215;
                     }
@@ -12666,12 +12674,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -12693,7 +12697,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -12715,13 +12719,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -12734,6 +12741,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 216;
                     }
@@ -12747,12 +12755,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -12774,7 +12778,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -12796,13 +12800,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -12815,6 +12822,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 217;
                     }
@@ -12828,12 +12836,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -12855,7 +12859,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -12877,13 +12881,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -12896,6 +12903,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 218;
                     }
@@ -12909,12 +12917,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -12936,7 +12940,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -12958,13 +12962,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -12977,6 +12984,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 219;
                     }
@@ -12990,12 +12998,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13017,6 +13021,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -13039,13 +13056,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 198:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -13058,6 +13143,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 220;
                     }
@@ -13071,12 +13157,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13098,7 +13180,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -13120,13 +13202,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -13139,6 +13224,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 221;
                     }
@@ -13152,12 +13238,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13180,19 +13262,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -13214,78 +13283,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 200:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 193;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -13298,6 +13305,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 222;
                     }
@@ -13311,12 +13319,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13338,7 +13342,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -13360,13 +13364,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -13379,6 +13386,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 223;
                     }
@@ -13392,12 +13400,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13419,6 +13423,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -13441,13 +13458,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
+                    case 5:
+                    {
+                        return 193;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 197:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -13460,6 +13545,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 224;
                     }
@@ -13473,12 +13559,8 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13500,7 +13582,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -13522,13 +13604,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    case 27:
+                    case 5:
+                    {
+                        return 193;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -13541,8 +13626,9 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
-                        return 225;
+                        return 224;
                     }
                     default:
                     {
@@ -13550,16 +13636,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 225:
+            case 196:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13582,19 +13664,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -13616,78 +13685,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 199:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 193;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -13700,89 +13707,9 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
-                    {
-                        return 226;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 226:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
                     {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 226;
+                        return 224;
                     }
                     default:
                     {
@@ -13790,93 +13717,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 198:
+            case 195:
             {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 193;
-                    }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 226;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 197:
-            {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(4, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -13892,12 +13738,86 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
+                    case 4:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
                     {
                         return 193;
                     }
-                    case 3:
-                    case 5:
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 194:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 4:
                     case 6:
                     case 7:
                     case 8:
@@ -13954,110 +13874,28 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 194;
+                        return 191;
                     }
-                    case 4:
+                    case 3:
                     {
-                        return 195;
+                        return 192;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 196:
-            {
-                switch (cls)
-                {
-                    case 2:
+                    case 5:
                     {
                         return 193;
                     }
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 194;
-                    }
-                    case 4:
-                    {
-                        return 195;
-                    }
                     default:
                     {
                         return -1;
                     }
                 }
             }
-            case 2:
+            case 191:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
+                    case 1:
                     case 4:
-                    case 5:
                     case 6:
                     case 7:
                     case 8:
@@ -14114,7 +13952,15 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 191;
+                    }
+                    case 3:
+                    {
+                        return 192;
+                    }
+                    case 5:
+                    {
+                        return 193;
                     }
                     default:
                     {
@@ -14122,19 +13968,11 @@ struct SpgLexer
                     }
                 }
             }
-            case 229:
+            case 3:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -14192,7 +14030,15 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
                     }
                     default:
                     {
@@ -14200,12 +14046,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 228:
+            case 227:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(5, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(5, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -14221,17 +14067,17 @@ struct SpgLexer
                 }
                 return -1;
             }
-            case 227:
+            case 226:
             {
                 switch (cls)
                 {
-                    case 2:
+                    case 3:
                     {
-                        return 227;
+                        return 226;
                     }
                     case 0:
                     case 1:
-                    case 4:
+                    case 2:
                     case 5:
                     case 6:
                     case 7:
@@ -14241,17 +14087,310 @@ struct SpgLexer
                     case 11:
                     case 12:
                     case 13:
+                    case 14:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 32:
+                    case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 228;
+                    }
+                    case 4:
+                    {
+                        return 229;
+                    }
+                    case 15:
+                    {
+                        return 230;
+                    }
+                    case 16:
+                    {
+                        return 231;
+                    }
+                    case 17:
+                    {
+                        return 232;
+                    }
+                    case 18:
+                    {
+                        return 233;
+                    }
+                    case 24:
+                    {
+                        return 234;
+                    }
+                    case 25:
+                    {
+                        return 235;
+                    }
+                    case 26:
+                    {
+                        return 236;
+                    }
+                    case 27:
+                    {
+                        return 237;
+                    }
+                    case 31:
+                    {
+                        return 238;
+                    }
+                    case 33:
+                    {
+                        return 239;
+                    }
+                    case 34:
+                    {
+                        return 240;
+                    }
+                    case 35:
+                    {
+                        return 241;
+                    }
+                    case 36:
+                    {
+                        return 242;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 243;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 243:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
                     case 18:
                     case 19:
                     case 20:
                     case 21:
                     case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
                     case 28:
                     case 29:
+                    case 30:
                     case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 244;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 244:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    case 39:
+                    case 40:
+                    {
+                        return 244;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 242:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -14274,66 +14413,172 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 230;
+                        return 225;
                     }
                     case 3:
                     {
-                        return 231;
+                        return 226;
                     }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 241:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 14:
-                    {
-                        return 232;
-                    }
                     case 15:
-                    {
-                        return 233;
-                    }
                     case 16:
-                    {
-                        return 234;
-                    }
                     case 17:
-                    {
-                        return 235;
-                    }
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
                     case 23:
-                    {
-                        return 236;
-                    }
                     case 24:
-                    {
-                        return 237;
-                    }
                     case 25:
-                    {
-                        return 238;
-                    }
                     case 26:
-                    {
-                        return 239;
-                    }
+                    case 27:
+                    case 28:
+                    case 29:
                     case 30:
-                    {
-                        return 240;
-                    }
+                    case 31:
                     case 32:
-                    {
-                        return 241;
-                    }
                     case 33:
-                    {
-                        return 242;
-                    }
                     case 34:
-                    {
-                        return 243;
-                    }
                     case 35:
-                    {
-                        return 244;
-                    }
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 240:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 245;
                     }
@@ -14347,15 +14592,169 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
                     {
-                        return 227;
+                        return 225;
                     }
                     case 3:
                     {
-                        return 228;
+                        return 226;
                     }
                     case 4:
+                    {
+                        return 227;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 245;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 239:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    {
+                        return 245;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 238:
+            {
+                switch (cls)
+                {
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -14389,6 +14788,8 @@ struct SpgLexer
                     case 35:
                     case 36:
                     case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -14411,10 +14812,406 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 237:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
                     case 38:
                     case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 236:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 235:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 234:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 233:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
                     {
                         return 246;
                     }
@@ -14428,15 +15225,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -14460,17 +15249,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -14492,133 +15270,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
-                    }
-                    case 38:
-                    case 39:
-                    {
-                        return 246;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 244:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
+                        return 225;
                     }
                     case 3:
                     {
-                        return 228;
+                        return 226;
                     }
                     case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 243:
-            {
-                switch (cls)
-                {
-                    case 2:
                     {
                         return 227;
                     }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -14632,107 +15293,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 242:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 247;
                     }
@@ -14746,15 +15306,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -14778,15 +15330,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -14808,138 +15351,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 247;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 241:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
+                        return 225;
                     }
                     case 3:
                     {
-                        return 228;
+                        return 226;
                     }
                     case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 247;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 240:
-            {
-                switch (cls)
-                {
-                    case 2:
                     {
                         return 227;
                     }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -14953,419 +15374,6 @@ struct SpgLexer
                     case 38:
                     case 39:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 239:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 238:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 237:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 236:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 235:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
                     {
                         return 248;
                     }
@@ -15379,15 +15387,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15410,7 +15410,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -15432,9 +15432,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -15447,6 +15454,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 249;
                     }
@@ -15460,15 +15468,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15491,7 +15491,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -15513,9 +15513,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -15528,6 +15535,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 250;
                     }
@@ -15541,15 +15549,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15572,7 +15572,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -15594,9 +15594,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -15609,6 +15616,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 251;
                     }
@@ -15622,15 +15630,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15653,7 +15653,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -15675,9 +15675,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -15690,6 +15697,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 252;
                     }
@@ -15703,15 +15711,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15734,7 +15734,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -15756,9 +15756,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -15771,6 +15778,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 253;
                     }
@@ -15784,15 +15792,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15815,6 +15815,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -15837,9 +15850,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 232:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -15852,6 +15937,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 254;
                     }
@@ -15865,15 +15951,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15896,7 +15974,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -15918,9 +15996,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -15933,6 +16018,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 255;
                     }
@@ -15946,15 +16032,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -15978,19 +16056,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -16012,74 +16077,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 234:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
+                        return 225;
                     }
                     case 3:
                     {
-                        return 228;
+                        return 226;
                     }
                     case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
                     {
-                        return 229;
+                        return 227;
                     }
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -16092,6 +16099,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 256;
                     }
@@ -16105,15 +16113,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -16136,7 +16136,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -16158,9 +16158,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -16173,6 +16180,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 257;
                     }
@@ -16186,15 +16194,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -16217,6 +16217,19 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
                     case 40:
                     case 41:
                     case 42:
@@ -16239,9 +16252,81 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 231:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
                     case 27:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -16254,6 +16339,7 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
                         return 258;
                     }
@@ -16267,15 +16353,7 @@ struct SpgLexer
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -16298,7 +16376,7 @@ struct SpgLexer
                     case 24:
                     case 25:
                     case 26:
-                    case 40:
+                    case 27:
                     case 41:
                     case 42:
                     case 43:
@@ -16320,9 +16398,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
                     }
-                    case 27:
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
                     case 28:
                     case 29:
                     case 30:
@@ -16335,8 +16420,9 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
+                    case 40:
                     {
-                        return 259;
+                        return 258;
                     }
                     default:
                     {
@@ -16344,19 +16430,11 @@ struct SpgLexer
                     }
                 }
             }
-            case 259:
+            case 230:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -16380,19 +16458,6 @@ struct SpgLexer
                     case 25:
                     case 26:
                     case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    case 40:
                     case 41:
                     case 42:
                     case 43:
@@ -16414,155 +16479,16 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 233:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
+                        return 225;
                     }
                     case 3:
                     {
-                        return 228;
+                        return 226;
                     }
                     case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 260;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 260:
-            {
-                switch (cls)
-                {
-                    case 2:
                     {
                         return 227;
                     }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
-                    {
-                        return 229;
-                    }
-                    case 27:
                     case 28:
                     case 29:
                     case 30:
@@ -16575,89 +16501,9 @@ struct SpgLexer
                     case 37:
                     case 38:
                     case 39:
-                    {
-                        return 260;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 232:
-            {
-                switch (cls)
-                {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
                     case 40:
-                    case 41:
-                    case 42:
-                    case 43:
-                    case 44:
-                    case 45:
-                    case 46:
-                    case 47:
-                    case 48:
-                    case 49:
-                    case 50:
-                    case 51:
-                    case 52:
-                    case 53:
-                    case 54:
-                    case 55:
-                    case 56:
-                    case 57:
-                    case 58:
-                    case 59:
-                    case 60:
                     {
-                        return 229;
-                    }
-                    case 27:
-                    case 28:
-                    case 29:
-                    case 30:
-                    case 31:
-                    case 32:
-                    case 33:
-                    case 34:
-                    case 35:
-                    case 36:
-                    case 37:
-                    case 38:
-                    case 39:
-                    {
-                        return 260;
+                        return 258;
                     }
                     default:
                     {
@@ -16665,12 +16511,12 @@ struct SpgLexer
                     }
                 }
             }
-            case 231:
+            case 229:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(5, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(5, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -16686,15 +16532,7 @@ struct SpgLexer
                 }
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -16752,7 +16590,15 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
                     }
                     default:
                     {
@@ -16760,19 +16606,11 @@ struct SpgLexer
                     }
                 }
             }
-            case 230:
+            case 228:
             {
                 switch (cls)
                 {
-                    case 2:
-                    {
-                        return 227;
-                    }
-                    case 3:
-                    {
-                        return 228;
-                    }
-                    case 4:
+                    case 1:
                     case 5:
                     case 6:
                     case 7:
@@ -16830,7 +16668,15 @@ struct SpgLexer
                     case 59:
                     case 60:
                     {
-                        return 229;
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
                     }
                     default:
                     {
@@ -16838,12 +16684,198 @@ struct SpgLexer
                     }
                 }
             }
+            case 225:
+            {
+                switch (cls)
+                {
+                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    case 38:
+                    case 39:
+                    case 40:
+                    case 41:
+                    case 42:
+                    case 43:
+                    case 44:
+                    case 45:
+                    case 46:
+                    case 47:
+                    case 48:
+                    case 49:
+                    case 50:
+                    case 51:
+                    case 52:
+                    case 53:
+                    case 54:
+                    case 55:
+                    case 56:
+                    case 57:
+                    case 58:
+                    case 59:
+                    case 60:
+                    {
+                        return 225;
+                    }
+                    case 3:
+                    {
+                        return 226;
+                    }
+                    case 4:
+                    {
+                        return 227;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 2:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(20, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    {
+                        return 259;
+                    }
+                    case 42:
+                    {
+                        return 260;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 260:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(18, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
+            case 259:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(22, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 42:
+                    {
+                        return 261;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 261:
+            {
+                auto& token = lexer.CurrentToken();
+                Lexeme prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(54, lexer);
+                if (tokenId == CONTINUE_TOKEN)
+                {
+                    token.id = CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                return -1;
+            }
             case 1:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -16860,15 +16892,15 @@ struct SpgLexer
                 switch (cls)
                 {
                     case 0:
-                    case 1:
-                    case 11:
+                    case 2:
                     case 12:
+                    case 13:
                     {
                         return 1;
                     }
-                    case 5:
+                    case 6:
                     {
-                        return 192;
+                        return 190;
                     }
                     default:
                     {
@@ -16880,359 +16912,367 @@ struct SpgLexer
         return -1;
     }
 
-    static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lxr)
+    static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
     {
         switch (ruleIndex)
         {
             case 0:
             {
-                lxr.Retract();
+                lexer.Retract();
                 break;
             }
             case 1:
             {
-                lxr.Retract();
-                int64_t kw = lxr.GetKeywordToken(lxr.CurrentToken().match);
+                lexer.Retract();
+                int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
                 if (kw == INVALID_TOKEN) return ID;
                 else return kw;
                 break;
             }
             case 2:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return INTEGER_LITERAL;
                 break;
             }
             case 3:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return FLOATING_LITERAL;
                 break;
             }
             case 4:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return CHAR_LITERAL;
                 break;
             }
             case 5:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return STRING_LITERAL;
                 break;
             }
             case 6:
             {
-                lxr.Retract();
-                return FILEPATH;
+                lexer.Retract();
+                return PRODUCES;
                 break;
             }
             case 7:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return DOLLAR;
                 break;
             }
             case 8:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return DISJUNCTION;
                 break;
             }
             case 9:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return AMP_AMP;
                 break;
             }
             case 10:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return DOT_STAR;
                 break;
             }
             case 11:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return ARROW_STAR;
                 break;
             }
             case 12:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return PIPE;
                 break;
             }
             case 13:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return CARET;
                 break;
             }
             case 14:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return AMP;
                 break;
             }
             case 15:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return EQ;
                 break;
             }
             case 16:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return NEQ;
                 break;
             }
             case 17:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LEQ;
                 break;
             }
             case 18:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return GEQ;
                 break;
             }
             case 19:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LANGLE;
                 break;
             }
             case 20:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return RANGLE;
                 break;
             }
             case 21:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return SHIFT_LEFT;
                 break;
             }
             case 22:
             {
-                auto vars = static_cast<Variables*>(lxr.GetVariables());
+                auto vars = static_cast<Variables*>(lexer.GetVariables());
                 if (vars->leftAngleCount > 0) return INVALID_TOKEN;
-                lxr.Retract();
+                lexer.Retract();
                 return SHIFT_RIGHT;
                 break;
             }
             case 23:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return PLUS;
                 break;
             }
             case 24:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return MINUS;
                 break;
             }
             case 25:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return STAR;
                 break;
             }
             case 26:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return DIV;
                 break;
             }
             case 27:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return REM;
                 break;
             }
             case 28:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return PLUS_PLUS;
                 break;
             }
             case 29:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return MINUS_MINUS;
                 break;
             }
             case 30:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return EXCLAMATION;
                 break;
             }
             case 31:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return QUEST;
                 break;
             }
             case 32:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return TILDE;
                 break;
             }
             case 33:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return DOT;
                 break;
             }
             case 34:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return ARROW;
                 break;
             }
             case 35:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LBRACKET;
                 break;
             }
             case 36:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return RBRACKET;
                 break;
             }
             case 37:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LPAREN;
                 break;
             }
             case 38:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return RPAREN;
                 break;
             }
             case 39:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LBRACE;
                 break;
             }
             case 40:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return RBRACE;
                 break;
             }
             case 41:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return ELLIPSIS;
                 break;
             }
             case 42:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return COLON_COLON;
                 break;
             }
             case 43:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return COLON;
                 break;
             }
             case 44:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return SEMICOLON;
                 break;
             }
             case 45:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return HASH;
                 break;
             }
             case 46:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return COMMA;
                 break;
             }
             case 47:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return ASSIGN;
                 break;
             }
             case 48:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return MUL_ASSIGN;
                 break;
             }
             case 49:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return DIV_ASSIGN;
                 break;
             }
             case 50:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return REM_ASSIGN;
                 break;
             }
             case 51:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return PLUS_ASSIGN;
                 break;
             }
             case 52:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return MINUS_ASSIGN;
                 break;
             }
             case 53:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return SHIFT_LEFT_ASSIGN;
                 break;
             }
             case 54:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return SHIFT_RIGHT_ASSIGN;
                 break;
             }
             case 55:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return AND_ASSIGN;
                 break;
             }
             case 56:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return XOR_ASSIGN;
                 break;
             }
             case 57:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return OR_ASSIGN;
+                break;
+            }
+            case 58:
+            {
+                auto vars = static_cast<Variables*>(lexer.GetVariables());
+                if (!vars->matchFilePath) return INVALID_TOKEN;
+                lexer.Retract();
+                return FILEPATH;
                 break;
             }
         }

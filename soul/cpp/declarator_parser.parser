@@ -3,19 +3,21 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.cpp.declarator.par;
+export module soul.cpp.declarator.parser;
 
 [interface]import soul.ast.cpp;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
-[implementation]import soul.cpp.declaration.par;
-[implementation]import soul.cpp.expression.par;
+[implementation]import soul.cpp.declaration.parser;
+[implementation]import soul.cpp.expression.parser;
 [implementation]import soul.lex.slg;
+[implementation]import soul.lex.spg;
 
 parser DeclaratorParser
 {
-    uselexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
 
     using ExpressionParser.ConstantExpression;
     using ExpressionParser.IdExpression;

@@ -1,26 +1,28 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/declaration_parser.parser' using soul parser generator spg version 4.0.0
 
-module soul.cpp.declaration.par;
+module soul.cpp.declaration.parser;
 
 import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
-import soul.cpp.expression.par;
-import soul.cpp.identifier.par;
-import soul.cpp.declarator.par;
+import soul.cpp.expression.parser;
+import soul.cpp.identifier.parser;
+import soul.cpp.declarator.parser;
 import soul.lex.slg;
+import soul.lex.spg;
 
 using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
 using namespace soul::punctuation::token;
-using namespace soul::cpp::expression::par;
-using namespace soul::cpp::identifier::par;
-using namespace soul::cpp::declarator::par;
+using namespace soul::cpp::expression::parser;
+using namespace soul::cpp::identifier::parser;
+using namespace soul::cpp::declarator::parser;
 using namespace soul::lex::slg;
+using namespace soul::lex::spg;
 
-namespace soul::cpp::declaration::par {
+namespace soul::cpp::declaration::parser {
 
 template<typename Lexer>
 soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
@@ -34,6 +36,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "BlockDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 0);
     std::unique_ptr<soul::ast::cpp::UsingObjectNode> nsAlias;
     std::unique_ptr<soul::ast::cpp::UsingObjectNode> usingDirective;
     std::unique_ptr<soul::ast::cpp::UsingObjectNode> usingDeclaration;
@@ -61,7 +64,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BlockDeclaration");
-                            #endif // SOUL_PARSER_DEBUG_SUPPORT
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
                             return soul::parser::Match(true, nsAlias.release());
                         }
                     }
@@ -85,7 +88,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BlockDeclaration");
-                                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                                    #endif SOUL_PARSER_DEBUG_SUPPORT
                                     return soul::parser::Match(true, usingDirective.release());
                                 }
                             }
@@ -114,7 +117,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BlockDeclaration");
-                                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                                #endif SOUL_PARSER_DEBUG_SUPPORT
                                 return soul::parser::Match(true, usingDeclaration.release());
                             }
                         }
@@ -143,7 +146,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BlockDeclaration");
-                            #endif // SOUL_PARSER_DEBUG_SUPPORT
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
                             return soul::parser::Match(true, simpleDeclaration.release());
                         }
                     }
@@ -180,6 +183,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 1);
     std::unique_ptr<soul::ast::cpp::SimpleDeclarationNode> simpleDeclaration = std::unique_ptr<soul::ast::cpp::SimpleDeclarationNode>();
     std::unique_ptr<soul::ast::cpp::InitDeclaratorListNode> initDeclaratorList;
     soul::parser::Match match(false);
@@ -295,7 +299,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleDeclaration");
-                        #endif // SOUL_PARSER_DEBUG_SUPPORT
+                        #endif SOUL_PARSER_DEBUG_SUPPORT
                         return soul::parser::Match(true, simpleDeclaration.release());
                     }
                 }
@@ -331,6 +335,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, sou
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifierSeq");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 2);
     std::unique_ptr<soul::ast::cpp::DeclSpecifierNode> declSpecifier;
     std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName;
     soul::parser::Match match(false);
@@ -446,6 +451,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 3);
     std::unique_ptr<soul::ast::cpp::StorageClassSpecifierNode> storateClassSpecifier;
     std::unique_ptr<soul::ast::cpp::TypeSpecifierNode> typeSpecifier;
     std::unique_ptr<soul::ast::cpp::DeclSpecifierNode> tdef;
@@ -468,7 +474,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclSpecifier");
-                        #endif // SOUL_PARSER_DEBUG_SUPPORT
+                        #endif SOUL_PARSER_DEBUG_SUPPORT
                         return soul::parser::Match(true, storateClassSpecifier.release());
                     }
                 }
@@ -492,7 +498,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclSpecifier");
-                                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                                #endif SOUL_PARSER_DEBUG_SUPPORT
                                 return soul::parser::Match(true, typeSpecifier.release());
                             }
                         }
@@ -521,7 +527,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclSpecifier");
-                            #endif // SOUL_PARSER_DEBUG_SUPPORT
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
                             return soul::parser::Match(true, tdef.release());
                         }
                     }
@@ -558,6 +564,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "StorageClassSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 4);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
@@ -570,7 +577,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StorageClassSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::StorageClassSpecifierNode("auto"));
                 }
             }
@@ -583,7 +590,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StorageClassSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::StorageClassSpecifierNode("register"));
                 }
             }
@@ -596,7 +603,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StorageClassSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::StorageClassSpecifierNode("static"));
                 }
             }
@@ -609,7 +616,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StorageClassSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::StorageClassSpecifierNode("extern"));
                 }
             }
@@ -622,7 +629,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StorageClassSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::StorageClassSpecifierNode("mutable"));
                 }
             }
@@ -655,6 +662,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 5);
     std::unique_ptr<soul::ast::cpp::TypeSpecifierNode> simpleTypeSpecifier;
     std::unique_ptr<soul::ast::cpp::TypeSpecifierNode> cvQualifier;
     soul::parser::Match match(false);
@@ -672,7 +680,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, simpleTypeSpecifier.release());
                 }
             }
@@ -696,7 +704,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeSpecifier");
-                            #endif // SOUL_PARSER_DEBUG_SUPPORT
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
                             return soul::parser::Match(true, cvQualifier.release());
                         }
                     }
@@ -733,6 +741,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleTypeSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 6);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
@@ -745,8 +754,47 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("char"));
+                }
+            }
+            break;
+        }
+        case CHAR8T:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("char8_t"));
+                }
+            }
+            break;
+        }
+        case CHAR16T:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("char16_t"));
+                }
+            }
+            break;
+        }
+        case CHAR32T:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("char32_t"));
                 }
             }
             break;
@@ -758,7 +806,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("wchar_t"));
                 }
             }
@@ -771,7 +819,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("bool"));
                 }
             }
@@ -784,7 +832,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("short"));
                 }
             }
@@ -797,7 +845,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("int"));
                 }
             }
@@ -810,7 +858,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("long"));
                 }
             }
@@ -823,7 +871,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("signed"));
                 }
             }
@@ -836,7 +884,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("unsigned"));
                 }
             }
@@ -849,7 +897,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("float"));
                 }
             }
@@ -862,7 +910,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("double"));
                 }
             }
@@ -875,7 +923,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::TypeSpecifierNode("void"));
                 }
             }
@@ -908,6 +956,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeName");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 7);
     std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName = std::unique_ptr<soul::ast::cpp::TypeNameNode>();
     std::unique_ptr<soul::parser::Value<std::string>> qid;
     soul::parser::Match match(false);
@@ -956,6 +1005,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
+                                        auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == LANGLE)
                                         {
@@ -964,6 +1014,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                         }
                                         if (match.hit)
                                         {
+                                            ++vars->leftAngleCount;
                                             typeName->SetTemplate();
                                         }
                                         *parentMatch9 = match;
@@ -991,6 +1042,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                     soul::parser::Match* parentMatch12 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
+                                        auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == RANGLE)
                                         {
@@ -999,6 +1051,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                         }
                                         if (match.hit)
                                         {
+                                            ++vars->leftAngleCount;
                                         }
                                         *parentMatch12 = match;
                                     }
@@ -1028,7 +1081,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TypeName");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, typeName.release());
             }
         }
@@ -1060,6 +1113,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgumentList(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgumentList");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 8);
     std::unique_ptr<soul::ast::cpp::Node> arg;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1164,6 +1218,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgument");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 9);
     std::unique_ptr<soul::ast::cpp::TypeIdNode> typeId;
     std::unique_ptr<soul::ast::cpp::Node> assignmentExpr;
     soul::parser::Match match(false);
@@ -1181,7 +1236,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateArgument");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, typeId.release());
                 }
             }
@@ -1205,7 +1260,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateArgument");
-                            #endif // SOUL_PARSER_DEBUG_SUPPORT
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
                             return soul::parser::Match(true, assignmentExpr.release());
                         }
                     }
@@ -1242,6 +1297,7 @@ soul::parser::Match DeclarationParser<Lexer>::Typedef(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Typedef");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 10);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1257,7 +1313,7 @@ soul::parser::Match DeclarationParser<Lexer>::Typedef(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Typedef");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::ast::cpp::TypedefNode);
             }
         }
@@ -1289,6 +1345,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CVQualifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 11);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
@@ -1301,7 +1358,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CVQualifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::ConstNode);
                 }
             }
@@ -1314,7 +1371,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CVQualifier");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::VolatileNode);
                 }
             }
@@ -1347,6 +1404,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceAliasDefinition");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 12);
     std::unique_ptr<soul::parser::Value<std::string>> id;
     std::unique_ptr<soul::parser::Value<std::string>> qid;
     soul::parser::Match match(false);
@@ -1441,7 +1499,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NamespaceAliasDefinition");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::ast::cpp::NamespaceAliasNode(id->value, qid->value));
             }
         }
@@ -1473,6 +1531,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 13);
     std::unique_ptr<soul::parser::Value<std::string>> qid;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1521,7 +1580,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UsingDeclaration");
-                        #endif // SOUL_PARSER_DEBUG_SUPPORT
+                        #endif SOUL_PARSER_DEBUG_SUPPORT
                         return soul::parser::Match(true, new soul::ast::cpp::UsingDeclarationNode(qid->value));
                     }
                 }
@@ -1557,6 +1616,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDirective");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 14);
     std::unique_ptr<soul::parser::Value<std::string>> ns;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1625,7 +1685,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UsingDirective");
-                        #endif // SOUL_PARSER_DEBUG_SUPPORT
+                        #endif SOUL_PARSER_DEBUG_SUPPORT
                         return soul::parser::Match(true, new soul::ast::cpp::UsingDirectiveNode(ns->value));
                     }
                 }
@@ -1650,5 +1710,6 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer)
 }
 
 template struct DeclarationParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
+template struct DeclarationParser<soul::lexer::Lexer<soul::lex::spg::SpgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::cpp::declaration::par
+} // namespace soul::cpp::declaration::parser

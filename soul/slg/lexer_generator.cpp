@@ -442,10 +442,10 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("using Variables = " + lexer->VariableClassName() + ";");
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lxr)");
+    interfaceFormatter.WriteLine("static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    interfaceFormatter.WriteLine("ClassMap<Char>* classmap = lxr.GetClassMap();");
+    interfaceFormatter.WriteLine("ClassMap<Char>* classmap = lexer.GetClassMap();");
     interfaceFormatter.WriteLine("int32_t cls = classmap->GetClass(chr);");
     interfaceFormatter.WriteLine("switch (state)");
     interfaceFormatter.WriteLine("{");
@@ -457,10 +457,10 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
         interfaceFormatter.IncIndent();
         if (state->Accept())
         {
-            interfaceFormatter.WriteLine("auto& token = lxr.CurrentToken();");
+            interfaceFormatter.WriteLine("auto& token = lexer.CurrentToken();");
             interfaceFormatter.WriteLine("Lexeme prevMatch = token.match;");
-            interfaceFormatter.WriteLine("token.match = lxr.CurrentLexeme();");
-            interfaceFormatter.WriteLine("int64_t tokenId = GetTokenId(" + std::to_string(state->RuleIndex()) + ", lxr);");
+            interfaceFormatter.WriteLine("token.match = lexer.CurrentLexeme();");
+            interfaceFormatter.WriteLine("int64_t tokenId = GetTokenId(" + std::to_string(state->RuleIndex()) + ", lexer);");
             interfaceFormatter.WriteLine("if (tokenId == CONTINUE_TOKEN)");
             interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
@@ -531,7 +531,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lxr)");
+    interfaceFormatter.WriteLine("static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("switch (ruleIndex)");
@@ -540,7 +540,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     for (const auto& rule : lexer->Rules())
     {
         interfaceFormatter.WriteLine("case " + std::to_string(rule->Index()) + ":");
-        rule->Code()->InsertFront(new soul::ast::cpp::ExpressionStatementNode(new soul::ast::cpp::InvokeNode(new soul::ast::cpp::IdExprNode("lxr.Retract"))));
+        rule->Code()->InsertFront(new soul::ast::cpp::ExpressionStatementNode(new soul::ast::cpp::InvokeNode(new soul::ast::cpp::IdExprNode("lexer.Retract"))));
         if (rule->Action() != -1)
         {
             soul::ast::slg::Action* action = lexer->GetActions().GetAction(rule->Action());
@@ -556,19 +556,11 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
                 }
                 if (visitor.HasVars())
                 {
-/*
-                    soul::ast::cpp::DeclarationStatementNode* declarationStmt = new soul::ast::cpp::DeclarationStatementNode(
-                        new soul::ast::cpp::InitDeclaratorNode(lexer->VariableClassName() + "* vars",
-                            new soul::ast::cpp::InitializerNode(
-                                new soul::ast::cpp::AssignInitNode(
-                                    new soul::ast::cpp::IdExprNode("static_cast<" + lexer->VariableClassName() + "*>(lxr.GetVariables())")))));
-                    rule->Code()->InsertFront(declarationStmt);
-*/
                     soul::ast::cpp::DeclarationStatementNode* declarationStmt = new soul::ast::cpp::DeclarationStatementNode(
                         new soul::ast::cpp::InitDeclaratorNode("auto vars",
                             new soul::ast::cpp::InitializerNode(
                                 new soul::ast::cpp::AssignInitNode(
-                                    new soul::ast::cpp::IdExprNode("static_cast<Variables*>(lxr.GetVariables())")))));
+                                    new soul::ast::cpp::IdExprNode("static_cast<Variables*>(lexer.GetVariables())")))));
                     rule->Code()->InsertFront(declarationStmt);
                 }
             }
@@ -856,12 +848,13 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
         {
             case soul::ast::slg::SlgFileDeclarationKind::tokenFileDeclaration:
             {
-                std::string tokenFilePath = util::GetFullPath(util::Path::Combine(dir, declaration->FilePath()));
+                soul::ast::slg::TokenFileDeclaration* tokenFileDeclaration = static_cast<soul::ast::slg::TokenFileDeclaration*>(declaration.get());
+                std::string tokenFilePath = util::GetFullPath(util::Path::Combine(dir, tokenFileDeclaration->FilePath()));
                 if (verbose)
                 {
                     std::cout << "> " << tokenFilePath << std::endl;
                 }
-                std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = ParseTokenFile(tokenFilePath);
+                std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = ParseTokenFile(tokenFilePath, tokenFileDeclaration->External());
                 GenerateTokenModule(tokenFile.get(), verbose);
                 slgFile->AddTokenFile(tokenFile.release());
                 break;

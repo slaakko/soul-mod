@@ -150,13 +150,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="parser_file_parser.parser" />
     <None Include="spg_file_parser.parser" />
     <None Include="spg_parsers.spg" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="code_generator.cpp" />
+    <ClCompile Include="code_generator.ixx" />
+    <ClCompile Include="code_modifier.cpp" />
+    <ClCompile Include="code_modifier.ixx" />
+    <ClCompile Include="file_parsers.cpp" />
+    <ClCompile Include="file_parsers.ixx" />
+    <ClCompile Include="linking.cpp" />
+    <ClCompile Include="linking.ixx" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="nonterminal_info.cpp" />
+    <ClCompile Include="nonterminal_info.ixx" />
+    <ClCompile Include="parser_file_parser.cpp" />
+    <ClCompile Include="parser_file_parser.ixx" />
+    <ClCompile Include="parser_generator.cpp" />
+    <ClCompile Include="parser_generator.ixx" />
+    <ClCompile Include="parsing_util.cpp" />
+    <ClCompile Include="parsing_util.ixx" />
     <ClCompile Include="spg_file_parser.cpp" />
     <ClCompile Include="spg_file_parser.ixx" />
+    <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">
@@ -183,6 +201,9 @@
     <ProjectReference Include="..\token\token.vcxproj">
       <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\lex\soul.lex.spg.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

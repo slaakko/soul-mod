@@ -162,6 +162,7 @@
     <None Include="soul.cpp.token" />
     <None Include="soul.punctuation.token" />
     <None Include="soul.tool.token" />
+    <None Include="tokens.slg" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="soul.cpp.op.token.ixx" />

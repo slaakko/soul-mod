@@ -3,23 +3,24 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.spg.spg.file.par;
+export module soul.spg.spg.file.parser;
 
 [interface]import soul.ast.spg;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
-[implementation]import soul.common.common.par;
+[implementation]import soul.common.common.parser;
 [implementation]import soul.lex.spg;
 
 parser SpgFileParser
 {
-    uselexer soul::lex::spg::SpgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
 
     main;
     using CommonParser.QualifiedId;
 	using CommonParser.FilePath;
+    using CommonParser.ParserKeyword;
 
     SpgFile(var std::unique_ptr<soul::ast::spg::SpgFile> spgFile) : soul::ast::spg::SpgFile*
         ::= 
@@ -33,7 +34,17 @@ parser SpgFileParser
         ;
 
 	SpgFileDeclaration : soul::ast::spg::SpgFileDeclaration*
-		::= empty{ return nullptr; }
+		::= ParserFileDeclaration:parserFileDeclaration{ return parserFileDeclaration; }
 		;
+
+    ParserFileDeclaration(var bool external) : soul::ast::spg::ParserFileDeclaration*
+        ::= 
+        (
+            (EXTERN{ external = true; } | empty{ external = false; }) ParserKeyword:parserKeyword FilePath:filePath! SEMICOLON!
+        )
+        {
+            return new soul::ast::spg::ParserFileDeclaration(filePath, external);
+        }
+        ;
 
 }

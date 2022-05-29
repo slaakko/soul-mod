@@ -6,7 +6,7 @@
 module soul.slg.regular.expression.parser;
 
 import soul.lex.re;
-import soul.re.par;
+import soul.re.parser;
 import util;
 
 namespace soul::slg {
@@ -18,7 +18,7 @@ soul::ast::re::Nfa RegularExpressionParser::Parse(const std::string& expression,
         std::u32string expr = util::ToUtf32(expression);
         auto lexer = soul::lex::re::MakeLexer(expr.c_str(), expr.c_str() + expr.length(), fileName);
         using LexerType = decltype(lexer);
-        return soul::re::par::RegExParser<LexerType>::Parse(lexer, lexerContext);
+        return soul::re::parser::RegExParser<LexerType>::Parse(lexer, lexerContext);
     }
     catch (const std::exception& ex)
     {

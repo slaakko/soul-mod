@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.slg.token.par;
+export module soul.slg.token.parser;
 
 import std.core;
 import soul.lexer.token;
@@ -12,7 +12,7 @@ import util.unicode;
 
 using namespace util;
 
-export namespace soul::slg::token::par {
+export namespace soul::slg::token::parser {
 
 template<typename Char>
 void ParseHexChar(const std::string& fileName, char32_t& value, const Char*& p, const Char* e, const soul::lexer::Token<Char, soul::lexer::LexerBase<Char>>& token)
@@ -150,4 +150,4 @@ std::string ParseStringLiteral(const std::string& fileName, const soul::lexer::T
     return ToUtf8(stringLiteral);
 }
 
-} // namespace soul::slg::token::par
+} // namespace soul::slg::token::parser

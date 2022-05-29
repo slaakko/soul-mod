@@ -1,7 +1,7 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/re/re_parser.parser' using soul parser generator spg version 4.0.0
 
-export module soul.re.par;
+export module soul.re.parser;
 
 import std.core;
 import soul.lexer;
@@ -10,7 +10,7 @@ import soul.ast.re;
 
 using namespace soul::ast::re;
 
-export namespace soul::re::par {
+export namespace soul::re::parser {
 
 template<typename Lexer>
 struct RegExParser
@@ -27,4 +27,4 @@ struct RegExParser
     static soul::parser::Match ExpressionReference(Lexer& lexer);
 };
 
-} // namespace soul::re::par
+} // namespace soul::re::parser

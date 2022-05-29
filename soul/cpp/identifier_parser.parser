@@ -3,15 +3,17 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.cpp.identifier.par;
+export module soul.cpp.identifier.parser;
 
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.lex.slg;
+[implementation]import soul.lex.spg;
 
 parser CppIdentifierParser
 {
-    uselexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
 
     CppIdentifier : std::string
         ::= ID{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }

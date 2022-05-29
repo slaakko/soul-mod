@@ -3,21 +3,23 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.cpp.expression.par;
+export module soul.cpp.expression.parser;
 
 [interface]import soul.ast.cpp;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
-[implementation]import soul.cpp.declarator.par;
-[implementation]import soul.cpp.declaration.par;
-[implementation]import soul.cpp.literal.par;
-[implementation]import soul.cpp.identifier.par;
+[implementation]import soul.cpp.declarator.parser;
+[implementation]import soul.cpp.declaration.parser;
+[implementation]import soul.cpp.literal.parser;
+[implementation]import soul.cpp.identifier.parser;
 [implementation]import soul.lex.slg;
+[implementation]import soul.lex.spg;
 
 parser ExpressionParser
 {
-    uselexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
 
     using DeclaratorParser.TypeId;
     using DeclaratorParser.TypeSpecifierSeq;
@@ -342,7 +344,7 @@ parser ExpressionParser
 
     NewExpression(var bool global, var std::unique_ptr<soul::ast::cpp::NewNode> newExprNode) : soul::ast::cpp::Node*
         ::= 
-        (   COLON_COLON{ global = true; }
+        (   (COLON_COLON{ global = true; })?
             NEW{ newExprNode.reset(new soul::ast::cpp::NewNode(global)); }
             empty{ newExprNode->BeginAddToPlacement(); } NewPlacement(newExprNode.get()):placement? empty{ newExprNode->EndAddToPlacement(); }
             (NewTypeId:newTypeId{ newExprNode->SetParens(false); newExprNode->SetTypeId(newTypeId); } | LPAREN TypeId:ti RPAREN{ newExprNode->SetParens(true); newExprNode->SetTypeId(ti); })

@@ -1,24 +1,24 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/slg/token_file_parser.parser' using soul parser generator spg version 4.0.0
 
-module soul.slg.token.file.par;
+module soul.slg.token.file.parser;
 
 import util;
 import soul.cpp.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.common.common.par;
-import soul.slg.token.par;
+import soul.common.common.parser;
+import soul.slg.token.parser;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
-using namespace soul::common::common::par;
-using namespace soul::slg::token::par;
+using namespace soul::common::common::parser;
+using namespace soul::slg::token::parser;
 using namespace soul::lex::slg;
 
-namespace soul::slg::token::file::par {
+namespace soul::slg::token::file::parser {
 
 template<typename Lexer>
 std::unique_ptr<soul::ast::slg::TokenFile> TokenFileParser<Lexer>::Parse(Lexer& lexer)
@@ -71,6 +71,7 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TokenFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 20);
     std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = std::unique_ptr<soul::ast::slg::TokenFile>();
     std::unique_ptr<soul::ast::slg::TokenCollection> tokenCollection = std::unique_ptr<soul::ast::slg::TokenCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> tokenCollectionName;
@@ -320,7 +321,7 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TokenFile");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, tokenFile.release());
             }
         }
@@ -352,6 +353,7 @@ soul::parser::Match TokenFileParser<Lexer>::Token(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Token");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 21);
     std::string name = std::string();
     std::string info = std::string();
     soul::parser::Match match(false);
@@ -526,7 +528,7 @@ soul::parser::Match TokenFileParser<Lexer>::Token(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Token");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::ast::slg::Token(name, info));
             }
         }
@@ -548,4 +550,4 @@ soul::parser::Match TokenFileParser<Lexer>::Token(Lexer& lexer)
 
 template struct TokenFileParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::slg::token::file::par
+} // namespace soul::slg::token::file::parser

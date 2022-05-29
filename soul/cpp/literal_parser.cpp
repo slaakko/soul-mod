@@ -1,18 +1,20 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/literal_parser.parser' using soul parser generator spg version 4.0.0
 
-module soul.cpp.literal.par;
+module soul.cpp.literal.parser;
 
 import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.lex.slg;
+import soul.lex.spg;
 
 using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
 using namespace soul::lex::slg;
+using namespace soul::lex::spg;
 
-namespace soul::cpp::literal::par {
+namespace soul::cpp::literal::parser {
 
 template<typename Lexer>
 soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
@@ -26,6 +28,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 73);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     soul::lexer::SourcePos sourcePos = lexer.GetSourcePos(pos);
@@ -38,7 +41,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
                 }
             }
@@ -51,7 +54,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
                 }
             }
@@ -64,7 +67,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
                 }
             }
@@ -77,7 +80,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
                 }
             }
@@ -90,7 +93,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
                 }
             }
@@ -103,7 +106,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
                 }
             }
@@ -116,7 +119,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif // SOUL_PARSER_DEBUG_SUPPORT
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::ast::cpp::LiteralNode(util::ToUtf8(lexer.GetToken(pos).ToString())));
                 }
             }
@@ -138,5 +141,6 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
 }
 
 template struct LiteralParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
+template struct LiteralParser<soul::lexer::Lexer<soul::lex::spg::SpgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::cpp::literal::par
+} // namespace soul::cpp::literal::parser

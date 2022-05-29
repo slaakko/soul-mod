@@ -1,10 +1,10 @@
 project spg.parsers;
-//parser <parser_file_parser.parser>;
+parser <parser_file_parser.parser>;
 parser <spg_file_parser.parser>;
-parser <../common/common_parser.parser>;
-parser <../cpp/declaration_parser.parser>;
-parser <../cpp/declarator_parser.parser>;
-parser <../cpp/expression_parser.parser>;
-parser <../cpp/identifier_parser.parser>;
-parser <../cpp/literal_parser.parser>;
-parser <../cpp/statement_parser.parser>;
+extern parser <../common/common_parser.parser>;
+extern parser <../cpp/declaration_parser.parser>;
+extern parser <../cpp/declarator_parser.parser>;
+extern parser <../cpp/expression_parser.parser>;
+extern parser <../cpp/identifier_parser.parser>;
+extern parser <../cpp/literal_parser.parser>;
+extern parser <../cpp/statement_parser.parser>;

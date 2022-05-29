@@ -1,26 +1,26 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/slg/expression_file_parser.parser' using soul parser generator spg version 4.0.0
 
-module soul.slg.expression.file.par;
+module soul.slg.expression.file.parser;
 
 import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.common.common.par;
-import soul.slg.token.par;
+import soul.common.common.parser;
+import soul.slg.token.parser;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
-using namespace soul::common::common::par;
-using namespace soul::slg::token::par;
+using namespace soul::common::common::parser;
+using namespace soul::slg::token::parser;
 using namespace soul::lex::slg;
 
-namespace soul::slg::expression::file::par {
+namespace soul::slg::expression::file::parser {
 
 template<typename Lexer>
 std::unique_ptr<soul::ast::slg::ExpressionFile> ExpressionFileParser<Lexer>::Parse(Lexer& lexer)
@@ -73,6 +73,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 0);
     std::unique_ptr<soul::ast::slg::ExpressionFile> expressionFile = std::unique_ptr<soul::ast::slg::ExpressionFile>();
     std::unique_ptr<soul::ast::slg::ExpressionCollection> expressionCollection = std::unique_ptr<soul::ast::slg::ExpressionCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> expressionCollectionName;
@@ -278,7 +279,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExpressionFile");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, expressionFile.release());
             }
         }
@@ -310,6 +311,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Expression");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 1);
     std::string name = std::string();
     int line = int();
     std::unique_ptr<soul::parser::Value<std::string>> exprString;
@@ -440,7 +442,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expression");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::ast::slg::Expression(name, exprString->value, line));
             }
         }
@@ -462,4 +464,4 @@ soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
 
 template struct ExpressionFileParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::slg::expression::file::par
+} // namespace soul::slg::expression::file::parser

@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.common.token.par;
+export module soul.common.token.parser;
 
 import std.core;
 
@@ -13,7 +13,7 @@ import util.unicode;
 
 using namespace util;
 
-export namespace soul::common::token::par {
+export namespace soul::common::token::parser {
 
 template<typename Char>
 std::string MakeExprStringValue(const std::string& fileName, const soul::lexer::Token<Char, soul::lexer::LexerBase<Char>>& token)
@@ -85,4 +85,4 @@ std::string MakeFilePath(const std::string& fileName, const soul::lexer::Token<C
     return ToUtf8(strValue);
 }
 
-} // namespace soul::common::token::par
+} // namespace soul::common::token::parser

@@ -1,7 +1,7 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/slg/token_file_parser.parser' using soul parser generator spg version 4.0.0
 
-export module soul.slg.token.file.par;
+export module soul.slg.token.file.parser;
 
 import std.core;
 import soul.lexer;
@@ -10,7 +10,7 @@ import soul.ast.slg;
 
 using namespace soul::ast::slg;
 
-export namespace soul::slg::token::file::par {
+export namespace soul::slg::token::file::parser {
 
 template<typename Lexer>
 struct TokenFileParser
@@ -20,4 +20,4 @@ struct TokenFileParser
     static soul::parser::Match Token(Lexer& lexer);
 };
 
-} // namespace soul::slg::token::file::par
+} // namespace soul::slg::token::file::parser

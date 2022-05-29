@@ -7,5 +7,5 @@ import soul.tool.token;
 
 keywords soul.spg.keyword
 {
-    ("parser", PARSER), ("main", MAIN), ("start", START), ("uselexer", USELEXER), ("empty", EMPTY), ("any", ANY), ("var", VAR), ("project", PROJECT)
+    ("main", MAIN), ("start", START), ("empty", EMPTY), ("any", ANY), ("var", VAR), ("project", PROJECT)
 }

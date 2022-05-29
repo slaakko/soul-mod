@@ -3,29 +3,30 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.slg.lex.file.par;
+export module soul.slg.lexer.file.parser;
 
 [interface]import soul.ast.slg;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
-[implementation]import soul.common.common.par;
-[implementation]import soul.slg.token.par;
-[implementation]import soul.cpp.statement.par;
-[implementation]import soul.cpp.declarator.par;
+[implementation]import soul.common.common.parser;
+[implementation]import soul.slg.token.parser;
+[implementation]import soul.cpp.statement.parser;
+[implementation]import soul.cpp.declarator.parser;
 [implementation]import soul.ast.cpp;
 [implementation]import soul.lex.slg;
 
 parser LexerFileParser
 {
-    uselexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::slg::SlgLexer<char32_t>;
 
     main;
     using CommonParser.QualifiedId;
     using CommonParser.ExportModule;
     using CommonParser.Import;
     using CommonParser.ExprString;
+    using CommonParser.LexerKeyword;
     using StatementParser.CompoundStatement;
     using DeclaratorParser.TypeId;
 
@@ -35,7 +36,7 @@ parser LexerFileParser
             empty{ lexerFile.reset(new soul::ast::slg::LexerFile(lexer.FileName())); }
             ExportModule:exportModule{ lexerFile->SetExportModule(exportModule); }
             Imports(lexerFile.get()):imports
-            LEXER 
+            LexerKeyword:lexerKeyword
             ID!{ lxr.reset(new soul::ast::slg::Lexer(util::ToUtf8(lexer.GetToken(pos).ToString()))); }
             LBRACE!
             (LexerContent(lxr.get()):content)*

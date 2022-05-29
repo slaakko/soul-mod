@@ -7,5 +7,5 @@ import soul.tool.token;
 
 keywords soul.slg.keyword
 {
-    ("tokens", TOKENS), ("keywords", KEYWORDS), ("expressions", EXPRESSIONS), ("lexer", LEXER), ("rules", RULES), ("variables", VARIABLES), ("actions", ACTIONS), ("project", PROJECT)
+    ("tokens", TOKENS), ("keywords", KEYWORDS), ("expressions", EXPRESSIONS), ("rules", RULES), ("variables", VARIABLES), ("actions", ACTIONS), ("project", PROJECT)
 }

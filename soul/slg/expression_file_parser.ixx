@@ -1,7 +1,7 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/slg/expression_file_parser.parser' using soul parser generator spg version 4.0.0
 
-export module soul.slg.expression.file.par;
+export module soul.slg.expression.file.parser;
 
 import std.core;
 import soul.lexer;
@@ -10,7 +10,7 @@ import soul.ast.slg;
 
 using namespace soul::ast::slg;
 
-export namespace soul::slg::expression::file::par {
+export namespace soul::slg::expression::file::parser {
 
 template<typename Lexer>
 struct ExpressionFileParser
@@ -20,4 +20,4 @@ struct ExpressionFileParser
     static soul::parser::Match Expression(Lexer& lexer);
 };
 
-} // namespace soul::slg::expression::file::par
+} // namespace soul::slg::expression::file::parser

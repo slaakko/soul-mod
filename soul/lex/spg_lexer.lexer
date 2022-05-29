@@ -18,12 +18,12 @@ lexer SpgLexer
 	rules
 	{
 		"{separators}" {}
-		"{id}" { int64_t kw = lxr.GetKeywordToken(lxr.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+		"{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
 		"{integer_literal}" { return INTEGER_LITERAL; }
 		"{floating_literal}" { return FLOATING_LITERAL; }
 		"{char_literal}" { return CHAR_LITERAL; }
 		"{string_literal}" { return STRING_LITERAL; }
-        "<[^\n>]*>" { return FILEPATH; }
+        "::=" { return PRODUCES; }
         "$" { return DOLLAR; }
         "\|\|" { return DISJUNCTION; }
         "&&" { return AMP_AMP; }
@@ -75,15 +75,18 @@ lexer SpgLexer
         "&=" { return AND_ASSIGN; }
         "^=" { return XOR_ASSIGN; }
         "\|=" { return OR_ASSIGN; }
+        "<[^\n>]*>" $(1) { return FILEPATH; }
 	}
 
     variables 
     {
         int leftAngleCount;
+        bool matchFilePath;
     }
 
     actions
     {
         $(0)={ if (vars->leftAngleCount > 0) return INVALID_TOKEN; }
+        $(1)={ if (!vars->matchFilePath) return INVALID_TOKEN; }
     }
 }

@@ -6,8 +6,9 @@
 import std.core;
 import util;
 import soul.ast.spg;
-//import soul.spg.file.parsers;
-//import soul.spg.parser.generator;
+import soul.spg.file.parsers;
+import soul.lexer.file.map;
+import soul.spg.parser.generator;
 
 void Init()
 {
@@ -37,6 +38,9 @@ void PrintHelp()
     std::cout << "--verbose | -v" << std::endl;
     std::cout << "  Be verbose." << std::endl;
     std::cout << std::endl;
+    std::cout << "--no-debug-support | -n" << std::endl;
+    std::cout << "  Do not generate parser debugging code." << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -44,15 +48,8 @@ int main(int argc, const char** argv)
     try
     {
         Init();
-
-        /*
-                std::string root = util::GetFullPath("C:\\work\\soul-mod\\soul\\lex");
-                std::string classMapName = "soul.lex.slg.classmap";
-                //std::string classMapName = "soul.lex.re.classmap";
-                soul::slg::MakeCompressedClassMap(root, classMapName);
-                soul::slg::MakeResourceFile(root, classMapName);
-        */
         bool verbose = false;
+        bool noDebugSupport = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
         {
@@ -68,6 +65,10 @@ int main(int argc, const char** argv)
                 {
                     verbose = true;
                 }
+                else if (arg == "--no-debug-support")
+                {
+                    noDebugSupport = true;
+                }
                 else
                 {
                     throw std::runtime_error("unknown option '" + arg + "'");
@@ -80,20 +81,25 @@ int main(int argc, const char** argv)
                 {
                     switch (o)
                     {
-                    case 'h':
-                    {
-                        PrintHelp();
-                        return 1;
-                    }
-                    case 'v':
-                    {
-                        verbose = true;
-                        break;
-                    }
-                    default:
-                    {
-                        throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
-                    }
+                        case 'h':
+                        {
+                            PrintHelp();
+                            return 1;
+                        }
+                        case 'v':
+                        {
+                            verbose = true;
+                            break;
+                        }
+                        case 'n':
+                        {
+                            noDebugSupport = true;
+                            break;
+                        }
+                        default:
+                        {
+                            throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
+                        }
                     }
                 }
             }
@@ -102,14 +108,11 @@ int main(int argc, const char** argv)
                 files.push_back(util::GetFullPath(arg));
             }
         }
+        soul::lexer::FileMap fileMap;
         for (const std::string& file : files)
         {
-            if (verbose)
-            {
-                std::cout << "> " << file << std::endl;
-            }
-            //std::unique_ptr<soul::ast::slg::SlgFile> slgFile = soul::slg::ParseSlgFile(file);
-            //soul::slg::GenerateLexer(slgFile.get(), verbose);
+            std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::ParseSpgFile(file, fileMap, verbose);
+            soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, Version());
         }
     }
     catch (const std::exception& ex)

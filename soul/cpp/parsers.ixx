@@ -3,11 +3,11 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.cpp.par;
+export module soul.cpp.parser;
 
-export import soul.cpp.identifier.par;
-export import soul.cpp.declaration.par;
-export import soul.cpp.declarator.par;
-export import soul.cpp.expression.par;
-export import soul.cpp.literal.par;
-export import soul.cpp.statement.par;
+export import soul.cpp.identifier.parser;
+export import soul.cpp.declaration.parser;
+export import soul.cpp.declarator.parser;
+export import soul.cpp.expression.parser;
+export import soul.cpp.literal.parser;
+export import soul.cpp.statement.parser;

@@ -1,18 +1,20 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/identifier_parser.parser' using soul parser generator spg version 4.0.0
 
-module soul.cpp.identifier.par;
+module soul.cpp.identifier.parser;
 
 import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.lex.slg;
+import soul.lex.spg;
 
 using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
 using namespace soul::lex::slg;
+using namespace soul::lex::spg;
 
-namespace soul::cpp::identifier::par {
+namespace soul::cpp::identifier::parser {
 
 template<typename Lexer>
 soul::parser::Match CppIdentifierParser<Lexer>::CppIdentifier(Lexer& lexer)
@@ -26,6 +28,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::CppIdentifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 71);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -41,7 +44,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::CppIdentifier(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CppIdentifier");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(util::ToUtf8(lexer.GetToken(pos).ToString())));
             }
         }
@@ -73,6 +76,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::QualifiedCppId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 72);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -226,7 +230,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::QualifiedCppId(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedCppId");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(str));
             }
         }
@@ -247,5 +251,6 @@ soul::parser::Match CppIdentifierParser<Lexer>::QualifiedCppId(Lexer& lexer)
 }
 
 template struct CppIdentifierParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
+template struct CppIdentifierParser<soul::lexer::Lexer<soul::lex::spg::SpgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::cpp::identifier::par
+} // namespace soul::cpp::identifier::parser

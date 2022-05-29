@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.re.token.par;
+export module soul.re.token.parser;
 
 import std.core;
 import soul.lexer.token;
@@ -12,7 +12,7 @@ import util.unicode;
 
 using namespace util;
 
-export namespace soul::re::token::par {
+export namespace soul::re::token::parser {
 
 template<typename Char>
 void ParseHexChar(const std::string& fileName, char32_t& value, const Char*& p, const Char* e, const soul::lexer::Token<Char, soul::lexer::LexerBase<Char>>& token)
@@ -130,4 +130,4 @@ char32_t MakeEscapeValue(const std::string& fileName, const soul::lexer::Token<C
     return escapeValue;
 }
 
-} // namespace soul::re::token::par
+} // namespace soul::re::token::parser

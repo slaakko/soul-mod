@@ -1,8 +1,8 @@
 project soul.lex.slg;
-tokens <../token/soul.cpp.op.token>;
-tokens <../token/soul.cpp.token>;
-tokens <../token/soul.punctuation.token>;
-tokens <../token/soul.tool.token>;
+extern tokens <../token/soul.cpp.op.token>;
+extern tokens <../token/soul.cpp.token>;
+extern tokens <../token/soul.punctuation.token>;
+extern tokens <../token/soul.tool.token>;
 keywords <../keyword/soul.cpp.keyword>;
 keywords <../keyword/soul.spg.keyword>;
 expressions <../expression/soul.tool.expr>;

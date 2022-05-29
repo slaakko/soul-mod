@@ -39,9 +39,9 @@ struct RegExLexer
 {
     using Variables = RegExLexer_Variables;
 
-    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lxr)
+    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
-        ClassMap<Char>* classmap = lxr.GetClassMap();
+        ClassMap<Char>* classmap = lexer.GetClassMap();
         int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
@@ -231,10 +231,10 @@ struct RegExLexer
             }
             case 15:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(14, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(14, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -252,10 +252,10 @@ struct RegExLexer
             }
             case 14:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -365,10 +365,10 @@ struct RegExLexer
             }
             case 32:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -478,10 +478,10 @@ struct RegExLexer
             }
             case 33:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -591,10 +591,10 @@ struct RegExLexer
             }
             case 34:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -674,10 +674,10 @@ struct RegExLexer
             }
             case 48:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -749,10 +749,10 @@ struct RegExLexer
             }
             case 49:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -910,10 +910,10 @@ struct RegExLexer
             }
             case 47:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -941,10 +941,10 @@ struct RegExLexer
             }
             case 53:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -972,10 +972,10 @@ struct RegExLexer
             }
             case 54:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1003,10 +1003,10 @@ struct RegExLexer
             }
             case 55:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1024,10 +1024,10 @@ struct RegExLexer
             }
             case 46:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1055,10 +1055,10 @@ struct RegExLexer
             }
             case 56:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1086,10 +1086,10 @@ struct RegExLexer
             }
             case 45:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1117,10 +1117,10 @@ struct RegExLexer
             }
             case 57:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1148,10 +1148,10 @@ struct RegExLexer
             }
             case 44:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1179,10 +1179,10 @@ struct RegExLexer
             }
             case 58:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1210,10 +1210,10 @@ struct RegExLexer
             }
             case 43:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1241,10 +1241,10 @@ struct RegExLexer
             }
             case 59:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1272,10 +1272,10 @@ struct RegExLexer
             }
             case 42:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1303,10 +1303,10 @@ struct RegExLexer
             }
             case 60:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1334,10 +1334,10 @@ struct RegExLexer
             }
             case 41:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1365,10 +1365,10 @@ struct RegExLexer
             }
             case 40:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1400,10 +1400,10 @@ struct RegExLexer
             }
             case 61:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1435,10 +1435,10 @@ struct RegExLexer
             }
             case 62:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1466,10 +1466,10 @@ struct RegExLexer
             }
             case 63:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1497,10 +1497,10 @@ struct RegExLexer
             }
             case 64:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1581,10 +1581,10 @@ struct RegExLexer
             }
             case 65:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1617,10 +1617,10 @@ struct RegExLexer
             }
             case 68:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1653,10 +1653,10 @@ struct RegExLexer
             }
             case 69:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1787,10 +1787,10 @@ struct RegExLexer
             }
             case 73:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1889,10 +1889,10 @@ struct RegExLexer
             }
             case 74:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1931,10 +1931,10 @@ struct RegExLexer
             }
             case 77:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -1998,10 +1998,10 @@ struct RegExLexer
             }
             case 31:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2029,10 +2029,10 @@ struct RegExLexer
             }
             case 30:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2060,10 +2060,10 @@ struct RegExLexer
             }
             case 29:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2091,10 +2091,10 @@ struct RegExLexer
             }
             case 28:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2122,10 +2122,10 @@ struct RegExLexer
             }
             case 27:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2153,10 +2153,10 @@ struct RegExLexer
             }
             case 26:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2184,10 +2184,10 @@ struct RegExLexer
             }
             case 25:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2215,10 +2215,10 @@ struct RegExLexer
             }
             case 24:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2250,10 +2250,10 @@ struct RegExLexer
             }
             case 78:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2285,10 +2285,10 @@ struct RegExLexer
             }
             case 23:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2321,10 +2321,10 @@ struct RegExLexer
             }
             case 79:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2357,10 +2357,10 @@ struct RegExLexer
             }
             case 80:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2389,10 +2389,10 @@ struct RegExLexer
             }
             case 22:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2425,10 +2425,10 @@ struct RegExLexer
             }
             case 21:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2614,10 +2614,10 @@ struct RegExLexer
             }
             case 88:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2645,10 +2645,10 @@ struct RegExLexer
             }
             case 20:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2687,10 +2687,10 @@ struct RegExLexer
             }
             case 19:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2729,10 +2729,10 @@ struct RegExLexer
             }
             case 89:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2771,10 +2771,10 @@ struct RegExLexer
             }
             case 90:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2809,10 +2809,10 @@ struct RegExLexer
             }
             case 18:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2851,10 +2851,10 @@ struct RegExLexer
             }
             case 17:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2882,10 +2882,10 @@ struct RegExLexer
             }
             case 13:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(12, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(12, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2903,10 +2903,10 @@ struct RegExLexer
             }
             case 12:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(11, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(11, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2924,10 +2924,10 @@ struct RegExLexer
             }
             case 11:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(10, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(10, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2945,10 +2945,10 @@ struct RegExLexer
             }
             case 10:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(9, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(9, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2966,10 +2966,10 @@ struct RegExLexer
             }
             case 9:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(8, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(8, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -2987,10 +2987,10 @@ struct RegExLexer
             }
             case 8:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(7, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(7, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3008,10 +3008,10 @@ struct RegExLexer
             }
             case 7:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(6, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(6, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3029,10 +3029,10 @@ struct RegExLexer
             }
             case 6:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(5, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(5, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3050,10 +3050,10 @@ struct RegExLexer
             }
             case 5:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(4, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3071,10 +3071,10 @@ struct RegExLexer
             }
             case 4:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(3, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3092,10 +3092,10 @@ struct RegExLexer
             }
             case 3:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3113,10 +3113,10 @@ struct RegExLexer
             }
             case 2:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3134,10 +3134,10 @@ struct RegExLexer
             }
             case 1:
             {
-                auto& token = lxr.CurrentToken();
+                auto& token = lexer.CurrentToken();
                 Lexeme prevMatch = token.match;
-                token.match = lxr.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lxr);
+                token.match = lexer.CurrentLexeme();
+                int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == CONTINUE_TOKEN)
                 {
                     token.id = CONTINUE_TOKEN;
@@ -3157,97 +3157,97 @@ struct RegExLexer
         return -1;
     }
 
-    static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lxr)
+    static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
     {
         switch (ruleIndex)
         {
             case 0:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LPAREN;
                 break;
             }
             case 1:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return RPAREN;
                 break;
             }
             case 2:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LBRACKET;
                 break;
             }
             case 3:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return RBRACKET;
                 break;
             }
             case 4:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return LBRACE;
                 break;
             }
             case 5:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return RBRACE;
                 break;
             }
             case 6:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return PIPE;
                 break;
             }
             case 7:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return STAR;
                 break;
             }
             case 8:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return PLUS;
                 break;
             }
             case 9:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return QUEST;
                 break;
             }
             case 10:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return DOT;
                 break;
             }
             case 11:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return CARET;
                 break;
             }
             case 12:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return MINUS;
                 break;
             }
             case 13:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return ESCAPE;
                 break;
             }
             case 14:
             {
-                lxr.Retract();
+                lexer.Retract();
                 return CHARACTER;
                 break;
             }

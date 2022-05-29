@@ -1,17 +1,17 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/slg/lexer_file_parser.parser' using soul parser generator spg version 4.0.0
 
-module soul.slg.lex.file.par;
+module soul.slg.lexer.file.parser;
 
 import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
-import soul.common.common.par;
-import soul.slg.token.par;
-import soul.cpp.statement.par;
-import soul.cpp.declarator.par;
+import soul.common.common.parser;
+import soul.slg.token.parser;
+import soul.cpp.statement.parser;
+import soul.cpp.declarator.parser;
 import soul.ast.cpp;
 import soul.lex.slg;
 
@@ -19,14 +19,14 @@ using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
-using namespace soul::common::common::par;
-using namespace soul::slg::token::par;
-using namespace soul::cpp::statement::par;
-using namespace soul::cpp::declarator::par;
+using namespace soul::common::common::parser;
+using namespace soul::slg::token::parser;
+using namespace soul::cpp::statement::parser;
+using namespace soul::cpp::declarator::parser;
 using namespace soul::ast::cpp;
 using namespace soul::lex::slg;
 
-namespace soul::slg::lex::file::par {
+namespace soul::slg::lexer::file::parser {
 
 template<typename Lexer>
 std::unique_ptr<soul::ast::slg::LexerFile> LexerFileParser<Lexer>::Parse(Lexer& lexer)
@@ -79,6 +79,7 @@ soul::parser::Match LexerFileParser<Lexer>::LexerFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LexerFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 2);
     std::unique_ptr<soul::ast::slg::LexerFile> lexerFile = std::unique_ptr<soul::ast::slg::LexerFile>();
     std::unique_ptr<soul::ast::slg::Lexer> lxr = std::unique_ptr<soul::ast::slg::Lexer>();
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;
@@ -163,12 +164,7 @@ soul::parser::Match LexerFileParser<Lexer>::LexerFile(Lexer& lexer)
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch13 = &match;
                                 {
-                                    soul::parser::Match match(false);
-                                    if (*lexer == LEXER)
-                                    {
-                                        ++lexer;
-                                        match.hit = true;
-                                    }
+                                    soul::parser::Match match = CommonParser<Lexer>::LexerKeyword(lexer);
                                     *parentMatch13 = match;
                                 }
                                 *parentMatch6 = match;
@@ -317,7 +313,7 @@ soul::parser::Match LexerFileParser<Lexer>::LexerFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LexerFile");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, lexerFile.release());
             }
         }
@@ -349,6 +345,7 @@ soul::parser::Match LexerFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::slg
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 3);
     std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
     soul::parser::Match* parentMatch0 = &match;
@@ -412,6 +409,7 @@ soul::parser::Match LexerFileParser<Lexer>::LexerContent(Lexer& lexer, soul::ast
         soul::lexer::WriteBeginRuleToLog(lexer, "LexerContent");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 4);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -478,6 +476,7 @@ soul::parser::Match LexerFileParser<Lexer>::Rules(Lexer& lexer, soul::ast::slg::
         soul::lexer::WriteBeginRuleToLog(lexer, "Rules");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 5);
     std::unique_ptr<soul::ast::slg::Rule> rl;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -632,6 +631,7 @@ soul::parser::Match LexerFileParser<Lexer>::Rule(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Rule");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 6);
     int line = int();
     std::unique_ptr<soul::parser::Value<std::string>> expr;
     std::unique_ptr<soul::parser::Value<int>> action;
@@ -694,7 +694,7 @@ soul::parser::Match LexerFileParser<Lexer>::Rule(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Rule");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::ast::slg::Rule(expr->value, code.release(), action->value, line));
             }
         }
@@ -726,6 +726,7 @@ soul::parser::Match LexerFileParser<Lexer>::Variables(Lexer& lexer, soul::ast::s
         soul::lexer::WriteBeginRuleToLog(lexer, "Variables");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 7);
     std::unique_ptr<soul::ast::slg::Variable> variable;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -880,6 +881,7 @@ soul::parser::Match LexerFileParser<Lexer>::Variable(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Variable");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 8);
     std::string name = std::string();
     std::unique_ptr<soul::ast::cpp::TypeIdNode> type;
     soul::parser::Match match(false);
@@ -961,7 +963,7 @@ soul::parser::Match LexerFileParser<Lexer>::Variable(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Variable");
-                #endif // SOUL_PARSER_DEBUG_SUPPORT
+                #endif SOUL_PARSER_DEBUG_SUPPORT
                 return soul::parser::Match(true, new soul::ast::slg::Variable(type.release(), name));
             }
         }
@@ -993,6 +995,7 @@ soul::parser::Match LexerFileParser<Lexer>::Actions(Lexer& lexer, soul::ast::slg
         soul::lexer::WriteBeginRuleToLog(lexer, "Actions");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 9);
     int actionId = int();
     std::unique_ptr<soul::parser::Value<int>> action;
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> stmt;
@@ -1201,6 +1204,7 @@ soul::parser::Match LexerFileParser<Lexer>::Action(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Action");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 10);
     int actionId = int();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1287,7 +1291,7 @@ soul::parser::Match LexerFileParser<Lexer>::Action(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Action");
-                            #endif // SOUL_PARSER_DEBUG_SUPPORT
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
                             return soul::parser::Match(true, new soul::parser::Value<int>(actionId));
                         }
                     }
@@ -1314,7 +1318,7 @@ soul::parser::Match LexerFileParser<Lexer>::Action(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Action");
-                            #endif // SOUL_PARSER_DEBUG_SUPPORT
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
                             return soul::parser::Match(true, new soul::parser::Value<int>(-1));
                         }
                     }
@@ -1341,4 +1345,4 @@ soul::parser::Match LexerFileParser<Lexer>::Action(Lexer& lexer)
 
 template struct LexerFileParser<soul::lexer::Lexer<soul::lex::slg::SlgLexer<char32_t>, char32_t>>;
 
-} // namespace soul::slg::lex::file::par
+} // namespace soul::slg::lexer::file::parser

@@ -24,6 +24,9 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(IMPORT, "IMPORT", "'import'"));
         tokens.AddToken(new soul::ast::slg::Token(MODULE, "MODULE", "'module"));
         tokens.AddToken(new soul::ast::slg::Token(CHAR, "CHAR", "'char'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR8T, "CHAR8T", "'char8_t'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR16T, "CHAR16T", "'char16_t'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR32T, "CHAR32T", "'char32_t'"));
         tokens.AddToken(new soul::ast::slg::Token(WCHART, "WCHART", "'wchar_t'"));
         tokens.AddToken(new soul::ast::slg::Token(BOOL, "BOOL", "'bool'"));
         tokens.AddToken(new soul::ast::slg::Token(SHORT, "SHORT", "'short'"));
@@ -128,22 +131,16 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(TOKENS, "TOKENS", "'tokens'"));
         tokens.AddToken(new soul::ast::slg::Token(KEYWORDS, "KEYWORDS", "'keywords'"));
         tokens.AddToken(new soul::ast::slg::Token(EXPRESSIONS, "EXPRESSIONS", "'expressions'"));
-        tokens.AddToken(new soul::ast::slg::Token(LEXER, "LEXER", "'lexer'"));
         tokens.AddToken(new soul::ast::slg::Token(RULES, "RULES", "'rules'"));
         tokens.AddToken(new soul::ast::slg::Token(VARIABLES, "VARIABLES", "''variables'"));
         tokens.AddToken(new soul::ast::slg::Token(ACTIONS, "ACTIONS", "'actions'"));
-        tokens.AddToken(new soul::ast::slg::Token(PARSER, "PARSER", "'parser'"));
-        tokens.AddToken(new soul::ast::slg::Token(INCLUDE, "INCLUDE", "'include'"));
         tokens.AddToken(new soul::ast::slg::Token(MAIN, "MAIN", "'main'"));
-        tokens.AddToken(new soul::ast::slg::Token(USELEXER, "USELEXER", "'uselexer'"));
         tokens.AddToken(new soul::ast::slg::Token(START, "START", "'start'"));
         tokens.AddToken(new soul::ast::slg::Token(EMPTY, "EMPTY", "'empty'"));
         tokens.AddToken(new soul::ast::slg::Token(ANY, "ANY", "'any'"));
         tokens.AddToken(new soul::ast::slg::Token(VAR, "VAR", "'var'"));
         tokens.AddToken(new soul::ast::slg::Token(FILEPATH, "FILEPATH", "file path"));
         tokens.AddToken(new soul::ast::slg::Token(PROJECT, "PROJECT", "'project'"));
-        tokens.AddToken(new soul::ast::slg::Token(IMPLEMENTATION_PREFIX, "IMPLEMENTATION_PREFIX", "implementation prefix"));
-        tokens.AddToken(new soul::ast::slg::Token(INTERFACE_PREFIX, "INTERFACE_PREFIX", "interface prefix"));
         tokens.AddToken(new soul::ast::slg::Token(CHARACTER, "CHARACTER", "character"));
         tokens.AddToken(new soul::ast::slg::Token(ESCAPE, "ESCAPE", "escape"));
     }

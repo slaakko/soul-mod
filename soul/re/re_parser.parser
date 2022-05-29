@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.re.par;
+export module soul.re.parser;
 
 [interface]import soul.ast.re;
 [implementation]import soul.cpp.token;
@@ -11,11 +11,11 @@ export module soul.re.par;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
 [implementation]import soul.lex.re;
-[implementation]import soul.re.token.par;
+[implementation]import soul.re.token.parser;
 
 parser RegExParser
 {
-    uselexer soul::lex::re::RegExLexer<char32_t>;
+    lexer soul::lex::re::RegExLexer<char32_t>;
 
     main;
 

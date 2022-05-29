@@ -24,6 +24,9 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(IMPORT, "IMPORT", "'import'"));
         tokens.AddToken(new soul::ast::slg::Token(MODULE, "MODULE", "'module"));
         tokens.AddToken(new soul::ast::slg::Token(CHAR, "CHAR", "'char'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR8T, "CHAR8T", "'char8_t'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR16T, "CHAR16T", "'char16_t'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR32T, "CHAR32T", "'char32_t'"));
         tokens.AddToken(new soul::ast::slg::Token(WCHART, "WCHART", "'wchar_t'"));
         tokens.AddToken(new soul::ast::slg::Token(BOOL, "BOOL", "'bool'"));
         tokens.AddToken(new soul::ast::slg::Token(SHORT, "SHORT", "'short'"));
@@ -128,22 +131,16 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(TOKENS, "TOKENS", "'tokens'"));
         tokens.AddToken(new soul::ast::slg::Token(KEYWORDS, "KEYWORDS", "'keywords'"));
         tokens.AddToken(new soul::ast::slg::Token(EXPRESSIONS, "EXPRESSIONS", "'expressions'"));
-        tokens.AddToken(new soul::ast::slg::Token(LEXER, "LEXER", "'lexer'"));
         tokens.AddToken(new soul::ast::slg::Token(RULES, "RULES", "'rules'"));
         tokens.AddToken(new soul::ast::slg::Token(VARIABLES, "VARIABLES", "''variables'"));
         tokens.AddToken(new soul::ast::slg::Token(ACTIONS, "ACTIONS", "'actions'"));
-        tokens.AddToken(new soul::ast::slg::Token(PARSER, "PARSER", "'parser'"));
-        tokens.AddToken(new soul::ast::slg::Token(INCLUDE, "INCLUDE", "'include'"));
         tokens.AddToken(new soul::ast::slg::Token(MAIN, "MAIN", "'main'"));
-        tokens.AddToken(new soul::ast::slg::Token(USELEXER, "USELEXER", "'uselexer'"));
         tokens.AddToken(new soul::ast::slg::Token(START, "START", "'start'"));
         tokens.AddToken(new soul::ast::slg::Token(EMPTY, "EMPTY", "'empty'"));
         tokens.AddToken(new soul::ast::slg::Token(ANY, "ANY", "'any'"));
         tokens.AddToken(new soul::ast::slg::Token(VAR, "VAR", "'var'"));
         tokens.AddToken(new soul::ast::slg::Token(FILEPATH, "FILEPATH", "file path"));
         tokens.AddToken(new soul::ast::slg::Token(PROJECT, "PROJECT", "'project'"));
-        tokens.AddToken(new soul::ast::slg::Token(IMPLEMENTATION_PREFIX, "IMPLEMENTATION_PREFIX", "implementation prefix"));
-        tokens.AddToken(new soul::ast::slg::Token(INTERFACE_PREFIX, "INTERFACE_PREFIX", "interface prefix"));
         tokens.AddToken(new soul::ast::slg::Token(CHARACTER, "CHARACTER", "character"));
         tokens.AddToken(new soul::ast::slg::Token(ESCAPE, "ESCAPE", "escape"));
     }
@@ -151,7 +148,7 @@ soul::ast::slg::TokenCollection* GetTokens()
 }
 
 SlgLexer_Variables::SlgLexer_Variables() :
-    leftAngleCount()
+    leftAngleCount(), matchFilePath()
 {
 }
 
@@ -168,10 +165,10 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "static", STATIC },
          { "extern", EXTERN },
          { "mutable", MUTABLE },
-         { "export", EXPORT },
-         { "import", IMPORT },
-         { "module", MODULE },
          { "char", CHAR },
+         { "char8_t", CHAR8T },
+         { "char16_t", CHAR16T },
+         { "char32_t", CHAR32T },
          { "wchar_t", WCHART },
          { "bool", BOOL },
          { "short", SHORT },
@@ -218,7 +215,6 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "tokens", TOKENS },
          { "keywords", KEYWORDS },
          { "expressions", EXPRESSIONS },
-         { "lexer", LEXER },
          { "rules", RULES },
          { "variables", VARIABLES },
          { "actions", ACTIONS },
@@ -238,10 +234,10 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"static", STATIC },
          { u8"extern", EXTERN },
          { u8"mutable", MUTABLE },
-         { u8"export", EXPORT },
-         { u8"import", IMPORT },
-         { u8"module", MODULE },
          { u8"char", CHAR },
+         { u8"char8_t", CHAR8T },
+         { u8"char16_t", CHAR16T },
+         { u8"char32_t", CHAR32T },
          { u8"wchar_t", WCHART },
          { u8"bool", BOOL },
          { u8"short", SHORT },
@@ -288,7 +284,6 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"tokens", TOKENS },
          { u8"keywords", KEYWORDS },
          { u8"expressions", EXPRESSIONS },
-         { u8"lexer", LEXER },
          { u8"rules", RULES },
          { u8"variables", VARIABLES },
          { u8"actions", ACTIONS },
@@ -308,10 +303,10 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"static", STATIC },
          { u"extern", EXTERN },
          { u"mutable", MUTABLE },
-         { u"export", EXPORT },
-         { u"import", IMPORT },
-         { u"module", MODULE },
          { u"char", CHAR },
+         { u"char8_t", CHAR8T },
+         { u"char16_t", CHAR16T },
+         { u"char32_t", CHAR32T },
          { u"wchar_t", WCHART },
          { u"bool", BOOL },
          { u"short", SHORT },
@@ -358,7 +353,6 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"tokens", TOKENS },
          { u"keywords", KEYWORDS },
          { u"expressions", EXPRESSIONS },
-         { u"lexer", LEXER },
          { u"rules", RULES },
          { u"variables", VARIABLES },
          { u"actions", ACTIONS },
@@ -378,10 +372,10 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"static", STATIC },
          { U"extern", EXTERN },
          { U"mutable", MUTABLE },
-         { U"export", EXPORT },
-         { U"import", IMPORT },
-         { U"module", MODULE },
          { U"char", CHAR },
+         { U"char8_t", CHAR8T },
+         { U"char16_t", CHAR16T },
+         { U"char32_t", CHAR32T },
          { U"wchar_t", WCHART },
          { U"bool", BOOL },
          { U"short", SHORT },
@@ -428,7 +422,6 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"tokens", TOKENS },
          { U"keywords", KEYWORDS },
          { U"expressions", EXPRESSIONS },
-         { U"lexer", LEXER },
          { U"rules", RULES },
          { U"variables", VARIABLES },
          { U"actions", ACTIONS },

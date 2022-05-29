@@ -24,6 +24,9 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(IMPORT, "IMPORT", "'import'"));
         tokens.AddToken(new soul::ast::slg::Token(MODULE, "MODULE", "'module"));
         tokens.AddToken(new soul::ast::slg::Token(CHAR, "CHAR", "'char'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR8T, "CHAR8T", "'char8_t'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR16T, "CHAR16T", "'char16_t'"));
+        tokens.AddToken(new soul::ast::slg::Token(CHAR32T, "CHAR32T", "'char32_t'"));
         tokens.AddToken(new soul::ast::slg::Token(WCHART, "WCHART", "'wchar_t'"));
         tokens.AddToken(new soul::ast::slg::Token(BOOL, "BOOL", "'bool'"));
         tokens.AddToken(new soul::ast::slg::Token(SHORT, "SHORT", "'short'"));
@@ -128,22 +131,16 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(TOKENS, "TOKENS", "'tokens'"));
         tokens.AddToken(new soul::ast::slg::Token(KEYWORDS, "KEYWORDS", "'keywords'"));
         tokens.AddToken(new soul::ast::slg::Token(EXPRESSIONS, "EXPRESSIONS", "'expressions'"));
-        tokens.AddToken(new soul::ast::slg::Token(LEXER, "LEXER", "'lexer'"));
         tokens.AddToken(new soul::ast::slg::Token(RULES, "RULES", "'rules'"));
         tokens.AddToken(new soul::ast::slg::Token(VARIABLES, "VARIABLES", "''variables'"));
         tokens.AddToken(new soul::ast::slg::Token(ACTIONS, "ACTIONS", "'actions'"));
-        tokens.AddToken(new soul::ast::slg::Token(PARSER, "PARSER", "'parser'"));
-        tokens.AddToken(new soul::ast::slg::Token(INCLUDE, "INCLUDE", "'include'"));
         tokens.AddToken(new soul::ast::slg::Token(MAIN, "MAIN", "'main'"));
-        tokens.AddToken(new soul::ast::slg::Token(USELEXER, "USELEXER", "'uselexer'"));
         tokens.AddToken(new soul::ast::slg::Token(START, "START", "'start'"));
         tokens.AddToken(new soul::ast::slg::Token(EMPTY, "EMPTY", "'empty'"));
         tokens.AddToken(new soul::ast::slg::Token(ANY, "ANY", "'any'"));
         tokens.AddToken(new soul::ast::slg::Token(VAR, "VAR", "'var'"));
         tokens.AddToken(new soul::ast::slg::Token(FILEPATH, "FILEPATH", "file path"));
         tokens.AddToken(new soul::ast::slg::Token(PROJECT, "PROJECT", "'project'"));
-        tokens.AddToken(new soul::ast::slg::Token(IMPLEMENTATION_PREFIX, "IMPLEMENTATION_PREFIX", "implementation prefix"));
-        tokens.AddToken(new soul::ast::slg::Token(INTERFACE_PREFIX, "INTERFACE_PREFIX", "interface prefix"));
         tokens.AddToken(new soul::ast::slg::Token(CHARACTER, "CHARACTER", "character"));
         tokens.AddToken(new soul::ast::slg::Token(ESCAPE, "ESCAPE", "escape"));
     }
@@ -151,7 +148,7 @@ soul::ast::slg::TokenCollection* GetTokens()
 }
 
 SpgLexer_Variables::SpgLexer_Variables() :
-    leftAngleCount()
+    leftAngleCount(), matchFilePath()
 {
 }
 
@@ -168,10 +165,10 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "static", STATIC },
          { "extern", EXTERN },
          { "mutable", MUTABLE },
-         { "export", EXPORT },
-         { "import", IMPORT },
-         { "module", MODULE },
          { "char", CHAR },
+         { "char8_t", CHAR8T },
+         { "char16_t", CHAR16T },
+         { "char32_t", CHAR32T },
          { "wchar_t", WCHART },
          { "bool", BOOL },
          { "short", SHORT },
@@ -215,10 +212,8 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "goto", GOTO },
          { "try", TRY },
          { "catch", CATCH },
-         { "parser", PARSER },
          { "main", MAIN },
          { "start", START },
-         { "uselexer", USELEXER },
          { "empty", EMPTY },
          { "any", ANY },
          { "var", VAR },
@@ -238,10 +233,10 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"static", STATIC },
          { u8"extern", EXTERN },
          { u8"mutable", MUTABLE },
-         { u8"export", EXPORT },
-         { u8"import", IMPORT },
-         { u8"module", MODULE },
          { u8"char", CHAR },
+         { u8"char8_t", CHAR8T },
+         { u8"char16_t", CHAR16T },
+         { u8"char32_t", CHAR32T },
          { u8"wchar_t", WCHART },
          { u8"bool", BOOL },
          { u8"short", SHORT },
@@ -285,10 +280,8 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"goto", GOTO },
          { u8"try", TRY },
          { u8"catch", CATCH },
-         { u8"parser", PARSER },
          { u8"main", MAIN },
          { u8"start", START },
-         { u8"uselexer", USELEXER },
          { u8"empty", EMPTY },
          { u8"any", ANY },
          { u8"var", VAR },
@@ -308,10 +301,10 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"static", STATIC },
          { u"extern", EXTERN },
          { u"mutable", MUTABLE },
-         { u"export", EXPORT },
-         { u"import", IMPORT },
-         { u"module", MODULE },
          { u"char", CHAR },
+         { u"char8_t", CHAR8T },
+         { u"char16_t", CHAR16T },
+         { u"char32_t", CHAR32T },
          { u"wchar_t", WCHART },
          { u"bool", BOOL },
          { u"short", SHORT },
@@ -355,10 +348,8 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"goto", GOTO },
          { u"try", TRY },
          { u"catch", CATCH },
-         { u"parser", PARSER },
          { u"main", MAIN },
          { u"start", START },
-         { u"uselexer", USELEXER },
          { u"empty", EMPTY },
          { u"any", ANY },
          { u"var", VAR },
@@ -378,10 +369,10 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"static", STATIC },
          { U"extern", EXTERN },
          { U"mutable", MUTABLE },
-         { U"export", EXPORT },
-         { U"import", IMPORT },
-         { U"module", MODULE },
          { U"char", CHAR },
+         { U"char8_t", CHAR8T },
+         { U"char16_t", CHAR16T },
+         { U"char32_t", CHAR32T },
          { U"wchar_t", WCHART },
          { U"bool", BOOL },
          { U"short", SHORT },
@@ -425,10 +416,8 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"goto", GOTO },
          { U"try", TRY },
          { U"catch", CATCH },
-         { U"parser", PARSER },
          { U"main", MAIN },
          { U"start", START },
-         { U"uselexer", USELEXER },
          { U"empty", EMPTY },
          { U"any", ANY },
          { U"var", VAR },

@@ -1,7 +1,7 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/declaration_parser.parser' using soul parser generator spg version 4.0.0
 
-export module soul.cpp.declaration.par;
+export module soul.cpp.declaration.parser;
 
 import std.core;
 import soul.lexer;
@@ -10,7 +10,7 @@ import soul.ast.cpp;
 
 using namespace soul::ast::cpp;
 
-export namespace soul::cpp::declaration::par {
+export namespace soul::cpp::declaration::parser {
 
 template<typename Lexer>
 struct DeclarationParser
@@ -32,4 +32,4 @@ struct DeclarationParser
     static soul::parser::Match UsingDirective(Lexer& lexer);
 };
 
-} // namespace soul::cpp::declaration::par
+} // namespace soul::cpp::declaration::parser

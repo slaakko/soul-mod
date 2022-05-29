@@ -12,6 +12,14 @@ namespace soul::slg {
 
 void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
 {
+    if (tokenFile->IsExternal())
+    {
+        if (verbose)
+        {
+            std::cout << "skipping external token file '" + tokenFile->FilePath() + "'" << std::endl;
+        }
+        return;
+    }
     std::string ixxFilePath = tokenFile->FilePath() + ".ixx";
     std::ofstream ixxFile(ixxFilePath);
     util::CodeFormatter formatter(ixxFile);

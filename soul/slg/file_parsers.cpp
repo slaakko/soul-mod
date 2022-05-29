@@ -9,29 +9,34 @@ import util;
 import soul.lexer;
 import soul.parser;
 import soul.lex.slg;
-import soul.slg.token.file.par;
-import soul.slg.keyword.file.par;
-import soul.slg.expression.file.par;
-import soul.slg.lex.file.par;
-import soul.slg.slg.file.par;
+import soul.slg.token.file.parser;
+import soul.slg.keyword.file.parser;
+import soul.slg.expression.file.parser;
+import soul.slg.lexer.file.parser;
+import soul.slg.slg.file.parser;
 
 namespace soul::slg {
 
 using namespace util;
 using namespace soul::lex::slg;
-using namespace soul::slg::token::file::par;
-using namespace soul::slg::keyword::file::par;
-using namespace soul::slg::expression::file::par;
-using namespace soul::slg::lex::file::par;
-using namespace soul::slg::slg::file::par;
+using namespace soul::slg::token::file::parser;
+using namespace soul::slg::keyword::file::parser;
+using namespace soul::slg::expression::file::parser;
+using namespace soul::slg::lexer::file::parser;
+using namespace soul::slg::slg::file::parser;
 
-std::unique_ptr<soul::ast::slg::TokenFile> ParseTokenFile(const std::string& tokenFilePath)
+std::unique_ptr<soul::ast::slg::TokenFile> ParseTokenFile(const std::string& tokenFilePath, bool external)
 {
     std::string tokenFileContent = ReadFile(tokenFilePath);
     std::u32string content = ToUtf32(tokenFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
     using LexerType = decltype(lexer);
-    return TokenFileParser<LexerType>::Parse(lexer);
+    std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = TokenFileParser<LexerType>::Parse(lexer);
+    if (external)
+    {
+        tokenFile->SetExternal();
+    }
+    return tokenFile;
 }
 
 std::unique_ptr<soul::ast::slg::KeywordFile> ParseKeywordFile(const std::string& keywordFilePath)
@@ -67,6 +72,8 @@ std::unique_ptr<soul::ast::slg::SlgFile> ParseSlgFile(const std::string& slgFile
     std::u32string content = ToUtf32(slgFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), slgFilePath);
     using LexerType = decltype(lexer);
+    auto vars = static_cast<LexerType::VariableClassType*>(lexer.GetVariables());
+    vars->matchFilePath = true;
     return SlgFileParser<LexerType>::Parse(lexer);
 }
 

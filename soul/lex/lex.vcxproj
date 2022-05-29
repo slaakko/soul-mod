@@ -164,6 +164,7 @@
     <None Include="slg_lexer.slg" />
     <None Include="spg_lexer.lexer" />
     <None Include="spg_lexer.slg" />
+    <None Include="tokens.slg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">

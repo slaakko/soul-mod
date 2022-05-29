@@ -3,20 +3,22 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.cpp.declaration.par;
+export module soul.cpp.declaration.parser;
 
 [interface]import soul.ast.cpp;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
-[implementation]import soul.cpp.expression.par;
-[implementation]import soul.cpp.identifier.par;
-[implementation]import soul.cpp.declarator.par;
+[implementation]import soul.cpp.expression.parser;
+[implementation]import soul.cpp.identifier.parser;
+[implementation]import soul.cpp.declarator.parser;
 [implementation]import soul.lex.slg;
+[implementation]import soul.lex.spg;
 
 parser DeclarationParser
 {
-    uselexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
 
     using CppIdentifierParser.CppIdentifier;
     using CppIdentifierParser.QualifiedCppId;
@@ -67,6 +69,9 @@ parser DeclarationParser
 
     SimpleTypeSpecifier : soul::ast::cpp::TypeSpecifierNode*
         ::= CHAR{ return new soul::ast::cpp::TypeSpecifierNode("char"); }
+        |   CHAR8T{ return new soul::ast::cpp::TypeSpecifierNode("char8_t"); }
+        |   CHAR16T{ return new soul::ast::cpp::TypeSpecifierNode("char16_t"); }
+        |   CHAR32T{ return new soul::ast::cpp::TypeSpecifierNode("char32_t"); }
         |   WCHART{ return new soul::ast::cpp::TypeSpecifierNode("wchar_t"); }
         |   BOOL{ return new soul::ast::cpp::TypeSpecifierNode("bool"); }
         |   SHORT{ return new soul::ast::cpp::TypeSpecifierNode("short"); }
@@ -83,7 +88,7 @@ parser DeclarationParser
         ::=
         (
             QualifiedCppId:qid{ typeName.reset(new soul::ast::cpp::TypeNameNode(qid)); }
-            (LANGLE{ /* ++vars->leftAngleCount; TODO!!! */ typeName->SetTemplate(); } TemplateArgumentList(typeName.get()):args RANGLE{ /* --vars->leftAngleCount; TODO!!! */ })?
+            (LANGLE{ ++vars->leftAngleCount; typeName->SetTemplate(); } TemplateArgumentList(typeName.get()):args RANGLE{ --vars->leftAngleCount; })?
         )
         {
             return typeName.release();

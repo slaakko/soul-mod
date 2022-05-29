@@ -1,7 +1,7 @@
 
 // this file has been automatically generated from 'C:/work/soul-mod/soul/slg/keyword_file_parser.parser' using soul parser generator spg version 4.0.0
 
-export module soul.slg.keyword.file.par;
+export module soul.slg.keyword.file.parser;
 
 import std.core;
 import soul.lexer;
@@ -10,7 +10,7 @@ import soul.ast.slg;
 
 using namespace soul::ast::slg;
 
-export namespace soul::slg::keyword::file::par {
+export namespace soul::slg::keyword::file::parser {
 
 template<typename Lexer>
 struct KeywordFileParser
@@ -21,4 +21,4 @@ struct KeywordFileParser
     static soul::parser::Match Keyword(Lexer& lexer);
 };
 
-} // namespace soul::slg::keyword::file::par
+} // namespace soul::slg::keyword::file::parser
