@@ -189,12 +189,6 @@ public:
     {
         classMap = classMap_;
     }
-/*
-    void SetVariables(Variables* vars_) override
-    {
-        
-    }
-*/
     soul::ast::slg::TokenCollection* GetTokenCollection() const override
     {
         return tokenCollection;
@@ -309,13 +303,14 @@ public:
         lines.append(token.match.begin - lineStart, ' ');
         lines.append(std::max(static_cast<int64_t>(1), token.match.end - token.match.begin), '^');
         lines.append(lineEnd - token.match.end, ' ');
-        lines.append(1, '\n');
         return ToUtf8(lines);
     }
     void ThrowExpectationFailure(int64_t pos, const std::string& name)
     {
         soul::ast::SourcePos sourcePos = GetSourcePos(pos);
-        throw ParsingException("parsing error at '" + fileName + ":" + std::to_string(sourcePos.line) + "': " + name + " expected:\n" + ErrorLines(pos), fileName, sourcePos);
+        std::string parserStateStr = GetParserStateStr();
+        throw ParsingException("parsing error at '" + fileName + ":" + std::to_string(sourcePos.line) + "': " + name + " expected:\n" + ErrorLines(pos) + parserStateStr, 
+            fileName, sourcePos);
     }
     std::string GetParserStateStr() const
     {

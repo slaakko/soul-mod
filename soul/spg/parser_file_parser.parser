@@ -277,5 +277,5 @@ parser ParserFileParser
         {
             return new soul::ast::spg::GroupingParser(lexer.GetSourcePos(pos), alt);
         }
-        ;
+		;
 }
