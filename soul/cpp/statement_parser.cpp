@@ -36,7 +36,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Statement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 74);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717505);
     std::unique_ptr<soul::ast::cpp::StatementNode> labeledStatement;
     std::unique_ptr<soul::ast::cpp::StatementNode> emptyStatement;
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> compoundStatement;
@@ -353,7 +353,7 @@ soul::parser::Match StatementParser<Lexer>::LabeledStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LabeledStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 75);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717506);
     std::string label = std::string();
     std::unique_ptr<soul::ast::cpp::StatementNode> stmt1;
     std::unique_ptr<soul::ast::cpp::Node> caseExpr;
@@ -692,7 +692,7 @@ soul::parser::Match StatementParser<Lexer>::EmptyStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EmptyStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 76);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717507);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -740,7 +740,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CompoundStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 77);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717508);
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> compoundStatement = std::unique_ptr<soul::ast::cpp::CompoundStatementNode>();
     std::unique_ptr<soul::ast::cpp::StatementNode> stmt;
     soul::parser::Match match(false);
@@ -888,7 +888,7 @@ soul::parser::Match StatementParser<Lexer>::SelectionStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SelectionStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 78);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717509);
     std::unique_ptr<soul::ast::cpp::StatementNode> ifStatement;
     std::unique_ptr<soul::ast::cpp::StatementNode> switchStatement;
     soul::parser::Match match(false);
@@ -967,7 +967,7 @@ soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "IfStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 79);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717510);
     std::unique_ptr<soul::ast::cpp::Node> cond;
     std::unique_ptr<soul::ast::cpp::StatementNode> thenS;
     std::unique_ptr<soul::ast::cpp::StatementNode> elseS;
@@ -1201,7 +1201,7 @@ soul::parser::Match StatementParser<Lexer>::SwitchStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SwitchStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 80);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717511);
     std::unique_ptr<soul::ast::cpp::Node> cond;
     std::unique_ptr<soul::ast::cpp::StatementNode> stmt;
     soul::parser::Match match(false);
@@ -1380,7 +1380,7 @@ soul::parser::Match StatementParser<Lexer>::IterationStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "IterationStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 81);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717512);
     std::unique_ptr<soul::ast::cpp::StatementNode> whileStatement;
     std::unique_ptr<soul::ast::cpp::StatementNode> doStatement;
     std::unique_ptr<soul::ast::cpp::StatementNode> rangeForStatement;
@@ -1527,7 +1527,7 @@ soul::parser::Match StatementParser<Lexer>::WhileStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "WhileStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 82);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717513);
     std::unique_ptr<soul::ast::cpp::Node> cond;
     std::unique_ptr<soul::ast::cpp::StatementNode> stmt;
     soul::parser::Match match(false);
@@ -1706,7 +1706,7 @@ soul::parser::Match StatementParser<Lexer>::DoStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "DoStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 83);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717514);
     std::unique_ptr<soul::ast::cpp::StatementNode> stmt;
     std::unique_ptr<soul::ast::cpp::Node> cond;
     soul::parser::Match match(false);
@@ -1951,7 +1951,7 @@ soul::parser::Match StatementParser<Lexer>::RangeForStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RangeForStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 84);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717515);
     std::unique_ptr<soul::ast::cpp::ForRangeDeclarationNode> forRangeDeclaration;
     std::unique_ptr<soul::ast::cpp::Node> container;
     std::unique_ptr<soul::ast::cpp::StatementNode> stmt;
@@ -2154,7 +2154,7 @@ soul::parser::Match StatementParser<Lexer>::ForRangeDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ForRangeDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 85);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717516);
     std::unique_ptr<soul::ast::cpp::ForRangeDeclarationNode> forRangeDeclaration = std::unique_ptr<soul::ast::cpp::ForRangeDeclarationNode>();
     std::unique_ptr<soul::parser::Value<std::string>> declarator;
     soul::parser::Match match(false);
@@ -2255,7 +2255,7 @@ soul::parser::Match StatementParser<Lexer>::ForStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ForStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 86);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717517);
     std::unique_ptr<soul::ast::cpp::Node> forInitStatement;
     std::unique_ptr<soul::ast::cpp::Node> cond;
     std::unique_ptr<soul::ast::cpp::Node> loopExpr;
@@ -2483,7 +2483,7 @@ soul::parser::Match StatementParser<Lexer>::ForInitStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ForInitStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 87);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717518);
     std::unique_ptr<soul::ast::cpp::StatementNode> emptyStatement;
     std::unique_ptr<soul::ast::cpp::StatementNode> expressionStatement;
     std::unique_ptr<soul::ast::cpp::SimpleDeclarationNode> simpleDeclaration;
@@ -2596,7 +2596,7 @@ soul::parser::Match StatementParser<Lexer>::JumpStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "JumpStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 88);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717519);
     std::unique_ptr<soul::ast::cpp::StatementNode> breakStatement;
     std::unique_ptr<soul::ast::cpp::StatementNode> continueStatement;
     std::unique_ptr<soul::ast::cpp::StatementNode> returnStatement;
@@ -2743,7 +2743,7 @@ soul::parser::Match StatementParser<Lexer>::BreakStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "BreakStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 89);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717520);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2829,7 +2829,7 @@ soul::parser::Match StatementParser<Lexer>::ContinueStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ContinueStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 90);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717521);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2915,7 +2915,7 @@ soul::parser::Match StatementParser<Lexer>::ReturnStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ReturnStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 91);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717522);
     std::unique_ptr<soul::ast::cpp::Node> returnValue;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3031,7 +3031,7 @@ soul::parser::Match StatementParser<Lexer>::GotoStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "GotoStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 92);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717523);
     std::string target = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3161,7 +3161,7 @@ soul::parser::Match StatementParser<Lexer>::DeclarationStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclarationStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 93);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717524);
     std::unique_ptr<soul::ast::cpp::Node> declaration;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3211,7 +3211,7 @@ soul::parser::Match StatementParser<Lexer>::Condition(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Condition");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 94);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717525);
     std::unique_ptr<soul::ast::cpp::TypeIdNode> typeId;
     std::unique_ptr<soul::parser::Value<std::string>> declarator;
     std::unique_ptr<soul::ast::cpp::Node> assignmentExpr;
@@ -3349,7 +3349,7 @@ soul::parser::Match StatementParser<Lexer>::TryStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TryStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 95);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717526);
     std::unique_ptr<soul::ast::cpp::TryStatementNode> tryStatement = std::unique_ptr<soul::ast::cpp::TryStatementNode>();
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> tryBlock;
     soul::parser::Match match(false);
@@ -3458,7 +3458,7 @@ soul::parser::Match StatementParser<Lexer>::HandlerSeq(Lexer& lexer, soul::ast::
         soul::lexer::WriteBeginRuleToLog(lexer, "HandlerSeq");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 96);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717527);
     std::unique_ptr<soul::ast::cpp::HandlerNode> handler;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3544,7 +3544,7 @@ soul::parser::Match StatementParser<Lexer>::Handler(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Handler");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 97);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717528);
     std::unique_ptr<soul::ast::cpp::ExceptionDeclarationNode> exceptionDeclaration;
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> catchBlock;
     soul::parser::Match match(false);
@@ -3723,7 +3723,7 @@ soul::parser::Match StatementParser<Lexer>::ExceptionDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExceptionDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 98);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717529);
     std::unique_ptr<soul::ast::cpp::ExceptionDeclarationNode> exceptionDeclaration = std::unique_ptr<soul::ast::cpp::ExceptionDeclarationNode>();
     std::unique_ptr<soul::parser::Value<std::string>> declarator;
     std::unique_ptr<soul::parser::Value<std::string>> abstractDeclarator;
@@ -3903,7 +3903,7 @@ soul::parser::Match StatementParser<Lexer>::ExpressionStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionStatement");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 99);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8599657534669717530);
     std::unique_ptr<soul::ast::cpp::Node> expr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

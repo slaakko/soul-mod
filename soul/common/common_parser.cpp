@@ -32,7 +32,7 @@ soul::parser::Match CommonParser<Lexer>::QualifiedId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 0);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097985);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -170,7 +170,7 @@ soul::parser::Match CommonParser<Lexer>::ExportModule(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportModule");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 1);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097986);
     std::unique_ptr<soul::ast::common::ExportModule> exp = std::unique_ptr<soul::ast::common::ExportModule>();
     std::unique_ptr<soul::parser::Value<std::string>> moduleName;
     soul::parser::Match match(false);
@@ -294,7 +294,7 @@ soul::parser::Match CommonParser<Lexer>::Import(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Import");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 2);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097987);
     std::unique_ptr<soul::ast::common::Import> imp = std::unique_ptr<soul::ast::common::Import>();
     soul::ast::common::ImportPrefix prefix = soul::ast::common::ImportPrefix();
     std::unique_ptr<soul::parser::Value<soul::ast::common::ImportPrefix>> importPrefix;
@@ -463,7 +463,7 @@ soul::parser::Match CommonParser<Lexer>::ImportPrefix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportPrefix");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 3);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097988);
     std::unique_ptr<soul::parser::Value<soul::ast::common::ImportPrefix>> implementationPrefix;
     std::unique_ptr<soul::parser::Value<soul::ast::common::ImportPrefix>> interfacePrefix;
     soul::parser::Match match(false);
@@ -542,7 +542,7 @@ soul::parser::Match CommonParser<Lexer>::ExprString(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExprString");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 4);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097989);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -590,7 +590,7 @@ soul::parser::Match CommonParser<Lexer>::FilePath(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097990);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -638,7 +638,7 @@ soul::parser::Match CommonParser<Lexer>::ExportKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097991);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -686,7 +686,7 @@ soul::parser::Match CommonParser<Lexer>::ModuleKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097992);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -734,7 +734,7 @@ soul::parser::Match CommonParser<Lexer>::ImportKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 8);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097993);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -782,7 +782,7 @@ soul::parser::Match CommonParser<Lexer>::ImplementationPrefix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationPrefix");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 9);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097994);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -865,7 +865,7 @@ soul::parser::Match CommonParser<Lexer>::InterfacePrefix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfacePrefix");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 10);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097995);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -948,7 +948,7 @@ soul::parser::Match CommonParser<Lexer>::ImplementationKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 11);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097996);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -996,7 +996,7 @@ soul::parser::Match CommonParser<Lexer>::InterfaceKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 12);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097997);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1044,7 +1044,7 @@ soul::parser::Match CommonParser<Lexer>::ParserKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ParserKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 13);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097998);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1092,7 +1092,7 @@ soul::parser::Match CommonParser<Lexer>::LexerKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LexerKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 14);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2231932063773097999);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

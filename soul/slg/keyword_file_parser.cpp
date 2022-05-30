@@ -71,7 +71,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 11);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860993);
     std::unique_ptr<soul::ast::slg::KeywordFile> keywordFile = std::unique_ptr<soul::ast::slg::KeywordFile>();
     std::unique_ptr<soul::ast::slg::KeywordCollection> keywordCollection = std::unique_ptr<soul::ast::slg::KeywordCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> keywordCollectionName;
@@ -383,7 +383,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 12);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860994);
     std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
     soul::parser::Match* parentMatch0 = &match;
@@ -447,7 +447,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Keyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 13);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860995);
     std::string str = std::string();
     std::string tokenName = std::string();
     soul::parser::Match match(false);

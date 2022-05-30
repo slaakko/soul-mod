@@ -28,7 +28,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::CppIdentifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 71);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2155528619961614337);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -76,7 +76,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::QualifiedCppId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 72);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2155528619961614338);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

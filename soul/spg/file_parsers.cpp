@@ -10,6 +10,7 @@ import util;
 import soul.lex.spg;
 import soul.spg.spg.file.parser;
 import soul.spg.parser.file.parser;
+import soul.spg.parsers.rules;
 
 namespace soul::spg {
 
@@ -27,8 +28,9 @@ std::unique_ptr<soul::ast::spg::SpgFile> ParseSpgFile(const std::string& spgFile
     std::string spgFileContent = util::ReadFile(spgFilePath);
     std::u32string content = util::ToUtf32(spgFileContent);
     auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), spgFilePath);
-    using LexerType = decltype(lexer);
+    lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
     lexer.SetFile(file);
+    using LexerType = decltype(lexer);
     auto vars = static_cast<LexerType::VariableClassType*>(lexer.GetVariables());
     vars->matchFilePath = true;
     std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::spg::file::parser::SpgFileParser<LexerType>::Parse(lexer);
@@ -52,8 +54,9 @@ std::unique_ptr<soul::ast::spg::ParserFile> ParseParserFile(const std::string& p
     std::string parserFileContent = util::ReadFile(parserFilePath);
     std::u32string content = util::ToUtf32(parserFileContent);
     auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), parserFilePath);
-    using LexerType = decltype(lexer);
+    lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
     lexer.SetFile(file);
+    using LexerType = decltype(lexer);
     std::unique_ptr<soul::ast::spg::ParserFile> parserFile = soul::spg::parser::file::parser::ParserFileParser<LexerType>::Parse(lexer);
     fileMap.AddFileContent(std::move(content), std::move(lexer.GetLineStartIndeces()));
     if (external)

@@ -14,6 +14,7 @@ import soul.slg.keyword.file.parser;
 import soul.slg.expression.file.parser;
 import soul.slg.lexer.file.parser;
 import soul.slg.slg.file.parser;
+import soul.slg.parsers.rules;
 
 namespace soul::slg {
 
@@ -30,6 +31,7 @@ std::unique_ptr<soul::ast::slg::TokenFile> ParseTokenFile(const std::string& tok
     std::string tokenFileContent = ReadFile(tokenFilePath);
     std::u32string content = ToUtf32(tokenFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), tokenFilePath);
+    lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = TokenFileParser<LexerType>::Parse(lexer);
     if (external)
@@ -44,6 +46,7 @@ std::unique_ptr<soul::ast::slg::KeywordFile> ParseKeywordFile(const std::string&
     std::string keywordFileContent = ReadFile(keywordFilePath);
     std::u32string content = ToUtf32(keywordFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), keywordFilePath);
+    lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     return KeywordFileParser<LexerType>::Parse(lexer);
 }
@@ -53,6 +56,7 @@ std::unique_ptr<soul::ast::slg::ExpressionFile> ParseExpressionFile(const std::s
     std::string expressionFileContent = ReadFile(expressionFilePath);
     std::u32string content = ToUtf32(expressionFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), expressionFilePath);
+    lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     return ExpressionFileParser<LexerType>::Parse(lexer);
 }
@@ -62,6 +66,7 @@ std::unique_ptr<soul::ast::slg::LexerFile> ParseLexerFile(const std::string& lex
     std::string lexerFileContent = ReadFile(lexerFilePath);
     std::u32string content = ToUtf32(lexerFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), lexerFilePath);
+    lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     return LexerFileParser<LexerType>::Parse(lexer);
 }
@@ -71,6 +76,7 @@ std::unique_ptr<soul::ast::slg::SlgFile> ParseSlgFile(const std::string& slgFile
     std::string slgFileContent = ReadFile(slgFilePath);
     std::u32string content = ToUtf32(slgFileContent);
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), slgFilePath);
+    lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
     auto vars = static_cast<LexerType::VariableClassType*>(lexer.GetVariables());
     vars->matchFilePath = true;

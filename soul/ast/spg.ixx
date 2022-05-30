@@ -308,8 +308,10 @@ class RuleParser : public Parser
 public:
     RuleParser(const soul::ast::SourcePos& sourcePos_, const std::string& name_);
     std::string Name() const override { return name; }
-    void SetId(int id_) { id = id_; }
-    int Id() const { return id; }
+    void SetIndex(int32_t index_) { index = index_; }
+    int32_t Index() const { return index; }
+    void SetId(int64_t id_) { id = id_; }
+    int64_t Id() const { return id; }
     void SetInfo(const std::string& info_);
     const std::string& Info() const { return info; }
     void AddParamOrVariable(ParamVar* paramVar);
@@ -329,7 +331,8 @@ public:
     void Accept(Visitor& visitor) override;
 private:
     std::string name;
-    int id;
+    int32_t index;
+    int64_t id;
     std::string info;
     std::vector<std::unique_ptr<Parameter>> params;
     std::vector<std::unique_ptr<Variable>> vars;
@@ -347,6 +350,8 @@ struct Using
     std::string parserRuleId;
 };
 
+class ParserFile;
+
 class GrammarParser : public Parser
 {
 public:
@@ -354,6 +359,10 @@ public:
     std::string Name() const override { return name; }
     bool Main() const { return main; }
     void SetMain() { main = true; }
+    int32_t Id() const { return id; }
+    void SetId(int32_t id_) { id = id_; }
+    ParserFile* GetParserFile() const { return parserFile; }
+    void SetParserFile(ParserFile* parserFile_) { parserFile = parserFile_; }
     void AddLexer(soul::ast::cpp::TypeIdNode* lexerTypeId);
     const std::vector<std::unique_ptr<soul::ast::cpp::TypeIdNode>>& Lexers() const { return lexers; }
     void AddUsing(const soul::ast::SourcePos& sourcePos, const std::string& parserRuleId);
@@ -367,6 +376,8 @@ public:
 private:
     std::string name;
     bool main;
+    int32_t id;
+    ParserFile* parserFile;
     std::vector<std::unique_ptr<soul::ast::cpp::TypeIdNode>> lexers;
     std::vector<Using> usings;
     std::vector<std::unique_ptr<RuleParser>> rules;
@@ -442,7 +453,7 @@ public:
     const std::vector<std::unique_ptr<SpgFileDeclaration>>& Declarations() const { return declarations; }
     void AddParserFile(ParserFile* parserFile);
     const std::vector<std::unique_ptr<ParserFile>>& ParserFiles() const { return parserFiles; }
-    void AddParser(GrammarParser* parser);
+    bool AddParser(GrammarParser* parser);
     GrammarParser* GetParser(const std::string& name) const;
     void AddRule(RuleParser* rule);
     const std::vector<RuleParser*>& Rules() const { return rules; }

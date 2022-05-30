@@ -204,6 +204,8 @@
     <ClCompile Include="regular_expression_parser.ixx" />
     <ClCompile Include="slg_file_parser.cpp" />
     <ClCompile Include="slg_file_parser.ixx" />
+    <ClCompile Include="slg_parsers_rules.cpp" />
+    <ClCompile Include="slg_parsers_rules.ixx" />
     <ClCompile Include="token_file_parser.cpp" />
     <ClCompile Include="token_file_parser.ixx" />
     <ClCompile Include="token_generator.cpp" />

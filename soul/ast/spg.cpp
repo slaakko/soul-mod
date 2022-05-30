@@ -351,7 +351,7 @@ void GroupingParser::Accept(Visitor& visitor)
 }
 
 RuleParser::RuleParser(const soul::ast::SourcePos& sourcePos_, const std::string& name_) : 
-    Parser(sourcePos_, ParserKind::ruleParser), name(name_), id(-1), grammar(nullptr), hasReturn(false)
+    Parser(sourcePos_, ParserKind::ruleParser), name(name_), id(-1), index(-1), grammar(nullptr), hasReturn(false)
 {
 }
 
@@ -432,7 +432,8 @@ Using::Using(const soul::ast::SourcePos& sourcePos_, const std::string& parserRu
 {
 }
 
-GrammarParser::GrammarParser(const soul::ast::SourcePos& sourcePos_, const std::string& name_) : Parser(sourcePos_, ParserKind::grammarParser), name(name_), main(false)
+GrammarParser::GrammarParser(const soul::ast::SourcePos& sourcePos_, const std::string& name_) : 
+    Parser(sourcePos_, ParserKind::grammarParser), name(name_), main(false), id(-1), parserFile(nullptr)
 {
 }
 
@@ -449,6 +450,7 @@ void GrammarParser::AddUsing(const soul::ast::SourcePos& sourcePos, const std::s
 bool GrammarParser::AddRule(RuleParser* rule)
 {
     rule->SetGrammar(this);
+    rule->SetIndex(rules.size());
     rules.push_back(std::unique_ptr<RuleParser>(rule));
     return MapRule(rule);
 }
@@ -530,6 +532,7 @@ void ParserFile::AddImport(soul::ast::common::Import* imprt)
 
 void ParserFile::AddParser(soul::ast::spg::GrammarParser* parser)
 {
+    parser->SetParserFile(this);
     parsers.push_back(std::unique_ptr< soul::ast::spg::GrammarParser>(parser));
 }
 
@@ -549,7 +552,6 @@ void SpgFile::AddParserFile(ParserFile* parserFile)
 
 void SpgFile::AddRule(RuleParser* rule)
 {
-    rule->SetId(rules.size());
     rules.push_back(rule);
 }
 
@@ -558,14 +560,15 @@ void SpgFile::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void SpgFile::AddParser(GrammarParser* parser)
+bool SpgFile::AddParser(GrammarParser* parser)
 {
     auto it = parserMap.find(parser->Name());
     if (it != parserMap.cend())
     {
-        throw std::runtime_error("parser '" + parser->Name() + "' already exists");
+        return false;
     }
     parserMap[parser->Name()] = parser;
+    return true;
 }
 
 GrammarParser* SpgFile::GetParser(const std::string& name) const

@@ -71,7 +71,7 @@ soul::parser::Match SpgFileParser<Lexer>::SpgFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SpgFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 22);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8393744626267193345);
     std::unique_ptr<soul::ast::spg::SpgFile> spgFile = std::unique_ptr<soul::ast::spg::SpgFile>();
     std::unique_ptr<soul::parser::Value<std::string>> projectName;
     std::unique_ptr<soul::ast::spg::SpgFileDeclaration> declaration;
@@ -249,7 +249,7 @@ soul::parser::Match SpgFileParser<Lexer>::SpgFileDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SpgFileDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 23);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8393744626267193346);
     std::unique_ptr<soul::ast::spg::ParserFileDeclaration> parserFileDeclaration;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -294,7 +294,7 @@ soul::parser::Match SpgFileParser<Lexer>::ParserFileDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ParserFileDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 24);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8393744626267193347);
     bool external = bool();
     std::unique_ptr<soul::parser::Value<std::string>> filePath;
     soul::parser::Match match(false);

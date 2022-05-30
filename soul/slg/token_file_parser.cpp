@@ -71,7 +71,7 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TokenFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 20);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7544922165020196865);
     std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = std::unique_ptr<soul::ast::slg::TokenFile>();
     std::unique_ptr<soul::ast::slg::TokenCollection> tokenCollection = std::unique_ptr<soul::ast::slg::TokenCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> tokenCollectionName;
@@ -353,7 +353,7 @@ soul::parser::Match TokenFileParser<Lexer>::Token(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Token");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 21);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7544922165020196866);
     std::string name = std::string();
     std::string info = std::string();
     soul::parser::Match match(false);

@@ -52,7 +52,7 @@ template<typename Stack>
     requires RuleStack<Stack>
 struct RuleGuard
 {
-    RuleGuard(Stack& stack_, int ruleId) : stack(stack_)
+    RuleGuard(Stack& stack_, int64_t ruleId) : stack(stack_)
     {
         stack.PushRule(ruleId);
     }
@@ -97,21 +97,21 @@ public:
     using VariableClassType = Machine::Variables;
 
     Lexer(const Char* start_, const Char* end_, const std::string& fileName_) :
-        flags(LexerFlags::none), 
+        flags(LexerFlags::none),
         file(-1),
         line(1),
-        current(tokens.end()), 
+        current(tokens.end()),
         token(this),
-        separatorChar('\0'), 
-        start(start_), 
-        end(end_), 
-        pos(start), 
-        fileName(fileName_), 
-        countLines(true), 
+        separatorChar('\0'),
+        start(start_),
+        end(end_),
+        pos(start),
+        fileName(fileName_),
+        countLines(true),
         classMap(nullptr),
         tokenCollection(nullptr),
         keywordMap(nullptr),
-        ruleNameVecPtr(nullptr),
+        ruleNameMapPtr(nullptr),
         farthestPos(GetPos()),
         log(nullptr),
         vars()
@@ -211,19 +211,19 @@ public:
     {
         keywordMap = keywordMap_;
     }
-    std::vector<std::string>* GetRuleNameVecPtr() const override
+    std::map<int64_t, std::string>* GetRuleNameMapPtr() const override
     {
-        return ruleNameVecPtr;
+        return ruleNameMapPtr;
     }
-    void SetRuleNameVecPtr(std::vector<std::string>* ruleNameVecPtr_) override
+    void SetRuleNameMapPtr(std::map<int64_t, std::string>* ruleNameMapPtr_) override
     { 
-        ruleNameVecPtr = ruleNameVecPtr_; 
+        ruleNameMapPtr = ruleNameMapPtr_;
     }
     LexerFlags Flags() const { return flags; }
     bool GetFlag(LexerFlags flag) const { return (flags & flag) != LexerFlags::none; }
     void SetFlag(LexerFlags flag) { flags = flags | flag; }
     void ResetFlag(LexerFlags flag) { flags = flags & ~flag; }
-    void PushRule(int ruleId)
+    void PushRule(int64_t ruleId)
     {
         ruleContext.push_back(ruleId);
     }
@@ -321,15 +321,16 @@ public:
     {
         std::string parserStateStr;
         int n = farthestRuleContext.size();
-        if (ruleNameVecPtr && n > 0)
+        if (ruleNameMapPtr && n > 0)
         {
             parserStateStr.append("\nParser state:\n");
             for (int i = 0; i < n; ++i)
             {
-                int ruleId = farthestRuleContext[i];
-                if (ruleId >= 0 && ruleId < ruleNameVecPtr->size())
+                int64_t ruleId = farthestRuleContext[i];
+                auto it = (*ruleNameMapPtr).find(ruleId);
+                if (it != (*ruleNameMapPtr).cend())
                 {
-                    std::string ruleName = (*ruleNameVecPtr)[ruleId];
+                    std::string ruleName = it->second;
                     parserStateStr.append(ruleName.append("\n"));
                 }
             }
@@ -499,10 +500,10 @@ private:
     soul::ast::slg::TokenCollection* tokenCollection;
     KeywordMap<Char>* keywordMap;
     int64_t farthestPos;
-    std::vector<int> ruleContext;
-    std::vector<int> farthestRuleContext;
+    std::vector<int64_t> ruleContext;
+    std::vector<int64_t> farthestRuleContext;
     std::vector<const Char*> lineStarts;
-    std::vector<std::string>* ruleNameVecPtr;
+    std::map<int64_t, std::string>* ruleNameMapPtr;
     ParsingLog* log;
     Machine::Variables vars;
 };

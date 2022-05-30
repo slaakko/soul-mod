@@ -176,6 +176,8 @@
     <ClCompile Include="parsing_util.ixx" />
     <ClCompile Include="spg_file_parser.cpp" />
     <ClCompile Include="spg_file_parser.ixx" />
+    <ClCompile Include="spg_parsers_rules.cpp" />
+    <ClCompile Include="spg_parsers_rules.ixx" />
     <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>

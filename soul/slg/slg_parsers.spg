@@ -1,4 +1,4 @@
-project slg.parsers;
+project soul.slg.parsers;
 parser <expression_file_parser.parser>;
 parser <lexer_file_parser.parser>;
 parser <keyword_file_parser.parser>;

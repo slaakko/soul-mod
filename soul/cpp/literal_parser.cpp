@@ -28,7 +28,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 73);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5808325801866690561);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)

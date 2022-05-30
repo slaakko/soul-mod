@@ -73,7 +73,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 0);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5410810734487535617);
     std::unique_ptr<soul::ast::slg::ExpressionFile> expressionFile = std::unique_ptr<soul::ast::slg::ExpressionFile>();
     std::unique_ptr<soul::ast::slg::ExpressionCollection> expressionCollection = std::unique_ptr<soul::ast::slg::ExpressionCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> expressionCollectionName;
@@ -311,7 +311,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Expression");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 1);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5410810734487535618);
     std::string name = std::string();
     int line = int();
     std::unique_ptr<soul::parser::Value<std::string>> exprString;

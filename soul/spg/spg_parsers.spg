@@ -1,4 +1,4 @@
-project spg.parsers;
+project soul.spg.parsers;
 parser <parser_file_parser.parser>;
 parser <spg_file_parser.parser>;
 extern parser <../common/common_parser.parser>;

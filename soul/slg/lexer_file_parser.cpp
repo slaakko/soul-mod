@@ -79,7 +79,7 @@ soul::parser::Match LexerFileParser<Lexer>::LexerFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LexerFile");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 2);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560129);
     std::unique_ptr<soul::ast::slg::LexerFile> lexerFile = std::unique_ptr<soul::ast::slg::LexerFile>();
     std::unique_ptr<soul::ast::slg::Lexer> lxr = std::unique_ptr<soul::ast::slg::Lexer>();
     std::unique_ptr<soul::ast::common::ExportModule> exportModule;
@@ -345,7 +345,7 @@ soul::parser::Match LexerFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::slg
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 3);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560130);
     std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
     soul::parser::Match* parentMatch0 = &match;
@@ -409,7 +409,7 @@ soul::parser::Match LexerFileParser<Lexer>::LexerContent(Lexer& lexer, soul::ast
         soul::lexer::WriteBeginRuleToLog(lexer, "LexerContent");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 4);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560131);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -476,7 +476,7 @@ soul::parser::Match LexerFileParser<Lexer>::Rules(Lexer& lexer, soul::ast::slg::
         soul::lexer::WriteBeginRuleToLog(lexer, "Rules");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560132);
     std::unique_ptr<soul::ast::slg::Rule> rl;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -631,7 +631,7 @@ soul::parser::Match LexerFileParser<Lexer>::Rule(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Rule");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560133);
     int line = int();
     std::unique_ptr<soul::parser::Value<std::string>> expr;
     std::unique_ptr<soul::parser::Value<int>> action;
@@ -726,7 +726,7 @@ soul::parser::Match LexerFileParser<Lexer>::Variables(Lexer& lexer, soul::ast::s
         soul::lexer::WriteBeginRuleToLog(lexer, "Variables");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560134);
     std::unique_ptr<soul::ast::slg::Variable> variable;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -881,7 +881,7 @@ soul::parser::Match LexerFileParser<Lexer>::Variable(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Variable");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 8);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560135);
     std::string name = std::string();
     std::unique_ptr<soul::ast::cpp::TypeIdNode> type;
     soul::parser::Match match(false);
@@ -995,7 +995,7 @@ soul::parser::Match LexerFileParser<Lexer>::Actions(Lexer& lexer, soul::ast::slg
         soul::lexer::WriteBeginRuleToLog(lexer, "Actions");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 9);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560136);
     int actionId = int();
     std::unique_ptr<soul::parser::Value<int>> action;
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> stmt;
@@ -1204,7 +1204,7 @@ soul::parser::Match LexerFileParser<Lexer>::Action(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Action");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 10);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8883513078608560137);
     int actionId = int();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

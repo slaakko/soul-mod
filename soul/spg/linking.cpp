@@ -82,6 +82,8 @@ void LinkingVisitor::Visit(soul::ast::spg::RuleParser& parser)
     currentRule = &parser;
     if (stage == LinkingStage::resolveRules)
     {
+        int64_t ruleId = (int64_t(parser.Grammar()->Id()) << 32) | int64_t(parser.Index() + 1);
+        parser.SetId(ruleId);
         spgFile->AddRule(&parser);
     }
     DefaultVisitor::Visit(parser);
@@ -90,9 +92,21 @@ void LinkingVisitor::Visit(soul::ast::spg::RuleParser& parser)
 void LinkingVisitor::Visit(soul::ast::spg::GrammarParser& parser)
 {
     currentParser = &parser;
+    if (parser.Id() == -1)
+    {
+        std::string fullGrammarName = parser.GetParserFile()->ExportModule()->ModuleName();
+        fullGrammarName.append(1, '.').append(parser.Name());
+        int32_t grammarId = std::hash<std::string>{}(fullGrammarName) & 0x7FFFFFFF;
+        parser.SetId(grammarId);
+    }
     if (stage == LinkingStage::addParsers)
     {
-        spgFile->AddParser(&parser);
+        if (!spgFile->AddParser(&parser))
+        {
+            std::string errorMessage = soul::lexer::MakeMessage("error", "Parser '" + parser.Name() + "' name not unique. Detected in SPG file '" + spgFile->FilePath() + "'",
+                parser.GetSourcePos(), fileMap);
+            throw std::runtime_error(errorMessage);
+        }
     }
     else if (stage == LinkingStage::resolveRules)
     {
