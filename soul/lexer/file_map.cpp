@@ -74,4 +74,16 @@ std::u32string FileMap::GetFileLine(int file, int line) const
     return trimmedLine;
 }
 
+FileMap* globalFileMap = nullptr;
+
+FileMap* GetGlobalFileMap()
+{
+    return globalFileMap;
+}
+
+void SetGlobalFileMap(FileMap* fileMap)
+{
+    globalFileMap = fileMap;
+}
+
 } // namespace soul::lexer

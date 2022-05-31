@@ -27,6 +27,7 @@ public:
     virtual const std::string& FileName() const = 0;
     virtual int File() const = 0;
     virtual int Line() const = 0;
+    virtual void SetLine(int32_t line_) = 0;
     virtual ClassMap<Char>* GetClassMap() const = 0;
     virtual void SetClassMap(ClassMap<Char>* classMap) = 0;
     virtual Variables* GetVariables() const = 0;

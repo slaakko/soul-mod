@@ -181,6 +181,10 @@ public:
     {
         return line;
     }
+    void SetLine(int32_t line_) override
+    {
+        line = line_;
+    }
     ClassMap<Char>* GetClassMap() const override
     {
         return classMap;
