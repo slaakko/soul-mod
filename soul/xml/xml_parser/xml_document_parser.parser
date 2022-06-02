@@ -6,11 +6,11 @@
 export module soul.xml.document.parser;
 
 import soul.xml.processor;
-import soul.lex.trivial;
+import soul.lexer.trivial;
 
 parser XmlParser
 {
-    lexer soul::lex::trivial::TrivialLexer<char32_t>;
+    lexer soul::lexer::trivial::TrivialLexer<char32_t>;
     main;
 
     Document(soul::xml::processor::XmlProcessor* processor)

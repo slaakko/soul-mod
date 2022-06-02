@@ -6,7 +6,7 @@
 module soul.xml.parser;
 
 import util;
-import soul.lex.trivial;
+import soul.lexer.trivial;
 import soul.xml.parser.rules;
 import soul.xml.document.parser;
 import soul.xml.processor;
@@ -39,7 +39,7 @@ void ParseXmlContent(const std::string& xmlContent, const std::string& systemId,
 
 void ParseXmlContent(const std::u32string& xmlContent, const std::string& systemId, XmlContentHandler* contentHandler)
 {
-    auto lexer = soul::lex::trivial::MakeLexer(xmlContent.c_str(), xmlContent.c_str() + xmlContent.length(), systemId);
+    auto lexer = soul::lexer::trivial::MakeLexer(xmlContent.c_str(), xmlContent.c_str() + xmlContent.length(), systemId);
     lexer.SetRuleNameMapPtr(soul::xml::parser::rules::GetRuleNameMapPtr());
     soul::xml::processor::XmlProcessor processor(contentHandler);
     soul::xml::document::parser::XmlParser<decltype(lexer)>::Parse(lexer, &processor);
@@ -47,7 +47,7 @@ void ParseXmlContent(const std::u32string& xmlContent, const std::string& system
 
 void ParseXmlContent(std::u32string&& xmlContent, const std::string& systemId, XmlContentHandler* contentHandler, soul::lexer::FileMap& fileMap)
 {
-    auto lexer = soul::lex::trivial::MakeLexer(xmlContent.c_str(), xmlContent.c_str() + xmlContent.length(), systemId);
+    auto lexer = soul::lexer::trivial::MakeLexer(xmlContent.c_str(), xmlContent.c_str() + xmlContent.length(), systemId);
     lexer.SetRuleNameMapPtr(soul::xml::parser::rules::GetRuleNameMapPtr());
     int file = fileMap.AddFilePath(systemId);
     lexer.SetFile(file);

@@ -156,7 +156,6 @@
     <ClCompile Include="slg_lexer.ixx" />
     <ClCompile Include="spg_lexer.cpp" />
     <ClCompile Include="spg_lexer.ixx" />
-    <ClCompile Include="trivial_lexer.ixx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="re_lexer.lexer" />

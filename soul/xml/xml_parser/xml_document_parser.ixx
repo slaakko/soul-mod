@@ -7,10 +7,10 @@ import std.core;
 import soul.lexer;
 import soul.parser;
 import soul.xml.processor;
-import soul.lex.trivial;
+import soul.lexer.trivial;
 
 using namespace soul::xml::processor;
-using namespace soul::lex::trivial;
+using namespace soul::lexer::trivial;
 
 export namespace soul::xml::document::parser {
 

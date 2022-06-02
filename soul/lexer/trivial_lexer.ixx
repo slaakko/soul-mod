@@ -3,12 +3,12 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.lex.trivial;
+export module soul.lexer.trivial;
 
 import std.core;
 import soul.lexer;
 
-export namespace soul::lex::trivial {
+export namespace soul::lexer::trivial {
 
 struct TrivialLexer_Variables : public soul::lexer::Variables
 {
@@ -45,4 +45,4 @@ soul::lexer::Lexer<TrivialLexer<Char>, Char> MakeLexer(const Char* start, const 
     return lexer;
 }
 
-} // namespace soul::lex::trivial
+} // namespace soul::lexer::trivial

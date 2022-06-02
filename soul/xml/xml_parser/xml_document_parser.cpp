@@ -4921,6 +4921,6 @@ soul::parser::Match XmlParser<Lexer>::DocTypeDecl(Lexer& lexer, soul::xml::proce
     return match;
 }
 
-template struct XmlParser<soul::lexer::Lexer<soul::lex::trivial::TrivialLexer<char32_t>, char32_t>>;
+template struct XmlParser<soul::lexer::Lexer<soul::lexer::trivial::TrivialLexer<char32_t>, char32_t>>;
 
 } // namespace soul::xml::document::parser

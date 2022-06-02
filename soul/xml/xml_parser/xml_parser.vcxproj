@@ -160,9 +160,6 @@
     <ProjectReference Include="..\..\lexer\lexer.vcxproj">
       <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\lex\lex.vcxproj">
-      <Project>{69f93e57-1621-43b9-8b9b-c33c1c079da9}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\parser\parser.vcxproj">
       <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
     </ProjectReference>
