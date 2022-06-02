@@ -155,9 +155,9 @@ void FileStream::Flush()
     int result = std::fflush(file);
     if (result != 0)
     {
-        char buf[4096];
-        strerror_s(buf, sizeof(buf), errno);
-        throw std::runtime_error("could not flush file '" + filePath + "': " + PlatformStringToUtf8(buf));
+    char buf[4096];
+    strerror_s(buf, sizeof(buf), errno);
+    throw std::runtime_error("could not flush file '" + filePath + "': " + PlatformStringToUtf8(buf));
     }
 }
 
@@ -166,21 +166,21 @@ void FileStream::Seek(int64_t pos, Origin origin)
     int seekOrigin = SEEK_SET;
     switch (origin)
     {
-        case Origin::seekCur:
-        {
-            seekOrigin = SEEK_CUR;
-            break;
-        }
-        case Origin::seekEnd:
-        {
-            seekOrigin = SEEK_END;
-            break;
-        }
-        case Origin::seekSet:
-        {
-            seekOrigin = SEEK_SET;
-            break;
-        }
+    case Origin::seekCur:
+    {
+        seekOrigin = SEEK_CUR;
+        break;
+    }
+    case Origin::seekEnd:
+    {
+        seekOrigin = SEEK_END;
+        break;
+    }
+    case Origin::seekSet:
+    {
+        seekOrigin = SEEK_SET;
+        break;
+    }
     }
 #ifdef _WIN32
     int result = _fseeki64(file, pos, seekOrigin);
@@ -195,21 +195,21 @@ void FileStream::Seek(int64_t pos, Origin origin)
     }
     switch (origin)
     {
-        case Origin::seekCur:
-        {
-            SetPosition(Position() + pos);
-            break;
-        }
-        case Origin::seekEnd:
-        {
-            SetPosition(Size() + pos);
-            break;
-        }
-        case Origin::seekSet:
-        {
-            SetPosition(pos);
-            break;
-        }
+    case Origin::seekCur:
+    {
+        SetPosition(Position() + pos);
+        break;
+    }
+    case Origin::seekEnd:
+    {
+        SetPosition(Size() + pos);
+        break;
+    }
+    case Origin::seekSet:
+    {
+        SetPosition(pos);
+        break;
+    }
     }
 }
 
@@ -232,12 +232,32 @@ int64_t FileStream::Size() const
 
 std::string ReadFile(const std::string& filePath)
 {
+    return ReadFile(filePath, false);
+}
+
+std::string ReadFile(const std::string& filePath, bool doNotSkipBOM)
+{
     std::string s;
     FileStream fs(filePath, OpenMode::read | OpenMode::binary);
     int64_t n = fs.Size();
     for (int64_t i = 0; i < n; ++i)
     {
         int c = fs.ReadByte();
+        if (!doNotSkipBOM && i <= 2)
+        {
+            if (i == 0 && c == 0xEF)
+            {
+                continue;
+            }
+            else if (i == 1 && c == 0xBB)
+            {
+                continue;
+            }
+            else if (i == 2 && c == 0xBF)
+            {
+                continue;
+            }
+        }
         if (c != -1)
         {
             s.append(1, c);

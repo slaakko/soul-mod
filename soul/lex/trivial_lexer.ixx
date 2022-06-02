@@ -10,6 +10,10 @@ import soul.lexer;
 
 export namespace soul::lex::trivial {
 
+struct TrivialLexer_Variables : public soul::lexer::Variables
+{
+};
+
 template<typename Char>
 struct TrivialLexer;
 
@@ -19,6 +23,8 @@ soul::lexer::Lexer<TrivialLexer<Char>, Char> MakeLexer(const Char* start, const 
 template<typename Char>
 struct TrivialLexer
 {
+    using Variables = TrivialLexer_Variables;
+
     static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
         auto& token = lexer.CurrentToken();

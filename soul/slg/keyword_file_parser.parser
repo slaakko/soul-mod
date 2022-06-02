@@ -10,7 +10,7 @@ export module soul.slg.keyword.file.parser;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
 [implementation]import soul.common.common.parser;
-[implementation]import soul.slg.token.parser;
+[implementation]import soul.common.token.parser;
 [implementation]import soul.lex.slg;
 
 parser KeywordFileParser
@@ -45,7 +45,11 @@ parser KeywordFileParser
     Keyword(var std::string str, var std::string tokenName) : soul::ast::slg::Keyword*
         ::= 
         (   
-            LPAREN STRING_LITERAL!{ str = ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)); } COMMA! ID!{ tokenName = util::ToUtf8(lexer.GetToken(pos).ToString()); } RPAREN!
+            LPAREN 
+            STRING_LITERAL!{ str = util::ToUtf8(ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos))); } 
+            COMMA! 
+            ID!{ tokenName = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
+            RPAREN!
         )
         {
             return new soul::ast::slg::Keyword(str, tokenName);

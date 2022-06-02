@@ -11,7 +11,7 @@ export module soul.slg.lexer.file.parser;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
 [implementation]import soul.common.common.parser;
-[implementation]import soul.slg.token.parser;
+[implementation]import soul.common.token.parser;
 [implementation]import soul.cpp.statement.parser;
 [implementation]import soul.cpp.declarator.parser;
 [implementation]import soul.ast.cpp;

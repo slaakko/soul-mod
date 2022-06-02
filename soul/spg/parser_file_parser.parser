@@ -11,13 +11,14 @@ export module soul.spg.parser.file.parser;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
 [implementation]import soul.common.common.parser;
+[implementation]import soul.spg.token.parser;
 [implementation]import soul.cpp.declarator.parser;
 [implementation]import soul.cpp.statement.parser;
 [implementation]import soul.cpp.expression.parser; 
 [implementation]import soul.lex.spg;
 [implementation]import soul.ast.cpp;
 [implementation]import soul.spg.parsing.util;
-[implementation]import soul.spg.token.parser;
+[implementation]import soul.common.token.parser;
 [implementation]import soul.spg.error;
 
 parser ParserFileParser
@@ -258,12 +259,8 @@ parser ParserFileParser
         (   EMPTY{ return new soul::ast::spg::EmptyParser(lexer.GetSourcePos(pos)); }
         |   ANY{ return new soul::ast::spg::AnyParser(lexer.GetSourcePos(pos)); }
         |   ID{ return new soul::ast::spg::TokenParser(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
-        |   CHAR_LITERAL{ return new soul::ast::spg::CharParser(lexer.GetSourcePos(pos), soul::spg::token::parser::ParseCharLiteral(lexer.FileName(), lexer.GetToken(pos))); }
-        |   STRING_LITERAL
-            { 
-                std::u32string str = soul::spg::token::parser::ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)); 
-                return soul::spg::parsing::util::MakeParserFromStrLiteral(lexer.GetSourcePos(pos), str); 
-            }
+        |   CHAR_LITERAL{ return new soul::ast::spg::CharParser(lexer.GetSourcePos(pos), soul::common::token::parser::ParseCharLiteral(lexer.FileName(), lexer.GetToken(pos))); }
+        |   STRING_LITERAL{ return soul::spg::token::parser::ParseStringLiteralOrCharSet(lexer.FileName(), lexer.GetToken(pos), lexer.GetSourcePos(pos)); }
         )
         ;
 

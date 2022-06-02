@@ -10,7 +10,7 @@ export module soul.slg.token.file.parser;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
 [implementation]import soul.common.common.parser;
-[implementation]import soul.slg.token.parser;
+[implementation]import soul.common.token.parser;
 [implementation]import soul.lex.slg;
 
 parser TokenFileParser
@@ -38,7 +38,11 @@ parser TokenFileParser
     Token(var std::string name, var std::string info) : soul::ast::slg::Token*
         ::= 
         (
-            LPAREN ID!{ name = util::ToUtf8(lexer.GetToken(pos).ToString()); } COMMA! STRING_LITERAL!{ info = ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)); } RPAREN!
+            LPAREN 
+            ID!{ name = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
+            COMMA! 
+            STRING_LITERAL!{ info = util::ToUtf8(ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos))); } 
+            RPAREN!
         )
         {
             return new soul::ast::slg::Token(name, info);

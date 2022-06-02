@@ -210,7 +210,6 @@
     <ClCompile Include="token_file_parser.ixx" />
     <ClCompile Include="token_generator.cpp" />
     <ClCompile Include="token_generator.ixx" />
-    <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="expression_file_parser.parser" />

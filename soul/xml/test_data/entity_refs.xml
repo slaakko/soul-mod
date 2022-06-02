@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root attValueWithApos='&apos;quoted value&apos;'>
+    less:&lt;tag>
+    greater:&gt;
+    <attribute withQuot="&quot;">
+        element with ampersand:&amp;
+    </attribute>
+    <attribute withAmp='&amp;'/>
+    <attribute withLT='&lt;'/>
+    <attribute withGT='&gt;'/>
+</root>

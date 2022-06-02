@@ -8,14 +8,14 @@ import soul.cpp.token;
 import soul.punctuation.token;
 import soul.tool.token;
 import soul.common.common.parser;
-import soul.slg.token.parser;
+import soul.common.token.parser;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
 using namespace soul::common::common::parser;
-using namespace soul::slg::token::parser;
+using namespace soul::common::token::parser;
 using namespace soul::lex::slg;
 
 namespace soul::slg::token::file::parser {
@@ -483,7 +483,7 @@ soul::parser::Match TokenFileParser<Lexer>::Token(Lexer& lexer)
                             }
                             if (match.hit)
                             {
-                                info = ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos));
+                                info = util::ToUtf8(ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos)));
                             }
                             *parentMatch12 = match;
                         }

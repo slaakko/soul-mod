@@ -4,18 +4,20 @@
 module soul.spg.parser.file.parser;
 
 import util;
+import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
 import soul.common.common.parser;
+import soul.spg.token.parser;
 import soul.cpp.declarator.parser;
 import soul.cpp.statement.parser;
 import soul.cpp.expression.parser;
 import soul.lex.spg;
 import soul.ast.cpp;
 import soul.spg.parsing.util;
-import soul.spg.token.parser;
+import soul.common.token.parser;
 import soul.spg.error;
 
 using namespace soul::cpp::token;
@@ -23,13 +25,14 @@ using namespace soul::cpp::op::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
 using namespace soul::common::common::parser;
+using namespace soul::spg::token::parser;
 using namespace soul::cpp::declarator::parser;
 using namespace soul::cpp::statement::parser;
 using namespace soul::cpp::expression::parser;
 using namespace soul::lex::spg;
 using namespace soul::ast::cpp;
 using namespace soul::spg::parsing::util;
-using namespace soul::spg::token::parser;
+using namespace soul::common::token::parser;
 using namespace soul::spg::error;
 
 namespace soul::spg::parser::file::parser {
@@ -2849,7 +2852,7 @@ soul::parser::Match ParserFileParser<Lexer>::Primitive(Lexer& lexer)
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Primitive");
                         #endif SOUL_PARSER_DEBUG_SUPPORT
-                        return soul::parser::Match(true, new soul::ast::spg::CharParser(lexer.GetSourcePos(pos), soul::spg::token::parser::ParseCharLiteral(lexer.FileName(), lexer.GetToken(pos))));
+                        return soul::parser::Match(true, new soul::ast::spg::CharParser(lexer.GetSourcePos(pos), soul::common::token::parser::ParseCharLiteral(lexer.FileName(), lexer.GetToken(pos))));
                     }
                 }
                 break;
@@ -2858,12 +2861,11 @@ soul::parser::Match ParserFileParser<Lexer>::Primitive(Lexer& lexer)
             {
                 ++lexer;
                 {
-                    std::u32string str = soul::spg::token::parser::ParseStringLiteral(lexer.FileName(), lexer.GetToken(pos));
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Primitive");
                         #endif SOUL_PARSER_DEBUG_SUPPORT
-                        return soul::parser::Match(true, soul::spg::parsing::util::MakeParserFromStrLiteral(lexer.GetSourcePos(pos), str));
+                        return soul::parser::Match(true, soul::spg::token::parser::ParseStringLiteralOrCharSet(lexer.FileName(), lexer.GetToken(pos), lexer.GetSourcePos(pos)));
                     }
                 }
                 break;

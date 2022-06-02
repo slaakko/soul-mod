@@ -13,6 +13,7 @@ import soul.ast.common;
 import soul.ast.cpp;
 import soul.spg.nonterminal.info;
 import soul.spg.parsing.util;
+import soul.spg.array.generator;
 
 namespace soul::spg {
 
@@ -618,17 +619,80 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::TokenParser& parser)
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::CharParser& parser)
 {
-
+    formatter->WriteLine("soul::parser::Match match(false);");
+    formatter->WriteLine("if (*lexer == " + std::to_string(static_cast<int32_t>(parser.Chr())) + ")");
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    formatter->WriteLine("++lexer;");
+    formatter->WriteLine("match.hit = true;");
+    formatter->DecIndent();
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
 {
-
+    formatter->WriteLine("soul::parser::Match match(true);");
+    formatter->WriteLine("for (int32_t i : " + parser.ArrayName() + ")");
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    formatter->WriteLine("if (*lexer == i)");
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    formatter->WriteLine("++lexer;");
+    formatter->DecIndent();
+    formatter->WriteLine("}");
+    formatter->WriteLine("else");
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    formatter->WriteLine("match.hit = false;");
+    formatter->WriteLine("break;");
+    formatter->DecIndent();
+    formatter->WriteLine("}");
+    formatter->DecIndent();
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
 {
-
+    if (parser.GetCharSet()->Inverse())
+    {
+        formatter->WriteLine("soul::parser::Match match(lexer.Pos() != lexer.End());");
+        formatter->WriteLine("for (const soul::ast::spg::Range& range : " + parser.ArrayName() + ")");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
+        formatter->WriteLine("if (*lexer >= range.first && *lexer <= range.last)");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
+        formatter->WriteLine("match.hit = false;");
+        formatter->WriteLine("break;");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+        formatter->WriteLine("if (match.hit)");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
+        formatter->WriteLine("++lexer;");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+    }
+    else
+    {
+        formatter->WriteLine("soul::parser::Match match(false);");
+        formatter->WriteLine("for (const soul::ast::spg::Range& range : " + parser.ArrayName() + ")");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
+        formatter->WriteLine("if (*lexer >= range.first && *lexer <= range.last)");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
+        formatter->WriteLine("match.hit = true;");
+        formatter->WriteLine("++lexer;");
+        formatter->WriteLine("break;");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+    }
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::GroupingParser& parser)
@@ -1125,6 +1189,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     formatter->WriteLine("module " + mod->ModuleName() + ";");
     formatter->WriteLine();
     formatter->WriteLine("import util;");
+    formatter->WriteLine("import soul.ast.spg;");
     for (const auto& imprt : parserFile.Imports())
     {
         if (imprt->Prefix() == soul::ast::common::ImportPrefix::implementationPrefix)
@@ -1148,6 +1213,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     }
     formatter->WriteLine("namespace " + soul::ast::common::ToNamespaceName(mod->ModuleName()) + " {");
     formatter->WriteLine();
+    GenerateArrays(parserFile, *formatter, sn);
     for (const auto& parser : parserFile.Parsers())
     {
         parser->Accept(*this);

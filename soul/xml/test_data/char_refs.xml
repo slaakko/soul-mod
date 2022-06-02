@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    exclamation dec=&#33;
+    exclamation hex=&#x21;
+    Latin Capital letter A dec=&#065;
+    Latin Capital letter A hex=&#x0041;
+    Latin Small Letter O with diaeresis dec=&#246;
+    Latin Small Letter O with diaeresis hex=&#xf6;
+    Greek Capital Letter Omega dec=&#937;
+    Greek Capital Letter Omega hex=&#x3a9;
+
+    <attribute exclamation_dec="&#33;" hex="&#x21;"/>
+    <attribute latin_capital_letter_A_dec="&#065;" latin_capital_letter_A_hex="&#x0041;"/>
+    <attribute latin_small_letter_O_with_diaresis_dec="&#246;" latin_small_letter_O_with_diaresis_hex="&#xf6;"/>
+    <attribute greek_capital_letter_omega_dec="&#937;" greek_capital_letter_omega_hex="&#x3a9;"/>
+</root>
