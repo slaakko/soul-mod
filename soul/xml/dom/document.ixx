@@ -14,6 +14,7 @@ class Document : public ParentNode
 {
 public:
     Document(const soul::ast::SourcePos& sourcePos_);
+    Element* DocumentElement() const { return documentElement; }
     bool XmlStandalone() const { return xmlStandalone; }
     void SetXmlStandalone(bool xmlStandalone_) { xmlStandalone = xmlStandalone_; }
     const std::string& XmlVersion() const { return xmlVersion; }

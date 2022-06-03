@@ -25,6 +25,20 @@ bool IsGetNode(const soul::ast::cpp::IdExprNode& node)
     return false;
 }
 
+bool IsContainedBySwitchStatment(const soul::ast::cpp::IdExprNode& node)
+{
+    soul::ast::cpp::Node* parent = node.Parent();
+    while (parent)
+    {
+        if (parent->Kind() == soul::ast::cpp::NodeKind::switchStatementNode)
+        {
+            return true;
+        }
+        parent = parent->Parent();
+    }
+    return false;
+}
+
 class NonterminalCountingVisitor : public soul::ast::cpp::DefaultVisitor
 {
 public:
@@ -38,7 +52,7 @@ void NonterminalCountingVisitor::Visit(soul::ast::cpp::IdExprNode& node)
 {
     for (auto& info : nonterminalInfos)
     {
-        if (node.Id() == info.nonterminalParser->InstanceName() && !IsGetNode(node))
+        if (node.Id() == info.nonterminalParser->InstanceName() && !IsGetNode(node) && !IsContainedBySwitchStatment(node))
         {
             ++info.count;
             info.sourcePositions.push_back(node.GetSourcePos());
