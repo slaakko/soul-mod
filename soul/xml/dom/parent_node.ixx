@@ -23,6 +23,11 @@ public:
     Node* LastChild() const { return lastChild; }
     void Accept(Visitor& visitor) override;
     void Write(util::CodeFormatter& formatter) override;
+    void WalkChildren(NodeOperation& operation) override;
+    void WalkDescendant(NodeOperation& operation) override;
+    void WalkDescendantOrSelf(NodeOperation& operation) override;
+    void WalkPreceding(NodeOperation& operation) override;
+    void WalkPrecedingOrSelf(NodeOperation& operation) override;
 private:
     Node* firstChild;
     Node* lastChild;

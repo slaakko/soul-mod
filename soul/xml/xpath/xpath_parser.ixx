@@ -47,7 +47,12 @@ struct XPathParser
     static soul::parser::Match Predicate(Lexer& lexer);
     static soul::parser::Match AbbreviatedStep(Lexer& lexer);
     static soul::parser::Match FunctionCall(Lexer& lexer);
+    static soul::parser::Match FunctionName(Lexer& lexer);
+    static soul::parser::Match Argument(Lexer& lexer);
     static soul::parser::Match FilterExpr(Lexer& lexer);
+    static soul::parser::Match PrimaryExpr(Lexer& lexer);
+    static soul::parser::Match VariableReference(Lexer& lexer);
+    static soul::parser::Match Number(Lexer& lexer);
     static soul::parser::Match EqualityOp(Lexer& lexer);
     static soul::parser::Match RelationalOp(Lexer& lexer);
     static soul::parser::Match AdditiveOp(Lexer& lexer);

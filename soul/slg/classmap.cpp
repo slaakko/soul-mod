@@ -38,7 +38,7 @@ void MakeCompressedClassMap(const std::string& root, const std::string& classMap
 void MakeResourceFile(const std::string& root, const std::string& classMapName, bool verbose)
 {
     std::string resourceFileName = Path::Combine(root, classMapName + ".rc");
-    std::string compressedClassMapFileName = Path::Combine(root, classMapName + ".compressed");
+    std::string compressedClassMapFileName = "./" + classMapName + ".compressed";
     std::ofstream resourceFile(resourceFileName);
     CodeFormatter formatter(resourceFile);
     formatter.WriteLine(classMapName + " RCDATA \"" + compressedClassMapFileName + "\"");

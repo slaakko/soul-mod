@@ -154,8 +154,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="context.cpp" />
+    <ClCompile Include="context.ixx" />
+    <ClCompile Include="evaluate.cpp" />
+    <ClCompile Include="evaluate.ixx" />
     <ClCompile Include="expr.cpp" />
     <ClCompile Include="expr.ixx" />
+    <ClCompile Include="function.cpp" />
+    <ClCompile Include="function.ixx" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="object.ixx" />
     <ClCompile Include="parser_rules.cpp" />
@@ -175,6 +181,9 @@
     <ProjectReference Include="..\..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\common\common.vcxproj">
+      <Project>{00815563-d4cd-40c0-83e9-dc21c0024e70}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\lexer\lexer.vcxproj">
       <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
     </ProjectReference>
@@ -183,6 +192,9 @@
     </ProjectReference>
     <ProjectReference Include="..\dom\dom.vcxproj">
       <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\dom_parser\dom_parser.vcxproj">
+      <Project>{3908ecf0-3a6b-4a1a-9a0e-5f872c88260f}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

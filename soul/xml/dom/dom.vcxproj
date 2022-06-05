@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="attribute_node.cpp" />
     <ClCompile Include="attribute_node.ixx" />
+    <ClCompile Include="axis.cpp" />
     <ClCompile Include="axis.ixx" />
     <ClCompile Include="cdata_section.cpp" />
     <ClCompile Include="cdata_section.ixx" />
@@ -187,6 +188,8 @@
     <ClCompile Include="index.ixx" />
     <ClCompile Include="node.cpp" />
     <ClCompile Include="node.ixx" />
+    <ClCompile Include="node_operation.cpp" />
+    <ClCompile Include="node_operation.ixx" />
     <ClCompile Include="parent_node.cpp" />
     <ClCompile Include="parent_node.ixx" />
     <ClCompile Include="processing_instruction.cpp" />

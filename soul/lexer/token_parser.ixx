@@ -475,11 +475,12 @@ uint64_t ParseOctalULong(const Char* begin, const Char* end, LexerBaseT* lexer, 
         throw std::runtime_error("octal unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
     }
 }
+
 template<typename Char, typename LexerBaseT>
 float ParseFloat(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
     float value = 0.0f;
-    if (ParseFloating<float>(begin, end, value))
+    if (ParseFloating<Char, float>(begin, end, value))
     {
         return value;
     }
@@ -493,7 +494,7 @@ template<typename Char, typename LexerBaseT>
 double ParseDouble(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
     double value = 0.0;
-    if (ParseFloating<double>(begin, end, value))
+    if (ParseFloating<Char, double>(begin, end, value))
     {
         return value;
     }

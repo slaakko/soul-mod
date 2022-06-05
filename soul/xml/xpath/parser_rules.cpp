@@ -39,17 +39,22 @@ std::map<int64_t, std::string>* GetRuleNameMapPtr()
         { 6774979419569127453, "XPathParser.Predicate" },
         { 6774979419569127454, "XPathParser.AbbreviatedStep" },
         { 6774979419569127455, "XPathParser.FunctionCall" },
-        { 6774979419569127456, "XPathParser.FilterExpr" },
-        { 6774979419569127457, "XPathParser.EqualityOp" },
-        { 6774979419569127458, "XPathParser.RelationalOp" },
-        { 6774979419569127459, "XPathParser.AdditiveOp" },
-        { 6774979419569127460, "XPathParser.MultiplicativeOp" },
-        { 6774979419569127461, "XPathParser.CombinePathOp" },
-        { 6774979419569127462, "XPathParser.OrKeyword" },
-        { 6774979419569127463, "XPathParser.AndKeyword" },
-        { 6774979419569127464, "XPathParser.DivKeyword" },
-        { 6774979419569127465, "XPathParser.ModKeyword" },
-        { 6774979419569127466, "XPathParser.ProcessingInstructionKeyword" }
+        { 6774979419569127456, "XPathParser.FunctionName" },
+        { 6774979419569127457, "XPathParser.Argument" },
+        { 6774979419569127458, "XPathParser.FilterExpr" },
+        { 6774979419569127459, "XPathParser.PrimaryExpr" },
+        { 6774979419569127460, "XPathParser.VariableReference" },
+        { 6774979419569127461, "XPathParser.Number" },
+        { 6774979419569127462, "XPathParser.EqualityOp" },
+        { 6774979419569127463, "XPathParser.RelationalOp" },
+        { 6774979419569127464, "XPathParser.AdditiveOp" },
+        { 6774979419569127465, "XPathParser.MultiplicativeOp" },
+        { 6774979419569127466, "XPathParser.CombinePathOp" },
+        { 6774979419569127467, "XPathParser.OrKeyword" },
+        { 6774979419569127468, "XPathParser.AndKeyword" },
+        { 6774979419569127469, "XPathParser.DivKeyword" },
+        { 6774979419569127470, "XPathParser.ModKeyword" },
+        { 6774979419569127471, "XPathParser.ProcessingInstructionKeyword" }
     };
     return &ruleNameMap;
 }

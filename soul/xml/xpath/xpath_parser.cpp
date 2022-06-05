@@ -3336,18 +3336,186 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127455);
+    std::unique_ptr<soul::xml::xpath::expr::FunctionCall> functionCall = std::unique_ptr<soul::xml::xpath::expr::FunctionCall>();
+    std::unique_ptr<soul::parser::Value<std::string>> functionName;
+    std::unique_ptr<soul::xml::xpath::expr::Expr> arg;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match(true);
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match = XPathParser<Lexer>::FunctionName(lexer);
+                        functionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                        *parentMatch4 = match;
+                    }
+                    if (match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch6 = &match;
+                            {
+                                int64_t pos = lexer.GetPos();
+                                soul::parser::Match match(false);
+                                if (*lexer == LPAREN)
+                                {
+                                    ++lexer;
+                                    match.hit = true;
+                                }
+                                if (match.hit)
+                                {
+                                    functionCall.reset(new soul::xml::xpath::expr::FunctionCall(functionName->value));
+                                }
+                                *parentMatch6 = match;
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch7 = &match;
+                    {
+                        soul::parser::Match match(true);
+                        int64_t save = lexer.GetPos();
+                        soul::parser::Match* parentMatch8 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch9 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch10 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch11 = &match;
+                                    {
+                                        int64_t pos = lexer.GetPos();
+                                        soul::parser::Match match = XPathParser<Lexer>::Argument(lexer);
+                                        arg.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            functionCall->AddArgument(arg.release());
+                                        }
+                                        *parentMatch11 = match;
+                                    }
+                                    *parentMatch10 = match;
+                                }
+                                if (match.hit)
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch12 = &match;
+                                    {
+                                        soul::parser::Match match(true);
+                                        soul::parser::Match* parentMatch13 = &match;
+                                        {
+                                            while (true)
+                                            {
+                                                int64_t save = lexer.GetPos();
+                                                {
+                                                    soul::parser::Match match(false);
+                                                    soul::parser::Match* parentMatch14 = &match;
+                                                    {
+                                                        soul::parser::Match match(false);
+                                                        if (*lexer == COMMA)
+                                                        {
+                                                            ++lexer;
+                                                            match.hit = true;
+                                                        }
+                                                        *parentMatch14 = match;
+                                                    }
+                                                    if (match.hit)
+                                                    {
+                                                        soul::parser::Match match(false);
+                                                        soul::parser::Match* parentMatch15 = &match;
+                                                        {
+                                                            soul::parser::Match match(false);
+                                                            soul::parser::Match* parentMatch16 = &match;
+                                                            {
+                                                                int64_t pos = lexer.GetPos();
+                                                                soul::parser::Match match = XPathParser<Lexer>::Argument(lexer);
+                                                                arg.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                                                                if (match.hit)
+                                                                {
+                                                                    functionCall->AddArgument(arg.release());
+                                                                }
+                                                                *parentMatch16 = match;
+                                                            }
+                                                            *parentMatch15 = match;
+                                                        }
+                                                        *parentMatch14 = match;
+                                                    }
+                                                    if (match.hit)
+                                                    {
+                                                        *parentMatch13 = match;
+                                                    }
+                                                    else
+                                                    {
+                                                        lexer.SetPos(save);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        *parentMatch12 = match;
+                                    }
+                                    *parentMatch10 = match;
+                                }
+                                *parentMatch9 = match;
+                            }
+                            if (match.hit)
+                            {
+                                *parentMatch8 = match;
+                            }
+                            else
+                            {
+                                lexer.SetPos(save);
+                            }
+                        }
+                        *parentMatch7 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch17 = &match;
+                {
+                    soul::parser::Match match(false);
+                    if (*lexer == RPAREN)
+                    {
+                        ++lexer;
+                        match.hit = true;
+                    }
+                    *parentMatch17 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
         if (match.hit)
         {
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionCall");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, nullptr);
+                return soul::parser::Match(true, functionCall.release());
             }
         }
         *parentMatch0 = match;
@@ -3357,6 +3525,126 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionCall");
         else soul::lexer::WriteFailureToLog(lexer, "FunctionCall");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
+soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "FunctionName");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127456);
+    std::unique_ptr<soul::parser::Value<std::string>> qname;
+    std::unique_ptr<soul::xml::xpath::expr::NodeTest> nodeType;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            int64_t save = lexer.GetPos();
+            {
+                soul::parser::Match match = XPathParser<Lexer>::QName(lexer);
+                qname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    int64_t tmp = lexer.GetPos();
+                    lexer.SetPos(save);
+                    save = tmp;
+                    soul::parser::Match match = XPathParser<Lexer>::NodeType(lexer);
+                    nodeType.reset(static_cast<soul::xml::xpath::expr::NodeTest*>(match.value));
+                    *parentMatch3 = match;
+                }
+                if (!match.hit)
+                {
+                    lexer.SetPos(save);
+                }
+                *parentMatch2 = soul::parser::Match(!match.hit, match.value);
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionName");
+                #endif SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, new soul::parser::Value<std::string>(qname->value));
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionName");
+        else soul::lexer::WriteFailureToLog(lexer, "FunctionName");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
+soul::parser::Match XPathParser<Lexer>::Argument(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "Argument");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127457);
+    std::unique_ptr<soul::xml::xpath::expr::Expr> expr;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match = XPathParser<Lexer>::Expr(lexer);
+        expr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Argument");
+                #endif SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, expr.release());
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Argument");
+        else soul::lexer::WriteFailureToLog(lexer, "Argument");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     if (!match.hit)
@@ -3378,19 +3666,88 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "FilterExpr");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127456);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127458);
+    std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
+    std::unique_ptr<soul::xml::xpath::expr::Expr> primaryExpr;
+    std::unique_ptr<soul::xml::xpath::expr::Expr> predicate;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match(true);
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = XPathParser<Lexer>::PrimaryExpr(lexer);
+                    primaryExpr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                    if (match.hit)
+                    {
+                        expr.reset(primaryExpr.release());
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch4 = &match;
+                {
+                    soul::parser::Match match(true);
+                    soul::parser::Match* parentMatch5 = &match;
+                    {
+                        while (true)
+                        {
+                            int64_t save = lexer.GetPos();
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch6 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch7 = &match;
+                                    {
+                                        int64_t pos = lexer.GetPos();
+                                        soul::parser::Match match = XPathParser<Lexer>::Predicate(lexer);
+                                        predicate.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            expr.reset(new soul::xml::xpath::expr::FilterExpr(expr.release(), predicate.release()));
+                                        }
+                                        *parentMatch7 = match;
+                                    }
+                                    *parentMatch6 = match;
+                                }
+                                if (match.hit)
+                                {
+                                    *parentMatch5 = match;
+                                }
+                                else
+                                {
+                                    lexer.SetPos(save);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    *parentMatch4 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
         if (match.hit)
         {
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FilterExpr");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, nullptr);
+                return soul::parser::Match(true, expr.release());
             }
         }
         *parentMatch0 = match;
@@ -3400,6 +3757,350 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
     {
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FilterExpr");
         else soul::lexer::WriteFailureToLog(lexer, "FilterExpr");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
+soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "PrimaryExpr");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127459);
+    std::unique_ptr<soul::xml::xpath::expr::Expr> functionCall;
+    std::unique_ptr<soul::xml::xpath::expr::Expr> variableReference;
+    std::unique_ptr<soul::xml::xpath::expr::Expr> expr;
+    std::unique_ptr<soul::xml::xpath::expr::Literal> literal;
+    std::unique_ptr<soul::xml::xpath::expr::Expr> number;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t save = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            int64_t save = lexer.GetPos();
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                int64_t save = lexer.GetPos();
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    int64_t save = lexer.GetPos();
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match = XPathParser<Lexer>::FunctionCall(lexer);
+                        functionCall.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                        if (match.hit)
+                        {
+                            {
+                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
+                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                return soul::parser::Match(true, functionCall.release());
+                            }
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                    if (!match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        lexer.SetPos(save);
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch6 = &match;
+                            {
+                                int64_t pos = lexer.GetPos();
+                                soul::parser::Match match = XPathParser<Lexer>::VariableReference(lexer);
+                                variableReference.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                                if (match.hit)
+                                {
+                                    {
+                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
+                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        return soul::parser::Match(true, variableReference.release());
+                                    }
+                                }
+                                *parentMatch6 = match;
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch3 = match;
+                    }
+                }
+                *parentMatch2 = match;
+                if (!match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch7 = &match;
+                    lexer.SetPos(save);
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch8 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch9 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch10 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch11 = &match;
+                                    {
+                                        soul::parser::Match match(false);
+                                        if (*lexer == LPAREN)
+                                        {
+                                            ++lexer;
+                                            match.hit = true;
+                                        }
+                                        *parentMatch11 = match;
+                                    }
+                                    if (match.hit)
+                                    {
+                                        soul::parser::Match match(false);
+                                        soul::parser::Match* parentMatch12 = &match;
+                                        {
+                                            soul::parser::Match match = XPathParser<Lexer>::Expr(lexer);
+                                            expr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                                            *parentMatch12 = match;
+                                        }
+                                        *parentMatch11 = match;
+                                    }
+                                    *parentMatch10 = match;
+                                }
+                                if (match.hit)
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch13 = &match;
+                                    {
+                                        soul::parser::Match match(false);
+                                        if (*lexer == RPAREN)
+                                        {
+                                            ++lexer;
+                                            match.hit = true;
+                                        }
+                                        *parentMatch13 = match;
+                                    }
+                                    *parentMatch10 = match;
+                                }
+                                *parentMatch9 = match;
+                            }
+                            if (match.hit)
+                            {
+                                {
+                                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
+                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                    return soul::parser::Match(true, new soul::xml::xpath::expr::UnaryExpr(soul::xml::xpath::expr::Operator::parens, expr.release()));
+                                }
+                            }
+                            *parentMatch8 = match;
+                        }
+                        *parentMatch7 = match;
+                    }
+                    *parentMatch2 = match;
+                }
+            }
+            *parentMatch1 = match;
+            if (!match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch14 = &match;
+                lexer.SetPos(save);
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch15 = &match;
+                    {
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match = XPathParser<Lexer>::Literal(lexer);
+                        literal.reset(static_cast<soul::xml::xpath::expr::Literal*>(match.value));
+                        if (match.hit)
+                        {
+                            {
+                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
+                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                return soul::parser::Match(true, literal.release());
+                            }
+                        }
+                        *parentMatch15 = match;
+                    }
+                    *parentMatch14 = match;
+                }
+                *parentMatch1 = match;
+            }
+        }
+        *parentMatch0 = match;
+        if (!match.hit)
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch16 = &match;
+            lexer.SetPos(save);
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch17 = &match;
+                {
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = XPathParser<Lexer>::Number(lexer);
+                    number.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
+                    if (match.hit)
+                    {
+                        {
+                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            return soul::parser::Match(true, number.release());
+                        }
+                    }
+                    *parentMatch17 = match;
+                }
+                *parentMatch16 = match;
+            }
+            *parentMatch0 = match;
+        }
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
+        else soul::lexer::WriteFailureToLog(lexer, "PrimaryExpr");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
+soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "VariableReference");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127460);
+    std::unique_ptr<soul::parser::Value<std::string>> qname;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                if (*lexer == DOLLAR)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match = XPathParser<Lexer>::QName(lexer);
+                    qname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "VariableReference");
+                #endif SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, new soul::xml::xpath::expr::VariableReference(qname->value));
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "VariableReference");
+        else soul::lexer::WriteFailureToLog(lexer, "VariableReference");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
+soul::parser::Match XPathParser<Lexer>::Number(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "Number");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127461);
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        if (*lexer == NUMBER)
+        {
+            ++lexer;
+            match.hit = true;
+        }
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Number");
+                #endif SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, new soul::xml::xpath::expr::NumberExpr(lexer.GetToken(pos).ToDouble()));
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Number");
+        else soul::lexer::WriteFailureToLog(lexer, "Number");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     if (!match.hit)
@@ -3421,7 +4122,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EqualityOp");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127457);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127462);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -3479,7 +4180,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RelationalOp");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127458);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127463);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -3563,7 +4264,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveOp");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127459);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127464);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -3621,7 +4322,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeOp");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127460);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127465);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3733,7 +4434,7 @@ soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CombinePathOp");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127461);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127466);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -3791,7 +4492,7 @@ soul::parser::Match XPathParser<Lexer>::OrKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "OrKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127462);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127467);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3839,7 +4540,7 @@ soul::parser::Match XPathParser<Lexer>::AndKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AndKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127463);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127468);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3887,7 +4588,7 @@ soul::parser::Match XPathParser<Lexer>::DivKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "DivKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127464);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127469);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3935,7 +4636,7 @@ soul::parser::Match XPathParser<Lexer>::ModKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ModKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127465);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127470);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3983,7 +4684,7 @@ soul::parser::Match XPathParser<Lexer>::ProcessingInstructionKeyword(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "ProcessingInstructionKeyword");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127466);
+    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127471);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

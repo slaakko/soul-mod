@@ -425,18 +425,54 @@ parser XPathParser
         }
         ;
 
-    FunctionCall : soul::xml::xpath::expr::Expr*
-        ::= empty
+    FunctionCall(var std::unique_ptr<soul::xml::xpath::expr::FunctionCall> functionCall) : soul::xml::xpath::expr::Expr*
+        ::= 
+        (
+            FunctionName:functionName
+            LPAREN{ functionCall.reset(new soul::xml::xpath::expr::FunctionCall(functionName)); }
+            (Argument:arg{ functionCall->AddArgument(arg); } % COMMA)?
+            RPAREN
+        )
         {
-            return nullptr; // todo
+            return functionCall.release();
         }
         ;
 
-    FilterExpr : soul::xml::xpath::expr::Expr*
-        ::= empty
+    FunctionName : std::string
+        ::= (QName:qname - NodeType:nodeType){ return qname; }
+        ;
+
+    Argument : soul::xml::xpath::expr::Expr*
+        ::= Expr:expr{ return expr; }
+        ;
+
+    FilterExpr(var std::unique_ptr<soul::xml::xpath::expr::Expr> expr) : soul::xml::xpath::expr::Expr*
+        ::= 
+        (
+            PrimaryExpr:primaryExpr{ expr.reset(primaryExpr); } 
+            (
+                Predicate:predicate{ expr.reset(new soul::xml::xpath::expr::FilterExpr(expr.release(), predicate)); }
+            )*
+        )
         {
-            return nullptr; // todo
+            return expr.release();
         }
+        ;
+
+    PrimaryExpr : soul::xml::xpath::expr::Expr*
+        ::= FunctionCall:functionCall{ return functionCall; }
+        |   VariableReference:variableReference{ return variableReference; }
+        |   (LPAREN Expr:expr RPAREN){ return new soul::xml::xpath::expr::UnaryExpr(soul::xml::xpath::expr::Operator::parens, expr); }
+        |   Literal:literal{ return literal; }
+        |   Number:number{ return number; }
+        ;
+
+    VariableReference : soul::xml::xpath::expr::Expr*
+        ::= (DOLLAR QName:qname){ return new soul::xml::xpath::expr::VariableReference(qname); }
+        ;
+
+    Number : soul::xml::xpath::expr::Expr*
+        ::= NUMBER{ return new soul::xml::xpath::expr::NumberExpr(lexer.GetToken(pos).ToDouble()); }
         ;
 
     EqualityOp : soul::xml::xpath::expr::Operator

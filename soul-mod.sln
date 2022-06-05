@@ -103,26 +103,39 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dom_parser", "soul\xml\dom_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xml_parser_test", "soul\xml\xml_parser_test\xml_parser_test.vcxproj", "{9F65CD05-E432-4372-B191-5E1A4691AECD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test_data", "test_data", "{EB00FE3A-5F1F-48ED-945E-AB2000E24DD3}"
-	ProjectSection(SolutionItems) = preProject
-		soul\xml\test_data\char_refs.xml = soul\xml\test_data\char_refs.xml
-		soul\xml\test_data\comments.xml = soul\xml\test_data\comments.xml
-		soul\xml\test_data\entity_refs.xml = soul\xml\test_data\entity_refs.xml
-		soul\xml\test_data\error_half_open_comment.xml = soul\xml\test_data\error_half_open_comment.xml
-		soul\xml\test_data\error_half_open_pi.xml = soul\xml\test_data\error_half_open_pi.xml
-		soul\xml\test_data\error_two_roots.xml = soul\xml\test_data\error_two_roots.xml
-		soul\xml\test_data\error_wrong_end_tag.xml = soul\xml\test_data\error_wrong_end_tag.xml
-		soul\xml\test_data\inner_element.xml = soul\xml\test_data\inner_element.xml
-		soul\xml\test_data\minimal.xml = soul\xml\test_data\minimal.xml
-		soul\xml\test_data\one_attribute.xml = soul\xml\test_data\one_attribute.xml
-		soul\xml\test_data\pi.xml = soul\xml\test_data\pi.xml
-		soul\xml\test_data\skipped_entity.xml = soul\xml\test_data\skipped_entity.xml
-		soul\xml\test_data\two_attributes.xml = soul\xml\test_data\two_attributes.xml
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xml_parser", "soul\xml\xml_parser\xml_parser.vcxproj", "{A2ABD336-9F9B-4BDF-9A5B-D275C5C06408}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xpath", "soul\xml\xpath\xpath.vcxproj", "{ADA5D2E5-5404-4C0B-A9CA-2ACC7AA07CA4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml_test_data", "xml_test_data", "{A8748CCF-00C4-4098-9B13-997B49C84549}"
+	ProjectSection(SolutionItems) = preProject
+		soul\xml\xml_parser_test_data\char_refs.xml = soul\xml\xml_parser_test_data\char_refs.xml
+		soul\xml\xml_parser_test_data\comments.xml = soul\xml\xml_parser_test_data\comments.xml
+		soul\xml\xml_parser_test_data\entity_refs.xml = soul\xml\xml_parser_test_data\entity_refs.xml
+		soul\xml\xml_parser_test_data\error_half_open_comment.xml = soul\xml\xml_parser_test_data\error_half_open_comment.xml
+		soul\xml\xml_parser_test_data\error_half_open_pi.xml = soul\xml\xml_parser_test_data\error_half_open_pi.xml
+		soul\xml\xml_parser_test_data\error_two_roots.xml = soul\xml\xml_parser_test_data\error_two_roots.xml
+		soul\xml\xml_parser_test_data\error_wrong_end_tag.xml = soul\xml\xml_parser_test_data\error_wrong_end_tag.xml
+		soul\xml\xml_parser_test_data\inner_element.xml = soul\xml\xml_parser_test_data\inner_element.xml
+		soul\xml\xml_test_data\library.xml = soul\xml\xml_test_data\library.xml
+		soul\xml\xml_parser_test_data\minimal.xml = soul\xml\xml_parser_test_data\minimal.xml
+		soul\xml\xml_parser_test_data\one_attribute.xml = soul\xml\xml_parser_test_data\one_attribute.xml
+		soul\xml\xml_parser_test_data\pi.xml = soul\xml\xml_parser_test_data\pi.xml
+		soul\xml\xml_parser_test_data\skipped_entity.xml = soul\xml\xml_parser_test_data\skipped_entity.xml
+		soul\xml\xml_parser_test_data\two_attributes.xml = soul\xml\xml_parser_test_data\two_attributes.xml
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xpath_test", "soul\xml\xpath_test\xpath_test.vcxproj", "{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xpath_tests", "xpath_tests", "{BB8DB70E-13D0-4FA5-B62A-8B999CEE296D}"
+	ProjectSection(SolutionItems) = preProject
+		soul\xml\xpath_tests\000_select_document_node.bat = soul\xml\xpath_tests\000_select_document_node.bat
+		soul\xml\xpath_tests\001_select_root_node.bat = soul\xml\xpath_tests\001_select_root_node.bat
+		soul\xml\xpath_tests\002_not_found_select_root_node_child.bat = soul\xml\xpath_tests\002_not_found_select_root_node_child.bat
+		soul\xml\xpath_tests\T03_select_object_names_from_library.bat = soul\xml\xpath_tests\T03_select_object_names_from_library.bat
+		soul\xml\xpath_tests\T04_number_of_elements_in_library.bat = soul\xml\xpath_tests\T04_number_of_elements_in_library.bat
+		soul\xml\xpath_tests\T05_select_groups_that_have_artworks_from_library.bat = soul\xml\xpath_tests\T05_select_groups_that_have_artworks_from_library.bat
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -572,6 +585,30 @@ Global
 		{ADA5D2E5-5404-4C0B-A9CA-2ACC7AA07CA4}.Trace|x64.Build.0 = Debug|x64
 		{ADA5D2E5-5404-4C0B-A9CA-2ACC7AA07CA4}.Trace|x86.ActiveCfg = Debug|Win32
 		{ADA5D2E5-5404-4C0B-A9CA-2ACC7AA07CA4}.Trace|x86.Build.0 = Debug|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Debug|Itanium.ActiveCfg = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Debug|Itanium.Build.0 = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Debug|x64.ActiveCfg = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Debug|x64.Build.0 = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Debug|x86.ActiveCfg = Debug|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Debug|x86.Build.0 = Debug|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Release|Itanium.ActiveCfg = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Release|Itanium.Build.0 = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Release|x64.ActiveCfg = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Release|x64.Build.0 = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Release|x86.ActiveCfg = Release|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Release|x86.Build.0 = Release|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.ReleaseWithoutAsm|Itanium.ActiveCfg = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.ReleaseWithoutAsm|Itanium.Build.0 = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.ReleaseWithoutAsm|x64.ActiveCfg = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.ReleaseWithoutAsm|x64.Build.0 = Release|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.ReleaseWithoutAsm|x86.ActiveCfg = Release|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.ReleaseWithoutAsm|x86.Build.0 = Release|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Trace|Itanium.ActiveCfg = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Trace|Itanium.Build.0 = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Trace|x64.ActiveCfg = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Trace|x64.Build.0 = Debug|x64
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Trace|x86.ActiveCfg = Debug|Win32
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43}.Trace|x86.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -594,9 +631,11 @@ Global
 		{DDB0E247-00F9-47E3-9A10-3E357DE0BB9F} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 		{3908ECF0-3A6B-4A1A-9A0E-5F872C88260F} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 		{9F65CD05-E432-4372-B191-5E1A4691AECD} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
-		{EB00FE3A-5F1F-48ED-945E-AB2000E24DD3} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 		{A2ABD336-9F9B-4BDF-9A5B-D275C5C06408} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 		{ADA5D2E5-5404-4C0B-A9CA-2ACC7AA07CA4} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
+		{A8748CCF-00C4-4098-9B13-997B49C84549} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
+		{2331E322-1FD9-4078-9A4A-3C0BD5C50C43} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
+		{BB8DB70E-13D0-4FA5-B62A-8B999CEE296D} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A635957-C3E9-4A44-AC4F-5DF7EA63264E}

@@ -4,6 +4,7 @@
 module soul.re.parser;
 
 import util;
+import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;

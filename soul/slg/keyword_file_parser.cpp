@@ -4,6 +4,7 @@
 module soul.slg.keyword.file.parser;
 
 import util;
+import soul.ast.spg;
 import soul.cpp.token;
 import soul.punctuation.token;
 import soul.tool.token;
