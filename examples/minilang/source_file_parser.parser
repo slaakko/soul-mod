@@ -1,0 +1,27 @@
+export module minilang.parser.source.file;
+
+[interface]import minilang.tree;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+[implementation]import minilang.parser.function;
+
+parser SourceFileParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+	main;
+
+    using FunctionParser.Function;
+
+    SourceFile(var std::unique_ptr<minilang::tree::SourceFileNode> sourceFile) : minilang::tree::SourceFileNode*
+        ::= 
+		(
+			empty{ sourceFile.reset(new minilang::tree::SourceFileNode()); } 
+			(
+				Function:function{ sourceFile->AddFunction(function); }
+			)*
+		)
+		{
+			return sourceFile.release();
+		}
+        ;
+}

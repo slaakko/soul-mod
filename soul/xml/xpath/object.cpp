@@ -5,6 +5,10 @@
 
 module soul.xml.xpath.object;
 
+import soul.xml.text;
+import soul.xml.processing.instruction;
+import soul.xml.comment;
+
 namespace soul::xml::xpath {
 
 std::string ObjectKindStr(ObjectKind kind)
@@ -87,6 +91,37 @@ soul::xml::Element* NodeSet::ToXmlElement() const
                 attributeElement->SetAttribute("value", attributeNode->Value());
                 attributesElement->AppendChild(attributeElement);
             }
+        }
+        else if (node->IsAttributeNode())
+        {
+            soul::xml::AttributeNode* attributeNode = static_cast<soul::xml::AttributeNode*>(node);
+            soul::xml::Element* attributeElement = soul::xml::MakeElement("attribute");
+            attributeElement->SetAttribute("name", attributeNode->Name());
+            attributeElement->SetAttribute("value", attributeNode->Value());
+            nodeElement->AppendChild(attributeElement);
+
+        }
+        else if (node->IsTextNode())
+        {
+            soul::xml::Text* textNode = static_cast<soul::xml::Text*>(node);
+            soul::xml::Element* textElement = soul::xml::MakeElement("text");
+            textElement->SetAttribute("value", textNode->Data());
+            nodeElement->AppendChild(textElement);
+        }
+        else if (node->IsProcessingInstructionNode())
+        {
+            soul::xml::ProcessingInstruction* processingInstructionNode = static_cast<soul::xml::ProcessingInstruction*>(node);
+            soul::xml::Element* processingInstructionElement = soul::xml::MakeElement("processing-instruction");
+            processingInstructionElement->SetAttribute("target", processingInstructionNode->Target());
+            processingInstructionElement->SetAttribute("data", processingInstructionNode->Data());
+            nodeElement->AppendChild(processingInstructionElement);
+        }
+        else if (node->IsCommentNode())
+        {
+            soul::xml::Comment* commentNode = static_cast<soul::xml::Comment*>(node);
+            soul::xml::Element* commentElement = soul::xml::MakeElement("comment");
+            commentElement->SetAttribute("data", commentNode->Data());
+            nodeElement->AppendChild(commentElement);
         }
         element->AppendChild(nodeElement);
     }

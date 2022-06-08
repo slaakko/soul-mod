@@ -1639,12 +1639,12 @@ void CharacterTable::ReadHeader(BinaryStreamReader& reader)
     {
         if (magic[i] != headerMagic[i])
         {
-            throw UnicodeException("invalid cmajor_ucd.bin header magic: 'CMAJUCD' expected");
+            throw UnicodeException("invalid soul_ucd.bin header magic: 'SOULUCD' expected");
         }
     }
     if (magic[7] != headerMagic[7])
     {
-        throw UnicodeException("invalid cmajor_ucd.bin version: version " + std::string(1, headerMagic[7]) + " expected, version " + std::string(1, magic[7]) + " read");
+        throw UnicodeException("invalid soul_ucd.bin version: version " + std::string(1, headerMagic[7]) + " expected, version " + std::string(1, magic[7]) + " read");
     }
     extendedHeaderStart = reader.ReadUInt();
     extendedHeaderEnd = reader.ReadUInt();

@@ -1,0 +1,131 @@
+export module minilang.parser.expression;
+
+[interface]import minilang.tree;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+[implementation]import minilang.parser.literal;
+[implementation]import minilang.parser.identifier;
+
+parser ExpressionParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+
+    using LiteralParser.Literal;
+    using IdentifierParser.Identifier;
+
+    Expression : minilang::tree::Node*
+        ::= EqualityExpression:expr{ return expr; }
+        ;
+
+    PrimaryExpression : minilang::tree::Node*
+        ::= Literal:literal{ return literal; }
+        |   Identifier:identifier{ return identifier; }
+        |   LPAREN Expression:expression RPAREN{ return new minilang::tree::ParenthesizedExpressionNode(expression); }
+        ;
+
+    PostfixExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+        ::= 
+		(
+			PrimaryExpression:primary{ expr.reset(primary); } 
+            (
+                LPAREN{ expr.reset(new minilang::tree::InvokeNode(expr.release())); } ExpressionList(expr.get()):args? RPAREN!
+            )*
+		)
+		{
+			return expr.release();
+		}
+        ;
+
+    ExpressionList(minilang::tree::Node* owner)
+        ::= Expression:left{ owner->AddArgument(left); } 
+            (
+                COMMA Expression:right!{ owner->AddArgument(right); }
+            )*
+        ;
+
+    UnaryExpression : minilang::tree::Node*
+        ::= UnaryOperator:op UnaryExpression:unaryExpr!{ return new minilang::tree::UnaryOpExprNode(op, unaryExpr); }
+        |   PostfixExpression:postfixExpr{ return postfixExpr; }
+        ;
+
+    UnaryOperator : minilang::tree::Operator
+        ::= PLUS{ return minilang::tree::Operator::unaryPlus; }
+        |   MINUS{ return minilang::tree::Operator::unaryMinus; }
+        |   NOT{ return minilang::tree::Operator::not_; }
+        ;
+
+    MultiplicativeExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+        ::= 
+		(
+			UnaryExpression:left{ expr.reset(left); } 
+            (
+                MultiplicativeOperator:op UnaryExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+            )*
+		)
+		{
+			return expr.release();
+		}
+        ;
+
+    MultiplicativeOperator : minilang::tree::Operator
+        ::= MUL{ return minilang::tree::Operator::mul; }
+        |   DIV{ return minilang::tree::Operator::div; }
+        |   MOD{ return minilang::tree::Operator::mod; }
+        ;
+
+    AdditiveExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+        ::= 
+		(
+			MultiplicativeExpression:left{ expr.reset(left); } 
+            (
+                AdditiveOperator:op MultiplicativeExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+            )*
+		)
+		{
+			return expr.release();
+		}
+        ;
+
+    AdditiveOperator : minilang::tree::Operator
+        ::= PLUS{ return minilang::tree::Operator::add; }
+        |   MINUS{ return minilang::tree::Operator::sub; }
+        ;
+
+    RelationalExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+        ::= 
+		(	
+			AdditiveExpression:left{ expr.reset(left); } 
+            (
+                RelationalOperator:op AdditiveExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+            )*
+		)
+		{
+			return expr.release();
+		}
+        ;
+
+    RelationalOperator : minilang::tree::Operator
+        ::= LESS{ return minilang::tree::Operator::less; }
+        |   GREATER{ return minilang::tree::Operator::greater; }
+        |   LEQ{ return minilang::tree::Operator::lessOrEqual; }
+        |   GEQ{ return minilang::tree::Operator::greaterOrEqual; }
+        ;
+
+    EqualityExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+        ::= 
+		(
+			RelationalExpression:left{ expr.reset(left); } 
+            (
+                EqualityOperator:op RelationalExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+            )*
+		)
+		{
+			return expr.release();
+		}
+        ;
+
+    EqualityOperator : minilang::tree::Operator
+        ::= EQ{ return minilang::tree::Operator::equal; }
+        |   NEQ{ return minilang::tree::Operator::notEqual; }
+        ;
+}

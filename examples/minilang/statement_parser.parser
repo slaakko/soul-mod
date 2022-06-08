@@ -1,0 +1,90 @@
+export module minilang.parser.statement;
+
+[implementation]import minilang.tree;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+[implementation]import minilang.parser.expression;
+[implementation]import minilang.parser.type;
+[implementation]import minilang.parser.identifier;
+
+parser StatementParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+
+    using ExpressionParser.Expression;
+    using TypeParser.Type;
+    using IdentifierParser.Identifier;
+
+    Statement : minilang::tree::Node*
+        ::= IfStatement:ifS{ return ifS; }
+        |   WhileStatement:whileS{ return whileS; }
+        |   ReturnStatement:returnS{ return returnS; }
+        |   ConstructionStatement:constructionS{ return constructionS; }
+        |   AssignmentStatement:assignmentS{ return assignmentS; }
+        |   CompoundStatement:compoundS{ return compoundS; }
+        ;
+
+    IfStatement : minilang::tree::Node*
+        ::= 
+		(
+			IF LPAREN! Expression:condition! RPAREN! Statement:thenS! (ELSE Statement:elseS!)?
+		)
+		{
+			return new minilang::tree::IfStatementNode(condition, thenS, elseS);
+		}
+        ;
+
+    WhileStatement : minilang::tree::Node*
+        ::= 
+		(
+			WHILE LPAREN! Expression:condition! RPAREN! Statement:statement!
+		)
+		{
+			return new minilang::tree::WhileStatementNode(condition, statement);
+		}
+        ;
+
+    ReturnStatement : minilang::tree::Node*
+        ::= 
+		(
+			RETURN Expression:returnValue? SEMICOLON!
+		)
+		{
+			return new minilang::tree::ReturnStatementNode(returnValue);
+		}
+        ;
+
+    ConstructionStatement : minilang::tree::Node*
+        ::= 
+		(
+			Type:type Identifier:variableName! ASSIGN! Expression:value! SEMICOLON!
+		)
+		{
+			return new minilang::tree::ConstructionStatementNode(type, variableName, value);
+		}
+        ;
+
+    AssignmentStatement : minilang::tree::Node*
+        ::= 
+		(
+			Identifier:variableName ASSIGN! Expression:value! SEMICOLON!
+		)
+		{
+			return new minilang::tree::AssignmentStatementNode(variableName, value);
+		}
+        ;
+
+    CompoundStatement(var std::unique_ptr<minilang::tree::CompoundStatementNode> compoundStatement) : minilang::tree::CompoundStatementNode*
+        ::= 
+		(
+			LBRACE{ compoundStatement.reset(new minilang::tree::CompoundStatementNode()); } 
+			(
+				Statement:statement{ compoundStatement->AddStatement(statement); }
+			)* 
+			RBRACE!
+		)
+		{
+			return compoundStatement.release();
+		}
+        ;
+}

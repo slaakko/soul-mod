@@ -1,0 +1,16 @@
+export module minilang.parser.type;
+
+[implementation]import minilang.tree;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+
+parser TypeParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+
+    Type : minilang::tree::Node*
+        ::= INT{ return new minilang::tree::IntNode(); }
+        |   BOOL{ return new minilang::tree::BoolNode(); }
+        |   VOID{ return new minilang::tree::VoidNode(); }
+        ;
+}

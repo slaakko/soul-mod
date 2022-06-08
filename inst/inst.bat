@@ -1,11 +1,15 @@
 @echo off
-IF NOT EXIST snginst.exe xcopy /Y /D ..\x64\Release\snginst.exe .
-IF NOT EXIST snglexer.dll xcopy /Y /D ..\x64\Release\snglexer.dll .
-IF NOT EXIST sngrex.dll xcopy /Y /D ..\x64\Release\sngrex.dll .
-IF NOT EXIST sngutil.dll xcopy /Y /D ..\x64\Release\sngutil.dll .
+IF NOT EXIST soul_inst.exe xcopy /Y /D ..\x64\Release\soul_inst.exe .
 IF NOT EXIST ..\bin mkdir ..\bin
 IF NOT EXIST ..\lib mkdir ..\lib
-snginst -v ..\x64\Debug\*.exe ..\bin
-snginst -v ..\x64\Release\*.exe ..\bin
-snginst -v ..\x64\Debug\*.lib ..\lib
-snginst -v ..\x64\Release\*.lib ..\lib
+IF NOT EXIST ..\rc mkdir ..\rc
+soul_inst -v ..\x64\Debug\*.exe ..\bin
+soul_inst -v ..\x64\Release\*.exe ..\bin
+soul_inst -v ..\x64\Debug\*.lib ..\lib
+soul_inst -v ..\x64\Release\*.lib ..\lib
+soul_inst -v ..\soul\lex\*.classmap.compressed ..\rc
+soul_inst -v ..\soul\lex\*.classmap.rc ..\rc
+soul_inst -v ..\soul\rex\*.classmap.compressed ..\rc
+soul_inst -v ..\soul\rex\*.classmap.rc ..\rc
+soul_inst -v ..\soul\xml\xpath\*.classmap.compressed ..\rc
+soul_inst -v ..\soul\xml\xpath\*.classmap.rc ..\rc

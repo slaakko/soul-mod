@@ -1,0 +1,52 @@
+export module minilang.parser.function;
+
+[interface]import minilang.tree;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+[implementation]import minilang.parser.type;
+[implementation]import minilang.parser.identifier;
+[implementation]import minilang.parser.statement;
+
+parser FunctionParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+
+    using TypeParser.Type;
+    using IdentifierParser.Identifier;
+    using StatementParser.CompoundStatement;
+
+    Function(var std::unique_ptr<minilang::tree::FunctionNode> function) : minilang::tree::FunctionNode*
+        ::= 
+		(
+			Type:returnType 
+            Identifier:functionName! 
+            LPAREN!{ function.reset(new minilang::tree::FunctionNode(returnType, functionName)); } 
+			ParameterList(function.get()):params? 
+            RPAREN! 
+			CompoundStatement:functionBody!{ function->SetBody(functionBody); }
+		)
+		{
+			return function.release();
+		}
+        ;
+
+    ParameterList(minilang::tree::FunctionNode* function)
+        ::= 
+        (
+            Parameter:left{ function->AddParam(left); } 
+            (
+                COMMA Parameter:right!{ function->AddParam(right); }
+            )*
+        )
+        ;
+
+    Parameter : minilang::tree::ParameterNode*
+        ::= 
+        (
+            Type:type Identifier:name
+        )
+		{
+			return new minilang::tree::ParameterNode(type, name);
+		}
+        ;
+}

@@ -12,8 +12,8 @@ import util.binary.stream.reader;
 export namespace util {
 
 std::string SoulVersionStr();
-std::string CmajorRoot();
-std::string CmajorUcdFilePath();
+std::string SoulRoot();
+std::string SoulUcdFilePath();
 
 class UnicodeException : public std::runtime_error
 {

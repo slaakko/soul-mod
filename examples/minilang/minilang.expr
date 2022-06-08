@@ -1,0 +1,8 @@
+expressions minilang.expr
+{
+    digit = "[0-9]";
+    integer = "{digit}+";
+    identifier = "{unicode_id_start}{unicode_id_cont}*";
+    ws = "[\n\r\t ]";
+    separators = "{ws}+";
+}

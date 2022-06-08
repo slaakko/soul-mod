@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{69f93e57-1621-43b9-8b9b-c33c1c079da9}</ProjectGuid>
-    <RootNamespace>lex</RootNamespace>
+    <ProjectGuid>{444521b3-56c2-4bec-8dd2-aa1176d4c18f}</ProjectGuid>
+    <RootNamespace>minilang</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -59,33 +59,36 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>soul.lexd</TargetName>
+    <TargetName>minilangd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>soul.lex</TargetName>
+    <TargetName>minilang</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -95,12 +98,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -110,20 +112,19 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
-      <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutDir);$(BOOST_LIB_DIR)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,52 +133,78 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
-      <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutDir);$(BOOST_LIB_DIR)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="re_lexer.cpp" />
-    <ClCompile Include="re_lexer.ixx" />
-    <ClCompile Include="slg_lexer.cpp" />
-    <ClCompile Include="slg_lexer.ixx" />
-    <ClCompile Include="spg_lexer.cpp" />
-    <ClCompile Include="spg_lexer.ixx" />
+    <ClCompile Include="expression_parser.cpp" />
+    <ClCompile Include="expression_parser.ixx" />
+    <ClCompile Include="function_parser.cpp" />
+    <ClCompile Include="function_parser.ixx" />
+    <ClCompile Include="identifier_parser.cpp" />
+    <ClCompile Include="identifier_parser.ixx" />
+    <ClCompile Include="literal_parser.cpp" />
+    <ClCompile Include="literal_parser.ixx" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="minilang.token.ixx" />
+    <ClCompile Include="minilang_lexer.cpp" />
+    <ClCompile Include="minilang_lexer.ixx" />
+    <ClCompile Include="minilang_rules.cpp" />
+    <ClCompile Include="minilang_rules.ixx" />
+    <ClCompile Include="source_file_parser.cpp" />
+    <ClCompile Include="source_file_parser.ixx" />
+    <ClCompile Include="statement_parser.cpp" />
+    <ClCompile Include="statement_parser.ixx" />
+    <ClCompile Include="tree.cpp" />
+    <ClCompile Include="tree.ixx" />
+    <ClCompile Include="type_parser.cpp" />
+    <ClCompile Include="type_parser.ixx" />
+    <ClCompile Include="visitor.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="re_lexer.lexer" />
-    <None Include="re_lexer.slg" />
-    <None Include="slg_lexer.lexer" />
-    <None Include="slg_lexer.slg" />
-    <None Include="spg_lexer.lexer" />
-    <None Include="spg_lexer.slg" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\soul\ast\ast.vcxproj">
+      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\soul\lexer\lexer.vcxproj">
+      <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\soul\parser\parser.vcxproj">
+      <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\util\util.vcxproj">
       <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ast\ast.vcxproj">
-      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\lexer\lexer.vcxproj">
-      <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\token\token.vcxproj">
-      <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="expression_parser.parser" />
+    <None Include="function_parser.parser" />
+    <None Include="identifier_parser.parser" />
+    <None Include="literal_parser.parser" />
+    <None Include="minilang.expr" />
+    <None Include="minilang.keyword" />
+    <None Include="minilang.slg" />
+    <None Include="minilang.spg" />
+    <None Include="minilang.token" />
+    <None Include="minilang_lexer.lexer" />
+    <None Include="source_file_parser.parser" />
+    <None Include="statement_parser.parser" />
+    <None Include="type_parser.parser" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="minilang.lexer.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

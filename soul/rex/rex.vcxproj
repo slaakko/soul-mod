@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{69f93e57-1621-43b9-8b9b-c33c1c079da9}</ProjectGuid>
-    <RootNamespace>lex</RootNamespace>
+    <ProjectGuid>{48b54a5a-3058-488b-bafc-022750421339}</ProjectGuid>
+    <RootNamespace>rex</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -59,22 +59,26 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>soul.lexd</TargetName>
+    <TargetName>soul.rexd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>soul.lex</TargetName>
+    <TargetName>soul.rex</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,8 +120,8 @@
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
+      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -137,8 +141,8 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
+      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <AdditionalOptions>/experimental:module /std:c++latest %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -150,20 +154,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="re_lexer.cpp" />
-    <ClCompile Include="re_lexer.ixx" />
-    <ClCompile Include="slg_lexer.cpp" />
-    <ClCompile Include="slg_lexer.ixx" />
-    <ClCompile Include="spg_lexer.cpp" />
-    <ClCompile Include="spg_lexer.ixx" />
+    <None Include="rex.expr" />
+    <None Include="rex.slg" />
+    <None Include="rex.spg" />
+    <None Include="rex.token" />
+    <None Include="rex_lexer.lexer" />
+    <None Include="rex_parser.parser" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="re_lexer.lexer" />
-    <None Include="re_lexer.slg" />
-    <None Include="slg_lexer.lexer" />
-    <None Include="slg_lexer.slg" />
-    <None Include="spg_lexer.lexer" />
-    <None Include="spg_lexer.slg" />
+    <ClCompile Include="algorithm.cpp" />
+    <ClCompile Include="algorithm.ixx" />
+    <ClCompile Include="context.cpp" />
+    <ClCompile Include="context.ixx" />
+    <ClCompile Include="match.cpp" />
+    <ClCompile Include="match.ixx" />
+    <ClCompile Include="nfa.cpp" />
+    <ClCompile Include="nfa.ixx" />
+    <ClCompile Include="rex.ixx" />
+    <ClCompile Include="rex.token.ixx" />
+    <ClCompile Include="rex_lexer.cpp" />
+    <ClCompile Include="rex_lexer.ixx" />
+    <ClCompile Include="rex_parser.cpp" />
+    <ClCompile Include="rex_parser.ixx" />
+    <ClCompile Include="rex_rules.cpp" />
+    <ClCompile Include="rex_rules.ixx" />
+    <ClCompile Include="symbol.cpp" />
+    <ClCompile Include="symbol.ixx" />
+    <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">
@@ -175,8 +192,8 @@
     <ProjectReference Include="..\lexer\lexer.vcxproj">
       <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\token\token.vcxproj">
-      <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
+    <ProjectReference Include="..\parser\parser.vcxproj">
+      <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
