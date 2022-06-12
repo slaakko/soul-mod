@@ -1,0 +1,7 @@
+Microsoft (R) Build Engine version 17.2.1+52cd2da31 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  data.cpp
+  main.cpp
+  Generating Code...
+  setup.vcxproj -> C:\work\soul-mod\setup\program\x64\Debug\setupd.exe

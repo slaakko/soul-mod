@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Common Syntax Elements</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>
+        Common Syntax Elements
+    </h1>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.export-module-declaration">export&#8209;module&#8209;declaration</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">export</span>
+                <span class="kw">module</span>
+                <span class="rule"><a href="#rule.module-name">module&#8209;name</a></span>
+                <span class="mono">;</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.imports">imports</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.import">import</a></span>*
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.import">import</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.import-prefix">import&#8209;prefix</a></span>?
+                <span class="kw">import</span>
+                <span class="rule"><a href="#rule.module-name">module&#8209;name</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.import-prefix">import&#8209;prefix</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.interface-prefix">interface&#8209;prefix</a></span> |
+                <span class="rule"><a href="#rule.implementation-prefix">implementation&#8209;prefix</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.interface-prefix">interface&#8209;prefix</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">[</span>
+                <span class="kw">interface</span>
+                <span class="mono">]</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.implementation-prefix">implementation&#8209;prefix</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">[</span>
+                <span class="kw">implementation</span>
+                <span class="mono">]</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.module-name">module&#8209;name</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.qualified-id">qualified&#8209;id</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.file-path">file&#8209;path</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">&lt;</span>[^<span class="mono">\n></span>]*<span class="mono">></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.qualified-id">qualified&#8209;id</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.identifier">identifier</a></span>
+                (<span class="mono">.</span>
+                <span class="rule"><a href="#rule.identifier">identifier</a></span>)*
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.identifier">identifier</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="https://unicode.org/reports/tr31/#Default_Identifier_Syntax">Unicode identifier</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.string-literal">string&#8209;literal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">"</span>
+                (<span class="rule"><a href="#rule.schar">schar</a></span> |
+                <span class="rule"><a href="#rule.escape">escape</a></span>)*
+                <span class="mono">"</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.schar">schar</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                [^<span class="mono">\"\\\n\r</span>]
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.char-literal">char&#8209;literal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">'</span>
+                (<span class="rule"><a href="#rule.cchar">cchar</a></span> |
+                <span class="rule"><a href="#rule.escape">escape</a></span>)+
+                <span class="mono">'</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.cchar">cchar</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                [^<span class="mono">'\\\n\r</span>]
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.escape">escape</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">\</span><br />(
+                (<span class="mono">x</span>|<span class="mono">X</span>) <span class="rule"><a href="#rule.hex-digit">hex&#8209;digit</a></span>+ |<br />
+                (<span class="mono">d</span>|<span class="mono">D</span>) <span class="rule"><a href="#rule.digit">digit</a></span>+ |<br />
+                <span class="rule"><a href="#rule.octal-digit">octal&#8209;digit</a></span>+ |<br />
+                <span class="mono">u</span><span class="rule"><a href="#rule.hex4">hex4</a></span> |<br />
+                <span class="mono">U</span><span class="rule"><a href="#rule.hex8">hex8</a></span> |<br />
+                (<span class="mono">a</span>|<span class="mono">b</span>|<span class="mono">f</span>|<span class="mono">n</span>|<span class="mono">r</span>|<span class="mono">t</span>|<span class="mono">v</span>|.))
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.integer-literal">integer&#8209;literal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.octal-literal">octal&#8209;literal</a></span> |
+                <span class="rule"><a href="#rule.decimal-literal">decimal&#8209;literal</a></span> |
+                <span class="rule"><a href="#rule.hex-literal">hex&#8209;literal</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.floating-literal">floating&#8209;literal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.fraction">fraction</a></span>
+                <span class="rule"><a href="#rule.exponent">exponent</a></span>? |
+                <span class="rule"><a href="#rule.digit">digit</a></span>+
+                <span class="rule"><a href="#rule.exponent">exponent</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.fraction">fraction</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.digit">digit</a></span>*
+                <span class="mono">.</span>
+                <span class="rule"><a href="#rule.digit">digit</a></span>+ |
+                <span class="rule"><a href="#rule.digit">digit</a></span>+
+                <span class="mono">.</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.exponent">exponent</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                (<span class="mono">e</span> |
+                <span class="mono">E</span>)
+                <span class="rule"><a href="#rule.sign">sign</a></span>?
+                <span class="rule"><a href="#rule.digit">digit</a></span>+
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.sign">sign</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">+</span> |
+                <span class="mono">-</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.decimal-literal">decimal&#8209;literal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                [<span class="mono">1-9</span>]
+                <span class="rule"><a href="#rule.digit">digit</a></span>*
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.digit-sequence">digit&#8209;sequence</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.digit">digit</a></span>+
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.digit">digit</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                [<span class="mono">0-9</span>]
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.hex-literal">hex&#8209;literal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                (<span class="mono">0x</span>|<span class="mono">0X</span>)
+                <span class="rule"><a href="#rule.hex-digit">hex&#8209;digit</a></span>+
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.hex8">hex8</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.hex4">hex4</a></span>
+                <span class="rule"><a href="#rule.hex4">hex4</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.hex4t">hex4</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.hex-digit">hex&#8209;digit</a></span>
+                <span class="rule"><a href="#rule.hex-digit">hex&#8209;digit</a></span>
+                <span class="rule"><a href="#rule.hex-digit">hex&#8209;digit</a></span>
+                <span class="rule"><a href="#rule.hex-digit">hex&#8209;digit</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.hex-digit">hex&#8209;digit</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                [<span class="mono">0-9a-fA-F</span>]
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.octal-literal">octal&#8209;literal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">0</span>
+                <span class="rule"><a href="#rule.octal-digit">octal&#8209;digit</a></span>*
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.octal-digit">octal&#8209;digit</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                [<span class="mono">0-7</span>]
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

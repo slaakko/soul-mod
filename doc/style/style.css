@@ -1,0 +1,100 @@
+body {
+    max-width: 1000px;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+    color: #005ab4;
+    font-family: sans-serif;
+}
+
+.toc
+{
+    font-family: sans-serif;
+}
+
+span.kw
+{
+    font-weight: bold;
+	color: #a31515;
+}
+
+span.rule
+{
+    font-family: serif;
+}
+
+span.mono
+{
+    font-family: monospace;
+	color: #a31515;
+	font-weight: bold;
+}
+
+span.var, span.param
+{
+    font-family: serif;
+}
+
+table.grammar
+{
+    background-color: FloralWhite;
+    margin: 20px;
+    padding: 20px;
+    max-width: 1000px;
+}
+
+td.rule, td.sep, td.rcontent
+{
+    vertical-align: top;
+}
+
+td.rule
+{
+    text-align: right
+}
+
+table.example
+{
+	background-color: #e6ffee;
+    margin: 20px;
+    padding: 20px;
+}
+
+.indent
+{
+	margin: 40px;
+}
+
+.double_indent
+{
+	margin: 80px;
+}
+
+.triple_indent
+{
+	margin: 120px;
+}
+
+table.common-type, th.common-type, td.common-type
+{
+    border: 1px solid #dddddd;
+    border-collapse: collapse;
+    padding: 8px;
+}
+
+.rule
+{
+    font-style: italic;
+}
+
+.var
+{
+    font-style: italic;
+}
+
+.op
+{
+    padding-left: 4pt;
+    padding-right: 4pt;
+}

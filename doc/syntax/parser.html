@@ -1,0 +1,1596 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Syntax of Parsing Files</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>
+        Syntax of Parsing Files
+    </h1>
+
+    <h2>
+        Table of contents
+    </h2>
+
+    <div class="toc">
+        1 <a href="#parser-file-syntax">Parser File Syntax</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;1.1 <a href="#parser-file-declaration">Parser File Declaration</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;1.2 <a href="#parser-declaration">Parser Declaration</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;1.3 <a href="#parser-statements">Parser Statements</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;1.4 <a href="#lexer-statement">Lexer Statement</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;1.5 <a href="#main-statement">Main Statement</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;1.6 <a href="#using-statement">Using Statement</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;1.7 <a href="#rule-statement">Rule Statement</a><br />
+        2 <a href="#parsing-expressions">Parsing Expressions</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.1 <a href="#choice">Choice</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.2 <a href="#sequence">Sequence</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.3 <a href="#difference">Difference</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.4 <a href="#list">List</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.5 <a href="#prefix">Prefix</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.6 <a href="#postfix">Postfix</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.7 <a href="#compound">Compound</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;2.8 <a href="#primary">Primary</a><br />
+        3 <a href="#project-file-syntax">Project File Syntax</a><br />
+    </div>
+
+    <h2 id="parser-file-syntax">
+        1 Parser File Syntax
+    </h2>
+
+    <h3 id="parser-file-declaration">
+        1.1 Parser File Declaration
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.parser-file">parser&#8209;file</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.parser-module-declaration">parser&#8209;module&#8209;declaration</a></span>
+                <span class="rule"><a href="common.html#rule.imports">imports</a></span>
+                <span class="rule"><a href="#rule.parser-declaration">parser&#8209;declaration</a></span>*
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parser-module-declaration">parser&#8209;module&#8209;declaration</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.export-module-declaration">export&#8209;module&#8209;declaration</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A parser file consists of a parser module declaration followed by module imports followed by parser declarations.
+    </p>
+
+    <p>
+        Each parser file must have a unique parser module identifier in the parser module declaration.
+    </p>
+
+    <p>
+        Modules that must be imported include:
+        <ul>
+            <li>token modules containing tokens used by the parsers in this parser file.</li>
+            <li>lexer modules for lexers used with the parsers in this parser file.</li>
+            <li>parser modules for parsers in other parser files that the parsers in this parser file uses.</li>
+            <li>modules that contain C++ types used in the <a href="#rule.rule-statement">rules</a> of the parsers in this parser file.</li>
+        </ul>
+    </p>
+
+    <p>
+        The parser generator will generate a C++ module for each parser file.
+        The module will be in two C++ source files:
+        <ul>
+            <li>
+                one containing a module interface unit with file name <em>&lt;parser&#8209;file&#8209;name></em>
+                <span class="mono">.ixx</span>.
+            </li>
+            <li>
+                the other one containing a module implementation unit with file name <em>&lt;parser&#8209;file&#8209;name></em><span class="mono">.cpp</span>.
+            </li>
+        </ul>
+    </p>
+
+    <p>
+        A module import may have two kinds of prefixes:
+        <ul>
+            <li>an interface prefix: <span class="kw">[interface]</span></li>
+            <li>an implementation prefix: <span class="kw">[implementation]</span></li>
+        </ul>
+    </p>
+
+    <p>
+        If a module import has an interface prefix, or it has no prefix, the parser generator will place the import to the generated module interface unit,
+        to the generated <span class="mono">.ixx</span> file.
+        If a module import has an implementation prefix, the parser generator will place the import to the generated module implementation unit,
+        to the generated <span class="mono">.cpp</span> file.
+    </p>
+
+    <p>
+        Imports for used token, lexer and parser modules can go to the module <em>implementation</em> unit.
+        If a C++ type is used as a parameter type in a <a href="#rule.rule-statement">rule</a>, the module import for the module containing that C++ type
+        is required to be placed to the module <em>interface</em> unit.
+        If a C++ type is used as a return value type or in the implementation of a semantic action of a rule, the import can be placed to the module implementation unit.
+        In other cases the import can be placed to the module implementation unit.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>// xpath_parser.parser:</td></tr>
+        <tr><td><span class="kw">export</span> <span class="kw">module</span> soul.xml.xpath.parser<span class="mono">;</span></td></tr>
+        <tr><td></td></tr>
+        <tr><td><span class="kw">[interface]</span><span class="kw">import</span> soul.xml.xpath.expr<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.xml.xpath.lexer<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.xml.xpath.token<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.xml.xpath.token.parser<span class="mono">;</span></td></tr>
+        <tr><td></td></tr>
+        <tr><td><span class="kw">parser</span> XPathParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">main</span><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">}</span></td></tr>
+    </table>
+
+    <h3 id="parser-declaration">
+        1.2 Parser Declaration
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.parser-declaration">parser&#8209;declaration</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">parser</span>
+                <span class="rule"><a href="#rule.parser-name">parser&#8209;name</a></span>
+                <span class="mono">{</span>
+                <span class="rule"><a href="#rule.parser-statement">parser&#8209;statement</a></span>*
+                <span class="mono">}</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parser-name">parser&#8209;name</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A parser declaration consists of the keyword <strong>parser</strong> followed by parser name followed by a sequence of parser statements enclosed in braces.
+    </p>
+
+    <p>
+        Parser name must be unique within a parser project.
+    </p>
+
+    <h4>
+        Generated Class Template
+    </h4>
+
+    <p>
+        The parser generator will generate a C++ class template for each parser declaration. The class template is parameterized with the type of the lexer.
+    </p>
+
+    <table class="example">
+        <tr><td>// generated xpath_parser.ixx:</td></tr>
+        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
+        <tr><td><span class="kw">struct </span>XPathParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">static</span> std::unique_ptr&lt;soul::xml::xpath::expr::Expr> Parse(Lexer& lexer);</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match Expr(Lexer& lexer);</span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">};</span></td></tr>
+    </table>
+
+    <h3 id="parser-statements">
+        1.3 Parser Statements
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.parser-statement">parser&#8209;statement</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.lexer-statement">lexer&#8209;statement</a></span> |
+                <span class="rule"><a href="#rule.main-statement">main&#8209;statement</a></span> |
+                <span class="rule"><a href="#rule.using-statement">using&#8209;statement</a></span> |
+                <span class="rule"><a href="#rule.rule-statement">rule&#8209;statement</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A parser statement can be either a lexer statement, a main statement, a using statement or a rule statement.
+    </p>
+
+    <h3 id="lexer-statement">
+        1.4 Lexer Statement
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.lexer-statement">lexer&#8209;statement</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">lexer</span>
+                <span class="rule"><a href="cpp.html#rule.type-id">type&#8209;id</a></span>
+                <span class="mono">;</span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A lexer statement instantiates the parser with the given lexer.
+        There must be at least one lexer statement for a parser, but there may be more than one.
+    </p>
+
+    <p>
+        When there is more than one lexer, each lexer must produce those tokens that the rules of the parser consume.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>// common_parser.parser:</td></tr>
+        <tr><td>...</td></tr>
+        <tr><td><span class="kw">parser</span> CommonParser</td>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::slg::SlgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::spg::SpgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">}</span></td></tr>
+    </table>
+
+    <h4>
+        Explicit Instantiation for the Lexer Type
+    </h4>
+
+    <p>
+        The parser class template is explicitly instantiated at the end of the <em>&lt;parser&#8209;file&#8209;name></em><span class="mono">.cpp</span> file
+        for each concrete lexer type declared in the <a href="#rule.lexer-statement">lexer&#8209;statement</a>.
+    </p>
+
+    <table class="example">
+        <tr><td>// generated common_parser.cpp:</td></tr>
+        <tr><td>...</td></tr>
+        <tr><td><span class="kw">template struct</span> CommonParser&lt;soul::lexer::Lexer&lt;soul::lex::slg::SlgLexer&lt;char32_t>, char32_t>>;
+        <tr><td><span class="kw">template struct</span> CommonParser&lt;soul::lexer::Lexer&lt;soul::lex::spg::SpgLexer&lt;char32_t>, char32_t>>;
+    </table>
+
+    <h3 id="main-statement">
+        1.5 Main Statement
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.main-statement">main&#8209;statement</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">main</span>
+                <span class="mono">;</span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        The main statement declares that the parser is a "main" parser. There may be more than one main parsers for a given parser project.
+        The parser generator generates a Parse-function that acts as the parser entry point for the main parser.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>// xpath_parser.parser:</td></tr>
+        <tr><td>...</td></tr>
+        <tr><td><span class="kw">parser</span> XPathParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">main</span><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"></span></td></tr>
+        <tr><td><span class="indent">Expr : soul::xml::xpath::expr::Expr*</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">::=</span>
+        <tr><td><span class="double_indent">...</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">}</span></td></tr>
+    </table>
+
+    <h4>
+        Generated Parser Interface
+    </h4>
+
+    <p>
+        The Parse-function takes a lexer as the first parameter and then the same parameters as the first rule of the parser.
+        It returns the value that the first rule returns with the exception that if the first rule returns a pointer type <span class="mono">Foo*</span>,
+        the Parse-function will return a <span class="mono">std::unique_ptr&lt;Foo></span>.
+    </p>
+
+    <table class="example">
+        <tr><td>// generated xpath_parser.ixx:</td></tr>
+        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
+        <tr><td><span class="kw">struct </span>XPathParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">static</span> std::unique_ptr&lt;soul::xml::xpath::expr::Expr> Parse(Lexer& lexer);</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match Expr(Lexer& lexer);</span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">};</span></td></tr>
+    </table>
+
+    <h4>
+        Generated Parse-function Implementation
+    </h4>
+
+    <p>
+        The implementation of the Parse-function is to advance the lexer to point to the first token of the input and
+        then to call the first rule of the parser with the lexer.
+    </p>
+
+    <table class="example">
+        <tr><td>// generated xpath_parser.cpp:</td></tr>
+        <tr><td>...</td></tr>
+        <tr><td><span class="kw">namespace</span> soul::xml::xpath::parser <span class="mono">{</span></td></tr>
+        <tr><td></td></tr>
+        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
+        <tr><td> std::unique_ptr&lt;soul::xml::xpath::expr::Expr> XPathParser&lt;Lexer>::Parse(Lexer& lexer)</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent">...</span>
+        <tr><td><span class="indent"><span class="mono">++</span>lexer</span></td></tr>
+        <tr><td><span class="indent">soul::parser::Match match = XPathParser&lt;Lexer>::Expr(lexer);</span></td></tr>
+        <tr><td><span class="indent">...</span>
+        <tr><td><span class="mono">}</span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h3 id="using-statement">
+        1.6 Using Statement
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.using-statement">using&#8209;statement</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">using</span>
+                <span class="rule"><a href="#rule.parser-rule-name">parser&#8209;and&#8209;rule&#8209;name</a></span>
+                <span class="mono">;</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parser-rule-name">parser&#8209;and&#8209;rule&#8209;name</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.qualified-id">qualified&#8209;id</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        The using statement takes form <span class="kw">using</span> &lt;parser><span class="mono">.</span>&lt;rule><span class="mono">;</span>.
+        The using statement imports a rule from another parser to the scope of the current parser
+        so that a rule or rules of the current parser can use (that is: to "call") the imported rule.
+        In addition to adding using statements, the modules that contain the used parsers must be imported at the start of the parser file.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td><span class="kw">export module</span> soul.cpp.statement.parser<span class="mono">;</span></td></tr>
+        <tr><td></td></tr>
+        <tr><td><span class="kw">[interface]</span><span class="kw">import</span> soul.ast.cpp<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.token<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.op.token<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.punctuation.token<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.declaration.parser<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.declarator.parser<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.expression.parser<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.lex.slg<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.lex.spg<span class="mono">;</span></td></tr>
+        <tr><td></td></tr>
+        <tr><td><span class="kw">parser</span> StatementParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::slg::SlgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::spg::SpgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
+        <tr><td></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>DeclarationParser.SimpleDeclaration<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>DeclarationParser.BlockDeclaration<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.TypeId<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.TypeSpecifierSeq<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.Declarator<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.AbstractDeclarator<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>ExpressionParser.Expression<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>ExpressionParser.ConstantExpression<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent"><span class="kw">using </span>ExpressionParser.AssignmentExpression<span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">}</span></td></tr>
+    </table>
+
+    <h3 id="rule-statement">
+        1.7 Rule Statement
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.rule-statement">rule&#8209;statement</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.rule-header">rule&#8209;header</a></span>
+                <span class="mono">::=</span>
+                <span class="rule"><a href="#rule.rule-body">rule&#8209;body</a></span>
+                <span class="mono">;</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.rule-header">rule&#8209;header</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.rule-name">rule&#8209;name</a></span>
+                <span class="rule"><a href="#rule.parameters-and-variables">parameters&#8209;and&#8209;variables</a></span>?
+                <span class="rule"><a href="#rule.return-value">return&#8209;value</a></span>?
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.rule-name">rule&#8209;name</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parameters-and-variables">parameters&#8209;and&#8209;variables</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">(</span>
+                (
+                <span class="rule"><a href="#rule.param-or-variable">param&#8209;or&#8209;variable</a></span>
+                (
+                <span class="mono">,</span>
+                <span class="rule"><a href="#rule.param-or-variable">param&#8209;or&#8209;variable</a></span>
+                )*
+                )?
+                <span class="mono">)</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.param-or-variable">param&#8209;or&#8209;variable</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.variable">variable</a></span> |
+                <span class="rule"><a href="#rule.parameter">parameter</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.variable">variable</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">var</span>
+                <span class="rule"><a href="#rule.variable-type">variable&#8209;type</a></span>
+                <span class="rule"><a href="#rule.variable-declarator">variable&#8209;declarator</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.variable-type">variable&#8209;type</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="cpp.html#rule.type-id">type&#8209;id</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.variable-declarator">variable&#8209;declarator</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="cpp.html#rule.declarator">declarator</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parameter">parameter</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.parameter-type">parameter&#8209;type</a></span>
+                <span class="rule"><a href="#rule.parameter-declarator">parameter&#8209;declarator</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parameter-type">parameter&#8209;type</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="cpp.html#rule.type-id">type&#8209;id</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parameter-declarator">parameter&#8209;declarator</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="cpp.html#rule.declarator">declarator</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.return-value">return&#8209;value</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">:</span>
+                <span class="rule"><a href="cpp.html#rule.type-id">type&#8209;id</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.rule-body">rule&#8209;body</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.choice">choice</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        The rule statement declares a parsing rule. It consists of the rule header followed by the <span class="mono">::=</span> symbol (pronounced 'produces') followed by
+        the rule body and terminated by the semicolon.
+    </p>
+
+    <p>
+        The rule header consists of the rule name followed by an optional list of parameters and variables followed by an optional return value.
+    </p>
+
+    <p>
+        A rule must have a unique name within a parser.
+    </p>
+
+    <p>
+        A variable declaration begins with the keyword <span class="kw">var</span> followed by the C++ type and declarator of the variable.
+    </p>
+
+    <p>
+        A parameter declaration lacks the <span class="kw">var</span> keyword and is otherwise similar to the variable declaration.
+    </p>
+
+    <p>
+        If the rule returns a value, the return value declaration begins with the <span class="mono">:</span> symbol and is followed by a C++ type.
+    </p>
+
+    <p>
+        The rule body consists of a 'choice' parsing expression.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>// statement_parser.parser:</td></tr>
+        <tr><td>...</td></tr>
+        <tr><td><span class="kw">parser</span> StatementParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="indent">Statement <span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">::= </span> ...</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">LabeledStatement<span class="mono">(</span><span class="kw">var</span> std::string label<span class="mono">)</span><span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">::= </span> ...</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">EmptyStatement <span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">::= </span> ...</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">}</span></td></tr>
+    </table>
+
+    <h4>
+        Generated Rule Functions
+    </h4>
+
+    <p>
+        The parser generator will generate a static function for each rule to the class template of the parser.
+    </p>
+
+    <table class="example">
+        <tr><td>// generated statement_parser.ixx:</td></tr>
+        <tr><td>...</td></tr>
+        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
+        <tr><td><span class="kw">struct</span> StatementParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match Statement(Lexer& lexer);</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match LabeledStatement(Lexer& lexer);</span></td></tr>
+        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match EmptyStatement(Lexer& lexer);</span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">}</span></td></tr>
+    </table>
+
+    <h2 id="parsing-expressions">
+        2 Parsing Expressions
+    </h2>
+
+    <p>
+        The body of a rule consists of a combination of <em>parsing expressions</em>:
+    </p>
+
+    <p>
+        These are the main categories of parsing expressions:
+
+        <ul>
+            <li><a href="#choice">choice</a></li>
+            <li><a href="#sequence">sequence</a></li>
+            <li><a href="#difference">difference</a></li>
+            <li><a href="#list">list</a></li>
+            <li><a href="#prefix">prefix</a></li>
+            <li><a href="#postfix">postfix</a></li>
+            <li><a href="#compound">compound</a></li>
+            <li><a href="#primary">primary</a></li>
+        </ul>
+    </p>
+
+    <p>
+        The parser generator will generate a C++ compound statement to the rule function for each kind of parsing expression.
+        These compound statements are called <em>component parsers</em>.
+    </p>
+
+    <h3 id="choice">
+        2.1 Choice
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.choice">choice</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.sequence">sequence</a></span>
+                (
+                <span class="mono">|</span>
+                <span class="rule"><a href="#rule.sequence">sequence</a></span>
+                )*
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'choice' parsing expression consists of a nonempty sequence of 'sequence' parsing expressions separated by the <span class="mono">|</span> symbol.
+        The 'sequence' parsing expressions are also called the 'choices'.
+    </p>
+
+    <p>
+        The generated component parser matches input to the choices starting with the leftmost choice and proceeding to the right.
+        The parser always accepts the first matching choice without trying to match the choices following the first matching choice at all.
+        In the beginning of each matching, the parser rewinds the input to the position where it was when matching the first choice.
+        If none of the choices match, the parser backtracks the input to the starting position of the first choice and returns failure
+        to the parent component parser.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>// statement_parser.parser:</td></tr>
+        <tr><td>...</td></tr>
+        <tr><td><span class="kw">parser</span> StatementParser</td></tr>
+        <tr><td><span class="mono">{</span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="indent">Statement <span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">::= </span> LabeledStatement:labeledStatement{ return labeledStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> EmptyStatement:emptyStatement{ return emptyStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> CompoundStatement:compoundStatement{ return compoundStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> SelectionStatement:selectionStatement{ return selectionStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> IterationStatement:iterationStatement{ return iterationStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> JumpStatement:jumpStatement{ return jumpStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> DeclarationStatement:declarationStatement{ return declarationStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> TryStatement:tryStatement{ return tryStatement; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|   </span> ExpressionStatement:expressionStatement{ return expressionStatement; }  </span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td><span class="mono">}</span></td></tr>
+    </table>
+
+    <h3 id="sequence">
+        2.2 Sequence
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.sequence">sequence</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.difference">difference</a></span>
+                <span class="rule"><a href="#rule.difference">difference</a></span>*
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'sequence' parsing expression consists of a nonempty sequence of 'difference' parsing expressions.
+        Let's call the 'difference' parsing expressions components c<sub>1</sub>, c<sub>2</sub>, ..., c<sub>n</sub>, for n &ge; 1.
+    </p>
+
+    <p>
+        The generated component parser matches input to the each of the components c<sub>i</sub> in sequence for all i=1...n.
+        If all the components match, the parser accepts a string of all of the matches catenated together,
+        otherwise the parser backtracts the input to the starting position of c<sub>1</sub> and returns failure to the parent component parser.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>WhileStatement : soul::ast::cpp::StatementNode*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span>
+        <tr><td><span class="indent"><span class="mono">(</span></span>
+        <tr><td><span class="double_indent">WHILE LPAREN! Condition:cond! RPAREN! Statement:stmt!</span>
+        <tr><td><span class="indent"><span class="mono">)</span></span>
+        <tr><td><span class="indent"><span class="mono">;</span></span>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h3 id="difference">
+        2.3 Difference
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.difference">difference</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.list">list</a></span>
+                (
+                <span class="mono">-</span>
+                <span class="rule"><a href="#rule.list">list</a></span>
+                )*
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'difference' parsing expression consists of a nonempty sequence of 'list' parsing expressions separated by the <span class="mono">-</span>, the dash, symbol.
+    </p>
+
+    <p>
+        For a difference parser <span class="rule">a</span> <span class="mono">-</span> <span class="rule">b</span>, the generated component parser will first
+        match input to the component parser <span class="rule">a</span>. If <span class="rule">a</span> matches, the parser will backtrack the input
+        and try to match <span class="rule">b</span>. If <span class="rule">b</span> does <em>not</em> match, the generated parser will then
+        backtrack the input to the position where the lexer was at the end of matching <span class="rule">a</span> and return success to the parent component parser.
+        Otherwise, if both <span class="rule">a</span> and <span class="rule">b</span> match, or <span class="rule">a</span> does not match,
+        the generated parser will backtrack the input to the starting position of <span class="rule">a</span> and return failure to the parent component parser.
+        Informally: the operation of the difference parser <span class="rule">a</span> <span class="mono">-</span> <span class="rule">b</span> is:
+        "match <span class="rule">a</span> but not <span class="rule">b</span>".
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>PathExpr(var std::unique_ptr&lt;soul::xml::xpath::expr::Expr> expr) : soul::xml::xpath::expr::Expr*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="triple_indent">LocationPath:locationPath - FunctionCall:functionCall</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent">...</span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h3 id="list">
+        2.4 List
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.list">list</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.prefix">prefix</a></span>
+                (
+                <span class="mono">%</span>
+                <span class="rule"><a href="#rule.prefix">prefix</a></span>
+                )?
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'list' parsing expression consists of a 'prefix' parsing expression optionally followed by the <span class="mono">%</span> symbol and another 'prefix' parsing expression.
+    </p>
+
+    <p>
+        A 'list' parsing expression <span class="rule">a</span> <span class="mono">%</span> <span class="rule">b</span> is a shorthand notation for parsing expression
+        <span class="rule">a</span> (<span class="rule">b</span> <span class="rule">a</span>)*, that is: one or more <span class="rule">a</span>'s separated by
+        <span class="rule">b</span>'s.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>ExpressionList(soul::ast::cpp::Node* owner)</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> AssignmentExpression:expr{ owner->Add(expr); } % COMMA</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h3 id="prefix">
+        2.5 Prefix
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.prefix">prefix</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.lookahead">lookahead</a></span> |
+                <span class="rule"><a href="#rule.postfix">postfix</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.lookahead">lookahead</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">&amp;</span>
+                <span class="rule"><a href="#rule.postfix">postfix</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'prefix' parsing expression consists of either a 'lookahead' or a 'postfix' parsing expression.
+    </p>
+
+    <p>
+        A 'lookahead' parsing expression consists of the <span class="mono">&amp;</span> symbol followed by a 'postfix' parsing expression.
+    </p>
+
+    <p>
+        For a lookahead parser <span class="mono">&amp;</span><span class="rule">a</span>, the generated component parser will try to match <span class="rule">a</span>.
+        If <span class="rule">a</span> matches, the generated parser will backtrack to the starting position of <span class="rule">a</span>
+        and return success to the parent component parser.
+        Otherwise the generated parser will backtrack to the starting position of <span class="rule">a</span> and return failure
+        to the parent component parser.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>TemplateArgument : Node*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> TypeId(ctx):typeId TemplateArgNext:next</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> ConstantExpression(ctx):constantExpr{ return constantExpr; }</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> IdExpression(ctx):idExpr{ return idExpr; }</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>TemplateArgNext</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> &(RANGLE | COMMA | ELLIPSIS)</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h3 id="postfix">
+        2.6 Postfix
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.postfix">postfix</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.compound">compound</a></span>
+                (
+                <span class="mono">*</span> |
+                <span class="mono">+</span> |
+                <span class="mono">?</span>
+                )?
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'postfix' parsing expression consists of a 'compound' parsing expression optionally followed by one of the symbols
+        <span class="mono">*</span>, <span class="mono">+</span> or <span class="mono">?</span>.
+    </p>
+
+    <p>
+        A 'compound' parsing expression followed by the <span class="mono">*</span> symbol forms a 'kleene-star' parsing expression.
+    </p>
+
+    <p>
+        A 'compound' parsing expression followed by the <span class="mono">+</span> symbol forms a 'positive' parsing expression.
+    </p>
+
+    <p>
+        A 'compound' parsing expression followed by the <span class="mono">?</span> symbol forms am 'optional' parsing expression.
+    </p>
+
+    <p>
+        For a 'kleene-star' parser <span class="rule">a</span><span class="mono">*</span>, the generated component parser will try to match
+        <span class="rule">a</span> as many times as it matches. Then it will backtrack the input to the position where it was at the
+        end of last matching <span class="rule">a</span>,
+        or to the position where it was at the start of matching first <span class="rule">a</span>, if <span class="rule">a</span>
+        matched zero times. Then the generated parser will return success to the parent component parser.
+        Thus the generated parser will match <span class="rule">a</span> zero or more times.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>LogicalOrExpression(var std::unique_ptr&lt;soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent">LogicalAndExpression:left{ expr.reset(left); }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="triple_indent">DISJUNCTION LogicalAndExpression:right!</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">)*</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <p>
+        For a 'positive' parser <span class="rule">a</span><span class="mono">+</span>, the generated component parser will try to match
+        <span class="rule">a</span> as many times as it matches. If <span class="rule">a</span> matched at least once,
+        the generated parser will backtrack the input to the position where it was at the end of last matching <span class="rule">a</span>
+        and return success to the parent component parser.
+        Otherwise the generated parser will backtrack to the position where it was at the start of matching first <span class="rule">a</span>
+        and return failure to the parent component parser. Thus the generated parser will match <span class="rule">a</span> one or more times.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>DeclSpecifierSeq(soul::ast::cpp::SimpleDeclarationNode* declaration)</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> (DeclSpecifier:declSpecifier{ declaration->Add(declSpecifier); })<span class="mono">+</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> TypeName:typeName{ declaration->Add(typeName); }</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <p>
+        For an 'optional' parser <span class="rule">a</span><span class="mono">?</span>, the generated component parser will try to match <span class="rule">a</span>.
+        If <span class="rule">a</span> matches, the generated parser returns success to the parent component parser.
+        Otherwise the generated parser will backtrack to the position where it was at the start of matching <span class="rule">a</span>
+        and return success to the parent component parser. Thus the generated parser will match <span class="rule">a</span> zero or one times.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>ThrowExpression : soul::ast::cpp::Node*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent">THROW AssignmentExpression:exception<span class="mono">?</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h3 id="compound">
+        2.7 Compound
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.compound">compound</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.primary">primary</a></span>
+                <span class="rule"><a href="#rule.expectation">expectation</a></span>?
+                (
+                <span class="rule"><a href="#rule.success-action">success&#8209;action</a></span>
+                <span class="rule"><a href="#rule.failure-action">failure&#8209;action</a></span>?
+                )?
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.expectation">expectation</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">!</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.success-action">success&#8209;action</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="cpp.html#rule.compound-statement">compound&#8209;statement</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.failure-action">failure&#8209;action</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">/</span>
+                <span class="rule"><a href="cpp.html#rule.compound-statement">compound&#8209;statement</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'compound' parsing expression consists of a 'primary' parsing expression optionally followed by an 'expectation' symbol optionally followed by
+        a 'success-action' that is optionally followed by a 'failure-action'.
+    </p>
+
+    <p>
+        A 'primary' parsing expression followed by an 'expectation' symbol forms an 'expectation' parsing expression.
+        For an expectation parser <span class="rule">a</span><span class="mono">!</span>, the generated component parser
+        tries to match <span class="rule">a</span>. If <span class="rule">a</span> matches the component parser returns success to the parent component parser.
+        Otherwise the generated parser will throw an exception that contains the source location of the current input position and information about the
+        current token or rule that is expected to match.
+    </p>
+
+    <p>
+        A 'success-action' is a C++ compound statement that is executed when input matches its preceding parsing expression, either a 'primary' parsing expression
+        or an 'expectation' parsing expression. If the current rule returns a value, the success action typically returns a parsed information item.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>BreakStatement : soul::ast::cpp::StatementNode*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent">BREAK SEMICOLON!</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
+        <tr><td><span class="double_indent">return new soul::ast::cpp::BreakStatementNode(lexer.GetSourcePos(pos));</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <p>
+        A 'failure-action' consists of <span class="mono">/</span> symbol followed by a C++ compound statement
+        that is executed when input does <em>not</em> match its preceding parsing expression.
+        If the preceding semantic actions of the current rule have changed some global state, the failure action may restore that state, for example.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>TemplateParameterList(sngcpp::symbols::Context* ctx) : Node*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent"><span class="kw">empty</span>{ ctx->PushResetFlag(sngcpp::symbols::ContextFlags::matchConstructorName); }</span></td></tr>
+        <tr><td><span class="double_indent">LANGLE}</span></td></tr>
+        <tr><td><span class="double_indent">...</span></td></tr>
+        <tr><td><span class="double_indent">RANGLE</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
+        <tr><td><span class="double_indent">ctx->PopFlags();</span></td></tr>
+        <tr><td><span class="double_indent">return node.release();</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">/</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
+        <tr><td><span class="double_indent">ctx->PopFlags();</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h4>
+        Variables for Semantic Actions
+    </h4>
+
+    <p>
+        There are special variables available for use in semantic actions:
+        <ul>
+            <li>lexer</li>
+            <li>pos</li>
+            <li>pass</li>
+            <li>vars</li>
+        </ul>
+    </p>
+
+    <h4>
+        The 'lexer' variable
+    </h4>
+
+    <p>
+        Current lexer can be accessed using the 'lexer' variable.
+    </p>
+
+    <h4>
+        The 'pos' variable
+    </h4>
+
+    <p>
+        The 'pos' is a 64-bit integer variable that contains the lexer position of the current token.
+        The leftmost 32-bits contain the line number of the token and the rightmost 32-bits contain an index to a vector of tokens inside the lexer.
+    </p>
+
+    <p>
+        You can access the current lexer token by using expression
+        <span class="rule">lexer</span><span class="mono">.</span><span class="rule">GetToken</span><span class="mono">(</span><span class="rule">pos</span><span class="mono">)</span>.
+        For example, to convert the matching lexeme of the current token to a UTF-8 string, you can use expression
+        <span class="rule">util</span><span class="mono">::</span><span class="rule">ToUtf8</span><span class="mono">(</span>
+        <span class="rule">lexer</span><span class="mono">.</span><span class="rule">GetToken</span>
+        <span class="mono">(</span><span class="rule">pos</span><span class="mono">).</span><span class="rule">ToString</span>
+        <span class="mono">()</span><span class="mono">)</span>.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>NCName : std::string</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> NAME{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h4>
+        The 'pass' variable
+    </h4>
+
+    <p>
+        'pass' is a Boolean variable.
+        By setting the 'pass' variable to <span class="kw">false</span> in a semantic action the semantic action can conditionally <em>reject</em> the
+        preceding parsing expression and cause to parser to backtrack and try the next matching choice.
+        In that case the parser behaves like the parsing expression preceding the semantic action
+        has <em>not</em> matched although it actually has. This is useful for implementing context-dependent keywords for example.
+        A context-dependent keyword behaves like a keyword only in certain positions of the syntax, in other positions it can be used as an ordinary name.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>OrExpr(var std::unique_ptr&lt;soul::xml::xpath::expr::Expr> expr) : soul::xml::xpath::expr::Expr*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent">AndExpr:left{ expr.reset(left); }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="triple_indent">OrKeyword:or_ AndExpr:right</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">)*</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>OrKeyword</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> NAME{ pass = lexer.GetKeywordToken(lexer.GetToken(pos).match) == OR; }</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h4>
+        The 'vars' variable
+    </h4>
+
+    <p>
+        The 'vars' variable is a pointer variable that can be used in a semantic action to access lexer <a href="lexer.html#rule.variables">variables</a>.
+        Lexer variable <span class="rule">var</span> can be accessed by using expression <span class="rule">vars</span><span class="mono">&#8209;></span><span class="rule">var</span>.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>TypeName(var std::unique_ptr&lt;soul::ast::cpp::TypeNameNode> typeName) : soul::ast::cpp::TypeNameNode*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent">QualifiedCppId:qid{ typeName.reset(new soul::ast::cpp::TypeNameNode(lexer.GetSourcePos(pos), qid)); }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="triple_indent">LANGLE{ ++vars->leftAngleCount; typeName->SetTemplate(); }</span></td></tr>
+        <tr><td><span class="triple_indent">TemplateArgumentList(typeName.get()):args</span></td></tr>
+        <tr><td><span class="triple_indent">RANGLE{ --vars->leftAngleCount; }</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">)?</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h3 id="primary">
+        2.8 Primary
+    </h3>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.primary">primary</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.nonterminal">nonterminal</a></span> |
+                <span class="rule"><a href="#rule.primitive">primitive</a></span> |
+                <span class="rule"><a href="#rule.grouping">grouping</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'primary' parsing expression consists either of a 'nonterminal', a 'primitive' or a 'grouping' parsing expression.
+    </p>
+
+    <h4>
+        Nonterminal
+    </h4>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.nonterminal">nonterminal</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.rule-name">rule&#8209;name</a></span>
+                <span class="rule"><a href="#rule.argument-list">argument&#8209;list</a></span>?
+                <span class="rule"><a href="#rule.instance-name">instance&#8209;name</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.argument-list">argument&#8209;list</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">(</span>
+                <span class="rule"><a href="cpp.html#rule.expression-list">expression&#8209;list</a></span>
+                <span class="mono">)</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.instance-name">instance&#8209;name</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">:</span>
+                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'nonterminal' parsing expression consists of a rule name optionally followed by an argument list followed by a nonterminal instance name.
+    </p>
+
+    <p>
+        A nonterminal instance name consists of the <span class="mono">:</span> symbol and an identifier that must be unique within a parsing rule.
+    </p>
+
+    <p>
+        The <span class="mono">:</span> symbol is mandatory and separates a 'nonterminal' parsing expression from a
+        '<a href="#rule.token-parser">token-parser</a>' parsing expression that also starts with
+        an identifier.
+    </p>
+
+    <p>
+        An argument list consists of C++ expressions separated by commas and enclosed in parentheses.
+    </p>
+
+    <p>
+        Note: if an argument list is present, there may not be white space between the rule name identifier and the left parenthesis of the argument list.
+        Otherwise the 'nonterminal' parsing expression would conflict with the '<a href="#rule.grouping">grouping</a>'' parsing expression.
+    </p>
+
+    <p>
+        The generated component parser calls a rule function with the given arguments. The number of arguments must match the number of parameters the rule takes.
+        If the rule returns success, the instance name is bound to the return value of the called rule if any and the generated component parser returns success
+        to its parent component parser. Otherwise the generated component parser returns failure to its parent component parser.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>ParserStatement(soul::ast::spg::GrammarParser* parser)</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> LexerStatement(parser):lexerStatement</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> MainStatement(parser):mainStatement</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> UsingStatement(parser):usingStatement</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> RuleStatement(parser):ruleStatement</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h4>
+        Primitive
+    </h4>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.primitive">primitive</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">empty</span> |
+                <span class="kw">any</span> |
+                <span class="rule"><a href="#rule.token-parser">token&#8209;parser</a></span> |
+                <span class="rule"><a href="#rule.lexerless-parser">lexerless&#8209;parser</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.token-parser">token&#8209;parser</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.token-name">token&#8209;name</a></span> |
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.token-name">token&#8209;name</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A 'primitive' parsing expression consists either of an 'empty' parsing expression, an 'any' parsing expression, a 'token-parser' parsing expression or
+        a 'lexerless-parser' parsing expression.
+    </p>
+
+    <p>
+        An 'empty' parsing expression consists of a keyword <span class="kw">empty</span>. It matches always and does not consume any input.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>ParserFile(var std::unique_ptr<soul::ast::spg::ParserFile> parserFile) : soul::ast::spg::ParserFile*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent"><span class="kw">empty</span>{ parserFile.reset(new soul::ast::spg::ParserFile(lexer.FileName())); }</span></td></tr>
+        <tr><td><span class="double_indent">...</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
+        <tr><td><span class="double_indent">return parserFile.release();</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <p>
+        An 'any' parsing expression consists of a keyword <span class="kw">any</span>. It matches a nonempty input and consumes, "eats", any single input token.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>ParenthesizedTokens</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LPAREN</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="kw">any</span> - (LPAREN | RPAREN))</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">|</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ParenthesizedTokens:ptokens</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="double_indent">RPAREN</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <p>
+        A 'token-parser' parsing expression consists of a token name. If the ID of the current input token of the lexer matches the ID of the token of the
+        'token&#8209;parser', the parser consumes the token and advances the input position of the lexer.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>Literal : soul::ast::cpp::LiteralNode*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span> INTEGER_LITERAL</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> FLOATING_LITERAL</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> CHAR_LITERAL</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> STRING_LITERAL</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> TRUE</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> FALSE</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">|</span> NULLPTR</span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <p>
+        The 'lexerless-parser' parsing expression is applicable when the lexer that the parser has been instantiated with is
+        <span class="mono">soul::lexer::trivial::TrivialLexer&lt;Char></span> for some <span class="mono">Char</span> type.
+    </p>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.lexerless-parser">lexerless&#8209;parser</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.character-parser">character&#8209;parser</a></span> |
+                <span class="rule"><a href="#rule.string-or-character-class-parser">string&#8209;or&#8209;character&#8209;class&#8209;parser</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.character-parser">character&#8209;parser</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.char-literal">char&#8209;literal</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.string-or-character-class-parser">string&#8209;or&#8209;character&#8209;class&#8209;parser</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.string-literal">string&#8209;literal</a></span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        The 'lexerless-parser' parsing expression is applicable when the lexer that the parser has been instantiated with is
+        <span class="mono">soul::lexer::trivial::TrivialLexer&lt;Char></span> for some <span class="mono">Char</span> type.
+    </p>
+
+    <p>
+        The 'lexerless-parser' parsing expression consists of either of a 'character-parser' parsing expression or a
+        'string-or-character-class-parser' parsing expression.
+    </p>
+
+    <p>
+        The 'character-parser' parsing expression consists of a character literal. If the current input character of the lexer
+        matches the character literal, the parser consumes, "eats", the character and advances the input position of the lexer.
+    </p>
+
+    <p>
+        The 'string-or-character-class-parser' parsing expression consists of a string literal.
+        If the string literal contains a character class enclosed in square brackets similar to the
+        <a href="re.html#rule.class">class</a> in a regular expression, the parsing expression forms a 'character-class-parser' parsing expression,
+        otherwise the forms a 'string-parser' parsing expression.
+    </p>
+
+    <p>
+        The 'character-class-parser' parsing expression matches the current input character of the lexer to the character set
+        constructed from the character class. If the current input character matches, the parser consumes, "eats",
+        the character and advances the input position of the lexer.
+    </p>
+
+    <p>
+        The 'string-parser' parsing expression matches a string of input characters starting with the current input character of the lexer to the
+        string literal of the string parser. If the string matches, the parser consumes, "eats", the characters and advances the input position of the lexer
+        by the length of the string literal.
+    </p>
+
+    <h4>
+        Grouping
+    </h4>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.grouping">grouping</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">(</span>
+                <span class="rule"><a href="#rule.choice">choice</a></span>
+                <span class="mono">)</span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        The 'grouping' parsing expression consists of a <span class="mono">(</span> symbol followed by a 'choice' parsing expression followed by a
+        <span class="mono">)</span> symbol. The evaluation precedence can be changed by using the 'grouping' parsing expression.
+    </p>
+
+    <p>
+        For a grouping parser <span class="mono">(</span><span class="rule">a</span><span class="mono">)</span>,
+        the generated component parser tries to match <span class="rule">a</span>. If <span class="rule">a</span> matches,
+        the generated component parser returns success to its parent component parser.
+        Otherwise the input is backtracked to the position where the lexer was where starting to match <span class="rule">a</span> and
+        returns failure to its parent component parser.
+    </p>
+
+    <h4>
+        Example
+    </h4>
+
+    <table class="example">
+        <tr><td>...</td></tr>
+        <tr><td>NodeTest : soul::xml::xpath::expr::NodeTest*</td></tr>
+        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
+        <tr><td><span class="triple_indent">ProcessingInstructionKeyword:pikw LPAREN Literal:pi RPAREN</span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">{</span></span></td></tr>
+        <tr><td><span class="triple_indent">return new soul::xml::xpath::expr::PILiteralNodeTest(pi); </span></td></tr>
+        <tr><td><span class="double_indent"><span class="mono">}</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
+        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
+        <tr><td>...</td></tr>
+    </table>
+
+    <h2 id="project-file-syntax">
+        3 Project File Syntax
+    </h2>
+
+    <table class="grammar">
+        <tr>
+            <td class="rule" id="rule.parser-project-file">parser&#8209;project&#8209;file</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">project</span>
+                <span class="rule"><a href="#rule.parser-project-name">parser&#8209;project&#8209;name</a></span>
+                <span class="mono">;</span>
+                <span class="rule"><a href="#rule.parser-project-file-declaration">parser&#8209;project&#8209;file&#8209;declaration</a></span>*
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parser-project-name">parser&#8209;project&#8209;name</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="common.html#rule.qualified-id">qualified&#8209;id</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parser-project-file-declaration">parser&#8209;project&#8209;file&#8209;declaration</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="rule"><a href="#rule.parser-file-declaration">parser&#8209;file&#8209;declaration</a></span>
+            </td>
+        </tr>
+        <tr>
+            <td class="rule" id="rule.parser-file-declaration">parser&#8209;file&#8209;declaration</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="kw">extern</span>?
+                <span class="kw">parser</span>
+                <span class="rule"><a href="common.html#rule.file-path">file&#8209;path</a></span>
+                <span class="mono">;</span>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        A parser project file consists of the keyword <span class="kw">project</span> followed by a parser project name followed by a semicolon followed
+        by a sequence of parser project file declarations.
+    </p>
+
+    <p>
+        A parser project file declaration consists of an optional <span class="kw">extern</span> keyword followed by
+        the keyword <span class="kw">parser</span> followed by a file path followed by a semicolon.
+    </p>
+
+    <p>
+        If parser file is declared <span class="kw">extern</span>, it participates to the parser file linking process but no C++ code is generated for it.
+        An external parser file is expected to be included nonexternally in another parser project that is compiled separately.
+    </p>
+
+    <p>
+        Parser project file extension is <span class="mono">.spg</span>
+    </p>
+
+    <h3>
+        Example
+    </h3>
+
+    <table class="example">
+        <tr><td><span class="kw">project</span> example.parser<span class="mono">;</span></td></tr>
+        <tr><td><span class="kw">parser</span> <span class="mono">&lt;</span>example_parser.parser<span class="mono">>;</span></td></tr>
+    </table>
+
+</body>
+</html>

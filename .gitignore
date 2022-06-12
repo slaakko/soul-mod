@@ -24,6 +24,8 @@ bind
 *.ast
 *.classmap
 *.org
+setup.package.bin
+setup.package.index.xml
 bootstrap
 lib
 trace

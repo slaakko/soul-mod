@@ -22,6 +22,7 @@ parser StatementParser
 
     using DeclarationParser.SimpleDeclaration;
     using DeclarationParser.BlockDeclaration;
+    using DeclarationParser.DeclSpecifierSeq;
     using DeclaratorParser.TypeId;
     using DeclaratorParser.TypeSpecifierSeq;
     using DeclaratorParser.Declarator;
@@ -130,7 +131,7 @@ parser StatementParser
         ::= 
         (
             empty{ forRangeDeclaration.reset(new soul::ast::cpp::ForRangeDeclarationNode(lexer.GetSourcePos(pos))); }
-            TypeSpecifierSeq(forRangeDeclaration->TypeId()):typeSpecifierSeq Declarator:declarator{ forRangeDeclaration->SetDeclarator(declarator); }
+            DeclSpecifierSeq(forRangeDeclaration->Declaration()):declSpecifierSeq Declarator:declarator{ forRangeDeclaration->SetDeclarator(declarator); }
         )
         {
             return forRangeDeclaration.release();

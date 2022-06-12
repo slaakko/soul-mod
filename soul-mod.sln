@@ -155,6 +155,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "minilang", "examples\minila
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "make_soul_ucd", "tools\make_soul_ucd\make_soul_ucd.vcxproj", "{1EBB219E-4F8E-44CF-BAD0-D2A37C6D5B5C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "minilang_tests", "minilang_tests", "{B81D7345-49CA-4DD1-8810-201EAE9F1E62}"
+	ProjectSection(SolutionItems) = preProject
+		examples\minilang_tests\empty.minilang = examples\minilang_tests\empty.minilang
+		examples\minilang_tests\error_comma.minilang = examples\minilang_tests\error_comma.minilang
+		examples\minilang_tests\error_semicolon.minilang = examples\minilang_tests\error_semicolon.minilang
+		examples\minilang_tests\fibonacci.minilang = examples\minilang_tests\fibonacci.minilang
+		examples\minilang_tests\gcd.minilang = examples\minilang_tests\gcd.minilang
+		examples\minilang_tests\invalid.minilang = examples\minilang_tests\invalid.minilang
+		examples\minilang_tests\minimal.minilang = examples\minilang_tests\minimal.minilang
+		examples\minilang_tests\unicodeid.minilang = examples\minilang_tests\unicodeid.minilang
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Itanium = Debug|Itanium
@@ -754,6 +766,7 @@ Global
 		{D1ACF7F7-00CB-40B9-8F7A-3A68A60AAF01} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}
 		{444521B3-56C2-4BEC-8DD2-AA1176D4C18F} = {ED596215-59BC-4D09-8D7A-D300704CAC59}
 		{1EBB219E-4F8E-44CF-BAD0-D2A37C6D5B5C} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}
+		{B81D7345-49CA-4DD1-8810-201EAE9F1E62} = {ED596215-59BC-4D09-8D7A-D300704CAC59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A635957-C3E9-4A44-AC4F-5DF7EA63264E}

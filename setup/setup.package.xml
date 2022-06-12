@@ -1,0 +1,77 @@
+<package appName="Soul" compression="deflate" id="33e1f923-1836-424a-8c03-8beb5360ad6c" includeUninstaller="true" name="setup" publisher="Seppo Laakko" sourceRootDir=".." targetRootDir="C:/soul" version="4.0.0">
+ <component name="binaries">
+  <directory name="bin"/>
+ </component>
+ <component name="configuration">
+  <directory name="config"/>
+ </component>
+ <component name="documentation">
+  <directory name="doc"/>
+ </component>
+ <component name="examples">
+  <directory name="examples">
+   <exclude cascade="true" dir="Debug"/>
+   <exclude cascade="true" dir="Release"/>
+   <exclude cascade="true" dir="x64"/>
+   <exclude cascade="true" dir=".vs"/>
+  </directory>
+ </component>
+ <component name="ext">
+  <directory name="ext">
+   <exclude cascade="true" dir="Debug"/>
+   <exclude cascade="true" dir="Release"/>
+   <exclude cascade="true" dir="x64"/>
+   <exclude cascade="true" dir=".vs"/>
+  </directory>
+ </component>
+ <component name="inst">
+  <directory name="inst"/>
+ </component>
+ <component name="libraries">
+  <directory name="lib"/>
+ </component>
+ <component name="rc">
+  <directory name="rc"/>
+ </component>
+ <component name="soul">
+  <directory name="soul">
+   <exclude cascade="true" dir="Debug"/>
+   <exclude cascade="true" dir="Release"/>
+   <exclude cascade="true" dir="x64"/>
+   <exclude cascade="true" dir=".vs"/>
+   <include dir="expression">
+    <exclude file="soul.tool.expr.org"/>
+   </include>
+  </directory>
+ </component>
+ <component name="tools">
+  <directory name="tools">
+   <exclude cascade="true" dir="Debug"/>
+   <exclude cascade="true" dir="Release"/>
+   <exclude cascade="true" dir="x64"/>
+   <exclude cascade="true" dir=".vs"/>
+  </directory>
+ </component>
+ <component name="unicode">
+  <directory name="unicode">
+   <exclude file="*.xml"/>
+   <exclude file="*.org"/>
+  </directory>
+ </component>
+ <component name="utilities">
+  <directory name="util">
+   <exclude cascade="true" dir="Debug"/>
+   <exclude cascade="true" dir="Release"/>
+   <exclude cascade="true" dir="x64"/>
+   <exclude cascade="true" dir=".vs"/>
+  </directory>
+ </component>
+ <environment>
+  <variable name="SOUL_ROOT" value="$TARGET_ROOT_DIR$"/>
+  <pathDirectory value="$TARGET_ROOT_DIR$/bin"/>
+ </environment>
+ <links>
+  <linkDirectory path="$START_MENU_PROGRAMS_FOLDER$/Soul"/>
+  <link description="Documentation" iconIndex="0" linkFilePath="$START_MENU_PROGRAMS_FOLDER$/Soul/doc.lnk" path="$TARGET_ROOT_DIR$/doc/index.html" workingDirectory="$TARGET_ROOT_DIR$/doc"/>
+ </links>
+</package>

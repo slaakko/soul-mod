@@ -655,18 +655,20 @@ private:
     std::unique_ptr<Node> expression;
 };
 
+class SimpleDeclarationNode;
+
 class ForRangeDeclarationNode : public Node
 {
 public:
     ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_);
-    TypeIdNode* TypeId() const { return typeId.get(); }
+    SimpleDeclarationNode* Declaration() const { return declaration.get(); }
     const std::string& Declarator() const { return declarator; }
     void SetDeclarator(const std::string& declarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
 private:
-    std::unique_ptr<TypeIdNode> typeId;
+    std::unique_ptr<SimpleDeclarationNode> declaration;
     std::string declarator;
 };
 

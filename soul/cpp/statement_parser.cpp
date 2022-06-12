@@ -2189,7 +2189,7 @@ soul::parser::Match StatementParser<Lexer>::ForRangeDeclaration(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch5 = &match;
                     {
-                        soul::parser::Match match = DeclaratorParser<Lexer>::TypeSpecifierSeq(lexer, forRangeDeclaration->TypeId());
+                        soul::parser::Match match = DeclarationParser<Lexer>::DeclSpecifierSeq(lexer, forRangeDeclaration->Declaration());
                         *parentMatch5 = match;
                     }
                     *parentMatch3 = match;

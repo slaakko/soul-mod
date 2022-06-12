@@ -318,7 +318,7 @@ int main()
         }
         if (soul_root.empty())
         {
-            std::cerr << "please set 'SOUL_ROOT' environment variable to contain /path/to/soul-mod directory." << std::endl;
+            std::cerr << "please set 'SOUL_ROOT' environment variable to contain /path/to/soul directory." << std::endl;
             return 2;
         }
         std::string xmlFileName = (std::filesystem::path(soul_root) / std::filesystem::path("unicode") / std::filesystem::path("ucd.all.flat.xml")).generic_string();

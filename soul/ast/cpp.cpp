@@ -1588,9 +1588,9 @@ void ConditionWithDeclaratorNode::Write(CodeFormatter& formatter)
 }
 
 ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_) : 
-    Node(NodeKind::forRangeDeclarationNode, sourcePos_), typeId(new TypeIdNode(sourcePos_)), declarator()
+    Node(NodeKind::forRangeDeclarationNode, sourcePos_), declaration(new SimpleDeclarationNode(sourcePos_)), declarator()
 {
-    typeId->SetParent(this);
+    declaration->SetParent(this);
 }
 
 void ForRangeDeclarationNode::SetDeclarator(const std::string& declarator_)
@@ -1612,7 +1612,7 @@ void ForRangeDeclarationNode::Accept(Visitor& visitor)
 
 void ForRangeDeclarationNode::Write(CodeFormatter& formatter)
 {
-    typeId->Write(formatter);
+    declaration->Write(formatter);
     formatter.Write(" ");
     formatter.Write(declarator);
 }
@@ -2780,7 +2780,7 @@ void DefaultVisitor::Visit(ConditionWithDeclaratorNode& node)
 
 void DefaultVisitor::Visit(ForRangeDeclarationNode& node) 
 {
-    node.TypeId()->Accept(*this);
+    node.Declaration()->Accept(*this);
 }
 
 void DefaultVisitor::Visit(RangeForStatementNode& node)
