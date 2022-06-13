@@ -1,0 +1,2 @@
+project example.parser;
+parser <example_parser.parser>;

@@ -1,0 +1,17 @@
+// a 'positive':
+
+parser DeclarationParser
+{
+	...
+    DeclSpecifierSeq(soul::ast::cpp::SimpleDeclarationNode* declaration)
+        ::= 
+		(
+			(
+				DeclSpecifier:declSpecifier{ declaration->Add(declSpecifier); }
+			)+
+			|   TypeName:typeName{ declaration->Add(typeName); }
+		)
+        ;
+	...
+}
+

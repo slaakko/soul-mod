@@ -1,0 +1,14 @@
+// 'empty':
+
+parser ParserFileParser
+{
+	...
+	ParserFile(var std::unique_ptr<soul::ast::spg::ParserFile> parserFile) : soul::ast::spg::ParserFile*
+		::= 
+		(
+			empty{ parserFile.reset(new soul::ast::spg::ParserFile(lexer.FileName())); }
+			...
+		)
+		;
+	...
+}

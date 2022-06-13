@@ -1,0 +1,10 @@
+// a 'list':
+
+parser ExpressionParser
+{
+	...
+    ExpressionList(soul::ast::cpp::Node* owner)
+        ::= AssignmentExpression:expr{ owner->Add(expr); } % COMMA
+        ;
+	...
+}

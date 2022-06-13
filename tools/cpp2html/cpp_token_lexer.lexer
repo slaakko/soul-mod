@@ -1,0 +1,86 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module cpp.token.lexer;
+
+import cpp.token;
+import cpp.keyword;
+import cpp.expr;
+
+lexer CppTokenLexer
+{
+    rules
+    {
+        "{ws}" { return WS; }
+        "{newline}" { }
+        "{linecomment}" { return LINECOMMENT; }
+        "{blockcomment}" { return BLOCKCOMMENT; }
+        "{blockcommentline}" $(1) { return BLOCKCOMMENTLINE; }
+        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return KEYWORD; }
+        "{characterliteral}" { return CHARLIT; }
+        "{beginrawstringliteral}" { return BEGINRAWSTRINGLIT; }
+        "{stringliteral}" { return STRINGLIT; }
+        "{ppnumber}" { return NUMBER; }
+        "{ws}*#[^\x0\r\n]*" { return PP; }
+        "::" { return OTHER; }
+        "," { return OTHER; }
+        "=" { return OTHER; }
+        "\*=" { return OTHER; }
+        "/=" { return OTHER; }
+        "%=" { return OTHER; }
+        "\+=" { return OTHER; }
+        "-=" { return OTHER; }
+        ">>=" { return OTHER; }
+        "<<=" { return OTHER; }
+        "&=" { return OTHER; }
+        "^=" { return OTHER; }
+        "\|=" { return OTHER; }
+        "\?" { return OTHER; }
+        ":" { return OTHER; }
+        "\|\|" { return OTHER; }
+        "&&" { return OTHER; }
+        "\|" { return OTHER; }
+        "^" { return OTHER; }
+        "&" { return OTHER; }
+        "==" { return OTHER; }
+        "!=" { return OTHER; }
+        "<=" { return OTHER; }
+        ">=" { return OTHER; }
+        "<=>" { return OTHER; }
+        "<" { return OTHER; }
+        ">" { return OTHER; }
+        "<<" { return OTHER; }
+        ">>" { return OTHER; }
+        "\+" { return OTHER; }
+        "-" { return OTHER; }
+        "\*" { return OTHER; }
+        "/" { return OTHER; }
+        "%" { return OTHER; }
+        "\.\*" { return OTHER; }
+        "->\*" { return OTHER; }
+        "\(" { return OTHER; }
+        "\)" { return OTHER; }
+        "\+\+" { return OTHER; }
+        "--" { return OTHER; }
+        "!" { return OTHER; }
+        "~" { return OTHER; }
+        "\[" { return OTHER; }
+        "\]" { return OTHER; }
+        "\." { return OTHER; }
+        "->" { return OTHER; }
+        ";" { return OTHER; }
+        "\.\.\." { return OTHER; }
+        "\{" { return OTHER; }
+        "\}" { return OTHER; }
+    }
+    actions
+    {
+        $(1)={ if (!vars->inBlockComment) return INVALID_TOKEN; }
+    }
+    variables
+    {
+        bool inBlockComment;
+    }
+}

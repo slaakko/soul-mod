@@ -1,0 +1,20 @@
+// rules of statement_parser.parser:
+
+parser StatementParser
+{
+	...
+	
+	Statement : soul::ast::cpp::StatementNode*
+		::= ...
+		;
+		
+	LabeledStatement(var std::string label) : soul::ast::cpp::StatementNode*
+		::= ...
+		;
+		
+	EmptyStatement : soul::ast::cpp::StatementNode*
+		::= ...
+		;
+	
+	...
+}

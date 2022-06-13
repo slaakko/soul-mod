@@ -1,0 +1,8 @@
+// common_parser.parser:
+...
+parser CommonParser
+{
+	lexer soul::lex::slg::SlgLexer<char32_t>;
+	lexer soul::lex::spg::SpgLexer<char32_t>; 
+	...
+}

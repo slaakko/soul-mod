@@ -1,0 +1,13 @@
+// 'nonterminal's:
+
+parser ParserFileParser
+{
+	...
+    ParserStatement(soul::ast::spg::GrammarParser* parser)
+        ::= LexerStatement(parser):lexerStatement
+        |   MainStatement(parser):mainStatement
+        |   UsingStatement(parser):usingStatement
+        |   RuleStatement(parser):ruleStatement
+        ;
+	...
+}

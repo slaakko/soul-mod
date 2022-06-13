@@ -1,0 +1,16 @@
+// a 'sequence':
+...
+parser StatementParser
+{
+	...
+    WhileStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            WHILE LPAREN! Condition:cond! RPAREN! Statement:stmt!
+        )
+        {
+            return new soul::ast::cpp::WhileStatementNode(lexer.GetSourcePos(pos), cond, stmt);
+        }
+        ;
+	...
+}

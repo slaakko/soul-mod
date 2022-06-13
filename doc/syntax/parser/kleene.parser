@@ -1,0 +1,18 @@
+// a 'kleene':
+...
+parser ExpressionParser
+{
+	...
+	LogicalOrExpression(var std::unique_ptr<soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*
+		::= 
+        (   LogicalAndExpression:left{ expr.reset(left); }
+            (
+                DISJUNCTION LogicalAndExpression:right!{ ... }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+	...
+}

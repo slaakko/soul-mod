@@ -1,0 +1,16 @@
+// a 'failure' action:
+
+parser ConceptParser
+{
+	...
+	ConceptDefinition(sngcpp::symbols::Context* ctx, var SourcePos s) : Node*
+		::= 
+        (
+			...
+            Assign:assign{ ctx->PushSetFlag(sngcpp::symbols::ContextFlags::parsingConceptDefinition); }
+            ConstraintExpression(ctx):constraintExpr{ ctx->PopFlags(); } / { ctx->PopFlags(); }
+			...
+        )
+        ;
+	...
+}

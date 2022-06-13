@@ -1,0 +1,18 @@
+// a 'choice':
+...
+parser StatementParser
+{
+	...
+    Statement : soul::ast::cpp::StatementNode*
+        ::= LabeledStatement:labeledStatement{ return labeledStatement; }
+        |   EmptyStatement:emptyStatement{ return emptyStatement; }
+        |   CompoundStatement:compoundStatement{ return compoundStatement; }
+        |   SelectionStatement:selectionStatement{ return selectionStatement; }
+        |   IterationStatement:iterationStatement{ return iterationStatement; }
+        |   JumpStatement:jumpStatement{ return jumpStatement; }
+        |   DeclarationStatement:declarationStatement{ return declarationStatement; }
+        |   TryStatement:tryStatement{ return tryStatement; }
+        |   ExpressionStatement:expressionStatement{ return expressionStatement; }  
+        ;
+	...
+}

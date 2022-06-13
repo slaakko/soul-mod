@@ -1,0 +1,17 @@
+// a 'lookahead':
+
+parser TemplateParser
+{
+	...
+	TemplateArgument(sngcpp::symbols::Context* ctx, sngcpp::ast::Node* templateIdNode, int index) : Node*
+		::= ... TypeId(ctx):typeId TemplateArgNext:next
+			...
+        |   ConstantExpression(ctx):constantExpr{ return constantExpr; }
+        |   IdExpression(ctx):idExpr{ return idExpr; }
+        ;
+
+	TemplateArgNext
+        ::= &(RANGLE | COMMA | ELLIPSIS)
+        ;
+	...
+}

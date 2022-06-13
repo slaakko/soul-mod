@@ -1,0 +1,31 @@
+// statement_parser.parser:
+
+export module soul.cpp.statement.parser;
+
+[interface]import soul.ast.cpp;
+[implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
+[implementation]import soul.punctuation.token;
+[implementation]import soul.cpp.declaration.parser;
+[implementation]import soul.cpp.declarator.parser;
+[implementation]import soul.cpp.expression.parser;
+[implementation]import soul.lex.slg;
+[implementation]import soul.lex.spg;
+
+parser StatementParser
+{
+    lexer soul::lex::slg::SlgLexer<char32_t>;
+    lexer soul::lex::spg::SpgLexer<char32_t>;
+
+    using DeclarationParser.SimpleDeclaration;
+    using DeclarationParser.BlockDeclaration;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclaratorParser.TypeId;
+    using DeclaratorParser.TypeSpecifierSeq;
+    using DeclaratorParser.Declarator;
+    using DeclaratorParser.AbstractDeclarator;
+    using ExpressionParser.Expression;
+    using ExpressionParser.ConstantExpression;
+    using ExpressionParser.AssignmentExpression;
+	...
+}

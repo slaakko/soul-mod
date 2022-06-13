@@ -1,0 +1,34 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+expressions cpp.expr
+{
+    ws = "[\t ]+";
+    newline = "\r\n|\n|\r";
+    linecomment = "//[^\n\r]*{newline}";
+    blockcomment = "/\*([^*\n\r]|\*[^/\n\r])*(\*/|{newline})";
+    blockcommentline = "([^*\n\r]|\*[^/\n\r])*(\*/|{newline})";
+    hexdigit = "[0-9a-fA-F]";
+    hex4 = "{hexdigit}{hexdigit}{hexdigit}{hexdigit}";
+    hex8 = "{hex4}{hex4}";
+    univcn = "\\u{hex4}|\\U{hex8}";
+    id = "({unicode_id_start}|{univcn})({unicode_id_cont}|{univcn})*";
+    digit = "[0-9]";
+    nondigit = "[a-zA-Z_]";
+    identifiernondigit = "{nondigit}|{univcn}";
+    sign = "\+|-";
+    ppnumber = "(({digit}|')+\.?|\.({digit}|')+)([eEpP]{sign}|{identifiernondigit})*";
+    octaldigit = "[0-7]";
+    simpleescape = "\\['\"\?\\abfnrtv]";
+    octalescape = "\\{octaldigit}|\\{octaldigit}{octaldigit}|\\{octaldigit}{octaldigit}{octaldigit}";
+    hexescape = "\\x{hexdigit}+";
+    escape = "{simpleescape}|{octalescape}|{hexescape}";
+    cchar = "[^\r\n\\']|{escape}|{univcn}";
+    characterliteral = "[uUL]?'{cchar}+'";
+    encodingprefix = "u8|u|U|L";
+    schar = "[^\r\n\\\"]|{escape}|{univcn}";
+    beginrawstringliteral = "{encodingprefix}?R\"";
+    stringliteral = "{encodingprefix}?\"{schar}*\";
+}

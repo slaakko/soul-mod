@@ -1,0 +1,20 @@
+// 'group':
+
+parser RexParser
+{
+	...
+    Repetition(soul::rex::context::Context* context, var soul::rex::nfa::Nfa value) : soul::rex::nfa::Nfa
+        ::=
+        (
+            Primary(context):left{ value = left; }
+            (   STAR{ value = soul::rex::nfa::Kleene(*context, value); }
+            |   PLUS{ value = soul::rex::nfa::Pos(*context, value); }
+            |   QUEST{ value = soul::rex::nfa::Opt(*context, value); }
+            )?
+        )
+        {
+            return value;
+        }
+        ;
+	...
+}

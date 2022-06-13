@@ -1,0 +1,5 @@
+project cpp.token.lexer;
+tokens <cpp.token>;
+keywords <cpp.keyword>;
+expressions <cpp.expr>;
+lexer <cpp_token_lexer.lexer>;

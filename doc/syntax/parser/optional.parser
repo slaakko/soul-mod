@@ -1,0 +1,16 @@
+// an 'optional':
+...
+parser StatementParser
+{
+	...
+    ReturnStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            RETURN Expression:returnValue? SEMICOLON!
+        )
+        { 
+            return new soul::ast::cpp::ReturnStatementNode(lexer.GetSourcePos(pos), returnValue); 
+        }
+        ;
+	...
+}

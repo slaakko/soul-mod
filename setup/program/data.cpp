@@ -9,7 +9,7 @@ std::string PackageResourceName()
 
 int64_t UncompressedPackageSize()
 {
-    return 277516341;
+    return 277578327;
 }
 
 std::string UnicodeDBResourceName()
@@ -49,7 +49,7 @@ std::string DefaultContainingDirPath()
 
 std::string InstallDirName()
 {
-    return "soul";
+    return "soul-4.0.0";
 }
 
 

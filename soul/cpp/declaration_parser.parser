@@ -44,8 +44,13 @@ parser DeclarationParser
         ;
 
     DeclSpecifierSeq(soul::ast::cpp::SimpleDeclarationNode* declaration)
-        ::= (DeclSpecifier:declSpecifier{ declaration->Add(declSpecifier); })+
-        |   TypeName:typeName{ declaration->Add(typeName); }
+        ::= 
+		(
+			(
+				DeclSpecifier:declSpecifier{ declaration->Add(declSpecifier); }
+			)+
+			|   TypeName:typeName{ declaration->Add(typeName); }
+		)
         ;
 
     DeclSpecifier : soul::ast::cpp::DeclSpecifierNode*
@@ -88,7 +93,11 @@ parser DeclarationParser
         ::=
         (
             QualifiedCppId:qid{ typeName.reset(new soul::ast::cpp::TypeNameNode(lexer.GetSourcePos(pos), qid)); }
-            (LANGLE{ ++vars->leftAngleCount; typeName->SetTemplate(); } TemplateArgumentList(typeName.get()):args RANGLE{ --vars->leftAngleCount; })?
+            (
+				LANGLE{ ++vars->leftAngleCount; typeName->SetTemplate(); } 
+				TemplateArgumentList(typeName.get()):args 
+				RANGLE{ --vars->leftAngleCount; }
+			)?
         )
         {
             return typeName.release();

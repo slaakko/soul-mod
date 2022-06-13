@@ -1,0 +1,21 @@
+// 'vars':
+...
+parser DeclarationParser
+{
+	...
+    TypeName(var std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName) : soul::ast::cpp::TypeNameNode*
+        ::=
+        (
+            QualifiedCppId:qid{ typeName.reset(new soul::ast::cpp::TypeNameNode(lexer.GetSourcePos(pos), qid)); }
+            (
+				LANGLE{ ++vars->leftAngleCount; typeName->SetTemplate(); } 
+				TemplateArgumentList(typeName.get()):args 
+				RANGLE{ --vars->leftAngleCount; }
+			)?
+        )
+        {
+            return typeName.release();
+        }
+        ;
+	...
+}

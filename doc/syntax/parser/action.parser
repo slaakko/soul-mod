@@ -1,0 +1,16 @@
+// a 'success' action:
+
+parser StatementParser
+{
+	...
+    BreakStatement : soul::ast::cpp::StatementNode*
+        ::= 
+        (
+            BREAK SEMICOLON!
+        )
+        { 
+            return new soul::ast::cpp::BreakStatementNode(lexer.GetSourcePos(pos)); 
+        }
+        ;
+	...
+}

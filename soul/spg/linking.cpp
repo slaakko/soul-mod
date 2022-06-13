@@ -91,6 +91,11 @@ void LinkingVisitor::Visit(soul::ast::spg::RuleParser& parser)
 
 void LinkingVisitor::Visit(soul::ast::spg::GrammarParser& parser)
 {
+    if (parser.Lexers().empty())
+    {
+        std::string errorMessage = soul::lexer::MakeMessage("error", "Parser '" + parser.Name() + "' has no lexer statements.", parser.GetSourcePos(), fileMap);
+        throw std::runtime_error(errorMessage);
+    }
     currentParser = &parser;
     if (parser.Id() == -1)
     {

@@ -1,0 +1,10 @@
+// 'pos':
+...
+parser XPathParser
+{
+	...
+    NCName : std::string
+        ::= NAME{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+        ;
+	...
+}

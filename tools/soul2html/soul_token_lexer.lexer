@@ -1,0 +1,78 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.token.lexer;
+
+import soul.token;
+import soul.cpp.token;
+import soul.keyword;
+import soul.cpp.keyword;
+import soul.tool.expr;
+
+lexer SoulTokenLexer
+{
+    rules
+    {
+        "{ws}" { return WS; }
+        "{newline}" { }
+        "{line_comment}" { return LINE_COMMENT; }
+        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return KEYWORD; }
+        "{integer_literal}"{ return NUMBER; }
+        "{floating_literal}"{ return NUMBER; }
+        "{char_literal}" { return CHAR_LITERAL; }
+        "{string_literal}" { return STRING_LITERAL; }
+        "$" { return PUNCT; }
+        "::" { return PUNCT; }
+        "," { return PUNCT; }
+        "=" { return PUNCT; }
+        "\*=" { return PUNCT; }
+        "/=" { return PUNCT; }
+        "%=" { return PUNCT; }
+        "\+=" { return PUNCT; }
+        "-=" { return PUNCT; }
+        ">>=" { return PUNCT; }
+        "<<=" { return PUNCT; }
+        "&=" { return PUNCT; }
+        "^=" { return PUNCT; }
+        "\|=" { return PUNCT; }
+        "\?" { return PUNCT; }
+        ":" { return PUNCT; }
+        "\|\|" { return PUNCT; }
+        "&&" { return PUNCT; }
+        "\|" { return PUNCT; }
+        "^" { return PUNCT; }
+        "&" { return PUNCT; }
+        "==" { return PUNCT; }
+        "!=" { return PUNCT; }
+        "<=" { return PUNCT; }
+        ">=" { return PUNCT; }
+        "<=>" { return PUNCT; }
+        "<" { return PUNCT; }
+        ">" { return PUNCT; }
+        "<<" { return PUNCT; }
+        ">>" { return PUNCT; }
+        "\+" { return PUNCT; }
+        "-" { return PUNCT; }
+        "\*" { return PUNCT; }
+        "/" { return PUNCT; }
+        "%" { return PUNCT; }
+        "\.\*" { return PUNCT; }
+        "->\*" { return PUNCT; }
+        "\(" { return PUNCT; }
+        "\)" { return PUNCT; }
+        "\+\+" { return PUNCT; }
+        "--" { return PUNCT; }
+        "!" { return PUNCT; }
+        "~" { return PUNCT; }
+        "\[" { return PUNCT; }
+        "\]" { return PUNCT; }
+        "\." { return PUNCT; }
+        "->" { return PUNCT; }
+        ";" { return PUNCT; }
+        "\.\.\." { return PUNCT; }
+        "\{" { return PUNCT; }
+        "\}" { return PUNCT; }
+    }
+}

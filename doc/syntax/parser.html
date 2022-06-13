@@ -122,21 +122,34 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>// xpath_parser.parser:</td></tr>
-        <tr><td><span class="kw">export</span> <span class="kw">module</span> soul.xml.xpath.parser<span class="mono">;</span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="kw">[interface]</span><span class="kw">import</span> soul.xml.xpath.expr<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.xml.xpath.lexer<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.xml.xpath.token<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.xml.xpath.token.parser<span class="mono">;</span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="kw">parser</span> XPathParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">main</span><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">interface</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">XPathLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">main</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h3 id="parser-declaration">
         1.2 Parser Declaration
@@ -179,16 +192,27 @@
         The parser generator will generate a C++ class template for each parser declaration. The class template is parameterized with the type of the lexer.
     </p>
 
-    <table class="example">
-        <tr><td>// generated xpath_parser.ixx:</td></tr>
-        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
-        <tr><td><span class="kw">struct </span>XPathParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">static</span> std::unique_ptr&lt;soul::xml::xpath::expr::Expr> Parse(Lexer& lexer);</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match Expr(Lexer& lexer);</span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">};</span></td></tr>
-    </table>
+  <div class="cpp">
+   <span xml:space="preserve"><span class="comment">// generated xpath_parser.ixx:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Lexer</span><span class="other">></span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">XPathParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">xpath</span><span class="other">::</span><span class="id">expr</span><span class="other">::</span><span class="id">Expr</span><span class="other">></span>&nbsp;<span class="id">Parse</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">Expr</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">}</span></span>
+   <br/>
+  </div>
 
     <h3 id="parser-statements">
         1.3 Parser Statements
@@ -240,16 +264,25 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>// common_parser.parser:</td></tr>
-        <tr><td>...</td></tr>
-        <tr><td><span class="kw">parser</span> CommonParser</td>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::slg::SlgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::spg::SpgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// common_parser.parser:
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">CommonParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">slg</span><span class="punctuation">::</span><span class="id">SlgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">SpgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         Explicit Instantiation for the Lexer Type
@@ -260,12 +293,19 @@
         for each concrete lexer type declared in the <a href="#rule.lexer-statement">lexer&#8209;statement</a>.
     </p>
 
-    <table class="example">
-        <tr><td>// generated common_parser.cpp:</td></tr>
-        <tr><td>...</td></tr>
-        <tr><td><span class="kw">template struct</span> CommonParser&lt;soul::lexer::Lexer&lt;soul::lex::slg::SlgLexer&lt;char32_t>, char32_t>>;
-        <tr><td><span class="kw">template struct</span> CommonParser&lt;soul::lexer::Lexer&lt;soul::lex::spg::SpgLexer&lt;char32_t>, char32_t>>;
-    </table>
+  <div class="cpp">
+   <span xml:space="preserve"><span class="comment">// generated common_parser.cpp:
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">template</span>&nbsp;<span class="kw">struct</span>&nbsp;<span class="id">CommonParser</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lex</span><span class="other">::</span><span class="id">slg</span><span class="other">::</span><span class="id">SlgLexer</span><span class="other">&lt;</span><span class="kw">char32_t</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="kw">char32_t</span><span class="other">>></span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">template</span>&nbsp;<span class="kw">struct</span>&nbsp;<span class="id">CommonParser</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lex</span><span class="other">::</span><span class="id">spg</span><span class="other">::</span><span class="id">SpgLexer</span><span class="other">&lt;</span><span class="kw">char32_t</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="kw">char32_t</span><span class="other">>></span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+  </div>
 
     <h3 id="main-statement">
         1.5 Main Statement
@@ -291,20 +331,45 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>// xpath_parser.parser:</td></tr>
-        <tr><td>...</td></tr>
-        <tr><td><span class="kw">parser</span> XPathParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">main</span><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"></span></td></tr>
-        <tr><td><span class="indent">Expr : soul::xml::xpath::expr::Expr*</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">::=</span>
-        <tr><td><span class="double_indent">...</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// xpath_parser.parser:
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">XPathLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">main</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Expr</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">expr</span><span class="punctuation">::</span><span class="id">Expr</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">OrExpr</span><span class="punctuation">:</span><span class="id">orExpr</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">orExpr</span><span class="punctuation">;</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         Generated Parser Interface
@@ -316,16 +381,27 @@
         the Parse-function will return a <span class="mono">std::unique_ptr&lt;Foo></span>.
     </p>
 
-    <table class="example">
-        <tr><td>// generated xpath_parser.ixx:</td></tr>
-        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
-        <tr><td><span class="kw">struct </span>XPathParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">static</span> std::unique_ptr&lt;soul::xml::xpath::expr::Expr> Parse(Lexer& lexer);</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match Expr(Lexer& lexer);</span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">};</span></td></tr>
-    </table>
+  <div class="cpp">
+   <span xml:space="preserve"><span class="comment">// generated xpath_parser.ixx:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Lexer</span><span class="other">></span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">XPathParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">xpath</span><span class="other">::</span><span class="id">expr</span><span class="other">::</span><span class="id">Expr</span><span class="other">></span>&nbsp;<span class="id">Parse</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">Expr</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         Generated Parse-function Implementation
@@ -336,21 +412,35 @@
         then to call the first rule of the parser with the lexer.
     </p>
 
-    <table class="example">
-        <tr><td>// generated xpath_parser.cpp:</td></tr>
-        <tr><td>...</td></tr>
-        <tr><td><span class="kw">namespace</span> soul::xml::xpath::parser <span class="mono">{</span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
-        <tr><td> std::unique_ptr&lt;soul::xml::xpath::expr::Expr> XPathParser&lt;Lexer>::Parse(Lexer& lexer)</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent">...</span>
-        <tr><td><span class="indent"><span class="mono">++</span>lexer</span></td></tr>
-        <tr><td><span class="indent">soul::parser::Match match = XPathParser&lt;Lexer>::Expr(lexer);</span></td></tr>
-        <tr><td><span class="indent">...</span>
-        <tr><td><span class="mono">}</span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="cpp">
+   <span xml:space="preserve"><span class="comment">// generated xpath_parser.cpp:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">namespace</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">xpath</span><span class="other">::</span><span class="id">parser</span>&nbsp;<span class="other">{</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Lexer</span><span class="other">></span></span>
+   <br/>
+   <span xml:space="preserve"><span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">xpath</span><span class="other">::</span><span class="id">expr</span><span class="other">::</span><span class="id">Expr</span><span class="other">></span>&nbsp;<span class="id">XPathParser</span><span class="other">&lt;</span><span class="id">Lexer</span><span class="other">></span><span class="other">::</span><span class="id">Parse</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">++</span><span class="id">lexer</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">match</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">XPathParser</span><span class="other">&lt;</span><span class="id">Lexer</span><span class="other">></span><span class="other">::</span><span class="id">Expr</span><span class="other">(</span><span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">}</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+  </div>
 
     <h3 id="using-statement">
         1.6 Using Statement
@@ -385,38 +475,74 @@
     <h4>
         Example
     </h4>
-
-    <table class="example">
-        <tr><td><span class="kw">export module</span> soul.cpp.statement.parser<span class="mono">;</span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="kw">[interface]</span><span class="kw">import</span> soul.ast.cpp<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.token<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.op.token<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.punctuation.token<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.declaration.parser<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.declarator.parser<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.cpp.expression.parser<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.lex.slg<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">[implementation]</span><span class="kw">import</span> soul.lex.spg<span class="mono">;</span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="kw">parser</span> StatementParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::slg::SlgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">lexer</span> soul::lex::spg::SpgLexer&lt;char32_t><span class="mono">;</span></span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>DeclarationParser.SimpleDeclaration<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>DeclarationParser.BlockDeclaration<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.TypeId<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.TypeSpecifierSeq<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.Declarator<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>DeclaratorParser.AbstractDeclarator<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>ExpressionParser.Expression<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>ExpressionParser.ConstantExpression<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent"><span class="kw">using </span>ExpressionParser.AssignmentExpression<span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
-
+	
+	
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// statement_parser.parser:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">statement</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">interface</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">ast</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">op</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">punctuation</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">declaration</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">declarator</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">expression</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">lex</span><span class="punctuation">.</span><span class="id">slg</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">lex</span><span class="punctuation">.</span><span class="id">spg</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">slg</span><span class="punctuation">::</span><span class="id">SlgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">SpgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclarationParser</span><span class="punctuation">.</span><span class="id">SimpleDeclaration</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclarationParser</span><span class="punctuation">.</span><span class="id">BlockDeclaration</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclarationParser</span><span class="punctuation">.</span><span class="id">DeclSpecifierSeq</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">TypeId</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">TypeSpecifierSeq</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">Declarator</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">AbstractDeclarator</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">ExpressionParser</span><span class="punctuation">.</span><span class="id">Expression</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">ExpressionParser</span><span class="punctuation">.</span><span class="id">ConstantExpression</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">ExpressionParser</span><span class="punctuation">.</span><span class="id">AssignmentExpression</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+	
     <h3 id="rule-statement">
         1.7 Rule Statement
     </h3>
@@ -566,24 +692,49 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>// statement_parser.parser:</td></tr>
-        <tr><td>...</td></tr>
-        <tr><td><span class="kw">parser</span> StatementParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="indent">Statement <span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">::= </span> ...</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">LabeledStatement<span class="mono">(</span><span class="kw">var</span> std::string label<span class="mono">)</span><span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">::= </span> ...</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">EmptyStatement <span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">::= </span> ...</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// rules of statement_parser.parser:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Statement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">LabeledStatement</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span>&nbsp;<span class="id">label</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">EmptyStatement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         Generated Rule Functions
@@ -592,20 +743,33 @@
     <p>
         The parser generator will generate a static function for each rule to the class template of the parser.
     </p>
-
-    <table class="example">
-        <tr><td>// generated statement_parser.ixx:</td></tr>
-        <tr><td>...</td></tr>
-        <tr><td><span class="kw">template</span><span class="mono">&lt;</span><span class="kw">typename</span> Lexer<span class="mono">></span></td></tr>
-        <tr><td><span class="kw">struct</span> StatementParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match Statement(Lexer& lexer);</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match LabeledStatement(Lexer& lexer);</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">static</span> soul::parser::Match EmptyStatement(Lexer& lexer);</span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
-
+	
+  <div class="cpp">
+   <span xml:space="preserve"><span class="comment">// generated statement_parser.ixx:
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Lexer</span><span class="other">></span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">Statement</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">LabeledStatement</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">EmptyStatement</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">}</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+  </div>
+	
     <h2 id="parsing-expressions">
         2 Parsing Expressions
     </h2>
@@ -669,27 +833,46 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>// statement_parser.parser:</td></tr>
-        <tr><td>...</td></tr>
-        <tr><td><span class="kw">parser</span> StatementParser</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="indent">Statement <span class="mono">:</span> soul::ast::cpp::StatementNode*</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">::= </span> LabeledStatement:labeledStatement{ return labeledStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> EmptyStatement:emptyStatement{ return emptyStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> CompoundStatement:compoundStatement{ return compoundStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> SelectionStatement:selectionStatement{ return selectionStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> IterationStatement:iterationStatement{ return iterationStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> JumpStatement:jumpStatement{ return jumpStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> DeclarationStatement:declarationStatement{ return declarationStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> TryStatement:tryStatement{ return tryStatement; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|   </span> ExpressionStatement:expressionStatement{ return expressionStatement; }  </span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">;</span></span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
-
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'choice':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Statement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">LabeledStatement</span><span class="punctuation">:</span><span class="id">labeledStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">labeledStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">EmptyStatement</span><span class="punctuation">:</span><span class="id">emptyStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">emptyStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">CompoundStatement</span><span class="punctuation">:</span><span class="id">compoundStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">compoundStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">SelectionStatement</span><span class="punctuation">:</span><span class="id">selectionStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">selectionStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">IterationStatement</span><span class="punctuation">:</span><span class="id">iterationStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">iterationStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">JumpStatement</span><span class="punctuation">:</span><span class="id">jumpStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">jumpStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">DeclarationStatement</span><span class="punctuation">:</span><span class="id">declarationStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">declarationStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">TryStatement</span><span class="punctuation">:</span><span class="id">tryStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">tryStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">ExpressionStatement</span><span class="punctuation">:</span><span class="id">expressionStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">expressionStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ 
     <h3 id="sequence">
         2.2 Sequence
     </h3>
@@ -720,17 +903,42 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>WhileStatement : soul::ast::cpp::StatementNode*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span>
-        <tr><td><span class="indent"><span class="mono">(</span></span>
-        <tr><td><span class="double_indent">WHILE LPAREN! Condition:cond! RPAREN! Statement:stmt!</span>
-        <tr><td><span class="indent"><span class="mono">)</span></span>
-        <tr><td><span class="indent"><span class="mono">;</span></span>
-        <tr><td>...</td></tr>
-    </table>
-
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'sequence':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">WhileStatement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">WHILE</span>&nbsp;<span class="id">LPAREN</span><span class="punctuation">!</span>&nbsp;<span class="id">Condition</span><span class="punctuation">:</span><span class="id">cond</span><span class="punctuation">!</span>&nbsp;<span class="id">RPAREN</span><span class="punctuation">!</span>&nbsp;<span class="id">Statement</span><span class="punctuation">:</span><span class="id">stmt</span><span class="punctuation">!</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">WhileStatementNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">cond</span><span class="punctuation">,</span>&nbsp;<span class="id">stmt</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+  
     <h3 id="difference">
         2.3 Difference
     </h3>
@@ -768,18 +976,43 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>PathExpr(var std::unique_ptr&lt;soul::xml::xpath::expr::Expr> expr) : soul::xml::xpath::expr::Expr*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="triple_indent">LocationPath:locationPath - FunctionCall:functionCall</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent">...</span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'difference':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PathExpr</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">expr</span><span class="punctuation">::</span><span class="id">Expr</span><span class="punctuation">></span>&nbsp;<span class="id">expr</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">expr</span><span class="punctuation">::</span><span class="id">Expr</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">LocationPath</span><span class="punctuation">:</span><span class="id">locationPath</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="id">FunctionCall</span><span class="punctuation">:</span><span class="id">functionCall</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">locationPath</span><span class="punctuation">;</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h3 id="list">
         2.4 List
@@ -813,13 +1046,29 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>ExpressionList(soul::ast::cpp::Node* owner)</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> AssignmentExpression:expr{ owner->Add(expr); } % COMMA</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'list':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ExpressionParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ExpressionList</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span>&nbsp;<span class="id">owner</span><span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">AssignmentExpression</span><span class="punctuation">:</span><span class="id">expr</span><span class="punctuation">{</span>&nbsp;<span class="id">owner</span><span class="punctuation">-></span><span class="id">Add</span><span class="punctuation">(</span><span class="id">expr</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;<span class="punctuation">%</span>&nbsp;<span class="id">COMMA</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h3 id="prefix">
         2.5 Prefix
@@ -857,26 +1106,50 @@
         If <span class="rule">a</span> matches, the generated parser will backtrack to the starting position of <span class="rule">a</span>
         and return success to the parent component parser.
         Otherwise the generated parser will backtrack to the starting position of <span class="rule">a</span> and return failure
-        to the parent component parser.
+        to the parent component parser. This allows arbitrary lookahead without consuming input.
     </p>
 
     <h4>
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>TemplateArgument : Node*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> TypeId(ctx):typeId TemplateArgNext:next</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> ConstantExpression(ctx):constantExpr{ return constantExpr; }</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> IdExpression(ctx):idExpr{ return idExpr; }</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>TemplateArgNext</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> &(RANGLE | COMMA | ELLIPSIS)</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
-
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'lookahead':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">TemplateParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TemplateArgument</span><span class="punctuation">(</span><span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">symbols</span><span class="punctuation">::</span><span class="id">Context</span><span class="punctuation">*</span>&nbsp;<span class="id">ctx</span><span class="punctuation">,</span>&nbsp;<span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span>&nbsp;<span class="id">templateIdNode</span><span class="punctuation">,</span>&nbsp;<span class="kw">int</span>&nbsp;<span class="id">index</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">Node</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="other">...</span>&nbsp;<span class="id">TypeId</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">typeId</span>&nbsp;<span class="id">TemplateArgNext</span><span class="punctuation">:</span><span class="id">next</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">ConstantExpression</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">constantExpr</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">constantExpr</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">IdExpression</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">idExpr</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">idExpr</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TemplateArgNext</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="punctuation">&amp;</span><span class="punctuation">(</span><span class="id">RANGLE</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">COMMA</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">ELLIPSIS</span><span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
     <h3 id="postfix">
         2.6 Postfix
     </h3>
@@ -926,19 +1199,45 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>LogicalOrExpression(var std::unique_ptr&lt;soul::ast::cpp::Node> expr) : soul::ast::cpp::Node*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent">LogicalAndExpression:left{ expr.reset(left); }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="triple_indent">DISJUNCTION LogicalAndExpression:right!</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">)*</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'kleene':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ExpressionParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">LogicalOrExpression</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">></span>&nbsp;<span class="id">expr</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="id">LogicalAndExpression</span><span class="punctuation">:</span><span class="id">left</span><span class="punctuation">{</span>&nbsp;<span class="id">expr</span><span class="punctuation">.</span><span class="id">reset</span><span class="punctuation">(</span><span class="id">left</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DISJUNCTION</span>&nbsp;<span class="id">LogicalAndExpression</span><span class="punctuation">:</span><span class="id">right</span><span class="punctuation">!</span><span class="punctuation">{</span>&nbsp;<span class="other">...</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">expr</span><span class="punctuation">.</span><span class="id">release</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <p>
         For a 'positive' parser <span class="rule">a</span><span class="mono">+</span>, the generated component parser will try to match
@@ -953,14 +1252,43 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>DeclSpecifierSeq(soul::ast::cpp::SimpleDeclarationNode* declaration)</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> (DeclSpecifier:declSpecifier{ declaration->Add(declSpecifier); })<span class="mono">+</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> TypeName:typeName{ declaration->Add(typeName); }</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'positive':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">DeclarationParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DeclSpecifierSeq</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">SimpleDeclarationNode</span><span class="punctuation">*</span>&nbsp;<span class="id">declaration</span><span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">DeclSpecifier</span><span class="punctuation">:</span><span class="id">declSpecifier</span><span class="punctuation">{</span>&nbsp;<span class="id">declaration</span><span class="punctuation">-></span><span class="id">Add</span><span class="punctuation">(</span><span class="id">declSpecifier</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">+</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">TypeName</span><span class="punctuation">:</span><span class="id">typeName</span><span class="punctuation">{</span>&nbsp;<span class="id">declaration</span><span class="punctuation">-></span><span class="id">Add</span><span class="punctuation">(</span><span class="id">typeName</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+  </div>
 
     <p>
         For an 'optional' parser <span class="rule">a</span><span class="mono">?</span>, the generated component parser will try to match <span class="rule">a</span>.
@@ -973,16 +1301,41 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>ThrowExpression : soul::ast::cpp::Node*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent">THROW AssignmentExpression:exception<span class="mono">?</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// an 'optional':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ReturnStatement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">RETURN</span>&nbsp;<span class="id">Expression</span><span class="punctuation">:</span><span class="id">returnValue</span><span class="punctuation">?</span>&nbsp;<span class="id">SEMICOLON</span><span class="punctuation">!</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">ReturnStatementNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">returnValue</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h3 id="compound">
         2.7 Compound
@@ -1047,19 +1400,41 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>BreakStatement : soul::ast::cpp::StatementNode*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent">BREAK SEMICOLON!</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
-        <tr><td><span class="double_indent">return new soul::ast::cpp::BreakStatementNode(lexer.GetSourcePos(pos));</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'success' action:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">BreakStatement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">BREAK</span>&nbsp;<span class="id">SEMICOLON</span><span class="punctuation">!</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">BreakStatementNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <p>
         A 'failure-action' consists of <span class="mono">/</span> symbol followed by a C++ compound statement
@@ -1071,27 +1446,41 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>TemplateParameterList(sngcpp::symbols::Context* ctx) : Node*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent"><span class="kw">empty</span>{ ctx->PushResetFlag(sngcpp::symbols::ContextFlags::matchConstructorName); }</span></td></tr>
-        <tr><td><span class="double_indent">LANGLE}</span></td></tr>
-        <tr><td><span class="double_indent">...</span></td></tr>
-        <tr><td><span class="double_indent">RANGLE</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
-        <tr><td><span class="double_indent">ctx->PopFlags();</span></td></tr>
-        <tr><td><span class="double_indent">return node.release();</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">/</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
-        <tr><td><span class="double_indent">ctx->PopFlags();</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// a 'failure' action:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ConceptParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ConceptDefinition</span><span class="punctuation">(</span><span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">symbols</span><span class="punctuation">::</span><span class="id">Context</span><span class="punctuation">*</span>&nbsp;<span class="id">ctx</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">SourcePos</span>&nbsp;<span class="id">s</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">Node</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Assign</span><span class="punctuation">:</span><span class="id">assign</span><span class="punctuation">{</span>&nbsp;<span class="id">ctx</span><span class="punctuation">-></span><span class="id">PushSetFlag</span><span class="punctuation">(</span><span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">symbols</span><span class="punctuation">::</span><span class="id">ContextFlags</span><span class="punctuation">::</span><span class="id">parsingConceptDefinition</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ConstraintExpression</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">constraintExpr</span><span class="punctuation">{</span>&nbsp;<span class="id">ctx</span><span class="punctuation">-></span><span class="id">PopFlags</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;<span class="punctuation">/</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="id">ctx</span><span class="punctuation">-></span><span class="id">PopFlags</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         Variables for Semantic Actions
@@ -1138,13 +1527,29 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>NCName : std::string</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> NAME{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// 'pos':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NCName</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">NAME</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         The 'pass' variable
@@ -1163,22 +1568,55 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>OrExpr(var std::unique_ptr&lt;soul::xml::xpath::expr::Expr> expr) : soul::xml::xpath::expr::Expr*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent">AndExpr:left{ expr.reset(left); }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="triple_indent">OrKeyword:or_ AndExpr:right</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">)*</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>OrKeyword</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> NAME{ pass = lexer.GetKeywordToken(lexer.GetToken(pos).match) == OR; }</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// 'pass':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">OrExpr</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">expr</span><span class="punctuation">::</span><span class="id">Expr</span><span class="punctuation">></span>&nbsp;<span class="id">expr</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">expr</span><span class="punctuation">::</span><span class="id">Expr</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">AndExpr</span><span class="punctuation">:</span><span class="id">left</span><span class="punctuation">{</span>&nbsp;<span class="id">expr</span><span class="punctuation">.</span><span class="id">reset</span><span class="punctuation">(</span><span class="id">left</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">OrKeyword</span><span class="punctuation">:</span><span class="id">or_</span>&nbsp;<span class="id">AndExpr</span><span class="punctuation">:</span><span class="id">right</span><span class="punctuation">{</span>&nbsp;<span class="other">...</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">expr</span><span class="punctuation">.</span><span class="id">release</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">OrKeyword</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">NAME</span><span class="punctuation">{</span>&nbsp;<span class="id">pass</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetKeywordToken</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">match</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">==</span>&nbsp;<span class="id">OR</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         The 'vars' variable
@@ -1193,21 +1631,51 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>TypeName(var std::unique_ptr&lt;soul::ast::cpp::TypeNameNode> typeName) : soul::ast::cpp::TypeNameNode*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent">QualifiedCppId:qid{ typeName.reset(new soul::ast::cpp::TypeNameNode(lexer.GetSourcePos(pos), qid)); }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="triple_indent">LANGLE{ ++vars->leftAngleCount; typeName->SetTemplate(); }</span></td></tr>
-        <tr><td><span class="triple_indent">TemplateArgumentList(typeName.get()):args</span></td></tr>
-        <tr><td><span class="triple_indent">RANGLE{ --vars->leftAngleCount; }</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">)?</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// 'vars':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">DeclarationParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TypeName</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">TypeNameNode</span><span class="punctuation">></span>&nbsp;<span class="id">typeName</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">TypeNameNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">QualifiedCppId</span><span class="punctuation">:</span><span class="id">qid</span><span class="punctuation">{</span>&nbsp;<span class="id">typeName</span><span class="punctuation">.</span><span class="id">reset</span><span class="punctuation">(</span><span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">TypeNameNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">qid</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">LANGLE</span><span class="punctuation">{</span>&nbsp;<span class="punctuation">++</span><span class="id">vars</span><span class="punctuation">-></span><span class="id">leftAngleCount</span><span class="punctuation">;</span>&nbsp;<span class="id">typeName</span><span class="punctuation">-></span><span class="id">SetTemplate</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TemplateArgumentList</span><span class="punctuation">(</span><span class="id">typeName</span><span class="punctuation">.</span><span class="id">get</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">args</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">RANGLE</span><span class="punctuation">{</span>&nbsp;<span class="punctuation">--</span><span class="id">vars</span><span class="punctuation">-></span><span class="id">leftAngleCount</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">?</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">typeName</span><span class="punctuation">.</span><span class="id">release</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h3 id="primary">
         2.8 Primary
@@ -1220,13 +1688,13 @@
             <td class="rcontent">
                 <span class="rule"><a href="#rule.nonterminal">nonterminal</a></span> |
                 <span class="rule"><a href="#rule.primitive">primitive</a></span> |
-                <span class="rule"><a href="#rule.grouping">grouping</a></span>
+                <span class="rule"><a href="#rule.group">group</a></span>
             </td>
         </tr>
     </table>
 
     <p>
-        A 'primary' parsing expression consists either of a 'nonterminal', a 'primitive' or a 'grouping' parsing expression.
+        A 'primary' parsing expression consists either of a 'nonterminal', a 'primitive' or a 'group' parsing expression.
     </p>
 
     <h4>
@@ -1282,7 +1750,7 @@
 
     <p>
         Note: if an argument list is present, there may not be white space between the rule name identifier and the left parenthesis of the argument list.
-        Otherwise the 'nonterminal' parsing expression would conflict with the '<a href="#rule.grouping">grouping</a>'' parsing expression.
+        Otherwise the 'nonterminal' parsing expression would conflict with the '<a href="#rule.group">group</a>'' parsing expression.
     </p>
 
     <p>
@@ -1295,16 +1763,35 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>ParserStatement(soul::ast::spg::GrammarParser* parser)</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> LexerStatement(parser):lexerStatement</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> MainStatement(parser):mainStatement</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> UsingStatement(parser):usingStatement</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> RuleStatement(parser):ruleStatement</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// 'nonterminal's:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ParserFileParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ParserStatement</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">GrammarParser</span><span class="punctuation">*</span>&nbsp;<span class="id">parser</span><span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">LexerStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">lexerStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">MainStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">mainStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">UsingStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">usingStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">RuleStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">ruleStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h4>
         Primitive
@@ -1350,20 +1837,37 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>ParserFile(var std::unique_ptr<soul::ast::spg::ParserFile> parserFile) : soul::ast::spg::ParserFile*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent"><span class="kw">empty</span>{ parserFile.reset(new soul::ast::spg::ParserFile(lexer.FileName())); }</span></td></tr>
-        <tr><td><span class="double_indent">...</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
-        <tr><td><span class="double_indent">return parserFile.release();</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// 'empty':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ParserFileParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ParserFile</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">ParserFile</span><span class="punctuation">></span>&nbsp;<span class="id">parserFile</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">ParserFile</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">empty</span><span class="punctuation">{</span>&nbsp;<span class="id">parserFile</span><span class="punctuation">.</span><span class="id">reset</span><span class="punctuation">(</span><span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">ParserFile</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">FileName</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <p>
         An 'any' parsing expression consists of a keyword <span class="kw">any</span>. It matches a nonempty input and consumes, "eats", any single input token.
@@ -1373,19 +1877,27 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>ParenthesizedTokens</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LPAREN</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="kw">any</span> - (LPAREN | RPAREN))</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">|</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ParenthesizedTokens:ptokens</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="double_indent">RPAREN</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// 'any':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">DeclarationParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ParenthesizedTokens</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">LPAREN</span>&nbsp;<span class="punctuation">(</span><span class="punctuation">(</span><span class="kw">any</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="punctuation">(</span><span class="id">LPAREN</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">RPAREN</span><span class="punctuation">)</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">ParenthesizedTokens</span><span class="punctuation">:</span><span class="id">ptokens</span><span class="punctuation">)</span><span class="punctuation">*</span>&nbsp;<span class="id">RPAREN</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <p>
         A 'token-parser' parsing expression consists of a token name. If the ID of the current input token of the lexer matches the ID of the token of the
@@ -1396,19 +1908,41 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>Literal : soul::ast::cpp::LiteralNode*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span> INTEGER_LITERAL</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> FLOATING_LITERAL</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> CHAR_LITERAL</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> STRING_LITERAL</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> TRUE</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> FALSE</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">|</span> NULLPTR</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// tokens:
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">LiteralParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Literal</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">INTEGER_LITERAL</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">FLOATING_LITERAL</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">CHAR_LITERAL</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">STRING_LITERAL</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">TRUE</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">FALSE</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">NULLPTR</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">LiteralNode</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetSourcePos</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <p>
         The 'lexerless-parser' parsing expression is applicable when the lexer that the parser has been instantiated with is
@@ -1441,11 +1975,6 @@
     </table>
 
     <p>
-        The 'lexerless-parser' parsing expression is applicable when the lexer that the parser has been instantiated with is
-        <span class="mono">soul::lexer::trivial::TrivialLexer&lt;Char></span> for some <span class="mono">Char</span> type.
-    </p>
-
-    <p>
         The 'lexerless-parser' parsing expression consists of either of a 'character-parser' parsing expression or a
         'string-or-character-class-parser' parsing expression.
     </p>
@@ -1475,12 +2004,12 @@
     </p>
 
     <h4>
-        Grouping
+        Group
     </h4>
 
     <table class="grammar">
         <tr>
-            <td class="rule" id="rule.grouping">grouping</td>
+            <td class="rule" id="rule.group">group</td>
             <td class="sep">&rarr;</td>
             <td class="rcontent">
                 <span class="mono">(</span>
@@ -1491,12 +2020,12 @@
     </table>
 
     <p>
-        The 'grouping' parsing expression consists of a <span class="mono">(</span> symbol followed by a 'choice' parsing expression followed by a
-        <span class="mono">)</span> symbol. The evaluation precedence can be changed by using the 'grouping' parsing expression.
+        The 'group' parsing expression consists of a <span class="mono">(</span> symbol followed by a 'choice' parsing expression followed by a
+        <span class="mono">)</span> symbol. The evaluation precedence can be changed by using the 'group' parsing expression.
     </p>
 
     <p>
-        For a grouping parser <span class="mono">(</span><span class="rule">a</span><span class="mono">)</span>,
+        For a group parser <span class="mono">(</span><span class="rule">a</span><span class="mono">)</span>,
         the generated component parser tries to match <span class="rule">a</span>. If <span class="rule">a</span> matches,
         the generated component parser returns success to its parent component parser.
         Otherwise the input is backtracked to the position where the lexer was where starting to match <span class="rule">a</span> and
@@ -1507,21 +2036,49 @@
         Example
     </h4>
 
-    <table class="example">
-        <tr><td>...</td></tr>
-        <tr><td>NodeTest : soul::xml::xpath::expr::NodeTest*</td></tr>
-        <tr><td><span class="indent"><span class="mono">::=</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">(</span></span></td></tr>
-        <tr><td><span class="triple_indent">ProcessingInstructionKeyword:pikw LPAREN Literal:pi RPAREN</span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">{</span></span></td></tr>
-        <tr><td><span class="triple_indent">return new soul::xml::xpath::expr::PILiteralNodeTest(pi); </span></td></tr>
-        <tr><td><span class="double_indent"><span class="mono">}</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">)</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">;</span></span></td></tr>
-        <tr><td>...</td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="comment">// 'group':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">RexParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Repetition</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">context</span><span class="punctuation">::</span><span class="id">Context</span><span class="punctuation">*</span>&nbsp;<span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Nfa</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Nfa</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Primary</span><span class="punctuation">(</span><span class="id">context</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">left</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">left</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="id">STAR</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Kleene</span><span class="punctuation">(</span><span class="punctuation">*</span><span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">PLUS</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Pos</span><span class="punctuation">(</span><span class="punctuation">*</span><span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">QUEST</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Opt</span><span class="punctuation">(</span><span class="punctuation">*</span><span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">?</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">value</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
 
     <h2 id="project-file-syntax">
         3 Project File Syntax
@@ -1587,10 +2144,12 @@
         Example
     </h3>
 
-    <table class="example">
-        <tr><td><span class="kw">project</span> example.parser<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">parser</span> <span class="mono">&lt;</span>example_parser.parser<span class="mono">>;</span></td></tr>
-    </table>
+  <div class="parser">
+   <span xml:space="preserve"><span class="kw">project</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">example_parser</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+  </div>
 
 </body>
 </html>

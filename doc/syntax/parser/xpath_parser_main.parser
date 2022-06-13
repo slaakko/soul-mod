@@ -1,0 +1,18 @@
+// xpath_parser.parser:
+...
+parser XPathParser
+{
+    lexer soul::xml::xpath::lexer::XPathLexer<char32_t>;
+    main;
+
+    Expr : soul::xml::xpath::expr::Expr*
+        ::= 
+        (
+            OrExpr:orExpr
+        )
+        { 
+            return orExpr; 
+        }
+        ;
+	...
+}

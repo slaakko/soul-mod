@@ -1,0 +1,17 @@
+// a 'difference':
+...
+parser XPathParser
+{
+	...
+    PathExpr(var std::unique_ptr<soul::xml::xpath::expr::Expr> expr) : soul::xml::xpath::expr::Expr*
+        ::= 
+        (
+            (
+                LocationPath:locationPath - FunctionCall:functionCall
+            )
+            { 
+                return locationPath; 
+            }
+        )
+	...
+}

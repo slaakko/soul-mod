@@ -1,0 +1,7 @@
+project soul.token.lexer;
+tokens <soul.token>;
+extern tokens <../../soul/token/soul.cpp.token>;
+keywords <soul.keyword>;
+keywords <../../soul/keyword/soul.cpp.keyword>;
+expressions <../../soul/expression/soul.tool.expr>;
+lexer <soul_token_lexer.lexer>;

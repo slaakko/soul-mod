@@ -1,4 +1,4 @@
-<package appName="Soul" compression="deflate" id="33e1f923-1836-424a-8c03-8beb5360ad6c" includeUninstaller="true" name="setup" publisher="Seppo Laakko" sourceRootDir=".." targetRootDir="C:/soul" version="4.0.0">
+<package appName="Soul" compression="deflate" id="33e1f923-1836-424a-8c03-8beb5360ad6c" includeUninstaller="true" name="setup" publisher="Seppo Laakko" sourceRootDir=".." targetRootDir="C:/soul-4.0.0" version="4.0.0">
  <component name="binaries">
   <directory name="bin"/>
  </component>
@@ -66,12 +66,18 @@
    <exclude cascade="true" dir=".vs"/>
   </directory>
  </component>
+ <component name="root">
+  <file name="LICENSE"/>
+  <file name="README.md"/>
+  <file name="soul-mod.sln"/>
+ </component>
  <environment>
   <variable name="SOUL_ROOT" value="$TARGET_ROOT_DIR$"/>
   <pathDirectory value="$TARGET_ROOT_DIR$/bin"/>
  </environment>
  <links>
-  <linkDirectory path="$START_MENU_PROGRAMS_FOLDER$/Soul"/>
-  <link description="Documentation" iconIndex="0" linkFilePath="$START_MENU_PROGRAMS_FOLDER$/Soul/doc.lnk" path="$TARGET_ROOT_DIR$/doc/index.html" workingDirectory="$TARGET_ROOT_DIR$/doc"/>
+  <linkDirectory path="$START_MENU_PROGRAMS_FOLDER$/Soul-4.0.0"/>
+  <link description="Soul Documentation" iconIndex="0" linkFilePath="$START_MENU_PROGRAMS_FOLDER$/Soul-4.0.0/documentation.lnk" path="$TARGET_ROOT_DIR$/doc/index.html" workingDirectory="$TARGET_ROOT_DIR$/doc"/>
+  <link description="Soul Home Page" iconIndex="0" linkFilePath="$START_MENU_PROGRAMS_FOLDER$/Soul-4.0.0/home-page.lnk" path="https://slaakko.github.io/soul-mod/index.html"/>
  </links>
 </package>

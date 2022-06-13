@@ -1,0 +1,23 @@
+// 'pass':
+
+parser XPathParser
+{
+	...
+    OrExpr(var std::unique_ptr<soul::xml::xpath::expr::Expr> expr) : soul::xml::xpath::expr::Expr*
+        ::= 
+        (
+            AndExpr:left{ expr.reset(left); }
+            (
+                OrKeyword:or_ AndExpr:right{ ... }
+            )*
+        )
+        {
+            return expr.release();
+        }
+        ;
+	...
+    OrKeyword 
+        ::= NAME{ pass = lexer.GetKeywordToken(lexer.GetToken(pos).match) == OR; }
+        ;
+	...
+}

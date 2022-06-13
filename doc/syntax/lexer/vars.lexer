@@ -1,0 +1,22 @@
+// 'vars':
+
+lexer SlgLexer
+{
+	rules
+	{
+		...
+		">" { return RANGLE; }
+		">>" $(0) { return SHIFT_RIGHT; }
+		...
+	}
+
+    variables 
+    {
+        int leftAngleCount;
+    }
+	
+    actions
+    {
+        $(0)={ if (vars->leftAngleCount > 0) return INVALID_TOKEN; }
+    }
+}
