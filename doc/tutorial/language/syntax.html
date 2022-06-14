@@ -1,19 +1,24 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <title>Minilang Syntax</title>
-    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
     <h1>
-        Minilang Syntax
+        1.1 Minilang Syntax
     </h1>
 
     <h2>
         Types
     </h2>
+
+    <p>
+        Minilang contains three types: <span class="kw">int</span> for representing integers, <span class="kw">bool</span> for representing truth values and
+        <span class="kw">void</span> for denoting lack of type.
+    </p>
 
     <table class="grammar">
         <tr>
@@ -30,6 +35,10 @@
     <h2>
         Literals
     </h2>
+
+    <p>
+        There are literals for representing Boolean and integer values.
+    </p>
 
     <table class="grammar">
         <tr>
@@ -56,7 +65,7 @@
             </td>
         </tr>
         <tr>
-            <td class="rule" id="rule.integer-literal">digit&#8209;sequence</td>
+            <td class="rule" id="rule.digit-sequence">digit&#8209;sequence</td>
             <td class="sep">&rarr;</td>
             <td class="rcontent">
                 [<span class="mono">0</span>-<span class="mono">9</span>]+
@@ -67,6 +76,10 @@
     <h2>
         Identifiers
     </h2>
+
+    <p>
+        A Minilang identifier can contain non-ASCII letters also. Minilang source files are expected to be UTF-8 encoded for this to work.
+    </p>
 
     <table class="grammar">
         <tr>
@@ -81,6 +94,20 @@
     <h2>
         Expressions
     </h2>
+
+    <p>
+        The grammar productions
+        <ul>
+            <li><a href="#rule.primary-expression">primary&#8209;expression</a>,</li>
+            <li><a href="#rule.postfix-expression">postfix&#8209;expression</a>,</li>
+            <li><a href="#rule.unary-expression">unary&#8209;expression</a>,</li>
+            <li><a href="#rule.multiplicative-expression">multiplicative&#8209;expression</a>,</li>
+            <li><a href="#rule.additive-expression">additive&#8209;expression</a>,</li>
+            <li><a href="#rule.relational-expression">relational&#8209;expression</a> and </li>
+            <li><a href="#rule.equality-expression">equality&#8209;expression</a></li>
+        </ul>
+        determine the precedence levels of the minilang operators in the order of decreasing precedence.
+    </p>
 
     <table class="grammar">
         <tr>
@@ -214,6 +241,10 @@
         Statements
     </h2>
 
+    <p>
+        There are statements for sequence, choice and repetition, and for creating and assigning variables.
+    </p>
+
     <table class="grammar">
         <tr>
             <td class="rule" id="rule.statement">statement</td>
@@ -222,9 +253,9 @@
                 <span class="rule"><a href="#rule.if-statement">if&#8209;statement</a></span> |
                 <span class="rule"><a href="#rule.while-statement">while&#8209;statement</a></span> |
                 <span class="rule"><a href="#rule.return-statement">return&#8209;statement</a></span> |
+                <span class="rule"><a href="#rule.compound-statement">compound&#8209;statement</a></span> |
                 <span class="rule"><a href="#rule.construction-statement">construction&#8209;statement</a></span> |
-                <span class="rule"><a href="#rule.assignment-statement">assignment&#8209;statement</a></span> |
-                <span class="rule"><a href="#rule.compound-statement">compound&#8209;statement</a></span>
+                <span class="rule"><a href="#rule.assignment-statement">assignment&#8209;statement</a></span>
             </td>
         </tr>
         <tr>
@@ -262,6 +293,15 @@
             </td>
         </tr>
         <tr>
+            <td class="rule" id="rule.compound-statement">compound&#8209;statement</td>
+            <td class="sep">&rarr;</td>
+            <td class="rcontent">
+                <span class="mono">{</span>
+                <span class="rule"><a href="#rule.statement">statement</a></span>*
+                <span class="mono">}</span>
+            </td>
+        </tr>
+        <tr>
             <td class="rule" id="rule.construction-statement">construction&#8209;statement</td>
             <td class="sep">&rarr;</td>
             <td class="rcontent">
@@ -282,20 +322,15 @@
                 <span class="mono">;</span>
             </td>
         </tr>
-        <tr>
-            <td class="rule" id="rule.compound-statement">compound&#8209;statement</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="mono">{</span>
-                <span class="rule"><a href="#rule.statement">statement</a></span>*
-                <span class="mono">}</span>
-            </td>
-        </tr>
     </table>
 
     <h2>
         Functions
     </h2>
+
+    <p>
+        Minilang functions can take parameters, do simple computations and return a result.
+    </p>
 
     <table class="grammar">
         <tr>
@@ -334,6 +369,10 @@
     <h2>
         Source Files
     </h2>
+
+    <p>
+        A minilang source file consists of a sequence of functions.
+    </p>
 
     <table class="grammar">
         <tr>

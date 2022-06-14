@@ -1,0 +1,34 @@
+export module minilang.lexer;
+
+import minilang.token;
+import minilang.keyword;
+import minilang.expr;
+
+lexer MinilangLexer
+{
+    rules
+    {
+        "{separators}" {}
+        "{identifier}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{integer}" { return INTEGER_LITERAL; }
+        ";" { return SEMICOLON; }
+        "\(" { return LPAREN; }
+        "\)" { return RPAREN; }
+        "\{" { return LBRACE; }
+        "\}" { return RBRACE; }
+        "\+" { return PLUS; }
+        "-" { return MINUS; }
+        "\*" { return MUL; }
+        "/" { return DIV; }
+        "%" { return MOD; }
+        "!" { return NOT; }
+        "==" { return EQ; }
+        "!=" { return NEQ; }
+        "<=" { return LEQ; }
+        ">=" { return GEQ; }
+        "<" { return LESS; }
+        ">" { return GREATER; }
+        "=" { return ASSIGN; }
+        "," { return COMMA; }
+    }
+}

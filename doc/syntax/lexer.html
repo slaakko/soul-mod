@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>
-        Syntax of Lexical Analyzer Files
+        2 Syntax of Lexical Analyzer Files
     </h1>
 
     <h2>
@@ -16,15 +16,15 @@
     </h2>
 
     <div class="toc">
-        1 <a href="#token-file-syntax">Token File Syntax</a><br />
-        2 <a href="#keyword-file-syntax">Keyword File Syntax</a><br />
-        3 <a href="#expression-file-syntax">Expression File Syntax</a><br />
-        4 <a href="#lexer-file-syntax">Lexer File Syntax</a><br />
-        5 <a href="#project-file-syntax">Project File Syntax</a><br />
+        2.1 <a href="#token-file-syntax">Token File Syntax</a><br />
+        2.2 <a href="#keyword-file-syntax">Keyword File Syntax</a><br />
+        2.3 <a href="#expression-file-syntax">Expression File Syntax</a><br />
+        2.4 <a href="#lexer-file-syntax">Lexer File Syntax</a><br />
+        2.5 <a href="#project-file-syntax">Project File Syntax</a><br />
     </div>
 
     <h2 id="token-file-syntax">
-        1 Token File Syntax
+        2.1 Token File Syntax
     </h2>
 
     <table class="grammar">
@@ -93,19 +93,29 @@
     </p>
 
     <p>
-        The token info string is included in error message when corresponding token should match but does not in an expectation parser.
+        The token info string is included in the error message of an exception thrown by a an <a href="parser.html#rule.expectation">expectation</a> parser
+        when corresponding token should match but does not.
     </p>
 
     <h3>
         Example
     </h3>
 
-    <table class="example">
-        <tr><td><span class="kw">tokens</span> example.token</td></tr>
-        <tr><td>{</td></tr>
-        <tr><td><span class="indent">(OR, "'or'"), (AND, "'and'"), (EQ, "'='"), (NEQ, "'!='"), (LEQ, "'<='"), (GEQ, "'>='"), (LESS, "'<'"), (GREATER, "'>'")</span></td></tr>
-        <tr><td>}</td></tr>
-    </table>
+    <div class="parser">
+        <span xml:space="preserve"><span class="comment">// example.token:
+</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">token</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">OR</span><span class="punctuation">,</span>&nbsp;<span class="string">"'or'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">AND</span><span class="punctuation">,</span>&nbsp;<span class="string">"'and'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">EQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">NEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'!='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LESS</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GREATER</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>'"</span><span class="punctuation">)</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">}</span></span>
+        <br />
+    </div>
 
     <p>
         I use qualified identifiers ending with <strong>.token</strong> for token module identifiers.
@@ -116,7 +126,7 @@
     </p>
 
     <h2 id="keyword-file-syntax">
-        2 Keyword File Syntax
+        2.2 Keyword File Syntax
     </h2>
 
     <table class="grammar">
@@ -197,12 +207,21 @@
         Example
     </h3>
 
-    <table class="example">
-        <tr><td><span class="kw">keywords</span> example.keyword</td></tr>
-        <tr><td>{</td></tr>
-        <tr><td><span class="indent">("or", OR), ("and", AND), ("div", DIV), ("mod", MOD)</span></td></tr>
-        <tr><td>}</td></tr>
-    </table>
+    <div class="parser">
+        <span xml:space="preserve"><span class="comment">// example.keyword:
+</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">keyword</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"or"</span><span class="punctuation">,</span>&nbsp;<span class="id">OR</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"and"</span><span class="punctuation">,</span>&nbsp;<span class="id">AND</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"div"</span><span class="punctuation">,</span>&nbsp;<span class="id">DIV</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"mod"</span><span class="punctuation">,</span>&nbsp;<span class="id">MOD</span><span class="punctuation">)</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">}</span></span>
+        <br />
+    </div>
 
     <p>
         I use qualified identifiers ending with <strong>.keyword</strong> for keyword module identifiers.
@@ -213,7 +232,7 @@
     </p>
 
     <h2 id="expression-file-syntax">
-        3 Expression File Syntax
+        2.3 Expression File Syntax
     </h2>
 
     <table class="grammar">
@@ -298,20 +317,37 @@
         Example
     </h3>
 
-    <table class="example">
-        <tr><td><span class="kw">expressions</span> example.expr</td></tr>
-        <tr><td>{</td></tr>
-        <tr><td><span class="indent">ws = "[\n\r\t ]";</span></td></tr>
-        <tr><td><span class="indent">separators = "{ws}+";</span></td></tr>
-        <tr><td><span class="indent">dq_string = "\"[^\"]*\"";</span></td></tr>
-        <tr><td><span class="indent">sq_string = "'[^']*'";</span></td></tr>
-        <tr><td><span class="indent">digits = "[0-9]+";</span></td></tr>
-        <tr><td><span class="indent">number = "{digits}(\.{digits}?)?|\.{digits}";</span></td></tr>
-        <tr><td><span class="indent">name_start_char = ...</span></td></tr>
-        <tr><td><span class="indent">name_char = ...</span></td></tr>
-        <tr><td><span class="indent">name = "{name_start_char}{name_char}*";</span></td></tr>
-        <tr><td>}</td></tr>
-    </table>
+    <div class="parser">
+        <span xml:space="preserve"><span class="comment">// example.expr:
+</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ws</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[\n\r\t ]"</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">separators</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{ws}+"</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">dq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"\"[^\"]*\""</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">sq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"'[^']*'"</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">digits</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[0-9]+"</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">number</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{digits}(\.{digits}?)?|\.{digits}"</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_start_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{name_start_char}{name_char}*"</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">}</span></span>
+        <br />
+    </div>
 
     <p>
         I use qualified identifiers ending with <strong>.expr</strong> for expression module identifiers.
@@ -322,7 +358,7 @@
     </p>
 
     <h2 id="lexer-file-syntax">
-        4 Lexer File Syntax
+        2.4 Lexer File Syntax
     </h2>
 
     <table class="grammar">
@@ -463,10 +499,94 @@
     </p>
 
     <p>
-        Each lexer rule consists of an expression string optionally followed by an action identifier followed by a C++ compound statement.
+        Each lexer rule consists of an <a href="#rule.expression-string">expression string</a> optionally followed by an action identifier followed by a C++ compound statement.
         Typically the compound statement returns a token identifier to the parser.
         The compound statement can also be empty in which case the corresponding token is skipped without returning it to the parser.
     </p>
+
+    <h3>
+        Example
+    </h3>
+
+    <div class="parser">
+        <span xml:space="preserve"><span class="comment">// example.lexer:
+</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">example_lexer</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">keyword</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="id">ExampleLexer</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">rules</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{separators}"</span><span class="punctuation">{</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{name}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NAME</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{number}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NUMBER</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{dq_string}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DQ_STRING</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{sq_string}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">SQ_STRING</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">EQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\.\."</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOT_DOT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\."</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"::"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COLON_COLON</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">":"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COLON</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"$"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOLLAR</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">","</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COMMA</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"@"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">AT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\["</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LBRACKET</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\]"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RBRACKET</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\("</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\)"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">}</span></span>
+        <br />
+    </div>
+
+    <p>
+        I use <strong>_lexer.lexer</strong> suffix for lexer module names.
+    </p>
+
+    <p>
+        Expression file extension is <span class="mono">.lexer</span>
+    </p>
+
+    <h3 id="vars">
+        Variables and Actions
+    </h3>
 
     <p>
         A lexer may also contain C++ variable declarations that can be accessed by the lexer actions and semantic actions of the parser.
@@ -477,59 +597,83 @@
 
     <p>
         A lexer may also contain actions each of which can be associated to some lexer rule.
-        Typically an action evaluates a lexer variable and either does nothing or returns <strong>INVALID_TOKEN</strong> token based on the value of the lexer variable.
-        If the action does nothing the action accepts the rule associated with the action.
-        If the action returns <strong>INVALID_TOKEN</strong> the lexer rejects the current rule containing the identifier of the current action and returns the token
-        id that has matched before the current rule instead.
+        An action consists of an action identifier followed by the <span class="mono">=</span> symbol followed by a C++ compound statement.
+        An action identifier consists of the <span class="mono">$</span> symbol followed by a parenthesized digit sequence.
+        Typically an action evaluates a lexer variable and either does nothing or returns <strong>INVALID_TOKEN</strong> token based on the value of the variable.
+        If the action does nothing, the action accepts the rule associated with the action.
+        If the action returns <strong>INVALID_TOKEN</strong>, the lexer rejects the rule associated with the action identifier and accepts a rule
+        that has matched before that rule, if any, instead.
+    </p>
+
+    <p>
+        Consider implementing a parser that can parse nested template id's such as <span class="mono">std::vector&lt;std::unique_ptr&lt;Foo>></span> that ends with two right angle brackets.
+        The problem is that without a lexical hack the lexer would return a <strong>SHIFT_RIGHT</strong> token for the ending right angle brackets, not two <strong>RANGLE</strong>
+        tokens as we would like. One solution is that the parser increments a <em>leftAngleCount</em> variable when parsing a template argument list
+        each time seeing a <strong>LANGLE</strong> token (see <a href="parser.html#vars-example">parser 'vars' example</a>).
+        In the middle of template id the <em>leftAngleCount</em> is now two.
+        Then when ending the template id, for the two <span class="mono">></span> characters, the <em>leftAngleCount</em> is greater than zero for them,
+        so the lexer recects the <span class="mono">>></span> rule that would return <strong>SHIFT_RIGHT</strong>.
+        The rule for the <span class="mono">">"</span> string has matched in addition to the rule for the <span class="mono">">>"</span> string, and comes before that rule,
+        so the lexer accepts the rule for the <span class="mono">">"</span> string instead.
+        Now each time seeing a <span class="mono">></span> character in a template id, the lexer returns the <strong>RANGLE</strong> token as desired.
     </p>
 
     <h3>
         Example
     </h3>
 
-    <table class="example">
-        <tr><td><span class="kw">export</span> <span class="kw">module</span> example_lexer.lexer<span class="mono">;</span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="kw">import</span> example.token<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">import</span> example.keyword<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">import</span> example.expr<span class="mono">;</span></td></tr>
-        <tr><td></td></tr>
-        <tr><td><span class="kw">lexer</span> ExampleLexer</td></tr>
-        <tr><td><span class="mono">{</span></td></tr>
-        <tr><td><span class="indent"><span class="kw">rules</span></span></td></tr>
-        <tr><td><span class="indent"><span class="mono">{</span></span></td></tr>
-        <tr><td><span class="double_indent">"{separators}"{ }</span></td></tr>
-        <tr><td><span class="double_indent">"{name}" { return NAME; }</span></td></tr>
-        <tr><td><span class="double_indent">"{number}" { return NUMBER; }</span></td></tr>
-        <tr><td><span class="double_indent">"{dq_string}" { return DQ_STRING; }</span></td></tr>
-        <tr><td><span class="double_indent">"{sq_string}" { return SQ_STRING; }</span></td></tr>
-        <tr><td><span class="double_indent">"=" { return EQ; }</span></td></tr>
-        <tr><td><span class="double_indent">...</span></td></tr>
-        <tr><td><span class="double_indent">"\.\." { return DOT_DOT; }</span></td></tr>
-        <tr><td><span class="double_indent">"\." { return DOT; }</span></td></tr>
-        <tr><td><span class="double_indent">"::" { return COLON_COLON; }</span></td></tr>
-        <tr><td><span class="double_indent">":" { return COLON; }</span></td></tr>
-        <tr><td><span class="double_indent">"$" { return DOLLAR; }</span></td></tr>
-        <tr><td><span class="double_indent">"," { return COMMA; }</span></td></tr>
-        <tr><td><span class="double_indent">"@" { return AT; }</span></td></tr>
-        <tr><td><span class="double_indent">"\[" { return LBRACKET; }</span></td></tr>
-        <tr><td><span class="double_indent">"\]" { return RBRACKET; }</span></td></tr>
-        <tr><td><span class="double_indent">"\(" { return LPAREN; }</span></td></tr>
-        <tr><td><span class="double_indent">"\)" { return RPAREN; }</span></td></tr>
-        <tr><td><span class="indent"><span class="mono">}</span></span></td></tr>
-        <tr><td><span class="mono">}</span></td></tr>
-    </table>
-
-    <p>
-        I use <strong>_lexer.lexer</strong> suffix for lexer module names.
-    </p>
-
-    <p>
-        Expression file extension is <span class="mono">.lexer</span>
-    </p>
+    <div class="parser">
+        <span xml:space="preserve"><span class="comment">// 'vars':
+</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="id">SlgLexer</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">rules</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LANGLE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RANGLE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">>"</span>&nbsp;<span class="punctuation">$</span><span class="punctuation">(</span><span class="number">0</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">SHIFT_RIGHT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve" />
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">variables</span>&nbsp;</span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">int</span>&nbsp;<span class="id">leftAngleCount</span><span class="punctuation">;</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">actions</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">$</span><span class="punctuation">(</span><span class="number">0</span><span class="punctuation">)</span><span class="punctuation">=</span><span class="punctuation">{</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="punctuation">(</span><span class="id">vars</span><span class="punctuation">-></span><span class="id">leftAngleCount</span>&nbsp;<span class="punctuation">></span>&nbsp;<span class="number">0</span><span class="punctuation">)</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">INVALID_TOKEN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+        <br />
+        <span xml:space="preserve"><span class="punctuation">}</span></span>
+        <br />
+    </div>
 
     <h2 id="project-file-syntax">
-        5 Project File Syntax
+        2.5 Project File Syntax
     </h2>
 
     <table class="grammar">
@@ -614,8 +758,8 @@
     </p>
 
     <p>
-        If a token file is declared <span class="kw">extern</span>, no C++ code for it is generated. It is then expected to be included nonexternally in another
-        lexer project.
+        If a token file is declared <span class="kw">extern</span>, no C++ code for it is generated in this lexer project.
+        It is then expected to be included nonexternally in another lexer project.
     </p>
 
     <p>

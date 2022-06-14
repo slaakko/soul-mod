@@ -1,0 +1,6 @@
+// example.keyword:
+
+keywords example.keyword
+{
+	("or", OR), ("and", AND), ("div", DIV), ("mod", MOD)
+}

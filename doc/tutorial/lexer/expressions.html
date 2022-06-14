@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Adding Expressions</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>1.2.4 Adding Expressions</h1>
+
+    <p>
+        These are the regular expressions used by the lexer rules.
+    </p>
+
+    <p>
+        The expression file syntax is described in <a href="../../syntax/lexer.html#expression-file-syntax">this</a> document.
+    </p>
+
+    <p>
+        To add expressions to the minilang language:
+    </p>
+
+    <ul>
+        <li>
+            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
+        </li>
+        <li>
+            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.expr</span>.
+        </li>
+        <li>
+            Add the following code to the expression file:<br />
+            <div class="parser">
+                <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">expr</span></span>
+                <br />
+                <span xml:space="preserve"><span class="punctuation">{</span></span>
+                <br />
+                <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">digit</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[0-9]"</span><span class="punctuation">;</span></span>
+                <br />
+                <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">integer</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{digit}+"</span><span class="punctuation">;</span></span>
+                <br />
+                <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">identifier</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{unicode_id_start}{unicode_id_cont}*"</span><span class="punctuation">;</span></span>
+                <br />
+                <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ws</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[\n\r\t ]"</span><span class="punctuation">;</span></span>
+                <br />
+                <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">separators</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{ws}+"</span><span class="punctuation">;</span></span>
+                <br />
+                <span xml:space="preserve"><span class="punctuation">}</span></span>
+                <br />
+            </div>
+
+        </li>
+    </ul>
+</body>
+</html>

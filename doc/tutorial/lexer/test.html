@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Testing</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>1.2.9 Testing</h1>
+
+    <p>
+        Running minilang with the following arguments should generate the following output:
+    </p>
+
+    <div class="console">
+        C:\minilang\x64\Release>minilang --verbose --test-lexer c:\soul-4.0.0\examples\minilang_tests\fibonacci.minilang<br />
+        testing lexer with file:<br />
+        > C:/soul-4.0.0/examples/minilang_tests/fibonacci.minilang<br />
+        INT[int]<br />
+        ID[fibonacci]<br />
+        LPAREN[(]<br />
+        INT[int]<br />
+        ID[n]<br />
+        RPAREN[)]<br />
+        LBRACE[{]<br />
+        IF[if]<br />
+        LPAREN[(]<br />
+        ID[n]<br />
+        EQ[==]<br />
+        INTEGER_LITERAL[0]<br />
+        RPAREN[)]<br />
+        RETURN[return]<br />
+        INTEGER_LITERAL[0]<br />
+        SEMICOLON[;]<br />
+        IF[if]<br />
+        LPAREN[(]<br />
+        ID[n]<br />
+        EQ[==]<br />
+        INTEGER_LITERAL[1]<br />
+        RPAREN[)]<br />
+        RETURN[return]<br />
+        INTEGER_LITERAL[1]<br />
+        SEMICOLON[;]<br />
+        RETURN[return]<br />
+        ID[fibonacci]<br />
+        LPAREN[(]<br />
+        ID[n]<br />
+        MINUS[-]<br />
+        INTEGER_LITERAL[1]<br />
+        RPAREN[)]<br />
+        PLUS[+]<br />
+        ID[fibonacci]<br />
+        LPAREN[(]<br />
+        ID[n]<br />
+        MINUS[-]<br />
+        INTEGER_LITERAL[2]<br />
+        RPAREN[)]<br />
+        SEMICOLON[;]<br />
+        RBRACE[}]<br />
+        success<br />
+    </div>
+</body>
+</html>

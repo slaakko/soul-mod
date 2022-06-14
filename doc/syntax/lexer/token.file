@@ -1,0 +1,6 @@
+// example.token:
+
+tokens example.token
+{
+	(OR, "'or'"), (AND, "'and'"), (EQ, "'='"), (NEQ, "'!='"), (LEQ, "'<='"), (GEQ, "'>='"), (LESS, "'<'"), (GREATER, "'>'")
+}

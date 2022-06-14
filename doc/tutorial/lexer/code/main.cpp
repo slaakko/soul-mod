@@ -1,3 +1,5 @@
+// main.cpp:
+
 import std.core;
 import util;
 import soul.lexer;
@@ -8,7 +10,7 @@ void TestLexer(const std::string& fileName, bool verbose)
     util::CodeFormatter formatter(std::cout);
     if (verbose)
     {
-        formatter.WriteLine("testing lexer with file:");
+        formatter.WriteLine("test lexer:");
         formatter.WriteLine("> " + fileName);
     }
     std::string content = util::ReadFile(fileName);
@@ -39,7 +41,7 @@ int main(int argc, const char** argv)
 {
     try
     {
-        util::Init();
+        util::Init(); // this initializes the util library, for example the Unicode support
         std::vector<std::string> fileNames;
         bool verbose = false;
         Command command = Command::testLexer;

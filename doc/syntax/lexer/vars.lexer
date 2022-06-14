@@ -5,6 +5,7 @@ lexer SlgLexer
 	rules
 	{
 		...
+		"<" { return LANGLE; }
 		">" { return RANGLE; }
 		">>" $(0) { return SHIFT_RIGHT; }
 		...

@@ -1,0 +1,14 @@
+// example.expr:
+
+expressions example.expr
+{
+    ws = "[\n\r\t ]";
+    separators = "{ws}+";
+    dq_string = "\"[^\"]*\"";
+    sq_string = "'[^']*'";
+    digits = "[0-9]+";
+    number = "{digits}(\.{digits}?)?|\.{digits}";
+    name_start_char = ...
+    name_char = ...
+    name = "{name_start_char}{name_char}*";
+}

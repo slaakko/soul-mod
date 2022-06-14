@@ -1,0 +1,4 @@
+keywords minilang.keyword
+{
+    ("if", IF), ("else", ELSE), ("while", WHILE), ("return", RETURN), ("int", INT), ("bool", BOOL), ("void", VOID), ("true", TRUE), ("false", FALSE)
+}

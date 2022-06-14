@@ -1,0 +1,32 @@
+// example.lexer:
+
+export module example_lexer.lexer;
+
+import example.token;
+import example.keyword;
+import example.expr;
+
+lexer ExampleLexer
+{
+	rules
+	{
+		"{separators}"{ }
+		"{name}" { return NAME; }
+		"{number}" { return NUMBER; }
+		"{dq_string}" { return DQ_STRING; }
+		"{sq_string}" { return SQ_STRING; }
+		"=" { return EQ; }
+		...
+		"\.\." { return DOT_DOT; }
+		"\." { return DOT; }
+		"::" { return COLON_COLON; }
+		":" { return COLON; }
+		"$" { return DOLLAR; }
+		"," { return COMMA; }
+		"@" { return AT; }
+		"\[" { return LBRACKET; }
+		"\]" { return RBRACKET; }
+		"\(" { return LPAREN; }
+		"\)" { return RPAREN; }
+	}
+}
