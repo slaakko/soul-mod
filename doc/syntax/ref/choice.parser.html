@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta charset="utf-8"/>
+  <title>choice.parser</title>
+  <style>
+   div.soul
+{
+ background-color: #e6ffee;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.soul .kw
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+.soul .id
+{
+ color: #000000;
+}
+
+.soul .number
+{
+ color: #000000;
+}
+
+.soul .other
+{
+ color: #000000;
+}
+
+.soul .string
+{
+ color: #a31515;
+}
+
+.soul .comment
+{
+ color: #006600;
+}
+
+.soul .punctuation
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+</style>
+ </head>
+ <body>
+  <div class="soul">
+   <span xml:space="preserve"><span class="comment">// a 'choice':
+</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Statement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">StatementNode</span><span class="punctuation">*</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">LabeledStatement</span><span class="punctuation">:</span><span class="id">labeledStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">labeledStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">EmptyStatement</span><span class="punctuation">:</span><span class="id">emptyStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">emptyStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">CompoundStatement</span><span class="punctuation">:</span><span class="id">compoundStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">compoundStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">SelectionStatement</span><span class="punctuation">:</span><span class="id">selectionStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">selectionStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">IterationStatement</span><span class="punctuation">:</span><span class="id">iterationStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">iterationStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">JumpStatement</span><span class="punctuation">:</span><span class="id">jumpStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">jumpStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">DeclarationStatement</span><span class="punctuation">:</span><span class="id">declarationStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">declarationStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">TryStatement</span><span class="punctuation">:</span><span class="id">tryStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">tryStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">ExpressionStatement</span><span class="punctuation">:</span><span class="id">expressionStatement</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">expressionStatement</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;&nbsp;</span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ </body>
+</html>

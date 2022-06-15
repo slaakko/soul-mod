@@ -1,0 +1,340 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// main.cpp:
+</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">std</span><span class="other">.</span><span class="id">core</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">util</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">lexer</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">lexer</span><span class="other">.</span><span class="id">xml</span><span class="other">.</span><span class="id">parsing</span><span class="other">.</span><span class="id">log</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="other">.</span><span class="id">ast</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="other">.</span><span class="id">lexer</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="other">.</span><span class="id">parser</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">void</span>&nbsp;<span class="id">TestLexer</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">fileName</span><span class="other">,</span>&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">verbose</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">CodeFormatter</span>&nbsp;<span class="id">formatter</span><span class="other">(</span><span class="id">std</span><span class="other">::</span><span class="id">cout</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">verbose</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">formatter</span><span class="other">.</span><span class="id">WriteLine</span><span class="other">(</span><span class="string">"testing lexer with file:"</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">formatter</span><span class="other">.</span><span class="id">WriteLine</span><span class="other">(</span><span class="string">"> "</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span>&nbsp;<span class="id">content</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ReadFile</span><span class="other">(</span><span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span>&nbsp;<span class="id">ucontent</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ToUtf32</span><span class="other">(</span><span class="id">content</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">lexer</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">minilang</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">MakeLexer</span><span class="other">(</span><span class="id">ucontent</span><span class="other">.</span><span class="id">c_str</span><span class="other">(</span><span class="other">)</span><span class="other">,</span>&nbsp;<span class="id">ucontent</span><span class="other">.</span><span class="id">c_str</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">ucontent</span><span class="other">.</span><span class="id">length</span><span class="other">(</span><span class="other">)</span><span class="other">,</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">TestLexer</span><span class="other">(</span><span class="id">lexer</span><span class="other">,</span>&nbsp;<span class="id">formatter</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">void</span>&nbsp;<span class="id">TestParser</span><span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">&amp;</span>&nbsp;<span class="id">fileName</span><span class="other">,</span>&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">verbose</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">CodeFormatter</span>&nbsp;<span class="id">formatter</span><span class="other">(</span><span class="id">std</span><span class="other">::</span><span class="id">cout</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">verbose</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">formatter</span><span class="other">.</span><span class="id">WriteLine</span><span class="other">(</span><span class="string">"testing parser with file:"</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">formatter</span><span class="other">.</span><span class="id">WriteLine</span><span class="other">(</span><span class="string">"> "</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span>&nbsp;<span class="id">content</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ReadFile</span><span class="other">(</span><span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">u32string</span>&nbsp;<span class="id">ucontent</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">ToUtf32</span><span class="other">(</span><span class="id">content</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">lexer</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">minilang</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">MakeLexer</span><span class="other">(</span><span class="id">ucontent</span><span class="other">.</span><span class="id">c_str</span><span class="other">(</span><span class="other">)</span><span class="other">,</span>&nbsp;<span class="id">ucontent</span><span class="other">.</span><span class="id">c_str</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">ucontent</span><span class="other">.</span><span class="id">length</span><span class="other">(</span><span class="other">)</span><span class="other">,</span>&nbsp;<span class="id">fileName</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetRuleNameMapPtr</span><span class="other">(</span><span class="id">minilang</span><span class="other">::</span><span class="id">spg</span><span class="other">::</span><span class="id">rules</span><span class="other">::</span><span class="id">GetRuleNameMapPtr</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">XmlParsingLog</span>&nbsp;<span class="id">log</span><span class="other">(</span><span class="id">std</span><span class="other">::</span><span class="id">cout</span><span class="other">)</span><span class="other">;</span>&nbsp;<span class="comment">// set the SOUL_PARSER_DEBUG_SUPPORT preprocessing symbol in the parser project settings to enable logging.
+</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">lexer</span><span class="other">.</span><span class="id">SetLog</span><span class="other">(</span><span class="other">&amp;</span><span class="id">log</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">minilang</span><span class="other">::</span><span class="id">ast</span><span class="other">::</span><span class="id">SourceFileNode</span><span class="other">></span>&nbsp;<span class="id">sourceFile</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">minilang</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">source</span><span class="other">::</span><span class="id">file</span><span class="other">::</span><span class="id">SourceFileParser</span><span class="other">&lt;</span><span class="kw">decltype</span><span class="other">(</span><span class="id">lexer</span><span class="other">)</span><span class="other">></span><span class="other">::</span><span class="id">Parse</span><span class="other">(</span><span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">enum</span>&nbsp;<span class="kw">class</span>&nbsp;<span class="id">Command</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">testLexer</span><span class="other">,</span>&nbsp;<span class="id">testParser</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">void</span>&nbsp;<span class="id">PrintHelp</span><span class="other">(</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"minilang example"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"usage: minilang [options] { FILE.minilang }"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"options:"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"--verbose | -v:"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"  Be verbose."</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"--help | -h:"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"  Print help and exit."</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"--test-lexer | -l:"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"  Test lexer."</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"--test-parser | -p:"</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="string">"  Test parser."</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">int</span>&nbsp;<span class="id">main</span><span class="other">(</span><span class="kw">int</span>&nbsp;<span class="id">argc</span><span class="other">,</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="kw">char</span><span class="other">*</span><span class="other">*</span>&nbsp;<span class="id">argv</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">try</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">Init</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">vector</span><span class="other">&lt;</span><span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">></span>&nbsp;<span class="id">fileNames</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">verbose</span>&nbsp;<span class="other">=</span>&nbsp;<span class="kw">false</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Command</span>&nbsp;<span class="id">command</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">Command</span><span class="other">::</span><span class="id">testLexer</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span>&nbsp;<span class="other">(</span><span class="kw">int</span>&nbsp;<span class="id">i</span>&nbsp;<span class="other">=</span>&nbsp;<span class="number">1</span><span class="other">;</span>&nbsp;<span class="id">i</span>&nbsp;<span class="other">&lt;</span>&nbsp;<span class="id">argc</span><span class="other">;</span>&nbsp;<span class="other">++</span><span class="id">i</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span>&nbsp;<span class="id">arg</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">argv</span><span class="other">[</span><span class="id">i</span><span class="other">]</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">arg</span><span class="other">.</span><span class="id">starts_with</span><span class="other">(</span><span class="string">"--"</span><span class="other">)</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">arg</span>&nbsp;<span class="other">==</span>&nbsp;<span class="string">"--verbose"</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">verbose</span>&nbsp;<span class="other">=</span>&nbsp;<span class="kw">true</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">arg</span>&nbsp;<span class="other">==</span>&nbsp;<span class="string">"--help"</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PrintHelp</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">1</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">arg</span>&nbsp;<span class="other">==</span>&nbsp;<span class="string">"--test-lexer"</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">command</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">Command</span><span class="other">::</span><span class="id">testLexer</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">arg</span>&nbsp;<span class="other">==</span>&nbsp;<span class="string">"--test-parser"</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">command</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">Command</span><span class="other">::</span><span class="id">testParser</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">throw</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">runtime_error</span><span class="other">(</span><span class="string">"unknown option '"</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">arg</span>&nbsp;<span class="other">+</span>&nbsp;<span class="string">"'"</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">arg</span><span class="other">.</span><span class="id">starts_with</span><span class="other">(</span><span class="string">"-"</span><span class="other">)</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span>&nbsp;<span class="id">options</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">arg</span><span class="other">.</span><span class="id">substr</span><span class="other">(</span><span class="number">1</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span>&nbsp;<span class="other">(</span><span class="kw">char</span>&nbsp;<span class="id">o</span>&nbsp;<span class="other">:</span>&nbsp;<span class="id">options</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">o</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="string">'v'</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">verbose</span>&nbsp;<span class="other">=</span>&nbsp;<span class="kw">true</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="string">'h'</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PrintHelp</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">1</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="string">'l'</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">command</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">Command</span><span class="other">::</span><span class="id">testLexer</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="string">'p'</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">command</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">Command</span><span class="other">::</span><span class="id">testParser</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">default</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">throw</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">runtime_error</span><span class="other">(</span><span class="string">"unknown option '-"</span>&nbsp;<span class="other">+</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">string</span><span class="other">(</span><span class="number">1</span><span class="other">,</span>&nbsp;<span class="id">o</span><span class="other">)</span>&nbsp;<span class="other">+</span>&nbsp;<span class="string">"'"</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">else</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">fileNames</span><span class="other">.</span><span class="id">push_back</span><span class="other">(</span><span class="id">util</span><span class="other">::</span><span class="id">GetFullPath</span><span class="other">(</span><span class="id">arg</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">fileNames</span><span class="other">.</span><span class="id">empty</span><span class="other">(</span><span class="other">)</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">throw</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">runtime_error</span><span class="other">(</span><span class="string">"no files given"</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span>&nbsp;<span class="other">(</span><span class="kw">const</span>&nbsp;<span class="kw">auto</span><span class="other">&amp;</span>&nbsp;<span class="id">fileName</span>&nbsp;<span class="other">:</span>&nbsp;<span class="id">fileNames</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">switch</span>&nbsp;<span class="other">(</span><span class="id">command</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="id">Command</span><span class="other">::</span><span class="id">testLexer</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TestLexer</span><span class="other">(</span><span class="id">fileName</span><span class="other">,</span>&nbsp;<span class="id">verbose</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">case</span>&nbsp;<span class="id">Command</span><span class="other">::</span><span class="id">testParser</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TestParser</span><span class="other">(</span><span class="id">fileName</span><span class="other">,</span>&nbsp;<span class="id">verbose</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">break</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">default</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">throw</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">runtime_error</span><span class="other">(</span><span class="string">"unknown command"</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">catch</span>&nbsp;<span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">exception</span><span class="other">&amp;</span>&nbsp;<span class="id">ex</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cerr</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">ex</span><span class="other">.</span><span class="id">what</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">1</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">Done</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">0</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+</div>

@@ -1,0 +1,35 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// a 'failure' action:
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ConceptParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ConceptDefinition</span><span class="punctuation">(</span><span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">symbols</span><span class="punctuation">::</span><span class="id">Context</span><span class="punctuation">*</span>&nbsp;<span class="id">ctx</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">SourcePos</span>&nbsp;<span class="id">s</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">Node</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Assign</span><span class="punctuation">:</span><span class="id">assign</span><span class="punctuation">{</span>&nbsp;<span class="id">ctx</span><span class="punctuation">-></span><span class="id">PushSetFlag</span><span class="punctuation">(</span><span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">symbols</span><span class="punctuation">::</span><span class="id">ContextFlags</span><span class="punctuation">::</span><span class="id">parsingConceptDefinition</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ConstraintExpression</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">constraintExpr</span><span class="punctuation">{</span>&nbsp;<span class="id">ctx</span><span class="punctuation">-></span><span class="id">PopFlags</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;<span class="punctuation">/</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="id">ctx</span><span class="punctuation">-></span><span class="id">PopFlags</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

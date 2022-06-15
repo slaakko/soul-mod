@@ -1,0 +1,37 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// a 'difference':
+</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">PathExpr</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">expr</span><span class="punctuation">::</span><span class="id">Expr</span><span class="punctuation">></span>&nbsp;<span class="id">expr</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">expr</span><span class="punctuation">::</span><span class="id">Expr</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">LocationPath</span><span class="punctuation">:</span><span class="id">locationPath</span>&nbsp;<span class="punctuation">-</span>&nbsp;<span class="id">FunctionCall</span><span class="punctuation">:</span><span class="id">functionCall</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">locationPath</span><span class="punctuation">;</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

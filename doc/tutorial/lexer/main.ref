@@ -1,0 +1,18 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Main Function</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>1.2.7 Main Function</h1>
+
+    <p>
+        This file contains the main program for testing the minilang lexer:
+    </p>
+	
+	<ref file="ref/main.cpp.div"/>
+</body>
+</html>

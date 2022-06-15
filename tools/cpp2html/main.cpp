@@ -338,12 +338,17 @@ void ProcessFile(const std::string& fileName, const std::string& title, bool ver
     std::u32string ucontent = util::ToUtf32(content);
     std::vector<std::u32string> lines = GetLines(ucontent);
     std::string htmlFilePath = fileName + ".html";
+    std::string divFilePath = fileName + ".div";
     std::ofstream htmlFile(htmlFilePath);
-    util::CodeFormatter formatter(htmlFile);
-    formatter.SetIndentSize(1);
-    std::unique_ptr<soul::xml::Document> doc = soul::xml::MakeDocument();
-    formatter.WriteLine("<!DOCTYPE html>");
-    formatter.WriteLine();
+    util::CodeFormatter htmlFormatter(htmlFile);
+    htmlFormatter.SetIndentSize(2);
+    std::ofstream divFile(divFilePath);
+    util::CodeFormatter divFormatter(divFile);
+    divFormatter.SetIndentSize(2);
+    std::unique_ptr<soul::xml::Document> htmlDoc = soul::xml::MakeDocument();
+    std::unique_ptr<soul::xml::Document> divDoc = soul::xml::MakeDocument();
+    htmlFormatter.WriteLine("<!DOCTYPE html>");
+    htmlFormatter.WriteLine();
     soul::xml::Element* htmlElement = soul::xml::MakeElement("html");
     htmlElement->SetAttribute("lang", "en");
     htmlElement->SetAttribute("xmlns", "http://www.w3.org/1999/xhtml");
@@ -365,32 +370,46 @@ void ProcessFile(const std::string& fileName, const std::string& title, bool ver
     soul::xml::Element* divElement = soul::xml::MakeElement("div");
     divElement->SetAttribute("class", "cpp");
     bodyElement->AppendChild(divElement);
-    doc->AppendChild(htmlElement);
-    soul::xml::Element* currentElement = nullptr;
+    soul::xml::Element* rootDivElement = soul::xml::MakeElement("div");
+    rootDivElement->SetAttribute("class", "cpp");
+    bodyElement->AppendChild(divElement);
+    htmlDoc->AppendChild(htmlElement);
+    divDoc->AppendChild(rootDivElement);
+    soul::xml::Element* currentHtmlElement = nullptr;
+    soul::xml::Element* currentDivElement = nullptr;
     int n = lines.size();
     for (int i = 0; i < n; ++i)
     {
         std::u32string line = lines[i];
         line.append(U"\n\n");
         auto tokenLexer = cpp::token::lexer::MakeLexer(line.c_str(), line.c_str() + line.length(), "");
-        soul::xml::Element* lineElement = soul::xml::MakeElement("span");
-        lineElement->SetAttribute("xml:space", "preserve");
-        currentElement = lineElement;
+        soul::xml::Element* htmlLineElement = soul::xml::MakeElement("span");
+        htmlLineElement->SetAttribute("xml:space", "preserve");
+        currentHtmlElement = htmlLineElement;
+        soul::xml::Element* divLineElement = soul::xml::MakeElement("span");
+        divLineElement->SetAttribute("xml:space", "preserve");
+        currentDivElement = divLineElement;
         ++tokenLexer;
         while (*tokenLexer != soul::lexer::END_TOKEN)
         {
             auto token = tokenLexer.GetToken(tokenLexer.GetPos());
-            ProcessToken(token, currentElement);
+            ProcessToken(token, currentHtmlElement);
+            ProcessToken(token, currentDivElement);
             ++tokenLexer;
         }
-        soul::xml::Element* brElement = soul::xml::MakeElement("br");
-        divElement->AppendChild(lineElement);
-        divElement->AppendChild(brElement);
+        soul::xml::Element* htmlBrElement = soul::xml::MakeElement("br");
+        divElement->AppendChild(htmlLineElement);
+        divElement->AppendChild(htmlBrElement);
+        soul::xml::Element* divBrElement = soul::xml::MakeElement("br");
+        rootDivElement->AppendChild(divLineElement);
+        rootDivElement->AppendChild(divBrElement);
     }
-    doc->Write(formatter);
+    htmlDoc->Write(htmlFormatter);
+    divDoc->Write(divFormatter);
     if (verbose)
     {
         std::cout << "==> " << htmlFilePath << std::endl;
+        std::cout << "==> " << divFilePath << std::endl;
     }
 }
 

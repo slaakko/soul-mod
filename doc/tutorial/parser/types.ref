@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Types</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+  <body>
+    <h1>Types</h1>
+	<p>The grammar rule for a minilang type name consists of three types that are represented by the 
+	keywords <span class="kw">int</span>, <span class="kw">bool</span> and <span class="kw">void</span>.</p>
+
+	<ref file="ref/type.grammar"/>
+    
+	<p>
+		These are represented by minilang tokens INT, BOOL and VOID that are contained by the token module <a href="../lexer/ref/minilang.token.html">minilang.token</a>.
+	</p>
+	
+	<p>
+		To create a Soul parser that can parse the <span class="rule">type</span> production I have created a parser file that contains a parser module. The parser module imports the token module.
+		Because token definitions are not needed by the interface of the parser, import statement contains an <span class="mono">[implementation]</span> prefix that 
+		instructs the parser generator to place the import to the generated <span class="mono">.cpp</span> file. 
+	</p>
+	
+	<p>
+		The parser itself is contained by a <a href="../../syntax/parser.html#parser-declaration">parser</a> declaration that contains a rule for representing
+		the <span class="rule">type</span> production. The body of the rule consists of a <a href="../../syntax/parser.html#choice">choice</a> parsing expression
+		that contains the choices for tokens INT, BOOL and VOID.
+	</p>
+
+	<ref file="ref/type.parser.simple.div"/>
+
+	<p>
+		Next I have created a C++ module that contains abstract syntax tree node classes for the parsed types.
+	</p>
+
+	<ref file="ref/type.ast.ixx.div"/>
+
+	<p>
+		Now the parser can be completed to create and return abstract syntax tree nodes for the types.
+	</p>
+
+	<p>
+		Each parser needs at least one <a href="../../syntax/parser.html#lexer-statement">lexer</a> statement for instantiating the parser with a lexer.
+	</p>
+
+	<p>
+		I have also added module imports for the <span class="mono">ast</span> and <span class="mono">lexer</span> modules.
+	</p>
+
+	<p>
+		The C++ type of the value that the <a href="../../syntax/parser.html#rule-statement">rule</a> returns is specified 
+		after the name of the rule separated by the <span class="mono">:</span> symbol. 
+		I have created a C++ compound statement that creates and returns the corresponding syntax tree node for the tokens.
+		Most parsing expressions can be associated such a semantic action that comes immediately after the parsing expression it is associated with.
+	</p>
+
+	<ref file="ref/type.parser.div"/>
+
+  </body>
+</html>

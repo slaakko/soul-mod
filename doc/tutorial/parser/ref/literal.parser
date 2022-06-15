@@ -1,0 +1,26 @@
+// literal_parser.parser:
+
+export module minilang.parser.literal;
+
+[implementation]import minilang.ast;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+
+parser LiteralParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+
+    Literal : minilang::ast::Node*
+        ::= BooleanLiteral:booleanLiteral{ return booleanLiteral; }
+        |   IntegerLiteral:integerLiteral{ return integerLiteral; }
+        ;
+
+    BooleanLiteral : minilang::ast::Node*
+        ::= TRUE{ return new minilang::ast::BooleanLiteralNode(true); }
+        |   FALSE{ return new minilang::ast::BooleanLiteralNode(false); }
+        ;
+
+    IntegerLiteral : minilang::ast::Node*
+        ::= INTEGER_LITERAL{ auto token = lexer.GetToken(pos); return new minilang::ast::IntegerLiteralNode(token.ToLong()); }
+        ;
+}

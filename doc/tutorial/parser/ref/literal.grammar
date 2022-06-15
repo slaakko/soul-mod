@@ -1,0 +1,32 @@
+<table class="grammar">
+	<tr>
+		<td class="rule" id="rule.literal">literal</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.boolean-literal">boolean&#8209;literal</a></span> |
+			<span class="rule"><a href="#rule.integer-literal">integer&#8209;literal</a></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.boolean-literal">boolean&#8209;literal</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="kw">true</span> |
+			<span class="kw">false</span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.integer-literal">integer&#8209;literal</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.digit-sequence">digit&#8209;sequence</a></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.digit-sequence">digit&#8209;sequence</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			[<span class="mono">0</span>-<span class="mono">9</span>]+
+		</td>
+	</tr>
+</table>

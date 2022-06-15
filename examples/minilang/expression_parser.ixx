@@ -6,9 +6,9 @@ export module minilang.parser.expression;
 import std.core;
 import soul.lexer;
 import soul.parser;
-import minilang.tree;
+import minilang.ast;
 
-using namespace minilang::tree;
+using namespace minilang::ast;
 
 export namespace minilang::parser::expression {
 
@@ -18,7 +18,7 @@ struct ExpressionParser
     static soul::parser::Match Expression(Lexer& lexer);
     static soul::parser::Match PrimaryExpression(Lexer& lexer);
     static soul::parser::Match PostfixExpression(Lexer& lexer);
-    static soul::parser::Match ExpressionList(Lexer& lexer, minilang::tree::Node* owner);
+    static soul::parser::Match ExpressionList(Lexer& lexer, minilang::ast::Node* owner);
     static soul::parser::Match UnaryExpression(Lexer& lexer);
     static soul::parser::Match UnaryOperator(Lexer& lexer);
     static soul::parser::Match MultiplicativeExpression(Lexer& lexer);

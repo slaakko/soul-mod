@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Functions</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Functions</h1>
+
+    <ref file="ref/function.grammar"/>
+	
+	<p>
+		The <span class="rule">ParameterList</span> rule contains a parameter declaration.
+		A parameter declaration is syntactically similar to a variable declaration but lacks the 
+		<span class="mono">var</span> keyword.
+	</p>
+	
+	<p>
+		The <span class="rule">ParameterList</span> rule is "called" in the 
+		<span class="rule">Function</span> rule with the 
+		<span class="rule">function</span> argument.
+	</p>
+	
+	<ref file="ref/function.parser.div"/>
+	
+</body>
+</html>

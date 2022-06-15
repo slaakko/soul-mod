@@ -1,0 +1,15 @@
+	...
+    CompoundStatement(var std::unique_ptr<minilang::ast::CompoundStatementNode> compoundStatement) : minilang::ast::CompoundStatementNode*
+        ::= 
+		(
+			LBRACE{ compoundStatement.reset(new minilang::ast::CompoundStatementNode()); } 
+			(
+				Statement:statement{ compoundStatement->AddStatement(statement); }
+			)* 
+			RBRACE!
+		)
+		{
+			return compoundStatement.release();
+		}
+        ;
+	...

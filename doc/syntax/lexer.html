@@ -1,793 +1,794 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
+  <head>
+    <meta charset="utf-8"/>
     <title>Syntax of Lexical Analyzer Files</title>
-    <link href="../style/style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-    <h1>
-        2 Syntax of Lexical Analyzer Files
-    </h1>
-
-    <h2>
-        Table of contents
-    </h2>
-
+    <link href="../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h1>2 Syntax of Lexical Analyzer Files</h1>
+    <h2>Table of contents</h2>
     <div class="toc">
-        2.1 <a href="#token-file-syntax">Token File Syntax</a><br />
-        2.2 <a href="#keyword-file-syntax">Keyword File Syntax</a><br />
-        2.3 <a href="#expression-file-syntax">Expression File Syntax</a><br />
-        2.4 <a href="#lexer-file-syntax">Lexer File Syntax</a><br />
-        2.5 <a href="#project-file-syntax">Project File Syntax</a><br />
+      2.1 <a href="#token-file-syntax">Token File Syntax</a>
+      <br/>
+      2.2 <a href="#keyword-file-syntax">Keyword File Syntax</a>
+      <br/>
+      2.3 <a href="#expression-file-syntax">Expression File Syntax</a>
+      <br/>
+      2.4 <a href="#lexer-file-syntax">Lexer File Syntax</a>
+      <br/>
+      2.5 <a href="#project-file-syntax">Project File Syntax</a>
+      <br/>
     </div>
-
-    <h2 id="token-file-syntax">
-        2.1 Token File Syntax
-    </h2>
-
+    <h2 id="token-file-syntax">2.1 Token File Syntax</h2>
     <table class="grammar">
-        <tr>
-            <td class="rule" id="rule.token-file">token&#8209;file</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">tokens</span>
-                <span class="rule"><a href="#rule.token-module-id">token&#8209;module&#8209;id</a></span>
-                <span class="mono">{</span>
-                (<span class="rule"><a href="#rule.token-declaration">token&#8209;declaration</a></span>
-                (<span class="mono">,</span> <span class="rule"><a href="#rule.token-declaration">token&#8209;declaration</a></span>)*
-                )?
-                <span class="mono">}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.token-module-id">token&#8209;module&#8209;id</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.qualified-id">qualified&#8209;id</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.token-declaration">token&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="mono">(</span>
-                <span class="rule"><a href="#rule.token-name">token&#8209;name</a></span>
-                <span class="mono">,</span>
-                <span class="rule"><a href="#rule.token-info-string">token&#8209;info&#8209;string</a></span>
-                <span class="mono">)</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.token-name">token&#8209;name</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.token-info-string">token&#8209;info&#8209;string</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.string-literal">string&#8209;literal</a></span>
-            </td>
-        </tr>
+      <tr>
+        <td class="rule" id="rule.token-file">token&#8209;file</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">tokens</span>
+          <span class="rule">
+            <a href="#rule.token-module-id">token&#8209;module&#8209;id</a>
+          </span>
+          <span class="mono">{</span>
+          ( <span class="rule">
+            <a href="#rule.token-declaration">token&#8209;declaration</a>
+          </span>
+          ( <span class="mono">,</span>
+          <span class="rule">
+            <a href="#rule.token-declaration">token&#8209;declaration</a>
+          </span>
+          )* )? <span class="mono">}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.token-module-id">token&#8209;module&#8209;id</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.qualified-id">qualified&#8209;id</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.token-declaration">token&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="mono">(</span>
+          <span class="rule">
+            <a href="#rule.token-name">token&#8209;name</a>
+          </span>
+          <span class="mono">,</span>
+          <span class="rule">
+            <a href="#rule.token-info-string">token&#8209;info&#8209;string</a>
+          </span>
+          <span class="mono">)</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.token-name">token&#8209;name</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.identifier">identifier</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.token-info-string">token&#8209;info&#8209;string</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.string-literal">string&#8209;literal</a>
+          </span>
+        </td>
+      </tr>
     </table>
-
     <p>
-        A token file consists of the keyword <strong>tokens</strong> followed by a token module identifier followed by a
-        sequence of token declarations separated by commas and enclosed in braces.
-    </p>
-
+      A token file consists of the keyword <strong>tokens</strong>
+      followed by a token module identifier followed by a sequence of token declarations separated by commas and enclosed in braces.</p>
+    <p>Each token file must be given a unique token module identifier.</p>
+    <p>Each token declaration is a pair that consists of a token name and a token info string separated by a comma and enclosed in parentheses.</p>
+    <p>I use UPPER_CASE identifiers for token names.</p>
     <p>
-        Each token file must be given a unique token module identifier.
-    </p>
-
-    <p>
-        Each token declaration is a pair that consists of a token name and a token info string separated by a comma and enclosed in parentheses.
-    </p>
-
-    <p>
-        I use UPPER_CASE identifiers for token names.
-    </p>
-
-    <p>
-        The token info string is included in the error message of an exception thrown by a an <a href="parser.html#rule.expectation">expectation</a> parser
-        when corresponding token should match but does not.
-    </p>
-
-    <h3>
-        Example
-    </h3>
-
-    <div class="parser">
-        <span xml:space="preserve"><span class="comment">// example.token:
-</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">token</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">OR</span><span class="punctuation">,</span>&nbsp;<span class="string">"'or'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">AND</span><span class="punctuation">,</span>&nbsp;<span class="string">"'and'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">EQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">NEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'!='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LESS</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GREATER</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>'"</span><span class="punctuation">)</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">}</span></span>
-        <br />
+      The token info string is included in the error message of an exception thrown by a an <a href="parser.html#rule.expectation">expectation</a>
+      parser when corresponding token should match but does not.</p>
+    <h3>Example</h3>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// example.token:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">token</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">OR</span><span class="punctuation">,</span>&nbsp;<span class="string">"'or'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">AND</span><span class="punctuation">,</span>&nbsp;<span class="string">"'and'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">EQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">NEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'!='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LESS</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GREATER</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>'"</span><span class="punctuation">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
     </div>
-
     <p>
-        I use qualified identifiers ending with <strong>.token</strong> for token module identifiers.
-    </p>
-
+      I use qualified identifiers ending with <strong>.token</strong>
+      for token module identifiers.</p>
     <p>
-        Token file extension is <span class="mono">.token</span>
+      Token file extension is <span class="mono">.token</span>
     </p>
-
-    <h2 id="keyword-file-syntax">
-        2.2 Keyword File Syntax
-    </h2>
-
+    <h2 id="keyword-file-syntax">2.2 Keyword File Syntax</h2>
     <table class="grammar">
-        <tr>
-            <td class="rule" id="rule.keyword-file">keyword&#8209;file</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.token-module-imports">token&#8209;module&#8209;imports</a></span><br />
-                <span class="kw">keywords</span>
-                <span class="rule"><a href="#rule.keyword-module-id">keyword&#8209;module&#8209;id</a></span>
-                <span class="mono">{</span>
-                (<span class="rule"><a href="#rule.keyword-declaration">keyword&#8209;declaration</a></span>
-                (<span class="mono">,</span> <span class="rule"><a href="#rule.keyword-declaration">keyword&#8209;declaration</a></span>)*
-                )?
-                <span class="mono">}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.token-module-imports">token&#8209;module&#8209;imports</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.imports">imports</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.keyword-module-id">keyword&#8209;module&#8209;id</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.qualified-id">qualified&#8209;id</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.keyword-declaration">keyword&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="mono">(</span>
-                <span class="rule"><a href="#rule.keyword-string">keyword&#8209;string</a></span>
-                <span class="mono">,</span>
-                <span class="rule"><a href="#rule.keyword-token-id">keyword&#8209;token&#8209;id</a></span>
-                <span class="mono">)</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.keyword-string">keyword&#8209;string</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.string-literal">string&#8209;literal</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.keyword-token-id">keyword&#8209;token&#8209;id</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.token-name">token&#8209;name</a></span>
-            </td>
-        </tr>
+      <tr>
+        <td class="rule" id="rule.keyword-file">keyword&#8209;file</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.token-module-imports">token&#8209;module&#8209;imports</a>
+          </span>
+          <br/>
+          <span class="kw">keywords</span>
+          <span class="rule">
+            <a href="#rule.keyword-module-id">keyword&#8209;module&#8209;id</a>
+          </span>
+          <span class="mono">{</span>
+          ( <span class="rule">
+            <a href="#rule.keyword-declaration">keyword&#8209;declaration</a>
+          </span>
+          ( <span class="mono">,</span>
+          <span class="rule">
+            <a href="#rule.keyword-declaration">keyword&#8209;declaration</a>
+          </span>
+          )* )? <span class="mono">}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.token-module-imports">token&#8209;module&#8209;imports</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.imports">imports</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.keyword-module-id">keyword&#8209;module&#8209;id</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.qualified-id">qualified&#8209;id</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.keyword-declaration">keyword&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="mono">(</span>
+          <span class="rule">
+            <a href="#rule.keyword-string">keyword&#8209;string</a>
+          </span>
+          <span class="mono">,</span>
+          <span class="rule">
+            <a href="#rule.keyword-token-id">keyword&#8209;token&#8209;id</a>
+          </span>
+          <span class="mono">)</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.keyword-string">keyword&#8209;string</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.string-literal">string&#8209;literal</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.keyword-token-id">keyword&#8209;token&#8209;id</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.token-name">token&#8209;name</a>
+          </span>
+        </td>
+      </tr>
     </table>
-
     <p>
-        A keyword file consists of possibly empty sequence of token module imports followed by
-        the keyword <strong>keywords</strong> followed by a keyword module identifier followed by a
-        sequence of keyword declarations separated by commas and enclosed in braces.
-    </p>
-
-    <p>
-        Each keyword file must be given a unique keyword module identifier.
-    </p>
-
-    <p>
-        Each keyword declaration is a pair that consists of a keyword string and a keyword token identifier separated by a comma and enclosed in parentheses.
-    </p>
-
-    <p>
-        The keyword string is associated with the corresponding keyword token identifier and will be included in a keyword map contained by a lexer.
-    </p>
-
-    <h3>
-        Example
-    </h3>
-
-    <div class="parser">
-        <span xml:space="preserve"><span class="comment">// example.keyword:
-</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">keyword</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"or"</span><span class="punctuation">,</span>&nbsp;<span class="id">OR</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"and"</span><span class="punctuation">,</span>&nbsp;<span class="id">AND</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"div"</span><span class="punctuation">,</span>&nbsp;<span class="id">DIV</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"mod"</span><span class="punctuation">,</span>&nbsp;<span class="id">MOD</span><span class="punctuation">)</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">}</span></span>
-        <br />
+      A keyword file consists of possibly empty sequence of token module imports followed by the keyword <strong>keywords</strong>
+      followed by a keyword module identifier followed by a sequence of keyword declarations separated by commas and enclosed in braces.</p>
+    <p>Each keyword file must be given a unique keyword module identifier.</p>
+    <p>Each keyword declaration is a pair that consists of a keyword string and a keyword token identifier separated by a comma and enclosed in parentheses.</p>
+    <p>The keyword string is associated with the corresponding keyword token identifier and will be included in a keyword map contained by a lexer.</p>
+    <h3>Example</h3>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// example.keyword:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">keyword</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"or"</span><span class="punctuation">,</span>&nbsp;<span class="id">OR</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"and"</span><span class="punctuation">,</span>&nbsp;<span class="id">AND</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"div"</span><span class="punctuation">,</span>&nbsp;<span class="id">DIV</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"mod"</span><span class="punctuation">,</span>&nbsp;<span class="id">MOD</span><span class="punctuation">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
     </div>
-
     <p>
-        I use qualified identifiers ending with <strong>.keyword</strong> for keyword module identifiers.
-    </p>
-
+      I use qualified identifiers ending with <strong>.keyword</strong>
+      for keyword module identifiers.</p>
     <p>
-        Keyword file extension is <span class="mono">.keyword</span>
+      Keyword file extension is <span class="mono">.keyword</span>
     </p>
-
-    <h2 id="expression-file-syntax">
-        2.3 Expression File Syntax
-    </h2>
-
+    <h2 id="expression-file-syntax">2.3 Expression File Syntax</h2>
     <table class="grammar">
-        <tr>
-            <td class="rule" id="rule.expression-file">expression&#8209;file</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">expressions</span>
-                <span class="rule"><a href="#rule.expression-module-id">expression&#8209;module&#8209;id</a></span>
-                <span class="mono">{</span>
-                <span class="rule"><a href="#rule.expression-declaration">expression&#8209;declaration</a></span>*
-                <span class="mono">}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.expression-module-id">expression&#8209;module&#8209;id</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.qualified-id">qualified&#8209;id</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.expression-declaration">expression&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.expression-name">expression&#8209;name</a></span>
-                <span class="mono">=</span>
-                <span class="rule"><a href="#rule.expression-string">expression&#8209;string</a></span>
-                <span class="mono">;</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.expression-name">expression&#8209;name</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.expression-string">expression&#8209;string</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.string-literal">string&#8209;literal</a></span>
-            </td>
-        </tr>
+      <tr>
+        <td class="rule" id="rule.expression-file">expression&#8209;file</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">expressions</span>
+          <span class="rule">
+            <a href="#rule.expression-module-id">expression&#8209;module&#8209;id</a>
+          </span>
+          <span class="mono">{</span>
+          <span class="rule">
+            <a href="#rule.expression-declaration">expression&#8209;declaration</a>
+          </span>
+          * <span class="mono">}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.expression-module-id">expression&#8209;module&#8209;id</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.qualified-id">qualified&#8209;id</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.expression-declaration">expression&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.expression-name">expression&#8209;name</a>
+          </span>
+          <span class="mono">=</span>
+          <span class="rule">
+            <a href="#rule.expression-string">expression&#8209;string</a>
+          </span>
+          <span class="mono">;</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.expression-name">expression&#8209;name</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.identifier">identifier</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.expression-string">expression&#8209;string</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.string-literal">string&#8209;literal</a>
+          </span>
+        </td>
+      </tr>
     </table>
-
     <p>
-        An expression file consists of the keyword <strong>expressions</strong> followed by an expression module identifier followed by a
-        sequence of expression declarations enclosed in braces.
-    </p>
-
+      An expression file consists of the keyword <strong>expressions</strong>
+      followed by an expression module identifier followed by a sequence of expression declarations enclosed in braces.</p>
+    <p>Each expression file must be given a unique expression module identifier.</p>
+    <p>An expression declaration consists of an expression name, an assignment symbol, an expression string and a semicolon.</p>
     <p>
-        Each expression file must be given a unique expression module identifier.
-    </p>
-
+      The expression string shall contain a <a href="re.html">lexer regular expression</a>
+      . The regular expression may contain references to expression names that precede the expression declaration.</p>
+    <p>The double quote character, the backslash character and the regular expression operator characters ('*', '+', '?', '|', '[', ']', '{', '}' and '.') must be quoted within the expression string by prefixing them with the backslash character if they are to be taken literally.</p>
     <p>
-        An expression declaration consists of an expression name, an assignment symbol, an expression string and a semicolon.
+      There are four built-in special expressions available: <ul>
+        <li>
+          <strong>unicode_id_start</strong>
+          is an expression that matches the characters that may start a Unicode identifier</li>
+        <li>
+          <strong>unicode_id_cont</strong>
+          is an expression that matches the characters that may follow the starting character of a Unicode identifier</li>
+        <li>
+          <strong>ascii_id_start</strong>
+          is an expression that matches the characters that may start an ASCII identifier, namely "[A-Za-z_]"</li>
+        <li>
+          <strong>ascii_id_cont</strong>
+          is an expression that matches the characters that may follow the starting character of an ASCII identifier, namely "[A-Za-z0-9_]"</li>
+      </ul>
     </p>
-
-    <p>
-        The expression string shall contain a <a href="re.html">lexer regular expression</a>.
-        The regular expression may contain references to expression names that precede the expression declaration.
-    </p>
-
-    <p>
-        The double quote character, the backslash character and the regular expression operator characters ('*', '+', '?', '|', '[', ']', '{', '}' and '.') must be quoted
-        within the expression string by prefixing them with the backslash character if they are to be taken literally.
-    </p>
-
-    <p>
-        There are four built-in special expressions available:
-        <ul>
-            <li><strong>unicode_id_start</strong> is an expression that matches the characters that may start a Unicode identifier</li>
-            <li><strong>unicode_id_cont</strong> is an expression that matches the characters that may follow the starting character of a Unicode identifier</li>
-            <li><strong>ascii_id_start</strong> is an expression that matches the characters that may start an ASCII identifier, namely "[A-Za-z_]"</li>
-            <li><strong>ascii_id_cont</strong> is an expression that matches the characters that may follow the starting character of an ASCII identifier, namely "[A-Za-z0-9_]"</li>
-        </ul>
-    </p>
-
-    <h3>
-        Example
-    </h3>
-
-    <div class="parser">
-        <span xml:space="preserve"><span class="comment">// example.expr:
-</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ws</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[\n\r\t ]"</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">separators</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{ws}+"</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">dq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"\"[^\"]*\""</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">sq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"'[^']*'"</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">digits</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[0-9]+"</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">number</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{digits}(\.{digits}?)?|\.{digits}"</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_start_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{name_start_char}{name_char}*"</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">}</span></span>
-        <br />
+    <h3>Example</h3>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// example.expr:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ws</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[\n\r\t ]"</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">separators</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{ws}+"</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">dq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"\"[^\"]*\""</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">sq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"'[^']*'"</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">digits</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[0-9]+"</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">number</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{digits}(\.{digits}?)?|\.{digits}"</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_start_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{name_start_char}{name_char}*"</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
     </div>
-
     <p>
-        I use qualified identifiers ending with <strong>.expr</strong> for expression module identifiers.
-    </p>
-
+      I use qualified identifiers ending with <strong>.expr</strong>
+      for expression module identifiers.</p>
     <p>
-        Expression file extension is <span class="mono">.expr</span>
+      Expression file extension is <span class="mono">.expr</span>
     </p>
-
-    <h2 id="lexer-file-syntax">
-        2.4 Lexer File Syntax
-    </h2>
-
+    <h2 id="lexer-file-syntax">2.4 Lexer File Syntax</h2>
     <table class="grammar">
-        <tr>
-            <td class="rule" id="rule.lexer-file">lexer&#8209;file</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.lexer-module-declaration">lexer&#8209;module&#8209;declaration</a></span>
-                <span class="rule"><a href="common.html#rule.imports">imports</a></span>
-                <span class="kw">lexer</span>
-                <span class="rule"><a href="#rule.lexer-name">lexer&#8209;name</a></span>
-                <span class="mono">{</span>
-                <span class="rule"><a href="#rule.lexer-content">lexer&#8209;content</a></span>*
-                <span class="mono">}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-module-declaration">lexer&#8209;module&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.export-module-declaration">export&#8209;module&#8209;declaration</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-name">lexer&#8209;name</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-content">lexer&#8209;content</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.rules">rules</a></span> |
-                <span class="rule"><a href="#rule.variables">variables</a></span> |
-                <span class="rule"><a href="#rule.actions">actions</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.rules">rules</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">rules</span>
-                <span class="mono">{</span>
-                <span class="rule"><a href="#rule.lexer-rule">lexer&#8209;rule</a></span>*
-                <span class="mono">}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-rule">lexer&#8209;rule</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.expression-string">expression&#8209;string</a></span>
-                <span class="rule"><a href="#rule.action-id">action&#8209;id</a></span>?
-                <span class="rule"><a href="cpp.html#rule.compound-statement">compound&#8209;statement</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.variables">variables</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">variables</span>
-                <span class="mono">{</span>
-                <span class="rule"><a href="#rule.lexer-variable">lexer&#8209;variable</a></span>*
-                <span class="mono">}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-variable">lexer&#8209;variable</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.variable-type">variable&#8209;type</a></span>
-                <span class="rule"><a href="#rule.variable-name">variable&#8209;name</a></span>
-                <span class="mono">;</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.variable-type">variable&#8209;type</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="cpp.html#rule.type-id">type&#8209;id</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.variable-name">variable&#8209;name</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.identifier">identifier</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.actions">actions</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">actions</span>
-                <span class="mono">{</span>
-                <span class="rule"><a href="#rule.lexer-action">lexer&#8209;action</a></span>*
-                <span class="mono">}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-action">lexer&#8209;action</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.action-id">action&#8209;id</a></span>
-                <span class="mono">=</span>
-                <span class="rule"><a href="cpp.html#rule.compound-statement">compound&#8209;statement</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.action-id">action&#8209;id</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="mono">$</span>
-                <span class="mono">(</span>
-                <span class="rule"><a href="common.html#rule.digit-sequence">digit&#8209;sequence</a></span>
-                <span class="mono">)</span>
-            </td>
-        </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-file">lexer&#8209;file</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.lexer-module-declaration">lexer&#8209;module&#8209;declaration</a>
+          </span>
+          <span class="rule">
+            <a href="common.html#rule.imports">imports</a>
+          </span>
+          <span class="kw">lexer</span>
+          <span class="rule">
+            <a href="#rule.lexer-name">lexer&#8209;name</a>
+          </span>
+          <span class="mono">{</span>
+          <span class="rule">
+            <a href="#rule.lexer-content">lexer&#8209;content</a>
+          </span>
+          * <span class="mono">}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-module-declaration">lexer&#8209;module&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.export-module-declaration">export&#8209;module&#8209;declaration</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-name">lexer&#8209;name</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.identifier">identifier</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-content">lexer&#8209;content</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.rules">rules</a>
+          </span>
+          | <span class="rule">
+            <a href="#rule.variables">variables</a>
+          </span>
+          | <span class="rule">
+            <a href="#rule.actions">actions</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.rules">rules</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">rules</span>
+          <span class="mono">{</span>
+          <span class="rule">
+            <a href="#rule.lexer-rule">lexer&#8209;rule</a>
+          </span>
+          * <span class="mono">}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-rule">lexer&#8209;rule</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.expression-string">expression&#8209;string</a>
+          </span>
+          <span class="rule">
+            <a href="#rule.action-id">action&#8209;id</a>
+          </span>
+          ? <span class="rule">
+            <a href="cpp.html#rule.compound-statement">compound&#8209;statement</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.variables">variables</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">variables</span>
+          <span class="mono">{</span>
+          <span class="rule">
+            <a href="#rule.lexer-variable">lexer&#8209;variable</a>
+          </span>
+          * <span class="mono">}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-variable">lexer&#8209;variable</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.variable-type">variable&#8209;type</a>
+          </span>
+          <span class="rule">
+            <a href="#rule.variable-name">variable&#8209;name</a>
+          </span>
+          <span class="mono">;</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.variable-type">variable&#8209;type</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="cpp.html#rule.type-id">type&#8209;id</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.variable-name">variable&#8209;name</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.identifier">identifier</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.actions">actions</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">actions</span>
+          <span class="mono">{</span>
+          <span class="rule">
+            <a href="#rule.lexer-action">lexer&#8209;action</a>
+          </span>
+          * <span class="mono">}</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-action">lexer&#8209;action</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.action-id">action&#8209;id</a>
+          </span>
+          <span class="mono">=</span>
+          <span class="rule">
+            <a href="cpp.html#rule.compound-statement">compound&#8209;statement</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.action-id">action&#8209;id</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="mono">$</span>
+          <span class="mono">(</span>
+          <span class="rule">
+            <a href="common.html#rule.digit-sequence">digit&#8209;sequence</a>
+          </span>
+          <span class="mono">)</span>
+        </td>
+      </tr>
     </table>
-
     <p>
-        A lexer file consists of a lexer module declaration followed by a sequence of imports followed by the keyword <strong>lexer</strong> followed by
-        the name of the lexer followed by lexer content.
-    </p>
-
+      A lexer file consists of a lexer module declaration followed by a sequence of imports followed by the keyword <strong>lexer</strong>
+      followed by the name of the lexer followed by lexer content.</p>
+    <p>Each lexer file must be given a unique lexer module identifier in the lexer module declaration.</p>
+    <p>There should be an import statement for each token module, keyword module and expression module used by the lexer.</p>
+    <p>The lexer content consists of rules, variables and actions.</p>
     <p>
-        Each lexer file must be given a unique lexer module identifier in the lexer module declaration.
-    </p>
-
-    <p>
-        There should be an import statement for each token module, keyword module and expression module used by the lexer.
-    </p>
-
-    <p>
-        The lexer content consists of rules, variables and actions.
-    </p>
-
-    <p>
-        Each lexer rule consists of an <a href="#rule.expression-string">expression string</a> optionally followed by an action identifier followed by a C++ compound statement.
-        Typically the compound statement returns a token identifier to the parser.
-        The compound statement can also be empty in which case the corresponding token is skipped without returning it to the parser.
-    </p>
-
-    <h3>
-        Example
-    </h3>
-
-    <div class="parser">
-        <span xml:space="preserve"><span class="comment">// example.lexer:
-</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">example_lexer</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">keyword</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="id">ExampleLexer</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">rules</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{separators}"</span><span class="punctuation">{</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{name}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NAME</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{number}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NUMBER</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{dq_string}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DQ_STRING</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{sq_string}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">SQ_STRING</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">EQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\.\."</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOT_DOT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\."</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"::"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COLON_COLON</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">":"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COLON</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"$"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOLLAR</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">","</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COMMA</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"@"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">AT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\["</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LBRACKET</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\]"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RBRACKET</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\("</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\)"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">}</span></span>
-        <br />
+      Each lexer rule consists of an <a href="#rule.expression-string">expression string</a>
+      optionally followed by an action identifier followed by a C++ compound statement. Typically the compound statement returns a token identifier to the parser. The compound statement can also be empty in which case the corresponding token is skipped without returning it to the parser.</p>
+    <h3>Example</h3>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// example.lexer:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">example_lexer</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">keyword</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="id">ExampleLexer</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">rules</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{separators}"</span><span class="punctuation">{</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{name}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NAME</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{number}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NUMBER</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{dq_string}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DQ_STRING</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{sq_string}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">SQ_STRING</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">EQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\.\."</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOT_DOT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\."</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"::"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COLON_COLON</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">":"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COLON</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"$"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DOLLAR</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">","</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COMMA</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"@"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">AT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\["</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LBRACKET</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\]"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RBRACKET</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\("</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\)"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
     </div>
-
     <p>
-        I use <strong>_lexer.lexer</strong> suffix for lexer module names.
-    </p>
-
+      I use <strong>_lexer.lexer</strong>
+      suffix for lexer module names.</p>
     <p>
-        Expression file extension is <span class="mono">.lexer</span>
+      Expression file extension is <span class="mono">.lexer</span>
     </p>
-
-    <h3 id="vars">
-        Variables and Actions
-    </h3>
-
+    <h3 id="vars">Variables and Actions</h3>
     <p>
-        A lexer may also contain C++ variable declarations that can be accessed by the lexer actions and semantic actions of the parser.
-        Each variable declaration consists of a C++ type id followed by the name of the variable.
-        Variables can be accessed using through a pointer variable whose name is <strong>vars</strong>.
-        For example to increment a variable whose name is <strong>varName</strong>, add a statement <strong>++vars&#8209;>varName</strong>.
-    </p>
-
+      A lexer may also contain C++ variable declarations that can be accessed by the lexer actions and semantic actions of the parser. Each variable declaration consists of a C++ type id followed by the name of the variable. Variables can be accessed using through a pointer variable whose name is <strong>vars</strong>
+      . For example to increment a variable whose name is <strong>varName</strong>
+      , add a statement <strong>++vars&#8209;>varName</strong>
+      .</p>
     <p>
-        A lexer may also contain actions each of which can be associated to some lexer rule.
-        An action consists of an action identifier followed by the <span class="mono">=</span> symbol followed by a C++ compound statement.
-        An action identifier consists of the <span class="mono">$</span> symbol followed by a parenthesized digit sequence.
-        Typically an action evaluates a lexer variable and either does nothing or returns <strong>INVALID_TOKEN</strong> token based on the value of the variable.
-        If the action does nothing, the action accepts the rule associated with the action.
-        If the action returns <strong>INVALID_TOKEN</strong>, the lexer rejects the rule associated with the action identifier and accepts a rule
-        that has matched before that rule, if any, instead.
-    </p>
-
+      A lexer may also contain actions each of which can be associated to some lexer rule. An action consists of an action identifier followed by the <span class="mono">=</span>
+      symbol followed by a C++ compound statement. An action identifier consists of the <span class="mono">$</span>
+      symbol followed by a parenthesized digit sequence. Typically an action evaluates a lexer variable and either does nothing or returns <strong>INVALID_TOKEN</strong>
+      token based on the value of the variable. If the action does nothing, the action accepts the rule associated with the action. If the action returns <strong>INVALID_TOKEN</strong>
+      , the lexer rejects the rule associated with the action identifier and accepts a rule that has matched before that rule, if any, instead.</p>
     <p>
-        Consider implementing a parser that can parse nested template id's such as <span class="mono">std::vector&lt;std::unique_ptr&lt;Foo>></span> that ends with two right angle brackets.
-        The problem is that without a lexical hack the lexer would return a <strong>SHIFT_RIGHT</strong> token for the ending right angle brackets, not two <strong>RANGLE</strong>
-        tokens as we would like. One solution is that the parser increments a <em>leftAngleCount</em> variable when parsing a template argument list
-        each time seeing a <strong>LANGLE</strong> token (see <a href="parser.html#vars-example">parser 'vars' example</a>).
-        In the middle of template id the <em>leftAngleCount</em> is now two.
-        Then when ending the template id, for the two <span class="mono">></span> characters, the <em>leftAngleCount</em> is greater than zero for them,
-        so the lexer recects the <span class="mono">>></span> rule that would return <strong>SHIFT_RIGHT</strong>.
-        The rule for the <span class="mono">">"</span> string has matched in addition to the rule for the <span class="mono">">>"</span> string, and comes before that rule,
-        so the lexer accepts the rule for the <span class="mono">">"</span> string instead.
-        Now each time seeing a <span class="mono">></span> character in a template id, the lexer returns the <strong>RANGLE</strong> token as desired.
-    </p>
-
-    <h3>
-        Example
-    </h3>
-
-    <div class="parser">
-        <span xml:space="preserve"><span class="comment">// 'vars':
-</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="id">SlgLexer</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">rules</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LANGLE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RANGLE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">>"</span>&nbsp;<span class="punctuation">$</span><span class="punctuation">(</span><span class="number">0</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">SHIFT_RIGHT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve" />
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">variables</span>&nbsp;</span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">int</span>&nbsp;<span class="id">leftAngleCount</span><span class="punctuation">;</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">actions</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">$</span><span class="punctuation">(</span><span class="number">0</span><span class="punctuation">)</span><span class="punctuation">=</span><span class="punctuation">{</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="punctuation">(</span><span class="id">vars</span><span class="punctuation">-></span><span class="id">leftAngleCount</span>&nbsp;<span class="punctuation">></span>&nbsp;<span class="number">0</span><span class="punctuation">)</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">INVALID_TOKEN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
-        <br />
-        <span xml:space="preserve"><span class="punctuation">}</span></span>
-        <br />
+      Consider implementing a parser that can parse nested template id's such as <span class="mono">std::vector&lt;std::unique_ptr&lt;Foo>></span>
+      that ends with two right angle brackets. The problem is that without a lexical hack the lexer would return a <strong>SHIFT_RIGHT</strong>
+      token for the ending right angle brackets, not two <strong>RANGLE</strong>
+      tokens as we would like. One solution is that the parser increments a <em>leftAngleCount</em>
+      variable when parsing a template argument list each time seeing a <strong>LANGLE</strong>
+      token (see <a href="parser.html#vars-example">parser 'vars' example</a>
+      ). In the middle of template id the <em>leftAngleCount</em>
+      is now two. Then when ending the template id, for the two <span class="mono">></span>
+      characters, the <em>leftAngleCount</em>
+      is greater than zero for them, so the lexer recects the <span class="mono">>></span>
+      rule that would return <strong>SHIFT_RIGHT</strong>
+      . The rule for the <span class="mono">">"</span>
+      string has matched in addition to the rule for the <span class="mono">">>"</span>
+      string, and comes before that rule, so the lexer accepts the rule for the <span class="mono">">"</span>
+      string instead. Now each time seeing a <span class="mono">></span>
+      character in a template id, the lexer returns the <strong>RANGLE</strong>
+      token as desired.</p>
+    <h3>Example</h3>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// 'vars':</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="id">SlgLexer</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">rules</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LANGLE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RANGLE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">>"</span>&nbsp;<span class="punctuation">$</span><span class="punctuation">(</span><span class="number">0</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">SHIFT_RIGHT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">variables</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">int</span>&nbsp;<span class="id">leftAngleCount</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">actions</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">$</span><span class="punctuation">(</span><span class="number">0</span><span class="punctuation">)</span><span class="punctuation">=</span><span class="punctuation">{</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="punctuation">(</span><span class="id">vars</span><span class="punctuation">-></span><span class="id">leftAngleCount</span>&nbsp;<span class="punctuation">></span>&nbsp;<span class="number">0</span><span class="punctuation">)</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">INVALID_TOKEN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
     </div>
-
-    <h2 id="project-file-syntax">
-        2.5 Project File Syntax
-    </h2>
-
+    <h2 id="project-file-syntax">2.5 Project File Syntax</h2>
     <table class="grammar">
-        <tr>
-            <td class="rule" id="rule.lexer-project-file">lexer&#8209;project&#8209;file</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">project</span>
-                <span class="rule"><a href="#rule.lexer-project-name">lexer&#8209;project&#8209;name</a></span>
-                <span class="mono">;</span>
-                <span class="rule"><a href="#rule.lexer-project-file-declaration">lexer&#8209;project&#8209;file&#8209;declaration</a></span>*
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-project-name">lexer&#8209;project&#8209;name</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="common.html#rule.qualified-id">qualified&#8209;id</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-project-file-declaration">lexer&#8209;project&#8209;file&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="rule"><a href="#rule.token-file-declaration">token&#8209;file&#8209;declaration</a></span> |
-                <span class="rule"><a href="#rule.keyword-file-declaration">keyword&#8209;file&#8209;declaration</a></span> |
-                <span class="rule"><a href="#rule.expression-file-declaration">expression&#8209;file&#8209;declaration</a></span> |
-                <span class="rule"><a href="#rule.lexer-file-declaration">lexer&#8209;file&#8209;declaration</a></span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.token-file-declaration">token&#8209;file&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">extern</span>?
-                <span class="kw">tokens</span>
-                <span class="rule"><a href="common.html#rule.file-path">file&#8209;path</a></span>
-                <span class="mono">;</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.keyword-file-declaration">keyword&#8209;file&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">keywords</span>
-                <span class="rule"><a href="common.html#rule.file-path">file&#8209;path</a></span>
-                <span class="mono">;</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.expression-file-declaration">expression&#8209;file&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">expressions</span>
-                <span class="rule"><a href="common.html#rule.file-path">file&#8209;path</a></span>
-                <span class="mono">;</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="rule" id="rule.lexer-file-declaration">lexer&#8209;file&#8209;declaration</td>
-            <td class="sep">&rarr;</td>
-            <td class="rcontent">
-                <span class="kw">lexer</span>
-                <span class="rule"><a href="common.html#rule.file-path">file&#8209;path</a></span>
-                <span class="mono">;</span>
-            </td>
-        </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-project-file">lexer&#8209;project&#8209;file</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">project</span>
+          <span class="rule">
+            <a href="#rule.lexer-project-name">lexer&#8209;project&#8209;name</a>
+          </span>
+          <span class="mono">;</span>
+          <span class="rule">
+            <a href="#rule.lexer-project-file-declaration">lexer&#8209;project&#8209;file&#8209;declaration</a>
+          </span>
+          *</td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-project-name">lexer&#8209;project&#8209;name</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="common.html#rule.qualified-id">qualified&#8209;id</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-project-file-declaration">lexer&#8209;project&#8209;file&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.token-file-declaration">token&#8209;file&#8209;declaration</a>
+          </span>
+          | <span class="rule">
+            <a href="#rule.keyword-file-declaration">keyword&#8209;file&#8209;declaration</a>
+          </span>
+          | <span class="rule">
+            <a href="#rule.expression-file-declaration">expression&#8209;file&#8209;declaration</a>
+          </span>
+          | <span class="rule">
+            <a href="#rule.lexer-file-declaration">lexer&#8209;file&#8209;declaration</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.token-file-declaration">token&#8209;file&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">extern</span>
+          ? <span class="kw">tokens</span>
+          <span class="rule">
+            <a href="common.html#rule.file-path">file&#8209;path</a>
+          </span>
+          <span class="mono">;</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.keyword-file-declaration">keyword&#8209;file&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">keywords</span>
+          <span class="rule">
+            <a href="common.html#rule.file-path">file&#8209;path</a>
+          </span>
+          <span class="mono">;</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.expression-file-declaration">expression&#8209;file&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">expressions</span>
+          <span class="rule">
+            <a href="common.html#rule.file-path">file&#8209;path</a>
+          </span>
+          <span class="mono">;</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.lexer-file-declaration">lexer&#8209;file&#8209;declaration</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">lexer</span>
+          <span class="rule">
+            <a href="common.html#rule.file-path">file&#8209;path</a>
+          </span>
+          <span class="mono">;</span>
+        </td>
+      </tr>
     </table>
-
     <p>
-        A lexer project file consists of the keyword <span class="kw">project</span> followed by a lexer project name followed by a semicolon
-        followed by a sequence on lexer project file declarations.
-    </p>
-
+      A lexer project file consists of the keyword <span class="kw">project</span>
+      followed by a lexer project name followed by a semicolon followed by a sequence on lexer project file declarations.</p>
+    <p>A lexer project file declaration can be a token file declaration, a keyword file declaration, an expression file declaration or a lexer file declaration.</p>
     <p>
-        A lexer project file declaration can be a token file declaration, a keyword file declaration, an expression file declaration or a lexer file declaration.
-    </p>
-
+      A token file declaration consists of an optional <span class="kw">extern</span>
+      keyword followed by the keyword <span class="kw">tokens</span>
+      followed by a file path followed by a semicolon.</p>
     <p>
-        A token file declaration consists of an optional <span class="kw">extern</span> keyword followed by the keyword <span class="kw">tokens</span> followed by
-        a file path followed by a semicolon.
-    </p>
-
+      If a token file is declared <span class="kw">extern</span>
+      , no C++ code for it is generated in this lexer project. It is then expected to be included nonexternally in another lexer project.</p>
     <p>
-        If a token file is declared <span class="kw">extern</span>, no C++ code for it is generated in this lexer project.
-        It is then expected to be included nonexternally in another lexer project.
-    </p>
-
+      A keyword file declaration consists of the keyword <span class="kw">keywords</span>
+      followed by a file path followed by a semicolon.</p>
     <p>
-        A keyword file declaration consists of the keyword <span class="kw">keywords</span> followed by a file path followed by a semicolon.
-    </p>
-
+      An expression file declaration consists of the keyword <span class="kw">expressions</span>
+      followed by a file path followed by a semicolon.</p>
     <p>
-        An expression file declaration consists of the keyword <span class="kw">expressions</span> followed by a file path followed by a semicolon.
-    </p>
-
+      A lexer file declaration consists of the keyword <span class="kw">lexer</span>
+      followed by a file path followed by a semicolon.</p>
+    <h3>Example</h3>
+    <div class="soul">
+      <span xml:space="preserve"><span class="kw">project</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">lexer</span>&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">example</span><span class="punctuation">.</span><span class="id">token</span>&nbsp;<span class="punctuation">></span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">example</span><span class="punctuation">.</span><span class="id">keyword</span>&nbsp;<span class="punctuation">></span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span>&nbsp;<span class="punctuation">></span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">example_lexer</span><span class="punctuation">.</span><span class="id">lexer</span>&nbsp;<span class="punctuation">></span><span class="punctuation">;</span></span>
+      <br/>
+    </div>
     <p>
-        A lexer file declaration consists of the keyword <span class="kw">lexer</span> followed by a file path followed by a semicolon.
+      Lexer project file extension is <span class="mono">.slg</span>
     </p>
-
-    <h3>
-        Example
-    </h3>
-
-    <table class="example">
-        <tr><td><span class="kw">project</span> example.lexer<span class="mono">;</span></td></tr>
-        <tr><td><span class="kw">tokens</span> <span class="mono">&lt;</span>example.token<span class="mono">>;</span></td></tr>
-        <tr><td><span class="kw">keywords</span> <span class="mono">&lt;</span>example.keyword<span class="mono">>;</span></td></tr>
-        <tr><td><span class="kw">expressions</span> <span class="mono">&lt;</span>example.expr<span class="mono">>;</span></td></tr>
-        <tr><td><span class="kw">lexer</span> <span class="mono">&lt;</span>example_lexer.lexer<span class="mono">>;</span></td></tr>
-    </table>
-
-    <p>
-        Lexer project file extension is <span class="mono">.slg</span>
-    </p>
-</body>
+  </body>
 </html>

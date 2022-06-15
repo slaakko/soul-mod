@@ -1,0 +1,28 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">interface</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">xml</span><span class="punctuation">.</span><span class="id">xpath</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">xml</span><span class="punctuation">::</span><span class="id">xpath</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">XPathLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">main</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

@@ -1,0 +1,33 @@
+<table class="grammar">
+	<tr>
+		<td class="rule" id="rule.function">function</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.type">type</a></span>
+			<span class="rule"><a href="#rule.identifier">identifier</a></span>
+			<span class="mono">(</span>
+			<span class="rule"><a href="#rule.parameter-list">parameter&#8209;list</a></span>?
+			<span class="mono">)</span>
+			<span class="rule"><a href="#rule.compound-statement">compound&#8209;statement</a></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.parameter-list">parameter&#8209;list</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.parameter">parameter</a></span>
+			(
+			<span class="mono">,</span>
+			<span class="rule"><a href="#rule.parameter">parameter</a></span>
+			)*
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.parameter">parameter</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.type">type</a></span>
+			<span class="rule"><a href="#rule.identifier">identifier</a></span>
+		</td>
+	</tr>
+</table>

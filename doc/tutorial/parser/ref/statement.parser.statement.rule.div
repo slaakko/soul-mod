@@ -1,0 +1,56 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">statement</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">ast</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">expression</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">type</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">identifier</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">MinilangLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">ExpressionParser</span><span class="punctuation">.</span><span class="id">Expression</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">TypeParser</span><span class="punctuation">.</span><span class="id">Type</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">IdentifierParser</span><span class="punctuation">.</span><span class="id">Identifier</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Statement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">IfStatement</span><span class="punctuation">:</span><span class="id">ifS</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">ifS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">WhileStatement</span><span class="punctuation">:</span><span class="id">whileS</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">whileS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">ReturnStatement</span><span class="punctuation">:</span><span class="id">returnS</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">returnS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">CompoundStatement</span><span class="punctuation">:</span><span class="id">compoundS</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">compoundS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">ConstructionStatement</span><span class="punctuation">:</span><span class="id">constructionS</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">constructionS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">AssignmentStatement</span><span class="punctuation">:</span><span class="id">assignmentS</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">assignmentS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

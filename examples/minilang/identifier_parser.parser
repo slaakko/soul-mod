@@ -1,6 +1,6 @@
 export module minilang.parser.identifier;
 
-[implementation]import minilang.tree;
+[implementation]import minilang.ast;
 [implementation]import minilang.lexer;
 [implementation]import minilang.token;
 
@@ -8,7 +8,7 @@ parser IdentifierParser
 {
     lexer minilang::lexer::MinilangLexer<char32_t>;
 
-    Identifier : minilang::tree::IdentifierNode*
-        ::= ID{ auto token = lexer.GetToken(pos); return new minilang::tree::IdentifierNode(token.ToString()); }
+    Identifier : minilang::ast::IdentifierNode*
+        ::= ID{ auto token = lexer.GetToken(pos); return new minilang::ast::IdentifierNode(token.ToString()); }
         ;
 }

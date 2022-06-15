@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta charset="utf-8"/>
+  <title>nonterminal.parser</title>
+  <style>
+   div.soul
+{
+ background-color: #e6ffee;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.soul .kw
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+.soul .id
+{
+ color: #000000;
+}
+
+.soul .number
+{
+ color: #000000;
+}
+
+.soul .other
+{
+ color: #000000;
+}
+
+.soul .string
+{
+ color: #a31515;
+}
+
+.soul .comment
+{
+ color: #006600;
+}
+
+.soul .punctuation
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+</style>
+ </head>
+ <body>
+  <div class="soul">
+   <span xml:space="preserve"><span class="comment">// 'nonterminal's:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ParserFileParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ParserStatement</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">GrammarParser</span><span class="punctuation">*</span>&nbsp;<span class="id">parser</span><span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">LexerStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">lexerStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">MainStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">mainStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">UsingStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">usingStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">RuleStatement</span><span class="punctuation">(</span><span class="id">parser</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">ruleStatement</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ </body>
+</html>

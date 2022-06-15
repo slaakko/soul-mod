@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Adding Tokens</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>
+        1.2.2 Adding Tokens
+    </h1>
+
+    <p>
+        Minilang tokens consist of the reserved words of the <a href="../language/syntax.html">language</a>, the tokens for literals 
+        and the tokens for the operator and punctuation symbols.
+    </p>
+
+    <p>
+        The token file syntax is described in <a href="../../syntax/lexer.html#token-file-syntax">this</a> document.
+    </p>
+
+    <p>
+        To add tokens to the minilang language:
+    </p>
+
+    <ul>
+        <li>
+            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
+        </li>
+        <li>
+            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.token</span>.
+        </li>
+        <li>
+            Add the following code to the token file:<br />
+			<ref file="ref/minilang.token.div"/>
+        </li>
+    </ul>
+</body>
+</html>

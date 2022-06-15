@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Creating a Parser Project File</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<h1>Creating a Parser Project File</h1>
+
+	<p>
+		Now that we have created a parser, we can create a parser project.
+	</p>
+
+    <p>
+        A parser project file consists of references to parser files.
+    </p>
+
+    <p>
+        The parser project file syntax is described in <a href="../../syntax/parser.html#project-file-syntax">this</a> document.
+    </p>
+
+	<ref file="ref/minilang.spg.div"/>
+
+</body>
+</html>

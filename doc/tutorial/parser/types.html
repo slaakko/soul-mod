@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Types</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h1>Types</h1>
+    <p>
+      The grammar rule for a minilang type name consists of three types that are represented by the keywords <span class="kw">int</span>
+      , <span class="kw">bool</span>
+      and <span class="kw">void</span>
+      .</p>
+    <table class="grammar">
+      <tr>
+        <td class="rule" id="rule.type">type</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">int</span>
+          | <span class="kw">bool</span>
+          | <span class="kw">void</span>
+        </td>
+      </tr>
+    </table>
+    <p>
+      These are represented by minilang tokens INT, BOOL and VOID that are contained by the token module <a href="../lexer/ref/minilang.token.html">minilang.token</a>
+      .</p>
+    <p>
+      To create a Soul parser that can parse the <span class="rule">type</span>
+      production I have created a parser file that contains a parser module. The parser module imports the token module. Because token definitions are not needed by the interface of the parser, import statement contains an <span class="mono">[implementation]</span>
+      prefix that instructs the parser generator to place the import to the generated <span class="mono">.cpp</span>
+      file.</p>
+    <p>
+      The parser itself is contained by a <a href="../../syntax/parser.html#parser-declaration">parser</a>
+      declaration that contains a rule for representing the <span class="rule">type</span>
+      production. The body of the rule consists of a <a href="../../syntax/parser.html#choice">choice</a>
+      parsing expression that contains the choices for tokens INT, BOOL and VOID.</p>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// type_parser.parser:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">type</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">TypeParser</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Type</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">INT</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">BOOL</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">VOID</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
+    </div>
+    <p>Next I have created a C++ module that contains abstract syntax tree node classes for the parsed types.</p>
+    <div class="cpp">
+      <span xml:space="preserve"><span class="comment">// ast.ixx:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="other">.</span><span class="id">ast</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">Node</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">IntNode</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">Node</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">BoolNode</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">Node</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">VoidNode</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">Node</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+    </div>
+    <p>Now the parser can be completed to create and return abstract syntax tree nodes for the types.</p>
+    <p>
+      Each parser needs at least one <a href="../../syntax/parser.html#lexer-statement">lexer</a>
+      statement for instantiating the parser with a lexer.</p>
+    <p>
+      I have also added module imports for the <span class="mono">ast</span>
+      and <span class="mono">lexer</span>
+      modules.</p>
+    <p>
+      The C++ type of the value that the <a href="../../syntax/parser.html#rule-statement">rule</a>
+      returns is specified after the name of the rule separated by the <span class="mono">:</span>
+      symbol. I have created a C++ compound statement that creates and returns the corresponding syntax tree node for the tokens. Most parsing expressions can be associated such a semantic action that comes immediately after the parsing expression it is associated with.</p>
+    <div class="soul">
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">type</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">ast</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">TypeParser</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">MinilangLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Type</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">INT</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">IntNode</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">BOOL</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">BoolNode</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">VOID</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">VoidNode</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
+    </div>
+  </body>
+</html>

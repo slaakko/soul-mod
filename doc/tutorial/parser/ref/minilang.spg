@@ -1,0 +1,2 @@
+project minilang.spg;
+parser <type_parser.parser>;

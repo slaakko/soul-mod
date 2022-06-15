@@ -1,0 +1,31 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// example.expr:
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">expr</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ws</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[\n\r\t ]"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">separators</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{ws}+"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">dq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"\"[^\"]*\""</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">sq_string</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"'[^']*'"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">digits</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[0-9]+"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">number</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{digits}(\.{digits}?)?|\.{digits}"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_start_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name_char</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">name</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{name_start_char}{name_char}*"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

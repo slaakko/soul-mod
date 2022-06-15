@@ -1,0 +1,30 @@
+<div class="soul">
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">IfStatement</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">IF</span>&nbsp;<span class="id">LPAREN</span><span class="punctuation">!</span>&nbsp;<span class="id">Expression</span><span class="punctuation">:</span><span class="id">condition</span><span class="punctuation">!</span>&nbsp;<span class="id">RPAREN</span><span class="punctuation">!</span>&nbsp;<span class="id">Statement</span><span class="punctuation">:</span><span class="id">thenS</span><span class="punctuation">!</span>&nbsp;<span class="punctuation">(</span><span class="id">ELSE</span>&nbsp;<span class="id">Statement</span><span class="punctuation">:</span><span class="id">elseS</span><span class="punctuation">!</span><span class="punctuation">)</span><span class="punctuation">?</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">IfStatementNode</span><span class="punctuation">(</span><span class="id">condition</span><span class="punctuation">,</span>&nbsp;<span class="id">thenS</span><span class="punctuation">,</span>&nbsp;<span class="id">elseS</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

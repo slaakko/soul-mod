@@ -112,7 +112,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SOUL_PARSER_DEBUG_SUPPORT;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ast.cpp" />
+    <ClCompile Include="ast.ixx" />
     <ClCompile Include="expression_parser.cpp" />
     <ClCompile Include="expression_parser.ixx" />
     <ClCompile Include="function_parser.cpp" />
@@ -164,12 +166,11 @@
     <ClCompile Include="minilang_lexer.ixx" />
     <ClCompile Include="minilang_rules.cpp" />
     <ClCompile Include="minilang_rules.ixx" />
+    <ClCompile Include="parser.ixx" />
     <ClCompile Include="source_file_parser.cpp" />
     <ClCompile Include="source_file_parser.ixx" />
     <ClCompile Include="statement_parser.cpp" />
     <ClCompile Include="statement_parser.ixx" />
-    <ClCompile Include="tree.cpp" />
-    <ClCompile Include="tree.ixx" />
     <ClCompile Include="type_parser.cpp" />
     <ClCompile Include="type_parser.ixx" />
     <ClCompile Include="visitor.ixx" />

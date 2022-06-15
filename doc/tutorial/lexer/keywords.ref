@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Adding Keywords</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>1.2.3 Adding Keywords</h1>
+
+    <p>
+        The minilang keywords, or reserved words, consist of strings for the statement selection, types and Boolean literals 
+        that are mapped to the corresponding tokens.
+    </p>
+
+    <p>
+        The keyword file syntax is described in <a href="../../syntax/lexer.html#keyword-file-syntax">this</a> document.
+    </p>
+
+    <p>
+        To add keywords to the minilang language:
+    </p>
+
+    <ul>
+        <li>
+            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
+        </li>
+        <li>
+            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.keyword</span>.
+        </li>
+        <li>
+            Add the following code to the keyword file:<br />
+			<ref file="ref/minilang.keyword.div"/>
+        </li>
+    </ul>
+</body>
+</html>

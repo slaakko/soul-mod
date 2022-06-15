@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta charset="utf-8"/>
+  <title>minilang.token</title>
+  <style>
+   div.soul
+{
+ background-color: #e6ffee;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.soul .kw
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+.soul .id
+{
+ color: #000000;
+}
+
+.soul .number
+{
+ color: #000000;
+}
+
+.soul .other
+{
+ color: #000000;
+}
+
+.soul .string
+{
+ color: #a31515;
+}
+
+.soul .comment
+{
+ color: #006600;
+}
+
+.soul .punctuation
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+</style>
+ </head>
+ <body>
+  <div class="soul">
+   <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">IF</span><span class="punctuation">,</span>&nbsp;<span class="string">"'if'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">ELSE</span><span class="punctuation">,</span>&nbsp;<span class="string">"'else'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">WHILE</span><span class="punctuation">,</span>&nbsp;<span class="string">"'while'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">RETURN</span><span class="punctuation">,</span>&nbsp;<span class="string">"'return'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">INT</span><span class="punctuation">,</span>&nbsp;<span class="string">"'int'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">BOOL</span><span class="punctuation">,</span>&nbsp;<span class="string">"'bool'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">VOID</span><span class="punctuation">,</span>&nbsp;<span class="string">"'void'"</span><span class="punctuation">)</span><span class="punctuation">,</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">ID</span><span class="punctuation">,</span>&nbsp;<span class="string">"identifier"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">INTEGER_LITERAL</span><span class="punctuation">,</span>&nbsp;<span class="string">"integer literal"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">TRUE</span><span class="punctuation">,</span>&nbsp;<span class="string">"'true'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">FALSE</span><span class="punctuation">,</span>&nbsp;<span class="string">"'false'"</span><span class="punctuation">)</span><span class="punctuation">,</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">SEMICOLON</span><span class="punctuation">,</span>&nbsp;<span class="string">"';'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LPAREN</span><span class="punctuation">,</span>&nbsp;<span class="string">"'('"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">RPAREN</span><span class="punctuation">,</span>&nbsp;<span class="string">"')'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LBRACE</span><span class="punctuation">,</span>&nbsp;<span class="string">"'{'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">RBRACE</span><span class="punctuation">,</span>&nbsp;<span class="string">"'}'"</span><span class="punctuation">)</span><span class="punctuation">,</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">PLUS</span><span class="punctuation">,</span>&nbsp;<span class="string">"'+'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">MINUS</span><span class="punctuation">,</span>&nbsp;<span class="string">"'-'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">MUL</span><span class="punctuation">,</span>&nbsp;<span class="string">"'*'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">DIV</span><span class="punctuation">,</span>&nbsp;<span class="string">"'/'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">MOD</span><span class="punctuation">,</span>&nbsp;<span class="string">"'%''"</span><span class="punctuation">)</span><span class="punctuation">,</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">NOT</span><span class="punctuation">,</span>&nbsp;<span class="string">"'!'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">EQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'=='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">NEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'!='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LESS</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GREATER</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>'"</span><span class="punctuation">)</span><span class="punctuation">,</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">ASSIGN</span><span class="punctuation">,</span>&nbsp;<span class="string">"'='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">COMMA</span><span class="punctuation">,</span>&nbsp;<span class="string">"','"</span><span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ </body>
+</html>

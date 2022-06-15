@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Identifiers</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Identifiers</h1>
+	
+    <ref file="ref/identifier.grammar"/>
+	
+	<p>
+		The syntax tree node for an identifier contains the identifier as a UTF-32-encoded string.
+	</p>
+	
+	<ref file="ref/identifier.ast.ixx.div"/>
+	
+	<p>
+		Because used lexer is instantiated with the UTF-32 character type, <span class="mono">char32_t</span>,
+		the <span class="mono">token.ToString()</span> function returns the match for the token as a UTF-32 string.
+	</p>
+	
+	<ref file="ref/identifier.parser.div"/>
+</body>
+</html>

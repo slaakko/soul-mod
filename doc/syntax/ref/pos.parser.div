@@ -1,0 +1,23 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// 'pos':
+</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">XPathParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">NCName</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">string</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">NAME</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">util</span><span class="punctuation">::</span><span class="id">ToUtf8</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

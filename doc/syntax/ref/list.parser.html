@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta charset="utf-8"/>
+  <title>list.parser</title>
+  <style>
+   div.soul
+{
+ background-color: #e6ffee;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.soul .kw
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+.soul .id
+{
+ color: #000000;
+}
+
+.soul .number
+{
+ color: #000000;
+}
+
+.soul .other
+{
+ color: #000000;
+}
+
+.soul .string
+{
+ color: #a31515;
+}
+
+.soul .comment
+{
+ color: #006600;
+}
+
+.soul .punctuation
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+</style>
+ </head>
+ <body>
+  <div class="soul">
+   <span xml:space="preserve"><span class="comment">// a 'list':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ExpressionParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ExpressionList</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">cpp</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span>&nbsp;<span class="id">owner</span><span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">AssignmentExpression</span><span class="punctuation">:</span><span class="id">expr</span><span class="punctuation">{</span>&nbsp;<span class="id">owner</span><span class="punctuation">-></span><span class="id">Add</span><span class="punctuation">(</span><span class="id">expr</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;<span class="punctuation">%</span>&nbsp;<span class="id">COMMA</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta charset="utf-8"/>
+  <title>minilang.expr</title>
+  <style>
+   div.soul
+{
+ background-color: #e6ffee;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.soul .kw
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+.soul .id
+{
+ color: #000000;
+}
+
+.soul .number
+{
+ color: #000000;
+}
+
+.soul .other
+{
+ color: #000000;
+}
+
+.soul .string
+{
+ color: #a31515;
+}
+
+.soul .comment
+{
+ color: #006600;
+}
+
+.soul .punctuation
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+</style>
+ </head>
+ <body>
+  <div class="soul">
+   <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">expr</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">digit</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[0-9]"</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">integer</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{digit}+"</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">identifier</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{unicode_id_start}{unicode_id_cont}*"</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ws</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[\n\r\t ]"</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">separators</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{ws}+"</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ </body>
+</html>

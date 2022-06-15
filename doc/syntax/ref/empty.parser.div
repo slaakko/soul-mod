@@ -1,0 +1,31 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// 'empty':
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">ParserFileParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ParserFile</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">ParserFile</span><span class="punctuation">></span>&nbsp;<span class="id">parserFile</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">ParserFile</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">empty</span><span class="punctuation">{</span>&nbsp;<span class="id">parserFile</span><span class="punctuation">.</span><span class="id">reset</span><span class="punctuation">(</span><span class="kw">new</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">ParserFile</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">FileName</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

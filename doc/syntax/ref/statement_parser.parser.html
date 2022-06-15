@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta charset="utf-8"/>
+  <title>statement_parser.parser</title>
+  <style>
+   div.soul
+{
+ background-color: #e6ffee;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.soul .kw
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+.soul .id
+{
+ color: #000000;
+}
+
+.soul .number
+{
+ color: #000000;
+}
+
+.soul .other
+{
+ color: #000000;
+}
+
+.soul .string
+{
+ color: #a31515;
+}
+
+.soul .comment
+{
+ color: #006600;
+}
+
+.soul .punctuation
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+</style>
+ </head>
+ <body>
+  <div class="soul">
+   <span xml:space="preserve"><span class="comment">// statement_parser.parser:
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">statement</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">interface</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">ast</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">op</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">punctuation</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">declaration</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">declarator</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">cpp</span><span class="punctuation">.</span><span class="id">expression</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">lex</span><span class="punctuation">.</span><span class="id">slg</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="punctuation">.</span><span class="id">lex</span><span class="punctuation">.</span><span class="id">spg</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">StatementParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">slg</span><span class="punctuation">::</span><span class="id">SlgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">SpgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclarationParser</span><span class="punctuation">.</span><span class="id">SimpleDeclaration</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclarationParser</span><span class="punctuation">.</span><span class="id">BlockDeclaration</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclarationParser</span><span class="punctuation">.</span><span class="id">DeclSpecifierSeq</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">TypeId</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">TypeSpecifierSeq</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">Declarator</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">DeclaratorParser</span><span class="punctuation">.</span><span class="id">AbstractDeclarator</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">ExpressionParser</span><span class="punctuation">.</span><span class="id">Expression</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">ExpressionParser</span><span class="punctuation">.</span><span class="id">ConstantExpression</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">using</span>&nbsp;<span class="id">ExpressionParser</span><span class="punctuation">.</span><span class="id">AssignmentExpression</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ </body>
+</html>

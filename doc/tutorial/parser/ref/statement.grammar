@@ -1,0 +1,78 @@
+<table class="grammar">
+	<tr>
+		<td class="rule" id="rule.statement">statement</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.if-statement">if&#8209;statement</a></span> |
+			<span class="rule"><a href="#rule.while-statement">while&#8209;statement</a></span> |
+			<span class="rule"><a href="#rule.return-statement">return&#8209;statement</a></span> |
+			<span class="rule"><a href="#rule.compound-statement">compound&#8209;statement</a></span> |
+			<span class="rule"><a href="#rule.construction-statement">construction&#8209;statement</a></span> |
+			<span class="rule"><a href="#rule.assignment-statement">assignment&#8209;statement</a></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.if-statement">if&#8209;statement</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="kw">if</span>
+			<span class="mono">(</span>
+			<span class="rule"><a href="#rule.expression">expression</a></span>
+			<span class="mono">)</span>
+			<span class="rule"><a href="#rule.statement">statement</a></span>
+			(
+			<span class="kw">else</span>
+			<span class="rule"><a href="#rule.statement">statement</a></span>
+			)?
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.while-statement">while&#8209;statement</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="kw">while</span>
+			<span class="mono">(</span>
+			<span class="rule"><a href="#rule.expression">expression</a></span>
+			<span class="mono">)</span>
+			<span class="rule"><a href="#rule.statement">statement</a></span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.return-statement">return&#8209;statement</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="kw">return</span>
+			<span class="rule"><a href="#rule.expression">expression</a></span>?
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.compound-statement">compound&#8209;statement</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="mono">{</span>
+			<span class="rule"><a href="#rule.statement">statement</a></span>*
+			<span class="mono">}</span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.construction-statement">construction&#8209;statement</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.type">type</a></span>
+			<span class="rule"><a href="#rule.identifier">identifier</a></span>
+			<span class="mono">=</span>
+			<span class="rule"><a href="#rule.expression">expression</a></span>
+			<span class="mono">;</span>
+		</td>
+	</tr>
+	<tr>
+		<td class="rule" id="rule.assignment-statement">assignment&#8209;statement</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.identifier">identifier</a></span>
+			<span class="mono">=</span>
+			<span class="rule"><a href="#rule.expression">expression</a></span>
+			<span class="mono">;</span>
+		</td>
+	</tr>
+</table>

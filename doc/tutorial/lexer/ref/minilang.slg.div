@@ -1,0 +1,12 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="kw">project</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">slg</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">keyword</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang_lexer</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+</div>

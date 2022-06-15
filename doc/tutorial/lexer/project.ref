@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Creating and Configuring a Project</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>
+        1.2.1 Creating and Configuring a Project
+    </h1>
+
+    <p>
+        This document contains instructions how to create a C++ project compatible with Soul tools and libraries using Visual Studio 2022.
+    </p>
+
+    <h2>Creating a Project</h2>
+
+    <ul>
+        <li>Create an empty C++ Console Application (.exe) project using Visual Studio 2022 Windows Desktop Wizard project template.</li>
+        <li>Right-click the project in the Solution Explorer and select 'Add New Item...'.</li>
+        <li>Select C++ File (.cpp) item and name the source file to 'main.cpp'.</li>
+        <li>
+            Add the following code to the 'main.cpp' file:
+			<ref file="ref/default_main.cpp.div"/>
+        </li>
+    </ul>
+
+    <h2>Setting Values of Boost Library Macros</h2>
+
+    <ul>
+        <li>If you have no Property Manager tab page in the Solution Explorer, select <span class="mono">View | Other Windows | Property Manager</span></li>
+        <li>Select the Property Manager tab in the Solution Explorer.</li>
+        <li>In the Property Manager, right-click your project and select Add Existing Property Sheet...</li>
+        <li>Navigate to the <span class="mono">C:\soul-4.0.0\config</span> folder and add the <span class="mono">build.props</span> file.</li>
+        <li>Open the <span class="mono"><em>project</em> | Debug | x64</span> folder in the Property Manager, right-click the <span class="mono">build</span> configuration and select <span class="mono">Properties</span></li>
+        <li>
+            Select the <span class="mono">User Macros</span> property page and enter paths to your Boost include directory and Boost library directory in the Value field for the
+            <strong>BOOST_INCLUDE_DIR</strong> and <strong>BOOST_LIB_DIR</strong> macros:<br/>
+            <img src="../../image/build_properties.png"/>
+        </li>
+    </ul>
+
+    <h2>
+        Setting Project Properties
+    </h2>
+
+    <ul>
+        <li>Select the Solution Explorer tab in the Solution Explorer window, right-click the project in the Solution Explorer and select 'Properties...'.</li>
+        <li>Select the <span class="mono">Debug | x64</span> configuration.</li>
+        <li>
+            Set the values in the General Properties tab page:<br />
+            <img src="../../image/general_properties_debug.png" />
+        </li>
+        <li>
+            Set the values in the C++ | General tab page:<br />
+            <img src="../../image/general_cpp_properties_debug.png" />
+        </li>
+        <li>
+            Set the values in the C++ | Language tab page:<br />
+            <img src="../../image/cpp_language_properties.png" />
+        </li>
+        <li>
+            Set the values in the C++ | Advanced tab page (to suppress spurious warnings):<br />
+            <img src="../../image/cpp_advanced_properties.png" />
+        </li>
+        <li>
+            Set the values in the Linker | General tab page:<br />
+            <img src="../../image/linker_general_properties.png" />
+        </li>
+        <li>Select the <span class="mono">Release | x64</span> configuration.</li>
+        <li>
+            Set the values in the General Properties tab page:<br />
+            <img src="../../image/general_properties_release.png" />
+        </li>
+        <li>
+            The changed settings in the
+            <span class="mono">C++ | General</span>, <span class="mono">C++ | Language</span>, <span class="mono">C++ | Advanced</span> and
+            <span class="mono">Linker | General</span> property pages are the same as for the <span class="mono">x64 | Debug</span> configuration.
+            Other settings are defaults for the <span class="mono">x64 | Release</span> configuration.
+        </li>
+    </ul>
+</body>
+</html>

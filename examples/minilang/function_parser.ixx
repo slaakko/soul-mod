@@ -6,9 +6,9 @@ export module minilang.parser.function;
 import std.core;
 import soul.lexer;
 import soul.parser;
-import minilang.tree;
+import minilang.ast;
 
-using namespace minilang::tree;
+using namespace minilang::ast;
 
 export namespace minilang::parser::function {
 
@@ -16,7 +16,7 @@ template<typename Lexer>
 struct FunctionParser
 {
     static soul::parser::Match Function(Lexer& lexer);
-    static soul::parser::Match ParameterList(Lexer& lexer, minilang::tree::FunctionNode* function);
+    static soul::parser::Match ParameterList(Lexer& lexer, minilang::ast::FunctionNode* function);
     static soul::parser::Match Parameter(Lexer& lexer);
 };
 

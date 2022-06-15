@@ -1,0 +1,6 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="kw">project</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">example_parser</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+</div>

@@ -1,47 +1,36 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
+  <head>
+    <meta charset="utf-8"/>
     <title>Adding Keywords</title>
-    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
     <h1>1.2.3 Adding Keywords</h1>
-
+    <p>The minilang keywords, or reserved words, consist of strings for the statement selection, types and Boolean literals that are mapped to the corresponding tokens.</p>
     <p>
-        The minilang keywords, or reserved words, consist of strings for the statement selection, types and Boolean literals 
-        that are mapped to the corresponding tokens.
-    </p>
-
-    <p>
-        The keyword file syntax is described in <a href="../../syntax/lexer.html#keyword-file-syntax">this</a> document.
-    </p>
-
-    <p>
-        To add keywords to the minilang language:
-    </p>
-
+      The keyword file syntax is described in <a href="../../syntax/lexer.html#keyword-file-syntax">this</a>
+      document.</p>
+    <p>To add keywords to the minilang language:</p>
     <ul>
-        <li>
-            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
-        </li>
-        <li>
-            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.keyword</span>.
-        </li>
-        <li>
-            Add the following code to the keyword file:<br />
-            <div class="parser">
-                <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">keyword</span></span>
-                <br />
-                <span xml:space="preserve"><span class="punctuation">{</span></span>
-                <br />
-                <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"if"</span><span class="punctuation">,</span>&nbsp;<span class="id">IF</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"else"</span><span class="punctuation">,</span>&nbsp;<span class="id">ELSE</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"while"</span><span class="punctuation">,</span>&nbsp;<span class="id">WHILE</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"return"</span><span class="punctuation">,</span>&nbsp;<span class="id">RETURN</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"int"</span><span class="punctuation">,</span>&nbsp;<span class="id">INT</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"bool"</span><span class="punctuation">,</span>&nbsp;<span class="id">BOOL</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"void"</span><span class="punctuation">,</span>&nbsp;<span class="id">VOID</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"true"</span><span class="punctuation">,</span>&nbsp;<span class="id">TRUE</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"false"</span><span class="punctuation">,</span>&nbsp;<span class="id">FALSE</span><span class="punctuation">)</span></span>
-                <br />
-                <span xml:space="preserve"><span class="punctuation">}</span></span>
-                <br />
-            </div>
-        </li>
+      <li>Right-click your project in the Solution Explorer and select 'Add | New Item...'.</li>
+      <li>
+        Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.keyword</span>
+        .</li>
+      <li>
+        Add the following code to the keyword file: <br/>
+        <div class="soul">
+          <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">keyword</span></span>
+          <br/>
+          <span xml:space="preserve"><span class="punctuation">{</span></span>
+          <br/>
+          <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="string">"if"</span><span class="punctuation">,</span>&nbsp;<span class="id">IF</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"else"</span><span class="punctuation">,</span>&nbsp;<span class="id">ELSE</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"while"</span><span class="punctuation">,</span>&nbsp;<span class="id">WHILE</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"return"</span><span class="punctuation">,</span>&nbsp;<span class="id">RETURN</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"int"</span><span class="punctuation">,</span>&nbsp;<span class="id">INT</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"bool"</span><span class="punctuation">,</span>&nbsp;<span class="id">BOOL</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"void"</span><span class="punctuation">,</span>&nbsp;<span class="id">VOID</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"true"</span><span class="punctuation">,</span>&nbsp;<span class="id">TRUE</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="string">"false"</span><span class="punctuation">,</span>&nbsp;<span class="id">FALSE</span><span class="punctuation">)</span></span>
+          <br/>
+          <span xml:space="preserve"><span class="punctuation">}</span></span>
+          <br/>
+        </div>
+      </li>
     </ul>
-</body>
+  </body>
 </html>

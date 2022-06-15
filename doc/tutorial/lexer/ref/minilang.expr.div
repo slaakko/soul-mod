@@ -1,0 +1,18 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">expr</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">digit</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[0-9]"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">integer</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{digit}+"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">identifier</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{unicode_id_start}{unicode_id_cont}*"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ws</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"[\n\r\t ]"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">separators</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="string">"{ws}+"</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

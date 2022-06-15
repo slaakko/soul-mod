@@ -1,0 +1,25 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// generated statement_parser.ixx:
+</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">...</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Lexer</span><span class="other">></span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">StatementParser</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">Statement</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">LabeledStatement</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">EmptyStatement</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">...</span></span>
+  <br/>
+</div>

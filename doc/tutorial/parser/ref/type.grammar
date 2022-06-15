@@ -1,0 +1,11 @@
+<table class="grammar">
+	<tr>
+		<td class="rule" id="rule.type">type</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="kw">int</span> |
+			<span class="kw">bool</span> |
+			<span class="kw">void</span>
+		</td>
+	</tr>
+</table>

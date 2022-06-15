@@ -1,0 +1,13 @@
+<table class="grammar">
+	<tr>
+		<td class="rule" id="rule.primary-expression">primary&#8209;expression</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="#rule.literal">literal</a></span> |
+			<span class="rule"><a href="#rule.identifier">identifier</a></span> |
+			<span class="mono">(</span>
+			<span class="rule"><a href="#rule.expression">expression</a></span>
+			<span class="mono">)</span>
+		</td>
+	</tr>
+</table>

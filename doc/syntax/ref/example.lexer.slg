@@ -1,0 +1,5 @@
+project example.lexer ;
+tokens <example.token >;
+keywords <example.keyword >;
+expressions <example.expr >;
+lexer <example_lexer.lexer >;

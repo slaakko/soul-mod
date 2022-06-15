@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Adding a Lexer</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>1.2.5 Adding a Lexer</h1>
+
+    <p>
+        The lexer contains rules for matching input with regular expressions and returning corresponging tokens to the parser.
+    </p>
+
+    <p>
+        The lexer file syntax is described in <a href="../../syntax/lexer.html#lexer-file-syntax">this</a> document.
+    </p>
+
+    <p>
+        To add a lexer to minilang:
+    </p>
+
+    <ul>
+        <li>
+            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
+        </li>
+        <li>
+            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang_lexer.lexer</span>.
+        </li>
+        <li>
+            Add the following code to the lexer file:<br />
+			<ref file="ref/minilang_lexer.lexer.div"/>
+        </li>
+    </ul>
+
+</body>
+</html>

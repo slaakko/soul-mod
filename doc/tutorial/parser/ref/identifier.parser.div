@@ -1,0 +1,37 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// identifier_parser.parser:
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">identifier</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">ast</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">IdentifierParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">MinilangLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Identifier</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">IdentifierNode</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">ID</span><span class="punctuation">{</span>&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">token</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">IdentifierNode</span><span class="punctuation">(</span><span class="id">token</span><span class="punctuation">.</span><span class="id">ToString</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+</div>

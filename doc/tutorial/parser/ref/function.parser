@@ -1,0 +1,35 @@
+export module minilang.parser.function;
+
+...
+
+parser FunctionParser
+{
+	...
+	
+    Function(var std::unique_ptr<minilang::ast::FunctionNode> function) : minilang::ast::FunctionNode*
+        ::= 
+		(
+			Type:returnType 
+            Identifier:functionName! 
+            LPAREN!{ function.reset(new minilang::ast::FunctionNode(returnType, functionName)); } 
+			ParameterList(function.get()):params? 
+            RPAREN! 
+			CompoundStatement:functionBody!{ function->SetBody(functionBody); }
+		)
+		{
+			return function.release();
+		}
+        ;
+
+    ParameterList(minilang::ast::FunctionNode* function)
+        ::= 
+        (
+            Parameter:left{ function->AddParam(left); } 
+            (
+                COMMA Parameter:right!{ function->AddParam(right); }
+            )*
+        )
+        ;
+		
+	...
+}

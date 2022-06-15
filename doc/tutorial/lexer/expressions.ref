@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Adding Expressions</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>1.2.4 Adding Expressions</h1>
+
+    <p>
+        These are the regular expressions used by the lexer rules.
+    </p>
+
+    <p>
+        The expression file syntax is described in <a href="../../syntax/lexer.html#expression-file-syntax">this</a> document.
+    </p>
+
+    <p>
+        To add expressions to the minilang language:
+    </p>
+
+    <ul>
+        <li>
+            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
+        </li>
+        <li>
+            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.expr</span>.
+        </li>
+        <li>
+            Add the following code to the expression file:<br />
+			<ref file="ref/minilang.expr.div"/>
+        </li>
+    </ul>
+</body>
+</html>

@@ -5,11 +5,11 @@ module minilang.parser.identifier;
 
 import util;
 import soul.ast.spg;
-import minilang.tree;
+import minilang.ast;
 import minilang.lexer;
 import minilang.token;
 
-using namespace minilang::tree;
+using namespace minilang::ast;
 using namespace minilang::lexer;
 using namespace minilang::token;
 
@@ -45,7 +45,7 @@ soul::parser::Match IdentifierParser<Lexer>::Identifier(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Identifier");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new minilang::tree::IdentifierNode(token.ToString()));
+                return soul::parser::Match(true, new minilang::ast::IdentifierNode(token.ToString()));
             }
         }
         *parentMatch0 = match;

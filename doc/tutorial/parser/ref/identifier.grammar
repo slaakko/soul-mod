@@ -1,0 +1,9 @@
+<table class="grammar">
+	<tr>
+		<td class="rule" id="rule.identifier">identifier</td>
+		<td class="sep">&rarr;</td>
+		<td class="rcontent">
+			<span class="rule"><a href="https://unicode.org/reports/tr31/#Default_Identifier_Syntax">Unicode identifier</a></span>
+		</td>
+	</tr>
+</table>

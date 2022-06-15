@@ -1,50 +1,38 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8" />
+  <head>
+    <meta charset="utf-8"/>
     <title>Creating a Lexer Project File</title>
-    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-    <h1>
-        1.2.6 Creating a Lexer Project File
-    </h1>
-
+    <link href="../../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h1>1.2.6 Creating a Lexer Project File</h1>
+    <p>A lexer project file consists of references to token, keyword, expression and lexer files.</p>
     <p>
-        A lexer project file consists of references to token, keyword, expression and lexer files.
-    </p>
-
-    <p>
-        The lexer project file syntax is described in <a href="../../syntax/lexer.html#project-file-syntax">this</a> document.
-    </p>
-
-    <p>
-        To add a lexer project file to minilang:
-    </p>
-
+      The lexer project file syntax is described in <a href="../../syntax/lexer.html#project-file-syntax">this</a>
+      document.</p>
+    <p>To add a lexer project file to minilang:</p>
     <ul>
-        <li>
-            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
-        </li>
-        <li>
-            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.slg</span>.
-        </li>
-        <li>
-            Add the following code to the lexer project file:<br />
-            <div class="parser">
-                <span xml:space="preserve"><span class="kw">project</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">slg</span><span class="punctuation">;</span></span>
-                <br />
-                <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">></span><span class="punctuation">;</span></span>
-                <br />
-                <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">keyword</span><span class="punctuation">></span><span class="punctuation">;</span></span>
-                <br />
-                <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">></span><span class="punctuation">;</span></span>
-                <br />
-                <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang_lexer</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">></span><span class="punctuation">;</span></span>
-                <br />
-            </div>
-        </li>
+      <li>Right-click your project in the Solution Explorer and select 'Add | New Item...'.</li>
+      <li>
+        Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.slg</span>
+        .</li>
+      <li>
+        Add the following code to the lexer project file: <br/>
+        <div class="soul">
+          <span xml:space="preserve"><span class="kw">project</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">slg</span><span class="punctuation">;</span></span>
+          <br/>
+          <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+          <br/>
+          <span xml:space="preserve"><span class="kw">keywords</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">keyword</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+          <br/>
+          <span xml:space="preserve"><span class="kw">expressions</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+          <br/>
+          <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="punctuation">&lt;</span><span class="id">minilang_lexer</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+          <br/>
+        </div>
+      </li>
     </ul>
-</body>
+  </body>
 </html>

@@ -1,0 +1,18 @@
+// literal_parser.parser:
+
+parser LiteralParser
+{
+    Literal 
+        ::= BooleanLiteral:booleanLiteral
+        |   IntegerLiteral:integerLiteral
+        ;
+
+    BooleanLiteral
+        ::= TRUE
+        |   FALSE
+        ;
+
+    IntegerLiteral 
+        ::= INTEGER_LITERAL
+        ;
+}

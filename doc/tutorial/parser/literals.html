@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Literals</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h1>Literals</h1>
+    <table class="grammar">
+      <tr>
+        <td class="rule" id="rule.literal">literal</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.boolean-literal">boolean&#8209;literal</a>
+          </span>
+          | <span class="rule">
+            <a href="#rule.integer-literal">integer&#8209;literal</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.boolean-literal">boolean&#8209;literal</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="kw">true</span>
+          | <span class="kw">false</span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.integer-literal">integer&#8209;literal</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.digit-sequence">digit&#8209;sequence</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.digit-sequence">digit&#8209;sequence</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          [ <span class="mono">0</span>
+          - <span class="mono">9</span>
+          ]+</td>
+      </tr>
+    </table>
+    <p>
+      The <span class="rule">Literal</span>
+      rule delegates parsing of a literal to two rules: <span class="rule">BooleanLiteral</span>
+      and <span class="rule">IntegerLiteral</span>
+      . The rule names <span class="rule">BooleanLiteral</span>
+      and <span class="rule">IntegerLiteral</span>
+      in the <span class="rule">Literal</span>
+      rule are examples of <a href="../../syntax/parser.html#nonterminal">nonterminals</a>
+      .</p>
+    <p>
+      Distinction between a <a href="../../syntax/parser.html#rule.token-parser">token</a>
+      and a <a href="../../syntax/parser.html#rule.nonterminal">nonterminal</a>
+      is made using the <span class="mono">:</span>
+      symbol separating the name of the nonterminal and the <em>instance</em>
+      name of the nonterminal. It is mandatory.</p>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// literal_parser.parser:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">LiteralParser</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Literal</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">BooleanLiteral</span><span class="punctuation">:</span><span class="id">booleanLiteral</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">IntegerLiteral</span><span class="punctuation">:</span><span class="id">integerLiteral</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">BooleanLiteral</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">TRUE</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">FALSE</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">IntegerLiteral</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">INTEGER_LITERAL</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
+    </div>
+    <p>The syntax tree node classes for literals contain parsed values of the literals.</p>
+    <div class="cpp">
+      <span xml:space="preserve"><span class="comment">// ast.ixx:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="other">.</span><span class="id">ast</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">BooleanLiteralNode</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">Node</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">public</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">BooleanLiteralNode</span><span class="other">(</span><span class="kw">bool</span>&nbsp;<span class="id">value_</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">Value</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="other">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">value</span><span class="other">;</span>&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">private</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">value</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">IntegerLiteralNode</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">Node</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">public</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">IntegerLiteralNode</span><span class="other">(</span><span class="id">int64_t</span>&nbsp;<span class="id">value_</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">int64_t</span>&nbsp;<span class="id">Value</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="other">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">value</span><span class="other">;</span>&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">private</span><span class="other">:</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">int64_t</span>&nbsp;<span class="id">value</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+      <br/>
+    </div>
+    <p>Here is the literal parser completed with semantic actions.</p>
+    <p>
+      A parser can access the lexer it is instantiated with by using the <a href="../../syntax/parser.html#lexer-variable">lexer</a>
+      variable. The <a href="../../syntax/parser.html#pos-variable">pos</a>
+      variable represents the position of the current token contained by the lexer. To convert the matching lexeme of a token to an integer, you can use the <em>ToLong</em>
+      member function of the token class.</p>
+    <div class="soul">
+      <span xml:space="preserve"><span class="comment">// literal_parser.parser:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">literal</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">ast</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">[</span><span class="kw">implementation</span><span class="punctuation">]</span><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">LiteralParser</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">lexer</span><span class="punctuation">::</span><span class="id">MinilangLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Literal</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">BooleanLiteral</span><span class="punctuation">:</span><span class="id">booleanLiteral</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">booleanLiteral</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">IntegerLiteral</span><span class="punctuation">:</span><span class="id">integerLiteral</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">integerLiteral</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">BooleanLiteral</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">TRUE</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">BooleanLiteralNode</span><span class="punctuation">(</span><span class="kw">true</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">FALSE</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">BooleanLiteralNode</span><span class="punctuation">(</span><span class="kw">false</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">IntegerLiteral</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="id">INTEGER_LITERAL</span><span class="punctuation">{</span>&nbsp;<span class="kw">auto</span>&nbsp;<span class="id">token</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetToken</span><span class="punctuation">(</span><span class="id">pos</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">IntegerLiteralNode</span><span class="punctuation">(</span><span class="id">token</span><span class="punctuation">.</span><span class="id">ToLong</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
+    </div>
+  </body>
+</html>

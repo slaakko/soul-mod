@@ -1,6 +1,6 @@
 export module minilang.parser.expression;
 
-[interface]import minilang.tree;
+[interface]import minilang.ast;
 [implementation]import minilang.lexer;
 [implementation]import minilang.token;
 [implementation]import minilang.parser.literal;
@@ -13,22 +13,22 @@ parser ExpressionParser
     using LiteralParser.Literal;
     using IdentifierParser.Identifier;
 
-    Expression : minilang::tree::Node*
+    Expression : minilang::ast::Node*
         ::= EqualityExpression:expr{ return expr; }
         ;
 
-    PrimaryExpression : minilang::tree::Node*
+    PrimaryExpression : minilang::ast::Node*
         ::= Literal:literal{ return literal; }
         |   Identifier:identifier{ return identifier; }
-        |   LPAREN Expression:expression RPAREN{ return new minilang::tree::ParenthesizedExpressionNode(expression); }
+        |   LPAREN Expression:expression RPAREN{ return new minilang::ast::ParenthesizedExpressionNode(expression); }
         ;
 
-    PostfixExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+    PostfixExpression(var std::unique_ptr<minilang::ast::Node> expr) : minilang::ast::Node*
         ::= 
 		(
 			PrimaryExpression:primary{ expr.reset(primary); } 
             (
-                LPAREN{ expr.reset(new minilang::tree::InvokeNode(expr.release())); } ExpressionList(expr.get()):args? RPAREN!
+                LPAREN{ expr.reset(new minilang::ast::InvokeNode(expr.release())); } ExpressionList(expr.get()):args? RPAREN!
             )*
 		)
 		{
@@ -36,30 +36,30 @@ parser ExpressionParser
 		}
         ;
 
-    ExpressionList(minilang::tree::Node* owner)
+    ExpressionList(minilang::ast::Node* owner)
         ::= Expression:left{ owner->AddArgument(left); } 
             (
                 COMMA Expression:right!{ owner->AddArgument(right); }
             )*
         ;
 
-    UnaryExpression : minilang::tree::Node*
-        ::= UnaryOperator:op UnaryExpression:unaryExpr!{ return new minilang::tree::UnaryOpExprNode(op, unaryExpr); }
+    UnaryExpression : minilang::ast::Node*
+        ::= UnaryOperator:op UnaryExpression:unaryExpr!{ return new minilang::ast::UnaryExprNode(op, unaryExpr); }
         |   PostfixExpression:postfixExpr{ return postfixExpr; }
         ;
 
-    UnaryOperator : minilang::tree::Operator
-        ::= PLUS{ return minilang::tree::Operator::unaryPlus; }
-        |   MINUS{ return minilang::tree::Operator::unaryMinus; }
-        |   NOT{ return minilang::tree::Operator::not_; }
+    UnaryOperator : minilang::ast::Operator
+        ::= PLUS{ return minilang::ast::Operator::unaryPlus; }
+        |   MINUS{ return minilang::ast::Operator::unaryMinus; }
+        |   NOT{ return minilang::ast::Operator::not_; }
         ;
 
-    MultiplicativeExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+    MultiplicativeExpression(var std::unique_ptr<minilang::ast::Node> expr) : minilang::ast::Node*
         ::= 
 		(
 			UnaryExpression:left{ expr.reset(left); } 
             (
-                MultiplicativeOperator:op UnaryExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+                MultiplicativeOperator:op UnaryExpression:right!{ expr.reset(new minilang::ast::BinaryExprNode(op, expr.release(), right)); }
             )*
 		)
 		{
@@ -67,18 +67,18 @@ parser ExpressionParser
 		}
         ;
 
-    MultiplicativeOperator : minilang::tree::Operator
-        ::= MUL{ return minilang::tree::Operator::mul; }
-        |   DIV{ return minilang::tree::Operator::div; }
-        |   MOD{ return minilang::tree::Operator::mod; }
+    MultiplicativeOperator : minilang::ast::Operator
+        ::= MUL{ return minilang::ast::Operator::mul; }
+        |   DIV{ return minilang::ast::Operator::div; }
+        |   MOD{ return minilang::ast::Operator::mod; }
         ;
 
-    AdditiveExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+    AdditiveExpression(var std::unique_ptr<minilang::ast::Node> expr) : minilang::ast::Node*
         ::= 
 		(
 			MultiplicativeExpression:left{ expr.reset(left); } 
             (
-                AdditiveOperator:op MultiplicativeExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+                AdditiveOperator:op MultiplicativeExpression:right!{ expr.reset(new minilang::ast::BinaryExprNode(op, expr.release(), right)); }
             )*
 		)
 		{
@@ -86,17 +86,17 @@ parser ExpressionParser
 		}
         ;
 
-    AdditiveOperator : minilang::tree::Operator
-        ::= PLUS{ return minilang::tree::Operator::add; }
-        |   MINUS{ return minilang::tree::Operator::sub; }
+    AdditiveOperator : minilang::ast::Operator
+        ::= PLUS{ return minilang::ast::Operator::add; }
+        |   MINUS{ return minilang::ast::Operator::sub; }
         ;
 
-    RelationalExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+    RelationalExpression(var std::unique_ptr<minilang::ast::Node> expr) : minilang::ast::Node*
         ::= 
 		(	
 			AdditiveExpression:left{ expr.reset(left); } 
             (
-                RelationalOperator:op AdditiveExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+                RelationalOperator:op AdditiveExpression:right!{ expr.reset(new minilang::ast::BinaryExprNode(op, expr.release(), right)); }
             )*
 		)
 		{
@@ -104,19 +104,19 @@ parser ExpressionParser
 		}
         ;
 
-    RelationalOperator : minilang::tree::Operator
-        ::= LESS{ return minilang::tree::Operator::less; }
-        |   GREATER{ return minilang::tree::Operator::greater; }
-        |   LEQ{ return minilang::tree::Operator::lessOrEqual; }
-        |   GEQ{ return minilang::tree::Operator::greaterOrEqual; }
+    RelationalOperator : minilang::ast::Operator
+        ::= LESS{ return minilang::ast::Operator::less; }
+        |   GREATER{ return minilang::ast::Operator::greater; }
+        |   LEQ{ return minilang::ast::Operator::lessOrEqual; }
+        |   GEQ{ return minilang::ast::Operator::greaterOrEqual; }
         ;
 
-    EqualityExpression(var std::unique_ptr<minilang::tree::Node> expr) : minilang::tree::Node*
+    EqualityExpression(var std::unique_ptr<minilang::ast::Node> expr) : minilang::ast::Node*
         ::= 
 		(
 			RelationalExpression:left{ expr.reset(left); } 
             (
-                EqualityOperator:op RelationalExpression:right!{ expr.reset(new minilang::tree::BinaryOpExprNode(op, expr.release(), right)); }
+                EqualityOperator:op RelationalExpression:right!{ expr.reset(new minilang::ast::BinaryExprNode(op, expr.release(), right)); }
             )*
 		)
 		{
@@ -124,8 +124,8 @@ parser ExpressionParser
 		}
         ;
 
-    EqualityOperator : minilang::tree::Operator
-        ::= EQ{ return minilang::tree::Operator::equal; }
-        |   NEQ{ return minilang::tree::Operator::notEqual; }
+    EqualityOperator : minilang::ast::Operator
+        ::= EQ{ return minilang::ast::Operator::equal; }
+        |   NEQ{ return minilang::ast::Operator::notEqual; }
         ;
 }

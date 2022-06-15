@@ -1,0 +1,14 @@
+// type_parser.parser:
+
+export module minilang.parser.type;
+
+[implementation]import minilang.token;
+
+parser TypeParser
+{
+    Type 
+        ::= INT
+        |   BOOL
+        |   VOID
+        ;
+}

@@ -1,6 +1,6 @@
 export module minilang.parser.literal;
 
-[implementation]import minilang.tree;
+[implementation]import minilang.ast;
 [implementation]import minilang.lexer;
 [implementation]import minilang.token;
 
@@ -8,17 +8,17 @@ parser LiteralParser
 {
     lexer minilang::lexer::MinilangLexer<char32_t>;
 
-    Literal : minilang::tree::Node*
+    Literal : minilang::ast::Node*
         ::= BooleanLiteral:booleanLiteral{ return booleanLiteral; }
         |   IntegerLiteral:integerLiteral{ return integerLiteral; }
         ;
 
-    BooleanLiteral : minilang::tree::Node*
-        ::= TRUE{ return new minilang::tree::BooleanLiteralNode(true); }
-        |   FALSE{ return new minilang::tree::BooleanLiteralNode(false); }
+    BooleanLiteral : minilang::ast::Node*
+        ::= TRUE{ return new minilang::ast::BooleanLiteralNode(true); }
+        |   FALSE{ return new minilang::ast::BooleanLiteralNode(false); }
         ;
 
-    IntegerLiteral : minilang::tree::Node*
-        ::= INTEGER_LITERAL{ auto token = lexer.GetToken(pos); return new minilang::tree::IntegerLiteralNode(token.ToLong()); }
+    IntegerLiteral : minilang::ast::Node*
+        ::= INTEGER_LITERAL{ auto token = lexer.GetToken(pos); return new minilang::ast::IntegerLiteralNode(token.ToLong()); }
         ;
 }

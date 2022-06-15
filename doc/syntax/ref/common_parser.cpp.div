@@ -1,0 +1,13 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// generated common_parser.cpp:
+</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">...</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">template</span>&nbsp;<span class="kw">struct</span>&nbsp;<span class="id">CommonParser</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lex</span><span class="other">::</span><span class="id">slg</span><span class="other">::</span><span class="id">SlgLexer</span><span class="other">&lt;</span><span class="kw">char32_t</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="kw">char32_t</span><span class="other">>></span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">template</span>&nbsp;<span class="kw">struct</span>&nbsp;<span class="id">CommonParser</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lexer</span><span class="other">::</span><span class="id">Lexer</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">lex</span><span class="other">::</span><span class="id">spg</span><span class="other">::</span><span class="id">SpgLexer</span><span class="other">&lt;</span><span class="kw">char32_t</span><span class="other">></span><span class="other">,</span>&nbsp;<span class="kw">char32_t</span><span class="other">>></span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">...</span></span>
+  <br/>
+</div>

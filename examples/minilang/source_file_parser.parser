@@ -1,6 +1,6 @@
 export module minilang.parser.source.file;
 
-[interface]import minilang.tree;
+[interface]import minilang.ast;
 [implementation]import minilang.lexer;
 [implementation]import minilang.token;
 [implementation]import minilang.parser.function;
@@ -12,10 +12,10 @@ parser SourceFileParser
 
     using FunctionParser.Function;
 
-    SourceFile(var std::unique_ptr<minilang::tree::SourceFileNode> sourceFile) : minilang::tree::SourceFileNode*
+    SourceFile(var std::unique_ptr<minilang::ast::SourceFileNode> sourceFile) : minilang::ast::SourceFileNode*
         ::= 
 		(
-			empty{ sourceFile.reset(new minilang::tree::SourceFileNode()); } 
+			empty{ sourceFile.reset(new minilang::ast::SourceFileNode()); } 
 			(
 				Function:function{ sourceFile->AddFunction(function); }
 			)*

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Functions</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h1>Functions</h1>
+    <table class="grammar">
+      <tr>
+        <td class="rule" id="rule.function">function</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.type">type</a>
+          </span>
+          <span class="rule">
+            <a href="#rule.identifier">identifier</a>
+          </span>
+          <span class="mono">(</span>
+          <span class="rule">
+            <a href="#rule.parameter-list">parameter&#8209;list</a>
+          </span>
+          ? <span class="mono">)</span>
+          <span class="rule">
+            <a href="#rule.compound-statement">compound&#8209;statement</a>
+          </span>
+        </td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.parameter-list">parameter&#8209;list</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.parameter">parameter</a>
+          </span>
+          ( <span class="mono">,</span>
+          <span class="rule">
+            <a href="#rule.parameter">parameter</a>
+          </span>
+          )*</td>
+      </tr>
+      <tr>
+        <td class="rule" id="rule.parameter">parameter</td>
+        <td class="sep">&rarr;</td>
+        <td class="rcontent">
+          <span class="rule">
+            <a href="#rule.type">type</a>
+          </span>
+          <span class="rule">
+            <a href="#rule.identifier">identifier</a>
+          </span>
+        </td>
+      </tr>
+    </table>
+    <p>
+      The <span class="rule">ParameterList</span>
+      rule contains a parameter declaration. A parameter declaration is syntactically similar to a variable declaration but lacks the <span class="mono">var</span>
+      keyword.</p>
+    <p>
+      The <span class="rule">ParameterList</span>
+      rule is "called" in the <span class="rule">Function</span>
+      rule with the <span class="rule">function</span>
+      argument.</p>
+    <div class="soul">
+      <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">parser</span><span class="punctuation">.</span><span class="id">function</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">FunctionParser</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Function</span><span class="punctuation">(</span><span class="kw">var</span>&nbsp;<span class="id">std</span><span class="punctuation">::</span><span class="id">unique_ptr</span><span class="punctuation">&lt;</span><span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">FunctionNode</span><span class="punctuation">></span>&nbsp;<span class="id">function</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">FunctionNode</span><span class="punctuation">*</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Type</span><span class="punctuation">:</span><span class="id">returnType</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Identifier</span><span class="punctuation">:</span><span class="id">functionName</span><span class="punctuation">!</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">LPAREN</span><span class="punctuation">!</span><span class="punctuation">{</span>&nbsp;<span class="id">function</span><span class="punctuation">.</span><span class="id">reset</span><span class="punctuation">(</span><span class="kw">new</span>&nbsp;<span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">FunctionNode</span><span class="punctuation">(</span><span class="id">returnType</span><span class="punctuation">,</span>&nbsp;<span class="id">functionName</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ParameterList</span><span class="punctuation">(</span><span class="id">function</span><span class="punctuation">.</span><span class="id">get</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">params</span><span class="punctuation">?</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">RPAREN</span><span class="punctuation">!</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">CompoundStatement</span><span class="punctuation">:</span><span class="id">functionBody</span><span class="punctuation">!</span><span class="punctuation">{</span>&nbsp;<span class="id">function</span><span class="punctuation">-></span><span class="id">SetBody</span><span class="punctuation">(</span><span class="id">functionBody</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">function</span><span class="punctuation">.</span><span class="id">release</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">ParameterList</span><span class="punctuation">(</span><span class="id">minilang</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">FunctionNode</span><span class="punctuation">*</span>&nbsp;<span class="id">function</span><span class="punctuation">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Parameter</span><span class="punctuation">:</span><span class="id">left</span><span class="punctuation">{</span>&nbsp;<span class="id">function</span><span class="punctuation">-></span><span class="id">AddParam</span><span class="punctuation">(</span><span class="id">left</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span>&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">COMMA</span>&nbsp;<span class="id">Parameter</span><span class="punctuation">:</span><span class="id">right</span><span class="punctuation">!</span><span class="punctuation">{</span>&nbsp;<span class="id">function</span><span class="punctuation">-></span><span class="id">AddParam</span><span class="punctuation">(</span><span class="id">right</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">*</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="punctuation">}</span></span>
+      <br/>
+    </div>
+  </body>
+</html>

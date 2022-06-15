@@ -5,11 +5,11 @@ module minilang.parser.type;
 
 import util;
 import soul.ast.spg;
-import minilang.tree;
+import minilang.ast;
 import minilang.lexer;
 import minilang.token;
 
-using namespace minilang::tree;
+using namespace minilang::ast;
 using namespace minilang::lexer;
 using namespace minilang::token;
 
@@ -40,7 +40,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new minilang::tree::IntNode);
+                    return soul::parser::Match(true, new minilang::ast::IntNode);
                 }
             }
             break;
@@ -53,7 +53,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new minilang::tree::BoolNode);
+                    return soul::parser::Match(true, new minilang::ast::BoolNode);
                 }
             }
             break;
@@ -66,7 +66,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new minilang::tree::VoidNode);
+                    return soul::parser::Match(true, new minilang::ast::VoidNode);
                 }
             }
             break;

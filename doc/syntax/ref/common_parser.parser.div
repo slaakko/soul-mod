@@ -1,0 +1,19 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// common_parser.parser:
+</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">CommonParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">slg</span><span class="punctuation">::</span><span class="id">SlgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">lexer</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">lex</span><span class="punctuation">::</span><span class="id">spg</span><span class="punctuation">::</span><span class="id">SpgLexer</span><span class="punctuation">&lt;</span><span class="kw">char32_t</span><span class="punctuation">></span><span class="punctuation">;</span>&nbsp;</span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

@@ -1,0 +1,28 @@
+// expression_parser.parser:
+
+export module minilang.parser.expression;
+
+[interface]import minilang.ast;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+[implementation]import minilang.parser.literal;
+[implementation]import minilang.parser.identifier;
+
+parser ExpressionParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+
+    using LiteralParser.Literal;
+    using IdentifierParser.Identifier;
+
+    Expression : minilang::ast::Node*
+        ::= empty{ return nullptr; }
+        ;
+
+    PrimaryExpression : minilang::ast::Node*
+        ::= Literal:literal{ return literal; }
+        |   Identifier:identifier{ return identifier; }
+        |   LPAREN Expression:expression RPAREN{ return new minilang::ast::ParenthesizedExpressionNode(expression); }
+        ;
+	...
+}

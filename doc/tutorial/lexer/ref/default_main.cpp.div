@@ -1,0 +1,15 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// main.cpp:
+</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">int</span>&nbsp;<span class="id">main</span><span class="other">(</span><span class="other">)</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">0</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+</div>

@@ -254,9 +254,13 @@ std::string XmlProcessor::GetNamespaceUri(const std::string& namespacePrefix, co
     }
     else
     {
-        throw XmlException("error: namespace prefix '" + namespacePrefix + "' not bound to any namespace URI in file " + 
-            lexer->FileName() + " line " + std::to_string(sourcePos.line) + ":\n" + lexer->ErrorLines(sourcePos.pos), sourcePos);
+        if (namespacePrefix != "xml")
+        {
+            throw XmlException("error: namespace prefix '" + namespacePrefix + "' not bound to any namespace URI in file " +
+                lexer->FileName() + " line " + std::to_string(sourcePos.line) + ":\n" + lexer->ErrorLines(sourcePos.pos), sourcePos);
+        }
     }
+    return std::string();
 }
 
 } // namespace soul::xml::processor {

@@ -1,0 +1,27 @@
+export module minilang.parser.statement;
+
+[implementation]import minilang.ast;
+[implementation]import minilang.lexer;
+[implementation]import minilang.token;
+[implementation]import minilang.parser.expression;
+[implementation]import minilang.parser.type;
+[implementation]import minilang.parser.identifier;
+
+parser StatementParser
+{
+    lexer minilang::lexer::MinilangLexer<char32_t>;
+
+    using ExpressionParser.Expression;
+    using TypeParser.Type;
+    using IdentifierParser.Identifier;
+
+    Statement : minilang::ast::Node*
+        ::= IfStatement:ifS{ return ifS; }
+        |   WhileStatement:whileS{ return whileS; }
+        |   ReturnStatement:returnS{ return returnS; }
+        |   CompoundStatement:compoundS{ return compoundS; }
+        |   ConstructionStatement:constructionS{ return constructionS; }
+        |   AssignmentStatement:assignmentS{ return assignmentS; }
+        ;
+	...
+}

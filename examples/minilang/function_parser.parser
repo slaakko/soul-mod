@@ -1,6 +1,6 @@
 export module minilang.parser.function;
 
-[interface]import minilang.tree;
+[interface]import minilang.ast;
 [implementation]import minilang.lexer;
 [implementation]import minilang.token;
 [implementation]import minilang.parser.type;
@@ -15,12 +15,12 @@ parser FunctionParser
     using IdentifierParser.Identifier;
     using StatementParser.CompoundStatement;
 
-    Function(var std::unique_ptr<minilang::tree::FunctionNode> function) : minilang::tree::FunctionNode*
+    Function(var std::unique_ptr<minilang::ast::FunctionNode> function) : minilang::ast::FunctionNode*
         ::= 
 		(
 			Type:returnType 
             Identifier:functionName! 
-            LPAREN!{ function.reset(new minilang::tree::FunctionNode(returnType, functionName)); } 
+            LPAREN!{ function.reset(new minilang::ast::FunctionNode(returnType, functionName)); } 
 			ParameterList(function.get()):params? 
             RPAREN! 
 			CompoundStatement:functionBody!{ function->SetBody(functionBody); }
@@ -30,7 +30,7 @@ parser FunctionParser
 		}
         ;
 
-    ParameterList(minilang::tree::FunctionNode* function)
+    ParameterList(minilang::ast::FunctionNode* function)
         ::= 
         (
             Parameter:left{ function->AddParam(left); } 
@@ -40,13 +40,13 @@ parser FunctionParser
         )
         ;
 
-    Parameter : minilang::tree::ParameterNode*
+    Parameter : minilang::ast::ParameterNode*
         ::= 
         (
             Type:type Identifier:name
         )
 		{
-			return new minilang::tree::ParameterNode(type, name);
+			return new minilang::ast::ParameterNode(type, name);
 		}
         ;
 }

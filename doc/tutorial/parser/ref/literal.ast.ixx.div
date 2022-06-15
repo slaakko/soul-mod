@@ -1,0 +1,61 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// ast.ixx:
+</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="other">.</span><span class="id">ast</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="comment">// ...
+</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">BooleanLiteralNode</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">Node</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">public</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">BooleanLiteralNode</span><span class="other">(</span><span class="kw">bool</span>&nbsp;<span class="id">value_</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">Value</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="other">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">value</span><span class="other">;</span>&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...
+</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">private</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">bool</span>&nbsp;<span class="id">value</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">class</span>&nbsp;<span class="id">IntegerLiteralNode</span>&nbsp;<span class="other">:</span>&nbsp;<span class="kw">public</span>&nbsp;<span class="id">Node</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">public</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">IntegerLiteralNode</span><span class="other">(</span><span class="id">int64_t</span>&nbsp;<span class="id">value_</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">int64_t</span>&nbsp;<span class="id">Value</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="kw">const</span>&nbsp;<span class="other">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">value</span><span class="other">;</span>&nbsp;<span class="other">}</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...
+</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">private</span><span class="other">:</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">int64_t</span>&nbsp;<span class="id">value</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="comment">// ...
+</span></span>
+  <br/>
+</div>

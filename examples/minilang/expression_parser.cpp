@@ -30,13 +30,13 @@ soul::parser::Match ExpressionParser<Lexer>::Expression(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755713);
-    std::unique_ptr<minilang::tree::Node> expr;
+    std::unique_ptr<minilang::ast::Node> expr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
         soul::parser::Match match = ExpressionParser<Lexer>::EqualityExpression(lexer);
-        expr.reset(static_cast<minilang::tree::Node*>(match.value));
+        expr.reset(static_cast<minilang::ast::Node*>(match.value));
         if (match.hit)
         {
             {
@@ -75,9 +75,9 @@ soul::parser::Match ExpressionParser<Lexer>::PrimaryExpression(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755714);
-    std::unique_ptr<minilang::tree::Node> literal;
-    std::unique_ptr<minilang::tree::IdentifierNode> identifier;
-    std::unique_ptr<minilang::tree::Node> expression;
+    std::unique_ptr<minilang::ast::Node> literal;
+    std::unique_ptr<minilang::ast::IdentifierNode> identifier;
+    std::unique_ptr<minilang::ast::Node> expression;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -91,7 +91,7 @@ soul::parser::Match ExpressionParser<Lexer>::PrimaryExpression(Lexer& lexer)
             {
                 int64_t pos = lexer.GetPos();
                 soul::parser::Match match = LiteralParser<Lexer>::Literal(lexer);
-                literal.reset(static_cast<minilang::tree::Node*>(match.value));
+                literal.reset(static_cast<minilang::ast::Node*>(match.value));
                 if (match.hit)
                 {
                     {
@@ -115,7 +115,7 @@ soul::parser::Match ExpressionParser<Lexer>::PrimaryExpression(Lexer& lexer)
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = IdentifierParser<Lexer>::Identifier(lexer);
-                        identifier.reset(static_cast<minilang::tree::IdentifierNode*>(match.value));
+                        identifier.reset(static_cast<minilang::ast::IdentifierNode*>(match.value));
                         if (match.hit)
                         {
                             {
@@ -159,7 +159,7 @@ soul::parser::Match ExpressionParser<Lexer>::PrimaryExpression(Lexer& lexer)
                         soul::parser::Match* parentMatch8 = &match;
                         {
                             soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
-                            expression.reset(static_cast<minilang::tree::Node*>(match.value));
+                            expression.reset(static_cast<minilang::ast::Node*>(match.value));
                             *parentMatch8 = match;
                         }
                         *parentMatch7 = match;
@@ -187,7 +187,7 @@ soul::parser::Match ExpressionParser<Lexer>::PrimaryExpression(Lexer& lexer)
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpression");
                                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                                    return soul::parser::Match(true, new minilang::tree::ParenthesizedExpressionNode(expression.release()));
+                                    return soul::parser::Match(true, new minilang::ast::ParenthesizedExpressionNode(expression.release()));
                                 }
                             }
                             *parentMatch10 = match;
@@ -228,8 +228,8 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755715);
-    std::unique_ptr<minilang::tree::Node> expr = std::unique_ptr<minilang::tree::Node>();
-    std::unique_ptr<minilang::tree::Node> primary;
+    std::unique_ptr<minilang::ast::Node> expr = std::unique_ptr<minilang::ast::Node>();
+    std::unique_ptr<minilang::ast::Node> primary;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -245,7 +245,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ExpressionParser<Lexer>::PrimaryExpression(lexer);
-                    primary.reset(static_cast<minilang::tree::Node*>(match.value));
+                    primary.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         expr.reset(primary.release());
@@ -287,7 +287,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new minilang::tree::InvokeNode(expr.release()));
+                                                    expr.reset(new minilang::ast::InvokeNode(expr.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -392,7 +392,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer)
 }
 
 template<typename Lexer>
-soul::parser::Match ExpressionParser<Lexer>::ExpressionList(Lexer& lexer, minilang::tree::Node* owner)
+soul::parser::Match ExpressionParser<Lexer>::ExpressionList(Lexer& lexer, minilang::ast::Node* owner)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -404,8 +404,8 @@ soul::parser::Match ExpressionParser<Lexer>::ExpressionList(Lexer& lexer, minila
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755716);
-    std::unique_ptr<minilang::tree::Node> left;
-    std::unique_ptr<minilang::tree::Node> right;
+    std::unique_ptr<minilang::ast::Node> left;
+    std::unique_ptr<minilang::ast::Node> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -414,7 +414,7 @@ soul::parser::Match ExpressionParser<Lexer>::ExpressionList(Lexer& lexer, minila
         {
             int64_t pos = lexer.GetPos();
             soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
-            left.reset(static_cast<minilang::tree::Node*>(match.value));
+            left.reset(static_cast<minilang::ast::Node*>(match.value));
             if (match.hit)
             {
                 owner->AddArgument(left.release());
@@ -463,7 +463,7 @@ soul::parser::Match ExpressionParser<Lexer>::ExpressionList(Lexer& lexer, minila
                                         {
                                             int64_t pos = lexer.GetPos();
                                             soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
-                                            right.reset(static_cast<minilang::tree::Node*>(match.value));
+                                            right.reset(static_cast<minilang::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
                                                 *parentMatch8 = match;
@@ -528,9 +528,9 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755717);
-    std::unique_ptr<soul::parser::Value<minilang::tree::Operator>> op;
-    std::unique_ptr<minilang::tree::Node> unaryExpr;
-    std::unique_ptr<minilang::tree::Node> postfixExpr;
+    std::unique_ptr<soul::parser::Value<minilang::ast::Operator>> op;
+    std::unique_ptr<minilang::ast::Node> unaryExpr;
+    std::unique_ptr<minilang::ast::Node> postfixExpr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -539,7 +539,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             soul::parser::Match match = ExpressionParser<Lexer>::UnaryOperator(lexer);
-            op.reset(static_cast<soul::parser::Value<minilang::tree::Operator>*>(match.value));
+            op.reset(static_cast<soul::parser::Value<minilang::ast::Operator>*>(match.value));
             *parentMatch1 = match;
         }
         if (match.hit)
@@ -556,7 +556,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = ExpressionParser<Lexer>::UnaryExpression(lexer);
-                        unaryExpr.reset(static_cast<minilang::tree::Node*>(match.value));
+                        unaryExpr.reset(static_cast<minilang::ast::Node*>(match.value));
                         if (match.hit)
                         {
                             *parentMatch4 = match;
@@ -572,7 +572,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
                             #endif SOUL_PARSER_DEBUG_SUPPORT
-                            return soul::parser::Match(true, new minilang::tree::UnaryOpExprNode(op->value, unaryExpr.release()));
+                            return soul::parser::Match(true, new minilang::ast::UnaryExprNode(op->value, unaryExpr.release()));
                         }
                     }
                     *parentMatch3 = match;
@@ -593,7 +593,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryExpression(Lexer& lexer)
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ExpressionParser<Lexer>::PostfixExpression(lexer);
-                    postfixExpr.reset(static_cast<minilang::tree::Node*>(match.value));
+                    postfixExpr.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         {
@@ -649,7 +649,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::unaryPlus));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::unaryPlus));
                 }
             }
             break;
@@ -662,7 +662,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::unaryMinus));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::unaryMinus));
                 }
             }
             break;
@@ -675,7 +675,7 @@ soul::parser::Match ExpressionParser<Lexer>::UnaryOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::not_));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::not_));
                 }
             }
             break;
@@ -708,10 +708,10 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeExpression(Lexer& lex
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755719);
-    std::unique_ptr<minilang::tree::Node> expr = std::unique_ptr<minilang::tree::Node>();
-    std::unique_ptr<minilang::tree::Node> left;
-    std::unique_ptr<soul::parser::Value<minilang::tree::Operator>> op;
-    std::unique_ptr<minilang::tree::Node> right;
+    std::unique_ptr<minilang::ast::Node> expr = std::unique_ptr<minilang::ast::Node>();
+    std::unique_ptr<minilang::ast::Node> left;
+    std::unique_ptr<soul::parser::Value<minilang::ast::Operator>> op;
+    std::unique_ptr<minilang::ast::Node> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -727,7 +727,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeExpression(Lexer& lex
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ExpressionParser<Lexer>::UnaryExpression(lexer);
-                    left.reset(static_cast<minilang::tree::Node*>(match.value));
+                    left.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         expr.reset(left.release());
@@ -755,7 +755,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeExpression(Lexer& lex
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match = ExpressionParser<Lexer>::MultiplicativeOperator(lexer);
-                                        op.reset(static_cast<soul::parser::Value<minilang::tree::Operator>*>(match.value));
+                                        op.reset(static_cast<soul::parser::Value<minilang::ast::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
                                     if (match.hit)
@@ -772,7 +772,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeExpression(Lexer& lex
                                                 {
                                                     int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = ExpressionParser<Lexer>::UnaryExpression(lexer);
-                                                    right.reset(static_cast<minilang::tree::Node*>(match.value));
+                                                    right.reset(static_cast<minilang::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
                                                         *parentMatch10 = match;
@@ -784,7 +784,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeExpression(Lexer& lex
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new minilang::tree::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new minilang::ast::BinaryExprNode(op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -862,7 +862,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeOperator(Lexer& lexer
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::mul));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::mul));
                 }
             }
             break;
@@ -875,7 +875,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeOperator(Lexer& lexer
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::div));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::div));
                 }
             }
             break;
@@ -888,7 +888,7 @@ soul::parser::Match ExpressionParser<Lexer>::MultiplicativeOperator(Lexer& lexer
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::mod));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::mod));
                 }
             }
             break;
@@ -921,10 +921,10 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveExpression(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755721);
-    std::unique_ptr<minilang::tree::Node> expr = std::unique_ptr<minilang::tree::Node>();
-    std::unique_ptr<minilang::tree::Node> left;
-    std::unique_ptr<soul::parser::Value<minilang::tree::Operator>> op;
-    std::unique_ptr<minilang::tree::Node> right;
+    std::unique_ptr<minilang::ast::Node> expr = std::unique_ptr<minilang::ast::Node>();
+    std::unique_ptr<minilang::ast::Node> left;
+    std::unique_ptr<soul::parser::Value<minilang::ast::Operator>> op;
+    std::unique_ptr<minilang::ast::Node> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -940,7 +940,7 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveExpression(Lexer& lexer)
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ExpressionParser<Lexer>::MultiplicativeExpression(lexer);
-                    left.reset(static_cast<minilang::tree::Node*>(match.value));
+                    left.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         expr.reset(left.release());
@@ -968,7 +968,7 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveExpression(Lexer& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match = ExpressionParser<Lexer>::AdditiveOperator(lexer);
-                                        op.reset(static_cast<soul::parser::Value<minilang::tree::Operator>*>(match.value));
+                                        op.reset(static_cast<soul::parser::Value<minilang::ast::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
                                     if (match.hit)
@@ -985,7 +985,7 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveExpression(Lexer& lexer)
                                                 {
                                                     int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = ExpressionParser<Lexer>::MultiplicativeExpression(lexer);
-                                                    right.reset(static_cast<minilang::tree::Node*>(match.value));
+                                                    right.reset(static_cast<minilang::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
                                                         *parentMatch10 = match;
@@ -997,7 +997,7 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new minilang::tree::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new minilang::ast::BinaryExprNode(op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1075,7 +1075,7 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::add));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::add));
                 }
             }
             break;
@@ -1088,7 +1088,7 @@ soul::parser::Match ExpressionParser<Lexer>::AdditiveOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::sub));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::sub));
                 }
             }
             break;
@@ -1121,10 +1121,10 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalExpression(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755723);
-    std::unique_ptr<minilang::tree::Node> expr = std::unique_ptr<minilang::tree::Node>();
-    std::unique_ptr<minilang::tree::Node> left;
-    std::unique_ptr<soul::parser::Value<minilang::tree::Operator>> op;
-    std::unique_ptr<minilang::tree::Node> right;
+    std::unique_ptr<minilang::ast::Node> expr = std::unique_ptr<minilang::ast::Node>();
+    std::unique_ptr<minilang::ast::Node> left;
+    std::unique_ptr<soul::parser::Value<minilang::ast::Operator>> op;
+    std::unique_ptr<minilang::ast::Node> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1140,7 +1140,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalExpression(Lexer& lexer)
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ExpressionParser<Lexer>::AdditiveExpression(lexer);
-                    left.reset(static_cast<minilang::tree::Node*>(match.value));
+                    left.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         expr.reset(left.release());
@@ -1168,7 +1168,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalExpression(Lexer& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match = ExpressionParser<Lexer>::RelationalOperator(lexer);
-                                        op.reset(static_cast<soul::parser::Value<minilang::tree::Operator>*>(match.value));
+                                        op.reset(static_cast<soul::parser::Value<minilang::ast::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
                                     if (match.hit)
@@ -1185,7 +1185,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalExpression(Lexer& lexer)
                                                 {
                                                     int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = ExpressionParser<Lexer>::AdditiveExpression(lexer);
-                                                    right.reset(static_cast<minilang::tree::Node*>(match.value));
+                                                    right.reset(static_cast<minilang::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
                                                         *parentMatch10 = match;
@@ -1197,7 +1197,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new minilang::tree::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new minilang::ast::BinaryExprNode(op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1275,7 +1275,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::less));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::less));
                 }
             }
             break;
@@ -1288,7 +1288,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::greater));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::greater));
                 }
             }
             break;
@@ -1301,7 +1301,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::lessOrEqual));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::lessOrEqual));
                 }
             }
             break;
@@ -1314,7 +1314,7 @@ soul::parser::Match ExpressionParser<Lexer>::RelationalOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::greaterOrEqual));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::greaterOrEqual));
                 }
             }
             break;
@@ -1347,10 +1347,10 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityExpression(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 3662973475552755725);
-    std::unique_ptr<minilang::tree::Node> expr = std::unique_ptr<minilang::tree::Node>();
-    std::unique_ptr<minilang::tree::Node> left;
-    std::unique_ptr<soul::parser::Value<minilang::tree::Operator>> op;
-    std::unique_ptr<minilang::tree::Node> right;
+    std::unique_ptr<minilang::ast::Node> expr = std::unique_ptr<minilang::ast::Node>();
+    std::unique_ptr<minilang::ast::Node> left;
+    std::unique_ptr<soul::parser::Value<minilang::ast::Operator>> op;
+    std::unique_ptr<minilang::ast::Node> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1366,7 +1366,7 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityExpression(Lexer& lexer)
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ExpressionParser<Lexer>::RelationalExpression(lexer);
-                    left.reset(static_cast<minilang::tree::Node*>(match.value));
+                    left.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         expr.reset(left.release());
@@ -1394,7 +1394,7 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityExpression(Lexer& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         soul::parser::Match match = ExpressionParser<Lexer>::EqualityOperator(lexer);
-                                        op.reset(static_cast<soul::parser::Value<minilang::tree::Operator>*>(match.value));
+                                        op.reset(static_cast<soul::parser::Value<minilang::ast::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
                                     if (match.hit)
@@ -1411,7 +1411,7 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityExpression(Lexer& lexer)
                                                 {
                                                     int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = ExpressionParser<Lexer>::RelationalExpression(lexer);
-                                                    right.reset(static_cast<minilang::tree::Node*>(match.value));
+                                                    right.reset(static_cast<minilang::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
                                                         *parentMatch10 = match;
@@ -1423,7 +1423,7 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityExpression(Lexer& lexer)
                                                 }
                                                 if (match.hit)
                                                 {
-                                                    expr.reset(new minilang::tree::BinaryOpExprNode(op->value, expr.release(), right.release()));
+                                                    expr.reset(new minilang::ast::BinaryExprNode(op->value, expr.release(), right.release()));
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1501,7 +1501,7 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::equal));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::equal));
                 }
             }
             break;
@@ -1514,7 +1514,7 @@ soul::parser::Match ExpressionParser<Lexer>::EqualityOperator(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityOperator");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new soul::parser::Value<minilang::tree::Operator>(minilang::tree::Operator::notEqual));
+                    return soul::parser::Match(true, new soul::parser::Value<minilang::ast::Operator>(minilang::ast::Operator::notEqual));
                 }
             }
             break;

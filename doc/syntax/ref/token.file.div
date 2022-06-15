@@ -1,0 +1,15 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// example.token:
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">tokens</span>&nbsp;<span class="id">example</span><span class="punctuation">.</span><span class="id">token</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span><span class="id">OR</span><span class="punctuation">,</span>&nbsp;<span class="string">"'or'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">AND</span><span class="punctuation">,</span>&nbsp;<span class="string">"'and'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">EQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">NEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'!='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GEQ</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>='"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">LESS</span><span class="punctuation">,</span>&nbsp;<span class="string">"'&lt;'"</span><span class="punctuation">)</span><span class="punctuation">,</span>&nbsp;<span class="punctuation">(</span><span class="id">GREATER</span><span class="punctuation">,</span>&nbsp;<span class="string">"'>'"</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

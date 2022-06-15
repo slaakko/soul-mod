@@ -5,11 +5,11 @@ module minilang.parser.literal;
 
 import util;
 import soul.ast.spg;
-import minilang.tree;
+import minilang.ast;
 import minilang.lexer;
 import minilang.token;
 
-using namespace minilang::tree;
+using namespace minilang::ast;
 using namespace minilang::lexer;
 using namespace minilang::token;
 
@@ -28,8 +28,8 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 2710058753855586305);
-    std::unique_ptr<minilang::tree::Node> booleanLiteral;
-    std::unique_ptr<minilang::tree::Node> integerLiteral;
+    std::unique_ptr<minilang::ast::Node> booleanLiteral;
+    std::unique_ptr<minilang::ast::Node> integerLiteral;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -39,7 +39,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
         {
             int64_t pos = lexer.GetPos();
             soul::parser::Match match = LiteralParser<Lexer>::BooleanLiteral(lexer);
-            booleanLiteral.reset(static_cast<minilang::tree::Node*>(match.value));
+            booleanLiteral.reset(static_cast<minilang::ast::Node*>(match.value));
             if (match.hit)
             {
                 {
@@ -63,7 +63,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = LiteralParser<Lexer>::IntegerLiteral(lexer);
-                    integerLiteral.reset(static_cast<minilang::tree::Node*>(match.value));
+                    integerLiteral.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
                         {
@@ -119,7 +119,7 @@ soul::parser::Match LiteralParser<Lexer>::BooleanLiteral(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BooleanLiteral");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new minilang::tree::BooleanLiteralNode(true));
+                    return soul::parser::Match(true, new minilang::ast::BooleanLiteralNode(true));
                 }
             }
             break;
@@ -132,7 +132,7 @@ soul::parser::Match LiteralParser<Lexer>::BooleanLiteral(Lexer& lexer)
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BooleanLiteral");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                    return soul::parser::Match(true, new minilang::tree::BooleanLiteralNode(false));
+                    return soul::parser::Match(true, new minilang::ast::BooleanLiteralNode(false));
                 }
             }
             break;
@@ -182,7 +182,7 @@ soul::parser::Match LiteralParser<Lexer>::IntegerLiteral(Lexer& lexer)
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IntegerLiteral");
                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, new minilang::tree::IntegerLiteralNode(token.ToLong()));
+                return soul::parser::Match(true, new minilang::ast::IntegerLiteralNode(token.ToLong()));
             }
         }
         *parentMatch0 = match;

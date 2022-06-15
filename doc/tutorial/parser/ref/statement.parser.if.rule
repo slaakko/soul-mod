@@ -1,0 +1,14 @@
+	...
+	
+    IfStatement : minilang::ast::Node*
+        ::= 
+		(
+			IF LPAREN! Expression:condition! RPAREN! Statement:thenS! (ELSE Statement:elseS!)?
+		)
+		{
+			return new minilang::ast::IfStatementNode(condition, thenS, elseS);
+		}
+        ;
+
+	...
+}

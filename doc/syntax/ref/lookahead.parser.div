@@ -1,0 +1,37 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="comment">// a 'lookahead':
+</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">TemplateParser</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TemplateArgument</span><span class="punctuation">(</span><span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">symbols</span><span class="punctuation">::</span><span class="id">Context</span><span class="punctuation">*</span>&nbsp;<span class="id">ctx</span><span class="punctuation">,</span>&nbsp;<span class="id">sngcpp</span><span class="punctuation">::</span><span class="id">ast</span><span class="punctuation">::</span><span class="id">Node</span><span class="punctuation">*</span>&nbsp;<span class="id">templateIdNode</span><span class="punctuation">,</span>&nbsp;<span class="kw">int</span>&nbsp;<span class="id">index</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">Node</span><span class="punctuation">*</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="other">...</span>&nbsp;<span class="id">TypeId</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">typeId</span>&nbsp;<span class="id">TemplateArgNext</span><span class="punctuation">:</span><span class="id">next</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">ConstantExpression</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">constantExpr</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">constantExpr</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">IdExpression</span><span class="punctuation">(</span><span class="id">ctx</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">idExpr</span><span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">idExpr</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">TemplateArgNext</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span>&nbsp;<span class="punctuation">&amp;</span><span class="punctuation">(</span><span class="id">RANGLE</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">COMMA</span>&nbsp;<span class="punctuation">|</span>&nbsp;<span class="id">ELLIPSIS</span><span class="punctuation">)</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

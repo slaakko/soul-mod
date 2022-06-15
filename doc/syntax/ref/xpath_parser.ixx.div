@@ -1,0 +1,21 @@
+<div class="cpp">
+  <span xml:space="preserve"><span class="comment">// generated xpath_parser.ixx:
+</span></span>
+  <br/>
+  <span xml:space="preserve"/>
+  <br/>
+  <span xml:space="preserve"><span class="kw">template</span><span class="other">&lt;</span><span class="kw">typename</span>&nbsp;<span class="id">Lexer</span><span class="other">></span></span>
+  <br/>
+  <span xml:space="preserve"><span class="kw">struct</span>&nbsp;<span class="id">XPathParser</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">{</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">xpath</span><span class="other">::</span><span class="id">expr</span><span class="other">::</span><span class="id">Expr</span><span class="other">></span>&nbsp;<span class="id">Parse</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">static</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">parser</span><span class="other">::</span><span class="id">Match</span>&nbsp;<span class="id">Expr</span><span class="other">(</span><span class="id">Lexer</span><span class="other">&amp;</span>&nbsp;<span class="id">lexer</span><span class="other">)</span><span class="other">;</span></span>
+  <br/>
+  <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+  <br/>
+  <span xml:space="preserve"><span class="other">}</span></span>
+  <br/>
+</div>

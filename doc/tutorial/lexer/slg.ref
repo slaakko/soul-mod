@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Creating a Lexer Project File</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>
+        1.2.6 Creating a Lexer Project File
+    </h1>
+
+    <p>
+        A lexer project file consists of references to token, keyword, expression and lexer files.
+    </p>
+
+    <p>
+        The lexer project file syntax is described in <a href="../../syntax/lexer.html#project-file-syntax">this</a> document.
+    </p>
+
+    <p>
+        To add a lexer project file to minilang:
+    </p>
+
+    <ul>
+        <li>
+            Right-click your project in the Solution Explorer and select 'Add | New Item...'.
+        </li>
+        <li>
+            Select Visual C++ | Utility | Text File (.txt) item and name the file <span class="mono">minilang.slg</span>.
+        </li>
+        <li>
+            Add the following code to the lexer project file:<br />
+			<ref file="ref/minilang.slg.div"/>
+        </li>
+    </ul>
+</body>
+</html>

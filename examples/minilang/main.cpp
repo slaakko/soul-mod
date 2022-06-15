@@ -1,7 +1,10 @@
 import std.core;
 import util;
 import soul.lexer;
+import soul.lexer.xml.parsing.log;
+import minilang.ast;
 import minilang.lexer;
+import minilang.parser;
 
 void TestLexer(const std::string& fileName, bool verbose)
 {
@@ -15,6 +18,23 @@ void TestLexer(const std::string& fileName, bool verbose)
     std::u32string ucontent = util::ToUtf32(content);
     auto lexer = minilang::lexer::MakeLexer(ucontent.c_str(), ucontent.c_str() + ucontent.length(), fileName);
     soul::lexer::TestLexer(lexer, formatter);
+}
+
+void TestParser(const std::string& fileName, bool verbose)
+{
+    util::CodeFormatter formatter(std::cout);
+    if (verbose)
+    {
+        formatter.WriteLine("testing parser with file:");
+        formatter.WriteLine("> " + fileName);
+    }
+    std::string content = util::ReadFile(fileName);
+    std::u32string ucontent = util::ToUtf32(content);
+    auto lexer = minilang::lexer::MakeLexer(ucontent.c_str(), ucontent.c_str() + ucontent.length(), fileName);
+    lexer.SetRuleNameMapPtr(minilang::spg::rules::GetRuleNameMapPtr());
+    soul::lexer::XmlParsingLog log(std::cout); // set the SOUL_PARSER_DEBUG_SUPPORT preprocessing symbol in the parser project settings to enable logging.
+    lexer.SetLog(&log);
+    std::unique_ptr<minilang::ast::SourceFileNode> sourceFile = minilang::parser::source::file::SourceFileParser<decltype(lexer)>::Parse(lexer);
 }
 
 enum class Command
@@ -33,6 +53,8 @@ void PrintHelp()
     std::cout << "  Print help and exit." << std::endl;
     std::cout << "--test-lexer | -l:" << std::endl;
     std::cout << "  Test lexer." << std::endl;
+    std::cout << "--test-parser | -p:" << std::endl;
+    std::cout << "  Test parser." << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -61,6 +83,10 @@ int main(int argc, const char** argv)
                 {
                     command = Command::testLexer;
                 }
+                else if (arg == "--test-parser")
+                {
+                    command = Command::testParser;
+                }
                 else
                 {
                     throw std::runtime_error("unknown option '" + arg + "'");
@@ -88,6 +114,11 @@ int main(int argc, const char** argv)
                             command = Command::testLexer;
                             break;
                         }
+                        case 'p':
+                        {
+                            command = Command::testParser;
+                            break;
+                        }
                         default:
                         {
                             throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
@@ -111,6 +142,11 @@ int main(int argc, const char** argv)
                 case Command::testLexer:
                 {
                     TestLexer(fileName, verbose);
+                    break;
+                }
+                case Command::testParser:
+                {
+                    TestParser(fileName, verbose);
                     break;
                 }
                 default:

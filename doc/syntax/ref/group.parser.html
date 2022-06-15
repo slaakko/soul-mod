@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+  <meta charset="utf-8"/>
+  <title>group.parser</title>
+  <style>
+   div.soul
+{
+ background-color: #e6ffee;
+ margin: 20px;
+ padding: 20px;
+ font-family: monospace;
+}
+
+.soul .kw
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+.soul .id
+{
+ color: #000000;
+}
+
+.soul .number
+{
+ color: #000000;
+}
+
+.soul .other
+{
+ color: #000000;
+}
+
+.soul .string
+{
+ color: #a31515;
+}
+
+.soul .comment
+{
+ color: #006600;
+}
+
+.soul .punctuation
+{
+ color: #a31515;
+ font-weight: bold;
+}
+
+</style>
+ </head>
+ <body>
+  <div class="soul">
+   <span xml:space="preserve"><span class="comment">// 'group':
+</span></span>
+   <br/>
+   <span xml:space="preserve"/>
+   <br/>
+   <span xml:space="preserve"><span class="kw">parser</span>&nbsp;<span class="id">RexParser</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Repetition</span><span class="punctuation">(</span><span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">context</span><span class="punctuation">::</span><span class="id">Context</span><span class="punctuation">*</span>&nbsp;<span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="kw">var</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Nfa</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span>&nbsp;<span class="punctuation">:</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Nfa</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">::</span><span class="punctuation">=</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">Primary</span><span class="punctuation">(</span><span class="id">context</span><span class="punctuation">)</span><span class="punctuation">:</span><span class="id">left</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">left</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">(</span>&nbsp;&nbsp;&nbsp;<span class="id">STAR</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Kleene</span><span class="punctuation">(</span><span class="punctuation">*</span><span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">PLUS</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Pos</span><span class="punctuation">(</span><span class="punctuation">*</span><span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">|</span>&nbsp;&nbsp;&nbsp;<span class="id">QUEST</span><span class="punctuation">{</span>&nbsp;<span class="id">value</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">soul</span><span class="punctuation">::</span><span class="id">rex</span><span class="punctuation">::</span><span class="id">nfa</span><span class="punctuation">::</span><span class="id">Opt</span><span class="punctuation">(</span><span class="punctuation">*</span><span class="id">context</span><span class="punctuation">,</span>&nbsp;<span class="id">value</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span><span class="punctuation">?</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">)</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="id">value</span><span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">;</span></span>
+   <br/>
+   <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">...</span></span>
+   <br/>
+   <span xml:space="preserve"><span class="punctuation">}</span></span>
+   <br/>
+  </div>
+ </body>
+</html>

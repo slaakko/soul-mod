@@ -1,0 +1,70 @@
+<div class="soul">
+ <span xml:space="preserve"><span class="kw">export</span>&nbsp;<span class="kw">module</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">lexer</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">token</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">keyword</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">minilang</span><span class="punctuation">.</span><span class="id">expr</span><span class="punctuation">;</span></span>
+ <br/>
+ <span xml:space="preserve"/>
+ <br/>
+ <span xml:space="preserve"><span class="kw">lexer</span>&nbsp;<span class="id">MinilangLexer</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">rules</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">{</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{separators}"</span>&nbsp;<span class="punctuation">{</span><span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{identifier}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="id">int64_t</span>&nbsp;<span class="id">kw</span>&nbsp;<span class="punctuation">=</span>&nbsp;<span class="id">lexer</span><span class="punctuation">.</span><span class="id">GetKeywordToken</span><span class="punctuation">(</span><span class="id">lexer</span><span class="punctuation">.</span><span class="id">CurrentToken</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">.</span><span class="id">match</span><span class="punctuation">)</span><span class="punctuation">;</span>&nbsp;<span class="kw">if</span>&nbsp;<span class="punctuation">(</span><span class="id">kw</span>&nbsp;<span class="punctuation">==</span>&nbsp;<span class="id">INVALID_TOKEN</span><span class="punctuation">)</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">ID</span><span class="punctuation">;</span>&nbsp;<span class="kw">else</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">kw</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"{integer}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">INTEGER_LITERAL</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">";"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">SEMICOLON</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\("</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\)"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RPAREN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\{"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LBRACE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\}"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">RBRACE</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\+"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">PLUS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"-"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">MINUS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"\*"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">MUL</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"/"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">DIV</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"%"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">MOD</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"!"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NOT</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"=="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">EQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"!="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">NEQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LEQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">GEQ</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"&lt;"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">LESS</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">">"</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">GREATER</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"="</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">ASSIGN</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">","</span>&nbsp;<span class="punctuation">{</span>&nbsp;<span class="kw">return</span>&nbsp;<span class="id">COMMA</span><span class="punctuation">;</span>&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="punctuation">}</span></span>
+ <br/>
+ <span xml:space="preserve"><span class="punctuation">}</span></span>
+ <br/>
+</div>

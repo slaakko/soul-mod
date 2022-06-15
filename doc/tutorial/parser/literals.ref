@@ -1,0 +1,48 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Literals</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Literals</h1>
+    <ref file="ref/literal.grammar"/>
+	
+	<p>
+		The <span class="rule">Literal</span> rule delegates parsing of a literal to two 
+		rules: <span class="rule">BooleanLiteral</span> and <span class="rule">IntegerLiteral</span>.
+		The rule names <span class="rule">BooleanLiteral</span> and 
+		<span class="rule">IntegerLiteral</span> in the <span class="rule">Literal</span>rule are examples of 
+		<a href="../../syntax/parser.html#nonterminal">nonterminals</a>.
+	</p>
+	
+	<p>
+		Distinction between a <a href="../../syntax/parser.html#rule.token-parser">token</a> and a
+		<a href="../../syntax/parser.html#rule.nonterminal">nonterminal</a> 
+		is made using the <span class="mono">:</span> symbol separating the name of the nonterminal 
+		and the <em>instance</em> name of the nonterminal. It is mandatory.
+	</p>
+	
+	<ref file="ref/literal.parser.simple.div"/>
+
+	<p>
+		The syntax tree node classes for literals contain parsed values of the literals.
+	</p>
+
+	<ref file="ref/literal.ast.ixx.div"/>
+	
+	<p>
+		Here is the literal parser completed with semantic actions.
+	</p>
+
+	<p>
+		A parser can access the lexer it is instantiated with by using the <a href="../../syntax/parser.html#lexer-variable">lexer</a> variable.
+		The <a href="../../syntax/parser.html#pos-variable">pos</a> variable represents the position of the current token contained by the lexer.
+		To convert the matching lexeme of a token to an integer, you can use the <em>ToLong</em> member function of the token class.
+	</p>
+	
+	<ref file="ref/literal.parser.div"/>
+</body>
+</html>

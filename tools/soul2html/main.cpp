@@ -19,7 +19,7 @@ std::string Version()
 void PrintHelp()
 {
     std::cout << "Parser to HTML converter version " << Version() << std::endl;
-    std::cout << "usage: parser2html [options] { FILE.parser }" << std::endl;
+    std::cout << "usage: soul2html [options] { FILE.parser | FILE.token | FILE.keyword | FILE.expr | FILE.lexer | FILE.slg }" << std::endl;
     std::cout << "options:" << std::endl;
     std::cout << "--verbose | -v" << std::endl;
     std::cout << "  Be verbose." << std::endl;
@@ -32,7 +32,7 @@ std::string MakeStyleText(int indent)
     std::stringstream sstream;
     util::CodeFormatter formatter(sstream);
     formatter.SetIndentSize(1);
-    formatter.WriteLine("div.parser");
+    formatter.WriteLine("div.soul");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("background-color: #e6ffee;");
@@ -42,7 +42,7 @@ std::string MakeStyleText(int indent)
     formatter.DecIndent();
     formatter.WriteLine("}");
     formatter.WriteLine();
-    formatter.WriteLine(".parser .kw");
+    formatter.WriteLine(".soul .kw");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("color: #a31515;");
@@ -51,7 +51,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine("}");
     formatter.WriteLine();
 
-    formatter.WriteLine(".parser .id");
+    formatter.WriteLine(".soul .id");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("color: #000000;");
@@ -59,7 +59,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine("}");
     formatter.WriteLine();
 
-    formatter.WriteLine(".parser .number");
+    formatter.WriteLine(".soul .number");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("color: #000000;");
@@ -67,7 +67,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine("}");
     formatter.WriteLine();
 
-    formatter.WriteLine(".parser .other");
+    formatter.WriteLine(".soul .other");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("color: #000000;");
@@ -75,7 +75,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine("}");
     formatter.WriteLine();
 
-    formatter.WriteLine(".parser .string");
+    formatter.WriteLine(".soul .string");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("color: #a31515;");
@@ -83,7 +83,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine("}");
     formatter.WriteLine();
 
-    formatter.WriteLine(".parser .comment");
+    formatter.WriteLine(".soul .comment");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("color: #006600;");
@@ -91,7 +91,7 @@ std::string MakeStyleText(int indent)
     formatter.WriteLine("}");
     formatter.WriteLine();
 
-    formatter.WriteLine(".parser .punctuation");
+    formatter.WriteLine(".soul .punctuation");
     formatter.WriteLine("{");
     formatter.IncIndent();
     formatter.WriteLine("color: #a31515;");
@@ -313,12 +313,16 @@ void ProcessFile(const std::string& fileName, const std::string& title, bool ver
     std::u32string ucontent = util::ToUtf32(content);
     std::vector<std::u32string> lines = GetLines(ucontent);
     std::string htmlFilePath = fileName + ".html";
+    std::string divFilePath = fileName + ".div";
     std::ofstream htmlFile(htmlFilePath);
-    util::CodeFormatter formatter(htmlFile);
-    formatter.SetIndentSize(1);
-    std::unique_ptr<soul::xml::Document> doc = soul::xml::MakeDocument();
-    formatter.WriteLine("<!DOCTYPE html>");
-    formatter.WriteLine();
+    std::ofstream divFile(divFilePath);
+    util::CodeFormatter htmlFormatter(htmlFile);
+    htmlFormatter.SetIndentSize(1);
+    util::CodeFormatter divFormatter(divFile);
+    divFormatter.SetIndentSize(1);
+    std::unique_ptr<soul::xml::Document> htmlDoc = soul::xml::MakeDocument();
+    htmlFormatter.WriteLine("<!DOCTYPE html>");
+    htmlFormatter.WriteLine();
     soul::xml::Element* htmlElement = soul::xml::MakeElement("html");
     htmlElement->SetAttribute("lang", "en");
     htmlElement->SetAttribute("xmlns", "http://www.w3.org/1999/xhtml");
@@ -337,40 +341,54 @@ void ProcessFile(const std::string& fileName, const std::string& title, bool ver
     htmlElement->AppendChild(headElement);
     soul::xml::Element* bodyElement = soul::xml::MakeElement("body");
     htmlElement->AppendChild(bodyElement);
-    soul::xml::Element* divElement = soul::xml::MakeElement("div");
-    divElement->SetAttribute("class", "parser");
-    bodyElement->AppendChild(divElement);
-    doc->AppendChild(htmlElement);
-    soul::xml::Element* currentElement = nullptr;
+    std::unique_ptr<soul::xml::Document> divDoc = soul::xml::MakeDocument();
+    soul::xml::Element* divHtmlElement = soul::xml::MakeElement("div");
+    divHtmlElement->SetAttribute("class", "soul");
+    bodyElement->AppendChild(divHtmlElement);
+    htmlDoc->AppendChild(htmlElement);
+    soul::xml::Element* divRootElement = soul::xml::MakeElement("div");
+    divRootElement->SetAttribute("class", "soul");
+    divDoc->AppendChild(divRootElement);
+    soul::xml::Element* currentHtmlElement = nullptr;
+    soul::xml::Element* currentDivElement = nullptr;
     int n = lines.size();
     for (int i = 0; i < n; ++i)
     {
         std::u32string line = lines[i];
         line.append(U"\n\n");
         auto tokenLexer = soul::token::lexer::MakeLexer(line.c_str(), line.c_str() + line.length(), "");
-        soul::xml::Element* lineElement = soul::xml::MakeElement("span");
-        lineElement->SetAttribute("xml:space", "preserve");
-        currentElement = lineElement;
+        soul::xml::Element* lineHtmlElement = soul::xml::MakeElement("span");
+        lineHtmlElement->SetAttribute("xml:space", "preserve");
+        currentHtmlElement = lineHtmlElement;
+        soul::xml::Element* lineDivElement = soul::xml::MakeElement("span");
+        lineDivElement->SetAttribute("xml:space", "preserve");
+        currentDivElement = lineDivElement;
         bool startOfLine = true;
         ++tokenLexer;
         while (*tokenLexer != soul::lexer::END_TOKEN)
         {
             auto token = tokenLexer.GetToken(tokenLexer.GetPos());
-            ProcessToken(token, currentElement, startOfLine);
+            ProcessToken(token, currentHtmlElement, startOfLine);
+            ProcessToken(token, currentDivElement, startOfLine);
             ++tokenLexer;
             if (token.id != WS)
             {
                 startOfLine = false;
             }
         }
-        soul::xml::Element* brElement = soul::xml::MakeElement("br");
-        divElement->AppendChild(lineElement);
-        divElement->AppendChild(brElement);
+        soul::xml::Element* brHtmlElement = soul::xml::MakeElement("br");
+        divHtmlElement->AppendChild(lineHtmlElement);
+        divHtmlElement->AppendChild(brHtmlElement);
+        soul::xml::Element* brDivElement = soul::xml::MakeElement("br");
+        divRootElement->AppendChild(lineDivElement);
+        divRootElement->AppendChild(brDivElement);
     }
-    doc->Write(formatter);
+    htmlDoc->Write(htmlFormatter);
+    divDoc->Write(divFormatter);
     if (verbose)
     {
         std::cout << "==> " << htmlFilePath << std::endl;
+        std::cout << "==> " << divFilePath << std::endl;
     }
 }
 
