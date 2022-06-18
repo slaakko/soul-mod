@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>
-        3 Syntax of Parsing Files
+        4 Syntax of Parsing Files
     </h1>
 
     <h2>
@@ -16,32 +16,32 @@
     </h2>
 
     <div class="toc">
-        3.1 <a href="#parser-file-syntax">Parser File Syntax</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 <a href="#parser-file-declaration">Parser File Declaration</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.2 <a href="#parser-declaration">Parser Declaration</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3 <a href="#parser-statements">Parser Statements</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.4 <a href="#lexer-statement">Lexer Statement</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.5 <a href="#main-statement">Main Statement</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.6 <a href="#using-statement">Using Statement</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.7 <a href="#rule-statement">Rule Statement</a><br />
-        3.2 <a href="#parsing-expressions">Parsing Expressions</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 <a href="#choice">Choice</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.2 <a href="#sequence">Sequence</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3 <a href="#difference">Difference</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.4 <a href="#list">List</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.5 <a href="#prefix">Prefix</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.6 <a href="#postfix">Postfix</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.7 <a href="#compound">Compound</a><br />
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.8 <a href="#primary">Primary</a><br />
-        3.3 <a href="#project-file-syntax">Project File Syntax</a><br />
+        4.1 <a href="#parser-file-syntax">Parser File Syntax</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.1 <a href="#parser-file-declaration">Parser File Declaration</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.2 <a href="#parser-declaration">Parser Declaration</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.3 <a href="#parser-statements">Parser Statements</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.4 <a href="#lexer-statement">Lexer Statement</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.5 <a href="#main-statement">Main Statement</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.6 <a href="#using-statement">Using Statement</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.1.7 <a href="#rule-statement">Rule Statement</a><br />
+        4.2 <a href="#parsing-expressions">Parsing Expressions</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.1 <a href="#choice">Choice</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.2 <a href="#sequence">Sequence</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3 <a href="#difference">Difference</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.4 <a href="#list">List</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.5 <a href="#prefix">Prefix</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.6 <a href="#postfix">Postfix</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.7 <a href="#compound">Compound</a><br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.8 <a href="#primary">Primary</a><br />
+        4.3 <a href="#project-file-syntax">Project File Syntax</a><br />
     </div>
 
     <h2 id="parser-file-syntax">
-        3.1 Parser File Syntax
+        4.1 Parser File Syntax
     </h2>
 
     <h3 id="parser-file-declaration">
-        3.1.1 Parser File Declaration
+        4.1.1 Parser File Declaration
     </h3>
 
     <table class="grammar">
@@ -125,7 +125,7 @@
 	<ref file="ref/xpath_parser.parser.div"/>
 
     <h3 id="parser-declaration">
-        3.1.2 Parser Declaration
+        4.1.2 Parser Declaration
     </h3>
 
     <table class="grammar">
@@ -168,7 +168,7 @@
 	<ref file="ref/xpath_parser.ixx.div"/>
 
     <h3 id="parser-statements">
-        3.1.3 Parser Statements
+        4.1.3 Parser Statements
     </h3>
 
     <table class="grammar">
@@ -189,7 +189,7 @@
     </p>
 
     <h3 id="lexer-statement">
-        3.1.4 Lexer Statement
+        4.1.4 Lexer Statement
     </h3>
 
     <table class="grammar">
@@ -231,7 +231,7 @@
 	<ref file="ref/common_parser.cpp.div"/>
 
     <h3 id="main-statement">
-        3.1.5 Main Statement
+        4.1.5 Main Statement
     </h3>
 
     <table class="grammar">
@@ -280,7 +280,7 @@
 	<ref file="ref/xpath_parser.cpp.div"/>
 
     <h3 id="using-statement">
-        3.1.6 Using Statement
+        4.1.6 Using Statement
     </h3>
 
     <table class="grammar">
@@ -316,7 +316,7 @@
 	<ref file="ref/statement_parser.parser.div"/>
 	
     <h3 id="rule-statement">
-        3.1.7 Rule Statement
+        4.1.7 Rule Statement
     </h3>
 
     <table class="grammar">
@@ -477,7 +477,7 @@
 	<ref file="ref/generated_statement_parser.ixx.div"/>
 	
     <h2 id="parsing-expressions">
-        3.2 Parsing Expressions
+        4.2 Parsing Expressions
     </h2>
 
     <p>
@@ -505,7 +505,7 @@
     </p>
 
     <h3 id="choice">
-        3.2.1 Choice
+        4.2.1 Choice
     </h3>
 
     <table class="grammar">
@@ -542,7 +542,7 @@
 	<ref file="ref/choice.parser.div"/>
 
     <h3 id="sequence">
-        3.2.2 Sequence
+        4.2.2 Sequence
     </h3>
 
     <table class="grammar">
@@ -574,7 +574,7 @@
 	<ref file="ref/sequence.parser.div"/>
 
     <h3 id="difference">
-        3.2.3 Difference
+        4.2.3 Difference
     </h3>
 
     <table class="grammar">
@@ -613,7 +613,7 @@
 	<ref file="ref/difference.parser.div"/>
 
     <h3 id="list">
-        3.2.4 List
+        4.2.4 List
     </h3>
 
     <table class="grammar">
@@ -647,7 +647,7 @@
 	<ref file="ref/list.parser.div"/>
 
     <h3 id="prefix">
-        3.2.5 Prefix
+        4.2.5 Prefix
     </h3>
 
     <table class="grammar">
@@ -692,7 +692,7 @@
 	<ref file="ref/lookahead.parser.div"/>
 
     <h3 id="postfix">
-        3.2.6 Postfix
+        4.2.6 Postfix
     </h3>
 
     <table class="grammar">
@@ -771,7 +771,7 @@
 	<ref file="ref/optional.parser.div"/>
 
     <h3 id="compound">
-        3.2.7 Compound
+        4.2.7 Compound
     </h3>
 
     <table class="grammar">
@@ -929,7 +929,7 @@
 	<ref file="ref/vars.parser.div"/>
 
     <h3 id="primary">
-        3.2.8 Primary
+        4.2.8 Primary
     </h3>
 
     <table class="grammar">
@@ -1178,7 +1178,7 @@
 	<ref file="ref/group.parser.div"/>
 
     <h2 id="project-file-syntax">
-        3.3 Project File Syntax
+        4.3 Project File Syntax
     </h2>
 
     <table class="grammar">

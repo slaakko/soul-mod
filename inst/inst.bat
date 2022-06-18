@@ -13,3 +13,5 @@ soul_inst -v ..\soul\rex\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\rex\*.classmap.rc ..\rc
 soul_inst -v ..\soul\xml\xpath\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\xpath\*.classmap.rc ..\rc
+soul_inst -v ..\soul\xml\serialization\*.classmap.compressed ..\rc
+soul_inst -v ..\soul\xml\serialization\*.classmap.rc ..\rc

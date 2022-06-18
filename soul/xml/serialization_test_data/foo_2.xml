@@ -1,0 +1,23 @@
+<Foo>
+  <name value="foo_2"/>
+  <contained>
+    <name value="foo_2.contained"/>
+  </contained>
+  <data className="example::ns::Derived">
+    <name value="foo_2_derived"/>
+    <derivedStr value="foo_2.derived_str"/>
+  </data>
+  <strings>
+    <item value="foo_2.string_1"/>
+    <item value="foo_2.string_2"/>
+  </strings>
+  <datas>
+    <item>
+      <name value="foo_2_data"/>
+    </item>
+    <item className="example::ns::Derived">
+      <name value="foo_2_derived_2"/>
+      <derivedStr value="foo_2_derived_2.str"/>
+    </item>
+  </datas>
+</Foo>

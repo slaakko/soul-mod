@@ -11,6 +11,8 @@ module;
 
 module util.uuid;
 
+import util.text.util;
+
 namespace util {
 
 void UuidToInts(const boost::uuids::uuid& id, uint64_t& int1, uint64_t& int2)
@@ -40,6 +42,45 @@ void RandomUuid(boost::uuids::uuid& id)
     UUID u;
     UuidCreate(&u);
     id = *static_cast<boost::uuids::uuid*>(static_cast<void*>(&u));
+}
+
+std::string ToString(const boost::uuids::uuid& uuid)
+{
+    std::string s;
+    int index = 0;
+    for (uint8_t x : uuid)
+    {
+        s.append(ToLower(ToHexString(x)));
+        if (index == 3 || index == 5 || index == 7 || index == 9)
+        {
+            s.append(1, '-');
+        }
+        ++index;
+    }
+    return s;
+}
+
+boost::uuids::uuid ParseUuid(const std::string& str)
+{
+    if (str.length() != 2 * boost::uuids::uuid::static_size() + 4)
+    {
+        throw std::runtime_error("wrong number of hex bytes in uuid string '" + str + "'." + std::to_string(boost::uuids::uuid::static_size()) + " hex bytes + 4 hyphens expected.");
+    }
+    boost::uuids::uuid uuid;
+    int index = 0;
+    for (long i = 0; i < boost::uuids::uuid::static_size(); ++i)
+    {
+        std::string hexByteStr = str.substr(index, 2);
+        uint8_t hexByte = ParseHexByte(hexByteStr);
+        uuid.data[i] = hexByte;
+        ++index;
+        ++index;
+        if (i == 3 || i == 5 || i == 7 || i == 9)
+        {
+            ++index;
+        }
+    }
+    return uuid;
 }
 
 } // namespace util

@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Using Soul XML Libraries</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>2.1 Using Soul XML Libraries</h1>
+
+    <h2>2.1.1 Creating a Project</h2>
+
+    <p>
+        To create a project that uses the Soul XML library components:
+    </p>
+
+    <ul>
+        <li>Create a Soul-compatible project as described in <a href="../../tutorial/lexer/project.html">this</a> document.</li>
+        <li>
+            Right-click the solution in the Solution Explorer and select 'Add | Existing Project...'
+        </li>
+        <li>
+            Navigate to the <span class="mono">C:\soul-4.0.0\soul\ast</span> folder and add the <span class="mono">ast.vcxproj</span> to the solution.
+        </li>
+        <li>
+            Do the same for
+            <ul>
+                <li><span class="mono">C:\soul-4.0.0\soul\common</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\lex</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\lexer</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\parser</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\token</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\util</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\xml\dom</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\xml\dom_parser</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\xml\processor</span>,</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\xml\xml_parser</span> and</li>
+                <li><span class="mono">C:\soul-4.0.0\soul\xml\xpath</span></li>
+            </ul> projects.
+        </li>
+    </ul>
+
+	<h2>
+		2.1.2 Example 
+	</h2>
+
+	<p>
+		I have created an example program that uses the XML DOM parser and XPath components:
+	</p>
+	
+	<ref file="ref/main.cpp.div"/>
+
+    <h2>
+        2.1.3 Adding References
+    </h2>
+
+    <p>
+        To add references to the required modules to your project:
+    </p>
+
+    <ul>
+        <li>
+            Expand your project in the Solution Explorer
+        </li>
+        <li>
+            Right-click 'References' and select 'Add Reference...'
+        </li>
+        <li>
+            Add references to the following modules:
+            <br/>
+            <img src="../../image/example_refs.png"/>
+        </li>
+    </ul>
+
+    <h2>
+        2.1.4 Adding Lexer Resource Files
+    </h2>
+
+    <p>
+        To add required lexer resource files to your project:
+    </p>
+
+    <ul>
+        <li>
+            Right-click your project in the Solution Explorer
+        </li>
+        <li>
+            Select 'Add | Existing Item...'
+        </li>
+        <li>
+            Navigate to the <span class="mono">C:\soul-4.0.0\rc</span> folder and add the <span class="mono">soul.xml.xpath.lexer.classmap.rc</span> file to your project.
+        </li>
+    </ul>
+
+    <h2>
+        2.1.5 Compiling the Solution
+    </h2>
+
+    <ul>
+        <li>Select the <span class="mono">64 | Debug</span> configuration.</li>
+        <li>Select the <span class="mono">Build | Build Solution</span> command.</li>
+        <li>The required Soul libraries and then your project should compile successfully.</li>
+        <li>Select the <span class="mono">64 | Release</span> configuration</li>
+        <li>Select the <span class="mono">Build | Build Solution</span> command.</li>
+        <li>The required Soul libraries and then your project should compile successfully.</li>
+    </ul>
+
+</body>
+</html>

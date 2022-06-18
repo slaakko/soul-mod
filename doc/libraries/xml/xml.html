@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Using Soul XML Libraries</title>
+    <link href="../../style/style.css" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <h1>2.1 Using Soul XML Libraries</h1>
+    <h2>2.1.1 Creating a Project</h2>
+    <p>To create a project that uses the Soul XML library components:</p>
+    <ul>
+      <li>
+        Create a Soul-compatible project as described in <a href="../../tutorial/lexer/project.html">this</a>
+        document.</li>
+      <li>Right-click the solution in the Solution Explorer and select 'Add | Existing Project...'</li>
+      <li>
+        Navigate to the <span class="mono">C:\soul-4.0.0\soul\ast</span>
+        folder and add the <span class="mono">ast.vcxproj</span>
+        to the solution.</li>
+      <li>
+        Do the same for <ul>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\common</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\lex</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\lexer</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\parser</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\token</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\util</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\xml\dom</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\xml\dom_parser</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\xml\processor</span>
+            ,</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\xml\xml_parser</span>
+            and</li>
+          <li>
+            <span class="mono">C:\soul-4.0.0\soul\xml\xpath</span>
+          </li>
+        </ul>
+        projects.</li>
+    </ul>
+    <h2>2.1.2 Example</h2>
+    <p>I have created an example program that uses the XML DOM parser and XPath components:</p>
+    <div class="cpp">
+      <span xml:space="preserve"><span class="comment">// main.cpp:</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">std</span><span class="other">.</span><span class="id">core</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">util</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">xml</span><span class="other">.</span><span class="id">dom</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">xml</span><span class="other">.</span><span class="id">dom</span><span class="other">.</span><span class="id">parser</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="kw">import</span>&nbsp;<span class="id">soul</span><span class="other">.</span><span class="id">xml</span><span class="other">.</span><span class="id">xpath</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"/>
+      <br/>
+      <span xml:space="preserve"><span class="kw">int</span>&nbsp;<span class="id">main</span><span class="other">(</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">try</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">Init</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">Document</span><span class="other">></span>&nbsp;<span class="id">doc</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">ParseXmlFile</span><span class="other">(</span><span class="string">"C:/soul-4.0.0/soul/xml/xml_test_data/library.xml"</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">unique_ptr</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">xpath</span><span class="other">::</span><span class="id">NodeSet</span><span class="other">></span>&nbsp;<span class="id">nodeSet</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">xpath</span><span class="other">::</span><span class="id">EvaluateToNodeSet</span><span class="other">(</span><span class="string">"//object/name"</span><span class="other">,</span>&nbsp;<span class="id">doc</span><span class="other">.</span><span class="id">get</span><span class="other">(</span><span class="other">)</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">int</span>&nbsp;<span class="id">n</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">nodeSet</span><span class="other">-></span><span class="id">Count</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span>&nbsp;<span class="other">(</span><span class="kw">int</span>&nbsp;<span class="id">i</span>&nbsp;<span class="other">=</span>&nbsp;<span class="number">0</span><span class="other">;</span>&nbsp;<span class="id">i</span>&nbsp;<span class="other">&lt;</span>&nbsp;<span class="id">n</span><span class="other">;</span>&nbsp;<span class="other">++</span><span class="id">i</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">Node</span><span class="other">*</span>&nbsp;<span class="id">node</span>&nbsp;<span class="other">=</span>&nbsp;<span class="id">nodeSet</span><span class="other">-></span><span class="id">GetNode</span><span class="other">(</span><span class="id">i</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span>&nbsp;<span class="other">(</span><span class="id">node</span><span class="other">-></span><span class="id">IsElementNode</span><span class="other">(</span><span class="other">)</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">Element</span><span class="other">*</span>&nbsp;<span class="id">element</span>&nbsp;<span class="other">=</span>&nbsp;<span class="kw">static_cast</span><span class="other">&lt;</span><span class="id">soul</span><span class="other">::</span><span class="id">xml</span><span class="other">::</span><span class="id">Element</span><span class="other">*</span><span class="other">></span><span class="other">(</span><span class="id">node</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cout</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">element</span><span class="other">-></span><span class="id">GetAttribute</span><span class="other">(</span><span class="string">"value"</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">catch</span>&nbsp;<span class="other">(</span><span class="kw">const</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">exception</span><span class="other">&amp;</span>&nbsp;<span class="id">ex</span><span class="other">)</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">{</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">cerr</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">ex</span><span class="other">.</span><span class="id">what</span><span class="other">(</span><span class="other">)</span>&nbsp;<span class="other">&lt;&lt;</span>&nbsp;<span class="id">std</span><span class="other">::</span><span class="id">endl</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">1</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="other">}</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="id">util</span><span class="other">::</span><span class="id">Done</span><span class="other">(</span><span class="other">)</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span>&nbsp;<span class="number">0</span><span class="other">;</span></span>
+      <br/>
+      <span xml:space="preserve"><span class="other">}</span></span>
+      <br/>
+    </div>
+    <h2>2.1.3 Adding References</h2>
+    <p>To add references to the required modules to your project:</p>
+    <ul>
+      <li>Expand your project in the Solution Explorer</li>
+      <li>Right-click 'References' and select 'Add Reference...'</li>
+      <li>
+        Add references to the following modules: <br/>
+        <img src="../../image/example_refs.png"/>
+      </li>
+    </ul>
+    <h2>2.1.4 Adding Lexer Resource Files</h2>
+    <p>To add required lexer resource files to your project:</p>
+    <ul>
+      <li>Right-click your project in the Solution Explorer</li>
+      <li>Select 'Add | Existing Item...'</li>
+      <li>
+        Navigate to the <span class="mono">C:\soul-4.0.0\rc</span>
+        folder and add the <span class="mono">soul.xml.xpath.lexer.classmap.rc</span>
+        file to your project.</li>
+    </ul>
+    <h2>2.1.5 Compiling the Solution</h2>
+    <ul>
+      <li>
+        Select the <span class="mono">64 | Debug</span>
+        configuration.</li>
+      <li>
+        Select the <span class="mono">Build | Build Solution</span>
+        command.</li>
+      <li>The required Soul libraries and then your project should compile successfully.</li>
+      <li>
+        Select the <span class="mono">64 | Release</span>
+        configuration</li>
+      <li>
+        Select the <span class="mono">Build | Build Solution</span>
+        command.</li>
+      <li>The required Soul libraries and then your project should compile successfully.</li>
+    </ul>
+  </body>
+</html>

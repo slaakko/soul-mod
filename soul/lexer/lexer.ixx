@@ -397,9 +397,17 @@ public:
     {
         return pos;
     }
+    void SetPos(const Char* pos_)
+    {
+        pos = pos_;
+    }
     const Char* End() const
     {
         return end;
+    }
+    const std::vector<Token<Char, LexerBase<Char>>>& Tokens() const
+    {
+        return tokens;
     }
 private:
     void NextToken()

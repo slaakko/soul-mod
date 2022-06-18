@@ -1,0 +1,8 @@
+export module ns;
+
+namespace my::ns
+{
+	class empty
+	{
+	}
+}

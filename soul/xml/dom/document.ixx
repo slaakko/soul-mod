@@ -13,6 +13,7 @@ export namespace soul::xml {
 class Document : public ParentNode
 {
 public:
+    Document();
     Document(const soul::ast::SourcePos& sourcePos_);
     Element* DocumentElement() const { return documentElement; }
     bool XmlStandalone() const { return xmlStandalone; }

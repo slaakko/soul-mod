@@ -1,0 +1,9 @@
+<Foo>
+  <name value="foo"/>
+  <contained>
+    <name value="contained"/>
+  </contained>
+  <data value="null"/>
+  <strings/>
+  <datas/>
+</Foo>

@@ -1,0 +1,25 @@
+<cls>
+  <b0 value="true"/>
+  <sb1 value="-1"/>
+  <b2 value="10"/>
+  <s3 value="100"/>
+  <us4 value="1000"/>
+  <i5 value="-100"/>
+  <ui6 value="0"/>
+  <l7 value="0"/>
+  <ul8 value="100000000000000000"/>
+  <f9 value="-123.456001"/>
+  <d10 value="1234.567800"/>
+  <c11 value="X"/>
+  <wc12 value="Y"/>
+  <uc13 value="Z"/>
+  <u14 value="406e501d-0b58-7342-923d-bc4aff410080"/>
+  <s15 value="Hello!"/>
+  <ws16 value="Qwerty"/>
+  <us17 value="FooBar"/>
+  <d18 value="2022-06-18"/>
+  <d19 value="2022-06-18T14:07:00"/>
+  <tp20 value="47179271090500"/>
+  <du21 value="200"/>
+  <en22 value="2"/>
+</cls>

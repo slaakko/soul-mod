@@ -1,0 +1,36 @@
+export module example;
+
+namespace example::ns
+{
+	class Data
+	{
+		string name;
+	}
+
+	class Derived : Data
+	{
+		string derivedStr;
+	}
+
+	class Contained
+	{
+		string name;
+	}
+
+	class Foo
+	{
+		string name; 
+		Contained contained;
+		Data* data;
+		string[] strings;
+		Data*[] datas;
+	}
+	
+	class Bar : Foo
+	{
+		Data* anotherData;
+		Contained anotherContained;
+		Derived* derived;
+		Derived*[] derivedVec;
+	}
+}

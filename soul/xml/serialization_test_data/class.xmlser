@@ -1,0 +1,37 @@
+export module test_cls;
+
+namespace ns {
+
+enum enm
+{
+    first, second, third
+}
+
+class cls
+{
+    bool b0;
+    sbyte sb1;
+    byte b2;
+    short s3;
+    ushort us4;
+    int i5;
+    uint ui6;
+    long l7;
+    ulong ul8;
+    float f9;
+    double d10;
+    char c11;
+    wchar wc12;
+    uchar uc13;
+    uuid u14;
+    string s15;
+    wstring ws16;
+    ustring us17;
+    date d18;
+    datetime d19;
+    time_point tp20;
+    duration du21;
+    enm en22;
+}
+
+} // namespace ns

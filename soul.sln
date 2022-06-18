@@ -173,6 +173,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "soul2html", "tools\soul2htm
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ref2html", "tools\ref2html\ref2html.vcxproj", "{35FFC5A7-47B2-4E5A-9D69-319661FE4866}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serialization", "soul\xml\serialization\serialization.vcxproj", "{DAB621CA-E2A5-49B5-8BAF-C1428B258498}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "serialization_test_data", "serialization_test_data", "{8100879B-A3F2-4B53-9EC7-23AB0532E158}"
+	ProjectSection(SolutionItems) = preProject
+		soul\xml\serialization_test_data\empty.xmlser = soul\xml\serialization_test_data\empty.xmlser
+		soul\xml\serialization_test_data\class.xmlser = soul\xml\serialization_test_data\class.xmlser
+		soul\xml\serialization_test_data\export.xmlser = soul\xml\serialization_test_data\export.xmlser
+		soul\xml\serialization_test_data\empty_class.xmlser = soul\xml\serialization_test_data\empty_class.xmlser
+		soul\xml\serialization_test_data\ns.xmlser = soul\xml\serialization_test_data\ns.xmlser
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlsergen", "soul\xml\xmlsergen\xmlsergen.vcxproj", "{D020F9A2-616F-4AD9-B42F-7C761D6A2921}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Itanium = Debug|Itanium
@@ -813,6 +826,54 @@ Global
 		{35FFC5A7-47B2-4E5A-9D69-319661FE4866}.Trace|x64.Build.0 = Debug|x64
 		{35FFC5A7-47B2-4E5A-9D69-319661FE4866}.Trace|x86.ActiveCfg = Debug|Win32
 		{35FFC5A7-47B2-4E5A-9D69-319661FE4866}.Trace|x86.Build.0 = Debug|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Debug|Itanium.ActiveCfg = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Debug|Itanium.Build.0 = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Debug|x64.ActiveCfg = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Debug|x64.Build.0 = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Debug|x86.ActiveCfg = Debug|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Debug|x86.Build.0 = Debug|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Release|Itanium.ActiveCfg = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Release|Itanium.Build.0 = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Release|x64.ActiveCfg = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Release|x64.Build.0 = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Release|x86.ActiveCfg = Release|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Release|x86.Build.0 = Release|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.ReleaseWithoutAsm|Itanium.ActiveCfg = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.ReleaseWithoutAsm|Itanium.Build.0 = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.ReleaseWithoutAsm|x64.ActiveCfg = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.ReleaseWithoutAsm|x64.Build.0 = Release|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.ReleaseWithoutAsm|x86.ActiveCfg = Release|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.ReleaseWithoutAsm|x86.Build.0 = Release|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Trace|Itanium.ActiveCfg = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Trace|Itanium.Build.0 = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Trace|x64.ActiveCfg = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Trace|x64.Build.0 = Debug|x64
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Trace|x86.ActiveCfg = Debug|Win32
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498}.Trace|x86.Build.0 = Debug|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Debug|Itanium.ActiveCfg = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Debug|Itanium.Build.0 = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Debug|x64.ActiveCfg = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Debug|x64.Build.0 = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Debug|x86.ActiveCfg = Debug|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Debug|x86.Build.0 = Debug|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Release|Itanium.ActiveCfg = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Release|Itanium.Build.0 = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Release|x64.ActiveCfg = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Release|x64.Build.0 = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Release|x86.ActiveCfg = Release|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Release|x86.Build.0 = Release|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.ReleaseWithoutAsm|Itanium.ActiveCfg = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.ReleaseWithoutAsm|Itanium.Build.0 = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.ReleaseWithoutAsm|x64.ActiveCfg = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.ReleaseWithoutAsm|x64.Build.0 = Release|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.ReleaseWithoutAsm|x86.ActiveCfg = Release|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.ReleaseWithoutAsm|x86.Build.0 = Release|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Trace|Itanium.ActiveCfg = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Trace|Itanium.Build.0 = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Trace|x64.ActiveCfg = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Trace|x64.Build.0 = Debug|x64
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Trace|x86.ActiveCfg = Debug|Win32
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921}.Trace|x86.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -848,6 +909,9 @@ Global
 		{F868F3E1-F543-43D3-A2EF-F0C4B0EA0935} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}
 		{3E928205-284A-491F-9F03-8C831D6D8958} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}
 		{35FFC5A7-47B2-4E5A-9D69-319661FE4866} = {D32D9A58-313A-4EAB-BA1A-188C33D585C2}
+		{DAB621CA-E2A5-49B5-8BAF-C1428B258498} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
+		{8100879B-A3F2-4B53-9EC7-23AB0532E158} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
+		{D020F9A2-616F-4AD9-B42F-7C761D6A2921} = {0EAEC954-637A-4FB5-AA46-FB34AFBF17D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A635957-C3E9-4A44-AC4F-5DF7EA63264E}

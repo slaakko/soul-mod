@@ -30,6 +30,9 @@
  <component name="libraries">
   <directory name="lib"/>
  </component>
+ <component name="nmake">
+  <directory name="nmake"/>
+ </component>
  <component name="rc">
   <directory name="rc"/>
  </component>
@@ -69,7 +72,7 @@
  <component name="root">
   <file name="LICENSE"/>
   <file name="README.md"/>
-  <file name="soul-mod.sln"/>
+  <file name="soul.sln"/>
  </component>
  <environment>
   <variable name="SOUL_ROOT" value="$TARGET_ROOT_DIR$"/>

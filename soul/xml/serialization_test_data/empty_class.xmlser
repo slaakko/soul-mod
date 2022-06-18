@@ -1,0 +1,5 @@
+export module empty_class;
+
+class empty
+{
+}

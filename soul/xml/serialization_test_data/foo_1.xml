@@ -1,0 +1,17 @@
+<Foo>
+  <name value="foo_1"/>
+  <contained>
+    <name value="foo_1.contained"/>
+  </contained>
+  <data>
+    <name value="d1"/>
+  </data>
+  <strings>
+    <item value="foo_1.str.1"/>
+  </strings>
+  <datas>
+    <item>
+      <name value="d2"/>
+    </item>
+  </datas>
+</Foo>
