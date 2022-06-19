@@ -16,6 +16,10 @@
 		<img src="../image/inst_clone.png"/>
 		<li>Create a SOUL_ROOT environment variable and set it to point to the <span class="mono">soul-mod</span> directory</li>
 		<img src="../image/inst_make_soul_root_env.png"/>
+		<li>Open the <span class="mono">soul-mod\config\build.props</span> file with a text editor.</li>
+		<li>Change the value of the BOOST_INCLUDE_DIR and BOOST_LIB_DIR macros within the <span class="mono">PropertyGroup Label="UserMacros"</span> element
+		to contain the paths to your Boost include directory and Boost library directory.</li>
+		<img src="../image/build_props.png"/>
 		<li>Start the Visual Studio 2022 x64 Native Tools Command Prompt</li>
 		<img src="../image/inst_start_x64_native_tools_command_prompt.png"/>
 		<li>Change to the <span class="mono">soul-mod/nmake</span> directory and run the <span class="mono">nmake</span> command:

@@ -19,6 +19,10 @@
 		<li>The installer copies files, creates a SOUL_ROOT environment variable that points to the installation directory and adds the <span class="mono">INSTALLATION_DIR\bin</span> directory to the PATH.</li>
 		<li>Click the <span class="kw">Close</span> button to close the installation program:</li>
 		<img src="../image/inst_ready.png"/>
+		<li>Open the <span class="mono">soul-mod\config\build.props</span> file with a text editor.</li>
+		<li>Change the value of the BOOST_INCLUDE_DIR and BOOST_LIB_DIR macros within the <span class="mono">PropertyGroup Label="UserMacros"</span> element
+		to contain the paths to your Boost include directory and Boost library directory.</li>
+		<img src="../image/build_props.png"/>
 		<li>Open a command prompt to the <span class="mono">soul-4.0.0\examples\minilang</span> directory and run <span class="mono">build.bat</span></li>
 		<img src="../image/inst_zip_test.png"/>
 		<li>The bat runs <span class="mono">slg</span> and <span class="mono">spg</span> with the minilang project files.</li>
