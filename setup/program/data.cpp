@@ -9,7 +9,7 @@ std::string PackageResourceName()
 
 int64_t UncompressedPackageSize()
 {
-    return 329538224;
+    return 330108633;
 }
 
 std::string UnicodeDBResourceName()

@@ -3,14 +3,24 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
-    <title>Installation from the zip package</title>
+    <title>Installation from the ZIP package</title>
     <link href="../style/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <h1>Installation from the zip package</h1>
+    <h1>Installation from the ZIP package</h1>
 
 	<ul>
-	
+		<li>Extract the <span class="mono">soul-4.0.0.zip</span> package to a directory of your choice.</li>
+		<li>Create a SOUL_ROOT environment variable and set it to point to the <span class="mono">soul-4.0.0</span> directory that is under the directory where you extracted.</li>
+		<img src="../image/inst_soul_root_env.png"/>
+		<li>Add the <span class="mono">soul-4.0.0\bin</span> directory to your PATH environment variable.</li>
+		<img src="../image/inst_zip_path.png"/>
+		<li>Open a command prompt to the <span class="mono">soul-4.0.0\examples\minilang</span> directory and run <span class="mono">build.bat</span></li>
+		<img src="../image/inst_zip_test.png"/>
+		<li>The bat runs <span class="mono">slg</span> and <span class="mono">spg</span> with the minilang project files.</li>
+		<li>If the programs run and print:<br/>
+		'lexers for project 'minilang.slg' generated successfully.' and
+		'parsers for project 'minilang.spg' generated successfully.' everything works fine.</li>
 	</ul>
 </body>
 </html>
