@@ -1,0 +1,55 @@
+export module book_msg;
+
+namespace book_msg {
+
+class Book
+{
+    string name;
+    string[] authors;
+    date published;
+}
+
+enum RequestKind
+{
+    none, bookRequest, stopRequest
+}
+
+class Request
+{
+    RequestKind kind;
+}
+
+class BookRequest : Request
+{
+    string bookId;
+}
+
+class StopRequest : Request
+{
+}
+
+enum ReplyKind
+{
+    none, bookReply, stopReply, errorReply
+}
+
+class Reply
+{
+    ReplyKind kind;
+}
+
+class BookReply : Reply
+{
+    Book book;
+}
+
+class StopReply : Reply
+{
+}
+
+class ErrorReply : Reply
+{
+    string errorMessage;
+}
+
+} // namespace book_msg

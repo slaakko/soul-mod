@@ -80,7 +80,6 @@
  </environment>
  <links>
   <linkDirectory path="$START_MENU_PROGRAMS_FOLDER$/Soul-4.0.0"/>
-  <link description="Soul Documentation" iconIndex="0" linkFilePath="$START_MENU_PROGRAMS_FOLDER$/Soul-4.0.0/documentation.lnk" path="$TARGET_ROOT_DIR$/doc/index.html" workingDirectory="$TARGET_ROOT_DIR$/doc"/>
-  <link description="Soul Home Page" iconIndex="0" linkFilePath="$START_MENU_PROGRAMS_FOLDER$/Soul-4.0.0/home-page.lnk" path="https://slaakko.github.io/soul-mod/index.html"/>
+  <link description="Soul Documentation" iconIndex="0" linkFilePath="$START_MENU_PROGRAMS_FOLDER$/Soul-4.0.0/Documentation.lnk" path="$TARGET_ROOT_DIR$/doc/index.html" workingDirectory="$TARGET_ROOT_DIR$/doc"/>
  </links>
 </package>

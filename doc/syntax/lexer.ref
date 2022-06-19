@@ -573,7 +573,7 @@
 
     <p>
         A lexer project file consists of the keyword <span class="kw">project</span> followed by a lexer project name followed by a semicolon
-        followed by a sequence on lexer project file declarations.
+        followed by a sequence of lexer project file declarations.
     </p>
 
     <p>

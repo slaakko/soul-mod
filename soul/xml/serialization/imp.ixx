@@ -9,6 +9,8 @@ import std.core;
 import util.time;
 import util.uuid;
 import soul.xml.element;
+import soul.xml.document;
+import soul.xml.dom.parser;
 import soul.xml.xpath.object;
 import soul.xml.serialization.class_registry;
 
@@ -119,29 +121,34 @@ void FromXml(soul::xml::Element* parentElement, const std::string& fieldName, T&
 }
 
 template<XmlImportableClassType T>
-void FromXml(soul::xml::Element* parentElement, const std::string& fieldName, std::unique_ptr<T>& value)
+void FromXml(soul::xml::Element* element, std::unique_ptr<T>& value)
 {
     value.reset();
-    soul::xml::Element* fieldElement = GetFieldElement(fieldName, parentElement);
-    if (fieldElement)
+    if (element)
     {
-        std::string val = fieldElement->GetAttribute("value");
+        std::string val = element->GetAttribute("value");
         if (val != "null")
         {
-            std::string className = fieldElement->GetAttribute("className");
+            std::string className = element->GetAttribute("className");
             if (!className.empty())
             {
                 T* v = soul::xml::serialization::CreateObject<T>(className);
                 value.reset(v);
-                value->FromXml(fieldElement);
+                value->FromXml(element);
             }
             else
             {
                 value.reset(new T());
-                value->FromXml(fieldElement);
+                value->FromXml(element);
             }
         }
     }
+}
+
+template<XmlImportableClassType T>
+void FromXml(soul::xml::Element* parentElement, const std::string& fieldName, std::unique_ptr<T>& value)
+{
+    FromXml(GetFieldElement(fieldName, parentElement), value);
 }
 
 template<XmlImportableType T>
@@ -205,6 +212,21 @@ void FromXml(soul::xml::Element* parentElement, const std::string& fieldName, st
             }
         }
     }
+}
+
+template<XmlImportableClassType T>
+std::unique_ptr<T> MakeObject(soul::xml::Document& xmlDoc)
+{
+    std::unique_ptr<T> value;
+    FromXml(xmlDoc.DocumentElement(), value);
+    return value;
+}
+
+template<XmlImportableClassType T>
+std::unique_ptr<T> MakeObject(const std::string& xmlString, const std::string& systemId)
+{
+    std::unique_ptr<soul::xml::Document> doc = soul::xml::ParseXmlContent(xmlString, systemId);
+    return MakeObject<T>(*doc);
 }
 
 } // namespace soul::xml::serialization

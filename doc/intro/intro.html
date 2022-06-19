@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Introduction</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>
+        Introduction
+    </h1>
+	
+	<p>
+		The Soul project contains two C++ tools: a lexical analyzer generator and a parser generator. In addition it contains a number of C++ libraries implemented using these tools.
+	</p>
+	
+	<p>
+		This 4.0.0 version has been implemented using new exciting C++ features: <span class="kw">modules</span> and <span class="kw">concepts.
+	</p>
+	
+	<p>
+		The tools and libraries of the current version of the Soul project has been implemented and tested using Microsoft Visual Studio 2022 Community Edition for Windows version 17.2.3 
+		using the <span class="kw">x64</span> configuration, with <a href="https://www.boost.org/">Boost C++</a> version 1.77 libraries installed.
+	</p>
+	
+	<h2>
+		Requirements
+	</h2>
+	
+	<p>
+		The requirements for using these tools and libraries are:
+	</p>
+	
+	<ul>
+		<li>Microsoft Visual Studio 2022 with 'Desktop Development with C++' tool chain installed.</li>
+		<li><a href="https://www.boost.org/">Boost C++ Libraries</a> installed</li>
+	</ul>
+	
+	<h2>
+		Components
+	</h2>
+	
+	<p>
+		The project includes the following components:
+	</p>
+	
+	<ul>
+		<li><span class="kw">slg</span>: Soul lexer generator</li>
+		<li><span class="kw">spg</span>: Soul parser generator</li>
+		<li><span class="kw">xml_parser</span>: an XML parser with SAX-like API.
+		<li><span class="kw">dom</span>: A DOM library.
+		<li><span class="kw">dom_parser</span>: an XML parser that parses an XML document to a DOM document.
+		<li><span class="kw">xpath</span>: XPath query engine.
+		<li><span class="kw">serialization</span>: XML serialization library.
+		<li><span class="kw">xmlsergen</span>: a tool that generates XML serializable C++ classes implemented using the <span class="kw">serialization</span> library.
+		<li><span class="kw">rex</span>: a regular expression library.
+	</ul>
+	
+	<h2>
+		Examples
+	</h2>
+	
+	<p>
+		The project contains two examples:
+	</p>
+	
+	<ul>
+		<li><span class="kw">minilang</span> language example that contains a lexer and a parser implemented using <span class="kw">slg</span> and <span class="kw">spg</span>.
+		<li><span class="kw">book_server</span> example implemented using the <span class="kw">xmlsergen</span> tool that uses Soul library components.
+	</ul>
+	
+</body>

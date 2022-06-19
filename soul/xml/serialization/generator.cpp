@@ -719,6 +719,7 @@ void WriteToXmlImplementation(util::CodeFormatter& formatter, soul::xml::seriali
     if (!node.BaseClassId().empty())
     {
         formatter.WriteLine("soul::xml::Element* element = " + node.BaseClassId() + "::ToXml(fieldName);");
+        formatter.WriteLine("element->SetAttribute(\"className\", \"" + node.FullClassName() + "\");");
     }
     else
     {

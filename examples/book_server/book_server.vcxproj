@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{dab621ca-e2a5-49b5-8baf-c1428b258498}</ProjectGuid>
-    <RootNamespace>serialization</RootNamespace>
+    <ProjectGuid>{7ce86bea-74dd-4798-82b2-8142dde69661}</ProjectGuid>
+    <RootNamespace>bookserver</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -59,37 +59,36 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
+    <Import Project="..\..\config\build.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>soul.xml.serializationd</TargetName>
+    <TargetName>book_serverd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>soul.xml.serialization</TargetName>
+    <TargetName>book_server</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -99,12 +98,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -114,19 +112,18 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutDir);$(BOOST_LIB_DIR)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +132,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>.;..;$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
@@ -144,63 +141,45 @@
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutDir);$(BOOST_LIB_DIR)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="xmlser.expr" />
-    <None Include="xmlser.keyword" />
-    <None Include="xmlser.slg" />
-    <None Include="xmlser.token" />
-    <None Include="xmlser_lexer.lexer" />
-    <None Include="xmlser.spg" />
-    <None Include="xmlser_parser.parser" />
+    <ClCompile Include="book_msg.cpp" />
+    <ClCompile Include="book_msg.ixx" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="msg.cpp" />
+    <ClCompile Include="msg.ixx" />
+    <ClCompile Include="server.cpp" />
+    <ClCompile Include="server.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ast.cpp" />
-    <ClCompile Include="ast.ixx" />
-    <ClCompile Include="class_registry.cpp" />
-    <ClCompile Include="class_registry.ixx" />
-    <ClCompile Include="exp.cpp" />
-    <ClCompile Include="generator.cpp" />
-    <ClCompile Include="generator.ixx" />
-    <ClCompile Include="imp.cpp" />
-    <ClCompile Include="imp.ixx" />
-    <ClCompile Include="scanner.ixx" />
-    <ClCompile Include="version.cpp" />
-    <ClCompile Include="version.ixx" />
-    <ClCompile Include="xmlser.token.ixx" />
-    <ClCompile Include="xmlser_lexer.cpp" />
-    <ClCompile Include="xmlser_lexer.ixx" />
-    <ClCompile Include="xmlser_parser.cpp" />
-    <ClCompile Include="xmlser_parser.ixx" />
-    <ClCompile Include="xmlser_rules.cpp" />
-    <ClCompile Include="xmlser_rules.ixx" />
-    <ClCompile Include="exp.ixx" />
+    <None Include="book_msg.xmlser" />
+    <None Include="build.bat" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ast\ast.vcxproj">
-      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\lexer\lexer.vcxproj">
-      <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\parser\parser.vcxproj">
-      <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\dom\dom.vcxproj">
+    <ProjectReference Include="..\..\soul\xml\dom\dom.vcxproj">
       <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\dom_parser\dom_parser.vcxproj">
+    <ProjectReference Include="..\..\soul\xml\dom_parser\dom_parser.vcxproj">
       <Project>{3908ecf0-3a6b-4a1a-9a0e-5f872c88260f}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\xpath\xpath.vcxproj">
+    <ProjectReference Include="..\..\soul\xml\serialization\serialization.vcxproj">
+      <Project>{dab621ca-e2a5-49b5-8baf-c1428b258498}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\soul\xml\xpath\xpath.vcxproj">
       <Project>{ada5d2e5-5404-4c0b-a9ca-2acc7aa07ca4}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\util\util.vcxproj">
+      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\soul\xml\xpath\soul.xml.xpath.lexer.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
