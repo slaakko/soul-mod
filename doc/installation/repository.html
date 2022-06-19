@@ -20,8 +20,18 @@
 		<img src="../image/inst_start_x64_native_tools_command_prompt.png"/>
 		<li>Change to the <span class="mono">soul-mod/nmake</span> directory and run the <span class="mono">nmake</span> command:
 		<img src="../image/inst_run_nmake.png"/>
-		<li>Add the <span class="mono">soul-mod\bin</span> directory to your PATH.</li>
+		<li>If NMAKE succeeds, the Makefile prints 'make succeeeded.'</li>
+		<img src="../image/inst_nmake_completed.png"/>
+		<li>Add the <span class="mono">soul-mod\bin</span> directory to your PATH environment variable.</li>
 		<img src="../image/inst_repo_path.png"/>
+		<li>Restart the command prompt, so that the changed PATH takes effect.</li>
+		<li>Change to the <span class="mono">soul-mod\examples\minilang</span> directory.
+		<li>Run <span class="mono">build.bat</span>.</li>
+		<img src="../image/build_minilang.png"/>
+		<li>The bat runs <span class="mono">slg</span> and <span class="mono">spg</span> with the minilang project files.</li>
+		<li>If the programs run and print:<br/>
+		'lexers for project 'minilang.slg' generated successfully.' and
+		'parsers for project 'minilang.spg' generated successfully.' everything works fine.</li>
 	</ul>
 </body>
 </html>
