@@ -150,8 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="parser_file_parser.parser" />
-    <None Include="spg_file_parser.parser" />
+    <None Include="parser_file.parser" />
+    <None Include="spg_file.parser" />
     <None Include="spg_parsers.spg" />
   </ItemGroup>
   <ItemGroup>
@@ -170,14 +170,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="nonterminal_info.cpp" />
     <ClCompile Include="nonterminal_info.ixx" />
-    <ClCompile Include="parser_file_parser.cpp" />
-    <ClCompile Include="parser_file_parser.ixx" />
+    <ClCompile Include="parser_file.parser.cpp" />
+    <ClCompile Include="parser_file.parser.ixx" />
     <ClCompile Include="parser_generator.cpp" />
     <ClCompile Include="parser_generator.ixx" />
     <ClCompile Include="parsing_util.cpp" />
     <ClCompile Include="parsing_util.ixx" />
-    <ClCompile Include="spg_file_parser.cpp" />
-    <ClCompile Include="spg_file_parser.ixx" />
+    <ClCompile Include="spg_file.parser.cpp" />
+    <ClCompile Include="spg_file.parser.ixx" />
     <ClCompile Include="spg_parsers_rules.cpp" />
     <ClCompile Include="spg_parsers_rules.ixx" />
     <ClCompile Include="token_parser.ixx" />

@@ -1,0 +1,24 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.statement;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+
+parser StatementParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    CompoundStatement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    HandlerSeq(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+}

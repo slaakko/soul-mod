@@ -14,7 +14,9 @@ class FileMap
 public:
     int AddFilePath(const std::string& filePath);
     const std::string& GetFilePath(int file) const;
-    void AddFileContent(std::u32string&& fileContent, std::vector<int>&& lineStartIndeces);
+    void Resize();
+    int Count() const { return filePaths.size(); }
+    void AddFileContent(int file, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces);
     bool HasFileContent(int file) const;
     const std::pair<std::u32string, std::vector<int>>& GetFileContent(int file) const;
     std::u32string GetFileLine(int file, int line) const;

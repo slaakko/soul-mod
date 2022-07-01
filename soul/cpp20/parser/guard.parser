@@ -1,0 +1,26 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.guard;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.lexer;
+
+parser GuardParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    ConceptGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parsingConceptDefinition); }
+        ;
+
+    NotDefiningTypeSpecifierGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = !context->GetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); }
+        ;
+
+    AssumeTypeGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::assumeType); }
+        ;
+}

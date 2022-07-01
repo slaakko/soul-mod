@@ -1,0 +1,4 @@
+project std;
+interface <std.ixx>;
+interface <std.core.ixx>;
+interface <std.type.fundamental.ixx>;

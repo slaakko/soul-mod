@@ -34,7 +34,7 @@ std::unique_ptr<soul::ast::spg::SpgFile> ParseSpgFile(const std::string& spgFile
     auto vars = static_cast<LexerType::VariableClassType*>(lexer.GetVariables());
     vars->matchFilePath = true;
     std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::spg::file::parser::SpgFileParser<LexerType>::Parse(lexer);
-    fileMap.AddFileContent(std::move(content), std::move(lexer.GetLineStartIndeces()));
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
     return spgFile;
 }
 
@@ -58,7 +58,7 @@ std::unique_ptr<soul::ast::spg::ParserFile> ParseParserFile(const std::string& p
     lexer.SetFile(file);
     using LexerType = decltype(lexer);
     std::unique_ptr<soul::ast::spg::ParserFile> parserFile = soul::spg::parser::file::parser::ParserFileParser<LexerType>::Parse(lexer);
-    fileMap.AddFileContent(std::move(content), std::move(lexer.GetLineStartIndeces()));
+    fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
     if (external)
     {
         parserFile->SetExternal();

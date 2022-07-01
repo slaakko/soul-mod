@@ -160,10 +160,12 @@
     <ClCompile Include="common.ixx" />
     <ClCompile Include="cpp.cpp" />
     <ClCompile Include="cpp.ixx" />
+    <ClCompile Include="lexer_pos_pair.ixx" />
     <ClCompile Include="re.cpp" />
     <ClCompile Include="re.ixx" />
     <ClCompile Include="slg.cpp" />
     <ClCompile Include="slg.ixx" />
+    <ClCompile Include="source_pos.cpp" />
     <ClCompile Include="source_pos.ixx" />
     <ClCompile Include="spg.cpp" />
     <ClCompile Include="spg.ixx" />

@@ -144,7 +144,7 @@ public:
             farthestRuleContext = ruleContext;
         }
     }
-    int64_t GetPos() const
+    int64_t GetPos() const override
     {
         int32_t p = static_cast<int32_t>(current - tokens.begin());
         return (static_cast<int64_t>(line) << 32) | static_cast<int64_t>(p);
@@ -250,6 +250,10 @@ public:
         return token;
     }
     const Lexeme<Char>& CurrentLexeme() const override
+    {
+        return lexeme;
+    }
+    Lexeme<Char>& CurrentLexeme() override
     {
         return lexeme;
     }
@@ -397,17 +401,37 @@ public:
     {
         return pos;
     }
-    void SetPos(const Char* pos_)
+    void SetPos(const Char* pos_) override
     {
         pos = pos_;
     }
-    const Char* End() const
+    const Char* End() const override
     {
         return end;
     }
     const std::vector<Token<Char, LexerBase<Char>>>& Tokens() const
     {
         return tokens;
+    }
+    void SetCurrentMatchEnd(const Char* end) override
+    {
+        current->match.end = end;
+    }
+    void EraseTokens() override
+    {
+        tokens.erase(current + 1, tokens.end());
+    }
+    void Increment() override
+    {
+        operator++();
+    }
+    void MoveToEnd() override
+    {
+        Token<Char, LexerBase<Char>> endToken(END_TOKEN, this);
+        endToken.match.begin = end;
+        endToken.match.end = end;
+        tokens.push_back(endToken);
+        current = tokens.end() - 1;
     }
 private:
     void NextToken()
@@ -573,4 +597,3 @@ void WriteFailureToLog(Lexer& lexer, const std::string& ruleName)
 }
 
 } // namespace soul::lexer
-

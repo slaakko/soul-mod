@@ -28,9 +28,18 @@ const std::string& FileMap::GetFilePath(int file) const
     }
 }
 
-void FileMap::AddFileContent(std::u32string&& fileContent, std::vector<int>&& lineStartIndeces)
+void FileMap::Resize()
 {
-    fileContents.push_back(std::make_pair(std::move(fileContent), std::move(lineStartIndeces)));
+    fileContents.resize(filePaths.size());
+}
+
+void FileMap::AddFileContent(int file, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces)
+{
+    while (file >= fileContents.size())
+    {
+        fileContents.push_back(std::make_pair(std::u32string(), std::vector<int>()));
+    }
+    fileContents[file] = std::make_pair(std::move(fileContent), std::move(lineStartIndeces));
 }
 
 bool FileMap::HasFileContent(int file) const

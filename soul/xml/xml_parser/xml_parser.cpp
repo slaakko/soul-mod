@@ -53,7 +53,7 @@ void ParseXmlContent(std::u32string&& xmlContent, const std::string& systemId, X
     lexer.SetFile(file);
     soul::xml::processor::XmlProcessor processor(contentHandler);
     soul::xml::document::parser::XmlParser<decltype(lexer)>::Parse(lexer, &processor);
-    fileMap.AddFileContent(std::move(xmlContent), std::move(lexer.GetLineStartIndeces()));
+    fileMap.AddFileContent(file, std::move(xmlContent), std::move(lexer.GetLineStartIndeces()));
 }
 
 } // namespace soul::xml::parser

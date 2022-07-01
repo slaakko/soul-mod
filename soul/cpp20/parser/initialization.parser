@@ -1,0 +1,88 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.initialization;
+
+[interface]import soul.cpp20.symbols.context;
+[interface]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.punctuation;
+
+parser InitializationParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using ExpressionParser.Expression;
+    using ExpressionParser.AssignmentExpression;
+    using ExpressionParser.ExpressionList;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using PunctuationParser.LBrace;
+    using PunctuationParser.RBrace;
+
+    Initializer(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> initializer, var std::unique_ptr<soul::cpp20::ast::ExpressionListNode> exprListNode) : 
+        soul::cpp20::ast::Node*
+        ::= 
+        (
+            BraceOrEqualInitializer(context):braceOrEqualInit{ initializer.reset(braceOrEqualInit); }
+        |   LPAREN{ exprListNode.reset(new soul::cpp20::ast::ExpressionListNode(lexer.GetSourcePos(pos))); exprListNode->SetLParenPos(lexer.GetSourcePos(pos)); } 
+            ExpressionList(context, exprListNode.get()):expressionList 
+            RPAREN{ exprListNode->SetRParenPos(lexer.GetSourcePos(pos)); initializer.reset(exprListNode.release()); }
+        )
+        {
+            return initializer.release();
+        }
+        ;
+
+    InitializerClause(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= BracedInitList(context):bracedInitList{ return bracedInitList; }
+        |   AssignmentExpression(context):assignmentExpr{ return assignmentExpr; }
+        ;
+
+    InitializerList(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
+        ::= 
+        (
+            InitializerClause(context):first{ container->AddNode(first); } 
+            (
+                Comma:comma{ container->AddNode(comma); } 
+                InitializerClause(context):next{ container->AddNode(next); }
+            )*
+            (Ellipsis:ellipsis{ container->AddNode(ellipsis); })?
+        )
+        ;
+
+    DesignatedInitializerList(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
+        ::= empty{ pass = false; }
+        ;
+
+    ExprOrBracedInitList(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= BracedInitList(context):bracedInitList{ return bracedInitList; }
+        |   Expression(context):expr{ return expr; }
+        ;
+
+    BraceOrEqualInitializer(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= ASSIGN{ sourcePos = lexer.GetSourcePos(pos); } InitializerClause(context):initializer{ return new soul::cpp20::ast::AssignmentInitNode(sourcePos, initializer); }
+        |   BracedInitList(context):bracedInitList{ return bracedInitList; }
+        ;
+
+    BracedInitList(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> initList) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            LBrace:lbrace{ initList.reset(new soul::cpp20::ast::BracedInitListNode(lexer.GetSourcePos(pos))); initList->AddNode(lbrace); }
+            (   InitializerList(context, initList.get()):initializerList 
+            |   DesignatedInitializerList(context, initList.get()):designatedInitList
+            )
+            (Comma:comma{ initList->AddNode(comma); })?
+            RBrace:rbrace{ initList->AddNode(rbrace); }
+        |   LBrace:lbrace{ initList.reset(new soul::cpp20::ast::BracedInitListNode(lexer.GetSourcePos(pos))); initList->AddNode(lbrace); }
+            RBrace:rbrace{ initList->AddNode(rbrace); }
+        )
+        {
+            return initList.release();
+        }
+        ;
+}

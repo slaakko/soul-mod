@@ -156,9 +156,9 @@
     <None Include="xmlser.keyword" />
     <None Include="xmlser.slg" />
     <None Include="xmlser.token" />
-    <None Include="xmlser_lexer.lexer" />
+    <None Include="xmlser.lexer" />
     <None Include="xmlser.spg" />
-    <None Include="xmlser_parser.parser" />
+    <None Include="xmlser.parser" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ast.cpp" />
@@ -173,11 +173,11 @@
     <ClCompile Include="scanner.ixx" />
     <ClCompile Include="version.cpp" />
     <ClCompile Include="version.ixx" />
+    <ClCompile Include="xmlser.lexer.cpp" />
+    <ClCompile Include="xmlser.lexer.ixx" />
+    <ClCompile Include="xmlser.parser.cpp" />
+    <ClCompile Include="xmlser.parser.ixx" />
     <ClCompile Include="xmlser.token.ixx" />
-    <ClCompile Include="xmlser_lexer.cpp" />
-    <ClCompile Include="xmlser_lexer.ixx" />
-    <ClCompile Include="xmlser_parser.cpp" />
-    <ClCompile Include="xmlser_parser.ixx" />
     <ClCompile Include="xmlser_rules.cpp" />
     <ClCompile Include="xmlser_rules.ixx" />
     <ClCompile Include="exp.ixx" />

@@ -2,4 +2,4 @@ project soul.xml.xpath.lexer;
 tokens <xpath.token>;
 keywords <xpath.keyword>;
 expressions <xpath.expr>;
-lexer <xpath_lexer.lexer>;
+lexer <xpath.lexer>;

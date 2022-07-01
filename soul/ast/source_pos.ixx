@@ -37,4 +37,10 @@ inline bool operator<(const SourcePos& left, const SourcePos& right)
     return left.col < right.col;
 }
 
+std::string ToString(const SourcePos& sourcePos);
+
 } // namespace soul::ast
+
+export namespace soul::ast::source::pos {
+
+} // namespace soul::ast::source::pos

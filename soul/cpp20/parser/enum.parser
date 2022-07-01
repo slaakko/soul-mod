@@ -1,0 +1,27 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.enums;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+
+parser EnumParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    EnumSpecifier(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    OpaqueEnumDeclaration(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    ElaboratedEnumSpecifier(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+}

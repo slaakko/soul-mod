@@ -1,0 +1,40 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.concepts;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+
+parser ConceptParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+    
+    RequiresClause(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            REQUIRES{ sourcePos = lexer.GetSourcePos(pos); }
+            ConstraintLogicalOrExpression(context):orExpr
+        )
+        {
+            return new soul::cpp20::ast::RequiresClauseNode(sourcePos, orExpr);
+        }
+        ;
+
+    ConstraintLogicalOrExpression(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    RequiresExpression(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    TypeConstraint(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+}

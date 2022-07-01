@@ -23,6 +23,7 @@ public:
     virtual int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const = 0;
     virtual Token<Char, Self>& CurrentToken() = 0;
     virtual const Lexeme<Char>& CurrentLexeme() const = 0;
+    virtual Lexeme<Char>& CurrentLexeme() = 0;
     virtual const Token<Char, Self>& GetToken(int64_t pos) const = 0;
     virtual const std::string& FileName() const = 0;
     virtual int File() const = 0;
@@ -38,6 +39,13 @@ public:
     virtual std::map<int64_t, std::string>* GetRuleNameMapPtr() const = 0;
     virtual void SetRuleNameMapPtr(std::map<int64_t, std::string>* ruleNameMapPtr) = 0;
     virtual std::string ErrorLines(int64_t pos) const = 0;
+    virtual int64_t GetPos() const = 0;
+    virtual const Char* End() const = 0;
+    virtual void SetPos(const Char* p) = 0;
+    virtual void SetCurrentMatchEnd(const Char* end) = 0;
+    virtual void EraseTokens() = 0;
+    virtual void Increment() = 0;
+    virtual void MoveToEnd() = 0;
 };
 
 } // namespace soul::lexer

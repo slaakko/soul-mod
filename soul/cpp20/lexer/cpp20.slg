@@ -1,0 +1,5 @@
+project cpp20.lexer.slg;
+tokens <../token/cpp20.token>;
+keywords <../keyword/cpp20.keyword>;
+expressions <../expression/cpp20.expr>;
+lexer <cpp20.lexer>;

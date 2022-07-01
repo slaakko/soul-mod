@@ -150,28 +150,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="identifier_parser.parser" />
+    <None Include="identifier.parser" />
     <None Include="cpp_parsers.spg" />
-    <None Include="declaration_parser.parser" />
-    <None Include="declarator_parser.parser" />
-    <None Include="expression_parser.parser" />
-    <None Include="literal_parser.parser" />
-    <None Include="statement_parser.parser" />
+    <None Include="declaration.parser" />
+    <None Include="declarator.parser" />
+    <None Include="expression.parser" />
+    <None Include="literal.parser" />
+    <None Include="statement.parser" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="declaration_parser.cpp" />
-    <ClCompile Include="declarator_parser.cpp" />
-    <ClCompile Include="expression_parser.cpp" />
-    <ClCompile Include="identifier_parser.cpp" />
-    <ClCompile Include="identifier_parser.ixx" />
-    <ClCompile Include="declaration_parser.ixx" />
-    <ClCompile Include="declarator_parser.ixx" />
-    <ClCompile Include="expression_parser.ixx" />
-    <ClCompile Include="literal_parser.cpp" />
-    <ClCompile Include="literal_parser.ixx" />
+    <ClCompile Include="declaration.parser.cpp" />
+    <ClCompile Include="declaration.parser.ixx" />
+    <ClCompile Include="declarator.parser.cpp" />
+    <ClCompile Include="declarator.parser.ixx" />
+    <ClCompile Include="expression.parser.cpp" />
+    <ClCompile Include="expression.parser.ixx" />
+    <ClCompile Include="identifier.parser.cpp" />
+    <ClCompile Include="identifier.parser.ixx" />
+    <ClCompile Include="literal.parser.cpp" />
+    <ClCompile Include="literal.parser.ixx" />
     <ClCompile Include="parsers.ixx" />
-    <ClCompile Include="statement_parser.cpp" />
-    <ClCompile Include="statement_parser.ixx" />
+    <ClCompile Include="statement.parser.cpp" />
+    <ClCompile Include="statement.parser.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">

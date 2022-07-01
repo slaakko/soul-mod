@@ -1,2 +1,2 @@
 project common.parser;
-parser <common_parser.parser>;
+parser <common.parser>;

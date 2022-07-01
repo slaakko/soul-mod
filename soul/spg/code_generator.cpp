@@ -1120,7 +1120,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     }
     sn = 0;
     stage = CodeGenerationStage::generateInterface;
-    std::string interfaceFileName = util::Path::ChangeExtension(parserFile.FilePath(), ".ixx");
+    std::string interfaceFileName = parserFile.FilePath() + ".ixx";
     std::ofstream interfaceFile(interfaceFileName);
     util::CodeFormatter interfaceFormatter(interfaceFile);
     formatter = &interfaceFormatter;
@@ -1178,7 +1178,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     }
 
     stage = CodeGenerationStage::generateImplementation;
-    std::string implementationFileName = util::Path::ChangeExtension(parserFile.FilePath(), ".cpp");
+    std::string implementationFileName = parserFile.FilePath() + ".cpp";
     std::ofstream implementationFile(implementationFileName);
     util::CodeFormatter implementationFormatter(implementationFile);
     formatter = &implementationFormatter;

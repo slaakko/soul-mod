@@ -34,9 +34,9 @@ std::map<int64_t, std::string>* GetRuleNameMapPtr()
         { 127393969859461122, "StatementParser.IfStatement" },
         { 127393969859461123, "StatementParser.WhileStatement" },
         { 127393969859461124, "StatementParser.ReturnStatement" },
-        { 127393969859461125, "StatementParser.ConstructionStatement" },
-        { 127393969859461126, "StatementParser.AssignmentStatement" },
-        { 127393969859461127, "StatementParser.CompoundStatement" },
+        { 127393969859461125, "StatementParser.CompoundStatement" },
+        { 127393969859461126, "StatementParser.ConstructionStatement" },
+        { 127393969859461127, "StatementParser.AssignmentStatement" },
         { 1020028859917008897, "TypeParser.Type" }
     };
     return &ruleNameMap;

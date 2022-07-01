@@ -1,8 +1,8 @@
 project minilang.spg;
-parser <expression_parser.parser>;
-parser <function_parser.parser>;
-parser <identifier_parser.parser>;
-parser <literal_parser.parser>;
-parser <source_file_parser.parser>;
-parser <statement_parser.parser>;
-parser <type_parser.parser>;
+parser <expression.parser>;
+parser <function.parser>;
+parser <identifier.parser>;
+parser <literal.parser>;
+parser <source_file.parser>;
+parser <statement.parser>;
+parser <type.parser>;

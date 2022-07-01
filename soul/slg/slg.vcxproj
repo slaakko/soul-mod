@@ -189,35 +189,35 @@
   <ItemGroup>
     <ClCompile Include="classmap.cpp" />
     <ClCompile Include="classmap.ixx" />
-    <ClCompile Include="expression_file_parser.cpp" />
-    <ClCompile Include="expression_file_parser.ixx" />
+    <ClCompile Include="expression_file.parser.cpp" />
+    <ClCompile Include="expression_file.parser.ixx" />
     <ClCompile Include="file_parsers.cpp" />
     <ClCompile Include="file_parsers.ixx" />
-    <ClCompile Include="keyword_file_parser.cpp" />
-    <ClCompile Include="keyword_file_parser.ixx" />
-    <ClCompile Include="lexer_file_parser.cpp" />
-    <ClCompile Include="lexer_file_parser.ixx" />
+    <ClCompile Include="keyword_file.parser.cpp" />
+    <ClCompile Include="keyword_file.parser.ixx" />
+    <ClCompile Include="lexer_file.parser.cpp" />
+    <ClCompile Include="lexer_file.parser.ixx" />
     <ClCompile Include="lexer_generator.cpp" />
     <ClCompile Include="lexer_generator.ixx" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="regular_expression_parser.cpp" />
     <ClCompile Include="regular_expression_parser.ixx" />
-    <ClCompile Include="slg_file_parser.cpp" />
-    <ClCompile Include="slg_file_parser.ixx" />
+    <ClCompile Include="slg_file.parser.cpp" />
+    <ClCompile Include="slg_file.parser.ixx" />
     <ClCompile Include="slg_parsers_rules.cpp" />
     <ClCompile Include="slg_parsers_rules.ixx" />
-    <ClCompile Include="token_file_parser.cpp" />
-    <ClCompile Include="token_file_parser.ixx" />
+    <ClCompile Include="token_file.parser.cpp" />
+    <ClCompile Include="token_file.parser.ixx" />
     <ClCompile Include="token_generator.cpp" />
     <ClCompile Include="token_generator.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="expression_file_parser.parser" />
-    <None Include="keyword_file_parser.parser" />
-    <None Include="lexer_file_parser.parser" />
-    <None Include="slg_file_parser.parser" />
+    <None Include="expression_file.parser" />
+    <None Include="keyword_file.parser" />
+    <None Include="lexer_file.parser" />
+    <None Include="slg_file.parser" />
     <None Include="slg_parsers.spg" />
-    <None Include="token_file_parser.parser" />
+    <None Include="token_file.parser" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\lex\soul.lex.re.classmap.rc" />

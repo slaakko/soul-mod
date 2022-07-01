@@ -170,12 +170,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="common_parser.parser" />
+    <None Include="common.parser" />
     <None Include="common_parser.spg" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="common_parser.cpp" />
-    <ClCompile Include="common_parser.ixx" />
+    <ClCompile Include="common.parser.cpp" />
+    <ClCompile Include="common.parser.ixx" />
     <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

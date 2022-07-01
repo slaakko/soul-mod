@@ -1,0 +1,81 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.proj.parser;
+
+[interface]import soul.cpp20.proj.ast;
+[implementation]import soul.cpp20.proj.token;
+[implementation]import soul.cpp20.proj.lexer;
+[implementation]import soul.cpp20.proj.parser.token;
+[implementation]import soul.cpp20.symbols;
+
+parser ProjectParser
+{
+    lexer soul::cpp20::proj::lexer::ProjectLexer<char32_t>;
+    main;
+
+    ProjectFile(var std::unique_ptr<soul::cpp20::proj::ast::Project> proj) : soul::cpp20::proj::ast::Project*
+        ::= 
+        (
+            ProjectDeclaration:projectDeclaration{ proj.reset(projectDeclaration); }
+            (
+                FilePath(proj.get()):filePath
+            )*
+        )
+        {
+            return proj.release();
+        }
+        ;
+
+    ProjectDeclaration : soul::cpp20::proj::ast::Project*
+        ::= 
+        (
+            PROJECT QualifiedId:projectName SEMICOLON
+        )
+        {
+            return new soul::cpp20::proj::ast::Project(lexer.FileName(), projectName);
+        }
+        ;
+
+    FilePath(soul::cpp20::proj::ast::Project* proj)
+        ::= 
+        (   InterfaceFilePath:interfaceFilePath{ proj->AddInterfaceFilePath(interfaceFilePath); }
+        |   SourceFilePath:sourceFilePath{ proj->AddSourceFilePath(sourceFilePath); }
+        )
+		;
+
+    InterfaceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            INTERFACE FILEPATH{ filePath = soul::cpp20::proj::parser::token::ParseFilePath(lexer.FileName(), lexer.GetToken(pos)); } SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+    SourceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            SOURCE FILEPATH{ filePath = soul::cpp20::proj::parser::token::ParseFilePath(lexer.FileName(), lexer.GetToken(pos)); } SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+	QualifiedId(var std::string str) : std::string
+		::= 
+        (
+            ID{ str.append(util::ToUtf8(lexer.GetToken(pos).ToString())); } 
+            (
+                DOT ID{ str.append(1, '.').append(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+            )*
+        )
+        { 
+            return str; 
+        }
+		;
+}

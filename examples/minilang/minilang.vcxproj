@@ -152,27 +152,27 @@
   <ItemGroup>
     <ClCompile Include="ast.cpp" />
     <ClCompile Include="ast.ixx" />
-    <ClCompile Include="expression_parser.cpp" />
-    <ClCompile Include="expression_parser.ixx" />
-    <ClCompile Include="function_parser.cpp" />
-    <ClCompile Include="function_parser.ixx" />
-    <ClCompile Include="identifier_parser.cpp" />
-    <ClCompile Include="identifier_parser.ixx" />
-    <ClCompile Include="literal_parser.cpp" />
-    <ClCompile Include="literal_parser.ixx" />
+    <ClCompile Include="expression.parser.cpp" />
+    <ClCompile Include="expression.parser.ixx" />
+    <ClCompile Include="function.parser.cpp" />
+    <ClCompile Include="function.parser.ixx" />
+    <ClCompile Include="identifier.parser.cpp" />
+    <ClCompile Include="identifier.parser.ixx" />
+    <ClCompile Include="literal.parser.cpp" />
+    <ClCompile Include="literal.parser.ixx" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="minilang.lexer.cpp" />
+    <ClCompile Include="minilang.lexer.ixx" />
     <ClCompile Include="minilang.token.ixx" />
-    <ClCompile Include="minilang_lexer.cpp" />
-    <ClCompile Include="minilang_lexer.ixx" />
     <ClCompile Include="minilang_rules.cpp" />
     <ClCompile Include="minilang_rules.ixx" />
     <ClCompile Include="parser.ixx" />
-    <ClCompile Include="source_file_parser.cpp" />
-    <ClCompile Include="source_file_parser.ixx" />
-    <ClCompile Include="statement_parser.cpp" />
-    <ClCompile Include="statement_parser.ixx" />
-    <ClCompile Include="type_parser.cpp" />
-    <ClCompile Include="type_parser.ixx" />
+    <ClCompile Include="source_file.parser.cpp" />
+    <ClCompile Include="source_file.parser.ixx" />
+    <ClCompile Include="statement.parser.cpp" />
+    <ClCompile Include="statement.parser.ixx" />
+    <ClCompile Include="type.parser.cpp" />
+    <ClCompile Include="type.parser.ixx" />
     <ClCompile Include="visitor.ixx" />
   </ItemGroup>
   <ItemGroup>
@@ -190,19 +190,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="expression_parser.parser" />
-    <None Include="function_parser.parser" />
-    <None Include="identifier_parser.parser" />
-    <None Include="literal_parser.parser" />
+    <None Include="expression.parser" />
+    <None Include="function.parser" />
+    <None Include="identifier.parser" />
+    <None Include="literal.parser" />
     <None Include="minilang.expr" />
     <None Include="minilang.keyword" />
     <None Include="minilang.slg" />
     <None Include="minilang.spg" />
     <None Include="minilang.token" />
-    <None Include="minilang_lexer.lexer" />
-    <None Include="source_file_parser.parser" />
-    <None Include="statement_parser.parser" />
-    <None Include="type_parser.parser" />
+    <None Include="minilang.lexer" />
+    <None Include="source_file.parser" />
+    <None Include="statement.parser" />
+    <None Include="type.parser" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="minilang.lexer.classmap.rc" />

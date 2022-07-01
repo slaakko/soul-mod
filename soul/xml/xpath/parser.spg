@@ -1,2 +1,2 @@
 project soul.xml.xpath.parser;
-parser <xpath_parser.parser>;
+parser <xpath.parser>;

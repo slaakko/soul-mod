@@ -1,0 +1,52 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.templates;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+
+parser TemplateParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    TemplateDeclaration(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    TemplateId(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    SimpleTemplateId(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    DeductionGuide(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    ExplicitInstantiation(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    ExplicitSpecialization(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
+
+    Extern : soul::cpp20::ast::Node*
+        ::= EXTERN{ return new soul::cpp20::ast::ExternNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    Template : soul::cpp20::ast::Node*
+        ::= TEMPLATE{ return new soul::cpp20::ast::TemplateNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    Typename : soul::cpp20::ast::Node*
+        ::= TYPENAME{ return new soul::cpp20::ast::TypenameNode(lexer.GetSourcePos(pos)); }
+        ;
+}

@@ -168,11 +168,11 @@
     <ClCompile Include="parser_rules.ixx" />
     <ClCompile Include="token_parser.ixx" />
     <ClCompile Include="xpath.ixx" />
+    <ClCompile Include="xpath.lexer.cpp" />
+    <ClCompile Include="xpath.lexer.ixx" />
+    <ClCompile Include="xpath.parser.cpp" />
+    <ClCompile Include="xpath.parser.ixx" />
     <ClCompile Include="xpath.token.ixx" />
-    <ClCompile Include="xpath_lexer.cpp" />
-    <ClCompile Include="xpath_lexer.ixx" />
-    <ClCompile Include="xpath_parser.cpp" />
-    <ClCompile Include="xpath_parser.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
@@ -202,9 +202,9 @@
     <None Include="parser.spg" />
     <None Include="xpath.expr" />
     <None Include="xpath.keyword" />
-    <None Include="xpath_lexer.lexer" />
+    <None Include="xpath.lexer" />
     <None Include="xpath.token" />
-    <None Include="xpath_parser.parser" />
+    <None Include="xpath.parser" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
