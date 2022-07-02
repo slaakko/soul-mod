@@ -132,7 +132,7 @@ void Scope::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Con
     throw Exception("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
-void Scope::RemoveSymbol(Symbol* symbol)
+std::unique_ptr<Symbol> Scope::RemoveSymbol(Symbol* symbol)
 {
     throw std::runtime_error("could not remove symbol");
 }
@@ -305,8 +305,9 @@ void ContainerScope::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourc
     containerSymbol->AddSymbol(symbol, sourcePos, context);
 }
 
-void ContainerScope::RemoveSymbol(Symbol* symbol)
+std::unique_ptr<Symbol> ContainerScope::RemoveSymbol(Symbol* symbol)
 {
+    return containerSymbol->RemoveSymbol(symbol);
 }
 
 ClassGroupSymbol* ContainerScope::GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)

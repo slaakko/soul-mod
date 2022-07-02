@@ -11,6 +11,7 @@ import soul.lexer.keyword;
 import soul.lexer.classmap;
 import soul.lexer.variables;
 import soul.ast.slg;
+import soul.ast.lexer.pos.pair;
 
 export namespace soul::lexer {
 
@@ -46,6 +47,8 @@ public:
     virtual void EraseTokens() = 0;
     virtual void Increment() = 0;
     virtual void MoveToEnd() = 0;
+    virtual void BeginRecordedParse(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair) {}
+    virtual void EndRecordedParse() {}
 };
 
 } // namespace soul::lexer

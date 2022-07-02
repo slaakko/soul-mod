@@ -14,6 +14,7 @@ import soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
+import soul.cpp20.symbols.block;
 import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.compound.type.symbol;
@@ -132,6 +133,12 @@ Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGr
 Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags)
 {
     return currentScope->Lookup(name, symbolGroupKind, ScopeLookup::allScopes, sourcePos, context, flags);
+}
+
+void SymbolTable::MapNode(soul::cpp20::ast::Node* node)
+{
+    Symbol* symbol = currentScope->GetSymbol();
+    MapNode(node, symbol);
 }
 
 void SymbolTable::MapNode(soul::cpp20::ast::Node* node, Symbol* symbol)
@@ -327,6 +334,28 @@ void SymbolTable::BeginClass(const std::u32string& name, soul::cpp20::ast::Node*
 void SymbolTable::EndClass()
 {
     EndScope();
+}
+
+void SymbolTable::BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    BlockSymbol* blockSymbol = new BlockSymbol(); 
+    currentScope->AddSymbol(blockSymbol, sourcePos, context);
+    BeginScope(blockSymbol->GetScope());
+}
+
+void SymbolTable::EndBlock()
+{
+    EndScope();
+}
+
+void SymbolTable::RemoveBlock()
+{
+    Symbol* symbol = currentScope->GetSymbol();
+    if (symbol && symbol->IsBlockSymbol())
+    {
+        EndScope();
+        currentScope->RemoveSymbol(symbol);
+    }
 }
 
 FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context)

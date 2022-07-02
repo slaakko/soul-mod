@@ -164,6 +164,8 @@
     <ClCompile Include="alias_group_symbol.ixx" />
     <ClCompile Include="alias_type_symbol.cpp" />
     <ClCompile Include="alias_type_symbol.ixx" />
+    <ClCompile Include="block.cpp" />
+    <ClCompile Include="block.ixx" />
     <ClCompile Include="classes.cpp" />
     <ClCompile Include="classes.ixx" />
     <ClCompile Include="class_group_symbol.cpp" />

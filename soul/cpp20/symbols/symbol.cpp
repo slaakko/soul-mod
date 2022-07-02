@@ -76,7 +76,7 @@ void Symbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Co
         sourcePos, context);
 }
 
-void Symbol::RemoveSymbol(Symbol* symbol)
+std::unique_ptr<Symbol> Symbol::RemoveSymbol(Symbol* symbol)
 {
     throw std::runtime_error("cannot remove symbol");
 }
@@ -102,6 +102,7 @@ bool Symbol::CanInstall() const
     switch (kind)
     {
         case SymbolKind::aliasTypeSymbol:
+        case SymbolKind::blockSymbol:
         case SymbolKind::classTypeSymbol:
         case SymbolKind::conceptSymbol:
         case SymbolKind::functionSymbol:

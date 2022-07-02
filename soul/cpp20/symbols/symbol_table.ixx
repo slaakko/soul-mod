@@ -72,6 +72,9 @@ public:
     void EndNamespace(int level);
     void BeginClass(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context);
     void EndClass();
+    void BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
+    void EndBlock();
+    void RemoveBlock();
     FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
     void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
@@ -81,6 +84,7 @@ public:
     TypeSymbol* MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
+    void MapNode(soul::cpp20::ast::Node* node);
     void MapNode(soul::cpp20::ast::Node* node, Symbol* symbol);
     void MapNode(soul::cpp20::ast::Node* node, Symbol* symbol, MapKind kind);
     soul::cpp20::ast::Node* GetNodeNothrow(Symbol* symbol) const;

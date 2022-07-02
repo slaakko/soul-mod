@@ -262,6 +262,7 @@ void ListNode::AddNode(Node* node)
 void ListNode::Clear()
 {
     nodes.Clear();
+    items.clear();
 }
 
 void ListNode::Write(Writer& writer)

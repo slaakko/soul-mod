@@ -6,6 +6,7 @@
 export module soul.cpp20.symbols;
 
 export import soul.cpp20.symbols.alias.type.symbol;
+export import soul.cpp20.symbols.block;
 export import soul.cpp20.symbols.compound.type.symbol;
 export import soul.cpp20.symbols.classes;
 export import soul.cpp20.symbols.container.symbol;

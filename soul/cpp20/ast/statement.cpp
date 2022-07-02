@@ -139,8 +139,6 @@ void CompoundStatementNode::Write(Writer& writer)
     writer.Write(attributes.get());
     writer.Write(lbPos);
     writer.Write(rbPos);
-    // writer.GetBinaryWriter().WriteULEB128ULong(tokenPosPair.start); not needed?
-    // writer.GetBinaryWriter().WriteULEB128ULong(tokenPosPair.end); not needed?
 }
 
 void CompoundStatementNode::Read(Reader& reader)
@@ -149,13 +147,11 @@ void CompoundStatementNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
     lbPos = reader.ReadSourcePos();
     rbPos = reader.ReadSourcePos();
-    // tokenPosPair.start = reader.GetBinaryReader().ReadULEB128ULong()); not needed?
-    // tokenPosPair.end = reader.GetBinaryReader().ReadULEB128ULong()); not needed?
 }
 
-void CompoundStatementNode::SetTokenPosPair(const soul::ast::LexerPosPair& tokenPosPair_)
+void CompoundStatementNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_)
 {
-    tokenPosPair = tokenPosPair_;
+    lexerPosPair = lexerPosPair_;
 }
 
 IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::ifStatementNode, sourcePos_)

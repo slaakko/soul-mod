@@ -77,7 +77,7 @@ public:
     virtual const std::u32string& InstallationName() const { return name; }
     virtual bool IsValidDeclarationScope(ScopeKind scopeKind) const { return true; }
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual void RemoveSymbol(Symbol* symbol);
+    virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual void Write(Writer& writer);
     virtual void Read(Reader& reader);
     virtual void Resolve(SymbolTable& symbolTable);
@@ -93,6 +93,7 @@ public:
     bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol; }
     bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
+    bool IsBlockSymbol() const { return kind == SymbolKind::blockSymbol; }
     SymbolGroupKind GetSymbolGroupKind() const;
 private:
     SymbolKind kind;

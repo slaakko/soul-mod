@@ -7,7 +7,7 @@ export module soul.ast.lexer.pos.pair;
 
 import std.core;
 
-export namespace soul::ast {
+export namespace soul::ast::lexer::pos::pair {
 
 struct LexerPosPair
 {
@@ -18,4 +18,4 @@ struct LexerPosPair
     int64_t end;
 };
 
-} // namespace soul::ast
+} // namespace soul::ast::lexer::pos::pair

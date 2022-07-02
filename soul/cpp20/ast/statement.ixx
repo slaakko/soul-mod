@@ -78,8 +78,8 @@ public:
     void Read(Reader& reader) override;
     Node* Attributes() const { return attributes.get(); }
     void SetAttributes(Node* attributes_) { attributes.reset(attributes_); }
-    void SetTokenPosPair(const soul::ast::LexerPosPair& tokenPosPair_);
-    const soul::ast::LexerPosPair& GetTokenPosPair() const { return tokenPosPair; }
+    void SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_);
+    const soul::ast::lexer::pos::pair::LexerPosPair& GetLexerPosPair() const { return lexerPosPair; }
     void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
     void SetRBracePos(const soul::ast::SourcePos& rbPos_) { rbPos = rbPos_; }
     const soul::ast::SourcePos& LBracePos() const { return lbPos; }
@@ -89,7 +89,7 @@ private:
     std::unique_ptr<Node> attributes;
     soul::ast::SourcePos lbPos;
     soul::ast::SourcePos rbPos;
-    soul::ast::LexerPosPair tokenPosPair;
+    soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair;
 };
 
 class IfStatementNode : public CompoundNode

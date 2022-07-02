@@ -38,7 +38,7 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     }
 }
 
-void ContainerSymbol::RemoveSymbol(Symbol* symbol)
+std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
 {
     if (symbol->CanInstall())
     {
@@ -49,9 +49,10 @@ void ContainerSymbol::RemoveSymbol(Symbol* symbol)
         if (i->get() == symbol)
         {
             symbols.erase(i);
-            break;
+            return std::unique_ptr<Symbol>(symbol);
         }
     }
+    return std::unique_ptr<Symbol>();
 }
 
 void ContainerSymbol::Write(Writer& writer)

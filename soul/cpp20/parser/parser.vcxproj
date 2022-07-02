@@ -226,6 +226,8 @@
     <ClCompile Include="module_dependency.parser.ixx" />
     <ClCompile Include="punctuation.parser.cpp" />
     <ClCompile Include="punctuation.parser.ixx" />
+    <ClCompile Include="recorded_parse.cpp" />
+    <ClCompile Include="recorded_parse.ixx" />
     <ClCompile Include="simple_type.parser.cpp" />
     <ClCompile Include="simple_type.parser.ixx" />
     <ClCompile Include="statement.parser.cpp" />

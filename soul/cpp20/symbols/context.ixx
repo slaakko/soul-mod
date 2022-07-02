@@ -23,7 +23,9 @@ enum class ContextFlags : int32_t
     assumeType = 1 << 5,
     constructor = 1 << 6,
     destructor = 1 << 7,
-    simpleTypeSpecifierWithoutTypeNameMatched = 1 << 8
+    parseSavedMemberFunctionBody = 1 << 8,
+    parsingTemplateDeclaration = 1 << 9,
+    parseMemberFunction = 1 << 10
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
