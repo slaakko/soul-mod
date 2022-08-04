@@ -6,6 +6,9 @@
 module soul.cpp20.symbols.class_group.symbol;
 
 import soul.cpp20.symbols.classes;
+import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
 
@@ -55,6 +58,39 @@ ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const
         }
     }
     return nullptr;
+}
+
+void ClassGroupSymbol::Write(Writer& writer)
+{
+    Symbol::Write(writer);
+    uint32_t count = classes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
+    for (ClassTypeSymbol* cls : classes)
+    {
+        writer.GetBinaryStreamWriter().Write(cls->Id());
+    }
+}
+
+void ClassGroupSymbol::Read(Reader& reader)
+{
+    Symbol::Read(reader);
+    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        util::uuid classId;
+        reader.GetBinaryStreamReader().ReadUuid(classId);
+        classIds.push_back(classId);
+    }
+}
+
+void ClassGroupSymbol::Resolve(SymbolTable& symbolTable)
+{
+    Symbol::Resolve(symbolTable);
+    for (const auto& classId : classIds)
+    {
+        ClassTypeSymbol* cls = symbolTable.GetClass(classId);
+        classes.push_back(cls);
+    }
 }
 
 } // namespace soul::cpp20::symbols

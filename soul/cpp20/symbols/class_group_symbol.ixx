@@ -23,8 +23,12 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddClass(ClassTypeSymbol* classTypeSymbol);
     ClassTypeSymbol* GetClass(int arity) const;
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
 private:
     std::vector<ClassTypeSymbol*> classes;
+    std::vector<util::uuid> classIds;
 };
 
 } // namespace soul::cpp20::symbols

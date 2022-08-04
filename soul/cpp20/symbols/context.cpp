@@ -5,6 +5,10 @@
 
 module soul.cpp20.symbols.context;
 
+import soul.cpp20.symbols.symbol.table;
+import soul.cpp20.symbols.scope;
+import soul.cpp20.symbols.symbol;
+
 namespace soul::cpp20::symbols {
 
 Context::Context() : symbolTable(nullptr), lexer(nullptr), flags(ContextFlags::none)
@@ -47,6 +51,20 @@ void Context::PushResetFlag(ContextFlags flag)
 {
     PushFlags();
     ResetFlag(flag);
+}
+
+bool Context::IsConstructorNameNode(soul::cpp20::ast::Node* node) const
+{
+    Scope* currentScope = symbolTable->CurrentScope();
+    if (currentScope->IsClassScope())
+    {
+        Symbol* symbol = currentScope->GetSymbol();
+        if (symbol->Name() == node->Str())
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace soul::cpp20::symbols

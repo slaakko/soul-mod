@@ -17,6 +17,7 @@ export module soul.cpp20.parser.function;
 [implementation]import soul.cpp20.parser.punctuation;
 [implementation]import soul.cpp20.parser.statement;
 [implementation]import soul.cpp20.parser.type;
+[implementation]import soul.cpp20.symbols;
 
 parser FunctionParser
 {
@@ -42,8 +43,7 @@ parser FunctionParser
     using TypeParser.TypeName;
 
     FunctionDefinition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifierSeqNode, 
-        var std::unique_ptr<soul::cpp20::ast::Node> declaratorNode, var std::unique_ptr<soul::cpp20::ast::Node> specifierNode, var bool functionDefinitionStarted) : 
-        soul::cpp20::ast::Node*
+        var std::unique_ptr<soul::cpp20::ast::Node> declaratorNode, var std::unique_ptr<soul::cpp20::ast::Node> specifierNode, var int scopes) : soul::cpp20::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ lexer.GetSourcePos(pos); })? 
             (DeclSpecifierSeq(context):declSpecifiers{ declSpecifierSeqNode.reset(declSpecifiers); if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); })? 
             Declarator(context):declarator
@@ -56,24 +56,14 @@ parser FunctionParser
             |   empty
             )
             { 
-                // functionDefinitionStarted = soul::cpp20::symbols::BeginFunctionDefinition(declSpecifierSeqNode.get(), declaratorNode.get(), context); TODO
+                scopes = soul::cpp20::symbols::BeginFunctionDefinition(declSpecifierSeqNode.get(), declaratorNode.get(), context); 
             }
             FunctionBody(context):functionBody
             {
                 soul::cpp20::ast::Node* node = new soul::cpp20::ast::FunctionDefinitionNode(sourcePos, attributes, declSpecifierSeqNode.release(), declaratorNode.release(), 
                     specifierNode.release(), functionBody);
-                // context->GetSymbolTable()->MapNode(node, context->GetSymbolTable()->CurrentScope()->GetSymbol(), soul::cpp20::symbols::MapKind::nodeToSymbol);
-                // soul::cpp20::symbols::EndFunctionDefinition(context, node); 
+                soul::cpp20::symbols::EndFunctionDefinition(node, scopes, context); 
                 return node;
-            }
-            /
-            {
-    /*
-                if (functionDefinitionStarted)
-                {
-                    soul::cpp20::symbols::RemoveFunctionDefinition(context); 
-                }
-    */
             }
         ;
 
@@ -110,18 +100,6 @@ parser FunctionParser
     Delete : soul::cpp20::ast::Node*
         ::= DELETE{ return new soul::cpp20::ast::DeleteNode(lexer.GetSourcePos(pos)); }
         ;
-
-    NoDeclSpecFunctionDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
-        ::= // constructor, destructor or conversion function declaration
-        (   (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })? 
-            Declarator(context):declarator{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
-            Semicolon:semicolon
-        )
-        {
-            return new soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode(sourcePos, declarator, attributes, semicolon);
-        }
-        ;
-
 
     ParameterDeclarationClause(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
         ::= empty{ context->PushSetFlag(soul::cpp20::symbols::ContextFlags::parsingParameters); }

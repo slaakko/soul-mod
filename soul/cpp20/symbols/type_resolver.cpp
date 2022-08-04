@@ -7,9 +7,11 @@ module soul.cpp20.symbols.type.resolver;
 
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.exception;
+import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.derivations;
 import soul.cpp20.symbols.fundamental.type.symbol;
 import soul.cpp20.symbols.compound.type.symbol;
+import soul.cpp20.symbols.specialization;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.scope.resolver;
 import util.unicode;
@@ -52,6 +54,8 @@ public:
     void Visit(soul::cpp20::ast::PtrNode& node) override;
     void Visit(soul::cpp20::ast::QualifiedIdNode& node) override;
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
+    void Visit(soul::cpp20::ast::TemplateIdNode& node) override;
+    void Visit(soul::cpp20::ast::TypeIdNode& node) override;
 private:
     Context* context;
     TypeSymbol* type;
@@ -80,8 +84,11 @@ void TypeResolver::ResolveBaseType(soul::cpp20::ast::Node* node)
 void TypeResolver::Visit(soul::cpp20::ast::DefiningTypeIdNode& node)
 {
     node.DefiningTypeSpecifiers()->Accept(*this);
-    ResolveBaseType(&node);
-    type = baseType;
+    if (!type)
+    {
+        ResolveBaseType(&node);
+        type = baseType;
+    }
     node.AbstractDeclarator()->Accept(*this);
     Derivations derivations;
     if ((flags & DeclarationFlags::constFlag) != DeclarationFlags::none)
@@ -236,23 +243,8 @@ void TypeResolver::Visit(soul::cpp20::ast::PtrNode& node)
 void TypeResolver::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 {
     BeginScope(node.Left(), context);
-    Symbol* symbol = context->GetSymbolTable()->Lookup(node.Right()->Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context);
+    node.Right()->Accept(*this);
     EndScope(context);
-    if (symbol)
-    {
-        if (symbol->IsTypeSymbol())
-        {
-            type = static_cast<TypeSymbol*>(symbol);
-        }
-        else
-        {
-            throw Exception("symbol '" + util::ToUtf8(symbol->Name()) + "' is not a type symbol", node.GetSourcePos(), context);
-        }
-    }
-    else
-    {
-        throw Exception("symbol '" + util::ToUtf8(node.Right()->Str()) + "' not found", node.GetSourcePos(), context);
-    }
 }
 
 void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
@@ -273,6 +265,39 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
     {
         throw Exception("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
     }
+}
+
+void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
+{
+    TypeSymbol* typeSymbol = ResolveType(node.TemplateName(), context);
+    if (typeSymbol->IsClassTypeSymbol())
+    {
+        ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
+        std::vector<TypeSymbol*> templateArgs;
+        int n = node.Items().size();
+        for (int i = 0; i < n; ++i)
+        {
+            TypeSymbol* templateArg = ResolveType(node.Items()[i], context);
+            templateArgs.push_back(templateArg);
+        }
+        SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(classTemplate, templateArgs);
+        type = specialization;
+    }
+    else
+    {
+        throw Exception("symbol '" + util::ToUtf8(typeSymbol->Name()) + "' is not a class type symbol", node.GetSourcePos(), context);
+    }
+}
+
+void TypeResolver::Visit(soul::cpp20::ast::TypeIdNode& node)
+{
+    node.TypeSpecifiers()->Accept(*this);
+    if (!type)
+    {
+        ResolveBaseType(&node);
+        type = baseType;
+    }
+    node.Declarator()->Accept(*this);
 }
 
 TypeSymbol* ResolveType(soul::cpp20::ast::Node* node, Context* context)

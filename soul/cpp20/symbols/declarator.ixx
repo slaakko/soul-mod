@@ -10,6 +10,7 @@ import soul.cpp20.ast;
 
 export namespace soul::cpp20::symbols {
 
+class Scope;
 class TypeSymbol;
 
 enum class DeclaratorKind
@@ -48,16 +49,19 @@ struct Declaration
 class FunctionDeclarator : public Declarator
 {
 public:
-    FunctionDeclarator(const std::u32string& name_, soul::cpp20::ast::Node* node_);
+    FunctionDeclarator(const std::u32string& name_, soul::cpp20::ast::Node* node_, Scope* scope_);
     void AddParameterDeclaration(Declaration&& parameterDeclaration);
     const std::vector<Declaration>& ParameterDeclarations() const { return parameterDeclarations; }
+    Scope* GetScope() const { return scope; }
 private:
     std::vector<Declaration> parameterDeclarations;
+    Scope* scope;
 };
 
 class Context;
 
 std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, Context* context);
+std::vector<Declaration> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, Context* context);
 Declaration ProcessDeclarator(TypeSymbol* baseType, soul::cpp20::ast::Node* declarator, Context* context);
 
 } // namespace soul::cpp20::symbols

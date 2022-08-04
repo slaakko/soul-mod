@@ -140,8 +140,12 @@ class DeclarationProcessor : public soul::cpp20::ast::DefaultVisitor
 public:
     DeclarationProcessor(Context* context_);
     std::vector<Declaration> GetDeclarations() { return std::move(declarations); }
+    void BeginProcessFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSeq, soul::cpp20::ast::Node* declarator);
     void Visit(soul::cpp20::ast::SimpleDeclarationNode& node) override;
+    void Visit(soul::cpp20::ast::MemberDeclarationNode& node) override;
     void Visit(soul::cpp20::ast::ParameterNode& node) override;
+    void Visit(soul::cpp20::ast::ClassSpecifierNode& node) override;
+    void Visit(soul::cpp20::ast::ElaboratedTypeSpecifierNode & override);
     TypeSymbol* ResolveBaseType(soul::cpp20::ast::Node* node);
     void Visit(soul::cpp20::ast::CharNode& node) override;
     void Visit(soul::cpp20::ast::Char8Node& node) override;
@@ -169,14 +173,30 @@ public:
     void Visit(soul::cpp20::ast::StaticNode& node) override;
     void Visit(soul::cpp20::ast::ThreadLocalNode& node) override;
     void Visit(soul::cpp20::ast::ExternNode& node) override;
+
+    void Visit(soul::cpp20::ast::QualifiedIdNode& node) override;
+    void Visit(soul::cpp20::ast::IdentifierNode& node) override;
 private:
     Context* context;
     DeclarationFlags flags;
     std::vector<Declaration> declarations;
+    bool isClassSpecifier;
+    TypeSymbol* type;
 };
 
-DeclarationProcessor::DeclarationProcessor(Context* context_) : context(context_), flags(DeclarationFlags::none)
+DeclarationProcessor::DeclarationProcessor(Context* context_) : context(context_), flags(DeclarationFlags::none), isClassSpecifier(false), type(nullptr)
 {
+}
+
+void DeclarationProcessor::BeginProcessFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSeq, soul::cpp20::ast::Node* declarator)
+{
+    if (declSpecifierSeq)
+    {
+        declSpecifierSeq->Accept(*this);
+    }
+    TypeSymbol* baseType = ResolveBaseType(declSpecifierSeq);
+    Declaration declaration = ProcessDeclarator(baseType, declarator, context);
+    declarations.push_back(std::move(declaration));
 }
 
 TypeSymbol* DeclarationProcessor::ResolveBaseType(soul::cpp20::ast::Node* node)
@@ -187,9 +207,9 @@ TypeSymbol* DeclarationProcessor::ResolveBaseType(soul::cpp20::ast::Node* node)
     {
         baseType = GetFundamentalType(fundamentalTypeFlags, node->GetSourcePos(), context);
     }
-    else
+    else 
     {
-        // todo
+        baseType = type;
     }
     return baseType;
 }
@@ -197,8 +217,24 @@ TypeSymbol* DeclarationProcessor::ResolveBaseType(soul::cpp20::ast::Node* node)
 void DeclarationProcessor::Visit(soul::cpp20::ast::SimpleDeclarationNode& node)
 {
     node.DeclarationSpecifiers()->Accept(*this);
-    TypeSymbol* baseType = ResolveBaseType(&node);
-    declarations = ProcessInitDeclaratorList(baseType, node.InitDeclaratorList(), context);
+    if (node.InitDeclaratorList())
+    {
+        TypeSymbol* baseType = ResolveBaseType(&node);
+        declarations = ProcessInitDeclaratorList(baseType, node.InitDeclaratorList(), context);
+    }
+}
+
+void DeclarationProcessor::Visit(soul::cpp20::ast::MemberDeclarationNode& node)
+{
+    if (node.DeclSpecifiers())
+    {
+        node.DeclSpecifiers()->Accept(*this);
+    }
+    if (node.MemberDeclarators())
+    {
+        TypeSymbol* baseType = ResolveBaseType(&node);
+        declarations = ProcessMemberDeclaratorList(baseType, node.MemberDeclarators(), context);
+    }
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
@@ -207,6 +243,16 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
     TypeSymbol* baseType = ResolveBaseType(&node);
     Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), context);
     declarations.push_back(std::move(declaration));
+}
+
+void DeclarationProcessor::Visit(soul::cpp20::ast::ClassSpecifierNode& node)
+{
+    isClassSpecifier = true;
+}
+
+void DeclarationProcessor::Visit(soul::cpp20::ast::ElaboratedTypeSpecifierNode& node)
+{
+    isClassSpecifier = true;
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::CharNode& node)
@@ -366,6 +412,16 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::ExternNode& node)
     flags = flags | DeclarationFlags::externFlag;
 }
 
+void DeclarationProcessor::Visit(soul::cpp20::ast::QualifiedIdNode& node)
+{
+    type = ResolveType(&node, context);
+}
+
+void DeclarationProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
+{
+    type = ResolveType(&node, context);
+}
+
 void ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Context* context)
 {
     context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, context);
@@ -421,6 +477,51 @@ Declaration ProcessParameterDeclaration(soul::cpp20::ast::Node* node, Context* c
     else
     {
         throw std::runtime_error("single declaration expected");
+    }
+}
+
+void ProcessMemberDeclaration(soul::cpp20::ast::Node* node, Context* context)
+{
+    ProcessSimpleDeclaration(node, context);
+}
+
+int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul::cpp20::ast::Node* declarator, Context* context)
+{
+    int scopes = 0;
+    DeclarationProcessor processor(context);
+    processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
+    std::vector<Declaration> declarations = processor.GetDeclarations();
+    if (declarations.size() == 1)
+    {
+        Declaration declaration = std::move(declarations.front());
+        if (declaration.declarator->Kind() == DeclaratorKind::functionDeclarator)
+        {
+            FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declaration.declarator.get());
+            context->GetSymbolTable()->BeginScope(functionDeclarator->GetScope());
+            ++scopes;
+            Symbol* symbol = context->GetSymbolTable()->Lookup(functionDeclarator->Name(), SymbolGroupKind::functionSymbolGroup, declarator->GetSourcePos(), context);
+            if (symbol)
+            {
+                if (symbol->IsFunctionSymbol())
+                {
+                    context->GetSymbolTable()->BeginScope(symbol->GetScope());
+                    ++scopes;
+                }
+            }
+        }
+    }
+    else
+    {
+        throw std::runtime_error("single declaration expected");
+    }
+    return scopes;
+}
+
+void EndFunctionDefinition(soul::cpp20::ast::Node* functionDefinitionNode, int scopes, Context* context)
+{
+    for (int i = 0; i < scopes; ++i)
+    {
+        context->GetSymbolTable()->EndScope(); 
     }
 }
 

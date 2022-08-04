@@ -11,6 +11,11 @@ import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
 
+CompoundTypeSymbol::CompoundTypeSymbol(const std::u32string& name_) :
+    TypeSymbol(SymbolKind::compoundTypeSymbol, name_), baseType(nullptr), derivations(), baseTypeId(util::nil_uuid())
+{
+}
+
 CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_) : 
     TypeSymbol(SymbolKind::compoundTypeSymbol, MakeCompoundTypeName(baseType_, derivations_)), baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid())
 {
@@ -18,18 +23,21 @@ CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations&
 
 void CompoundTypeSymbol::Write(Writer& writer)
 {
+    TypeSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(baseType->Id());
     soul::cpp20::symbols::Write(writer, derivations);
 }
 
 void CompoundTypeSymbol::Read(Reader& reader)
 {
+    TypeSymbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(baseTypeId);
     soul::cpp20::symbols::Read(reader, derivations);
 }
 
 void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
+    TypeSymbol::Resolve(symbolTable);
     baseType = symbolTable.GetType(baseTypeId);
 }
 

@@ -16,6 +16,7 @@ public:
     NamespaceSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "namespace symbol"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
+    void Import(NamespaceSymbol* that, Context* context);
 };
 
 void BeginNamespace(soul::cpp20::ast::Node* node, Context* context);

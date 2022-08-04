@@ -14,6 +14,7 @@ export namespace soul::cpp20::symbols {
 class CompoundTypeSymbol : public TypeSymbol
 {
 public:
+    CompoundTypeSymbol(const std::u32string& name_);
     CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_);
     std::string SymbolKindStr() const override { return "compound type symbol"; }
     TypeSymbol* BaseType() const { return baseType; }

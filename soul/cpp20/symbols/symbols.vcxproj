@@ -207,11 +207,16 @@
     <ClCompile Include="scope.ixx" />
     <ClCompile Include="scope_resolver.cpp" />
     <ClCompile Include="scope_resolver.ixx" />
+    <ClCompile Include="specialiazation_compare.ixx" />
+    <ClCompile Include="specialization.ixx" />
+    <ClCompile Include="specialization.cpp" />
+    <ClCompile Include="specialization_compare.cpp" />
     <ClCompile Include="symbol.cpp" />
     <ClCompile Include="symbol.ixx" />
     <ClCompile Include="symbols.ixx" />
     <ClCompile Include="symbol_table.cpp" />
     <ClCompile Include="symbol_table.ixx" />
+    <ClCompile Include="templates.cpp" />
     <ClCompile Include="templates.ixx" />
     <ClCompile Include="type_resolver.cpp" />
     <ClCompile Include="type_resolver.ixx" />

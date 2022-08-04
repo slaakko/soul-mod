@@ -27,7 +27,7 @@ void Project::AddSourceFilePath(const std::string& sourceFilePath)
     sourceFilePaths.push_back(sourceFilePath);
 }
 
-void Project::AddDependencies()
+void Project::AddDependencies(soul::cpp20::symbols::ModuleMapper& moduleMapper)
 {
     for (const auto& module : modules)
     {
@@ -43,14 +43,23 @@ void Project::AddDependencies()
                 module->AddExportedModule(exportedModule);
                 module->AddDependsOnModule(exportedModule);
             }
+            else
+            {
+                throw std::runtime_error("exported module '" + exportedModuleName + "' not found");
+            }
         }
         for (const auto& importedModuleName : module->ImportModuleNames())
         {
             soul::cpp20::symbols::Module* importedModule = GetModule(importedModuleName);
-            if (importedModule)
+            if (!importedModule)
             {
-                module->AddImportedModule(importedModule);
-                module->AddDependsOnModule(importedModule);
+                importedModule = moduleMapper.GetModule(importedModuleName);
+            }
+            module->AddImportedModule(importedModule);
+            module->AddDependsOnModule(importedModule);
+            for (soul::cpp20::symbols::Module* exportedModule : importedModule->ExportedModules())
+            {
+                module->Import(exportedModule, moduleMapper);
             }
         }
     }
@@ -86,6 +95,18 @@ soul::cpp20::symbols::Module* Project::GetModule(int file) const
     if (file >= 0 && file < modules.size())
     {
         return modules[file].get();
+    }
+    else
+    {
+        throw std::runtime_error("invalid file index");
+    }
+}
+
+soul::cpp20::symbols::Module* Project::ReleaseModule(int file)
+{
+    if (file >= 0 && file < modules.size())
+    {
+        return modules[file].release();
     }
     else
     {

@@ -94,6 +94,10 @@ std::u32string MakeFundamentalTypeName(FundamentalTypeKind kind)
     return util::ToUtf32(fundamentalTypeNames[static_cast<int32_t>(kind)]);
 }
 
+FundamentalTypeSymbol::FundamentalTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::fundamentalTypeSymbol, name_), kind()
+{
+}
+
 FundamentalTypeSymbol::FundamentalTypeSymbol(FundamentalTypeKind kind_) : TypeSymbol(SymbolKind::fundamentalTypeSymbol, MakeFundamentalTypeName(kind_)), kind(kind_)
 {
 }

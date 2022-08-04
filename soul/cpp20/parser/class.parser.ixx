@@ -27,13 +27,25 @@ struct ClassParser
     static soul::parser::Match VirtSpecifier(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match OverrideKeyword(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match FinalKeyword(Lexer& lexer, soul::cpp20::symbols::Context* context);
-    static soul::parser::Match Private(Lexer& lexer);
-    static soul::parser::Match VirtualSpecifier(Lexer& lexer);
     static soul::parser::Match BaseClause(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match BaseSpecifierList(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match BaseSpecifier(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match ClassOrDeclType(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberSpecification(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
+    static soul::parser::Match MemberDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match MemberDeclSpecifiers(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match MemberFunctionDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match MemberTemplateDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match MemberDeclaratorList(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match MemberDeclarator(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match CtorInitializer(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberInitializerList(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match MemberInitializer(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match MemberInitializerId(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match PureSpecifier(Lexer& lexer);
+    static soul::parser::Match AccessSpecifier(Lexer& lexer);
+    static soul::parser::Match Private(Lexer& lexer);
+    static soul::parser::Match VirtualSpecifier(Lexer& lexer);
 };
 
 } // namespace soul::cpp20::parser::classes

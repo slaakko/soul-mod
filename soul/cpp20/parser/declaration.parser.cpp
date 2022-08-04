@@ -170,7 +170,6 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
     std::unique_ptr<soul::cpp20::ast::Node> moduleImportDeclaration;
     std::unique_ptr<soul::cpp20::ast::Node> exportDeclaration;
     std::unique_ptr<soul::cpp20::ast::Node> blockDeclaration;
-    std::unique_ptr<soul::cpp20::ast::Node> noDeclSpecFunctionDeclaration;
     std::unique_ptr<soul::cpp20::ast::Node> functionDefinition;
     std::unique_ptr<soul::cpp20::ast::Node> deductionGuide;
     std::unique_ptr<soul::cpp20::ast::Node> explicitInstantiation;
@@ -227,78 +226,45 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                 soul::parser::Match match(false);
                                                 soul::parser::Match* parentMatch11 = &match;
                                                 {
-                                                    int64_t save = lexer.GetPos();
-                                                    soul::parser::Match match(false);
-                                                    soul::parser::Match* parentMatch12 = &match;
+                                                    int64_t pos = lexer.GetPos();
+                                                    soul::parser::Match match = ModuleParser<Lexer>::ImportDeclaration(lexer, context);
+                                                    moduleImportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                    if (match.hit)
                                                     {
-                                                        int64_t pos = lexer.GetPos();
-                                                        soul::parser::Match match = ModuleParser<Lexer>::ImportDeclaration(lexer, context);
-                                                        moduleImportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
-                                                        if (match.hit)
                                                         {
-                                                            {
-                                                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
-                                                                #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                return soul::parser::Match(true, moduleImportDeclaration.release());
-                                                            }
+                                                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
+                                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                            return soul::parser::Match(true, moduleImportDeclaration.release());
                                                         }
-                                                        *parentMatch12 = match;
                                                     }
                                                     *parentMatch11 = match;
-                                                    if (!match.hit)
-                                                    {
-                                                        soul::parser::Match match(false);
-                                                        soul::parser::Match* parentMatch13 = &match;
-                                                        lexer.SetPos(save);
-                                                        {
-                                                            soul::parser::Match match(false);
-                                                            soul::parser::Match* parentMatch14 = &match;
-                                                            {
-                                                                int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = ModuleParser<Lexer>::ExportDeclaration(lexer, context);
-                                                                exportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
-                                                                if (match.hit)
-                                                                {
-                                                                    {
-                                                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
-                                                                        #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                        return soul::parser::Match(true, exportDeclaration.release());
-                                                                    }
-                                                                }
-                                                                *parentMatch14 = match;
-                                                            }
-                                                            *parentMatch13 = match;
-                                                        }
-                                                        *parentMatch11 = match;
-                                                    }
                                                 }
                                                 *parentMatch10 = match;
                                                 if (!match.hit)
                                                 {
                                                     soul::parser::Match match(false);
-                                                    soul::parser::Match* parentMatch15 = &match;
+                                                    soul::parser::Match* parentMatch12 = &match;
                                                     lexer.SetPos(save);
                                                     {
                                                         soul::parser::Match match(false);
-                                                        soul::parser::Match* parentMatch16 = &match;
+                                                        soul::parser::Match* parentMatch13 = &match;
                                                         {
                                                             int64_t pos = lexer.GetPos();
-                                                            soul::parser::Match match = DeclarationParser<Lexer>::BlockDeclaration(lexer, context);
-                                                            blockDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                            soul::parser::Match match = ModuleParser<Lexer>::ExportDeclaration(lexer, context);
+                                                            exportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
                                                                 {
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
                                                                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                    return soul::parser::Match(true, blockDeclaration.release());
+                                                                    return soul::parser::Match(true, exportDeclaration.release());
                                                                 }
                                                             }
-                                                            *parentMatch16 = match;
+                                                            *parentMatch13 = match;
                                                         }
-                                                        *parentMatch15 = match;
+                                                        *parentMatch12 = match;
                                                     }
                                                     *parentMatch10 = match;
                                                 }
@@ -307,27 +273,27 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                             if (!match.hit)
                                             {
                                                 soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch17 = &match;
+                                                soul::parser::Match* parentMatch14 = &match;
                                                 lexer.SetPos(save);
                                                 {
                                                     soul::parser::Match match(false);
-                                                    soul::parser::Match* parentMatch18 = &match;
+                                                    soul::parser::Match* parentMatch15 = &match;
                                                     {
                                                         int64_t pos = lexer.GetPos();
-                                                        soul::parser::Match match = FunctionParser<Lexer>::NoDeclSpecFunctionDeclaration(lexer, context);
-                                                        noDeclSpecFunctionDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                        soul::parser::Match match = DeclarationParser<Lexer>::BlockDeclaration(lexer, context);
+                                                        blockDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             {
                                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
                                                                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                return soul::parser::Match(true, noDeclSpecFunctionDeclaration.release());
+                                                                return soul::parser::Match(true, blockDeclaration.release());
                                                             }
                                                         }
-                                                        *parentMatch18 = match;
+                                                        *parentMatch15 = match;
                                                     }
-                                                    *parentMatch17 = match;
+                                                    *parentMatch14 = match;
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -336,11 +302,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                         if (!match.hit)
                                         {
                                             soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch19 = &match;
+                                            soul::parser::Match* parentMatch16 = &match;
                                             lexer.SetPos(save);
                                             {
                                                 soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch20 = &match;
+                                                soul::parser::Match* parentMatch17 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = FunctionParser<Lexer>::FunctionDefinition(lexer, context);
@@ -354,9 +320,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                             return soul::parser::Match(true, functionDefinition.release());
                                                         }
                                                     }
-                                                    *parentMatch20 = match;
+                                                    *parentMatch17 = match;
                                                 }
-                                                *parentMatch19 = match;
+                                                *parentMatch16 = match;
                                             }
                                             *parentMatch8 = match;
                                         }
@@ -365,11 +331,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                     if (!match.hit)
                                     {
                                         soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch21 = &match;
+                                        soul::parser::Match* parentMatch18 = &match;
                                         lexer.SetPos(save);
                                         {
                                             soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch22 = &match;
+                                            soul::parser::Match* parentMatch19 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = TemplateParser<Lexer>::DeductionGuide(lexer, context);
@@ -383,9 +349,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                         return soul::parser::Match(true, deductionGuide.release());
                                                     }
                                                 }
-                                                *parentMatch22 = match;
+                                                *parentMatch19 = match;
                                             }
-                                            *parentMatch21 = match;
+                                            *parentMatch18 = match;
                                         }
                                         *parentMatch7 = match;
                                     }
@@ -394,11 +360,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                 if (!match.hit)
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch23 = &match;
+                                    soul::parser::Match* parentMatch20 = &match;
                                     lexer.SetPos(save);
                                     {
                                         soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch24 = &match;
+                                        soul::parser::Match* parentMatch21 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
                                             soul::parser::Match match = TemplateParser<Lexer>::ExplicitInstantiation(lexer, context);
@@ -412,9 +378,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                     return soul::parser::Match(true, explicitInstantiation.release());
                                                 }
                                             }
-                                            *parentMatch24 = match;
+                                            *parentMatch21 = match;
                                         }
-                                        *parentMatch23 = match;
+                                        *parentMatch20 = match;
                                     }
                                     *parentMatch6 = match;
                                 }
@@ -423,11 +389,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                             if (!match.hit)
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch25 = &match;
+                                soul::parser::Match* parentMatch22 = &match;
                                 lexer.SetPos(save);
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch26 = &match;
+                                    soul::parser::Match* parentMatch23 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = TemplateParser<Lexer>::ExplicitSpecialization(lexer, context);
@@ -441,9 +407,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                 return soul::parser::Match(true, explicitSpecialization.release());
                                             }
                                         }
-                                        *parentMatch26 = match;
+                                        *parentMatch23 = match;
                                     }
-                                    *parentMatch25 = match;
+                                    *parentMatch22 = match;
                                 }
                                 *parentMatch5 = match;
                             }
@@ -452,11 +418,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                         if (!match.hit)
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch27 = &match;
+                            soul::parser::Match* parentMatch24 = &match;
                             lexer.SetPos(save);
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch28 = &match;
+                                soul::parser::Match* parentMatch25 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = TemplateParser<Lexer>::TemplateDeclaration(lexer, context);
@@ -470,9 +436,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                             return soul::parser::Match(true, templateDeclaration.release());
                                         }
                                     }
-                                    *parentMatch28 = match;
+                                    *parentMatch25 = match;
                                 }
-                                *parentMatch27 = match;
+                                *parentMatch24 = match;
                             }
                             *parentMatch4 = match;
                         }
@@ -481,11 +447,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                     if (!match.hit)
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch29 = &match;
+                        soul::parser::Match* parentMatch26 = &match;
                         lexer.SetPos(save);
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch30 = &match;
+                            soul::parser::Match* parentMatch27 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
                                 soul::parser::Match match = DeclarationParser<Lexer>::LinkageSpecification(lexer, context);
@@ -499,9 +465,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                         return soul::parser::Match(true, linkageSpecification.release());
                                     }
                                 }
-                                *parentMatch30 = match;
+                                *parentMatch27 = match;
                             }
-                            *parentMatch29 = match;
+                            *parentMatch26 = match;
                         }
                         *parentMatch3 = match;
                     }
@@ -510,11 +476,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                 if (!match.hit)
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch31 = &match;
+                    soul::parser::Match* parentMatch28 = &match;
                     lexer.SetPos(save);
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch32 = &match;
+                        soul::parser::Match* parentMatch29 = &match;
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match = DeclarationParser<Lexer>::NamespaceDefinition(lexer, context);
@@ -528,9 +494,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                     return soul::parser::Match(true, namespaceDefinition.release());
                                 }
                             }
-                            *parentMatch32 = match;
+                            *parentMatch29 = match;
                         }
-                        *parentMatch31 = match;
+                        *parentMatch28 = match;
                     }
                     *parentMatch2 = match;
                 }
@@ -539,11 +505,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
             if (!match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch33 = &match;
+                soul::parser::Match* parentMatch30 = &match;
                 lexer.SetPos(save);
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch34 = &match;
+                    soul::parser::Match* parentMatch31 = &match;
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = DeclarationParser<Lexer>::EmptyDeclaration(lexer);
@@ -557,9 +523,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                 return soul::parser::Match(true, emptyDeclaration.release());
                             }
                         }
-                        *parentMatch34 = match;
+                        *parentMatch31 = match;
                     }
-                    *parentMatch33 = match;
+                    *parentMatch30 = match;
                 }
                 *parentMatch1 = match;
             }
@@ -568,11 +534,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
         if (!match.hit)
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch35 = &match;
+            soul::parser::Match* parentMatch32 = &match;
             lexer.SetPos(save);
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch36 = &match;
+                soul::parser::Match* parentMatch33 = &match;
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = DeclarationParser<Lexer>::AttributeDeclaration(lexer, context);
@@ -586,9 +552,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                             return soul::parser::Match(true, attributeDeclaration.release());
                         }
                     }
-                    *parentMatch36 = match;
+                    *parentMatch33 = match;
                 }
-                *parentMatch35 = match;
+                *parentMatch32 = match;
             }
             *parentMatch0 = match;
         }

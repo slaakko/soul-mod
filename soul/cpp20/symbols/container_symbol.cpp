@@ -7,9 +7,12 @@ module soul.cpp20.symbols.container.symbol;
 
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.fundamental.type.symbol;
+import soul.cpp20.symbols.function.symbol;
 import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.symbol.table;
+import soul.cpp20.symbols.variable.symbol;
 
 namespace soul::cpp20::symbols {
 
@@ -36,6 +39,25 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
         TypeSymbol* typeSymbol = static_cast<TypeSymbol*>(symbol);
         context->GetSymbolTable()->MapType(typeSymbol);
     }
+    if (symbol->IsFundamentalTypeSymbol())
+    {
+        FundamentalTypeSymbol* fundamentalTypeSymbol = static_cast<FundamentalTypeSymbol*>(symbol);
+        context->GetSymbolTable()->MapFundamentalType(fundamentalTypeSymbol);
+    }
+    if (symbol->IsFunctionSymbol())
+    {
+        FunctionSymbol* function = static_cast<FunctionSymbol*>(symbol);
+        context->GetSymbolTable()->MapFunction(function);
+    }
+    if (symbol->IsVariableSymbol())
+    {
+        VariableSymbol* variable = static_cast<VariableSymbol*>(symbol);
+        context->GetSymbolTable()->MapVariable(variable);
+    }
+    if (symbol->IsTypenameConstraintSymbol())
+    {
+        context->GetSymbolTable()->SetTypenameConstraintSymbol(symbol);
+    }
 }
 
 std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
@@ -57,6 +79,7 @@ std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
 
 void ContainerSymbol::Write(Writer& writer)
 {
+    Symbol::Write(writer);
     uint32_t count = symbols.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (uint32_t i = 0; i < count; ++i)
@@ -68,6 +91,7 @@ void ContainerSymbol::Write(Writer& writer)
 
 void ContainerSymbol::Read(Reader& reader)
 {
+    Symbol::Read(reader);
     uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < count; ++i)
     {
@@ -78,6 +102,7 @@ void ContainerSymbol::Read(Reader& reader)
 
 void ContainerSymbol::Resolve(SymbolTable& symbolTable)
 {
+    Symbol::Resolve(symbolTable);
     for (const auto& symbol : symbols)
     {
         symbol->Resolve(symbolTable);

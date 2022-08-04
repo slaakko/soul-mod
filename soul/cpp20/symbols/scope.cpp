@@ -41,6 +41,15 @@ Scope::~Scope()
 {
 }
 
+void Scope::Import(Scope* that)
+{
+    for (const auto& p : that->symbolMap)
+    {
+        Symbol* s = p.second;
+        Install(s);
+    }
+}
+
 void Scope::Install(Symbol* symbol)
 {
     SymbolGroupKind symbolGroupKind = symbol->GetSymbolGroupKind();
@@ -104,6 +113,18 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
             errorMessage.append(util::ToUtf8(symbol->FullName()));
         }
         throw Exception(errorMessage, sourcePos, context);
+    }
+}
+
+Scope* Scope::GroupScope()
+{
+    if (IsTemplateDeclarationScope())
+    {
+        return ParentScope();
+    }
+    else
+    {
+        return this;
     }
 }
 
@@ -184,6 +205,30 @@ AliasGroupSymbol* Scope::GetOrInsertAliasGroup(const std::u32string& name, const
 
 ContainerScope::ContainerScope() : Scope(), parentScope(nullptr), usingDeclarationScope(nullptr), containerSymbol(nullptr)
 {
+}
+
+void ContainerScope::Import(Scope* that)
+{
+    if (that->IsContainerScope())
+    {
+        ContainerScope* thatScope = static_cast<ContainerScope*>(that);
+        if (thatScope->usingDeclarationScope)
+        {
+            if (!usingDeclarationScope)
+            {
+                usingDeclarationScope = new UsingDeclarationScope(this);
+                scopes.push_back(std::unique_ptr<Scope>(usingDeclarationScope));
+            }
+            usingDeclarationScope->Import(thatScope->usingDeclarationScope);
+        }
+        for (UsingDirectiveScope* thatUsingDirectiveScope : thatScope->usingDirectiveScopes)
+        {
+            UsingDirectiveScope* usingDirectiveScope = new UsingDirectiveScope(thatUsingDirectiveScope->Ns());
+            scopes.push_back(std::unique_ptr<Scope>(usingDirectiveScope));
+            usingDirectiveScopes.push_back(usingDirectiveScope);
+            usingDirectiveScope->Import(thatUsingDirectiveScope);
+        }
+    }
 }
 
 Scope* ContainerScope::GetClassScope() const

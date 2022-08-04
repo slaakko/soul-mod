@@ -14,6 +14,10 @@ export module soul.cpp20.parser.concepts;
 parser ConceptParser
 {
     lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    ConceptDefinition(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ pass = false; }
+        ;
     
     RequiresClause(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
         ::= 

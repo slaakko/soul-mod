@@ -5,11 +5,6 @@
 
 export module std.type.fundamental;
 
-void foo(int bar)
-{
-	int baz = 123;
-}
-
 export {
 
 using int8_t = char;

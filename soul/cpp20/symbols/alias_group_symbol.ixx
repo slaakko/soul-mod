@@ -22,8 +22,12 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol);
     AliasTypeSymbol* GetAliasTypeSymbol(int arity) const;
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
 private:
     std::vector<AliasTypeSymbol*> aliasTypeSymbols;
+    std::vector<util::uuid> aliasTypeIds;
 };
 
 } // namespace soul::cpp20::symbols

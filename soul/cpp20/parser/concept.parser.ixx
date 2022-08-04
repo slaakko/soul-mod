@@ -15,6 +15,7 @@ export namespace soul::cpp20::parser::concepts {
 template<typename Lexer>
 struct ConceptParser
 {
+    static soul::parser::Match ConceptDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match RequiresClause(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ConstraintLogicalOrExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match RequiresExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);

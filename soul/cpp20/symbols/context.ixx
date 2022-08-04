@@ -21,11 +21,9 @@ enum class ContextFlags : int32_t
     parsingConceptDefinition = 1 << 3,
     parsingTemplateId = 1 << 4,
     assumeType = 1 << 5,
-    constructor = 1 << 6,
-    destructor = 1 << 7,
-    parseSavedMemberFunctionBody = 1 << 8,
-    parsingTemplateDeclaration = 1 << 9,
-    parseMemberFunction = 1 << 10
+    parseSavedMemberFunctionBody = 1 << 6,
+    parsingTemplateDeclaration = 1 << 7,
+    parseMemberFunction = 1 << 8
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -61,6 +59,7 @@ public:
     void SetFlag(ContextFlags flag) { flags = flags | flag; }
     bool GetFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
     void ResetFlag(ContextFlags flag) { flags = flags & ~flag; }
+    bool IsConstructorNameNode(soul::cpp20::ast::Node* node) const;
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;

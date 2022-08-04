@@ -24,18 +24,20 @@ parser ModuleDependencyParser
     using ModuleParser.ModuleKeyword;
     using PunctuationParser.Semicolon;
 
-    ModuleUnit(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+    ModuleUnit(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> moduleDeclarationNode) : soul::cpp20::ast::Node*
         ::= 
         (
             (
                 GlobalModuleFragment(context):globalModuleFragment{ sourcePos = lexer.GetSourcePos(pos); }
             )? 
-            ModuleDeclaration(context):moduleDeclaration{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); } 
+            ModuleDeclaration(context):moduleDeclaration{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); moduleDeclarationNode.reset(moduleDeclaration); }
             DeclarationSeq(context):declarations? 
+        |   DeclarationSeq(context):declarations{ lexer.MoveToEnd(); return new soul::cpp20::ast::TranslationUnitNode(lexer.GetSourcePos(pos), declarations); }
+        |   empty{ lexer.MoveToEnd(); return new soul::cpp20::ast::TranslationUnitNode(lexer.GetSourcePos(pos), nullptr); }
         )
         {
             lexer.MoveToEnd();
-            return new soul::cpp20::ast::ModuleUnitNode(sourcePos, globalModuleFragment, moduleDeclaration, declarations, nullptr);
+            return new soul::cpp20::ast::ModuleUnitNode(sourcePos, globalModuleFragment, moduleDeclarationNode.release(), declarations, nullptr);
         }
         ;
 

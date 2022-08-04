@@ -35,7 +35,6 @@ parser DeclarationParser
     using ExpressionParser.ConstantExpression;
     using ExpressionParser.IdExpression;
     using FunctionParser.ParameterDeclarationClause;
-    using FunctionParser.NoDeclSpecFunctionDeclaration;
     using FunctionParser.FunctionDefinition;
     using IdentifierParser.Identifier;
     using IdentifierParser.IdentifierList;
@@ -81,7 +80,6 @@ parser DeclarationParser
         ::= ImportDeclaration(context):moduleImportDeclaration{ return moduleImportDeclaration; }
         |   ExportDeclaration(context):exportDeclaration{ return exportDeclaration; }
         |   BlockDeclaration(context):blockDeclaration{ return blockDeclaration; }
-        |   NoDeclSpecFunctionDeclaration(context):noDeclSpecFunctionDeclaration { return noDeclSpecFunctionDeclaration; }
         |   FunctionDefinition(context):functionDefinition{ return functionDefinition; }
         |   DeductionGuide(context):deductionGuide{ return deductionGuide; }
         |   ExplicitInstantiation(context):explicitInstantiation{ return explicitInstantiation; }

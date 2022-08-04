@@ -6,6 +6,9 @@
 module soul.cpp20.symbols.alias.group.symbol;
 
 import soul.cpp20.symbols.alias.type.symbol;
+import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
 
@@ -55,6 +58,39 @@ AliasTypeSymbol* AliasGroupSymbol::GetAliasTypeSymbol(int arity) const
         }
     }
     return nullptr;
+}
+
+void AliasGroupSymbol::Write(Writer& writer)
+{
+    Symbol::Write(writer);
+    uint32_t count = aliasTypeSymbols.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
+    for (AliasTypeSymbol* aliasType : aliasTypeSymbols)
+    {
+        writer.GetBinaryStreamWriter().Write(aliasType->Id());
+    }
+}
+
+void AliasGroupSymbol::Read(Reader& reader)
+{
+    Symbol::Read(reader);
+    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        util::uuid aliasTypeId;
+        reader.GetBinaryStreamReader().ReadUuid(aliasTypeId);
+        aliasTypeIds.push_back(aliasTypeId);
+    }
+}
+
+void AliasGroupSymbol::Resolve(SymbolTable& symbolTable)
+{
+    Symbol::Resolve(symbolTable);
+    for (const auto& aliasTypeId : aliasTypeIds)
+    {
+        AliasTypeSymbol* aliasType = symbolTable.GetAliasType(aliasTypeId);
+        aliasTypeSymbols.push_back(aliasType);
+    }
 }
 
 } // namespace soul::cpp20::symbols

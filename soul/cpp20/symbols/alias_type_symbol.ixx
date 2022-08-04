@@ -14,12 +14,17 @@ export namespace soul::cpp20::symbols {
 class AliasTypeSymbol : public TypeSymbol
 {
 public:
+    AliasTypeSymbol(const std::u32string& name_);
     AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referredType_);
     virtual int Arity() const { return 0;  }
     TypeSymbol* ReferredType() const { return referredType; }
     std::string SymbolKindStr() const override { return "alias type symbol"; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
 private:
     TypeSymbol* referredType;
+    util::uuid referredTypeId;
 };
 
 class Context;

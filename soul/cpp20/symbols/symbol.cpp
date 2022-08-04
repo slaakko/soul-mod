@@ -5,9 +5,17 @@
 
 module soul.cpp20.symbols.symbol;
 
+import soul.cpp20.symbols.alias.type.symbol;
+import soul.cpp20.symbols.block;
+import soul.cpp20.symbols.classes;
+import soul.cpp20.symbols.concepts;
 import soul.cpp20.symbols.declaration;
 import soul.cpp20.symbols.exception;
+import soul.cpp20.symbols.function.symbol;
+import soul.cpp20.symbols.fundamental.type.symbol;
+import soul.cpp20.symbols.namespaces;
 import soul.cpp20.symbols.templates;
+import soul.cpp20.symbols.variable.symbol;
 import soul.cpp20.symbols.compound.type.symbol;
 import soul.cpp20.symbols.value;
 import soul.cpp20.symbols.reader;
@@ -17,6 +25,7 @@ import soul.cpp20.symbols.concept_group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
+import soul.cpp20.symbols.specialization;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
@@ -109,6 +118,7 @@ bool Symbol::CanInstall() const
         case SymbolKind::parameterSymbol:
         case SymbolKind::variableSymbol:
         case SymbolKind::templateDeclarationSymbol:
+        case SymbolKind::typenameConstraintSymbol:
         {
             return false; 
         }
@@ -156,6 +166,7 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::classTypeSymbol:
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::fundamentalTypeSymbol:
+        case SymbolKind::templateParameterSymbol:
         {
             return SymbolGroupKind::typeSymbolGroup;
         }
@@ -170,6 +181,10 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::variableGroupSymbol:
         {
             return SymbolGroupKind::variableSymbolGroup;
+        }
+        case SymbolKind::templateDeclarationSymbol:
+        {
+            return SymbolGroupKind::blockSymbolGroup;
         }
     }
     return SymbolGroupKind::none;
@@ -303,6 +318,94 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         case SymbolKind::floatingValueSymbol:
         {
             return new FloatingValue(name);
+        }
+        case SymbolKind::genericTypeSymbol:
+        {
+            throw std::runtime_error("not implemented");
+        }
+        case SymbolKind::nullPtrTypeSymbol:
+        {
+            throw std::runtime_error("not implemented");
+        }
+        case SymbolKind::aliasTypeSymbol:
+        {
+            return new AliasTypeSymbol(name);
+        }
+        case SymbolKind::arrayTypeSymbol:
+        {
+            throw std::runtime_error("not implemented");
+        }
+        case SymbolKind::blockSymbol:
+        {
+            return new BlockSymbol();
+        }
+        case SymbolKind::classTypeSymbol:
+        {
+            return new ClassTypeSymbol(name);
+        }
+        case SymbolKind::compoundTypeSymbol:
+        {
+            return new CompoundTypeSymbol(name);
+        }
+        case SymbolKind::conceptSymbol:
+        {
+            return new ConceptSymbol(name);
+        }
+        case SymbolKind::enumTypeSymbol:
+        {
+            throw std::runtime_error("not implemented");
+        }
+        case SymbolKind::enumeratorSymbol:
+        {
+            throw std::runtime_error("not implemented");
+        }
+        case SymbolKind::functionSymbol:
+        {
+            return new FunctionSymbol(name);
+        }
+        case SymbolKind::functionTypeSymbol:
+        {
+            throw std::runtime_error("not implemented");
+        }
+        case SymbolKind::fundamentalTypeSymbol:
+        {
+            return new FundamentalTypeSymbol(name);
+        }
+        case SymbolKind::namespaceSymbol:
+        {
+            return new NamespaceSymbol(name);
+        }
+        case SymbolKind::templateDeclarationSymbol:
+        {
+            return new TemplateDeclarationSymbol();
+        }
+        case SymbolKind::typenameConstraintSymbol:
+        {
+            return new TypenameConstraintSymbol();
+        }
+        case SymbolKind::templateParameterSymbol:
+        {
+            return new TemplateParameterSymbol(name);
+        }
+        case SymbolKind::varArgTypeSymbol:
+        {
+            throw std::runtime_error("not implemented");
+        }
+        case SymbolKind::variableSymbol:
+        {
+            return new VariableSymbol(name);
+        }
+        case SymbolKind::parameterSymbol:
+        {
+            return new ParameterSymbol(name);
+        }
+        case SymbolKind::specializationSymbol:
+        {
+            return new SpecializationSymbol(name);
+        }
+        case SymbolKind::errorSymbol:
+        {
+            throw std::runtime_error("not implemented");
         }
     }
     return nullptr;

@@ -6,3 +6,4 @@
 export module std.core;
 
 export import std.type.fundamental;
+export import std.container.vector;

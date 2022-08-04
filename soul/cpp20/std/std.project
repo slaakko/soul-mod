@@ -1,4 +1,5 @@
 project std;
 interface <std.ixx>;
 interface <std.core.ixx>;
+interface <std.container.vector.ixx>;
 interface <std.type.fundamental.ixx>;

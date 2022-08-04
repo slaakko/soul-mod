@@ -6,6 +6,9 @@
 module soul.cpp20.symbols.variable.group.symbol;
 
 import soul.cpp20.symbols.variable.symbol;
+import soul.cpp20.symbols.symbol.table;
+import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.writer;
 
 namespace soul::cpp20::symbols {
 
@@ -55,6 +58,39 @@ VariableSymbol* VariableGroupSymbol::GetVariable(int arity) const
         }
     }
     return nullptr;
+}
+
+void VariableGroupSymbol::Write(Writer& writer)
+{
+    Symbol::Write(writer);
+    uint32_t count = variables.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
+    for (VariableSymbol* variable : variables)
+    {
+        writer.GetBinaryStreamWriter().Write(variable->Id());
+    }
+}
+
+void VariableGroupSymbol::Read(Reader& reader)
+{
+    Symbol::Read(reader);
+    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        util::uuid variableId;
+        reader.GetBinaryStreamReader().ReadUuid(variableId);
+        variableIds.push_back(variableId);
+    }
+}
+
+void VariableGroupSymbol::Resolve(SymbolTable& symbolTable)
+{
+    Symbol::Resolve(symbolTable);
+    for (const auto& variableId : variableIds)
+    {
+        VariableSymbol* variable = symbolTable.GetVariable(variableId);
+        variables.push_back(variable);
+    }
 }
 
 } // namespace soul::cpp20::symbols

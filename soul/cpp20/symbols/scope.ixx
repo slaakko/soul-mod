@@ -42,6 +42,9 @@ public:
     void Install(Symbol* symbol);
     void Uninstall(Symbol* symbol);
     Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags) const;
+    bool IsClassScope() const { return kind == ScopeKind::classScope; }
+    bool IsTemplateDeclarationScope() const { return kind == ScopeKind::templateDeclarationScope; }
+    Scope* GroupScope();
     virtual std::string FullName() const = 0;
     virtual bool IsContainerScope() const { return false; }
     virtual Scope* GetClassScope() const { return nullptr; }
@@ -59,6 +62,7 @@ public:
     virtual ConceptGroupSymbol* GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual void Import(Scope* that);
 private:
     ScopeKind kind;
     std::map<std::pair<std::u32string, SymbolGroupKind>, Symbol*> symbolMap;
@@ -68,6 +72,7 @@ class ContainerScope : public Scope
 {
 public:
     ContainerScope();
+    void Import(Scope* that) override;
     Scope* ParentScope() const override { return parentScope; }
     void SetParentScope(Scope* parentScope_) override { parentScope = parentScope_; }
     bool IsContainerScope() const override { return true; }

@@ -22,10 +22,13 @@ void Visit(int file, soul::cpp20::proj::ast::Project* project, std::vector<int>&
     soul::cpp20::symbols::Module* module = project->GetModule(file);
     for (soul::cpp20::symbols::Module* dependsOnModule : module->DependsOnModules())
     {
-        if (visited.find(dependsOnModule->File()) == visited.cend())
+        if (dependsOnModule->File() != -1)
         {
-            visited.insert(dependsOnModule->File());
-            Visit(dependsOnModule->File(), project, topologicalOrder, visited);
+            if (visited.find(dependsOnModule->File()) == visited.cend())
+            {
+                visited.insert(dependsOnModule->File());
+                Visit(dependsOnModule->File(), project, topologicalOrder, visited);
+            }
         }
     }
     topologicalOrder.push_back(file);
@@ -51,6 +54,7 @@ public:
     ModuleDependencyVisitor(int file_);
     soul::cpp20::symbols::Module* GetModule() { return module.release(); }
     void Visit(soul::cpp20::ast::ModuleDeclarationNode& node);
+    void Visit(soul::cpp20::ast::TranslationUnitNode& node);
     void Visit(soul::cpp20::ast::ExportDeclarationNode& node);
     void Visit(soul::cpp20::ast::ImportDeclarationNode& node);
     void Visit(soul::cpp20::ast::ModuleNameNode& node);
@@ -73,6 +77,17 @@ void ModuleDependencyVisitor::Visit(soul::cpp20::ast::ModuleDeclarationNode& nod
         exp = true;
         node.ModuleName()->Accept(*this);
         exp = false;
+    }
+}
+
+void ModuleDependencyVisitor::Visit(soul::cpp20::ast::TranslationUnitNode& node)
+{
+    module.reset(new soul::cpp20::symbols::Module("main"));
+    module->Init();
+    module->SetFile(file);
+    if (node.Unit())
+    {
+        node.Unit()->Accept(*this);
     }
 }
 
@@ -101,6 +116,7 @@ void ModuleDependencyVisitor::Visit(soul::cpp20::ast::ModuleNameNode& node)
     if (exp)
     { 
         module.reset(new soul::cpp20::symbols::Module(util::ToUtf8(node.Str())));
+        module->Init();
         module->SetFile(file);
     }
     else if (expimp && module)
@@ -130,7 +146,7 @@ void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file)
     project->SetModule(file, visitor.GetModule());
 }
 
-void Build(const std::string& projectFilePath, BuildFlags flags)
+void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& projectFilePath, BuildFlags flags)
 {
     std::unique_ptr<soul::cpp20::proj::ast::Project> project = soul::cpp20::project::parser::ParseProjectFile(projectFilePath);
     std::string root = util::Path::GetDirectoryName(project->FilePath());
@@ -147,27 +163,17 @@ void Build(const std::string& projectFilePath, BuildFlags flags)
         sourceFiles.push_back(project->GetFileMap().AddFilePath(sourceFilePath));
     }
     project->Resize();
-    std::vector<std::thread> scanThreads;
     for (int file : interfaceFiles)
     {
-        if ((flags & BuildFlags::multithreadedBuild) != BuildFlags::none)
-        {
-            scanThreads.push_back(std::thread{ ScanDependencies, project.get(), file });
-        }
-        else
-        {
-            ScanDependencies(project.get(), file);
-        }
+        ScanDependencies(project.get(), file);
     }
-    if ((flags & BuildFlags::multithreadedBuild) != BuildFlags::none)
-    {
-        for (auto& scanThread : scanThreads)
-        {
-            scanThread.join();
-        }
-    }
-    project->AddDependencies();
+    project->AddDependencies(moduleMapper);
     std::vector<int> topologicalOrder = MakeTopologicalOrder(interfaceFiles, project.get());
+    for (int file : topologicalOrder)
+    {
+        soul::cpp20::symbols::Module* module = project->GetModule(file);
+        moduleMapper.ClearModule(module->Name());
+    }
     for (int file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
@@ -177,10 +183,12 @@ void Build(const std::string& projectFilePath, BuildFlags flags)
         lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
         soul::cpp20::symbols::Context context;
         soul::cpp20::symbols::Module* module = project->GetModule(file);
+        module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<soul::cpp20::ast::Node> node = soul::cpp20::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
-        int x = 0;
+        module->Write(root);
+        moduleMapper.AddModule(project->ReleaseModule(file));
     }
 }
 

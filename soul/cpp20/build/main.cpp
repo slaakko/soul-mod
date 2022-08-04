@@ -16,12 +16,9 @@ int main()
     try
     {
         util::Init();
-/*
-        soul::cpp20::symbols::Module std("std");
-        soul::cpp20::symbols::Writer writer(soul::cpp20::symbols::StdModuleFilePath(std.Name()));
-        std.Write(writer);
-*/
-        soul::cpp20::project::build::Build(R"(C:\work\soul-mod\soul\cpp20\std\std.project)", soul::cpp20::project::build::BuildFlags::none);
+        soul::cpp20::symbols::ModuleMapper moduleMapper;
+        //soul::cpp20::project::build::Build(moduleMapper, R"(C:\work\soul-mod\soul\cpp20\std\std.project)", soul::cpp20::project::build::BuildFlags::none);
+        soul::cpp20::project::build::Build(moduleMapper, R"(C:\work\soul-mod\soul\cpp20\test\test1.project)", soul::cpp20::project::build::BuildFlags::none);
     }
     catch (const std::exception& ex)
     {

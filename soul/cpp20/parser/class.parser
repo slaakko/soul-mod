@@ -11,18 +11,48 @@ export module soul.cpp20.parser.classes;
 [implementation]import soul.cpp20.lexer;
 [implementation]import soul.cpp20.symbols;
 [implementation]import soul.cpp20.parser.attribute;
+[implementation]import soul.cpp20.parser.concepts;
+[implementation]import soul.cpp20.parser.declaration;
+[implementation]import soul.cpp20.parser.enums;
+[implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.function;
 [implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.initialization;
+[implementation]import soul.cpp20.parser.punctuation;
 [implementation]import soul.cpp20.parser.templates;
+[implementation]import soul.cpp20.parser.type;
 
 parser ClassParser
 {
     lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
 
     using AttributeParser.AttributeSpecifierSeq;
+    using ConceptParser.RequiresClause;
+    using DeclarationParser.AliasDeclaration;
+    using DeclarationParser.Declarator;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclarationParser.EmptyDeclaration;
+    using DeclarationParser.UsingDeclaration;
+    using DeclarationParser.UsingEnumDeclaration;
+    using DeclarationParser.StaticAssertDeclaration;
+    using EnumParser.OpaqueEnumDeclaration;
+    using ExpressionParser.ExpressionList;
+    using FunctionParser.FunctionDefinition;
     using IdentifierParser.Identifier;
     using IdentifierParser.NestedNameSpecifier;
     using IdentifierParser.Unnamed;
+    using InitializationParser.BracedInitList;
+    using InitializationParser.BraceOrEqualInitializer;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using PunctuationParser.Semicolon;
+    using TemplateParser.DeductionGuide;
+    using TemplateParser.ExplicitSpecialization;
     using TemplateParser.SimpleTemplateId;
+    using TemplateParser.Template;
+    using TemplateParser.TemplateDeclaration;
+    using TypeParser.DeclTypeSpecifier;
+    using TypeParser.TypeName;
 
     ClassSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::ClassSpecifierNode> node, 
         var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : soul::cpp20::ast::Node*
@@ -121,28 +151,150 @@ parser ClassParser
         }
         ;
 
-    Private : soul::cpp20::ast::Node*
-        ::= PRIVATE{ return new soul::cpp20::ast::PrivateNode(lexer.GetSourcePos(pos)); }
-        ;
-
-    VirtualSpecifier : soul::cpp20::ast::Node*
-        ::= VIRTUAL{ return new soul::cpp20::ast::VirtualNode(lexer.GetSourcePos(pos)); }
-        ;
-
     BaseClause(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
-        ::= COLON{ sourcePos = lexer.GetSourcePos(pos); } BaseSpecifierList(context):baseSpecifierList
+        ::= COLON{ sourcePos = lexer.GetSourcePos(pos); } 
+            BaseSpecifierList(context):baseSpecifierList
         {
             return new soul::cpp20::ast::BaseClauseNode(sourcePos, baseSpecifierList);
         }
         ;
 
-    BaseSpecifierList(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
-        ::= empty{ pass = false; } // todo
+    BaseSpecifierList(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            BaseSpecifier(context):first{ node.reset(new soul::cpp20::ast::BaseSpecifierListNode(lexer.GetSourcePos(pos))); node->AddNode(first); } 
+            (
+                Comma:comma{ node->AddNode(comma); } 
+                BaseSpecifier(context):next{ node->AddNode(next); }
+            )*
+            (Ellipsis:ellipsis{ node->AddNode(ellipsis); })?
+        )
+        {
+            return node.release();
+        }
         ;
 
-    MemberSpecification(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
-        ::= empty{ pass = false; }
+    BaseSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> accessSpecifierNode, 
+        var std::unique_ptr<soul::cpp20::ast::Node> virtualSpecifier, var bool virtualFirst) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+            (   VirtualSpecifier:virt{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); virtualSpecifier.reset(virt); virtualFirst = true; } 
+                (AccessSpecifier:access{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); accessSpecifierNode.reset(access); })? 
+            |   AccessSpecifier:access2{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); accessSpecifierNode.reset(access2); } 
+                (VirtualSpecifier:virt2{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); virtualSpecifier.reset(virt2); })?
+            |   empty
+            )
+            ClassOrDeclType(context):classOrDeclType{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new soul::cpp20::ast::BaseSpecifierNode(sourcePos, classOrDeclType, accessSpecifierNode.release(), virtualSpecifier.release(), attributes, virtualFirst);
+        }
         ;
+
+    ClassOrDeclType(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos tmpPos) : soul::cpp20::ast::Node*
+        ::= NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } 
+            Template:tmp{ tmpPos = sourcePos; } 
+            SimpleTemplateId(context):simpleTemplateId
+            { 
+                return new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns, new soul::cpp20::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)); 
+            }
+        |   NestedNameSpecifier(context):nns2{ sourcePos = lexer.GetSourcePos(pos); } 
+            Identifier(context):id
+            { 
+                return new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns2, id); 
+            }
+        |   TypeName(context):typeName2{ return typeName2; }
+        |   DeclTypeSpecifier(context):declTypeSpecifier{ return declTypeSpecifier; }
+        ;
+
+    MemberSpecification(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container, var soul::ast::SourcePos sourcePos, var soul::ast:: SourcePos colonPos)
+        ::= 
+        (   AccessSpecifier:accessSpecifier{ sourcePos = lexer.GetSourcePos(pos); } 
+            COLON{ colonPos = lexer.GetSourcePos(pos); container->AddNode(new soul::cpp20::ast::BeginAccessGroupNode(sourcePos, accessSpecifier, colonPos)); }
+        |   MemberDeclaration(context):memberDeclaration1{ container->AddNode(memberDeclaration1); }
+        |   MemberDeclaration(context):memberDeclaration2{ container->AddNode(memberDeclaration2); }
+        )+
+        ;
+
+    MemberDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifiersNode, 
+        var std::unique_ptr<soul::cpp20::ast::Node> declaratorsNode) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })? 
+            (MemberDeclSpecifiers(context):declSpecifiers{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); declSpecifiersNode.reset(declSpecifiers); })? 
+            (MemberDeclaratorList(context):declarators{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); declaratorsNode.reset(declarators); })? 
+            (Semicolon:semicolon{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); })
+            {
+                if (!declSpecifiersNode && !declaratorsNode) pass = false;
+                else
+                {
+                    soul::cpp20::ast::MemberDeclarationNode* memberDeclarationNode = new soul::cpp20::ast::MemberDeclarationNode(sourcePos, attributes, declSpecifiersNode.release(), 
+                        declaratorsNode.release(), semicolon);
+                    soul::cpp20::symbols::ProcessMemberDeclaration(memberDeclarationNode, context);
+                    return memberDeclarationNode;
+                }
+            }
+        |   MemberFunctionDefinition(context):memberFunctionDefinition{ return memberFunctionDefinition; }
+        |   UsingDeclaration(context):usingDeclaration{ return usingDeclaration; }
+        |   UsingEnumDeclaration(context):usingEnumDeclaration{ return usingEnumDeclaration; }
+        |   StaticAssertDeclaration(context):staticAssertDeclaration{ return staticAssertDeclaration; }
+        |   MemberTemplateDeclaration(context):templateDeclaration{ return templateDeclaration; }
+        |   ExplicitSpecialization(context):explicitSpecialization{ return explicitSpecialization; }
+        |   DeductionGuide(context):deductionGuide{ return deductionGuide; }
+        |   AliasDeclaration(context):aliasDeclaration{ return aliasDeclaration; }
+        |   OpaqueEnumDeclaration(context):opaqueEnumDeclaration{ return opaqueEnumDeclaration; }
+        |   EmptyDeclaration:emptyDeclaration{ return emptyDeclaration; }
+        ;
+
+    MemberDeclSpecifiers(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= DeclSpecifierSeq(context):declSpecifiers{ return declSpecifiers; }
+        ;
+
+    MemberFunctionDefinition(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= FunctionDefinition(context):functionDefinition{ return functionDefinition; }
+        ;
+
+    MemberTemplateDeclaration(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= TemplateDeclaration(context):templateDeclaration{ return templateDeclaration; }
+        ;
+
+    MemberDeclaratorList(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            MemberDeclarator(context):first{ node.reset(new soul::cpp20::ast::MemberDeclaratorListNode(lexer.GetSourcePos(pos))); node->AddNode(first); }
+            (
+                Comma:comma{ node->AddNode(comma); } 
+                MemberDeclarator(context):next{ node->AddNode(next); }
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    MemberDeclarator(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::TrailingQualifiersNode> trailingQualifiersNode) : 
+        soul::cpp20::ast::Node*
+        ::= 
+        (
+            Declarator(context):declarator{ sourcePos = lexer.GetSourcePos(pos); } 
+            (   RequiresClause(context):requiresClause{ return new soul::cpp20::ast::InitDeclaratorNode(sourcePos, declarator, requiresClause); }
+            |   BraceOrEqualInitializer(context):initializer{ return new soul::cpp20::ast::InitDeclaratorNode(sourcePos, declarator, initializer); }
+            |   empty{ trailingQualifiersNode.reset(new soul::cpp20::ast::TrailingQualifiersNode(sourcePos, declarator)); }
+            )
+            (VirtSpecifierSeq(context):virtSpecifierSeq{ trailingQualifiersNode->AddNode(virtSpecifierSeq); })?
+            (PureSpecifier:pureSpecifier{ trailingQualifiersNode->AddNode(pureSpecifier); })?
+        )
+        {
+            if (trailingQualifiersNode->Nodes().IsEmpty())
+            {
+                return trailingQualifiersNode->ReleaseSubject();
+            }
+            else
+            {
+                return trailingQualifiersNode.release();
+            }
+        }
+        ;    
+
 
     CtorInitializer(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
         ::= COLON{ sourcePos = lexer.GetSourcePos(pos); } 
@@ -152,7 +304,65 @@ parser ClassParser
         }
         ;
 
-    MemberInitializerList(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
-        ::= empty{ pass = false; }
+    MemberInitializerList(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node) : soul::cpp20::ast::Node*
+        ::= 
+        (   
+            MemberInitializer(context):first{ node.reset(new soul::cpp20::ast::MemberInitializerListNode(lexer.GetSourcePos(pos))); node->AddNode(first); }
+            (
+                Comma:comma{ node->AddNode(comma); } 
+                MemberInitializer(context):next{ node->AddNode(next); }
+            )*
+            (Ellipsis:ellipsis{ node->AddNode(ellipsis); })?
+        )
+        {
+            return node.release();
+        }
         ;
+
+    MemberInitializer(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::ExpressionListNode> exprListNode, 
+        var std::unique_ptr<soul::cpp20::ast::Node> node) : soul::cpp20::ast::Node*
+        ::= 
+        (   MemberInitializerId(context):id{ sourcePos = lexer.GetSourcePos(pos); }
+            (
+                LPAREN{ exprListNode.reset(new soul::cpp20::ast::ExpressionListNode(sourcePos)); exprListNode->SetLParenPos(sourcePos); } 
+                ExpressionList(context, exprListNode.get()):expressionList?
+                RPAREN{ exprListNode->SetRParenPos(sourcePos); node.reset(exprListNode.release()); }
+            |   BracedInitList(context):bracedInitList{ node.reset(bracedInitList); }
+            )
+        )
+        {
+            return new soul::cpp20::ast::MemberInitializerNode(sourcePos, id, node.release());
+        }
+        ;
+
+    MemberInitializerId(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= ClassOrDeclType(context):classOrDeclType{ return classOrDeclType; }
+        |   Identifier(context):identifier{ return identifier; }
+        ;
+
+    PureSpecifier(var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos zeroPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            ASSIGN{ sourcePos = lexer.GetSourcePos(pos); } 
+            INTEGER_LITERAL{ zeroPos = lexer.GetSourcePos(pos); std::u32string value = lexer.GetToken(pos).ToString(); pass = value == U"0"; }
+        )
+        {
+            return new soul::cpp20::ast::PureSpecifierNode(sourcePos, zeroPos);
+        }
+        ;
+
+    AccessSpecifier : soul::cpp20::ast::Node*
+        ::= PUBLIC{ return new soul::cpp20::ast::PublicNode(lexer.GetSourcePos(pos)); }
+        |   PROTECTED{ return new soul::cpp20::ast::ProtectedNode(lexer.GetSourcePos(pos)); }
+        |   Private:privat{ return privat; }
+        ;
+
+    Private : soul::cpp20::ast::Node*
+        ::= PRIVATE{ return new soul::cpp20::ast::PrivateNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    VirtualSpecifier : soul::cpp20::ast::Node*
+        ::= VIRTUAL{ return new soul::cpp20::ast::VirtualNode(lexer.GetSourcePos(pos)); }
+        ;
+
 }

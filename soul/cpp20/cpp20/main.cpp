@@ -8,6 +8,8 @@ import util;
 import soul.lexer.test;
 import soul.cpp20.ast;
 import soul.cpp20.lexer;
+import cpp20.parser.spg.rules;
+import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.namespaces;
 import soul.cpp20.symbols.compound.type.symbol;
 import soul.cpp20.symbols.symbol.table;
@@ -139,6 +141,7 @@ int main(int argc, const char** argv)
             std::string content = util::ReadFile(fileName);
             std::u32string ucontent = util::ToUtf32(content);
             auto lexer = soul::cpp20::lexer::MakeLexer(ucontent.c_str(), ucontent.c_str() + ucontent.length(), fileName);
+            lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
             if (verbose)
             {
                 std::cout << "> " << fileName << std::endl;
@@ -149,6 +152,7 @@ int main(int argc, const char** argv)
             }
             if (parse)
             {
+                soul::cpp20::symbols::ModuleMapper moduleMapper;
                 soul::cpp20::symbols::SymbolTable symbolTable;
                 soul::cpp20::symbols::Context context;
                 context.SetLexer(&lexer);

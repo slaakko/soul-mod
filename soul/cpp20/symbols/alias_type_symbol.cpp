@@ -8,11 +8,37 @@ module soul.cpp20.symbols.alias.type.symbol;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.type.resolver;
 import soul.cpp20.symbols.symbol.table;
+import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.writer;
 
 namespace soul::cpp20::symbols {
 
-AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referredType_) : TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(referredType_)
+AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_) : 
+    TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(nullptr), referredTypeId(util::nil_uuid())
 {
+}
+
+AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referredType_) : 
+    TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(referredType_), referredTypeId(util::nil_uuid())
+{
+}
+
+void AliasTypeSymbol::Write(Writer& writer)
+{
+    TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(referredType->Id());
+}
+
+void AliasTypeSymbol::Read(Reader& reader)
+{
+    TypeSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(referredTypeId);
+}
+
+void AliasTypeSymbol::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol::Resolve(symbolTable);
+    referredType = symbolTable.GetType(referredTypeId);
 }
 
 class AliasDeclarationProcessor : public soul::cpp20::ast::DefaultVisitor

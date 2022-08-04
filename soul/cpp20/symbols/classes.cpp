@@ -44,6 +44,7 @@ public:
     std::u32string GetName() const { return name; }
     void Visit(soul::cpp20::ast::ClassSpecifierNode& node) override;
     void Visit(soul::cpp20::ast::ClassHeadNode& node) override;
+    void Visit(soul::cpp20::ast::ElaboratedTypeSpecifierNode& node) override;
 private:
     std::u32string name;
 };
@@ -56,6 +57,11 @@ void ClassNameResolver::Visit(soul::cpp20::ast::ClassSpecifierNode& node)
 void ClassNameResolver::Visit(soul::cpp20::ast::ClassHeadNode& node)
 {
     name = node.ClassHeadName()->Str();
+}
+
+void ClassNameResolver::Visit(soul::cpp20::ast::ElaboratedTypeSpecifierNode& node)
+{
+    name = node.Id()->Str();
 }
 
 std::u32string GetClassName(soul::cpp20::ast::Node* node)

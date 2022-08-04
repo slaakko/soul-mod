@@ -25,6 +25,40 @@ bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
+void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
+{
+    SymbolTable* symbolTable = context->GetSymbolTable();
+    symbolTable->BeginNamespace(that->Name(), nullptr, context);
+    Scope* currentScope = symbolTable->CurrentScope();
+    Symbol* symbol = currentScope->GetSymbol();
+    NamespaceSymbol* ns = nullptr;
+    if (symbol->IsNamespaceSymbol())
+    {
+        ns = static_cast<NamespaceSymbol*>(symbol);
+    }
+    else
+    {
+        throw std::runtime_error("namespace symbol expected");
+    }
+    for (const auto& symbol : that->Symbols())
+    {
+        if (symbol->IsNamespaceSymbol())
+        {
+            NamespaceSymbol* thatNs = static_cast<NamespaceSymbol*>(symbol.get());
+            ns->Import(thatNs, context);
+        }
+        else
+        {
+            if (symbol->CanInstall())
+            {
+                currentScope->Install(symbol.get());
+            }
+        }
+    }
+    currentScope->Import(that->GetScope());
+    symbolTable->EndNamespace();
+}
+
 class NamespaceCreator : public soul::cpp20::ast::DefaultVisitor
 {
 public:

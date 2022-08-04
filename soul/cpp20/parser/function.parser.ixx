@@ -21,7 +21,6 @@ struct FunctionParser
     static soul::parser::Match FunctionBody(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match Default(Lexer& lexer);
     static soul::parser::Match Delete(Lexer& lexer);
-    static soul::parser::Match NoDeclSpecFunctionDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ParameterDeclarationClause(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
     static soul::parser::Match ParameterDeclarationList(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
     static soul::parser::Match ParameterDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);

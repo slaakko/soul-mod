@@ -6,6 +6,7 @@
 export module soul.cpp20.project.build;
 
 import std.core;
+import soul.cpp20.symbols.modules;
 
 export namespace soul::cpp20::project::build {
 
@@ -29,6 +30,6 @@ constexpr BuildFlags operator~(BuildFlags flags)
     return BuildFlags(~int32_t(flags));
 }
 
-void Build(const std::string& projectFilePath, BuildFlags flags);
+void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& projectFilePath, BuildFlags flags);
 
 } // namespace soul::cpp20::project::build

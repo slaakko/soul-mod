@@ -26,7 +26,8 @@ public:
     void SetModule(int file, soul::cpp20::symbols::Module* module);
     soul::cpp20::symbols::Module* GetModule(const std::string& moduleName) const;
     soul::cpp20::symbols::Module* GetModule(int file) const;
-    void AddDependencies();
+    soul::cpp20::symbols::Module* ReleaseModule(int file);
+    void AddDependencies(soul::cpp20::symbols::ModuleMapper& moduleMapper);
 private:
     std::string filePath;
     std::string name;

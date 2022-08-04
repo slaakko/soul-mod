@@ -14,15 +14,20 @@ export namespace soul::cpp20::symbols {
 class Writer;
 class Reader;
 
-std::string StdModuleFilePath(const std::string& moduleName);
+std::string MakeModuleFilePath(const std::string& root, const std::string& moduleName);
+
+class ModuleMapper;
 
 class Module
 {
 public:
     Module(const std::string& name_);
     const std::string& Name() const { return name; }
+    void Import(ModuleMapper& moduleMapper);
+    void Import(Module* that, ModuleMapper& moduleMapper);
+    void Write(const std::string& root);
     void Write(Writer& writer);
-    void Read(Reader& reader);
+    void Read(Reader& reader, ModuleMapper& moduleMapper);
     void Init();
     int File() const { return file; }
     void SetFile(int file_) { file = file_; }
@@ -46,6 +51,20 @@ private:
     std::vector<Module*> importedModules;
     SymbolTable symbolTable;
     std::vector<Module*> dependsOnModules;
+};
+
+class ModuleMapper
+{
+public:
+    ModuleMapper();
+    void AddModule(Module* module);
+    Module* GetModule(const std::string& moduleName);
+    void ClearModule(const std::string& moduleName);
+    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath);
+private:
+    std::map<std::string, Module*> moduleMap;
+    std::vector<std::unique_ptr<Module>> modules;
+    std::vector<std::string> roots;
 };
 
 } // namespace soul::cpp20::symbols

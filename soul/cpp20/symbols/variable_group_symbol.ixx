@@ -22,8 +22,12 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddVariable(VariableSymbol* variableSymbol);
     VariableSymbol* GetVariable(int arity) const;
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
 private:
     std::vector<VariableSymbol*> variables;
+    std::vector<util::uuid> variableIds;
 };
 
 } // namespace soul::cpp20::symbols

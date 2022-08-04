@@ -20,7 +20,6 @@ public:
     std::string SymbolKindStr() const override { return "concept group symbol"; }
     Symbol* GetSingleSymbol() override;
     void AddConcept(ConceptSymbol* conceptSymbol);
-    ConceptSymbol* GetConcept(const std::vector<Symbol*>& templateArguments, MatchKind matchKind, bool& exact) const;
 private:
     std::vector<ConceptSymbol*> concepts;
 };

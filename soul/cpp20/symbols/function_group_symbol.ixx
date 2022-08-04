@@ -22,10 +22,12 @@ public:
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
     void AddFunction(FunctionSymbol* function);
-    void RemoveFunction(FunctionSymbol* function);
-    FunctionSymbol* GetFunction(const std::vector<TypeSymbol*>& parameterTypes) const;
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
 private:
     std::vector<FunctionSymbol*> functions;
+    std::vector<util::uuid> functionIds;
 };
 
 } // namespace soul::cpp20::symbols

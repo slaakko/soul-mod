@@ -1236,6 +1236,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos tmpPos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> nns = std::unique_ptr<soul::cpp20::ast::Node>();
+    bool isConstructorNameNode = bool();
     std::unique_ptr<soul::cpp20::ast::Node> simpleType;
     std::unique_ptr<soul::cpp20::ast::Node> nns1;
     std::unique_ptr<soul::cpp20::ast::Node> tmp;
@@ -1399,6 +1400,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
                                                                     {
                                                                         nns.reset(nns2.release());
                                                                         soul::cpp20::symbols::BeginScope(nns.get(), context);
+                                                                        sourcePos = lexer.GetSourcePos(pos);
                                                                     }
                                                                     *parentMatch21 = match;
                                                                 }
@@ -1413,21 +1415,36 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
                                                                     soul::parser::Match* parentMatch23 = &match;
                                                                     {
                                                                         int64_t pos = lexer.GetPos();
+                                                                        bool pass = true;
                                                                         soul::parser::Match match = TypeParser<Lexer>::TypeName(lexer, context);
                                                                         typeName.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                                         if (match.hit)
                                                                         {
+                                                                            std::unique_ptr<soul::cpp20::ast::Node> typeNameNode;
+                                                                            typeNameNode.reset(typeName.release());
+                                                                            isConstructorNameNode = context->IsConstructorNameNode(typeNameNode.get());
                                                                             soul::cpp20::symbols::EndScope(context);
+                                                                            if (isConstructorNameNode)
                                                                             {
-                                                                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                                                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                                                                                #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                                return soul::parser::Match(true, new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns.release(), typeName.release()));
+                                                                                pass = false;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                {
+                                                                                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                                                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
+                                                                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                                                    return soul::parser::Match(true, new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns.release(), typeNameNode.release()));
+                                                                                }
                                                                             }
                                                                         }
                                                                         else
                                                                         {
                                                                             soul::cpp20::symbols::EndScope(context);
+                                                                        }
+                                                                        if (match.hit && !pass)
+                                                                        {
+                                                                            match = soul::parser::Match(false);
                                                                         }
                                                                         *parentMatch23 = match;
                                                                     }
@@ -1450,17 +1467,61 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
                                                         soul::parser::Match match(false);
                                                         soul::parser::Match* parentMatch25 = &match;
                                                         {
-                                                            int64_t pos = lexer.GetPos();
-                                                            soul::parser::Match match = TypeParser<Lexer>::TypeName(lexer, context);
-                                                            typeName2.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
-                                                            if (match.hit)
+                                                            soul::parser::Match match(false);
+                                                            soul::parser::Match* parentMatch26 = &match;
                                                             {
+                                                                int64_t pos = lexer.GetPos();
+                                                                bool pass = true;
+                                                                soul::parser::Match match(true);
+                                                                if (match.hit)
                                                                 {
-                                                                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                                                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
-                                                                    #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                    return soul::parser::Match(true, typeName2.release());
+                                                                    if (isConstructorNameNode) pass = false;
                                                                 }
+                                                                if (match.hit && !pass)
+                                                                {
+                                                                    match = soul::parser::Match(false);
+                                                                }
+                                                                *parentMatch26 = match;
+                                                            }
+                                                            *parentMatch25 = match;
+                                                        }
+                                                        if (match.hit)
+                                                        {
+                                                            soul::parser::Match match(false);
+                                                            soul::parser::Match* parentMatch27 = &match;
+                                                            {
+                                                                soul::parser::Match match(false);
+                                                                soul::parser::Match* parentMatch28 = &match;
+                                                                {
+                                                                    int64_t pos = lexer.GetPos();
+                                                                    bool pass = true;
+                                                                    soul::parser::Match match = TypeParser<Lexer>::TypeName(lexer, context);
+                                                                    typeName2.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                                    if (match.hit)
+                                                                    {
+                                                                        std::unique_ptr<soul::cpp20::ast::Node> typeNameNode;
+                                                                        typeNameNode.reset(typeName2.release());
+                                                                        if (context->IsConstructorNameNode(typeNameNode.get()))
+                                                                        {
+                                                                            pass = false;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            {
+                                                                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTypeSpecifier");
+                                                                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                                                return soul::parser::Match(true, typeNameNode.release());
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    if (match.hit && !pass)
+                                                                    {
+                                                                        match = soul::parser::Match(false);
+                                                                    }
+                                                                    *parentMatch28 = match;
+                                                                }
+                                                                *parentMatch27 = match;
                                                             }
                                                             *parentMatch25 = match;
                                                         }
@@ -1473,11 +1534,11 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
                                             if (!match.hit)
                                             {
                                                 soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch26 = &match;
+                                                soul::parser::Match* parentMatch29 = &match;
                                                 lexer.SetPos(save);
                                                 {
                                                     soul::parser::Match match(false);
-                                                    soul::parser::Match* parentMatch27 = &match;
+                                                    soul::parser::Match* parentMatch30 = &match;
                                                     {
                                                         int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = TypeParser<Lexer>::DeclTypeSpecifier(lexer, context);
@@ -1491,9 +1552,9 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
                                                                 return soul::parser::Match(true, declTypeSpecifier.release());
                                                             }
                                                         }
-                                                        *parentMatch27 = match;
+                                                        *parentMatch30 = match;
                                                     }
-                                                    *parentMatch26 = match;
+                                                    *parentMatch29 = match;
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1502,11 +1563,11 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
                                         if (!match.hit)
                                         {
                                             soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch28 = &match;
+                                            soul::parser::Match* parentMatch31 = &match;
                                             lexer.SetPos(save);
                                             {
                                                 soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch29 = &match;
+                                                soul::parser::Match* parentMatch32 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = TypeParser<Lexer>::PlaceholderTypeSpecifier(lexer, context);
@@ -1520,9 +1581,9 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, soul::c
                                                             return soul::parser::Match(true, placeholderTypeSpecifier.release());
                                                         }
                                                     }
-                                                    *parentMatch29 = match;
+                                                    *parentMatch32 = match;
                                                 }
-                                                *parentMatch28 = match;
+                                                *parentMatch31 = match;
                                             }
                                             *parentMatch8 = match;
                                         }
