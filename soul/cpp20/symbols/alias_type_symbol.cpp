@@ -61,7 +61,7 @@ AliasDeclarationProcessor::AliasDeclarationProcessor(Context* context_) : contex
 void AliasDeclarationProcessor::Visit(soul::cpp20::ast::AliasDeclarationNode& node)
 {
     idNode = node.Identifier();
-    type = ResolveType(node.DefiningTypeId(), context);
+    type = ResolveType(node.DefiningTypeId(), DeclarationFlags::none, context);
 }
 
 void ProcessAliasDeclaration(soul::cpp20::ast::Node* aliasDeclarationNode, Context* context)

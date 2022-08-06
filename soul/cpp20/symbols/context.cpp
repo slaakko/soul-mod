@@ -55,11 +55,29 @@ void Context::PushResetFlag(ContextFlags flag)
 
 bool Context::IsConstructorNameNode(soul::cpp20::ast::Node* node) const
 {
+    if (!GetFlag(ContextFlags::parsingParameters))
+    {
+        Scope* currentScope = symbolTable->CurrentScope();
+        if (currentScope->IsClassScope())
+        {
+            Symbol* symbol = currentScope->GetSymbol();
+            if (symbol->Name() == node->Str())
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Context::EnableDeclSpecFunctionDeclaration() const
+{
     Scope* currentScope = symbolTable->CurrentScope();
-    if (currentScope->IsClassScope())
+    if (currentScope->IsTemplateDeclarationScope())
     {
         Symbol* symbol = currentScope->GetSymbol();
-        if (symbol->Name() == node->Str())
+        Symbol* parent = symbol->Parent();
+        if (parent->GetScope()->IsClassScope())
         {
             return true;
         }

@@ -13,6 +13,7 @@ export module soul.cpp20.parser.declaration;
 [implementation]import soul.cpp20.parser.attribute;
 [implementation]import soul.cpp20.parser.type;
 [implementation]import soul.cpp20.parser.function;
+[implementation]import soul.cpp20.parser.guard;
 [implementation]import soul.cpp20.parser.concepts;
 [implementation]import soul.cpp20.parser.enums;
 [implementation]import soul.cpp20.parser.expression;
@@ -36,6 +37,7 @@ parser DeclarationParser
     using ExpressionParser.IdExpression;
     using FunctionParser.ParameterDeclarationClause;
     using FunctionParser.FunctionDefinition;
+    using GuardParser.NoDeclSpecDeclarationGuard;
     using IdentifierParser.Identifier;
     using IdentifierParser.IdentifierList;
     using IdentifierParser.NestedNameSpecifier;
@@ -80,6 +82,7 @@ parser DeclarationParser
         ::= ImportDeclaration(context):moduleImportDeclaration{ return moduleImportDeclaration; }
         |   ExportDeclaration(context):exportDeclaration{ return exportDeclaration; }
         |   BlockDeclaration(context):blockDeclaration{ return blockDeclaration; }
+        |   NoDeclSpecFunctionDeclaration(context):noDeclSpecDecl{ return noDeclSpecDecl; }
         |   FunctionDefinition(context):functionDefinition{ return functionDefinition; }
         |   DeductionGuide(context):deductionGuide{ return deductionGuide; }
         |   ExplicitInstantiation(context):explicitInstantiation{ return explicitInstantiation; }
@@ -101,6 +104,20 @@ parser DeclarationParser
         |   UsingDirective(context):usingDirective{ return usingDirective; }
         |   StaticAssertDeclaration(context):staticAssertDeclaration{ return staticAssertDeclaration; }
         |   AliasDeclaration(context):aliasDeclaration{ return aliasDeclaration; }
+        ;
+
+    NoDeclSpecFunctionDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (   NoDeclSpecDeclarationGuard(context):guard
+            (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+            Declarator(context):declarator{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            Semicolon:semicolon
+        )
+        {
+            soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode* node = new soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode(sourcePos, attributes, declarator, semicolon);
+            soul::cpp20::symbols::ProcessMemberDeclaration(node, context);
+            return node;
+        }
         ;
 
     EmptyDeclaration : soul::cpp20::ast::Node*

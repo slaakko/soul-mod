@@ -100,6 +100,10 @@ public:
     void Visit(soul::cpp20::ast::OperatorFunctionIdNode& node) override;
     void Visit(soul::cpp20::ast::QualifiedIdNode& node) override;
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
+    void Visit(soul::cpp20::ast::AbstractDeclaratorNode& node) override;
+    void Visit(soul::cpp20::ast::LvalueRefNode& node) override;
+    void Visit(soul::cpp20::ast::RvalueRefNode& node) override;
+    void Visit(soul::cpp20::ast::PtrNode& node) override;
 private:
     Context* context;
     TypeSymbol* baseType;
@@ -133,7 +137,8 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ParameterListNode& node)
     int n = node.Items().size();
     for (int i = 0; i < n; ++i)
     {
-        node.Items()[i]->Accept(*this);
+        soul::cpp20::ast::Node* item = node.Items()[i];
+        item->Accept(*this);
     }
 }
 
@@ -144,6 +149,27 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
     {
         functionDeclarator->AddParameterDeclaration(std::move(declaration));
     }
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::LvalueRefNode& node)
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::lvalueRefDerivation);
+    baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::RvalueRefNode& node)
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::rvalueRefDerivation);
+    baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::PtrNode& node)
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::pointerDerivation);
+    baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::DestructorIdNode& node)
@@ -194,6 +220,11 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
             declaration = Declaration(baseType, new SimpleDeclarator(node.Str(), &node));
         }
     }
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::AbstractDeclaratorNode& node)
+{
+    declaration = Declaration(baseType, new SimpleDeclarator(std::u32string(), &node));
 }
 
 std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, Context* context)

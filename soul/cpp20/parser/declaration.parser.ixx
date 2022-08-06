@@ -20,6 +20,7 @@ struct DeclarationParser
     static soul::parser::Match DeclarationSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match Declaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match BlockDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match NoDeclSpecFunctionDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match EmptyDeclaration(Lexer& lexer);
     static soul::parser::Match SimpleDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match AsmDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);

@@ -143,6 +143,7 @@ public:
     void BeginProcessFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSeq, soul::cpp20::ast::Node* declarator);
     void Visit(soul::cpp20::ast::SimpleDeclarationNode& node) override;
     void Visit(soul::cpp20::ast::MemberDeclarationNode& node) override;
+    void Visit(soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode& node) override;
     void Visit(soul::cpp20::ast::ParameterNode& node) override;
     void Visit(soul::cpp20::ast::ClassSpecifierNode& node) override;
     void Visit(soul::cpp20::ast::ElaboratedTypeSpecifierNode & override);
@@ -235,6 +236,11 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::MemberDeclarationNode& node)
         TypeSymbol* baseType = ResolveBaseType(&node);
         declarations = ProcessMemberDeclaratorList(baseType, node.MemberDeclarators(), context);
     }
+}
+
+void DeclarationProcessor::Visit(soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode& node)
+{
+    declarations.push_back(ProcessDeclarator(nullptr, &node, context));
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
@@ -414,12 +420,12 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::ExternNode& node)
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 {
-    type = ResolveType(&node, context);
+    type = ResolveType(&node, flags, context);
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
-    type = ResolveType(&node, context);
+    type = ResolveType(&node, flags, context);
 }
 
 void ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Context* context)
@@ -433,9 +439,17 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
     functionSymbol->SetReturnType(type);
     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
     {
-        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(parameterDeclaration.declarator->Name(), parameterDeclaration.declarator->Node(), 
-            parameterDeclaration.type, context);
-        functionSymbol->AddParameter(parameter, parameterDeclaration.declarator->Node()->GetSourcePos(), context);
+        soul::ast::SourcePos sourcePos;
+        std::u32string name;
+        soul::cpp20::ast::Node* node = nullptr;
+        if (parameterDeclaration.declarator)
+        {
+            name = parameterDeclaration.declarator->Name();
+            node = parameterDeclaration.declarator->Node();
+            sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
+        }
+        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+        functionSymbol->AddParameter(parameter, sourcePos, context);
     }
 }
 

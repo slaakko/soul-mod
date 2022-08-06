@@ -11,6 +11,7 @@ import soul.cpp20.lexer;
 import soul.cpp20.parser.attribute;
 import soul.cpp20.parser.type;
 import soul.cpp20.parser.function;
+import soul.cpp20.parser.guard;
 import soul.cpp20.parser.concepts;
 import soul.cpp20.parser.enums;
 import soul.cpp20.parser.expression;
@@ -28,6 +29,7 @@ using namespace soul::cpp20::lexer;
 using namespace soul::cpp20::parser::attribute;
 using namespace soul::cpp20::parser::type;
 using namespace soul::cpp20::parser::function;
+using namespace soul::cpp20::parser::guard;
 using namespace soul::cpp20::parser::concepts;
 using namespace soul::cpp20::parser::enums;
 using namespace soul::cpp20::parser::expression;
@@ -170,6 +172,7 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
     std::unique_ptr<soul::cpp20::ast::Node> moduleImportDeclaration;
     std::unique_ptr<soul::cpp20::ast::Node> exportDeclaration;
     std::unique_ptr<soul::cpp20::ast::Node> blockDeclaration;
+    std::unique_ptr<soul::cpp20::ast::Node> noDeclSpecDecl;
     std::unique_ptr<soul::cpp20::ast::Node> functionDefinition;
     std::unique_ptr<soul::cpp20::ast::Node> deductionGuide;
     std::unique_ptr<soul::cpp20::ast::Node> explicitInstantiation;
@@ -226,45 +229,78 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                 soul::parser::Match match(false);
                                                 soul::parser::Match* parentMatch11 = &match;
                                                 {
-                                                    int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = ModuleParser<Lexer>::ImportDeclaration(lexer, context);
-                                                    moduleImportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
-                                                    if (match.hit)
+                                                    int64_t save = lexer.GetPos();
+                                                    soul::parser::Match match(false);
+                                                    soul::parser::Match* parentMatch12 = &match;
                                                     {
+                                                        int64_t pos = lexer.GetPos();
+                                                        soul::parser::Match match = ModuleParser<Lexer>::ImportDeclaration(lexer, context);
+                                                        moduleImportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                        if (match.hit)
                                                         {
-                                                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
-                                                            #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                            return soul::parser::Match(true, moduleImportDeclaration.release());
+                                                            {
+                                                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
+                                                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                                return soul::parser::Match(true, moduleImportDeclaration.release());
+                                                            }
                                                         }
+                                                        *parentMatch12 = match;
                                                     }
                                                     *parentMatch11 = match;
+                                                    if (!match.hit)
+                                                    {
+                                                        soul::parser::Match match(false);
+                                                        soul::parser::Match* parentMatch13 = &match;
+                                                        lexer.SetPos(save);
+                                                        {
+                                                            soul::parser::Match match(false);
+                                                            soul::parser::Match* parentMatch14 = &match;
+                                                            {
+                                                                int64_t pos = lexer.GetPos();
+                                                                soul::parser::Match match = ModuleParser<Lexer>::ExportDeclaration(lexer, context);
+                                                                exportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                                if (match.hit)
+                                                                {
+                                                                    {
+                                                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
+                                                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                                        return soul::parser::Match(true, exportDeclaration.release());
+                                                                    }
+                                                                }
+                                                                *parentMatch14 = match;
+                                                            }
+                                                            *parentMatch13 = match;
+                                                        }
+                                                        *parentMatch11 = match;
+                                                    }
                                                 }
                                                 *parentMatch10 = match;
                                                 if (!match.hit)
                                                 {
                                                     soul::parser::Match match(false);
-                                                    soul::parser::Match* parentMatch12 = &match;
+                                                    soul::parser::Match* parentMatch15 = &match;
                                                     lexer.SetPos(save);
                                                     {
                                                         soul::parser::Match match(false);
-                                                        soul::parser::Match* parentMatch13 = &match;
+                                                        soul::parser::Match* parentMatch16 = &match;
                                                         {
                                                             int64_t pos = lexer.GetPos();
-                                                            soul::parser::Match match = ModuleParser<Lexer>::ExportDeclaration(lexer, context);
-                                                            exportDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                            soul::parser::Match match = DeclarationParser<Lexer>::BlockDeclaration(lexer, context);
+                                                            blockDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
                                                                 {
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
                                                                     #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                    return soul::parser::Match(true, exportDeclaration.release());
+                                                                    return soul::parser::Match(true, blockDeclaration.release());
                                                                 }
                                                             }
-                                                            *parentMatch13 = match;
+                                                            *parentMatch16 = match;
                                                         }
-                                                        *parentMatch12 = match;
+                                                        *parentMatch15 = match;
                                                     }
                                                     *parentMatch10 = match;
                                                 }
@@ -273,27 +309,27 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                             if (!match.hit)
                                             {
                                                 soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch14 = &match;
+                                                soul::parser::Match* parentMatch17 = &match;
                                                 lexer.SetPos(save);
                                                 {
                                                     soul::parser::Match match(false);
-                                                    soul::parser::Match* parentMatch15 = &match;
+                                                    soul::parser::Match* parentMatch18 = &match;
                                                     {
                                                         int64_t pos = lexer.GetPos();
-                                                        soul::parser::Match match = DeclarationParser<Lexer>::BlockDeclaration(lexer, context);
-                                                        blockDeclaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                                        soul::parser::Match match = DeclarationParser<Lexer>::NoDeclSpecFunctionDeclaration(lexer, context);
+                                                        noDeclSpecDecl.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             {
                                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
                                                                 #endif SOUL_PARSER_DEBUG_SUPPORT
-                                                                return soul::parser::Match(true, blockDeclaration.release());
+                                                                return soul::parser::Match(true, noDeclSpecDecl.release());
                                                             }
                                                         }
-                                                        *parentMatch15 = match;
+                                                        *parentMatch18 = match;
                                                     }
-                                                    *parentMatch14 = match;
+                                                    *parentMatch17 = match;
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -302,11 +338,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                         if (!match.hit)
                                         {
                                             soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch16 = &match;
+                                            soul::parser::Match* parentMatch19 = &match;
                                             lexer.SetPos(save);
                                             {
                                                 soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch17 = &match;
+                                                soul::parser::Match* parentMatch20 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = FunctionParser<Lexer>::FunctionDefinition(lexer, context);
@@ -320,9 +356,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                             return soul::parser::Match(true, functionDefinition.release());
                                                         }
                                                     }
-                                                    *parentMatch17 = match;
+                                                    *parentMatch20 = match;
                                                 }
-                                                *parentMatch16 = match;
+                                                *parentMatch19 = match;
                                             }
                                             *parentMatch8 = match;
                                         }
@@ -331,11 +367,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                     if (!match.hit)
                                     {
                                         soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch18 = &match;
+                                        soul::parser::Match* parentMatch21 = &match;
                                         lexer.SetPos(save);
                                         {
                                             soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch19 = &match;
+                                            soul::parser::Match* parentMatch22 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = TemplateParser<Lexer>::DeductionGuide(lexer, context);
@@ -349,9 +385,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                         return soul::parser::Match(true, deductionGuide.release());
                                                     }
                                                 }
-                                                *parentMatch19 = match;
+                                                *parentMatch22 = match;
                                             }
-                                            *parentMatch18 = match;
+                                            *parentMatch21 = match;
                                         }
                                         *parentMatch7 = match;
                                     }
@@ -360,11 +396,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                 if (!match.hit)
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch20 = &match;
+                                    soul::parser::Match* parentMatch23 = &match;
                                     lexer.SetPos(save);
                                     {
                                         soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch21 = &match;
+                                        soul::parser::Match* parentMatch24 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
                                             soul::parser::Match match = TemplateParser<Lexer>::ExplicitInstantiation(lexer, context);
@@ -378,9 +414,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                     return soul::parser::Match(true, explicitInstantiation.release());
                                                 }
                                             }
-                                            *parentMatch21 = match;
+                                            *parentMatch24 = match;
                                         }
-                                        *parentMatch20 = match;
+                                        *parentMatch23 = match;
                                     }
                                     *parentMatch6 = match;
                                 }
@@ -389,11 +425,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                             if (!match.hit)
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch22 = &match;
+                                soul::parser::Match* parentMatch25 = &match;
                                 lexer.SetPos(save);
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch23 = &match;
+                                    soul::parser::Match* parentMatch26 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = TemplateParser<Lexer>::ExplicitSpecialization(lexer, context);
@@ -407,9 +443,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                                 return soul::parser::Match(true, explicitSpecialization.release());
                                             }
                                         }
-                                        *parentMatch23 = match;
+                                        *parentMatch26 = match;
                                     }
-                                    *parentMatch22 = match;
+                                    *parentMatch25 = match;
                                 }
                                 *parentMatch5 = match;
                             }
@@ -418,11 +454,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                         if (!match.hit)
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch24 = &match;
+                            soul::parser::Match* parentMatch27 = &match;
                             lexer.SetPos(save);
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch25 = &match;
+                                soul::parser::Match* parentMatch28 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = TemplateParser<Lexer>::TemplateDeclaration(lexer, context);
@@ -436,9 +472,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                             return soul::parser::Match(true, templateDeclaration.release());
                                         }
                                     }
-                                    *parentMatch25 = match;
+                                    *parentMatch28 = match;
                                 }
-                                *parentMatch24 = match;
+                                *parentMatch27 = match;
                             }
                             *parentMatch4 = match;
                         }
@@ -447,11 +483,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                     if (!match.hit)
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch26 = &match;
+                        soul::parser::Match* parentMatch29 = &match;
                         lexer.SetPos(save);
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch27 = &match;
+                            soul::parser::Match* parentMatch30 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
                                 soul::parser::Match match = DeclarationParser<Lexer>::LinkageSpecification(lexer, context);
@@ -465,9 +501,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                         return soul::parser::Match(true, linkageSpecification.release());
                                     }
                                 }
-                                *parentMatch27 = match;
+                                *parentMatch30 = match;
                             }
-                            *parentMatch26 = match;
+                            *parentMatch29 = match;
                         }
                         *parentMatch3 = match;
                     }
@@ -476,11 +512,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                 if (!match.hit)
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch28 = &match;
+                    soul::parser::Match* parentMatch31 = &match;
                     lexer.SetPos(save);
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch29 = &match;
+                        soul::parser::Match* parentMatch32 = &match;
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match = DeclarationParser<Lexer>::NamespaceDefinition(lexer, context);
@@ -494,9 +530,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                     return soul::parser::Match(true, namespaceDefinition.release());
                                 }
                             }
-                            *parentMatch29 = match;
+                            *parentMatch32 = match;
                         }
-                        *parentMatch28 = match;
+                        *parentMatch31 = match;
                     }
                     *parentMatch2 = match;
                 }
@@ -505,11 +541,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
             if (!match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch30 = &match;
+                soul::parser::Match* parentMatch33 = &match;
                 lexer.SetPos(save);
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch31 = &match;
+                    soul::parser::Match* parentMatch34 = &match;
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = DeclarationParser<Lexer>::EmptyDeclaration(lexer);
@@ -523,9 +559,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                                 return soul::parser::Match(true, emptyDeclaration.release());
                             }
                         }
-                        *parentMatch31 = match;
+                        *parentMatch34 = match;
                     }
-                    *parentMatch30 = match;
+                    *parentMatch33 = match;
                 }
                 *parentMatch1 = match;
             }
@@ -534,11 +570,11 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
         if (!match.hit)
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch32 = &match;
+            soul::parser::Match* parentMatch35 = &match;
             lexer.SetPos(save);
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch33 = &match;
+                soul::parser::Match* parentMatch36 = &match;
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = DeclarationParser<Lexer>::AttributeDeclaration(lexer, context);
@@ -552,9 +588,9 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, soul::cp
                             return soul::parser::Match(true, attributeDeclaration.release());
                         }
                     }
-                    *parentMatch33 = match;
+                    *parentMatch36 = match;
                 }
-                *parentMatch32 = match;
+                *parentMatch35 = match;
             }
             *parentMatch0 = match;
         }
@@ -891,6 +927,146 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer, sou
 }
 
 template<typename Lexer>
+soul::parser::Match DeclarationParser<Lexer>::NoDeclSpecFunctionDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDeclaration");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933124);
+    soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
+    std::unique_ptr<soul::cpp20::ast::Node> attributes;
+    std::unique_ptr<soul::cpp20::ast::Node> declarator;
+    std::unique_ptr<soul::cpp20::ast::Node> semicolon;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match = GuardParser<Lexer>::NoDeclSpecDeclarationGuard(lexer, context);
+                        *parentMatch4 = match;
+                    }
+                    if (match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            soul::parser::Match match(true);
+                            int64_t save = lexer.GetPos();
+                            soul::parser::Match* parentMatch6 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch7 = &match;
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch8 = &match;
+                                    {
+                                        int64_t pos = lexer.GetPos();
+                                        soul::parser::Match match = AttributeParser<Lexer>::AttributeSpecifierSeq(lexer, context);
+                                        attributes.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            sourcePos = lexer.GetSourcePos(pos);
+                                        }
+                                        *parentMatch8 = match;
+                                    }
+                                    *parentMatch7 = match;
+                                }
+                                if (match.hit)
+                                {
+                                    *parentMatch6 = match;
+                                }
+                                else
+                                {
+                                    lexer.SetPos(save);
+                                }
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch9 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch10 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = DeclarationParser<Lexer>::Declarator(lexer, context);
+                            declarator.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                            if (match.hit)
+                            {
+                                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                            }
+                            *parentMatch10 = match;
+                        }
+                        *parentMatch9 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch11 = &match;
+                {
+                    soul::parser::Match match = PunctuationParser<Lexer>::Semicolon(lexer);
+                    semicolon.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                    *parentMatch11 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode *node = new soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode(sourcePos, attributes.release(), declarator.release(), semicolon.release());
+            soul::cpp20::symbols::ProcessMemberDeclaration(node, context);
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NoDeclSpecFunctionDeclaration");
+                #endif SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, node);
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NoDeclSpecFunctionDeclaration");
+        else soul::lexer::WriteFailureToLog(lexer, "NoDeclSpecFunctionDeclaration");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
 soul::parser::Match DeclarationParser<Lexer>::EmptyDeclaration(Lexer& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -902,7 +1078,7 @@ soul::parser::Match DeclarationParser<Lexer>::EmptyDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EmptyDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933124);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933125);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -950,7 +1126,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer, so
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933125);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933126);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -1342,7 +1518,7 @@ soul::parser::Match DeclarationParser<Lexer>::AsmDeclaration(Lexer& lexer, soul:
         soul::lexer::WriteBeginRuleToLog(lexer, "AsmDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933126);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933127);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -1544,7 +1720,7 @@ soul::parser::Match DeclarationParser<Lexer>::Asm(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Asm");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933127);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933128);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1592,7 +1768,7 @@ soul::parser::Match DeclarationParser<Lexer>::LinkageSpecification(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "LinkageSpecification");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933128);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933129);
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
@@ -1812,7 +1988,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceDefinition(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceDefinition");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933129);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933130);
     std::unique_ptr<soul::cpp20::ast::Node> nestedNamespaceDefinition;
     std::unique_ptr<soul::cpp20::ast::Node> namedNamespaceDefinition;
     std::unique_ptr<soul::cpp20::ast::Node> unnamedNamespaceDefinition;
@@ -1925,7 +2101,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamedNamespaceDefinition(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NamedNamespaceDefinition");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933130);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933131);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -2170,7 +2346,7 @@ soul::parser::Match DeclarationParser<Lexer>::UnnamedNamespaceDefinition(Lexer& 
         soul::lexer::WriteBeginRuleToLog(lexer, "UnnamedNamespaceDefinition");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933131);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933132);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -2385,7 +2561,7 @@ soul::parser::Match DeclarationParser<Lexer>::NestedNamespaceDefinition(Lexer& l
         soul::lexer::WriteBeginRuleToLog(lexer, "NestedNamespaceDefinition");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933132);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933133);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::NestedNameSpecifierNode> nns = std::unique_ptr<soul::cpp20::ast::NestedNameSpecifierNode>();
     std::unique_ptr<soul::cpp20::ast::Node> qualifiedNsName = std::unique_ptr<soul::cpp20::ast::Node>();
@@ -2591,7 +2767,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceAliasDefinition");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933133);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933134);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> ns;
     std::unique_ptr<soul::cpp20::ast::Node> id;
@@ -2720,7 +2896,7 @@ soul::parser::Match DeclarationParser<Lexer>::QualifiedNamespaceSpecifier(Lexer&
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedNamespaceSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933134);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933135);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> nns;
     std::unique_ptr<soul::cpp20::ast::Node> nsName;
@@ -2832,7 +3008,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceBody(Lexer& lexer, soul::
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceBody");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933135);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933136);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> declarations;
     soul::parser::Match match(false);
@@ -2911,7 +3087,7 @@ soul::parser::Match DeclarationParser<Lexer>::NestedNamespaceSpecifier(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NestedNamespaceSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933136);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933137);
     int level = int();
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> colonColon;
@@ -3191,7 +3367,7 @@ soul::parser::Match DeclarationParser<Lexer>::Namespace(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Namespace");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933137);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933138);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3239,7 +3415,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceName(Lexer& lexer, soul::
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceName");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933138);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933139);
     std::unique_ptr<soul::cpp20::ast::Node> identifier;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3284,7 +3460,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer, sou
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933139);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933140);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> usng;
     std::unique_ptr<soul::cpp20::ast::Node> usingDeclarators;
@@ -3381,7 +3557,7 @@ soul::parser::Match DeclarationParser<Lexer>::Using(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Using");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933140);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933141);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3429,7 +3605,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaratorList(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclaratorList");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933141);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933142);
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> comma;
@@ -3614,7 +3790,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclarator(Lexer& lexer, soul
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933142);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933143);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> typename_;
@@ -3781,7 +3957,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingEnumDeclaration(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingEnumDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933143);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933144);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> usng;
     std::unique_ptr<soul::cpp20::ast::Node> ees;
@@ -3877,7 +4053,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer, soul:
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDirective");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933144);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933145);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> attributes;
@@ -4122,7 +4298,7 @@ soul::parser::Match DeclarationParser<Lexer>::StaticAssertDeclaration(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "StaticAssertDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933145);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933146);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -4382,7 +4558,7 @@ soul::parser::Match DeclarationParser<Lexer>::StaticAssert(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "StaticAssert");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933146);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933147);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4430,7 +4606,7 @@ soul::parser::Match DeclarationParser<Lexer>::AliasDeclaration(Lexer& lexer, sou
         soul::lexer::WriteBeginRuleToLog(lexer, "AliasDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933147);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933148);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> usng;
     std::unique_ptr<soul::cpp20::ast::Node> identifier;
@@ -4591,7 +4767,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, sou
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifierSeq");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933148);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933149);
     std::unique_ptr<soul::cpp20::ast::Node> sequence = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> next;
@@ -4779,7 +4955,7 @@ soul::parser::Match DeclarationParser<Lexer>::Inline(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Inline");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933149);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933150);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4827,7 +5003,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer, soul::
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933150);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933151);
     std::unique_ptr<soul::cpp20::ast::Node> storageClassSpecifier;
     std::unique_ptr<soul::cpp20::ast::Node> definingTypeSpecifier;
     std::unique_ptr<soul::cpp20::ast::Node> functionSpecifier;
@@ -5160,7 +5336,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "StorageClassSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933151);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933152);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -5244,7 +5420,7 @@ soul::parser::Match DeclarationParser<Lexer>::FunctionSpecifier(Lexer& lexer, so
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933152);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933153);
     std::unique_ptr<soul::cpp20::ast::Node> explicitSpecifier;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -5326,7 +5502,7 @@ soul::parser::Match DeclarationParser<Lexer>::ExplicitSpecifier(Lexer& lexer, so
         soul::lexer::WriteBeginRuleToLog(lexer, "ExplicitSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933153);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933154);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -5497,7 +5673,7 @@ soul::parser::Match DeclarationParser<Lexer>::InitDeclaratorList(Lexer& lexer, s
         soul::lexer::WriteBeginRuleToLog(lexer, "InitDeclaratorList");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933154);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933155);
     std::unique_ptr<soul::cpp20::ast::Node> list = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> comma;
@@ -5637,7 +5813,7 @@ soul::parser::Match DeclarationParser<Lexer>::InitDeclarator(Lexer& lexer, soul:
         soul::lexer::WriteBeginRuleToLog(lexer, "InitDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933155);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933156);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> declarator;
     std::unique_ptr<soul::cpp20::ast::Node> requiresClause;
@@ -5786,7 +5962,7 @@ soul::parser::Match DeclarationParser<Lexer>::Declarator(Lexer& lexer, soul::cpp
         soul::lexer::WriteBeginRuleToLog(lexer, "Declarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933156);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933157);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> declarator;
     std::unique_ptr<soul::cpp20::ast::Node> paramsAndQualifiers;
@@ -5925,7 +6101,7 @@ soul::parser::Match DeclarationParser<Lexer>::PtrDeclarator(Lexer& lexer, soul::
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933157);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933158);
     std::unique_ptr<soul::cpp20::ast::Node> ptrDeclarator = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> next;
@@ -6090,7 +6266,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoPtrDeclarator(Lexer& lexer, soul
         soul::lexer::WriteBeginRuleToLog(lexer, "NoPtrDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933158);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933159);
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
@@ -6504,7 +6680,7 @@ soul::parser::Match DeclarationParser<Lexer>::ParametersAndQualifiers(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "ParametersAndQualifiers");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933159);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933160);
     std::unique_ptr<soul::cpp20::ast::ParameterListNode> parameterListNode = std::unique_ptr<soul::cpp20::ast::ParameterListNode>();
     std::unique_ptr<soul::cpp20::ast::TrailingQualifiersNode> trailingQualifiersNode = std::unique_ptr<soul::cpp20::ast::TrailingQualifiersNode>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
@@ -6859,7 +7035,7 @@ soul::parser::Match DeclarationParser<Lexer>::TrailingReturnType(Lexer& lexer, s
         soul::lexer::WriteBeginRuleToLog(lexer, "TrailingReturnType");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933160);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933161);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> typeId;
     soul::parser::Match match(false);
@@ -6940,7 +7116,7 @@ soul::parser::Match DeclarationParser<Lexer>::PtrOperator(Lexer& lexer, soul::cp
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrOperator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933161);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933162);
     std::unique_ptr<soul::cpp20::ast::TrailingQualifiersNode> trailingQualifiersNode = std::unique_ptr<soul::cpp20::ast::TrailingQualifiersNode>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> nns;
@@ -7406,7 +7582,7 @@ soul::parser::Match DeclarationParser<Lexer>::AbstractDeclarator(Lexer& lexer, s
         soul::lexer::WriteBeginRuleToLog(lexer, "AbstractDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933162);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933163);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> declarator;
     std::unique_ptr<soul::cpp20::ast::Node> params;
@@ -7569,7 +7745,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoPtrAbstractDeclarator(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "NoPtrAbstractDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933163);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933164);
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
@@ -7925,7 +8101,7 @@ soul::parser::Match DeclarationParser<Lexer>::PtrAbstractDeclarator(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrAbstractDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933164);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933165);
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> next;
@@ -8116,7 +8292,7 @@ soul::parser::Match DeclarationParser<Lexer>::AbstractPackDeclarator(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "AbstractPackDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933165);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933166);
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> noPtrAbstractPackDeclarator;
     std::unique_ptr<soul::cpp20::ast::Node> first;
@@ -8281,7 +8457,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoPtrAbstractPackDeclarator(Lexer&
         soul::lexer::WriteBeginRuleToLog(lexer, "NoPtrAbstractPackDeclarator");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933166);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933167);
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
@@ -8490,7 +8666,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclaratorId(Lexer& lexer, soul::c
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclaratorId");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933167);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933168);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> ellipsis;
     std::unique_ptr<soul::cpp20::ast::Node> idExpr;
@@ -8602,7 +8778,7 @@ soul::parser::Match DeclarationParser<Lexer>::Ptr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Ptr");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933168);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933169);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -8650,7 +8826,7 @@ soul::parser::Match DeclarationParser<Lexer>::LvalueRef(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LvalueRef");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933169);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933170);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -8698,7 +8874,7 @@ soul::parser::Match DeclarationParser<Lexer>::RvalueRef(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RvalueRef");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933170);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933171);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -8746,7 +8922,7 @@ soul::parser::Match DeclarationParser<Lexer>::RefQualifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RefQualifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933171);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933172);
     std::unique_ptr<soul::cpp20::ast::Node> rvalueRef;
     std::unique_ptr<soul::cpp20::ast::Node> lvalueRef;
     soul::parser::Match match(false);
@@ -8825,7 +9001,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifierSeq(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CVQualifierSeq");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933172);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933173);
     std::unique_ptr<soul::cpp20::ast::Node> sequence = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> next;
@@ -8938,7 +9114,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CVQualifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933173);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933174);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -8996,7 +9172,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoexceptSpecifier(Lexer& lexer, so
         soul::lexer::WriteBeginRuleToLog(lexer, "NoexceptSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933174);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933175);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -9171,7 +9347,7 @@ soul::parser::Match DeclarationParser<Lexer>::ThrowSpecifier(Lexer& lexer, soul:
         soul::lexer::WriteBeginRuleToLog(lexer, "ThrowSpecifier");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933175);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933176);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -9297,7 +9473,7 @@ soul::parser::Match DeclarationParser<Lexer>::AttributeDeclaration(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "AttributeDeclaration");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933176);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933177);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> attributes;
     std::unique_ptr<soul::cpp20::ast::Node> semicolon;

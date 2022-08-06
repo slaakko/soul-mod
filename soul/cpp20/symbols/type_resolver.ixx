@@ -17,6 +17,6 @@ class TypeSymbol;
 
 void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, const std::string& specifierStr, const soul::ast::SourcePos& sourcePos, Context* context);
 
-TypeSymbol* ResolveType(soul::cpp20::ast::Node* node, Context* context);
+TypeSymbol* ResolveType(soul::cpp20::ast::Node* node, DeclarationFlags flags, Context* context);
 
 } // namespace soul::cpp20::symbols

@@ -557,7 +557,10 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, soul::cpp20
 ParameterSymbol* SymbolTable::CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context)
 {
     ParameterSymbol* parameterSymbol = new ParameterSymbol(name, type);
-    MapNode(node, parameterSymbol);
+    if (node)
+    {
+        MapNode(node, parameterSymbol);
+    }
     return parameterSymbol;
 }
 

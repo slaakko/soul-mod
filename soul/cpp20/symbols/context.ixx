@@ -60,6 +60,7 @@ public:
     bool GetFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
     void ResetFlag(ContextFlags flag) { flags = flags & ~flag; }
     bool IsConstructorNameNode(soul::cpp20::ast::Node* node) const;
+    bool EnableDeclSpecFunctionDeclaration() const;
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;

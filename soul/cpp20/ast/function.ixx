@@ -74,16 +74,16 @@ class NoDeclSpecFunctionDeclarationNode : public CompoundNode
 {
 public:
     NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_);
-    NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, Node* attributes_, Node* semicolon_);
+    NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declarator_, Node* semicolon_);
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Declarator() const { return declarator.get(); }
     Node* Attributes() const { return attributes.get(); }
+    Node* Declarator() const { return declarator.get(); }
     Node* Semicolon() const { return semicolon.get(); }
 private:
-    std::unique_ptr<Node> declarator;
     std::unique_ptr<Node> attributes;
+    std::unique_ptr<Node> declarator;
     std::unique_ptr<Node> semicolon;
 };
 

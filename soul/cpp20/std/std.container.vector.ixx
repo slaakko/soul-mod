@@ -8,6 +8,7 @@ template<typename T>
 class vector
 {
 public:
+/*
 	using value_type = T;
 	using reference = value_type&;
 	using const_reference = const value_type&;
@@ -15,6 +16,14 @@ public:
 	using difference_type = int64_t;
 	using iterator = value_type*;
 	using const_iterator = const value_type*;
+	
+	vector();
+	vector(size_type n);
+	vector(size_type n, const T& value);
+	template<class InputIterator>
+	vector(InputIterator first, InputIterator last);
+*/	
+	vector(const vector&);
 };
 
 } // namespace std

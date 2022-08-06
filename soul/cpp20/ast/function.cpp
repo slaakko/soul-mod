@@ -115,8 +115,8 @@ NoDeclSpecFunctionDeclarationNode::NoDeclSpecFunctionDeclarationNode(const soul:
 {
 }
 
-NoDeclSpecFunctionDeclarationNode::NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, Node* attributes_, Node* semicolon_) :
-    CompoundNode(NodeKind::noDeclSpecFunctionDeclarationNode, sourcePos_), declarator(declarator_), attributes(attributes_), semicolon(semicolon_)
+NoDeclSpecFunctionDeclarationNode::NoDeclSpecFunctionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declarator_, Node* semicolon_) :
+    CompoundNode(NodeKind::noDeclSpecFunctionDeclarationNode, sourcePos_), attributes(attributes_), declarator(declarator_), semicolon(semicolon_)
 {
 }
 

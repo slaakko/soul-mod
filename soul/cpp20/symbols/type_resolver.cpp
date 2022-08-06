@@ -29,9 +29,10 @@ void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, cons
 class TypeResolver : public soul::cpp20::ast::DefaultVisitor
 {
 public:
-    TypeResolver(Context* context_);
-    TypeSymbol* GetType() const { return type; }
+    TypeResolver(Context* context_, DeclarationFlags flags_);
+    TypeSymbol* GetType();
     void ResolveBaseType(soul::cpp20::ast::Node* node);
+    void ResolveType();
     void Visit(soul::cpp20::ast::DefiningTypeIdNode& node) override;
     void Visit(soul::cpp20::ast::CharNode& node) override;
     void Visit(soul::cpp20::ast::Char8Node& node) override;
@@ -62,10 +63,17 @@ private:
     TypeSymbol* baseType;
     DeclarationFlags flags;
     int pointerCount;
+    bool typeResolved;
 };
 
-TypeResolver::TypeResolver(Context* context_) : context(context_), type(nullptr), baseType(nullptr), flags(DeclarationFlags::none), pointerCount(0)
+TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_) : context(context_), type(nullptr), baseType(nullptr), flags(flags_), pointerCount(0), typeResolved(false)
 {
+}
+
+TypeSymbol* TypeResolver::GetType() 
+{
+    ResolveType();
+    return type;
 }
 
 void TypeResolver::ResolveBaseType(soul::cpp20::ast::Node* node)
@@ -81,15 +89,10 @@ void TypeResolver::ResolveBaseType(soul::cpp20::ast::Node* node)
     }
 }
 
-void TypeResolver::Visit(soul::cpp20::ast::DefiningTypeIdNode& node)
+void TypeResolver::ResolveType()
 {
-    node.DefiningTypeSpecifiers()->Accept(*this);
-    if (!type)
-    {
-        ResolveBaseType(&node);
-        type = baseType;
-    }
-    node.AbstractDeclarator()->Accept(*this);
+    if (typeResolved) return;
+    typeResolved = true;
     Derivations derivations;
     if ((flags & DeclarationFlags::constFlag) != DeclarationFlags::none)
     {
@@ -111,13 +114,25 @@ void TypeResolver::Visit(soul::cpp20::ast::DefiningTypeIdNode& node)
         derivations.vec.push_back(Derivation::lvalueRefDerivation);
     }
     else if ((flags & DeclarationFlags::lvalueRefFlag) != DeclarationFlags::none)
-    { 
+    {
         derivations.vec.push_back(Derivation::rvalueRefDerivation);
     }
     if (!derivations.IsEmpty())
     {
         type = context->GetSymbolTable()->MakeCompoundType(type, derivations);
     }
+}
+
+void TypeResolver::Visit(soul::cpp20::ast::DefiningTypeIdNode& node)
+{
+    node.DefiningTypeSpecifiers()->Accept(*this);
+    if (!type)
+    {
+        ResolveBaseType(&node);
+        type = baseType;
+    }
+    node.AbstractDeclarator()->Accept(*this);
+    ResolveType();
 }
 
 void TypeResolver::Visit(soul::cpp20::ast::CharNode& node)
@@ -269,7 +284,7 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
 
 void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
 {
-    TypeSymbol* typeSymbol = ResolveType(node.TemplateName(), context);
+    TypeSymbol* typeSymbol = soul::cpp20::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context);
     if (typeSymbol->IsClassTypeSymbol())
     {
         ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
@@ -277,7 +292,7 @@ void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
         int n = node.Items().size();
         for (int i = 0; i < n; ++i)
         {
-            TypeSymbol* templateArg = ResolveType(node.Items()[i], context);
+            TypeSymbol* templateArg = soul::cpp20::symbols::ResolveType(node.Items()[i], DeclarationFlags::none, context);
             templateArgs.push_back(templateArg);
         }
         SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(classTemplate, templateArgs);
@@ -300,9 +315,9 @@ void TypeResolver::Visit(soul::cpp20::ast::TypeIdNode& node)
     node.Declarator()->Accept(*this);
 }
 
-TypeSymbol* ResolveType(soul::cpp20::ast::Node* node, Context* context)
+TypeSymbol* ResolveType(soul::cpp20::ast::Node* node, DeclarationFlags flags, Context* context)
 {
-    TypeResolver resolver(context);
+    TypeResolver resolver(context, flags);
     node->Accept(resolver);
     return resolver.GetType();
 }

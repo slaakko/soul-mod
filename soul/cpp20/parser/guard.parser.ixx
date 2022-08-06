@@ -20,6 +20,7 @@ struct GuardParser
     static soul::parser::Match AssumeTypeGuard(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberFunctionTemplateGuard(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match SavedMemberFunctionBodyGuard(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match NoDeclSpecDeclarationGuard(Lexer& lexer, soul::cpp20::symbols::Context* context);
 };
 
 } // namespace soul::cpp20::parser::guard
