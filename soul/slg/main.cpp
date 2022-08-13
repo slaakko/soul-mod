@@ -22,7 +22,7 @@ void Done()
 
 std::string Version()
 {
-    return "4.0.0";
+    return "4.1.0";
 }
 
 void PrintHelp()

@@ -42,6 +42,7 @@ public:
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
 private:
     bool value;
 };
@@ -58,6 +59,7 @@ public:
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
 private:
     int64_t value;
 };
@@ -74,6 +76,7 @@ public:
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
 private:
     double value;
 };
@@ -83,7 +86,6 @@ class EvaluationContext
 public:
     EvaluationContext();
     void Init();
-    static EvaluationContext& Instance();
     void Write(Writer& writer);
     void Read(Reader& reader);
     BoolValue* GetBoolValue(bool value);
@@ -97,6 +99,7 @@ private:
     std::vector<std::unique_ptr<Value>> values;
 };
 
+void SetEvaluationContext(EvaluationContext* evalationContext);
 EvaluationContext& GetEvaluationContext();
 
 } // namespace soul::cpp20::symbols

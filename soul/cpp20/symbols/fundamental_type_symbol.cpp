@@ -11,6 +11,7 @@ import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
@@ -113,6 +114,11 @@ void FundamentalTypeSymbol::Read(Reader& reader)
 {
     TypeSymbol::Read(reader);
     kind = static_cast<FundamentalTypeKind>(reader.GetBinaryStreamReader().ReadByte());
+}
+
+void FundamentalTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)

@@ -5,9 +5,13 @@
 
 module soul.cpp20.proj.ast;
 
+import std.filesystem;
+import util;
+import soul.cpp20.ast.node;
+
 namespace soul::cpp20::proj::ast {
 
-Project::Project(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_)
+Project::Project(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_), initialized(false), scanned(false), loaded(false)
 {
 }
 
@@ -27,12 +31,31 @@ void Project::AddSourceFilePath(const std::string& sourceFilePath)
     sourceFilePaths.push_back(sourceFilePath);
 }
 
-void Project::AddDependencies(soul::cpp20::symbols::ModuleMapper& moduleMapper)
+const std::string& Project::GetModuleSourceFilePath(int file) const
 {
+    return fileMap.GetFilePath(file);
+}
+
+void Project::InitModules()
+{
+    if (initialized) return;
+    initialized = true;
+    MapFiles();
+    Resize();
+}
+
+void Project::LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::cpp20::symbols::ModuleMapper& moduleMapper,
+    soul::cpp20::symbols::Symbols* symbols, soul::cpp20::symbols::EvaluationContext* evaluationContext)
+{
+    if (loaded) return;
+    loaded = true;
     for (const auto& module : modules)
     {
         moduleMap[module->Name()] = module.get();
     }
+    soul::cpp20::ast::SetNodeIdFactory(nodeIdFactory);
+    soul::cpp20::symbols::SetSymbols(symbols);
+    soul::cpp20::symbols::SetEvaluationContext(evaluationContext);
     for (const auto& module : modules)
     {
         for (const auto& exportedModuleName : module->ExportModuleNames())
@@ -112,6 +135,35 @@ soul::cpp20::symbols::Module* Project::ReleaseModule(int file)
     {
         throw std::runtime_error("invalid file index");
     }
+}
+
+void Project::MapFiles()
+{
+    root = util::Path::GetDirectoryName(filePath);
+    for (const auto& interfaceFileName : interfaceFilePaths)
+    {
+        std::string interfaceFilePath = util::GetFullPath(util::Path::Combine(root, interfaceFileName));
+        interfaceFiles.push_back(fileMap.AddFilePath(interfaceFilePath));
+    }
+    for (const auto& sourceFileName : sourceFilePaths)
+    {
+        std::string sourceFilePath = util::GetFullPath(util::Path::Combine(root, sourceFileName));
+        sourceFiles.push_back(fileMap.AddFilePath(sourceFilePath));
+    }
+}
+
+bool Project::UpToDate() const
+{
+    for (const auto& module : modules)
+    {
+        const std::string& moduleSourceFilePath = GetModuleSourceFilePath(module->File());
+        std::string moduleFilePath = soul::cpp20::symbols::MakeModuleFilePath(root, module->Name());
+        if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 } // namespace soul::cpp20::proj::ast

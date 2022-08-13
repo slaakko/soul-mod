@@ -127,7 +127,7 @@ std::string NodeKindStr(NodeKind nodeKind)
     return nodeKindStr[static_cast<int>(nodeKind)];
 }
 
-Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_), parent(nullptr)
+Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_), parent(nullptr), id(GetNextNodeId())
 {
 }
 
@@ -151,10 +151,12 @@ void Node::Clear()
 
 void Node::Write(Writer& writer)
 {
+    writer.GetBinaryStreamWriter().Write(id);
 }
 
 void Node::Read(Reader& reader)
 {
+    id = reader.GetBinaryStreamReader().ReadInt();
 }
 
 CompoundNode::CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
@@ -585,6 +587,7 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::importNode, new NodeFactory<ImportNode>());
     Register(NodeKind::importDeclarationNode, new NodeFactory<ImportDeclarationNode>());
     Register(NodeKind::modulePartitionNode, new NodeFactory<ModulePartitionNode>());
+    Register(NodeKind::moduleNode, new NodeFactory<ModuleNode>());
     Register(NodeKind::globalModuleFragmentNode, new NodeFactory<GlobalModuleFragmentNode>());
     Register(NodeKind::privateModuleFragmentNode, new NodeFactory<PrivateModuleFragmentNode>());
     // Qualifier:
@@ -682,6 +685,27 @@ void NodeFactoryCollection::Register(NodeKind kind, AbstractNodeFactory* factory
 Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos)
 {
     return NodeFactoryCollection::Instance().CreateNode(nodeKind, sourcePos);
+}
+
+void MakeNodeFactoryCollection()
+{
+    NodeFactoryCollection::Instance();
+}
+
+NodeIdFactory::NodeIdFactory() : nodeId(0)
+{
+}
+
+NodeIdFactory* nodeIdFactory = nullptr;
+
+void SetNodeIdFactory(NodeIdFactory* factory)
+{
+    nodeIdFactory = factory;
+}
+
+int32_t GetNextNodeId()
+{
+    return nodeIdFactory->GetNextNodeId();
 }
 
 } // namespace soul::cpp20::ast

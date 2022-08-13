@@ -12,6 +12,7 @@ import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
@@ -39,6 +40,11 @@ void ParameterSymbol::Resolve(SymbolTable& symbolTable)
 {
     Symbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+}
+
+void ParameterSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::functionSymbol, name_), returnType(nullptr), returnTypeId(util::nil_uuid())
@@ -85,6 +91,11 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
     {
         returnType = symbolTable.GetType(returnTypeId);
     }
+}
+
+void FunctionSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 } // namespace soul::cpp20::symbols

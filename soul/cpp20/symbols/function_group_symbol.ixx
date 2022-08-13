@@ -22,9 +22,11 @@ public:
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
     void AddFunction(FunctionSymbol* function);
+    const std::vector<FunctionSymbol*>& Functions() const { return functions; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
 private:
     std::vector<FunctionSymbol*> functions;
     std::vector<util::uuid> functionIds;

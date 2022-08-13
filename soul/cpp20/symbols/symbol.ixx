@@ -15,6 +15,7 @@ export namespace soul::cpp20::symbols {
 class Context;
 class Reader;
 class Writer;
+class Visitor;
 class SymbolTable;
 
 enum class ScopeKind : int32_t;
@@ -83,6 +84,7 @@ public:
     virtual void Write(Writer& writer);
     virtual void Read(Reader& reader);
     virtual void Resolve(SymbolTable& symbolTable);
+    virtual void Accept(Visitor& visitor) = 0;
     virtual Symbol* GetSingleSymbol() { return this; }
     Symbol* Parent() { return parent; }
     void SetParent(Symbol* parent_) { parent = parent_; }
@@ -105,6 +107,7 @@ public:
     bool IsTemplateDeclarationSymbol() const { return kind == SymbolKind::templateDeclarationSymbol; }
     bool IsTypenameConstraintSymbol() const { return kind == SymbolKind::typenameConstraintSymbol; }
     bool IsVariableSymbol() const { return kind == SymbolKind::variableSymbol; }
+    bool IsErrorTypeSymbol() const { return kind == SymbolKind::errorSymbol; }
     SymbolGroupKind GetSymbolGroupKind() const;
 private:
     SymbolKind kind;

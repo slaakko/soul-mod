@@ -6,6 +6,7 @@
 module soul.cpp20.symbols.reader;
 
 import soul.cpp20.symbols.symbol;
+import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
 
@@ -26,6 +27,7 @@ Symbol* Reader::ReadSymbol()
         std::u32string name = binaryStreamReader.ReadUtf32String();
         Symbol* symbol = CreateSymbol(kind, name);
         symbol->Read(*this);
+        soul::cpp20::symbols::AddSymbol(symbol);
         return symbol;
     }
 }

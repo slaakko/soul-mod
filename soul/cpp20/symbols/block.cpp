@@ -6,6 +6,7 @@
 module soul.cpp20.symbols.block;
 
 import soul.cpp20.symbols.context;
+import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
@@ -13,6 +14,11 @@ namespace soul::cpp20::symbols {
 BlockSymbol::BlockSymbol() : ContainerSymbol(SymbolKind::blockSymbol, std::u32string())
 {
     GetScope()->SetKind(ScopeKind::blockScope);
+}
+
+void BlockSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 void BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)

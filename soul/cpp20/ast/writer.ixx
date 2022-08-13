@@ -16,16 +16,18 @@ class Writer
 {
 public:
     Writer(const std::string& fileName);
-    util::BinaryStreamWriter& GetBinaryStreamWriter() { return binaryStreamWriter; }
+    Writer(util::BinaryStreamWriter* writerPtr_);
+    util::BinaryStreamWriter& GetBinaryStreamWriter() { return *writerPtr; }
     void Write(const soul::ast::SourcePos& sourcePos);
     void Write(NodeKind nodeKind);
     void Write(const std::u32string& str);
     void Write(bool value);
     void Write(Node* node);
 private:
-    util::FileStream fileStream;
-    util::BufferedStream bufferedStream;
-    util::BinaryStreamWriter binaryStreamWriter;
+    std::unique_ptr<util::FileStream> fileStream;
+    std::unique_ptr<util::BufferedStream> bufferedStream;
+    std::unique_ptr<util::BinaryStreamWriter> binaryStreamWriter;
+    util::BinaryStreamWriter* writerPtr;
 };
 
 } // namespace soul::cpp20::ast

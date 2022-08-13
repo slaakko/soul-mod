@@ -8,6 +8,7 @@ module soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.alias.type.symbol;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
@@ -91,6 +92,11 @@ void AliasGroupSymbol::Resolve(SymbolTable& symbolTable)
         AliasTypeSymbol* aliasType = symbolTable.GetAliasType(aliasTypeId);
         aliasTypeSymbols.push_back(aliasType);
     }
+}
+
+void AliasGroupSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 } // namespace soul::cpp20::symbols

@@ -277,14 +277,12 @@ parser TypeParser
                 {
                     context->PopFlags();
                     leaf.reset(simpleTemplateId);
-                    // TODO: context->GetSymbolTable()->MapNode(leaf.get(), context->GetSymbolTable()->MakeGenericTypeSymbol(), soul::cpp20::symbols::MapKind::nodeToSymbol);
                     return new soul::cpp20::ast::TypenameSpecifierNode(sourcePos, nns, leaf.release(), templateNode.release());
                 }
             |   Identifier(context):identifier
                 {
                     context->PopFlags();
                     leaf.reset(identifier);
-                    // TODO: context->GetSymbolTable()->MapNode(leaf.get(), context->GetSymbolTable()->MakeGenericTypeSymbol(), soul::cpp20::symbols::MapKind::nodeToSymbol);
                     return new soul::cpp20::ast::TypenameSpecifierNode(sourcePos, nns, leaf.release(), nullptr);
                 }
             )

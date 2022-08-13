@@ -24,3 +24,5 @@ export import soul.cpp20.symbols.templates;
 export import soul.cpp20.symbols.type.symbol;
 export import soul.cpp20.symbols.using_declaration;
 export import soul.cpp20.symbols.using_directive;
+export import soul.cpp20.symbols.value;
+export import soul.cpp20.symbols.visitor;

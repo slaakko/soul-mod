@@ -22,9 +22,11 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol);
     AliasTypeSymbol* GetAliasTypeSymbol(int arity) const;
+    const std::vector<AliasTypeSymbol*>& AliasTypeSymbols() const { return aliasTypeSymbols; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
 private:
     std::vector<AliasTypeSymbol*> aliasTypeSymbols;
     std::vector<util::uuid> aliasTypeIds;

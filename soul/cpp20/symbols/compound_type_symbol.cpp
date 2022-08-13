@@ -7,6 +7,7 @@ module soul.cpp20.symbols.compound.type.symbol;
 
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
@@ -39,6 +40,11 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     baseType = symbolTable.GetType(baseTypeId);
+}
+
+void CompoundTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations)

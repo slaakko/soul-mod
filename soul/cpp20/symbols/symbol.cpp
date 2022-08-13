@@ -405,7 +405,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         }
         case SymbolKind::errorSymbol:
         {
-            throw std::runtime_error("not implemented");
+            return new ErrorTypeSymbol();
         }
     }
     return nullptr;

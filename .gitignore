@@ -23,7 +23,9 @@ bind
 *.log
 *.ast
 *.classmap
+*.classmap.compressed
 *.org
+*.module
 setup.package.bin
 setup.package.index.xml
 bootstrap

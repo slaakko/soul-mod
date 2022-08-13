@@ -10,6 +10,7 @@ import soul.cpp20.symbols.type.resolver;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
@@ -39,6 +40,11 @@ void AliasTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     referredType = symbolTable.GetType(referredTypeId);
+}
+
+void AliasTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 class AliasDeclarationProcessor : public soul::cpp20::ast::DefaultVisitor

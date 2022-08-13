@@ -10,6 +10,9 @@ import std.filesystem;
 import soul.cpp20.symbols.namespaces;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
+import soul.cpp20.ast.reader;
+import soul.cpp20.ast.writer;
 
 namespace soul::cpp20::symbols {
 
@@ -21,6 +24,11 @@ std::string MakeModuleFilePath(const std::string& root, const std::string& modul
 Module::Module(const std::string& name_) : name(name_), symbolTable(), file(-1)
 {
     symbolTable.SetModule(this);
+}
+
+void Module::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 void Module::Import(ModuleMapper& moduleMapper)
@@ -114,6 +122,9 @@ void Module::Write(Writer& writer)
         writer.GetBinaryStreamWriter().Write(importedModuleName);
     }
     symbolTable.Write(writer);
+    soul::cpp20::ast::Writer astWriter(&writer.GetBinaryStreamWriter());
+    files.Write(astWriter);
+    symbolTable.WriteMaps(writer);
 }
 
 void Module::Read(Reader& reader, ModuleMapper& moduleMapper)
@@ -130,6 +141,9 @@ void Module::Read(Reader& reader, ModuleMapper& moduleMapper)
         AddImportModuleName(reader.GetBinaryStreamReader().ReadUtf8String());
     }
     symbolTable.Read(reader);
+    soul::cpp20::ast::Reader astReader(&reader.GetBinaryStreamReader());
+    files.Read(astReader);
+    symbolTable.ReadMaps(reader, astReader);
     Import(moduleMapper);
     symbolTable.Resolve();
 }
@@ -141,12 +155,14 @@ ModuleMapper::ModuleMapper()
 
 void ModuleMapper::AddModule(Module* module)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     moduleMap[module->Name()] = module;
     modules.push_back(std::unique_ptr<Module>(module));
 }
 
 Module* ModuleMapper::GetModule(const std::string& moduleName)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = moduleMap.find(moduleName);
     if (it != moduleMap.cend())
     {
@@ -168,6 +184,7 @@ Module* ModuleMapper::GetModule(const std::string& moduleName)
 
 void ModuleMapper::ClearModule(const std::string& moduleName)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     Module* module = nullptr;
     auto it = moduleMap.find(moduleName);
     if (it != moduleMap.cend())
@@ -196,6 +213,27 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
     moduleMap[moduleName] = modulePtr;
     modules.push_back(std::move(module));
     return modulePtr;
+}
+
+Module* currentModule = nullptr;
+
+Module* GetCurrentModule()
+{
+    return currentModule;
+}
+
+void SetCurrentModule(Module* module)
+{
+    currentModule = module;
+}
+
+void NodeDestroyed(soul::cpp20::ast::Node* node)
+{
+    Module* module = GetCurrentModule();
+    if (module)
+    {
+        module->GetSymbolTable()->RemoveNode(node);
+    }
 }
 
 } // namespace soul::cpp20::symbols

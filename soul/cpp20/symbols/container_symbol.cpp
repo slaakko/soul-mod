@@ -58,6 +58,11 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     {
         context->GetSymbolTable()->SetTypenameConstraintSymbol(symbol);
     }
+    if (symbol->IsErrorTypeSymbol())
+    {
+        ErrorTypeSymbol* errorSymbol = static_cast<ErrorTypeSymbol*>(symbol);
+        context->GetSymbolTable()->SetErrorTypeSymbol(errorSymbol);
+    }
 }
 
 std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
@@ -70,6 +75,7 @@ std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
     {
         if (i->get() == symbol)
         {
+            symbol = i->release();
             symbols.erase(i);
             return std::unique_ptr<Symbol>(symbol);
         }

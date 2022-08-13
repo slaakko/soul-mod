@@ -7,12 +7,13 @@ export module soul.cpp20.project.build;
 
 import std.core;
 import soul.cpp20.symbols.modules;
+import soul.cpp20.proj.ast;
 
 export namespace soul::cpp20::project::build {
 
 enum class BuildFlags : int32_t
 {
-    none = 0, multithreadedBuild = 1 << 0
+    none = 0, multithreadedBuild = 1 << 0, verbose = 1 << 1
 };
 
 constexpr BuildFlags operator|(BuildFlags left, BuildFlags right)
@@ -30,6 +31,8 @@ constexpr BuildFlags operator~(BuildFlags flags)
     return BuildFlags(~int32_t(flags));
 }
 
-void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& projectFilePath, BuildFlags flags);
+void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file);
+soul::cpp20::symbols::Module* GetModule(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& moduleName);
+void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags);
 
 } // namespace soul::cpp20::project::build

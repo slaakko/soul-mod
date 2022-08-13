@@ -94,6 +94,7 @@ public:
     Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     virtual ~Node();
     NodeKind Kind() const { return kind; }
+    void SetId(int32_t id_) { id = id_; }
     virtual std::u32string Str() const { return std::u32string(); }
     virtual NodeType Type() const { return NodeType::single; }
     virtual int Count() const { return 0; }
@@ -106,11 +107,13 @@ public:
     virtual void Clear();
     Node* Parent() const { return parent; }
     void SetParent(Node* parent_) { parent = parent_; }
+    int32_t Id() const { return id; }
     bool IsImportDeclarationNode() const { return kind == NodeKind::importDeclarationNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;
     Node* parent;
+    int32_t id;
 };
 
 class CompoundNode : public Node
@@ -184,6 +187,18 @@ private:
     std::vector<Node*> items;
 };
 
+class NodeIdFactory
+{
+public:
+    NodeIdFactory();
+    int32_t GetNextNodeId() { return nodeId++; }
+private:
+    int32_t nodeId;
+};
+
+void MakeNodeFactoryCollection();
+void SetNodeIdFactory(NodeIdFactory* factory);
 Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos);
+int32_t GetNextNodeId();
 
 } // namespace soul::cpp20::ast

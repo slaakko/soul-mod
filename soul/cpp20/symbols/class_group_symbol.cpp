@@ -8,6 +8,7 @@ module soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
@@ -91,6 +92,11 @@ void ClassGroupSymbol::Resolve(SymbolTable& symbolTable)
         ClassTypeSymbol* cls = symbolTable.GetClass(classId);
         classes.push_back(cls);
     }
+}
+
+void ClassGroupSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 } // namespace soul::cpp20::symbols

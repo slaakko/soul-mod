@@ -278,30 +278,23 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
     }
     else
     {
-        throw Exception("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
+        type = context->GetSymbolTable()->GetErrorTypeSymbol();
     }
 }
 
 void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
 {
     TypeSymbol* typeSymbol = soul::cpp20::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context);
-    if (typeSymbol->IsClassTypeSymbol())
+    ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
+    std::vector<TypeSymbol*> templateArgs;
+    int n = node.Items().size();
+    for (int i = 0; i < n; ++i)
     {
-        ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
-        std::vector<TypeSymbol*> templateArgs;
-        int n = node.Items().size();
-        for (int i = 0; i < n; ++i)
-        {
-            TypeSymbol* templateArg = soul::cpp20::symbols::ResolveType(node.Items()[i], DeclarationFlags::none, context);
-            templateArgs.push_back(templateArg);
-        }
-        SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(classTemplate, templateArgs);
-        type = specialization;
+        TypeSymbol* templateArg = soul::cpp20::symbols::ResolveType(node.Items()[i], DeclarationFlags::none, context);
+        templateArgs.push_back(templateArg);
     }
-    else
-    {
-        throw Exception("symbol '" + util::ToUtf8(typeSymbol->Name()) + "' is not a class type symbol", node.GetSourcePos(), context);
-    }
+    SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(classTemplate, templateArgs);
+    type = specialization;
 }
 
 void TypeResolver::Visit(soul::cpp20::ast::TypeIdNode& node)

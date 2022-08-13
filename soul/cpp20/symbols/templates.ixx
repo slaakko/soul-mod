@@ -16,6 +16,7 @@ class TypenameConstraintSymbol : public TypeSymbol
 public:
     TypenameConstraintSymbol();
     std::string SymbolKindStr() const override { return "typename constraint symbol"; }
+    void Accept(Visitor& visitor) override;
 };
 
 class TemplateParameterSymbol : public TypeSymbol
@@ -29,6 +30,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
 private:
     Symbol* constraint;
     util::uuid constraintId;
@@ -42,6 +44,7 @@ public:
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string SymbolKindStr() const override { return "template declaration symbol"; }
     const std::vector<TemplateParameterSymbol*>& TemplateParameters() const { return templateParameters; }
+    void Accept(Visitor& visitor) override;
 private:
     std::vector<TemplateParameterSymbol*> templateParameters;
 };

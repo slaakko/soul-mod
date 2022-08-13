@@ -10,11 +10,17 @@ import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
 TypenameConstraintSymbol::TypenameConstraintSymbol() : TypeSymbol(SymbolKind::typenameConstraintSymbol, std::u32string())
 {
+}
+
+void TypenameConstraintSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 TemplateParameterSymbol::TemplateParameterSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::templateParameterSymbol, name_), constraint(), index(-1)
@@ -46,6 +52,11 @@ void TemplateParameterSymbol::Resolve(SymbolTable& symbolTable)
     constraint = symbolTable.GetConstraint(constraintId);
 }
 
+void TemplateParameterSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 TemplateDeclarationSymbol::TemplateDeclarationSymbol() : ContainerSymbol(SymbolKind::templateDeclarationSymbol, std::u32string())
 {
     GetScope()->SetKind(ScopeKind::templateDeclarationScope);
@@ -58,6 +69,11 @@ void TemplateDeclarationSymbol::AddSymbol(Symbol* symbol, const soul::ast::Sourc
     {
         templateParameters.push_back(static_cast<TemplateParameterSymbol*>(symbol));
     }
+}
+
+void TemplateDeclarationSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 void BeginTemplateDeclaration(soul::cpp20::ast::Node* node, Context* context)

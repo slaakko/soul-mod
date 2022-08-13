@@ -161,6 +161,8 @@
     <ClCompile Include="ast.ixx" />
     <ClCompile Include="build.cpp" />
     <ClCompile Include="build.ixx" />
+    <ClCompile Include="init.cpp" />
+    <ClCompile Include="init.ixx" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="parser.ixx" />
     <ClCompile Include="project.lexer.cpp" />

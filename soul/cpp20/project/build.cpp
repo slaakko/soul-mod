@@ -7,7 +7,6 @@ module soul.cpp20.project.build;
 
 import util;
 import soul.cpp20.project.parser;
-import soul.cpp20.proj.ast;
 import soul.cpp20.lexer;
 import cpp20.parser.spg.rules;
 import soul.cpp20.parser.module_dependency;
@@ -146,29 +145,23 @@ void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file)
     project->SetModule(file, visitor.GetModule());
 }
 
-void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& projectFilePath, BuildFlags flags)
+void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags)
 {
-    std::unique_ptr<soul::cpp20::proj::ast::Project> project = soul::cpp20::project::parser::ParseProjectFile(projectFilePath);
-    std::string root = util::Path::GetDirectoryName(project->FilePath());
-    std::vector<int> interfaceFiles;
-    for (const auto& interfaceFileName : project->InterfaceFilePaths())
+    soul::cpp20::ast::NodeIdFactory nodeIdFactory;
+    soul::cpp20::ast::SetNodeIdFactory(&nodeIdFactory);
+    soul::cpp20::symbols::Symbols symbols;
+    soul::cpp20::symbols::EvaluationContext evaluationContext;
+    project->InitModules();
+    if (!project->Scanned())
     {
-        std::string interfaceFilePath = util::GetFullPath(util::Path::Combine(root, interfaceFileName));
-        interfaceFiles.push_back(project->GetFileMap().AddFilePath(interfaceFilePath));
+        project->SetScanned();
+        for (int file : project->InterfaceFiles())
+        {
+            ScanDependencies(project, file);
+        }
     }
-    std::vector<int> sourceFiles;
-    for (const auto& sourceFileName : project->SourceFilePaths())
-    {
-        std::string sourceFilePath = util::GetFullPath(util::Path::Combine(root, sourceFileName));
-        sourceFiles.push_back(project->GetFileMap().AddFilePath(sourceFilePath));
-    }
-    project->Resize();
-    for (int file : interfaceFiles)
-    {
-        ScanDependencies(project.get(), file);
-    }
-    project->AddDependencies(moduleMapper);
-    std::vector<int> topologicalOrder = MakeTopologicalOrder(interfaceFiles, project.get());
+    project->LoadModules(&nodeIdFactory, moduleMapper, &symbols, &evaluationContext);
+    std::vector<int> topologicalOrder = MakeTopologicalOrder(project->InterfaceFiles(), project);
     for (int file : topologicalOrder)
     {
         soul::cpp20::symbols::Module* module = project->GetModule(file);
@@ -183,13 +176,24 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& 
         lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
         soul::cpp20::symbols::Context context;
         soul::cpp20::symbols::Module* module = project->GetModule(file);
+        soul::cpp20::symbols::SetCurrentModule(module);
         module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<soul::cpp20::ast::Node> node = soul::cpp20::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
-        module->Write(root);
+        module->Files().AddFile(new soul::cpp20::ast::File(util::Path::GetFileName(filePath), node.release()));
+        module->Write(project->Root());
         moduleMapper.AddModule(project->ReleaseModule(file));
+        if ((flags & BuildFlags::verbose) != BuildFlags::none)
+        {
+            std::cout << filePath << " -> " << soul::cpp20::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
+        }
     }
+}
+
+soul::cpp20::symbols::Module* GetModule(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& moduleName)
+{
+    return moduleMapper.GetModule(moduleName);
 }
 
 } // namespace soul::cpp20::project::build

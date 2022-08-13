@@ -53,6 +53,7 @@ class ParameterSymbol;
 class VariableSymbol;
 class Reader;
 class Writer;
+class Visitor;
 
 enum class SymbolGroupKind : int32_t;
 
@@ -68,9 +69,14 @@ public:
     void Write(Writer& writer);
     void Read(Reader& reader);
     void Resolve();
+    void Accept(Visitor& visitor);
+    void WriteMaps(Writer& writer);
+    void ReadMaps(Reader& reader, soul::cpp20::ast::Reader& astReader);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
     void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
+    TypeSymbol* GetErrorTypeSymbol() { return errorTypeSymbol; }
+    void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) { errorTypeSymbol = errorTypeSymbol_; }
     Scope* CurrentScope() const { return currentScope; }
     void SetCurrentScope(Scope* scope) { currentScope = scope; }
     void PushScope();
@@ -97,7 +103,7 @@ public:
     void AddUsingDeclaration(soul::cpp20::ast::Node* node, Symbol* symbol, Context* context);
     void AddUsingDirective(NamespaceSymbol* ns, soul::cpp20::ast::Node* node, Context* context);
     TypeSymbol* MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations);
-    SpecializationSymbol* MakeSpecialization(ClassTypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments);
+    SpecializationSymbol* MakeSpecialization(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     void MapNode(soul::cpp20::ast::Node* node);
@@ -105,6 +111,7 @@ public:
     void MapNode(soul::cpp20::ast::Node* node, Symbol* symbol, MapKind kind);
     soul::cpp20::ast::Node* GetNodeNothrow(Symbol* symbol) const;
     soul::cpp20::ast::Node* GetNode(Symbol* symbol) const;
+    void RemoveNode(soul::cpp20::ast::Node* node);
     Symbol* GetSymbolNothrow(soul::cpp20::ast::Node* node) const;
     Symbol* GetSymbol(soul::cpp20::ast::Node* node) const;
     TypeSymbol* GetTypeNothrow(const util::uuid& id) const;
@@ -142,12 +149,29 @@ private:
     std::stack<Scope*> scopeStack;
     Scope* currentScope;
     std::map<soul::cpp20::ast::Node*, Symbol*> nodeSymbolMap;
+    std::map<soul::cpp20::ast::Node*, Symbol*> allNodeSymbolMap;
     std::map<Symbol*, soul::cpp20::ast::Node*> symbolNodeMap;
+    std::map<Symbol*, soul::cpp20::ast::Node*> allSymbolNodeMap;
     std::map<util::uuid, TypeSymbol*> typeMap;
     std::map<util::uuid, FunctionSymbol*> functionMap;
     std::map<util::uuid, VariableSymbol*> variableMap;
     std::map<util::uuid, Symbol*> constraintMap;
     Symbol* typenameConstraintSymbol;
+    TypeSymbol* errorTypeSymbol;
 };
+
+class Symbols
+{
+public:
+    Symbols();
+    void AddSymbol(Symbol* symbol);
+    Symbol* GetSymbol(const util::uuid& symbolId);
+private:
+    std::map<util::uuid, Symbol*> symbolMap;
+};
+
+void SetSymbols(Symbols* symbols_);
+void AddSymbol(Symbol* symbol);
+Symbol* GetSymbol(const util::uuid& symbolId);
 
 } // namespace soul::cpp20::symbols

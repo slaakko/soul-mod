@@ -23,9 +23,11 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddClass(ClassTypeSymbol* classTypeSymbol);
     ClassTypeSymbol* GetClass(int arity) const;
+    const std::vector<ClassTypeSymbol*>& Classes() const { return classes; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
 private:
     std::vector<ClassTypeSymbol*> classes;
     std::vector<util::uuid> classIds;

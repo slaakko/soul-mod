@@ -15,6 +15,7 @@ class ConceptSymbol : public Symbol
 public:
     ConceptSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "concept symbol"; }
+    void Accept(Visitor& visitor) override;
 };
 
 } // namespace soul::cpp20::symbols

@@ -6,6 +6,7 @@
 module soul.cpp20.symbols.concept_group.symbol;
 
 import soul.cpp20.symbols.concepts;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
@@ -23,6 +24,11 @@ Symbol* ConceptGroupSymbol::GetSingleSymbol()
     {
         return this;
     }
+}
+
+void ConceptGroupSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 } // namespace soul::cpp20::symbols

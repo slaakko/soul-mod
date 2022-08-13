@@ -27,15 +27,32 @@ public:
     soul::cpp20::symbols::Module* GetModule(const std::string& moduleName) const;
     soul::cpp20::symbols::Module* GetModule(int file) const;
     soul::cpp20::symbols::Module* ReleaseModule(int file);
-    void AddDependencies(soul::cpp20::symbols::ModuleMapper& moduleMapper);
+    void MapFiles();
+    const std::string& Root() const { return root; }
+    const std::vector<int>& InterfaceFiles() const { return interfaceFiles; }
+    const std::vector<int>& SourceFiles() const { return sourceFiles; }
+    const std::string& GetModuleSourceFilePath(int file) const;
+    void InitModules();
+    void LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::cpp20::symbols::ModuleMapper& moduleMapper,
+        soul::cpp20::symbols::Symbols* symbols, soul::cpp20::symbols::EvaluationContext* evaluationContext);
+    bool UpToDate() const;
+    bool Scanned() const { return scanned; }
+    void SetScanned() { scanned = true; }
+    const std::vector<std::unique_ptr<soul::cpp20::symbols::Module>>& Modules() const { return modules; }
 private:
     std::string filePath;
+    std::string root;
     std::string name;
     std::vector<std::string> interfaceFilePaths;
     std::vector<std::string> sourceFilePaths;
     soul::lexer::FileMap fileMap;
     std::vector<std::unique_ptr<soul::cpp20::symbols::Module>> modules;
     std::map<std::string, soul::cpp20::symbols::Module*> moduleMap;
+    std::vector<int> interfaceFiles;
+    std::vector<int> sourceFiles;
+    bool initialized;
+    bool scanned;
+    bool loaded;
 };
 
 } // namespace soul::cpp20::proj::ast

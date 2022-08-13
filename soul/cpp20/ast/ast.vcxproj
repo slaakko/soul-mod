@@ -169,6 +169,8 @@
     <ClCompile Include="enum.ixx" />
     <ClCompile Include="expression.cpp" />
     <ClCompile Include="expression.ixx" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="file.ixx" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="function.ixx" />
     <ClCompile Include="identifier.cpp" />

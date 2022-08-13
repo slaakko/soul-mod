@@ -34,6 +34,7 @@ struct ClassParser
     static soul::parser::Match MemberSpecification(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
     static soul::parser::Match MemberDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberDeclSpecifiers(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match RetMemberDeclSpecifiers(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberFunctionDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberTemplateDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberDeclaratorList(Lexer& lexer, soul::cpp20::symbols::Context* context);

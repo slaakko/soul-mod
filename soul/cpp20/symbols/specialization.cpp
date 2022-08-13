@@ -7,6 +7,7 @@ module soul.cpp20.symbols.specialization;
 
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
@@ -15,7 +16,7 @@ SpecializationSymbol::SpecializationSymbol(const std::u32string& name_) : TypeSy
 {
 }
 
-void SpecializationSymbol::SetClassTemplate(ClassTypeSymbol* classTemplate_)
+void SpecializationSymbol::SetClassTemplate(TypeSymbol* classTemplate_)
 {
     classTemplate = classTemplate_;
 }
@@ -62,7 +63,12 @@ void SpecializationSymbol::Resolve(SymbolTable& symbolTable)
     }
 }
 
-std::u32string MakeSpecializationName(ClassTypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments)
+void SpecializationSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+std::u32string MakeSpecializationName(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments)
 {
     std::u32string specializationName;
     specializationName.append(classTemplate->Name());

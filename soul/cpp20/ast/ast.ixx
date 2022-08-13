@@ -11,6 +11,7 @@ export import soul.cpp20.ast.concepts;
 export import soul.cpp20.ast.declaration;
 export import soul.cpp20.ast.enums;
 export import soul.cpp20.ast.expression;
+export import soul.cpp20.ast.file;
 export import soul.cpp20.ast.function;
 export import soul.cpp20.ast.identifier;
 export import soul.cpp20.ast.lambda;

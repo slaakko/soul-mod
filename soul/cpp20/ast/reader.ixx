@@ -16,16 +16,20 @@ class Reader
 {
 public:
     Reader(const std::string& fileName);
-    util::BinaryStreamReader& GetBinaryStreamReader() { return binaryStreamReader; }
+    Reader(util::BinaryStreamReader* readerPtr_);
+    util::BinaryStreamReader& GetBinaryStreamReader() { return *readerPtr; }
     soul::ast::SourcePos ReadSourcePos();
     NodeKind ReadNodeKind();
     std::u32string ReadStr();
     bool ReadBool();
     Node* ReadNode();
+    Node* GetNode(int32_t nodeId) const;
 private:
-    util::FileStream fileStream;
-    util::BufferedStream bufferedStream;
-    util::BinaryStreamReader binaryStreamReader;
+    std::unique_ptr<util::FileStream> fileStream;
+    std::unique_ptr<util::BufferedStream> bufferedStream;
+    std::unique_ptr<util::BinaryStreamReader> binaryStreamReader;
+    util::BinaryStreamReader* readerPtr;
+    std::map<int32_t, Node*> nodeMap;
 };
 
 } // namespace soul::cpp20::ast

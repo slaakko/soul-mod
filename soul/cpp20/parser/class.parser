@@ -233,6 +233,16 @@ parser ClassParser
                     return memberDeclarationNode;
                 }
             }
+        |   (AttributeSpecifierSeq(context):attributes2{ sourcePos = lexer.GetSourcePos(pos); })? 
+            RetMemberDeclSpecifiers(context):declSpecifiers2{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); declSpecifiersNode.reset(declSpecifiers2); }
+            MemberDeclaratorList(context):declarators2{ declaratorsNode.reset(declarators2); }
+            Semicolon:semicolon2
+            {
+                soul::cpp20::ast::MemberDeclarationNode* memberDeclarationNode = new soul::cpp20::ast::MemberDeclarationNode(sourcePos, attributes2, declSpecifiersNode.release(), 
+                    declaratorsNode.release(), semicolon2);
+                soul::cpp20::symbols::ProcessMemberDeclaration(memberDeclarationNode, context);
+                return memberDeclarationNode;
+            }
         |   MemberFunctionDefinition(context):memberFunctionDefinition{ return memberFunctionDefinition; }
         |   UsingDeclaration(context):usingDeclaration{ return usingDeclaration; }
         |   UsingEnumDeclaration(context):usingEnumDeclaration{ return usingEnumDeclaration; }
@@ -247,6 +257,11 @@ parser ClassParser
 
     MemberDeclSpecifiers(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
         ::= DeclSpecifierSeq(context):declSpecifiers{ return declSpecifiers; }
+        ;
+
+    RetMemberDeclSpecifiers(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ context->PushSetFlag(ContextFlags::retMemberDeclSpecifiers); }
+            DeclSpecifierSeq(context):declSpecifiers{ context->PopFlags(); return declSpecifiers; } / { context->PopFlags(); }
         ;
 
     MemberFunctionDefinition(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*

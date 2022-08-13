@@ -7,7 +7,15 @@ module soul.cpp20.ast.writer;
 
 namespace soul::cpp20::ast {
 
-Writer::Writer(const std::string& fileName) : fileStream(fileName, util::OpenMode::binary | util::OpenMode::write), bufferedStream(fileStream), binaryStreamWriter(bufferedStream)
+Writer::Writer(const std::string& fileName) : 
+    fileStream(new util::FileStream(fileName, util::OpenMode::binary | util::OpenMode::write)),
+    bufferedStream(new util::BufferedStream(*fileStream)), 
+    binaryStreamWriter(new util::BinaryStreamWriter(*bufferedStream)),
+    writerPtr(binaryStreamWriter.get())
+{
+}
+
+Writer::Writer(util::BinaryStreamWriter* writerPtr_) : writerPtr(writerPtr_)
 {
 }
 
@@ -15,28 +23,28 @@ void Writer::Write(const soul::ast::SourcePos& sourcePos)
 {
     if (sourcePos.IsValid())
     {
-        binaryStreamWriter.WriteULEB128UInt(sourcePos.line);
-        binaryStreamWriter.WriteULEB128UInt(sourcePos.col);
+        writerPtr->WriteULEB128UInt(sourcePos.line);
+        writerPtr->WriteULEB128UInt(sourcePos.col);
     }
     else
     {
-        binaryStreamWriter.WriteULEB128UInt(0);
+        writerPtr->WriteULEB128UInt(0);
     }
 }
 
 void Writer::Write(NodeKind nodeKind)
 {
-    binaryStreamWriter.WriteULEB128UInt(static_cast<uint32_t>(nodeKind));
+    writerPtr->WriteULEB128UInt(static_cast<uint32_t>(nodeKind));
 }
 
 void Writer::Write(const std::u32string& str)
 {
-    binaryStreamWriter.Write(str);
+    writerPtr->Write(str);
 }
 
 void Writer::Write(bool value)
 {
-    binaryStreamWriter.Write(value);
+    writerPtr->Write(value);
 }
 
 void Writer::Write(Node* node)

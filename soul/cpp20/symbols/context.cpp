@@ -55,7 +55,7 @@ void Context::PushResetFlag(ContextFlags flag)
 
 bool Context::IsConstructorNameNode(soul::cpp20::ast::Node* node) const
 {
-    if (!GetFlag(ContextFlags::parsingParameters))
+    if (!GetFlag(ContextFlags::parsingParameters) && !GetFlag(ContextFlags::retMemberDeclSpecifiers))
     {
         Scope* currentScope = symbolTable->CurrentScope();
         if (currentScope->IsClassScope())

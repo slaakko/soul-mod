@@ -112,7 +112,6 @@ parser IdentifierParser
         ::= Identifier(context):id
             { 
                 identifier.reset(id);
-                //context->GetSymbolTable()->MapNode(identifier.get(), context->GetSymbolTable()->MakeGenericTypeSymbol(), soul::cpp20::symbols::MapKind::nodeToSymbol);
                 return identifier.release(); 
             }
         ;

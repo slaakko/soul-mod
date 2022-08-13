@@ -22,6 +22,7 @@ public:
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     const std::vector<Symbol*>& BaseClasses() const { return baseClasses; }
     void AddBaseClass(Symbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    void Accept(Visitor& visitor) override;
 private:
     std::vector<Symbol*> baseClasses;
 };

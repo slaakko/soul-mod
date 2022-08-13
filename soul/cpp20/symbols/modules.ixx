@@ -8,11 +8,13 @@ export module soul.cpp20.symbols.modules;
 import std.core;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.compound.type.symbol;
+import soul.cpp20.ast.file;
 
 export namespace soul::cpp20::symbols {
 
 class Writer;
 class Reader;
+class Visitor;
 
 std::string MakeModuleFilePath(const std::string& root, const std::string& moduleName);
 
@@ -23,6 +25,7 @@ class Module
 public:
     Module(const std::string& name_);
     const std::string& Name() const { return name; }
+    void Accept(Visitor& visitor);
     void Import(ModuleMapper& moduleMapper);
     void Import(Module* that, ModuleMapper& moduleMapper);
     void Write(const std::string& root);
@@ -42,6 +45,7 @@ public:
     const std::vector<Module*>& ImportedModules() const { return importedModules; }
     void AddDependsOnModule(Module* dependsOnModule);
     const std::vector<Module*>& DependsOnModules() const { return dependsOnModules; }
+    soul::cpp20::ast::Files& Files() { return files; }
 private:
     int file;
     std::string name;
@@ -51,6 +55,7 @@ private:
     std::vector<Module*> importedModules;
     SymbolTable symbolTable;
     std::vector<Module*> dependsOnModules;
+    soul::cpp20::ast::Files files;
 };
 
 class ModuleMapper
@@ -65,6 +70,11 @@ private:
     std::map<std::string, Module*> moduleMap;
     std::vector<std::unique_ptr<Module>> modules;
     std::vector<std::string> roots;
+    std::recursive_mutex mtx;
 };
+
+Module* GetCurrentModule();
+void SetCurrentModule(Module* module);
+void NodeDestroyed(soul::cpp20::ast::Node* node);
 
 } // namespace soul::cpp20::symbols

@@ -16,7 +16,7 @@ namespace util {
 
 std::string SoulVersionStr()
 {
-    return "4.0.0";
+    return "4.1.0";
 }
 
 std::string SoulRoot()

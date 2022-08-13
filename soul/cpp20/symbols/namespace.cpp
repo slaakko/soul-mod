@@ -7,6 +7,7 @@ module soul.cpp20.symbols.namespaces;
 
 import soul.cpp20.ast;
 import soul.cpp20.symbols.context;
+import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
@@ -57,6 +58,11 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
     }
     currentScope->Import(that->GetScope());
     symbolTable->EndNamespace();
+}
+
+void NamespaceSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 class NamespaceCreator : public soul::cpp20::ast::DefaultVisitor

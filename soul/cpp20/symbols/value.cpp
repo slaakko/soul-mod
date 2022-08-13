@@ -8,6 +8,7 @@ module soul.cpp20.symbols.value;
 import util.unicode;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
@@ -70,6 +71,11 @@ void BoolValue::Read(Reader& reader)
     value = reader.GetBinaryStreamReader().ReadBool();
 }
 
+void BoolValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 IntegerValue::IntegerValue() : Value(SymbolKind::integerValueSymbol, std::u32string(U"0")), value(0)
 {
 }
@@ -108,6 +114,11 @@ void IntegerValue::Read(Reader& reader)
 {
     Value::Read(reader);
     value = reader.GetBinaryStreamReader().ReadLong();
+}
+
+void IntegerValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 FloatingValue::FloatingValue() : Value(SymbolKind::floatingValueSymbol, std::u32string(U"0.0")), value(0.0)
@@ -150,6 +161,11 @@ void FloatingValue::Read(Reader& reader)
     value = reader.GetBinaryStreamReader().ReadDouble();
 }
 
+void FloatingValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 EvaluationContext::EvaluationContext() : trueValue(true, U"true"), falseValue(false, U"false")
 {
 }
@@ -159,12 +175,6 @@ void EvaluationContext::Init()
     integerValueMap.clear();
     floatingValueMap.clear();
     values.clear();
-}
-
-EvaluationContext& EvaluationContext::Instance()
-{
-    static EvaluationContext instance;
-    return instance;
 }
 
 BoolValue* EvaluationContext::GetBoolValue(bool value)
@@ -234,9 +244,16 @@ void EvaluationContext::Read(Reader& reader)
     }
 }
 
+EvaluationContext* evaluationContext = nullptr;
+
+void SetEvaluationContext(EvaluationContext* evaluationContext_)
+{
+    evaluationContext = evaluationContext_;
+}
+
 EvaluationContext& GetEvaluationContext()
 {
-    return EvaluationContext::Instance();
+    return *evaluationContext;
 }
 
 } // namespace soul::cpp20::symbols

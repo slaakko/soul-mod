@@ -22,6 +22,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
 private:
     TypeSymbol* baseType;
     Derivations derivations;

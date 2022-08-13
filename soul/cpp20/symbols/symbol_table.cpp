@@ -9,6 +9,7 @@ module;
 module soul.cpp20.symbols.symbol.table;
 
 import util.unicode;
+import util.uuid;
 import soul.cpp20.symbols.alias.type.symbol;
 import soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
@@ -29,11 +30,21 @@ import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.specialization;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
-SymbolTable::SymbolTable() : module(nullptr), globalNs(new NamespaceSymbol(std::u32string())), currentScope(globalNs->GetScope()), typenameConstraintSymbol(nullptr)
+SymbolTable::SymbolTable() : 
+    module(nullptr), 
+    globalNs(new NamespaceSymbol(std::u32string())), currentScope(globalNs->GetScope()), 
+    typenameConstraintSymbol(nullptr),
+    errorTypeSymbol(nullptr)
 {
+}
+
+void SymbolTable::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 void SymbolTable::PushScope()
@@ -86,6 +97,7 @@ void SymbolTable::Import(const SymbolTable& that)
     ImportVariableMap(that);
     ImportConstraintMap(that);
     typenameConstraintSymbol = that.typenameConstraintSymbol;
+    errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
 }
 
@@ -115,17 +127,17 @@ void SymbolTable::ImportFundamentalTypeMap(const SymbolTable& that)
 
 void SymbolTable::ImportNodeSymbolMap(const SymbolTable& that)
 {
-    for (const auto& p : that.nodeSymbolMap)
+    for (const auto& p : that.allNodeSymbolMap)
     {
-        nodeSymbolMap.insert(p);
+        allNodeSymbolMap.insert(p);
     }
 }
 
 void SymbolTable::ImportSymbolNodeMap(const SymbolTable& that)
 {
-    for (const auto& p : that.symbolNodeMap)
+    for (const auto& p : that.allSymbolNodeMap)
     {
-        symbolNodeMap.insert(p);
+        allSymbolNodeMap.insert(p);
     }
 }
 
@@ -158,6 +170,54 @@ void SymbolTable::ImportConstraintMap(const SymbolTable& that)
     for (const auto& p : that.constraintMap)
     {
         constraintMap.insert(p);
+    }
+}
+
+void SymbolTable::WriteMaps(Writer& writer)
+{
+    uint32_t nns = nodeSymbolMap.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(nns);
+    for (const auto& m : nodeSymbolMap)
+    {
+        int32_t nodeId = m.first->Id();
+        writer.GetBinaryStreamWriter().Write(nodeId);
+        const util::uuid& uuid = m.second->Id();
+        writer.GetBinaryStreamWriter().Write(uuid);
+    }
+    uint32_t nsn = symbolNodeMap.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(nsn);
+    for (const auto& m : symbolNodeMap)
+    {
+        const util::uuid& uuid = m.first->Id();
+        writer.GetBinaryStreamWriter().Write(uuid);
+        int32_t nodeId = m.second->Id();
+        writer.GetBinaryStreamWriter().Write(nodeId);
+    }
+}
+
+void SymbolTable::ReadMaps(Reader& reader, soul::cpp20::ast::Reader& astReader)
+{
+    uint32_t nns = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < nns; ++i)
+    {
+        int32_t nodeId = reader.GetBinaryStreamReader().ReadInt();
+        util::uuid symbolId;
+        reader.GetBinaryStreamReader().ReadUuid(symbolId);
+        soul::cpp20::ast::Node* node = astReader.GetNode(nodeId);
+        Symbol* symbol = soul::cpp20::symbols::GetSymbol(symbolId);
+        nodeSymbolMap[node] = symbol;
+        allNodeSymbolMap[node] = symbol;
+    }
+    uint32_t nsn = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < nsn; ++i)
+    {
+        util::uuid symbolId;
+        reader.GetBinaryStreamReader().ReadUuid(symbolId);
+        int32_t nodeId = reader.GetBinaryStreamReader().ReadInt();
+        Symbol* symbol = soul::cpp20::symbols::GetSymbol(symbolId);
+        soul::cpp20::ast::Node* node = astReader.GetNode(nodeId);
+        symbolNodeMap[symbol] = node;
+        allSymbolNodeMap[symbol] = node;
     }
 }
 
@@ -271,17 +331,19 @@ void SymbolTable::MapNode(soul::cpp20::ast::Node* node, Symbol* symbol, MapKind 
     if ((kind & MapKind::nodeToSymbol) != MapKind::none)
     {
         nodeSymbolMap[node] = symbol;
+        allNodeSymbolMap[node] = symbol;
     }
     if ((kind & MapKind::symbolToNode) != MapKind::none)
     {
         symbolNodeMap[symbol] = node;
+        allSymbolNodeMap[symbol] = node;
     }
 }
 
 soul::cpp20::ast::Node* SymbolTable::GetNodeNothrow(Symbol* symbol) const
 {
-    auto it = symbolNodeMap.find(symbol);
-    if (it != symbolNodeMap.cend())
+    auto it = allSymbolNodeMap.find(symbol);
+    if (it != allSymbolNodeMap.cend())
     {
         return it->second;
     }
@@ -304,10 +366,15 @@ soul::cpp20::ast::Node* SymbolTable::GetNode(Symbol* symbol) const
     }
 }
 
+void SymbolTable::RemoveNode(soul::cpp20::ast::Node* node)
+{
+    nodeSymbolMap.erase(node);
+}
+
 Symbol* SymbolTable::GetSymbolNothrow(soul::cpp20::ast::Node* node) const
 {
-    auto it = nodeSymbolMap.find(node);
-    if (it != nodeSymbolMap.cend())
+    auto it = allNodeSymbolMap.find(node);
+    if (it != allNodeSymbolMap.cend())
     {
         return it->second;
     }
@@ -374,15 +441,6 @@ void SymbolTable::AddVariable(const std::u32string& name, soul::cpp20::ast::Node
 void SymbolTable::AddAliasType(soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context)
 {
     std::u32string id = node->Str();
-    Symbol* symbol = currentScope->Lookup(id, SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
-    if (symbol)
-    {
-        if (!symbol->IsAliasGroupSymbol())
-        {
-            throw Exception("name of alias type symbol '" + util::ToUtf8(id) + "' conflicts with earlier declaration '" + util::ToUtf8(symbol->FullName()) + "'", 
-                node->GetSourcePos(), context);
-        }
-    }
     AliasGroupSymbol* aliasGroup = currentScope->GroupScope()->GetOrInsertAliasGroup(id, node->GetSourcePos(), context);
     AliasTypeSymbol* aliasTypeSymbol = new AliasTypeSymbol(id, type);
     currentScope->AddSymbol(aliasTypeSymbol, node->GetSourcePos(), context);
@@ -514,7 +572,6 @@ void SymbolTable::BeginTemplateDeclaration(soul::cpp20::ast::Node* node, Context
 {
     TemplateDeclarationSymbol* templateDeclarationSymbol = new TemplateDeclarationSymbol();
     currentScope->AddSymbol(templateDeclarationSymbol, node->GetSourcePos(), context);
-    MapNode(node, templateDeclarationSymbol);
     BeginScope(templateDeclarationSymbol->GetScope());
 }
 
@@ -592,7 +649,7 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, const Derivation
     return compoundType;
 }
 
-SpecializationSymbol* SymbolTable::MakeSpecialization(ClassTypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments)
+SpecializationSymbol* SymbolTable::MakeSpecialization(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments)
 {
     std::unique_ptr<SpecializationSymbol> symbol(new SpecializationSymbol(MakeSpecializationName(classTemplate, templateArguments)));
     symbol->SetClassTemplate(classTemplate);
@@ -748,10 +805,51 @@ Symbol* SymbolTable::GetConstraint(const util::uuid& id) const
 void SymbolTable::CreateCoreSymbols()
 {
     typenameConstraintSymbol = new TypenameConstraintSymbol();
+    errorTypeSymbol = new ErrorTypeSymbol();
     MapConstraint(typenameConstraintSymbol);
     Context context;
     context.SetSymbolTable(this);
     globalNs->AddSymbol(typenameConstraintSymbol, soul::ast::SourcePos(), &context);
+    globalNs->AddSymbol(errorTypeSymbol, soul::ast::SourcePos(), &context);
+}
+
+Symbols::Symbols()
+{
+}
+
+void Symbols::AddSymbol(Symbol* symbol)
+{
+    symbolMap[symbol->Id()] = symbol;
+}
+
+Symbol* Symbols::GetSymbol(const util::uuid& symbolId)
+{
+    auto it = symbolMap.find(symbolId);
+    if (it != symbolMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        throw std::runtime_error("soul.cpp20.symbols.Reader: symbol id " + util::ToString(symbolId) + " not found");
+    }
+}
+
+Symbols* symbols = nullptr;
+
+void SetSymbols(Symbols* symbols_)
+{
+    symbols = symbols_;
+}
+
+void AddSymbol(Symbol* symbol)
+{
+    symbols->AddSymbol(symbol);
+}
+
+Symbol* GetSymbol(const util::uuid& symbolId)
+{
+    return symbols->GetSymbol(symbolId);
 }
 
 } // namespace soul::cpp20::symbols

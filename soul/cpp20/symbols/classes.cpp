@@ -9,6 +9,7 @@ import soul.cpp20.ast;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.symbol.table;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
@@ -36,6 +37,11 @@ void ClassTypeSymbol::AddBaseClass(Symbol* baseClass, const soul::ast::SourcePos
 {
     baseClasses.push_back(baseClass);
     GetScope()->AddBaseScope(baseClass->GetScope(), sourcePos, context);
+}
+
+void ClassTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 class ClassNameResolver : public soul::cpp20::ast::DefaultVisitor

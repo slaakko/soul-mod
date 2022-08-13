@@ -8,6 +8,7 @@ module soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.function.symbol;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
@@ -78,6 +79,11 @@ void FunctionGroupSymbol::Resolve(SymbolTable& symbolTable)
         FunctionSymbol* function = symbolTable.GetFunction(functionId);
         functions.push_back(function);
     }
+}
+
+void FunctionGroupSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 } // namespace soul::cpp20::symbols

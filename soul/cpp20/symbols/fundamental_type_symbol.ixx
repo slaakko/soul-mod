@@ -30,6 +30,7 @@ public:
     std::string SymbolKindStr() const override { return "fundamental type symbol"; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
 private:
     FundamentalTypeKind kind;
 };

@@ -232,6 +232,8 @@
     <ClCompile Include="variable_group_symbol.ixx" />
     <ClCompile Include="variable_symbol.cpp" />
     <ClCompile Include="variable_symbol.ixx" />
+    <ClCompile Include="visitor.cpp" />
+    <ClCompile Include="visitor.ixx" />
     <ClCompile Include="writer.cpp" />
     <ClCompile Include="writer.ixx" />
   </ItemGroup>

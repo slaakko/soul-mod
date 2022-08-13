@@ -9,6 +9,7 @@ import soul.cpp20.symbols.variable.symbol;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
 
@@ -91,6 +92,11 @@ void VariableGroupSymbol::Resolve(SymbolTable& symbolTable)
         VariableSymbol* variable = symbolTable.GetVariable(variableId);
         variables.push_back(variable);
     }
+}
+
+void VariableGroupSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 } // namespace soul::cpp20::symbols
