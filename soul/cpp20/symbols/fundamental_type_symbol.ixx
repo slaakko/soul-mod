@@ -18,7 +18,8 @@ class Context;
 enum class FundamentalTypeKind : int32_t
 {
     none, charType, char8Type, char16Type, char32Type, wcharType, boolType, shortIntType, intType, longIntType, longLongIntType, floatType, doubleType, voidType,
-    signedCharType, unsignedCharType, unsignedShortIntType, unsignedIntType, unsignedLongIntType, unsignedLongLongIntType, longDoubleType, autoType, max
+    signedCharType, unsignedCharType, unsignedShortIntType, unsignedIntType, unsignedLongIntType, unsignedLongLongIntType, longDoubleType, autoType, nullPtrType, 
+    max
 };
 
 class FundamentalTypeSymbol : public TypeSymbol
@@ -28,6 +29,7 @@ public:
     FundamentalTypeSymbol(FundamentalTypeKind kind_);
     FundamentalTypeKind GetFundamentalTypeKind() const { return kind; }
     std::string SymbolKindStr() const override { return "fundamental type symbol"; }
+    std::string SymbolDocKindStr() const override { return "fundamental_type"; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;

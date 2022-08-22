@@ -99,4 +99,12 @@ void VariableGroupSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+void VariableGroupSymbol::Merge(VariableGroupSymbol* that)
+{
+    for (const auto& variable : that->variables)
+    {
+        variables.push_back(variable);
+    }
+}
+
 } // namespace soul::cpp20::symbols

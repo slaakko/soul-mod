@@ -243,7 +243,20 @@ parser ClassParser
                 soul::cpp20::symbols::ProcessMemberDeclaration(memberDeclarationNode, context);
                 return memberDeclarationNode;
             }
-        |   MemberFunctionDefinition(context):memberFunctionDefinition{ return memberFunctionDefinition; }
+        |   MemberFunctionDefinition(context):memberFunctionDefinition
+            { 
+                std::unique_ptr<soul::cpp20::ast::Node> memFunDefNode;
+                memFunDefNode.reset(memberFunctionDefinition);
+                soul::cpp20::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
+                return memFunDefNode.release(); 
+            }
+        |   RetMemberFunctionDefinition(context):retMemberFunctionDefinition
+            { 
+                std::unique_ptr<soul::cpp20::ast::Node> memFunDefNode;
+                memFunDefNode.reset(retMemberFunctionDefinition);
+                soul::cpp20::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
+                return memFunDefNode.release(); 
+            }
         |   UsingDeclaration(context):usingDeclaration{ return usingDeclaration; }
         |   UsingEnumDeclaration(context):usingEnumDeclaration{ return usingEnumDeclaration; }
         |   StaticAssertDeclaration(context):staticAssertDeclaration{ return staticAssertDeclaration; }
@@ -266,6 +279,11 @@ parser ClassParser
 
     MemberFunctionDefinition(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
         ::= FunctionDefinition(context):functionDefinition{ return functionDefinition; }
+        ;
+
+    RetMemberFunctionDefinition(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ context->PushSetFlag(ContextFlags::retMemberDeclSpecifiers); }
+            FunctionDefinition(context):functionDefinition{ context->PopFlags(); return functionDefinition; } / { context->PopFlags(); }
         ;
 
     MemberTemplateDeclaration(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*

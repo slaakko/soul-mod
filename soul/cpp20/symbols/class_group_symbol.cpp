@@ -99,4 +99,13 @@ void ClassGroupSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
+{
+    for (const auto& cls : that->classes)
+    {
+        classes.push_back(cls);
+    }
+
+}
+
 } // namespace soul::cpp20::symbols

@@ -14,6 +14,7 @@ import soul.cpp20.symbols.concepts;
 import soul.cpp20.symbols.container.symbol;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.classes;
+import soul.cpp20.symbols.enums;
 import soul.cpp20.symbols.fundamental.type.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.function.symbol;
@@ -74,14 +75,6 @@ void DefaultVisitor::Visit(NamespaceSymbol& symbol)
     VisitContainer(symbol);
 }
 
-void DefaultVisitor::Visit(AliasGroupSymbol& symbol)
-{
-    for (const auto& symbol : symbol.AliasTypeSymbols())
-    {
-        symbol->Accept(*this);
-    }
-}
-
 void DefaultVisitor::Visit(AliasTypeSymbol& symbol)
 {
     SetVisitContainer(false);
@@ -94,15 +87,12 @@ void DefaultVisitor::Visit(BlockSymbol& symbol)
     VisitContainer(symbol);
 }
 
-void DefaultVisitor::Visit(ClassGroupSymbol& symbol)
+void DefaultVisitor::Visit(ClassTypeSymbol& symbol)
 {
-    for (const auto& symbol : symbol.Classes())
-    {
-        symbol->Accept(*this);
-    }
+    VisitContainer(symbol);
 }
 
-void DefaultVisitor::Visit(ClassTypeSymbol& symbol)
+void DefaultVisitor::Visit(EnumeratedTypeSymbol& symbol)
 {
     VisitContainer(symbol);
 }
@@ -112,22 +102,6 @@ void DefaultVisitor::Visit(CompoundTypeSymbol& symbol)
     SetVisitContainer(false);
     symbol.BaseType()->Accept(*this);
     SetVisitContainer(true);
-}
-
-void DefaultVisitor::Visit(ConceptGroupSymbol& symbol)
-{
-    for (const auto& symbol : symbol.Concepts())
-    {
-        symbol->Accept(*this);
-    }
-}
-
-void DefaultVisitor::Visit(FunctionGroupSymbol& symbol)
-{
-    for (const auto& symbol : symbol.Functions())
-    {
-        symbol->Accept(*this);
-    }
 }
 
 void DefaultVisitor::Visit(FunctionSymbol& symbol)
@@ -161,14 +135,6 @@ void DefaultVisitor::Visit(TemplateParameterSymbol& symbol)
 void DefaultVisitor::Visit(TemplateDeclarationSymbol& symbol)
 {
     VisitContainer(symbol);
-}
-
-void DefaultVisitor::Visit(VariableGroupSymbol& symbol)
-{
-    for (const auto& variable : symbol.Variables())
-    {
-        variable->Accept(*this);
-    }
 }
 
 void DefaultVisitor::Visit(VariableSymbol& symbol)

@@ -19,6 +19,7 @@ class ClassGroupSymbol : public Symbol
 public:
     ClassGroupSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "class group symbol"; }
+    std::string SymbolDocKindStr() const override { return "class_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
     void AddClass(ClassTypeSymbol* classTypeSymbol);
@@ -28,6 +29,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    void Merge(ClassGroupSymbol* that);
 private:
     std::vector<ClassTypeSymbol*> classes;
     std::vector<util::uuid> classIds;

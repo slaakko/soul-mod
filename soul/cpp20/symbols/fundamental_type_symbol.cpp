@@ -18,7 +18,7 @@ namespace soul::cpp20::symbols {
 constexpr const char* fundamentalTypeNames[] =
 {
     "none", "char", "char8_t", "char16_t", "char32_t", "wchar_t", "bool", "short int", "int", "long int", "long long int", "float", "double", "void",
-    "signed char", "unsigned char", "unsigned short int", "unsigned int", "unsigned long int", "unsigned long long int", "long double", "auto"
+    "signed char", "unsigned char", "unsigned short int", "unsigned int", "unsigned long int", "unsigned long long int", "long double", "auto", "nullptr_t"
 };
 
 class FundamentalTypeFlagMapper
@@ -130,7 +130,7 @@ TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul
     }
     else
     {
-        throw Exception("invalid combination of fundamental type specifiers", sourcePos, context);
+        ThrowException("invalid combination of fundamental type specifiers", sourcePos, context);
     }
 }
 

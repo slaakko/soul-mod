@@ -16,6 +16,9 @@ class ContainerSymbol;
 class BoolValue;
 class IntegerValue;
 class FloatingValue;
+class NullPtrValue;
+class SymbolValue;
+class InvokeValue;
 class AliasGroupSymbol;
 class AliasTypeSymbol;
 class BlockSymbol;
@@ -24,6 +27,8 @@ class ClassTypeSymbol;
 class CompoundTypeSymbol;
 class ConceptGroupSymbol;
 class ConceptSymbol;
+class EnumeratedTypeSymbol;
+class EnumConstantSymbol;
 class FunctionGroupSymbol;
 class ParameterSymbol;
 class FunctionSymbol;
@@ -34,6 +39,7 @@ class TypenameConstraintSymbol;
 class TemplateParameterSymbol;
 class TemplateDeclarationSymbol;
 class ErrorTypeSymbol;
+class NestedTypeSymbol;
 class VariableGroupSymbol;
 class VariableSymbol;
 
@@ -51,6 +57,9 @@ public:
     virtual void Visit(BoolValue& value) {}
     virtual void Visit(IntegerValue& value) {}
     virtual void Visit(FloatingValue& value) {}
+    virtual void Visit(NullPtrValue& value) {}
+    virtual void Visit(SymbolValue& value) {}
+    virtual void Visit(InvokeValue& value) {}
     virtual void Visit(AliasGroupSymbol& symbol) {}
     virtual void Visit(AliasTypeSymbol& symbol) {}
     virtual void Visit(BlockSymbol& symbol) {}
@@ -59,6 +68,8 @@ public:
     virtual void Visit(CompoundTypeSymbol& symbol) {}
     virtual void Visit(ConceptGroupSymbol& symbol) {}
     virtual void Visit(ConceptSymbol& symbol) {}
+    virtual void Visit(EnumeratedTypeSymbol& symbol) {}
+    virtual void Visit(EnumConstantSymbol& symbol) {}
     virtual void Visit(FunctionGroupSymbol& symbol) {}
     virtual void Visit(ParameterSymbol& symbol) {}
     virtual void Visit(FunctionSymbol& symbol) {}
@@ -68,6 +79,7 @@ public:
     virtual void Visit(TypenameConstraintSymbol& symbol) {}
     virtual void Visit(TemplateParameterSymbol& symbol) {}
     virtual void Visit(TemplateDeclarationSymbol& symbol) {}
+    virtual void Visit(NestedTypeSymbol& symbol) {}
     virtual void Visit(ErrorTypeSymbol& symbol) {}
     virtual void Visit(VariableGroupSymbol& symbol) {}
     virtual void Visit(VariableSymbol& symbol) {}
@@ -82,19 +94,15 @@ public:
     void Visit(Module& module) override;
     void Visit(NamespaceSymbol& symbol) override;
     void Visit(SymbolTable& symbolTable) override;
-    void Visit(AliasGroupSymbol& symbol) override;
     void Visit(AliasTypeSymbol& symbol) override;
     void Visit(BlockSymbol& symbol) override;
-    void Visit(ClassGroupSymbol& symbol) override;
     void Visit(ClassTypeSymbol& symbol) override;
+    void Visit(EnumeratedTypeSymbol& symbol) override;
     void Visit(CompoundTypeSymbol& symbol) override;
-    void Visit(ConceptGroupSymbol& symbol) override;
-    void Visit(FunctionGroupSymbol& symbol) override;
     void Visit(FunctionSymbol& symbol) override;
     void Visit(SpecializationSymbol& symbol) override;
     void Visit(TemplateParameterSymbol& symbol) override;
     void Visit(TemplateDeclarationSymbol& symbol) override;
-    void Visit(VariableGroupSymbol& symbol) override;
     void Visit(VariableSymbol& symbol) override;
 };
 

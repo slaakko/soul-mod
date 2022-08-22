@@ -27,6 +27,7 @@ parser SimpleTypeParser
         |   SIGNED{ return new soul::cpp20::ast::SignedNode(lexer.GetSourcePos(pos)); }
         |   UNSIGNED{ return new soul::cpp20::ast::UnsignedNode(lexer.GetSourcePos(pos)); }
         |   FLOAT{ return new soul::cpp20::ast::FloatNode(lexer.GetSourcePos(pos)); }
+        |   DOUBLE{ return new soul::cpp20::ast::DoubleNode(lexer.GetSourcePos(pos)); }
         |   VOID{ return new soul::cpp20::ast::VoidNode(lexer.GetSourcePos(pos)); }
         ;
 }

@@ -8,19 +8,83 @@ module;
 
 module soul.cpp20.symbols.function.symbol;
 
+import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.visitor;
+import soul.cpp20.symbols.templates;
+import soul.cpp20.symbols.value;
 
 namespace soul::cpp20::symbols {
 
-ParameterSymbol::ParameterSymbol(const std::u32string& name_) : Symbol(SymbolKind::parameterSymbol, name_), type(nullptr), typeId(util::nil_uuid())
+
+std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers)
+{
+    std::string s;
+    if ((qualifiers & FunctionQualifiers::isVolatile) != FunctionQualifiers::none)
+    {
+        s.append("volatile");
+    }
+    if ((qualifiers & FunctionQualifiers::isConst) != FunctionQualifiers::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("const");
+    }
+    if ((qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("override");
+    }
+    if ((qualifiers & FunctionQualifiers::isFinal) != FunctionQualifiers::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("final");
+    }
+    if ((qualifiers & FunctionQualifiers::isDefault) != FunctionQualifiers::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("= default");
+    }
+    if ((qualifiers & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
+    {
+        if (!s.empty())
+        {
+            s.append(1, ' ');
+        }
+        s.append("= delete");
+    }
+    return s;
+}
+
+ParameterSymbol::ParameterSymbol(const std::u32string& name_) : 
+    Symbol(SymbolKind::parameterSymbol, name_), 
+    type(nullptr), 
+    typeId(util::nil_uuid()), 
+    defaultValue(nullptr), 
+    defaultValueId(util::nil_uuid())
 {
 }
 
-ParameterSymbol::ParameterSymbol(const std::u32string& name_, TypeSymbol* type_) : Symbol(SymbolKind::parameterSymbol, name_), type(type_), typeId(util::nil_uuid())
+ParameterSymbol::ParameterSymbol(const std::u32string& name_, TypeSymbol* type_) : 
+    Symbol(SymbolKind::parameterSymbol, name_), 
+    type(type_), 
+    typeId(util::nil_uuid()), 
+    defaultValue(nullptr),
+    defaultValueId(util::nil_uuid())
 {
 }
 
@@ -28,18 +92,34 @@ void ParameterSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(type->Id());
+    bool hasDefaultValue = defaultValue != nullptr;
+    writer.GetBinaryStreamWriter().Write(hasDefaultValue);
+    if (hasDefaultValue)
+    {
+        writer.GetBinaryStreamWriter().Write(defaultValue->Id());
+    }
 }
 
 void ParameterSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(typeId);
+    bool hasDefaultValue = reader.GetBinaryStreamReader().ReadBool();
+    if (hasDefaultValue)
+    {
+        reader.GetBinaryStreamReader().ReadUuid(defaultValueId);
+    }
 }
 
 void ParameterSymbol::Resolve(SymbolTable& symbolTable)
 {
     Symbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
+    if (defaultValueId != util::nil_uuid())
+    {
+        EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
+        defaultValue = evaluationContext->GetValue(defaultValueId);
+    }
 }
 
 void ParameterSymbol::Accept(Visitor& visitor)
@@ -49,6 +129,16 @@ void ParameterSymbol::Accept(Visitor& visitor)
 
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::functionSymbol, name_), returnType(nullptr), returnTypeId(util::nil_uuid())
 {
+}
+
+TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration()
+{
+    Symbol* parentSymbol = Parent();
+    if (parentSymbol->IsTemplateDeclarationSymbol())
+    {
+        return static_cast<TemplateDeclarationSymbol*>(parentSymbol);
+    }
+    return nullptr;
 }
 
 void FunctionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -68,6 +158,8 @@ void FunctionSymbol::AddParameter(ParameterSymbol* parameter, const soul::ast::S
 void FunctionSymbol::Write(Writer& writer)
 {
     ContainerSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(kind));
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(qualifiers));
     if (returnType)
     {
         writer.GetBinaryStreamWriter().Write(returnType->Id());
@@ -81,6 +173,8 @@ void FunctionSymbol::Write(Writer& writer)
 void FunctionSymbol::Read(Reader& reader)
 {
     ContainerSymbol::Read(reader);
+    kind = static_cast<FunctionKind>(reader.GetBinaryStreamReader().ReadByte());
+    qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
     reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
 }
 
@@ -96,6 +190,13 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
 void FunctionSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const
+{
+    if (int(left->GetFunctionKind()) < int(right->GetFunctionKind())) return true;
+    if (int(left->GetFunctionKind()) > int(right->GetFunctionKind())) return false;
+    return left->Name() < right->Name();
 }
 
 } // namespace soul::cpp20::symbols

@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/parser/simple_type.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/parser/simple_type.parser' using soul parser generator spg version 4.1.0
 
 module soul.cpp20.parser.simple.type;
 
@@ -184,6 +184,19 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
                     #endif SOUL_PARSER_DEBUG_SUPPORT
                     return soul::parser::Match(true, new soul::cpp20::ast::FloatNode(lexer.GetSourcePos(pos)));
+                }
+            }
+            break;
+        }
+        case DOUBLE:
+        {
+            ++lexer;
+            {
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, new soul::cpp20::ast::DoubleNode(lexer.GetSourcePos(pos)));
                 }
             }
             break;

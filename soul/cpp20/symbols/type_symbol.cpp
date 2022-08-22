@@ -13,6 +13,15 @@ TypeSymbol::TypeSymbol(SymbolKind kind_, const std::u32string& name_) : Containe
 {
 }
 
+NestedTypeSymbol::NestedTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::nestedTypeSymbol, name_)
+{
+}
+
+void NestedTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 ErrorTypeSymbol::ErrorTypeSymbol() : TypeSymbol(SymbolKind::errorSymbol, U"<error_type>")
 {
 }

@@ -19,6 +19,7 @@ public:
     virtual int Arity() const { return 0;  }
     TypeSymbol* ReferredType() const { return referredType; }
     std::string SymbolKindStr() const override { return "alias type symbol"; }
+    std::string SymbolDocKindStr() const override { return "alias_type"; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -31,5 +32,10 @@ private:
 class Context;
 
 void ProcessAliasDeclaration(soul::cpp20::ast::Node* aliasDeclarationNode, Context* context);
+
+struct AliasTypeLess
+{
+    bool operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const;
+};
 
 } // namespace soul::cpp20::symbols

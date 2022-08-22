@@ -1,6 +1,17 @@
 project std;
 interface <std.ixx>;
 interface <std.core.ixx>;
+interface <std.container.list.ixx>;
+interface <std.container.map.ixx>;
+interface <std.container.set.ixx>;
 interface <std.container.vector.ixx>;
+interface <std.functional.ixx>;
+interface <std.iterator.list.ixx>;
+interface <std.iterator.map.ixx>;
 interface <std.iterator.reverse.ixx>;
+interface <std.iterator.set.ixx>;
+interface <std.string.ixx>;
 interface <std.type.fundamental.ixx>;
+interface <std.utilities.pair.ixx>;
+interface <std.utilities.unique_ptr.ixx>;
+interface <std.utilities.utility.ixx>;

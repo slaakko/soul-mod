@@ -17,6 +17,7 @@ public:
     CompoundTypeSymbol(const std::u32string& name_);
     CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_);
     std::string SymbolKindStr() const override { return "compound type symbol"; }
+    std::string SymbolDocKindStr() const override { return "compound_type"; }
     TypeSymbol* BaseType() const { return baseType; }
     const Derivations& GetDerivations() const { return derivations; }
     void Write(Writer& writer) override;

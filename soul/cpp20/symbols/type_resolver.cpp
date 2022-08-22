@@ -22,7 +22,7 @@ void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, cons
 {
     if ((flags & flag) != DeclarationFlags::none)
     {
-        throw Exception("duplicate '" + specifierStr + "'", sourcePos, context);
+        ThrowException("duplicate '" + specifierStr + "'", sourcePos, context);
     }
 }
 
@@ -53,6 +53,7 @@ public:
     void Visit(soul::cpp20::ast::LvalueRefNode& node) override;
     void Visit(soul::cpp20::ast::RvalueRefNode& node) override;
     void Visit(soul::cpp20::ast::PtrNode& node) override;
+    void Visit(soul::cpp20::ast::TypenameSpecifierNode& node) override;
     void Visit(soul::cpp20::ast::QualifiedIdNode& node) override;
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
     void Visit(soul::cpp20::ast::TemplateIdNode& node) override;
@@ -64,9 +65,10 @@ private:
     DeclarationFlags flags;
     int pointerCount;
     bool typeResolved;
+    bool createTypeSymbol;
 };
 
-TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_) : context(context_), type(nullptr), baseType(nullptr), flags(flags_), pointerCount(0), typeResolved(false)
+TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_) : context(context_), type(nullptr), baseType(nullptr), flags(flags_), pointerCount(0), typeResolved(false), createTypeSymbol(false)
 {
 }
 
@@ -83,7 +85,7 @@ void TypeResolver::ResolveBaseType(soul::cpp20::ast::Node* node)
     {
         if (baseType)
         {
-            throw Exception("duplicate type symbol in declaration specifier sequence", node->GetSourcePos(), context);
+            ThrowException("duplicate type symbol in declaration specifier sequence", node->GetSourcePos(), context);
         }
         baseType = GetFundamentalType(fundamentalTypeFlags, node->GetSourcePos(), context);
     }
@@ -255,11 +257,24 @@ void TypeResolver::Visit(soul::cpp20::ast::PtrNode& node)
     ++pointerCount;
 }
 
+void TypeResolver::Visit(soul::cpp20::ast::TypenameSpecifierNode& node)
+{
+    context->GetSymbolTable()->PushTopScopeIndex();
+    BeginScope(node.NestedNameSpecifier(), context);
+    createTypeSymbol = true;
+    node.Id()->Accept(*this);
+    createTypeSymbol = false;
+    EndScope(context);
+    context->GetSymbolTable()->PopTopScopeIndex();
+}
+
 void TypeResolver::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 {
+    context->GetSymbolTable()->PushTopScopeIndex();
     BeginScope(node.Left(), context);
     node.Right()->Accept(*this);
     EndScope(context);
+    context->GetSymbolTable()->PopTopScopeIndex();
 }
 
 void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
@@ -273,7 +288,41 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
         }
         else
         {
-            throw Exception("symbol '" + util::ToUtf8(symbol->Name()) + "' is not a type symbol", node.GetSourcePos(), context);
+            ThrowException("symbol '" + util::ToUtf8(symbol->Name()) + "' is not a type symbol", node.GetSourcePos(), context);
+        }
+    }
+    else if (createTypeSymbol)
+    {
+        Scope* scope = context->GetSymbolTable()->CurrentScope();
+        ContainerSymbol* containerSymbol = nullptr;
+        if (scope->IsContainerScope())
+        {
+            ContainerScope* containerScope = static_cast<ContainerScope*>(scope);
+            std::vector<Symbol*> symbols;
+            containerScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, symbols);
+            if (!symbols.empty())
+            {
+                Symbol* symbol = symbols.front();
+                if (symbol->IsTypeSymbol())
+                {
+                    type = static_cast<TypeSymbol*>(symbol);
+                }
+                else
+                {
+                    type = context->GetSymbolTable()->GetErrorTypeSymbol();
+                }
+            }
+            else
+            {
+                containerSymbol = containerScope->GetContainerSymbol();
+                NestedTypeSymbol* nestedTypeSymbol = new NestedTypeSymbol(node.Str());
+                containerSymbol->AddSymbol(nestedTypeSymbol, node.GetSourcePos(), context);
+                type = nestedTypeSymbol;
+            }
+        }
+        else
+        {
+            type = context->GetSymbolTable()->GetErrorTypeSymbol();
         }
     }
     else
@@ -285,7 +334,6 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
 void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
 {
     TypeSymbol* typeSymbol = soul::cpp20::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context);
-    ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
     std::vector<TypeSymbol*> templateArgs;
     int n = node.Items().size();
     for (int i = 0; i < n; ++i)
@@ -293,7 +341,7 @@ void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
         TypeSymbol* templateArg = soul::cpp20::symbols::ResolveType(node.Items()[i], DeclarationFlags::none, context);
         templateArgs.push_back(templateArg);
     }
-    SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(classTemplate, templateArgs);
+    SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(typeSymbol, templateArgs);
     type = specialization;
 }
 

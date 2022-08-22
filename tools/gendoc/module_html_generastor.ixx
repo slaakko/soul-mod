@@ -10,6 +10,8 @@ import soul.cpp20.symbols.modules;
 
 export namespace gendoc {
 
-void GenerateModuleHtml(const std::string& rootDir, soul::cpp20::symbols::Module* module);
+class Project;
 
-} // namespace gendoc::module_html_generator
+void GenerateModuleHtml(const std::string& rootDir, soul::cpp20::symbols::Module* module, Project* nsProject);
+
+} // namespace gendoc

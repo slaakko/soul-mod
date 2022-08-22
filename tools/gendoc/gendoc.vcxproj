@@ -150,11 +150,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="class_html_generator.cpp" />
+    <ClCompile Include="class_html_generator.ixx" />
+    <ClCompile Include="enum_html_generator.cpp" />
+    <ClCompile Include="enum_html_generator.ixx" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="module_html_generastor.ixx" />
     <ClCompile Include="module_html_generator.cpp" />
+    <ClCompile Include="namespace_html_generator.cpp" />
+    <ClCompile Include="namespace_html_generator.ixx" />
+    <ClCompile Include="namespace_symbols.cpp" />
+    <ClCompile Include="namespace_symbols.ixx" />
     <ClCompile Include="project.cpp" />
     <ClCompile Include="project.ixx" />
+    <ClCompile Include="style.cpp" />
+    <ClCompile Include="style.ixx" />
+    <ClCompile Include="type_element_generator.ixx" />
+    <ClCompile Include="type_element_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\soul\cpp20\project\project.vcxproj">

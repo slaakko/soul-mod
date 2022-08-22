@@ -53,8 +53,12 @@ void Module::Import(ModuleMapper& moduleMapper)
 
 void Module::Import(Module* that, ModuleMapper& moduleMapper)
 {
-    that->Import(moduleMapper);
-    symbolTable.Import(that->symbolTable);
+    if (importSet.find(that) == importSet.cend())
+    {
+        importSet.insert(that);
+        that->Import(moduleMapper);
+        symbolTable.Import(that->symbolTable);
+    }
 }
 
 void Module::Write(const std::string& root)
@@ -122,6 +126,7 @@ void Module::Write(Writer& writer)
         writer.GetBinaryStreamWriter().Write(importedModuleName);
     }
     symbolTable.Write(writer);
+    evaluationContext.Write(writer);
     soul::cpp20::ast::Writer astWriter(&writer.GetBinaryStreamWriter());
     files.Write(astWriter);
     symbolTable.WriteMaps(writer);
@@ -141,11 +146,13 @@ void Module::Read(Reader& reader, ModuleMapper& moduleMapper)
         AddImportModuleName(reader.GetBinaryStreamReader().ReadUtf8String());
     }
     symbolTable.Read(reader);
+    evaluationContext.Read(reader);
     soul::cpp20::ast::Reader astReader(&reader.GetBinaryStreamReader());
     files.Read(astReader);
     symbolTable.ReadMaps(reader, astReader);
     Import(moduleMapper);
     symbolTable.Resolve();
+    evaluationContext.Resolve(symbolTable);
 }
 
 ModuleMapper::ModuleMapper()
@@ -180,28 +187,6 @@ Module* ModuleMapper::GetModule(const std::string& moduleName)
         }
         throw std::runtime_error("module '" + moduleName + "' not found");
     }
-}
-
-void ModuleMapper::ClearModule(const std::string& moduleName)
-{
-    std::lock_guard<std::recursive_mutex> lock(mtx);
-    Module* module = nullptr;
-    auto it = moduleMap.find(moduleName);
-    if (it != moduleMap.cend())
-    {
-        module = it->second;
-    }
-    if (module)
-    {
-        for (auto& mod : modules)
-        {
-            if (mod.get() == module)
-            {
-                mod.reset();
-            }
-        }
-    }
-    moduleMap.erase(moduleName);
 }
 
 Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::string& moduleFilePath)

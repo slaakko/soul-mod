@@ -5,10 +5,17 @@
 
 module soul.cpp20.symbols.declarator;
 
+import soul.cpp20.ast.visitor;
+import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.declaration;
+import soul.cpp20.symbols.evaluator;
+import soul.cpp20.symbols.function.symbol;
+import soul.cpp20.symbols.scope;
 import soul.cpp20.symbols.scope.resolver;
+import soul.cpp20.symbols.symbol;
 import soul.cpp20.symbols.symbol.table;
+import soul.cpp20.symbols.value;
 
 namespace soul::cpp20::symbols {
 
@@ -24,8 +31,8 @@ SimpleDeclarator::SimpleDeclarator(const std::u32string& name_, soul::cpp20::ast
 {
 }
 
-FunctionDeclarator::FunctionDeclarator(const std::u32string& name_, soul::cpp20::ast::Node* node_, Scope* scope_) : 
-    Declarator(DeclaratorKind::functionDeclarator, name_, node_), scope(scope_)
+FunctionDeclarator::FunctionDeclarator(const std::u32string& name_, soul::cpp20::ast::Node* node_, FunctionKind kind_, FunctionQualifiers qualifiers_, Scope* scope_) :
+    Declarator(DeclaratorKind::functionDeclarator, name_, node_), scope(scope_), kind(kind_), qualifiers(qualifiers_)
 {
 }
 
@@ -34,11 +41,16 @@ void FunctionDeclarator::AddParameterDeclaration(Declaration&& parameterDeclarat
     parameterDeclarations.push_back(std::move(parameterDeclaration));
 }
 
-Declaration::Declaration() : type(nullptr), declarator(nullptr)
+void FunctionDeclarator::AddQualifier(FunctionQualifiers qualifier)
+{
+    qualifiers = qualifiers | qualifier;
+}
+
+Declaration::Declaration() : type(nullptr), declarator(nullptr), value(nullptr)
 {
 }
 
-Declaration::Declaration(TypeSymbol* type_, Declarator* declarator_) : type(type_), declarator(declarator_)
+Declaration::Declaration(TypeSymbol* type_, Declarator* declarator_) : type(type_), declarator(declarator_), value(nullptr)
 {
 }
 
@@ -93,6 +105,8 @@ public:
     DeclaratorProcessor(Context* context_, TypeSymbol* baseType_);
     Declaration GetDeclaration() { return std::move(declaration); }
     void Visit(soul::cpp20::ast::FunctionDeclaratorNode& node) override;
+    void Visit(soul::cpp20::ast::TrailingQualifiersNode& node) override;
+    void Visit(soul::cpp20::ast::InitDeclaratorNode& node) override;
     void Visit(soul::cpp20::ast::ParameterListNode& node) override;
     void Visit(soul::cpp20::ast::ParameterNode& node) override;
     void Visit(soul::cpp20::ast::DestructorIdNode& node) override;
@@ -101,6 +115,10 @@ public:
     void Visit(soul::cpp20::ast::QualifiedIdNode& node) override;
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
     void Visit(soul::cpp20::ast::AbstractDeclaratorNode& node) override;
+    void Visit(soul::cpp20::ast::ConstNode& node) override;
+    void Visit(soul::cpp20::ast::VolatileNode& node) override;
+    void Visit(soul::cpp20::ast::FinalNode& node) override;
+    void Visit(soul::cpp20::ast::OverrideNode& node) override;
     void Visit(soul::cpp20::ast::LvalueRefNode& node) override;
     void Visit(soul::cpp20::ast::RvalueRefNode& node) override;
     void Visit(soul::cpp20::ast::PtrNode& node) override;
@@ -156,29 +174,65 @@ private:
     bool isDestructorDeclarator;
     bool skipIdFunctionDeclarator;
     bool operatorFunctionId;
+    bool trailingQualifiers;
+    bool processTrailingQualifiers;
+    FunctionQualifiers qualifiers;
     FunctionDeclarator* functionDeclarator;
     Scope* scope;
 };
 
 DeclaratorProcessor::DeclaratorProcessor(Context* context_, TypeSymbol* baseType_) : 
-    context(context_), baseType(baseType_), isFunctionDeclarator(false), isDestructorDeclarator(false), skipIdFunctionDeclarator(false), operatorFunctionId(false),
+    context(context_), 
+    baseType(baseType_), 
+    isFunctionDeclarator(false), 
+    isDestructorDeclarator(false), 
+    skipIdFunctionDeclarator(false), 
+    operatorFunctionId(false), 
+    trailingQualifiers(false),
+    processTrailingQualifiers(false),
     scope(context->GetSymbolTable()->CurrentScope())
 {
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::FunctionDeclaratorNode& node)
 {
+    processTrailingQualifiers = true;
+    node.Params()->Accept(*this);
+    processTrailingQualifiers = false;
     isFunctionDeclarator = true;
     node.Child()->Accept(*this);
-    isFunctionDeclarator = false;
     if (node.Params())
     {
         node.Params()->Accept(*this);
+    }
+    isFunctionDeclarator = false;
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::TrailingQualifiersNode& node)
+{
+    if (!processTrailingQualifiers)
+    {
+        node.Subject()->Accept(*this);
+        return;
+    }
+    trailingQualifiers = true;
+    VisitSequence(node);
+    trailingQualifiers = false;
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::InitDeclaratorNode& node)
+{
+    node.Left()->Accept(*this);
+    if (node.Right())
+    {
+        Value* value = Evaluate(node.Right(), context);
+        declaration.value = value;
     }
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::ParameterListNode& node)
 {
+    if (processTrailingQualifiers) return;
     int n = node.Items().size();
     for (int i = 0; i < n; ++i)
     {
@@ -194,6 +248,30 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
     {
         functionDeclarator->AddParameterDeclaration(std::move(declaration));
     }
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::ConstNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isConst;
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::VolatileNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isVolatile;
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::FinalNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isFinal;
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::OverrideNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isOverride;
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::LvalueRefNode& node)
@@ -248,7 +326,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::NewArrayOpNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator new[]", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator new[]", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -256,7 +334,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::NewOpNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator new", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator new", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -264,7 +342,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::DeleteArrayOpNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator delete[]", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator delete[]", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -272,7 +350,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::DeleteOpNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator delete", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator delete", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -280,7 +358,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::CoAwaitOpNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator co_await", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator co_await", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -288,7 +366,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::InvokeOpNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator()", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator()", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -296,7 +374,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::SubscriptOpNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator[]", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator[]", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -304,7 +382,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ArrowNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator->", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator->", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -312,7 +390,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ArrowStarNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator->*", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator->*", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -320,7 +398,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ComplementNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator~", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator~", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -328,7 +406,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::NotNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator!", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator!", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -336,7 +414,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::PlusNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator+", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator+", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -344,7 +422,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::MinusNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator-", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator-", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -352,7 +430,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::MulNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator*", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator*", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -360,7 +438,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::DivNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator/", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator/", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -368,7 +446,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ModNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator%", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator%", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -376,7 +454,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ExclusiveOrNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator^", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator^", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -384,7 +462,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::AndNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator&", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator&", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -392,7 +470,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::InclusiveOrNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator|", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator|", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -400,7 +478,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::AssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator=", &node, FunctionKind::special, qualifiers, scope);
     }
 }
 
@@ -408,7 +486,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::PlusAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator+=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator+=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -416,7 +494,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::MinusAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator-=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator-=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -424,7 +502,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::MulAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator*=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator*=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -432,7 +510,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::DivAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator/=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator/=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -440,7 +518,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ModAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator%=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator%=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -448,7 +526,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::XorAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator^=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator^=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -456,7 +534,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::AndAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator&=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator&=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -464,7 +542,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::OrAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator|=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator|=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -472,7 +550,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ShiftLeftAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator<<=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator<<=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -480,7 +558,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ShiftRightAssignNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator>>=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator>>=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -488,7 +566,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::EqualNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator==", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator==", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -496,7 +574,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::NotEqualNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator!=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator!=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -504,7 +582,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::LessOrEqualNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator<=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator<=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -512,7 +590,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::GreaterOrEqualNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator>=", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator>=", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -520,7 +598,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::CompareNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator<=>", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator<=>", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -528,7 +606,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::LessNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator<", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator<", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -536,7 +614,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::GreaterNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator>", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator>", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -544,7 +622,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ConjunctionNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator&&", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator&&", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -552,7 +630,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::DisjunctionNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator||", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator||", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -560,7 +638,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ShiftLeftNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator<<", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator<<", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -568,7 +646,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ShiftRightNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator>>", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator>>", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -576,7 +654,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::PrefixIncNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator++", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator++", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -584,7 +662,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::PrefixDecNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator--", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator--", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -592,7 +670,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::CommaNode& node)
 {
     if (operatorFunctionId)
     {
-        functionDeclarator = new FunctionDeclarator(U"operator,", &node, scope);
+        functionDeclarator = new FunctionDeclarator(U"operator,", &node, FunctionKind::function, qualifiers, scope);
     }
 }
 
@@ -610,11 +688,24 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
         {
             if (isDestructorDeclarator)
             {
-                functionDeclarator = new FunctionDeclarator(U"~" + node.Str(), &node, scope);
+                functionDeclarator = new FunctionDeclarator(U"~" + node.Str(), &node, FunctionKind::destructor, qualifiers, scope);
             }
             else
             {
-                functionDeclarator = new FunctionDeclarator(node.Str(), &node, scope);
+                FunctionKind kind = FunctionKind::function;
+                if (context->GetSymbolTable()->CurrentScope()->IsClassScope())
+                {
+                    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
+                    if (symbol->IsClassTypeSymbol())
+                    {
+                        ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
+                        if (node.Str() == classTypeSymbol->Name())
+                        {
+                            kind = FunctionKind::constructor;
+                        }
+                    }
+                }
+                functionDeclarator = new FunctionDeclarator(node.Str(), &node, kind, qualifiers, scope);
             }
             declaration = Declaration(baseType, functionDeclarator);
         }

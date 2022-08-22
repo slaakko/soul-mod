@@ -8,6 +8,7 @@ export module soul.cpp20.symbols.modules;
 import std.core;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.compound.type.symbol;
+import soul.cpp20.symbols.value;
 import soul.cpp20.ast.file;
 
 export namespace soul::cpp20::symbols {
@@ -35,6 +36,7 @@ public:
     int File() const { return file; }
     void SetFile(int file_) { file = file_; }
     SymbolTable* GetSymbolTable() { return &symbolTable; }
+    EvaluationContext* GetEvaluationContext() { return &evaluationContext; }
     void AddExportModuleName(const std::string& exportModuleName);
     const std::vector<std::string>& ExportModuleNames() const { return exportModuleNames; }
     void AddExportedModule(Module* exportedModule);
@@ -54,8 +56,10 @@ private:
     std::vector<std::string> importModuleNames;
     std::vector<Module*> importedModules;
     SymbolTable symbolTable;
+    EvaluationContext evaluationContext;
     std::vector<Module*> dependsOnModules;
     soul::cpp20::ast::Files files;
+    std::set<Module*> importSet;
 };
 
 class ModuleMapper

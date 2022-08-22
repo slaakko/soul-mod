@@ -59,8 +59,35 @@ void Scope::Install(Symbol* symbol)
         Symbol* existingSymbol = it->second;
         if (existingSymbol != symbol)
         {
-            throw std::runtime_error("cannot install symbol '" + util::ToUtf8(symbol->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "': name conflicts with existing symbol '" +
-                util::ToUtf8(existingSymbol->FullName()) + "'");
+            if (existingSymbol->IsFunctionGroupSymbol() && symbol->IsFunctionGroupSymbol())
+            {
+                FunctionGroupSymbol* existingFunctionGroup = static_cast<FunctionGroupSymbol*>(existingSymbol);
+                FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
+                existingFunctionGroup->Merge(functionGroup);
+            }
+            else if (existingSymbol->IsClassGroupSymbol() && symbol->IsClassGroupSymbol())
+            {
+                ClassGroupSymbol* existingClassGroup = static_cast<ClassGroupSymbol*>(existingSymbol);
+                ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
+                existingClassGroup->Merge(classGroup);
+            }
+            else if (existingSymbol->IsAliasGroupSymbol() && symbol->IsAliasGroupSymbol())
+            {
+                AliasGroupSymbol* existingAliasGroup = static_cast<AliasGroupSymbol*>(existingSymbol);
+                AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
+                existingAliasGroup->Merge(aliasGroup);
+            }
+            else if (existingSymbol->IsVariableGroupSymbol() && symbol->IsVariableGroupSymbol())
+            {
+                VariableGroupSymbol* existingVariableGroup = static_cast<VariableGroupSymbol*>(existingSymbol);
+                VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
+                existingVariableGroup->Merge(variableGroup);
+            }
+            else
+            {
+                throw std::runtime_error("cannot install symbol '" + util::ToUtf8(symbol->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "': name conflicts with existing symbol '" +
+                    util::ToUtf8(existingSymbol->FullName()) + "'");
+            }
         }
         else
         {
@@ -112,7 +139,7 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
             }
             errorMessage.append(util::ToUtf8(symbol->FullName()));
         }
-        throw Exception(errorMessage, sourcePos, context);
+        ThrowException(errorMessage, sourcePos, context);
     }
 }
 
@@ -150,7 +177,7 @@ void Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, S
 
 void Scope::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 std::unique_ptr<Symbol> Scope::RemoveSymbol(Symbol* symbol)
@@ -165,42 +192,42 @@ void Scope::SetParentScope(Scope* parentScope_)
 
 void Scope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add base class scope to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add base class scope to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 void Scope::AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add using declaration '" + util::ToUtf8(usingDeclaration->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add using declaration '" + util::ToUtf8(usingDeclaration->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 void Scope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add using directive '" + util::ToUtf8(ns->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add using directive '" + util::ToUtf8(ns->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 ClassGroupSymbol* Scope::GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add class group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add class group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 FunctionGroupSymbol* Scope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add function group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add function group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 ConceptGroupSymbol* Scope::GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add concept group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add concept group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 VariableGroupSymbol* Scope::GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add variable group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add variable group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 AliasGroupSymbol* Scope::GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add alias group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+    ThrowException("cannot add alias group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
 ContainerScope::ContainerScope() : Scope(), parentScope(nullptr), usingDeclarationScope(nullptr), containerSymbol(nullptr)
@@ -337,7 +364,7 @@ void ContainerScope::AddUsingDirective(NamespaceSymbol* ns, const soul::ast::Sou
     }
     else
     {
-        throw Exception("cannot add using directive to " + ScopeKindStr(Kind()), sourcePos, context);
+        ThrowException("cannot add using directive to " + ScopeKindStr(Kind()), sourcePos, context);
     }
 }
 
@@ -345,7 +372,7 @@ void ContainerScope::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourc
 {
     if (!symbol->IsValidDeclarationScope(Kind()))
     {
-        throw Exception("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(Kind()) + " '" + FullName() + "'", sourcePos, context);
+        ThrowException("cannot declare symbol '" + util::ToUtf8(symbol->Name()) + "' in " + ScopeKindStr(Kind()) + " '" + FullName() + "'", sourcePos, context);
     }
     containerSymbol->AddSymbol(symbol, sourcePos, context);
 }

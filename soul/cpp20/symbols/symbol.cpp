@@ -10,6 +10,7 @@ import soul.cpp20.symbols.block;
 import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.concepts;
 import soul.cpp20.symbols.declaration;
+import soul.cpp20.symbols.enums;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.function.symbol;
 import soul.cpp20.symbols.fundamental.type.symbol;
@@ -26,7 +27,9 @@ import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
 import soul.cpp20.symbols.specialization;
+import soul.cpp20.symbols.symbol.table;
 import util.unicode;
+import util.sha1;
 
 namespace soul::cpp20::symbols {
 
@@ -71,17 +74,20 @@ std::u32string Symbol::FullName() const
     {
         fullName = parent->FullName();
     }
-    if (!fullName.empty())
+    if (!fullName.empty() && !name.empty())
     {
         fullName.append(U"::");
     }
-    fullName.append(name);
+    if (!name.empty())
+    {
+        fullName.append(name);
+    }
     return fullName;
 }
 
 void Symbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    throw Exception("cannot add " + symbol->SymbolKindStr() + " '" + util::ToUtf8(symbol->FullName()) + "' to " + SymbolKindStr() + " '" + util::ToUtf8(FullName()), 
+    ThrowException("cannot add " + symbol->SymbolKindStr() + " '" + util::ToUtf8(symbol->FullName()) + "' to " + SymbolKindStr() + " '" + util::ToUtf8(FullName()), 
         sourcePos, context);
 }
 
@@ -104,6 +110,61 @@ void Symbol::Read(Reader& reader)
 
 void Symbol::Resolve(SymbolTable& symbolTable)
 {
+}
+
+SymbolTable* Symbol::GetSymbolTable() 
+{
+    NamespaceSymbol* ns = ParentNamespace();
+    if (ns)
+    {
+        return ns->GetSymbolTable();
+    }
+    return nullptr;
+}
+
+Module* Symbol::GetModule()
+{
+    SymbolTable* symbolTable = GetSymbolTable();
+    if (symbolTable)
+    {
+        return symbolTable->GetModule();
+    }
+    return nullptr;
+}
+
+ClassTypeSymbol* Symbol::ParentClass() const
+{
+    Symbol* parentSymbol = parent;
+    while (parentSymbol)
+    {
+        if (parentSymbol->IsClassTypeSymbol())
+        {
+            return static_cast<ClassTypeSymbol*>(parentSymbol);
+        }
+        parentSymbol = parentSymbol->Parent();
+    }
+    return nullptr;
+}
+
+NamespaceSymbol* Symbol::ParentNamespace() const
+{
+    Symbol* parentSymbol = parent;
+    while (parentSymbol)
+    {
+        if (parentSymbol->IsNamespaceSymbol())
+        {
+            return static_cast<NamespaceSymbol*>(parentSymbol);
+        }
+        parentSymbol = parentSymbol->Parent();
+    }
+    return nullptr;
+}
+
+std::string Symbol::DocName() const
+{
+    std::string docName = SymbolDocKindStr();
+    docName.append("_").append(util::ToUtf8(Name())).append("_").append(util::GetSha1MessageDigest(util::ToUtf8(FullName())));
+    return docName;
 }
 
 bool Symbol::CanInstall() const
@@ -142,12 +203,30 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::enumTypeSymbol:
         case SymbolKind::errorSymbol:
+        case SymbolKind::nestedTypeSymbol:
         case SymbolKind::functionTypeSymbol:
         case SymbolKind::fundamentalTypeSymbol:
         case SymbolKind::genericTypeSymbol:
         case SymbolKind::nullPtrTypeSymbol:
         case SymbolKind::templateParameterSymbol:
         case SymbolKind::varArgTypeSymbol:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Symbol::IsValueSymbol() const
+{
+    switch (kind)
+    {
+        case SymbolKind::boolValueSymbol:
+        case SymbolKind::integerValueSymbol:
+        case SymbolKind::floatingValueSymbol:
+        case SymbolKind::nullPtrValueSymbol:
+        case SymbolKind::symbolValueSymbol:
+        case SymbolKind::invokeValueSymbol:
         {
             return true;
         }
@@ -165,8 +244,10 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::aliasTypeSymbol:
         case SymbolKind::classTypeSymbol:
         case SymbolKind::compoundTypeSymbol:
+        case SymbolKind::enumTypeSymbol:
         case SymbolKind::fundamentalTypeSymbol:
         case SymbolKind::templateParameterSymbol:
+        case SymbolKind::nestedTypeSymbol:
         {
             return SymbolGroupKind::typeSymbolGroup;
         }
@@ -319,6 +400,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         {
             return new FloatingValue(name);
         }
+        case SymbolKind::nullPtrValueSymbol:
+        {
+            return new NullPtrValue();
+        }
         case SymbolKind::genericTypeSymbol:
         {
             throw std::runtime_error("not implemented");
@@ -353,11 +438,11 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         }
         case SymbolKind::enumTypeSymbol:
         {
-            throw std::runtime_error("not implemented");
+            return new EnumeratedTypeSymbol(name);
         }
-        case SymbolKind::enumeratorSymbol:
+        case SymbolKind::enumConstantSymbol:
         {
-            throw std::runtime_error("not implemented");
+            return new EnumConstantSymbol(name);
         }
         case SymbolKind::functionSymbol:
         {
@@ -403,9 +488,21 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         {
             return new SpecializationSymbol(name);
         }
+        case SymbolKind::nestedTypeSymbol:
+        {
+            return new NestedTypeSymbol(name);
+        }
         case SymbolKind::errorSymbol:
         {
             return new ErrorTypeSymbol();
+        }
+        case SymbolKind::symbolValueSymbol:
+        {
+            return new SymbolValue();
+        }
+        case SymbolKind::invokeValueSymbol:
+        {
+            return new InvokeValue();
         }
     }
     return nullptr;

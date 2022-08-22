@@ -49,6 +49,8 @@ constexpr LexerFlags operator~(LexerFlags flag)
     return static_cast<LexerFlags>(~static_cast<int32_t>(flag));
 }
 
+bool parsing_error_thrown = false;
+
 template<typename Stack>
     requires RuleStack<Stack>
 struct RuleGuard
@@ -361,6 +363,7 @@ public:
     void ThrowFarthestError()
     {
         soul::ast::SourcePos sourcePos = GetSourcePos(farthestPos);
+        parsing_error_thrown = true;
         throw ParsingException(GetError(farthestPos), fileName, sourcePos);
     }
     void SetLog(ParsingLog* log_) 

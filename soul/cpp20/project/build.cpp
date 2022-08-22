@@ -30,6 +30,7 @@ void Visit(int file, soul::cpp20::proj::ast::Project* project, std::vector<int>&
             }
         }
     }
+    visited.insert(file);
     topologicalOrder.push_back(file);
 }
 
@@ -50,7 +51,7 @@ std::vector<int> MakeTopologicalOrder(const std::vector<int>& files, soul::cpp20
 class ModuleDependencyVisitor : public soul::cpp20::ast::DefaultVisitor
 {
 public:
-    ModuleDependencyVisitor(int file_);
+    ModuleDependencyVisitor(int file_, soul::cpp20::proj::ast::Project* project_, const std::string& fileName_);
     soul::cpp20::symbols::Module* GetModule() { return module.release(); }
     void Visit(soul::cpp20::ast::ModuleDeclarationNode& node);
     void Visit(soul::cpp20::ast::TranslationUnitNode& node);
@@ -58,6 +59,8 @@ public:
     void Visit(soul::cpp20::ast::ImportDeclarationNode& node);
     void Visit(soul::cpp20::ast::ModuleNameNode& node);
 private:
+    soul::cpp20::proj::ast::Project* project;
+    std::string fileName;
     int file;
     bool exp;
     bool expimp;
@@ -65,7 +68,13 @@ private:
     std::unique_ptr<soul::cpp20::symbols::Module> module;
 };
 
-ModuleDependencyVisitor::ModuleDependencyVisitor(int file_) : exp(false), expimp(false), imp(false), file(file_)
+ModuleDependencyVisitor::ModuleDependencyVisitor(int file_, soul::cpp20::proj::ast::Project* project_, const std::string& fileName_) : 
+    exp(false), 
+    expimp(false), 
+    imp(false), 
+    file(file_), 
+    project(project_),
+    fileName(fileName_)
 {
 }
 
@@ -81,7 +90,7 @@ void ModuleDependencyVisitor::Visit(soul::cpp20::ast::ModuleDeclarationNode& nod
 
 void ModuleDependencyVisitor::Visit(soul::cpp20::ast::TranslationUnitNode& node)
 {
-    module.reset(new soul::cpp20::symbols::Module("main"));
+    module.reset(new soul::cpp20::symbols::Module(project->Name() + "." + fileName));
     module->Init();
     module->SetFile(file);
     if (node.Unit())
@@ -131,6 +140,7 @@ void ModuleDependencyVisitor::Visit(soul::cpp20::ast::ModuleNameNode& node)
 void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file)
 {
     const std::string& filePath = project->GetFileMap().GetFilePath(file);
+    std::string fileName = util::Path::GetFileNameWithoutExtension(filePath);
     std::string fileContent = util::ReadFile(filePath);
     std::u32string content = util::ToUtf32(fileContent);
     auto lexer = soul::cpp20::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);
@@ -140,7 +150,7 @@ void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file)
     context.SetLexer(&lexer);
     std::unique_ptr<soul::cpp20::ast::Node> node = soul::cpp20::parser::module_dependency::ModuleDependencyParser<decltype(lexer)>::Parse(lexer, &context);
     project->GetFileMap().AddFileContent(file, std::move(content), lexer.GetLineStartIndeces());
-    ModuleDependencyVisitor visitor(file);
+    ModuleDependencyVisitor visitor(file, project, fileName);
     node->Accept(visitor);
     project->SetModule(file, visitor.GetModule());
 }
@@ -150,7 +160,6 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::
     soul::cpp20::ast::NodeIdFactory nodeIdFactory;
     soul::cpp20::ast::SetNodeIdFactory(&nodeIdFactory);
     soul::cpp20::symbols::Symbols symbols;
-    soul::cpp20::symbols::EvaluationContext evaluationContext;
     project->InitModules();
     if (!project->Scanned())
     {
@@ -160,13 +169,8 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::
             ScanDependencies(project, file);
         }
     }
-    project->LoadModules(&nodeIdFactory, moduleMapper, &symbols, &evaluationContext);
+    project->LoadModules(&nodeIdFactory, moduleMapper, &symbols);
     std::vector<int> topologicalOrder = MakeTopologicalOrder(project->InterfaceFiles(), project);
-    for (int file : topologicalOrder)
-    {
-        soul::cpp20::symbols::Module* module = project->GetModule(file);
-        moduleMapper.ClearModule(module->Name());
-    }
     for (int file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);

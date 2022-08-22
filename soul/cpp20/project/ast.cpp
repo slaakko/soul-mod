@@ -44,18 +44,17 @@ void Project::InitModules()
     Resize();
 }
 
-void Project::LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::cpp20::symbols::ModuleMapper& moduleMapper,
-    soul::cpp20::symbols::Symbols* symbols, soul::cpp20::symbols::EvaluationContext* evaluationContext)
+void Project::LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::symbols::Symbols* symbols)
 {
     if (loaded) return;
     loaded = true;
     for (const auto& module : modules)
     {
         moduleMap[module->Name()] = module.get();
+        moduleNames.push_back(module->Name());
     }
     soul::cpp20::ast::SetNodeIdFactory(nodeIdFactory);
     soul::cpp20::symbols::SetSymbols(symbols);
-    soul::cpp20::symbols::SetEvaluationContext(evaluationContext);
     for (const auto& module : modules)
     {
         for (const auto& exportedModuleName : module->ExportModuleNames())

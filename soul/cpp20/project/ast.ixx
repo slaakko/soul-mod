@@ -33,12 +33,12 @@ public:
     const std::vector<int>& SourceFiles() const { return sourceFiles; }
     const std::string& GetModuleSourceFilePath(int file) const;
     void InitModules();
-    void LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::cpp20::symbols::ModuleMapper& moduleMapper,
-        soul::cpp20::symbols::Symbols* symbols, soul::cpp20::symbols::EvaluationContext* evaluationContext);
+    void LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::symbols::Symbols* symbols);
     bool UpToDate() const;
     bool Scanned() const { return scanned; }
     void SetScanned() { scanned = true; }
     const std::vector<std::unique_ptr<soul::cpp20::symbols::Module>>& Modules() const { return modules; }
+    const std::vector<std::string>& ModuleNames() const { return moduleNames; }
 private:
     std::string filePath;
     std::string root;
@@ -53,6 +53,7 @@ private:
     bool initialized;
     bool scanned;
     bool loaded;
+    std::vector<std::string> moduleNames;
 };
 
 } // namespace soul::cpp20::proj::ast

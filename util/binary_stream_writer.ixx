@@ -8,6 +8,7 @@ module;
 
 export module util.binary.stream.writer;
 import std.core;
+import util.boost.uuid;
 import util.stream;
 import util.uuid;
 

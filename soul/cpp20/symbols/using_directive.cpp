@@ -53,7 +53,7 @@ void UsingDirectiveProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
     }
     else
     {
-        throw Exception("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not denote a namespace", node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not denote a namespace", node.GetSourcePos(), context);
     }
 }
 

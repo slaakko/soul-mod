@@ -48,13 +48,13 @@ void UsingDeclarationProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
     scope->Lookup(node.Str(), SymbolGroupKind::all, ScopeLookup::thisScope, symbols);
     if (symbols.empty())
     {
-        throw Exception("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
     }
     for (Symbol* symbol : symbols)
     {
         if (symbol->IsNamespaceSymbol())
         {
-            throw Exception("symbol '" + util::ToUtf8(symbol->FullName()) + "' denotes a namespace", node.GetSourcePos(), context);
+            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' denotes a namespace", node.GetSourcePos(), context);
         }
         else
         {

@@ -15,6 +15,10 @@ import util.uuid;
 
 export namespace soul::cpp20::symbols {
 
+enum class FunctionKind;
+enum class FunctionQualifiers;
+enum class EnumTypeKind;
+
 enum class MapKind : int32_t
 {
     none, nodeToSymbol = 1 << 0, symbolToNode = 1 << 1, both = nodeToSymbol | symbolToNode
@@ -36,6 +40,7 @@ constexpr MapKind operator~(MapKind kind)
 }
 
 enum class FundamentalTypeKind : int32_t;
+enum class ClassKind;
 
 class Context;
 class Module;
@@ -43,6 +48,7 @@ class Symbol;
 class Scope;
 class AliasTypeSymbol;
 class ClassTypeSymbol;
+class EnumeratedTypeSymbol;
 class SpecializationSymbol;
 class CompoundTypeSymbol;
 class NamespaceSymbol;
@@ -50,6 +56,7 @@ class TypeSymbol;
 class FundamentalTypeSymbol;
 class FunctionSymbol;
 class ParameterSymbol;
+class Value;
 class VariableSymbol;
 class Reader;
 class Writer;
@@ -83,12 +90,17 @@ public:
     void PopScope();
     void BeginScope(Scope* scope);
     void EndScope();
+    void PushTopScopeIndex();
+    void PopTopScopeIndex();
     void BeginNamespace(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context);
     void EndNamespace();
     void BeginNamespace(soul::cpp20::ast::Node* node, Context* context);
     void EndNamespace(int level);
-    void BeginClass(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context);
+    void BeginClass(const std::u32string& name, ClassKind classKind, soul::cpp20::ast::Node* node, Context* context);
     void EndClass();
+    void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, soul::cpp20::ast::Node* node, Context* context);
+    void EndEnumeratedType();
+    void AddEnumerator(const std::u32string& name, Value* value, soul::cpp20::ast::Node* node, Context* context);
     void BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
     void EndBlock();
     void RemoveBlock();
@@ -96,9 +108,9 @@ public:
     void EndTemplateDeclaration();
     void RemoveTemplateDeclaration();
     void AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, Context* context);
-    FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context);
+    FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
-    void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
+    void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Value* value, Context* context);
     void AddAliasType(soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
     void AddUsingDeclaration(soul::cpp20::ast::Node* node, Symbol* symbol, Context* context);
     void AddUsingDirective(NamespaceSymbol* ns, soul::cpp20::ast::Node* node, Context* context);
@@ -146,7 +158,7 @@ private:
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
     std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
     std::map<int32_t, TypeSymbol*> fundamentalTypeMap;
-    std::stack<Scope*> scopeStack;
+    std::vector<Scope*> scopeStack;
     Scope* currentScope;
     std::map<soul::cpp20::ast::Node*, Symbol*> nodeSymbolMap;
     std::map<soul::cpp20::ast::Node*, Symbol*> allNodeSymbolMap;
@@ -158,6 +170,8 @@ private:
     std::map<util::uuid, Symbol*> constraintMap;
     Symbol* typenameConstraintSymbol;
     TypeSymbol* errorTypeSymbol;
+    int topScopeIndex;
+    std::stack<int> topScopeIndexStack;
 };
 
 class Symbols

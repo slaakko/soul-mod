@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/parser/class.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/parser/class.parser' using soul parser generator spg version 4.1.0
 
 export module soul.cpp20.parser.classes;
 
@@ -36,6 +36,7 @@ struct ClassParser
     static soul::parser::Match MemberDeclSpecifiers(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match RetMemberDeclSpecifiers(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberFunctionDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match RetMemberFunctionDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberTemplateDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberDeclaratorList(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match MemberDeclarator(Lexer& lexer, soul::cpp20::symbols::Context* context);

@@ -17,6 +17,13 @@ NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(
     GetScope()->SetKind(ScopeKind::namespaceScope);
 }
 
+SymbolTable* NamespaceSymbol::GetSymbolTable() 
+{
+    if (symbolTable) return symbolTable;
+    if (Parent()) return Parent()->GetSymbolTable();
+    return nullptr;
+}
+
 bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)
@@ -39,7 +46,7 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
     }
     else
     {
-        throw std::runtime_error("namespace symbol expected");
+        throw std::runtime_error("soul.cpp20.symbols.NamespaceSymbol::Import: namespace symbol expected");
     }
     for (const auto& symbol : that->Symbols())
     {
@@ -63,6 +70,15 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
 void NamespaceSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+bool NamespaceSymbol::ContainsSymbols() const
+{
+    for (const auto& symbol : Symbols())
+    {
+        if (!symbol->IsNamespaceSymbol()) return true;
+    }
+    return false;
 }
 
 class NamespaceCreator : public soul::cpp20::ast::DefaultVisitor
@@ -106,6 +122,11 @@ void BeginNamespace(soul::cpp20::ast::Node* node, Context* context)
 void EndNamespace(int level, Context* context)
 {
     context->GetSymbolTable()->EndNamespace(level);
+}
+
+bool NamespaceLess::operator()(NamespaceSymbol* left, NamespaceSymbol* right) const
+{
+    return left->FullName() < right->FullName();
 }
 
 } // namespace soul::cpp20::symbols

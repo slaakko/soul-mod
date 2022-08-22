@@ -109,6 +109,9 @@ public:
     void SetParent(Node* parent_) { parent = parent_; }
     int32_t Id() const { return id; }
     bool IsImportDeclarationNode() const { return kind == NodeKind::importDeclarationNode; }
+    bool IsClassNode() const { return kind == NodeKind::classNode; }
+    bool IsStructNode() const { return kind == NodeKind::structNode;  }
+    bool IsUnionNode() const { return kind == NodeKind::unionNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

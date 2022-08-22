@@ -56,6 +56,10 @@ void SpecializationSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     classTemplate = static_cast<ClassTypeSymbol*>(symbolTable.GetType(ids[0]));
+}
+
+void SpecializationSymbol::ResolveTemplateArgs(SymbolTable& symbolTable)
+{
     for (int i = 1; i < ids.size(); ++i)
     {
         TypeSymbol* templateArg = symbolTable.GetType(ids[i]);

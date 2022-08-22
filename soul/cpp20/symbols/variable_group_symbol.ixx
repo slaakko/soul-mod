@@ -18,6 +18,7 @@ class VariableGroupSymbol : public Symbol
 public:
     VariableGroupSymbol(const std::u32string& name_);
     std::string SymbolKindStr() const override { return "variable group symbol"; }
+    std::string SymbolDocKindStr() const override { return "variable_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
     void AddVariable(VariableSymbol* variableSymbol);
@@ -27,6 +28,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    void Merge(VariableGroupSymbol* that);
 private:
     std::vector<VariableSymbol*> variables;
     std::vector<util::uuid> variableIds;

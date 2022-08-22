@@ -3,14 +3,73 @@
 // Distributed under the MIT license
 // =================================
 
+module;
+#include <boost/uuid/uuid.hpp>
+
 module soul.cpp20.symbols.value;
 
 import util.unicode;
+import soul.cpp20.symbols.modules;
+import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.visitor;
 
 namespace soul::cpp20::symbols {
+
+ValueKind CommonValueKind(ValueKind left, ValueKind right) 
+{
+    switch (left)
+    {
+        case ValueKind::boolValue:
+        {
+            return ValueKind::boolValue;
+        }
+        case ValueKind::integerValue:
+        {
+            switch (right)
+            {
+                case ValueKind::integerValue:
+                {
+                    return ValueKind::integerValue;
+                }
+                case ValueKind::floatingValue:
+                {
+                    return ValueKind::floatingValue;
+                }
+                case ValueKind::boolValue:
+                {
+                    return ValueKind::boolValue;
+                }
+                default:
+                {
+                    return ValueKind::none;
+                }
+            }
+            break;
+        }
+        case ValueKind::floatingValue:
+        {
+            switch (right)
+            {
+                case ValueKind::integerValue:
+                case ValueKind::floatingValue:
+                {
+                    return ValueKind::floatingValue;
+                }
+                case ValueKind::boolValue:
+                {
+                    return ValueKind::boolValue;
+                }
+                default:
+                {
+                    return ValueKind::none;
+                }
+            }
+        }
+    }
+    return ValueKind::none;
+}
 
 Value::Value(SymbolKind symbolKind_, const std::u32string& rep_) : Symbol(symbolKind_, rep_)
 {
@@ -31,6 +90,18 @@ ValueKind Value::GetValueKind() const
         case SymbolKind::floatingValueSymbol:
         {
             return ValueKind::floatingValue;
+        }
+        case SymbolKind::nullPtrValueSymbol:
+        {
+            return ValueKind::nullPtrValue;
+        }
+        case SymbolKind::symbolValueSymbol:
+        {
+            return ValueKind::symbolValue;
+        }
+        case SymbolKind::invokeValueSymbol:
+        {
+            return ValueKind::invokeValue;
         }
     }
     return ValueKind::none;
@@ -166,15 +237,137 @@ void FloatingValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-EvaluationContext::EvaluationContext() : trueValue(true, U"true"), falseValue(false, U"false")
+NullPtrValue::NullPtrValue() : Value(SymbolKind::nullPtrValueSymbol, U"nullptr")
 {
 }
 
-void EvaluationContext::Init()
+BoolValue* NullPtrValue::ToBoolValue(EvaluationContext& context)
 {
-    integerValueMap.clear();
-    floatingValueMap.clear();
-    values.clear();
+    return context.GetBoolValue(false);
+}
+
+Value* NullPtrValue::Convert(ValueKind kind, EvaluationContext& context)
+{
+    switch (kind)
+    {
+        case ValueKind::boolValue: return ToBoolValue(context);
+    }
+    return this;
+}
+
+void NullPtrValue::Write(Writer& writer)
+{
+    Value::Write(writer);
+}
+
+void NullPtrValue::Read(Reader& reader)
+{
+    Value::Read(reader);
+}
+
+void NullPtrValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+SymbolValue::SymbolValue() : Value(SymbolKind::symbolValueSymbol, std::u32string()), symbol(nullptr)
+{
+}
+
+SymbolValue::SymbolValue(Symbol* symbol_) : Value(SymbolKind::symbolValueSymbol, std::u32string()), symbol(symbol_)
+{
+}
+
+Value* SymbolValue::Convert(ValueKind kind, EvaluationContext& context)
+{
+    return this;
+}
+
+BoolValue* SymbolValue::ToBoolValue(EvaluationContext& context)
+{
+    return context.GetBoolValue(false);
+}
+
+void SymbolValue::Write(Writer& writer)
+{
+    Value::Write(writer);
+    writer.GetBinaryStreamWriter().Write(symbol->Id());
+}
+
+void SymbolValue::Read(Reader& reader)
+{
+    Value::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(symbolId);
+}
+
+void SymbolValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void SymbolValue::Resolve(SymbolTable& symbolTable)
+{
+    Value::Resolve(symbolTable);
+    symbol = soul::cpp20::symbols::GetSymbol(symbolId);
+}
+
+std::u32string SymbolValue::ToString() const
+{
+    return symbol->Name();
+}
+
+InvokeValue::InvokeValue() : Value(SymbolKind::invokeValueSymbol, std::u32string()), subject(nullptr)
+{
+}
+
+InvokeValue::InvokeValue(Value* subject_) : Value(SymbolKind::invokeValueSymbol, std::u32string()), subject(subject_)
+{
+}
+
+Value* InvokeValue::Convert(ValueKind kind, EvaluationContext& context)
+{
+    return this;
+}
+
+BoolValue* InvokeValue::ToBoolValue(EvaluationContext& context)
+{
+    return context.GetBoolValue(false);
+}
+
+void InvokeValue::Write(Writer& writer)
+{
+    Value::Write(writer);
+    writer.GetBinaryStreamWriter().Write(subject->Id());
+}
+
+void InvokeValue::Read(Reader& reader)
+{
+    Value::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(subjectId);
+}
+
+void InvokeValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void InvokeValue::Resolve(SymbolTable& symbolTable)
+{
+    Value::Resolve(symbolTable);
+    EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
+    subject = evaluationContext->GetValue(subjectId);
+}
+
+std::u32string InvokeValue::ToString() const
+{
+    return subject->ToString() + U"()";
+}
+
+EvaluationContext::EvaluationContext() : trueValue(true, U"true"), falseValue(false, U"false"), nullPtrValue()
+{
+    MapValue(&nullPtrValue);
+    MapValue(&trueValue);
+    MapValue(&falseValue);
 }
 
 BoolValue* EvaluationContext::GetBoolValue(bool value)
@@ -194,6 +387,7 @@ IntegerValue* EvaluationContext::GetIntegerValue(int64_t value, const std::u32st
         IntegerValue* integerValue = new IntegerValue(value, rep);
         integerValueMap[std::make_pair(value, rep)] = integerValue;
         values.push_back(std::unique_ptr<Value>(integerValue));
+        MapValue(integerValue);
         return integerValue;
     }
 }
@@ -210,12 +404,50 @@ FloatingValue* EvaluationContext::GetFloatingValue(double value, const std::u32s
         FloatingValue* floatingValue = new FloatingValue(value, rep);
         floatingValueMap[std::make_pair(value, rep)] = floatingValue;
         values.push_back(std::unique_ptr<Value>(floatingValue));
+        MapValue(floatingValue);
         return floatingValue;
+    }
+}
+
+SymbolValue* EvaluationContext::GetSymbolValue(Symbol* symbol)
+{
+    auto it = symbolValueMap.find(symbol);
+    if (it != symbolValueMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        SymbolValue* symbolValue = new SymbolValue(symbol);
+        symbolValueMap[symbol] = symbolValue;
+        values.push_back(std::unique_ptr<Value>(symbolValue));
+        MapValue(symbolValue);
+        return symbolValue;
+    }
+}
+
+InvokeValue* EvaluationContext::GetInvokeValue(Value* subject)
+{
+    auto it = invokeMap.find(subject);
+    if (it != invokeMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        InvokeValue* invokeValue = new InvokeValue(subject);
+        invokeMap[subject] = invokeValue;
+        values.push_back(std::unique_ptr<Value>(invokeValue));
+        MapValue(invokeValue);
+        return invokeValue;
     }
 }
 
 void EvaluationContext::Write(Writer& writer)
 {
+    trueValue.Write(writer);
+    falseValue.Write(writer);
+    nullPtrValue.Write(writer);
     uint32_t count = values.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (uint32_t i = 0; i < count; ++i)
@@ -227,33 +459,63 @@ void EvaluationContext::Write(Writer& writer)
 
 void EvaluationContext::Read(Reader& reader)
 {
+    trueValue.Read(reader);
+    falseValue.Read(reader);
+    nullPtrValue.Read(reader);
+    MapValue(&nullPtrValue);
+    MapValue(&trueValue);
+    MapValue(&falseValue);
     uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < count; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
-        if (symbol->IsIntegerValueSymbol())
+        if (symbol->IsValueSymbol())
         {
-            IntegerValue* integerValue = static_cast<IntegerValue*>(symbol);
-            integerValueMap[std::make_pair(integerValue->GetValue(), integerValue->Rep())] = integerValue;
+            Value* value = static_cast<Value*>(symbol);
+            values.push_back(std::unique_ptr<Value>(value));
+            MapValue(value);
+            if (symbol->IsIntegerValueSymbol())
+            {
+                IntegerValue* integerValue = static_cast<IntegerValue*>(symbol);
+                integerValueMap[std::make_pair(integerValue->GetValue(), integerValue->Rep())] = integerValue;
+            }
+            else if (symbol->IsFloatingValueSymbol())
+            {
+                FloatingValue* floatingValue = static_cast<FloatingValue*>(symbol);
+                floatingValueMap[std::make_pair(floatingValue->GetValue(), floatingValue->Rep())] = floatingValue;
+            }
         }
-        else if (symbol->IsFloatingValueSymbol())
+        else
         {
-            FloatingValue* floatingValue = static_cast<FloatingValue*>(symbol);
-            floatingValueMap[std::make_pair(floatingValue->GetValue(), floatingValue->Rep())] = floatingValue;
+            throw std::runtime_error("soul.cpp20.symbols.value: value symbol expected");
         }
     }
 }
 
-EvaluationContext* evaluationContext = nullptr;
-
-void SetEvaluationContext(EvaluationContext* evaluationContext_)
+Value* EvaluationContext::GetValue(const util::uuid& valueId) const
 {
-    evaluationContext = evaluationContext_;
+    auto it = valueMap.find(valueId);
+    if (it != valueMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
-EvaluationContext& GetEvaluationContext()
+void EvaluationContext::MapValue(Value* value)
 {
-    return *evaluationContext;
+    valueMap[value->Id()] = value;
+}
+
+void EvaluationContext::Resolve(SymbolTable& symbolTable)
+{
+    for (const auto& value : values)
+    {
+        value->Resolve(symbolTable);
+    }
 }
 
 } // namespace soul::cpp20::symbols

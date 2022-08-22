@@ -13,10 +13,18 @@ export namespace soul::cpp20::symbols {
 
 class Context;
 
+bool ExceptionThrown();
+
 class Exception : public std::runtime_error
 {
 public:
     Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
+    Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
 };
+
+[[noreturn]]
+void ThrowException(const std::string& message, const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
+
+void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
 
 } // namespace soul::cpp20::symbols

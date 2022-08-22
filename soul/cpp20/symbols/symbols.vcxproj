@@ -186,6 +186,10 @@
     <ClCompile Include="declarator.ixx" />
     <ClCompile Include="derivations.cpp" />
     <ClCompile Include="derivations.ixx" />
+    <ClCompile Include="enums.cpp" />
+    <ClCompile Include="enums.ixx" />
+    <ClCompile Include="evaluator.cpp" />
+    <ClCompile Include="evaluator.ixx" />
     <ClCompile Include="exception.cpp" />
     <ClCompile Include="exception.ixx" />
     <ClCompile Include="function_group_symbol.cpp" />

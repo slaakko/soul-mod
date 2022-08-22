@@ -18,11 +18,9 @@ struct Init
     Init();
     void SetSymbols(soul::cpp20::symbols::Symbols* symbols_) { symbols = symbols_; }
     void SetNodeIdFactory(soul::cpp20::ast::NodeIdFactory* nodeIdFactory_) { nodeIdFactory = nodeIdFactory_; }
-    void SetEvaluationContext(soul::cpp20::symbols::EvaluationContext* evaluationContext_) { evaluationContext = evaluationContext_; }
     soul::cpp20::symbols::ModuleMapper moduleMapper;
     soul::cpp20::symbols::Symbols* symbols;
     soul::cpp20::ast::NodeIdFactory* nodeIdFactory;
-    soul::cpp20::symbols::EvaluationContext* evaluationContext;
 };
 
 } // namespace soul::cpp20::project::init

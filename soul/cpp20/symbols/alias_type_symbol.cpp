@@ -79,4 +79,9 @@ void ProcessAliasDeclaration(soul::cpp20::ast::Node* aliasDeclarationNode, Conte
     context->GetSymbolTable()->AddAliasType(idNode, type, context);
 }
 
+bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const
+{
+    return left->Name() < right->Name();
+}
+
 } // namespace soul::cpp20::symbols

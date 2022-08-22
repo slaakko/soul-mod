@@ -99,4 +99,12 @@ void AliasGroupSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+void AliasGroupSymbol::Merge(AliasGroupSymbol* that)
+{
+    for (const auto& aliasType : that->aliasTypeSymbols)
+    {
+        aliasTypeSymbols.push_back(aliasType);
+    }
+}
+
 } // namespace soul::cpp20::symbols

@@ -13,11 +13,11 @@ bool SpecializationLess::operator()(SpecializationSymbol* left, SpecializationSy
 {
     if (left->ClassTemplate() < right->ClassTemplate())
     {
-        return left;
+        return true;
     }
     else if (left->ClassTemplate() > right->ClassTemplate())
     {
-        return right;
+        return false;
     }
     int n = left->TemplateArguments().size();
     int m = right->TemplateArguments().size();

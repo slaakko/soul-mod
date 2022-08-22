@@ -4,6 +4,7 @@ module;
 export module util.uuid;
 
 import std.core;
+import util.boost.uuid;
 
 export namespace util {
 

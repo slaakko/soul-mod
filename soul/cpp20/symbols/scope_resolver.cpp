@@ -60,13 +60,12 @@ void ScopeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
         }
         else
         {
-            throw Exception("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not have a scope", node.GetSourcePos(), context);
+            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not have a scope", node.GetSourcePos(), context);
         }
     }
     else
     {
-        throw Exception("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'",
-            node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'", node.GetSourcePos(), context);
     }
 }
 

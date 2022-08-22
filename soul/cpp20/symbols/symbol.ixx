@@ -17,6 +17,15 @@ class Reader;
 class Writer;
 class Visitor;
 class SymbolTable;
+class Module;
+class ConceptSymbol;
+class AliasTypeSymbol;
+class ClassTypeSymbol;
+class EnumeratedTypeSymbol;
+class FunctionSymbol;
+class NamespaceSymbol;
+class TemplateDeclarationSymbol;
+class VariableSymbol;
 
 enum class ScopeKind : int32_t;
 
@@ -28,10 +37,10 @@ enum class SymbolKind : int32_t
     classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol,
     boolValueSymbol, integerValueSymbol, floatingValueSymbol, genericTypeSymbol, nullPtrTypeSymbol,
     aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
-    conceptSymbol, enumTypeSymbol, enumeratorSymbol, functionSymbol, functionTypeSymbol, 
+    conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, 
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
     templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol, 
-    specializationSymbol,
+    specializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
     max
 };
 
@@ -86,8 +95,14 @@ public:
     virtual void Resolve(SymbolTable& symbolTable);
     virtual void Accept(Visitor& visitor) = 0;
     virtual Symbol* GetSingleSymbol() { return this; }
+    virtual std::string SymbolDocKindStr() const = 0;
+    virtual SymbolTable* GetSymbolTable();
+    Module* GetModule();
     Symbol* Parent() { return parent; }
     void SetParent(Symbol* parent_) { parent = parent_; }
+    ClassTypeSymbol* ParentClass() const;
+    NamespaceSymbol* ParentNamespace() const;
+    std::string DocName() const;
     bool CanInstall() const;
     bool IsTypeSymbol() const;
     bool IsNamespaceSymbol() const { return kind == SymbolKind::namespaceSymbol; }
@@ -99,15 +114,19 @@ public:
     bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
     bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol; }
+    bool IsEnumeratedTypeSymbol() const { return kind == SymbolKind::enumTypeSymbol; }
+    bool IsFunctionGroupSymbol() const { return kind == SymbolKind::functionGroupSymbol; }
+    bool IsFunctionSymbol() const { return  kind == SymbolKind::functionSymbol; }
     bool IsBlockSymbol() const { return kind == SymbolKind::blockSymbol; }
     bool IsFundamentalTypeSymbol() const { return kind == SymbolKind::fundamentalTypeSymbol; }
-    bool IsFunctionSymbol() const { return  kind == SymbolKind::functionSymbol; }
     bool IsParameterSymbol() const { return kind == SymbolKind::parameterSymbol; }
     bool IsTemplateParameterSymbol() const { return kind == SymbolKind::templateParameterSymbol; }
     bool IsTemplateDeclarationSymbol() const { return kind == SymbolKind::templateDeclarationSymbol; }
     bool IsTypenameConstraintSymbol() const { return kind == SymbolKind::typenameConstraintSymbol; }
+    bool IsVariableGroupSymbol() const { return kind == SymbolKind::variableGroupSymbol; }
     bool IsVariableSymbol() const { return kind == SymbolKind::variableSymbol; }
     bool IsErrorTypeSymbol() const { return kind == SymbolKind::errorSymbol; }
+    bool IsValueSymbol() const;
     SymbolGroupKind GetSymbolGroupKind() const;
 private:
     SymbolKind kind;

@@ -5,6 +5,7 @@
 
 module soul.cpp20.symbols.context;
 
+import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.scope;
 import soul.cpp20.symbols.symbol;
@@ -23,6 +24,11 @@ void Context::SetLexer(Lexer* lexer_)
 void Context::SetSymbolTable(SymbolTable* symbolTable_)
 {
     symbolTable = symbolTable_;
+}
+
+EvaluationContext* Context::GetEvaluationContext()
+{
+    return symbolTable->GetModule()->GetEvaluationContext();
 }
 
 std::string Context::FileName() const

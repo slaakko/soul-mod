@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/parser/initialization.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/parser/initialization.parser' using soul parser generator spg version 4.1.0
 
 module soul.cpp20.parser.initialization;
 

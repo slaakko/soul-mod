@@ -43,6 +43,7 @@ constexpr  ContextFlags operator~(ContextFlags flags)
 }
 
 class SymbolTable;
+class EvaluationContext;
 
 class Context
 {
@@ -52,6 +53,7 @@ public:
     void SetLexer(Lexer* lexer_);
     SymbolTable* GetSymbolTable() { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_);
+    EvaluationContext* GetEvaluationContext();
     std::string FileName() const;
     void PushFlags();
     void PopFlags();

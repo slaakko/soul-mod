@@ -7,6 +7,7 @@ module soul.cpp20.symbols.declaration;
 
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.declarator;
+import soul.cpp20.symbols.evaluator;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.function.symbol;
 import soul.cpp20.symbols.fundamental.type.symbol;
@@ -144,6 +145,7 @@ public:
     void Visit(soul::cpp20::ast::SimpleDeclarationNode& node) override;
     void Visit(soul::cpp20::ast::MemberDeclarationNode& node) override;
     void Visit(soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode& node) override;
+    void Visit(soul::cpp20::ast::FunctionDefinitionNode& node) override;
     void Visit(soul::cpp20::ast::ParameterNode& node) override;
     void Visit(soul::cpp20::ast::ClassSpecifierNode& node) override;
     void Visit(soul::cpp20::ast::ElaboratedTypeSpecifierNode & override);
@@ -177,6 +179,7 @@ public:
 
     void Visit(soul::cpp20::ast::QualifiedIdNode& node) override;
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
+    void Visit(soul::cpp20::ast::TemplateIdNode& node) override;
 private:
     Context* context;
     DeclarationFlags flags;
@@ -243,11 +246,47 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::NoDeclSpecFunctionDeclaration
     declarations.push_back(ProcessDeclarator(nullptr, &node, context));
 }
 
+void DeclarationProcessor::Visit(soul::cpp20::ast::FunctionDefinitionNode& node)
+{
+    if (node.DeclSpecifiers())
+    {
+        node.DeclSpecifiers()->Accept(*this);
+    }
+    TypeSymbol* baseType = ResolveBaseType(&node);
+    Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), context);
+    if (node.FunctionBody() && node.FunctionBody()->Kind() == soul::cpp20::ast::NodeKind::defaultedOrDeletedFunctionNode)
+    {
+        if (declaration.declarator->IsFunctionDeclarator())
+        {
+            FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declaration.declarator.get());
+            soul::cpp20::ast::DefaultedOrDeletedFunctionNode* ddNode = static_cast<soul::cpp20::ast::DefaultedOrDeletedFunctionNode*>(node.FunctionBody());
+            switch (ddNode->DefaultOrDelete()->Kind())
+            {
+                case soul::cpp20::ast::NodeKind::defaultNode:
+                {
+                    functionDeclarator->AddQualifier(FunctionQualifiers::isDefault);
+                    break;
+                }
+                case soul::cpp20::ast::NodeKind::deleteNode:
+                {
+                    functionDeclarator->AddQualifier(FunctionQualifiers::isDeleted);
+                    break;
+                }
+            }
+        }
+    }
+    declarations.push_back(std::move(declaration));
+}
+
 void DeclarationProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
 {
     node.DeclSpecifiers()->Accept(*this);
     TypeSymbol* baseType = ResolveBaseType(&node);
     Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), context);
+    if (node.Initializer())
+    {
+        declaration.value = Evaluate(node.Initializer(), context);
+    }
     declarations.push_back(std::move(declaration));
 }
 
@@ -428,14 +467,24 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
     type = ResolveType(&node, flags, context);
 }
 
-void ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Context* context)
+void DeclarationProcessor::Visit(soul::cpp20::ast::TemplateIdNode& node)
 {
-    context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, context);
+    type = ResolveType(&node, flags, context);
+}
+
+void ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Value* value, Context* context)
+{
+    context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, value, context);
 }
 
 void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbol* type, Context* context)
 {
-    FunctionSymbol* functionSymbol = context->GetSymbolTable()->AddFunction(functionDeclarator->Name(), functionDeclarator->Node(), context);
+    FunctionSymbol* functionSymbol = context->GetSymbolTable()->AddFunction(
+        functionDeclarator->Name(), 
+        functionDeclarator->Node(), 
+        functionDeclarator->GetFunctionKind(), 
+        functionDeclarator->GetFunctionQualifiers(), 
+        context);
     functionSymbol->SetReturnType(type);
     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
     {
@@ -449,6 +498,10 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
             sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
         }
         ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+        if (parameterDeclaration.value)
+        {
+            parameter->SetDefaultValue(parameterDeclaration.value);
+        }
         functionSymbol->AddParameter(parameter, sourcePos, context);
     }
 }
@@ -466,7 +519,7 @@ void ProcessSimpleDeclaration(soul::cpp20::ast::Node* node, Context* context)
             case DeclaratorKind::simpleDeclarator:
             {
                 SimpleDeclarator* simpleDeclarator = static_cast<SimpleDeclarator*>(declarator);
-                ProcessSimpleDeclarator(simpleDeclarator, declaration.type, context);
+                ProcessSimpleDeclarator(simpleDeclarator, declaration.type, declaration.value, context);
                 break;
             }
             case DeclaratorKind::functionDeclarator:
@@ -490,7 +543,7 @@ Declaration ProcessParameterDeclaration(soul::cpp20::ast::Node* node, Context* c
     }
     else
     {
-        throw std::runtime_error("single declaration expected");
+        throw std::runtime_error("soul.cpp20.symbols.declaration: single declaration expected");
     }
 }
 
@@ -526,7 +579,7 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
     }
     else
     {
-        throw std::runtime_error("single declaration expected");
+        throw std::runtime_error("soul.cpp20.symbols.declaration: single declaration expected");
     }
     return scopes;
 }
@@ -537,6 +590,11 @@ void EndFunctionDefinition(soul::cpp20::ast::Node* functionDefinitionNode, int s
     {
         context->GetSymbolTable()->EndScope(); 
     }
+}
+
+void ProcessMemberFunctionDefinition(soul::cpp20::ast::Node* node, Context* context)
+{
+    ProcessSimpleDeclaration(node, context);
 }
 
 void Write(Writer& writer, DeclarationFlags flags)

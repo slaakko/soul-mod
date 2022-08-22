@@ -86,4 +86,12 @@ void FunctionGroupSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
+{
+    for (const auto& function : that->functions)
+    {
+        functions.push_back(function);
+    }
+}
+
 } // namespace soul::cpp20::symbols

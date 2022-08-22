@@ -1,0 +1,8 @@
+project soul.util;
+interface <ansi.ixx>;
+interface <binary_resource_ptr.ixx>;
+interface <binary_stream_reader.ixx>;
+interface <binary_stream_writer.ixx>;
+interface <boost.uuid.soul.ixx>;
+interface <stream.ixx>;
+interface <uuid.ixx>;

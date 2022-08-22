@@ -17,6 +17,7 @@ class BlockSymbol : public ContainerSymbol
 public:
     BlockSymbol();
     std::string SymbolKindStr() const override { return "block symbol"; }
+    std::string SymbolDocKindStr() const override { return "block"; }
     void Accept(Visitor& visitor) override;
 };
 
