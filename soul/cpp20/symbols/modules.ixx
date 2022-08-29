@@ -10,6 +10,7 @@ import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.compound.type.symbol;
 import soul.cpp20.symbols.value;
 import soul.cpp20.ast.file;
+import soul.cpp20.ast.node.map;
 
 export namespace soul::cpp20::symbols {
 
@@ -29,9 +30,11 @@ public:
     void Accept(Visitor& visitor);
     void Import(ModuleMapper& moduleMapper);
     void Import(Module* that, ModuleMapper& moduleMapper);
+    void ResolveForwardDeclarations();
     void Write(const std::string& root);
     void Write(Writer& writer);
-    void Read(Reader& reader, ModuleMapper& moduleMapper);
+    void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
+    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, soul::cpp20::ast::NodeMap* nodeMap);
     void Init();
     int File() const { return file; }
     void SetFile(int file_) { file = file_; }
@@ -60,6 +63,12 @@ private:
     std::vector<Module*> dependsOnModules;
     soul::cpp20::ast::Files files;
     std::set<Module*> importSet;
+    bool reading;
+};
+
+struct ModuleNameLess
+{
+    bool operator()(Module* left, Module* right) const;
 };
 
 class ModuleMapper
@@ -68,13 +77,15 @@ public:
     ModuleMapper();
     void AddModule(Module* module);
     Module* GetModule(const std::string& moduleName);
-    void ClearModule(const std::string& moduleName);
     Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath);
+    void AddRoot(const std::string& root);
+    void ClearNodeMap();
 private:
     std::map<std::string, Module*> moduleMap;
     std::vector<std::unique_ptr<Module>> modules;
     std::vector<std::string> roots;
     std::recursive_mutex mtx;
+    soul::cpp20::ast::NodeMap nodeMap;
 };
 
 Module* GetCurrentModule();

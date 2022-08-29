@@ -24,6 +24,7 @@ class AliasTypeSymbol;
 class BlockSymbol;
 class ClassGroupSymbol;
 class ClassTypeSymbol;
+class ForwardClassDeclarationSymbol;
 class CompoundTypeSymbol;
 class ConceptGroupSymbol;
 class ConceptSymbol;
@@ -32,11 +33,13 @@ class EnumConstantSymbol;
 class FunctionGroupSymbol;
 class ParameterSymbol;
 class FunctionSymbol;
+class FunctionTypeSymbol;
 class FundamentalTypeSymbol;
 class NamespaceSymbol;
 class SpecializationSymbol;
 class TypenameConstraintSymbol;
 class TemplateParameterSymbol;
+class BoundTemplateParameterSymbol;
 class TemplateDeclarationSymbol;
 class ErrorTypeSymbol;
 class NestedTypeSymbol;
@@ -65,6 +68,7 @@ public:
     virtual void Visit(BlockSymbol& symbol) {}
     virtual void Visit(ClassGroupSymbol& symbol) {}
     virtual void Visit(ClassTypeSymbol& symbol) {}
+    virtual void Visit(ForwardClassDeclarationSymbol& symbol) {}
     virtual void Visit(CompoundTypeSymbol& symbol) {}
     virtual void Visit(ConceptGroupSymbol& symbol) {}
     virtual void Visit(ConceptSymbol& symbol) {}
@@ -73,11 +77,13 @@ public:
     virtual void Visit(FunctionGroupSymbol& symbol) {}
     virtual void Visit(ParameterSymbol& symbol) {}
     virtual void Visit(FunctionSymbol& symbol) {}
+    virtual void Visit(FunctionTypeSymbol& symbol) {}
     virtual void Visit(FundamentalTypeSymbol& symbol) {}
     virtual void Visit(NamespaceSymbol& symbol) {}
     virtual void Visit(SpecializationSymbol& symbol) {}
     virtual void Visit(TypenameConstraintSymbol& symbol) {}
     virtual void Visit(TemplateParameterSymbol& symbol) {}
+    virtual void Visit(BoundTemplateParameterSymbol& symbol) {}
     virtual void Visit(TemplateDeclarationSymbol& symbol) {}
     virtual void Visit(NestedTypeSymbol& symbol) {}
     virtual void Visit(ErrorTypeSymbol& symbol) {}

@@ -135,6 +135,10 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thReturnTypeElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thReturnTypeElement);
     soul::xml::Text* thReturnTypeText = soul::xml::MakeText("return type");
@@ -149,6 +153,18 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
         std::string moduleName = module->Name();
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        trElement->AppendChild(tdSpecifiersElement);
+        soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
+        tdSpecifiersElement->AppendChild(spanSpecifierElement);
+        spanSpecifierElement->SetAttribute("class", "specifier");
+        soul::cpp20::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
+        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        if (!specifierStr.empty())
+        {
+            soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
+            spanSpecifierElement->AppendChild(specifierText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         tdElement->SetAttribute("class", "right");
         trElement->AppendChild(tdElement);
@@ -158,15 +174,13 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
             tdElement->AppendChild(returnTypeElement);
         }
         soul::xml::Element* tdFunctionElement = soul::xml::MakeElement("td");
+        tdFunctionElement->SetAttribute("id", function->DocName());
         trElement->AppendChild(tdFunctionElement);
-        soul::xml::Element* linkElement = soul::xml::MakeElement("a");
-        tdFunctionElement->AppendChild(linkElement);
-        linkElement->SetAttribute("href", "../../module/" + moduleName + "/index.html#" + function->DocName()); 
         soul::xml::Element* spanElement = soul::xml::MakeElement("span");
         spanElement->SetAttribute("xml:space", "preserve");
         soul::xml::Text* functionNameText = soul::xml::MakeText(util::ToUtf8(function->Name()));
-        linkElement->AppendChild(functionNameText);
-        spanElement->AppendChild(linkElement);
+        spanElement->AppendChild(functionNameText);
+        tdFunctionElement->AppendChild(spanElement);
         soul::xml::Text* lparenText = soul::xml::MakeText("(");
         spanElement->AppendChild(lparenText);
         bool first = true;
@@ -198,6 +212,15 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
         }
         soul::xml::Text* rparenText = soul::xml::MakeText(")");
         spanElement->AppendChild(rparenText);
+        std::string qualifierStr = soul::cpp20::symbols::MakeFunctionQualifierStr(function->Qualifiers());
+        if (!qualifierStr.empty())
+        {
+            soul::xml::Element* spanQualifierElement = soul::xml::MakeElement("span");
+            spanQualifierElement->SetAttribute("class", "specifier");
+            soul::xml::Text* qualifierText = soul::xml::MakeText(" " + qualifierStr);
+            spanQualifierElement->AppendChild(qualifierText);
+            spanElement->AppendChild(spanQualifierElement);
+        }
         tdFunctionElement->AppendChild(spanElement);
     }
 }
@@ -215,6 +238,10 @@ void GenerateVariableSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thVariableElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thVariableElement);
     soul::xml::Text* thVariableText = soul::xml::MakeText("variable");
@@ -231,6 +258,18 @@ void GenerateVariableSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
     {
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        trElement->AppendChild(tdSpecifiersElement);
+        soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
+        tdSpecifiersElement->AppendChild(spanSpecifierElement);
+        spanSpecifierElement->SetAttribute("class", "specifier");
+        soul::cpp20::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
+        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        if (!specifierStr.empty())
+        {
+            soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
+            spanSpecifierElement->AppendChild(specifierText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         tdElement->SetAttribute("id", variable->DocName());
         soul::xml::Text* tdVariableText = soul::xml::MakeText(util::ToUtf8(variable->Name()));

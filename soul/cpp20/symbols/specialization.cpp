@@ -12,8 +12,9 @@ import soul.cpp20.symbols.symbol.table;
 
 namespace soul::cpp20::symbols {
 
-SpecializationSymbol::SpecializationSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::specializationSymbol, name_)
+SpecializationSymbol::SpecializationSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::specializationSymbol, name_), instantiated(false)
 {
+    GetScope()->SetKind(ScopeKind::classScope);
 }
 
 void SpecializationSymbol::SetClassTemplate(TypeSymbol* classTemplate_)
@@ -29,6 +30,7 @@ void SpecializationSymbol::AddTemplateArgument(TypeSymbol* templateArgument)
 void SpecializationSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(instantiated);
     writer.GetBinaryStreamWriter().Write(classTemplate->Id());
     writer.GetBinaryStreamWriter().WriteULEB128UInt(templateArguments.size());
     for (TypeSymbol* templateArg : templateArguments)
@@ -40,6 +42,7 @@ void SpecializationSymbol::Write(Writer& writer)
 void SpecializationSymbol::Read(Reader& reader)
 {
     TypeSymbol::Read(reader);
+    instantiated = reader.GetBinaryStreamReader().ReadBool();
     util::uuid id;
     reader.GetBinaryStreamReader().ReadUuid(id);
     ids.push_back(id);
@@ -56,10 +59,6 @@ void SpecializationSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     classTemplate = static_cast<ClassTypeSymbol*>(symbolTable.GetType(ids[0]));
-}
-
-void SpecializationSymbol::ResolveTemplateArgs(SymbolTable& symbolTable)
-{
     for (int i = 1; i < ids.size(); ++i)
     {
         TypeSymbol* templateArg = symbolTable.GetType(ids[i]);

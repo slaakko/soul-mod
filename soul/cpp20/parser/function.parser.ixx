@@ -18,6 +18,7 @@ template<typename Lexer>
 struct FunctionParser
 {
     static soul::parser::Match FunctionDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match NoDeclSpecFunctionDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match FunctionBody(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match Default(Lexer& lexer);
     static soul::parser::Match Delete(Lexer& lexer);

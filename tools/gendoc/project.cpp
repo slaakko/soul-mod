@@ -169,12 +169,18 @@ void Project::Build(Project* nsProject)
     BuildCppProject();
     GenerateDocs(nsProject);
     GenerateNamespaceDocs();
+    if (verbose)
+    {
+        std::cout << "documentation generated for project '" + FullName() << "'" << std::endl;
+    }
 }
 
 void Project::BuildCppProject()
 {
     if (cppProjectFilePath.empty()) return;
     project = soul::cpp20::project::parser::ParseProjectFile(cppProjectFilePath);
+    init.moduleMapper.AddRoot(project->Root());
+    project->AddRoots(init.moduleMapper);
     project->InitModules();
     for (int file : project->InterfaceFiles())
     {
@@ -183,7 +189,11 @@ void Project::BuildCppProject()
     project->SetScanned();
     project->LoadModules(init.nodeIdFactory, init.moduleMapper, init.symbols);
     bool build = force || !project->UpToDate();
-    if (!build) return;
+    if (!build)
+    {
+        project->ResolveForwardDeclarations(init.moduleMapper);
+        return;
+    }
     soul::cpp20::project::build::BuildFlags flags = soul::cpp20::project::build::BuildFlags::none;
     if (verbose)
     {

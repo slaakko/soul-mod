@@ -183,6 +183,8 @@
     <ClCompile Include="module.ixx" />
     <ClCompile Include="node.cpp" />
     <ClCompile Include="node.ixx" />
+    <ClCompile Include="node_map.cpp" />
+    <ClCompile Include="node_map.ixx" />
     <ClCompile Include="node_list.ixx" />
     <ClCompile Include="output.cpp" />
     <ClCompile Include="output.ixx" />

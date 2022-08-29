@@ -79,6 +79,7 @@ class Reader;
 std::string DeclarationFlagStr(DeclarationFlags flags);
 
 void ProcessSimpleDeclaration(soul::cpp20::ast::Node* node, Context* context);
+Declaration ProcessFunctionDeclaration(soul::cpp20::ast::Node* node, Context* context);
 Declaration ProcessParameterDeclaration(soul::cpp20::ast::Node* node, Context* context);
 void ProcessMemberDeclaration(soul::cpp20::ast::Node* node, Context* context);
 int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul::cpp20::ast::Node* declarator, Context* context);

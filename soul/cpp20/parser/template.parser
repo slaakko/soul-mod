@@ -43,12 +43,12 @@ parser TemplateParser
         ::= TemplateHead(context, true):templateHead{ templateHeadNode.reset(templateHead); sourcePos = lexer.GetSourcePos(pos); }
             (   ConceptDefinition(context):concepDefinition
                 { 
-                    soul::cpp20::symbols::EndTemplateDeclaration(context); 
+                    soul::cpp20::symbols::EndTemplateDeclaration(templateHeadNode.get(), context); 
                     return new soul::cpp20::ast::TemplateDeclarationNode(sourcePos, templateHeadNode.release(), concepDefinition); 
                 }
             |   Declaration(context):declaration
                 { 
-                    soul::cpp20::symbols::EndTemplateDeclaration(context); 
+                    soul::cpp20::symbols::EndTemplateDeclaration(templateHeadNode.get(), context); 
                     return new soul::cpp20::ast::TemplateDeclarationNode(sourcePos, templateHeadNode.release(), declaration); 
                 }
             |   empty{ soul::cpp20::symbols::RemoveTemplateDeclaration(context); pass = false; }

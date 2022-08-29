@@ -15,6 +15,8 @@ class SpecializationSymbol : public TypeSymbol
 {
 public:
     SpecializationSymbol(const std::u32string& name_);
+    bool Instantiated() const { return instantiated; }
+    void SetInstantiated() { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
     std::string SymbolDocKindStr() const override { return "specialization"; }
     TypeSymbol* ClassTemplate() const { return classTemplate; }
@@ -24,12 +26,12 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
-    void ResolveTemplateArgs(SymbolTable& symbolTable);
     void Accept(Visitor& visitor) override;
 private:
     TypeSymbol* classTemplate;
     std::vector<TypeSymbol*> templateArguments;
     std::vector<util::uuid> ids;
+    bool instantiated;
 };
 
 std::u32string MakeSpecializationName(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments);

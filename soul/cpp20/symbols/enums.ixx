@@ -64,6 +64,6 @@ class Context;
 
 void BeginEnumType(soul::cpp20::ast::Node* node, Context* context);
 void AddEnumerators(soul::cpp20::ast::Node* node, Context* context);
-void EndEnumType(Context* context);
+void EndEnumType(soul::cpp20::ast::Node* node, Context* context);
 
 } // namespace soul::cpp20::symbols

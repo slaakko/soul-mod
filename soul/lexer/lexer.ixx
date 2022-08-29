@@ -6,12 +6,12 @@
 export module soul.lexer;
 
 import soul.ast.source.pos;
-export import soul.lexer.concepts;
 export import soul.lexer.lexeme;
 export import soul.lexer.token;
 export import soul.lexer.keyword;
 export import soul.lexer.base;
 export import soul.lexer.classmap;
+export import soul.lexer.concepts;
 export import soul.lexer.variables;
 export import soul.lexer.error;
 export import soul.lexer.parsing.log;
@@ -362,6 +362,7 @@ public:
     }
     void ThrowFarthestError()
     {
+        std::cout.flush();
         soul::ast::SourcePos sourcePos = GetSourcePos(farthestPos);
         parsing_error_thrown = true;
         throw ParsingException(GetError(farthestPos), fileName, sourcePos);

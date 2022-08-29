@@ -13,6 +13,16 @@ namespace soul::cpp20::proj::ast {
 
 Project::Project(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_), initialized(false), scanned(false), loaded(false)
 {
+    root = util::Path::GetDirectoryName(filePath);
+}
+
+void Project::AddRoots(soul::cpp20::symbols::ModuleMapper& moduleMapper)
+{
+    for (const auto& referenceFilePath : referenceFilePaths)
+    {
+        std::string referenceRoot = util::GetFullPath(util::Path::Combine(root, util::Path::GetDirectoryName(referenceFilePath)));
+        moduleMapper.AddRoot(referenceRoot);
+    }
 }
 
 void Project::Resize()
@@ -73,18 +83,24 @@ void Project::LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::
         for (const auto& importedModuleName : module->ImportModuleNames())
         {
             soul::cpp20::symbols::Module* importedModule = GetModule(importedModuleName);
+            bool loaded = false;
             if (!importedModule)
             {
                 importedModule = moduleMapper.GetModule(importedModuleName);
+                loaded = true;
             }
             module->AddImportedModule(importedModule);
             module->AddDependsOnModule(importedModule);
-            for (soul::cpp20::symbols::Module* exportedModule : importedModule->ExportedModules())
+            if (loaded)
             {
-                module->Import(exportedModule, moduleMapper);
+                for (soul::cpp20::symbols::Module* exportedModule : importedModule->ExportedModules())
+                {
+                    module->Import(exportedModule, moduleMapper);
+                }
             }
         }
     }
+    moduleMapper.ClearNodeMap();
 }
 
 void Project::SetModule(int file, soul::cpp20::symbols::Module* module)
@@ -163,6 +179,50 @@ bool Project::UpToDate() const
         }
     }
     return true;
+}
+
+void Project::AddReferenceFilePath(const std::string& referenceFilePath)
+{
+    referenceFilePaths.push_back(referenceFilePath);
+}
+
+void Project::ResolveForwardDeclarations(soul::cpp20::symbols::ModuleMapper& moduleMapper)
+{
+    soul::cpp20::symbols::Module projectModule(Name() + ".#project");
+    for (const auto& moduleName : moduleNames)
+    {
+        soul::cpp20::symbols::Module* module = moduleMapper.GetModule(moduleName);
+        projectModule.Import(module, moduleMapper);
+    }
+    projectModule.ResolveForwardDeclarations();
+}
+
+Solution::Solution(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_)
+{
+}
+
+void Solution::AddProjectFilePath(const std::string& projectFilePath)
+{
+    projectFilePaths.push_back(projectFilePath);
+}
+
+void Solution::AddProject(Project* project)
+{
+    projects.push_back(std::unique_ptr<Project>(project));
+    projectMap[project->FilePath()] = project;
+}
+
+Project* Solution::GetProject(const std::string& projectFilePath) const
+{
+    auto it = projectMap.find(projectFilePath);
+    if (it != projectMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 } // namespace soul::cpp20::proj::ast

@@ -53,6 +53,8 @@ private:
     soul::xml::Element* bodyElement;
     soul::xml::Element* currentElement;
     soul::cpp20::symbols::Module* currentModule;
+    std::vector < soul::cpp20::symbols::Module*> exportedModules;
+    std::vector < soul::cpp20::symbols::Module*> importedModules;
     std::vector<soul::cpp20::symbols::NamespaceSymbol*> namespaces;
     std::vector<soul::cpp20::symbols::ConceptSymbol*> concepts;
     std::vector<soul::cpp20::symbols::AliasTypeSymbol*> typeAliases;
@@ -98,6 +100,19 @@ void ModuleHtmlGenerator::EndVisitExports()
 {
     if (visitNamespaces) return;
     visitingExports = false;
+    std::sort(exportedModules.begin(), exportedModules.end(), soul::cpp20::symbols::ModuleNameLess());
+    for (const auto& module : exportedModules)
+    {
+        soul::xml::Element* trElement = soul::xml::MakeElement("tr");
+        currentElement->AppendChild(trElement);
+        soul::xml::Element* tdElement = soul::xml::MakeElement("td");
+        trElement->AppendChild(tdElement);
+        soul::xml::Element* linkElement = soul::xml::MakeElement("a");
+        tdElement->AppendChild(linkElement);
+        linkElement->SetAttribute("href", "../" + module->Name() + "/index.html");
+        soul::xml::Text* moduleText = soul::xml::MakeText(module->Name());
+        linkElement->AppendChild(moduleText);
+    }
     currentElement = bodyElement;
 }
 
@@ -125,12 +140,8 @@ void ModuleHtmlGenerator::EndVisitImports()
 {
     if (visitNamespaces) return;
     visitingImports = false;
-    currentElement = bodyElement;
-}
-
-void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::Module& module)
-{
-    if (visitingExports || visitingImports)
+    std::sort(importedModules.begin(), importedModules.end(), soul::cpp20::symbols::ModuleNameLess());
+    for (const auto& module : importedModules)
     {
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         currentElement->AppendChild(trElement);
@@ -138,9 +149,25 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::Module& module)
         trElement->AppendChild(tdElement);
         soul::xml::Element* linkElement = soul::xml::MakeElement("a");
         tdElement->AppendChild(linkElement);
-        linkElement->SetAttribute("href", "../" + module.Name() + "/index.html");
-        soul::xml::Text* moduleText = soul::xml::MakeText(module.Name());
+        linkElement->SetAttribute("href", "../" + module->Name() + "/index.html");
+        soul::xml::Text* moduleText = soul::xml::MakeText(module->Name());
         linkElement->AppendChild(moduleText);
+    }
+    currentElement = bodyElement;
+}
+
+void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::Module& module)
+{
+    if (visitingExports || visitingImports)
+    {
+        if (visitingExports)
+        {
+            exportedModules.push_back(&module);
+        }
+        else if (visitingImports)
+        {
+            importedModules.push_back(&module);
+        }
         if (visitingExports)
         {
             visitNamespaces = true;
@@ -212,7 +239,10 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::ConceptSymbol& symbol)
     if (visitNamespaces) return;
     if (symbol.ParentClass()) return;
     concepts.push_back(&symbol);
-    nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    if (nsProject)
+    {
+        nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    }
 }
 
 void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol)
@@ -220,7 +250,10 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol)
     if (visitNamespaces) return;
     if (symbol.ParentClass()) return;
     typeAliases.push_back(&symbol);
-    nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    if (nsProject)
+    {
+        nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    }
 }
 
 void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
@@ -228,7 +261,10 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
     if (visitNamespaces) return;
     if (symbol.ParentClass()) return;
     classes.push_back(&symbol);
-    nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    if (nsProject)
+    {
+        nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    }
 }
 
 void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol)
@@ -236,7 +272,10 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symb
     if (visitNamespaces) return;
     if (symbol.ParentClass()) return;
     enumerations.push_back(&symbol);
-    nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    if (nsProject)
+    {
+        nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    }
 }
 
 void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::FunctionSymbol& symbol)
@@ -244,7 +283,10 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::FunctionSymbol& symbol)
     if (visitNamespaces) return;
     if (symbol.ParentClass()) return;
     functions.push_back(&symbol);
-    nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    if (nsProject)
+    {
+        nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    }
 }
 
 void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::VariableSymbol& symbol)
@@ -252,7 +294,10 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::VariableSymbol& symbol)
     if (visitNamespaces) return;
     if (symbol.ParentClass()) return;
     variables.push_back(&symbol);
-    nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    if (nsProject)
+    {
+        nsProject->AddToNamespace(symbol.ParentNamespace(), &symbol);
+    }
 }
 
 void ModuleHtmlGenerator::GenerateNamespaceSection()
@@ -434,6 +479,10 @@ void ModuleHtmlGenerator::GenerateFunctionSection()
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thReturnTypeElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thReturnTypeElement);
     soul::xml::Text* thReturnTypeText = soul::xml::MakeText("return type");
@@ -451,6 +500,18 @@ void ModuleHtmlGenerator::GenerateFunctionSection()
         soul::cpp20::symbols::NamespaceSymbol* ns = function->ParentNamespace();
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        trElement->AppendChild(tdSpecifiersElement);
+        soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
+        tdSpecifiersElement->AppendChild(spanSpecifierElement);
+        spanSpecifierElement->SetAttribute("class", "specifier");
+        soul::cpp20::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
+        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        if (!specifierStr.empty())
+        {
+            soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
+            spanSpecifierElement->AppendChild(specifierText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         tdElement->SetAttribute("class", "right");
         trElement->AppendChild(tdElement);
@@ -461,14 +522,12 @@ void ModuleHtmlGenerator::GenerateFunctionSection()
         }
         soul::xml::Element* tdFunctionElement = soul::xml::MakeElement("td");
         trElement->AppendChild(tdFunctionElement);
-        soul::xml::Element* linkElement = soul::xml::MakeElement("a");
-        tdFunctionElement->AppendChild(linkElement);
-        linkElement->SetAttribute("href", "#" + function->DocName());
+        tdFunctionElement->SetAttribute("id", function->DocName());
         soul::xml::Element* spanElement = soul::xml::MakeElement("span");
         spanElement->SetAttribute("xml:space", "preserve");
         soul::xml::Text* functionNameText = soul::xml::MakeText(util::ToUtf8(function->Name()));
-        linkElement->AppendChild(functionNameText);
-        spanElement->AppendChild(linkElement);
+        spanElement->AppendChild(functionNameText);
+        tdFunctionElement->AppendChild(spanElement);
         soul::xml::Text* lparenText = soul::xml::MakeText("(");
         spanElement->AppendChild(lparenText);
         bool first = true;
@@ -498,6 +557,15 @@ void ModuleHtmlGenerator::GenerateFunctionSection()
         }
         soul::xml::Text* rparenText = soul::xml::MakeText(")");
         spanElement->AppendChild(rparenText);
+        std::string qualifierStr = soul::cpp20::symbols::MakeFunctionQualifierStr(function->Qualifiers());
+        if (!qualifierStr.empty())
+        {
+            soul::xml::Element* spanQualifierElement = soul::xml::MakeElement("span");
+            spanQualifierElement->SetAttribute("class", "specifier");
+            soul::xml::Text* qualifierText = soul::xml::MakeText(" " + qualifierStr);
+            spanQualifierElement->AppendChild(qualifierText);
+            spanElement->AppendChild(spanQualifierElement);
+        }
         tdFunctionElement->AppendChild(spanElement);
         soul::xml::Element* tdNsElement = soul::xml::MakeElement("td");
         trElement->AppendChild(tdNsElement);
@@ -522,6 +590,10 @@ void ModuleHtmlGenerator::GenerateVariableSection()
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thVariableElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thVariableElement);
     soul::xml::Text* thVariableText = soul::xml::MakeText("variable");
@@ -538,6 +610,18 @@ void ModuleHtmlGenerator::GenerateVariableSection()
     {
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        trElement->AppendChild(tdSpecifiersElement);
+        soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
+        tdSpecifiersElement->AppendChild(spanSpecifierElement);
+        spanSpecifierElement->SetAttribute("class", "specifier");
+        soul::cpp20::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
+        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        if (!specifierStr.empty())
+        {
+            soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
+            spanSpecifierElement->AppendChild(specifierText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         tdElement->SetAttribute("id", variable->DocName());
         soul::xml::Text* tdVariableText = soul::xml::MakeText(util::ToUtf8(variable->Name()));

@@ -5,6 +5,8 @@
 
 export module util.component;
 
+import std.core;
+
 export namespace util {
 
 class Container;

@@ -855,7 +855,8 @@ FunctionDeclaratorNode::FunctionDeclaratorNode(const soul::ast::SourcePos& sourc
 {
 }
 
-FunctionDeclaratorNode::FunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* parameters_) : UnaryNode(NodeKind::functionDeclaratorNode, sourcePos_, child_), params(parameters_)
+FunctionDeclaratorNode::FunctionDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* parameters_) : 
+    UnaryNode(NodeKind::functionDeclaratorNode, sourcePos_, child_), params(parameters_)
 {
 }
 

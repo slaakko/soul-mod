@@ -13,18 +13,8 @@ struct pair
     U second;
     pair(const pair&) = default;
     pair(pair&&) = default;
-    template<class U1, class U2>
-    pair(U1&& x, U2&& y);
-    template<class U1, class U2>
-    pair(const pair<U1, U2>& p);
-    template<class U1, class U2>
-    pair(pair<U1, U2>&& p);
     pair& operator=(const pair& p);
-    template<class U1, class U2>
-    pair& operator=(const pair<U1, U2>& p);
     pair& operator=(pair&& p);
-    template<class U1, class U2>
-    pair& operator=(pair<U1, U2>&& p);
     void swap(pair& p);
 };
 

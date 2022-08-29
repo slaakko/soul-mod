@@ -24,14 +24,10 @@ public:
     list();
     explicit list(size_type n);
     list(size_type n, const T& value);
-    template<class InputIterator>
-    list(InputIterator first, InputIterator last);
     list(const list& x);
     list(list&& x);
     list& operator=(const list& x);
     list& operator=(list&& x);
-    template<class InputIterator>
-    void assign(InputIterator first, InputIterator last);
     void assign(size_type n, const T& value);
 
     iterator begin();
@@ -65,8 +61,6 @@ public:
     iterator insert(const_iterator position, const T& x);
     iterator insert(const_iterator position, T&& x);
     iterator insert(const_iterator position, size_type n, const T& x);
-    template<class InputIterator>
-    iterator insert(const_iterator position, InputIterator first, InputIterator last);
     iterator erase(const_iterator position);
     iterator erase(const_iterator first, const_iterator last);
     void swap(list& x);
@@ -80,22 +74,12 @@ public:
     void splice(const_iterator position, list&& x, const_iterator first, const_iterator last);
     
     size_type remove(const T& value);
-    template<class Predicate>
-    size_type remove_if(Predicate pred);
     size_type unique();
-    template<class BinaryPredicate>
-    size_type unique(BinaryPredicate binary_pred);
     
     void merge(list& x);
     void merge(list&& x);
-    template<class Compare>
-    void merge(list& x, Compare comp);
-    template<class Compare>
-    void merge(list&& x, Compare comp); 
     
     void sort();
-    template<class Compare>
-    void sort(Compare comp);
     void reverse();
 };
 
@@ -103,9 +87,5 @@ template<class T>
 bool operator==(const list<T>& x, const list<T>& y);
 template<class T>
 void swap(list<T>& x, list<T>& y);
-template<class T, class U>
-typename list<T>::size_type erase(list<T>& c, const U& value);
-template<class T, class Predicate>
-typename list<T>::size_type erase_if(list<T>& c, Predicate pred);
 
 } // namespace std

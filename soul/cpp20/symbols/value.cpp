@@ -9,6 +9,7 @@ module;
 module soul.cpp20.symbols.value;
 
 import util.unicode;
+import soul.cpp20.symbols.enums;
 import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.writer;
@@ -41,6 +42,10 @@ ValueKind CommonValueKind(ValueKind left, ValueKind right)
                 {
                     return ValueKind::boolValue;
                 }
+                case ValueKind::symbolValue:
+                {
+                    return ValueKind::integerValue;
+                }
                 default:
                 {
                     return ValueKind::none;
@@ -60,6 +65,24 @@ ValueKind CommonValueKind(ValueKind left, ValueKind right)
                 case ValueKind::boolValue:
                 {
                     return ValueKind::boolValue;
+                }
+                default:
+                {
+                    return ValueKind::none;
+                }
+            }
+        }
+        case ValueKind::symbolValue:
+        {
+            switch (right)
+            {
+                case ValueKind::integerValue:
+                {
+                    return ValueKind::integerValue;
+                }
+                case ValueKind::symbolValue:
+                {
+                    return ValueKind::integerValue;
                 }
                 default:
                 {
@@ -280,6 +303,35 @@ SymbolValue::SymbolValue(Symbol* symbol_) : Value(SymbolKind::symbolValueSymbol,
 
 Value* SymbolValue::Convert(ValueKind kind, EvaluationContext& context)
 {
+    switch (kind)
+    {
+        case ValueKind::integerValue: 
+        {
+            switch (symbol->Kind())
+            {
+                case SymbolKind::enumConstantSymbol:
+                {
+                    EnumConstantSymbol* enumConstantSymbol = static_cast<EnumConstantSymbol*>(symbol);
+                    Value* value = enumConstantSymbol->GetValue();
+                    switch (value->GetValueKind())
+                    {
+                        case ValueKind::integerValue:
+                        {
+                            IntegerValue* integerValue = static_cast<IntegerValue*>(value);
+                            return context.GetIntegerValue(integerValue->GetValue(), enumConstantSymbol->Name());
+                        }
+                        case ValueKind::boolValue:
+                        {
+                            BoolValue* boolValue = static_cast<BoolValue*>(value);
+                            return context.GetIntegerValue(static_cast<int64_t>(boolValue->GetValue()), enumConstantSymbol->Name());
+                        }
+                    }
+                    break;
+                }
+            }
+            break;
+        }
+    }
     return this;
 }
 

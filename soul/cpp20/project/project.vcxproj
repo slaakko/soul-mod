@@ -155,6 +155,13 @@
     <None Include="project.slg" />
     <None Include="project.spg" />
     <None Include="project.token" />
+    <None Include="solution.expr" />
+    <None Include="solution.keyword" />
+    <None Include="solution.lexer" />
+    <None Include="solution.parser" />
+    <None Include="solution.slg" />
+    <None Include="solution.spg" />
+    <None Include="solution.token" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ast.cpp" />
@@ -172,6 +179,13 @@
     <ClCompile Include="project.token.ixx" />
     <ClCompile Include="project_rules.cpp" />
     <ClCompile Include="project_rules.ixx" />
+    <ClCompile Include="solution.lexer.cpp" />
+    <ClCompile Include="solution.lexer.ixx" />
+    <ClCompile Include="solution.parser.cpp" />
+    <ClCompile Include="solution.parser.ixx" />
+    <ClCompile Include="solution.token.ixx" />
+    <ClCompile Include="solution_rules.cpp" />
+    <ClCompile Include="solution_rules.ixx" />
     <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <ItemGroup>

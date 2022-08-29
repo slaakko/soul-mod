@@ -266,7 +266,7 @@ soul::parser::Match EnumParser<Lexer>::EnumSpecifier(Lexer& lexer, soul::cpp20::
         }
         if (match.hit)
         {
-            soul::cpp20::symbols::EndEnumType(context);
+            soul::cpp20::symbols::EndEnumType(enumSpecifierNode.get(), context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumSpecifier");
@@ -1315,7 +1315,7 @@ soul::parser::Match EnumParser<Lexer>::OpaqueEnumDeclaration(Lexer& lexer, soul:
         {
             soul::cpp20::ast::Node *node = new soul::cpp20::ast::OpaqueEnumDeclarationNode(sourcePos, enumKey.release(), enumHeadName.release(), enumBase.release(), attributes.release(), semicolon.release());
             soul::cpp20::symbols::BeginEnumType(node, context);
-            soul::cpp20::symbols::EndEnumType(context);
+            soul::cpp20::symbols::EndEnumType(node, context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OpaqueEnumDeclaration");
@@ -1422,7 +1422,7 @@ soul::parser::Match EnumParser<Lexer>::ElaboratedEnumSpecifier(Lexer& lexer, sou
                                 {
                                     soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns.release(), identifier.release()));
                                     soul::cpp20::symbols::BeginEnumType(node, context);
-                                    soul::cpp20::symbols::EndEnumType(context);
+                                    soul::cpp20::symbols::EndEnumType(node, context);
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedEnumSpecifier");
@@ -1453,7 +1453,7 @@ soul::parser::Match EnumParser<Lexer>::ElaboratedEnumSpecifier(Lexer& lexer, sou
                                 {
                                     soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, identifier2.release());
                                     soul::cpp20::symbols::BeginEnumType(node, context);
-                                    soul::cpp20::symbols::EndEnumType(context);
+                                    soul::cpp20::symbols::EndEnumType(node, context);
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedEnumSpecifier");

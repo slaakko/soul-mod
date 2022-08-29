@@ -13,8 +13,6 @@ public:
     using reference = T&;
     
     map_iterator();
-    template<class U>
-    map_iterator& operator=(const map_iterator<U>& u);
     reference operator*() const;
     pointer operator->() const;
     map_iterator& operator++();

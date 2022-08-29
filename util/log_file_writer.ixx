@@ -18,8 +18,8 @@ public:
     void WriteLine();
     void WriteLine(const std::string& line);
     void Write(const std::string& s);
-    typedef std::basic_ostream<char, std::char_traits<char>> CoutType;
-    typedef CoutType& (*StandardEndLine)(CoutType&);
+    using CoutType = std::ostream;
+    using StandardEndLine = CoutType& (*)(CoutType&);
     LogFileWriter& operator<<(StandardEndLine manip);
     std::ostream& LogFile() { return logFile; }
 private:

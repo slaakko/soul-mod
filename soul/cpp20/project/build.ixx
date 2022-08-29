@@ -13,7 +13,7 @@ export namespace soul::cpp20::project::build {
 
 enum class BuildFlags : int32_t
 {
-    none = 0, multithreadedBuild = 1 << 0, verbose = 1 << 1
+    none = 0, multithreadedBuild = 1 << 0, verbose = 1 << 1, debugParse = 1 << 2
 };
 
 constexpr BuildFlags operator|(BuildFlags left, BuildFlags right)
@@ -34,5 +34,6 @@ constexpr BuildFlags operator~(BuildFlags flags)
 void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file);
 soul::cpp20::symbols::Module* GetModule(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& moduleName);
 void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags);
+void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags);
 
 } // namespace soul::cpp20::project::build

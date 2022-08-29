@@ -163,6 +163,7 @@
   <ItemGroup>
     <ResourceCompile Include="..\lexer\soul.cpp20.lexer.classmap.rc" />
     <ResourceCompile Include="..\project\soul.cpp20.proj.lexer.classmap.rc" />
+    <ResourceCompile Include="..\project\soul.cpp20.sln.lexer.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,22 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.sln.lexer;
+
+import soul.cpp20.sln.token;
+import soul.cpp20.sln.keyword;
+import soul.cpp20.sln.expr;
+
+lexer SolutionLexer
+{
+    rules
+    {
+		"{separators}" {}
+		"{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{filepath}" { return FILEPATH; }
+        ";" { return SEMICOLON; }
+        "\." { return DOT; }
+    }
+}

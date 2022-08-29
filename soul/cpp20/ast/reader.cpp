@@ -5,17 +5,20 @@
 
 module soul.cpp20.ast.reader;
 
+import soul.cpp20.ast.node.map;
+
 namespace soul::cpp20::ast {
 
 Reader::Reader(const std::string& fileName) : 
     fileStream(new util::FileStream(fileName, util::OpenMode::binary | util::OpenMode::read)), 
     bufferedStream(new util::BufferedStream(*fileStream)), 
     binaryStreamReader(new util::BinaryStreamReader(*bufferedStream)),
-    readerPtr(binaryStreamReader.get())
+    readerPtr(binaryStreamReader.get()),
+    nodeMap(nullptr)
 {
 }
 
-Reader::Reader(util::BinaryStreamReader* readerPtr_) : readerPtr(readerPtr_)
+Reader::Reader(util::BinaryStreamReader* readerPtr_) : readerPtr(readerPtr_), nodeMap(nullptr)
 {
 }
 
@@ -60,21 +63,8 @@ Node* Reader::ReadNode()
         {
             throw std::runtime_error("soul.cpp20.ast.Reader: node id not set");
         }
-        nodeMap[node->Id()] = node;
+        nodeMap->AddNode(node);
         return node;
-    }
-}
-
-Node* Reader::GetNode(int32_t nodeId) const
-{
-    auto it = nodeMap.find(nodeId);
-    if (it != nodeMap.cend())
-    {
-        return it->second;
-    }
-    else
-    {
-        throw std::runtime_error("soul.cpp20.ast.Reader: node id " + std::to_string(nodeId) + " not found");
     }
 }
 

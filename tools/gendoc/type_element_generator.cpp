@@ -65,22 +65,29 @@ public:
     void Visit(soul::cpp20::symbols::NamespaceSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::ConceptSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol) override;
+    void Visit(soul::cpp20::symbols::ClassGroupSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol) override;
+    void Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol) override;
+    void Visit(soul::cpp20::symbols::ForwardClassDeclarationSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::CompoundTypeSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::FundamentalTypeSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::TemplateParameterSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::SpecializationSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::NestedTypeSymbol& symbol) override;
+    void Visit(soul::cpp20::symbols::FunctionTypeSymbol& symbol) override;
+    void CompleteBaseType(soul::cpp20::symbols::Symbol* symbol);
 private:
     soul::cpp20::symbols::Module* module;
     soul::cpp20::symbols::Symbol* containerSymbol;
     std::unique_ptr<soul::xml::Element> element;
+    bool baseTypeIncomplete;
 };
 
 TypeElementGenerator::TypeElementGenerator(soul::cpp20::symbols::Module* module_, soul::cpp20::symbols::Symbol* containerSymbol_) : 
     module(module_), 
     containerSymbol(containerSymbol_),
-    element(soul::xml::MakeElement("span"))
+    element(soul::xml::MakeElement("span")),
+    baseTypeIncomplete(false)
 {
     element->SetAttribute("xml:space", "preserve");
     element->SetAttribute("class", "type");
@@ -128,6 +135,18 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol)
     element->AppendChild(linkElement);
 }
 
+void TypeElementGenerator::Visit(soul::cpp20::symbols::ClassGroupSymbol& symbol)
+{
+    if (symbol.Classes().size() == 1)
+    {
+        symbol.Classes().front()->Accept(*this);
+    }
+    else if (symbol.ForwardDeclarations().size() == 1)
+    {
+        symbol.ForwardDeclarations().front()->Accept(*this);
+    }
+}
+
 void TypeElementGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
 {
     soul::xml::Element* linkElement = soul::xml::MakeElement("a");
@@ -159,6 +178,59 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
     element->AppendChild(linkElement);
 }
 
+void TypeElementGenerator::Visit(soul::cpp20::symbols::EnumeratedTypeSymbol& symbol)
+{
+    soul::xml::Element* linkElement = soul::xml::MakeElement("a");
+    std::string href;
+    if (!module && !containerSymbol)
+    {
+        href = "../../module/" + symbol.GetModule()->Name() + "/" + symbol.DocName() + ".html";
+    }
+    else if (symbol.GetModule() != module)
+    {
+        href = "../" + symbol.GetModule()->Name() + "/" + symbol.DocName() + ".html";
+    }
+    else
+    {
+        href = symbol.DocName() + ".html";
+    }
+    linkElement->SetAttribute("href", href);
+    std::string text;
+    if (containerSymbol == symbol.Parent())
+    {
+        text = util::ToUtf8(symbol.Name());
+    }
+    else
+    {
+        text = util::ToUtf8(symbol.FullName());
+    }
+    soul::xml::Text* linkText = soul::xml::MakeText(text);
+    linkElement->AppendChild(linkText);
+    element->AppendChild(linkElement);
+}
+
+void TypeElementGenerator::Visit(soul::cpp20::symbols::ForwardClassDeclarationSymbol& symbol)
+{
+    soul::cpp20::symbols::ClassTypeSymbol* classTypeSymbol = symbol.GetClassTypeSymbol();
+    if (classTypeSymbol)
+    {
+        classTypeSymbol->Accept(*this);
+    }
+    else
+    {
+        std::string text;
+        if (containerSymbol == symbol.Parent())
+        {
+            text = util::ToUtf8(symbol.Name());
+        }
+        else
+        {
+            text = util::ToUtf8(symbol.FullName());
+        }
+        element->AppendChild(soul::xml::MakeText(text));
+    }
+}
+
 void TypeElementGenerator::Visit(soul::cpp20::symbols::CompoundTypeSymbol& symbol)
 {
     if (soul::cpp20::symbols::HasDerivation(symbol.GetDerivations(), soul::cpp20::symbols::Derivation::constDerivation))
@@ -184,6 +256,11 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::CompoundTypeSymbol& symbo
     else if (soul::cpp20::symbols::HasDerivation(symbol.GetDerivations(), soul::cpp20::symbols::Derivation::rvalueRefDerivation))
     {
         element->AppendChild(soul::xml::MakeText("&&"));
+    }
+    if (baseTypeIncomplete)
+    {
+        baseTypeIncomplete = false;
+        CompleteBaseType(symbol.BaseType());
     }
 }
 
@@ -250,6 +327,39 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::NestedTypeSymbol& symbol)
     }
     soul::xml::Text* text = soul::xml::MakeText(str);
     element->AppendChild(text);
+}
+
+void TypeElementGenerator::Visit(soul::cpp20::symbols::FunctionTypeSymbol& symbol)
+{
+    soul::xml::Element* returnTypeElement = GenerateTypeXmlElement(module, containerSymbol, symbol.ReturnType());
+    element->AppendChild(returnTypeElement);
+    element->AppendChild(soul::xml::MakeText(" ("));
+    baseTypeIncomplete = true;
+}
+
+void TypeElementGenerator::CompleteBaseType(soul::cpp20::symbols::Symbol* symbol)
+{
+    if (symbol->IsFunctionTypeSymbol())
+    {
+        soul::cpp20::symbols::FunctionTypeSymbol* functionTypeSymbol = static_cast<soul::cpp20::symbols::FunctionTypeSymbol*>(symbol);
+        element->AppendChild(soul::xml::MakeText(")("));
+        bool first = true;
+        for (const auto& parameterType : functionTypeSymbol->ParameterTypes())
+        {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                soul::xml::Text* commaText = soul::xml::MakeText(", ");
+                element->AppendChild(commaText);
+            }
+            soul::xml::Element* parameterTypeElement = GenerateTypeXmlElement(module, containerSymbol, parameterType);
+            element->AppendChild(parameterTypeElement);
+        }
+        element->AppendChild(soul::xml::MakeText(")"));
+    }
 }
 
 soul::xml::Element* GenerateTypeXmlElement(soul::cpp20::symbols::Module* module, soul::cpp20::symbols::Symbol* containerSymbol, soul::cpp20::symbols::Symbol* symbol)

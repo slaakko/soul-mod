@@ -1,0 +1,5 @@
+export module bug;
+
+import std.core;
+
+std::map<int, int> m;

@@ -45,15 +45,22 @@ void UsingDirectiveProcessor::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 
 void UsingDirectiveProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
-    Symbol* symbol = scope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::none);
-    if (symbol->IsNamespaceSymbol())
+    Symbol* symbol = scope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::none);
+    if (symbol)
     {
-        NamespaceSymbol* ns = static_cast<NamespaceSymbol*>(symbol);
-        context->GetSymbolTable()->AddUsingDirective(ns, &node, context);
+        if (symbol->IsNamespaceSymbol())
+        {
+            NamespaceSymbol* ns = static_cast<NamespaceSymbol*>(symbol);
+            context->GetSymbolTable()->AddUsingDirective(ns, &node, context);
+        }
+        else
+        {
+            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not denote a namespace", node.GetSourcePos(), context);
+        }
     }
     else
     {
-        ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not denote a namespace", node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(symbol->Name()) + "' not found", node.GetSourcePos(), context);
     }
 }
 

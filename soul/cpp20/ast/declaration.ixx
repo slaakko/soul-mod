@@ -388,67 +388,6 @@ public:
     void Accept(Visitor& visitor) override;
 };
 
-/*
-class AST_API CDeclNode : public Node
-{
-public:
-    CDeclNode(const soul::ast::SourcePos& sourcePos_);
-    void Accept(Visitor& visitor) override;
-};
-
-class AST_API FastCallNode : public Node
-{
-public:
-    FastCallNode(const soul::ast::SourcePos& sourcePos_);
-    void Accept(Visitor& visitor) override;
-};
-
-class AST_API StdCallNode : public Node
-{
-public:
-    StdCallNode(const soul::ast::SourcePos& sourcePos_);
-    void Accept(Visitor& visitor) override;
-};
-
-class AST_API ThisCallNode : public Node
-{
-public:
-    ThisCallNode(const soul::ast::SourcePos& sourcePos_);
-    void Accept(Visitor& visitor) override;
-};
-
-class AST_API VectorCallNode : public Node
-{
-public:
-    VectorCallNode(const soul::ast::SourcePos& sourcePos_);
-    void Accept(Visitor& visitor) override;
-};
-
-class AST_API UnalignedNode : public Node
-{
-public:
-    UnalignedNode(const soul::ast::SourcePos& sourcePos_);
-    void Accept(Visitor& visitor) override;
-};
-
-class AST_API DeclSpecNode : public CompoundNode
-{
-public:
-    DeclSpecNode(const soul::ast::SourcePos& sourcePos_);
-    DeclSpecNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
-    void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
-    void Read(Reader& reader) override;
-    Node* Identifier() const { return identifier.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
-private:
-    std::unique_ptr<Node> identifier;
-    soul::ast::SourcePos lpPos;
-    soul::ast::SourcePos rpPos;
-};
-*/
-
 class InlineNode : public Node
 {
 public:

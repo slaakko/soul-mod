@@ -43,6 +43,7 @@ parser ProjectParser
         ::= 
         (   InterfaceFilePath:interfaceFilePath{ proj->AddInterfaceFilePath(interfaceFilePath); }
         |   SourceFilePath:sourceFilePath{ proj->AddSourceFilePath(sourceFilePath); }
+        |   ReferenceFilePath:referenceFilePath{ proj->AddReferenceFilePath(referenceFilePath); }
         )
 		;
 
@@ -60,6 +61,16 @@ parser ProjectParser
         ::= 
         (
             SOURCE FILEPATH{ filePath = soul::cpp20::proj::parser::token::ParseFilePath(lexer.FileName(), lexer.GetToken(pos)); } SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+    ReferenceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            REFERENCE FILEPATH{ filePath = soul::cpp20::proj::parser::token::ParseFilePath(lexer.FileName(), lexer.GetToken(pos)); } SEMICOLON
         )
         {
             return filePath;

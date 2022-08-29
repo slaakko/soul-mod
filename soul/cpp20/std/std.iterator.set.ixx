@@ -13,8 +13,6 @@ public:
     using reference = T&;
     
     set_iterator();
-    template<class U>
-    set_iterator& operator=(const set_iterator<U>& u);
     reference operator*() const;
     pointer operator->() const;
     set_iterator& operator++();

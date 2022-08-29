@@ -68,6 +68,14 @@ void MakeStyleFile(const std::string& rootDir)
     formatter.DecIndent();
     formatter.WriteLine("}");
     formatter.WriteLine();
+    formatter.WriteLine(".specifier");
+    formatter.WriteLine("{");
+    formatter.IncIndent();
+    formatter.WriteLine("color: blue;");
+    formatter.WriteLine("font-weight: bold;");
+    formatter.DecIndent();
+    formatter.WriteLine("}");
+    formatter.WriteLine();
 }
 
 } // namespace gendoc

@@ -48,6 +48,10 @@ std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKin
     {
         symbolGroupKindVec.push_back(SymbolGroupKind::variableSymbolGroup);
     }
+    if ((symbolGroupKinds & SymbolGroupKind::enumConstantSymbolGroup) != SymbolGroupKind::none)
+    {
+        symbolGroupKindVec.push_back(SymbolGroupKind::enumConstantSymbolGroup);
+    }
     if ((symbolGroupKinds & SymbolGroupKind::conceptSymbolGroup) != SymbolGroupKind::none)
     {
         symbolGroupKindVec.push_back(SymbolGroupKind::conceptSymbolGroup);
@@ -59,12 +63,37 @@ std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKin
     return symbolGroupKindVec;
 }
 
-Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), id(util::random_uuid()), name(name_), parent(nullptr)
+std::string AccessStr(Access access)
+{
+    switch (access)
+    {
+        case Access::private_:
+        {
+            return "private";
+        }
+        case Access::protected_:
+        {
+            return "protected";
+        }
+        case Access::public_:
+        {
+            return "public";
+        }
+    }
+    return std::string();
+}
+
+Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), id(util::random_uuid()), name(name_), parent(nullptr), access(Access::none)
 {
 }
 
 Symbol::~Symbol()
 {
+}
+
+void Symbol::SetName(const std::u32string& name_)
+{
+    name = name_;
 }
 
 std::u32string Symbol::FullName() const
@@ -100,12 +129,14 @@ void Symbol::Write(Writer& writer)
 {
     writer.GetBinaryStreamWriter().Write(id);
     soul::cpp20::symbols::Write(writer, declarationFlags);
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(access));
 }
 
 void Symbol::Read(Reader& reader)
 {
     reader.GetBinaryStreamReader().ReadUuid(id);
     soul::cpp20::symbols::Read(reader, declarationFlags);
+    access = static_cast<Access>(reader.GetBinaryStreamReader().ReadByte());
 }
 
 void Symbol::Resolve(SymbolTable& symbolTable)
@@ -180,10 +211,13 @@ bool Symbol::CanInstall() const
         case SymbolKind::variableSymbol:
         case SymbolKind::templateDeclarationSymbol:
         case SymbolKind::typenameConstraintSymbol:
+        case SymbolKind::forwardClassDeclarationSymbol:
         {
             return false; 
         }
+        case SymbolKind::functionTypeSymbol:
         case SymbolKind::templateParameterSymbol:
+        case SymbolKind::boundTemplateParameterSymbol:
         {
             return !Name().empty();
         }
@@ -200,6 +234,8 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::aliasTypeSymbol:
         case SymbolKind::arrayTypeSymbol:
         case SymbolKind::classTypeSymbol:
+        case SymbolKind::forwardClassDeclarationSymbol:
+        case SymbolKind::specializationSymbol:
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::enumTypeSymbol:
         case SymbolKind::errorSymbol:
@@ -209,6 +245,7 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::genericTypeSymbol:
         case SymbolKind::nullPtrTypeSymbol:
         case SymbolKind::templateParameterSymbol:
+        case SymbolKind::boundTemplateParameterSymbol:
         case SymbolKind::varArgTypeSymbol:
         {
             return true;
@@ -243,10 +280,12 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::namespaceSymbol:
         case SymbolKind::aliasTypeSymbol:
         case SymbolKind::classTypeSymbol:
+        case SymbolKind::forwardClassDeclarationSymbol:
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::enumTypeSymbol:
         case SymbolKind::fundamentalTypeSymbol:
         case SymbolKind::templateParameterSymbol:
+        case SymbolKind::boundTemplateParameterSymbol:
         case SymbolKind::nestedTypeSymbol:
         {
             return SymbolGroupKind::typeSymbolGroup;
@@ -262,6 +301,10 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::variableGroupSymbol:
         {
             return SymbolGroupKind::variableSymbolGroup;
+        }
+        case SymbolKind::enumConstantSymbol:
+        {
+            return SymbolGroupKind::enumConstantSymbolGroup;
         }
         case SymbolKind::templateDeclarationSymbol:
         {
@@ -428,6 +471,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         {
             return new ClassTypeSymbol(name);
         }
+        case SymbolKind::forwardClassDeclarationSymbol:
+        {
+            return new ForwardClassDeclarationSymbol(name);
+        }
         case SymbolKind::compoundTypeSymbol:
         {
             return new CompoundTypeSymbol(name);
@@ -450,7 +497,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         }
         case SymbolKind::functionTypeSymbol:
         {
-            throw std::runtime_error("not implemented");
+            return new FunctionTypeSymbol(name);
         }
         case SymbolKind::fundamentalTypeSymbol:
         {

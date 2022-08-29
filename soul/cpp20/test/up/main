@@ -1,7 +1,0 @@
-import std.core;
-
-template<class T>
-class up
-{
-	up& operator=(const up&) = delete;
-};

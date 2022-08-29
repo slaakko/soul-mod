@@ -46,28 +46,29 @@ void FunctionDeclarator::AddQualifier(FunctionQualifiers qualifier)
     qualifiers = qualifiers | qualifier;
 }
 
-Declaration::Declaration() : type(nullptr), declarator(nullptr), value(nullptr)
+Declaration::Declaration() : flags(DeclarationFlags::none), type(nullptr), declarator(nullptr), value(nullptr)
 {
 }
 
-Declaration::Declaration(TypeSymbol* type_, Declarator* declarator_) : type(type_), declarator(declarator_), value(nullptr)
+Declaration::Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator* declarator_) : flags(flags_), type(type_), declarator(declarator_), value(nullptr)
 {
 }
 
 class DeclaratorListProcessor : public soul::cpp20::ast::DefaultVisitor
 {
 public:
-    DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_);
+    DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_);
     std::vector<Declaration> GetDeclarations() { return std::move(declarations); }
     void Visit(soul::cpp20::ast::InitDeclaratorListNode& node) override;
     void Visit(soul::cpp20::ast::MemberDeclaratorListNode& node) override;
 private:
     Context* context;
     TypeSymbol* baseType;
+    DeclarationFlags flags;
     std::vector<Declaration> declarations;
 };
 
-DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_) : context(context_), baseType(baseType_)
+DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_) : context(context_), baseType(baseType_), flags(flags_)
 {
 }
 
@@ -77,7 +78,7 @@ void DeclaratorListProcessor::Visit(soul::cpp20::ast::InitDeclaratorListNode& no
     for (int32_t i = 0; i < n; ++i)
     {
         soul::cpp20::ast::Node* declarator = node.Items()[i];
-        Declaration declaration = ProcessDeclarator(baseType, declarator, context);
+        Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
         if (declaration.declarator.get())
         {
             declarations.push_back(std::move(declaration));
@@ -91,7 +92,7 @@ void DeclaratorListProcessor::Visit(soul::cpp20::ast::MemberDeclaratorListNode& 
     for (int32_t i = 0; i < n; ++i)
     {
         soul::cpp20::ast::Node* declarator = node.Items()[i];
-        Declaration declaration = ProcessDeclarator(baseType, declarator, context);
+        Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
         if (declaration.declarator.get())
         {
             declarations.push_back(std::move(declaration));
@@ -102,9 +103,11 @@ void DeclaratorListProcessor::Visit(soul::cpp20::ast::MemberDeclaratorListNode& 
 class DeclaratorProcessor : public soul::cpp20::ast::DefaultVisitor
 {
 public:
-    DeclaratorProcessor(Context* context_, TypeSymbol* baseType_);
+    DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_);
+    void SetProcessTrailingQualifiers(bool processTrailingQualifiers_) { processTrailingQualifiers = processTrailingQualifiers_; }
     Declaration GetDeclaration() { return std::move(declaration); }
     void Visit(soul::cpp20::ast::FunctionDeclaratorNode& node) override;
+    void Visit(soul::cpp20::ast::ParenthesizedDeclaratorNode& node);
     void Visit(soul::cpp20::ast::TrailingQualifiersNode& node) override;
     void Visit(soul::cpp20::ast::InitDeclaratorNode& node) override;
     void Visit(soul::cpp20::ast::ParameterListNode& node) override;
@@ -168,7 +171,9 @@ public:
     void Visit(soul::cpp20::ast::CommaNode& node) override;
 private:
     Context* context;
+    DeclarationFlags flags;
     TypeSymbol* baseType;
+    FunctionTypeSymbol* functionTypeSymbol;
     Declaration declaration;
     bool isFunctionDeclarator;
     bool isDestructorDeclarator;
@@ -181,9 +186,11 @@ private:
     Scope* scope;
 };
 
-DeclaratorProcessor::DeclaratorProcessor(Context* context_, TypeSymbol* baseType_) : 
+DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_) :
     context(context_), 
+    flags(flags_),
     baseType(baseType_), 
+    functionTypeSymbol(nullptr),
     isFunctionDeclarator(false), 
     isDestructorDeclarator(false), 
     skipIdFunctionDeclarator(false), 
@@ -206,6 +213,29 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::FunctionDeclaratorNode& node)
         node.Params()->Accept(*this);
     }
     isFunctionDeclarator = false;
+    if (functionTypeSymbol)
+    {
+        functionTypeSymbol->MakeName();
+        if (context->GetSymbolTable()->AddToRecomputeNameSet())
+        {
+            context->GetSymbolTable()->RecomputeNames();
+            context->GetSymbolTable()->SetAddToRecomputeNameSet(false);
+        }
+        context->GetSymbolTable()->CurrentScope()->SymbolScope()->AddSymbol(functionTypeSymbol, node.GetSourcePos(), context);
+    }
+}
+
+void DeclaratorProcessor::Visit(soul::cpp20::ast::ParenthesizedDeclaratorNode& node)
+{
+    if (isFunctionDeclarator)
+    {
+        isFunctionDeclarator = false;
+        functionTypeSymbol = new FunctionTypeSymbol();
+        functionTypeSymbol->SetReturnType(baseType);
+        baseType = functionTypeSymbol;
+        context->GetSymbolTable()->SetAddToRecomputeNameSet(true);
+    }
+    declaration = ProcessDeclarator(baseType, node.Declarator(), flags, context);
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::TrailingQualifiersNode& node)
@@ -247,6 +277,10 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
     if (functionDeclarator)
     {
         functionDeclarator->AddParameterDeclaration(std::move(declaration));
+    }
+    if (functionTypeSymbol)
+    {
+        functionTypeSymbol->AddParameterType(declaration.type);
     }
 }
 
@@ -318,7 +352,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::OperatorFunctionIdNode& node)
     operatorFunctionId = false;
     if (functionDeclarator)
     {
-        declaration = Declaration(baseType, functionDeclarator);
+        declaration = Declaration(flags, baseType, functionDeclarator);
     }
 }
 
@@ -676,12 +710,14 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::CommaNode& node)
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 {
+    if (processTrailingQualifiers) return;
     scope = ResolveScope(node.Left(), context);
     node.Right()->Accept(*this);
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
+    if (processTrailingQualifiers) return;
     if (!skipIdFunctionDeclarator)
     {
         if (isFunctionDeclarator)
@@ -693,9 +729,9 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
             else
             {
                 FunctionKind kind = FunctionKind::function;
-                if (context->GetSymbolTable()->CurrentScope()->IsClassScope())
+                if (context->GetSymbolTable()->CurrentScope()->SymbolScope()->IsClassScope())
                 {
-                    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
+                    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->SymbolScope()->GetSymbol();
                     if (symbol->IsClassTypeSymbol())
                     {
                         ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
@@ -707,37 +743,43 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
                 }
                 functionDeclarator = new FunctionDeclarator(node.Str(), &node, kind, qualifiers, scope);
             }
-            declaration = Declaration(baseType, functionDeclarator);
+            declaration = Declaration(flags, baseType, functionDeclarator);
         }
         else
         {
-            declaration = Declaration(baseType, new SimpleDeclarator(node.Str(), &node));
+            declaration = Declaration(flags, baseType, new SimpleDeclarator(node.Str(), &node));
         }
     }
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::AbstractDeclaratorNode& node)
 {
-    declaration = Declaration(baseType, new SimpleDeclarator(std::u32string(), &node));
+    declaration = Declaration(flags, baseType, new SimpleDeclarator(std::u32string(), &node));
 }
 
-std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, Context* context)
+std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)
 {
-    DeclaratorListProcessor processor(context, baseType);
+    DeclaratorListProcessor processor(context, baseType, flags);
     initDeclaratorList->Accept(processor);
     return processor.GetDeclarations();
 }
 
-std::vector<Declaration> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, Context* context)
+std::vector<Declaration> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
 {
-    DeclaratorListProcessor processor(context, baseType);
+    DeclaratorListProcessor processor(context, baseType, flags);
     memberDeclaratorList->Accept(processor);
     return processor.GetDeclarations();
 }
 
-Declaration ProcessDeclarator(TypeSymbol* baseType, soul::cpp20::ast::Node* declarator, Context* context)
+Declaration ProcessDeclarator(TypeSymbol* baseType, soul::cpp20::ast::Node* declarator, DeclarationFlags flags, Context* context)
 {
-    DeclaratorProcessor processor(context, baseType);
+    DeclaratorProcessor processor(context, flags, baseType);
+    if (declarator->Kind() == soul::cpp20::ast::NodeKind::trailingQualifiersNode)
+    {
+        processor.SetProcessTrailingQualifiers(true);
+        declarator->Accept(processor);
+        processor.SetProcessTrailingQualifiers(false);
+    }
     declarator->Accept(processor);
     return processor.GetDeclaration();
 }

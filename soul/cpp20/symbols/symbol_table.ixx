@@ -18,6 +18,7 @@ export namespace soul::cpp20::symbols {
 enum class FunctionKind;
 enum class FunctionQualifiers;
 enum class EnumTypeKind;
+enum class DeclarationFlags : int32_t;
 
 enum class MapKind : int32_t
 {
@@ -41,6 +42,7 @@ constexpr MapKind operator~(MapKind kind)
 
 enum class FundamentalTypeKind : int32_t;
 enum class ClassKind;
+enum class Access : int32_t;
 
 class Context;
 class Module;
@@ -75,10 +77,11 @@ public:
     void Import(const SymbolTable& that);
     void Write(Writer& writer);
     void Read(Reader& reader);
-    void Resolve();
+    void Resolve(soul::cpp20::ast::NodeMap* nodeMap_);
+    soul::cpp20::ast::NodeMap* GetNodeMap() const { return nodeMap; }
     void Accept(Visitor& visitor);
     void WriteMaps(Writer& writer);
-    void ReadMaps(Reader& reader, soul::cpp20::ast::Reader& astReader);
+    void ReadMaps(Reader& reader, soul::cpp20::ast::NodeMap* nodeMap);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
     Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
     void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
@@ -98,6 +101,7 @@ public:
     void EndNamespace(int level);
     void BeginClass(const std::u32string& name, ClassKind classKind, soul::cpp20::ast::Node* node, Context* context);
     void EndClass();
+    void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, soul::cpp20::ast::Node* node, Context* context);
     void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, soul::cpp20::ast::Node* node, Context* context);
     void EndEnumeratedType();
     void AddEnumerator(const std::u32string& name, Value* value, soul::cpp20::ast::Node* node, Context* context);
@@ -107,10 +111,10 @@ public:
     void BeginTemplateDeclaration(soul::cpp20::ast::Node* node, Context* context);
     void EndTemplateDeclaration();
     void RemoveTemplateDeclaration();
-    void AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, Context* context);
-    FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, Context* context);
+    void AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, soul::cpp20::ast::Node* defaultTemplateArgNode, Context* context);
+    FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
-    void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Value* value, Context* context);
+    void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context);
     void AddAliasType(soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
     void AddUsingDeclaration(soul::cpp20::ast::Node* node, Symbol* symbol, Context* context);
     void AddUsingDirective(NamespaceSymbol* ns, soul::cpp20::ast::Node* node, Context* context);
@@ -118,12 +122,16 @@ public:
     SpecializationSymbol* MakeSpecialization(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
+    Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
+    Symbol* LookupSymbol(Symbol* symbol);
     void MapNode(soul::cpp20::ast::Node* node);
     void MapNode(soul::cpp20::ast::Node* node, Symbol* symbol);
     void MapNode(soul::cpp20::ast::Node* node, Symbol* symbol, MapKind kind);
     soul::cpp20::ast::Node* GetNodeNothrow(Symbol* symbol) const;
     soul::cpp20::ast::Node* GetNode(Symbol* symbol) const;
     void RemoveNode(soul::cpp20::ast::Node* node);
+    soul::cpp20::ast::Node* GetSpecifierNode(Symbol* symbol) const;
+    void SetSpecifierNode(Symbol* symbol, soul::cpp20::ast::Node* node);
     Symbol* GetSymbolNothrow(soul::cpp20::ast::Node* node) const;
     Symbol* GetSymbol(soul::cpp20::ast::Node* node) const;
     TypeSymbol* GetTypeNothrow(const util::uuid& id) const;
@@ -138,6 +146,16 @@ public:
     ClassTypeSymbol* GetClass(const util::uuid& id) const;
     VariableSymbol* GetVariable(const util::uuid& id) const;
     Symbol* GetConstraint(const util::uuid& id) const;
+    void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
+    bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
+    void AddToRecomputeNameSet(CompoundTypeSymbol* compoundTypeSymbol);
+    void RecomputeNames();
+    const std::set<Symbol*>& ForwardDeclarations() const { return forwardDeclarations; }
+    const std::set<Symbol*>& AllForwardDeclarations() const { return allForwardDeclarations; }
+    Access CurrentAccess() const { return currentAccess; }
+    void SetCurrentAccess(Access access) { currentAccess = access; }
+    void PushAccess(Access access);
+    void PopAccess();
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -151,6 +169,8 @@ private:
     void ImportFunctionMap(const SymbolTable& that);
     void ImportVariableMap(const SymbolTable& that);
     void ImportConstraintMap(const SymbolTable& that);
+    void ImportForwardDeclarations(const SymbolTable& that);
+    void ImportSpecifierMap(const SymbolTable& that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
     std::vector<std::unique_ptr<Symbol>> specializations;
@@ -164,6 +184,8 @@ private:
     std::map<soul::cpp20::ast::Node*, Symbol*> allNodeSymbolMap;
     std::map<Symbol*, soul::cpp20::ast::Node*> symbolNodeMap;
     std::map<Symbol*, soul::cpp20::ast::Node*> allSymbolNodeMap;
+    std::map<Symbol*, soul::cpp20::ast::Node*> specifierNodeMap;
+    std::map<Symbol*, soul::cpp20::ast::Node*> allSpecifierNodeMap;
     std::map<util::uuid, TypeSymbol*> typeMap;
     std::map<util::uuid, FunctionSymbol*> functionMap;
     std::map<util::uuid, VariableSymbol*> variableMap;
@@ -172,6 +194,13 @@ private:
     TypeSymbol* errorTypeSymbol;
     int topScopeIndex;
     std::stack<int> topScopeIndexStack;
+    bool addToRecomputeNameSet;
+    std::set<CompoundTypeSymbol*> recomputeNameSet;
+    std::set<Symbol*> forwardDeclarations;
+    std::set<Symbol*> allForwardDeclarations;
+    Access currentAccess;
+    std::stack<Access> accessStack;
+    soul::cpp20::ast::NodeMap* nodeMap;
 };
 
 class Symbols

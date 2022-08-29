@@ -40,6 +40,8 @@ public:
     void CopyTo(Stream& destination, int64_t bufferSize);
     int64_t Position() const { return position; }
     void SetPosition(int64_t position_);
+    void AddObserver(StreamObserver* observer);
+    void RemoveObserver(StreamObserver* observer);
 private:
     int64_t position;
     std::vector<StreamObserver*> observers;

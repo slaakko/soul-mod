@@ -3,10 +3,9 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#include <boost/filesystem/path.hpp>
-
 export module util.path;
+
+import std.core;
 
 export namespace util {
 

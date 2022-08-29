@@ -12,6 +12,7 @@ import soul.cpp20.symbols.match;
 export namespace soul::cpp20::symbols {
 
 class ClassTypeSymbol;
+class ForwardClassDeclarationSymbol;
 class TypeSymbol;
 
 class ClassGroupSymbol : public Symbol
@@ -25,6 +26,9 @@ public:
     void AddClass(ClassTypeSymbol* classTypeSymbol);
     ClassTypeSymbol* GetClass(int arity) const;
     const std::vector<ClassTypeSymbol*>& Classes() const { return classes; }
+    void AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration);
+    ForwardClassDeclarationSymbol* GetForwardDeclaration(int arity) const;
+    const std::vector<ForwardClassDeclarationSymbol*>& ForwardDeclarations() const { return forwardDeclarations; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -32,6 +36,7 @@ public:
     void Merge(ClassGroupSymbol* that);
 private:
     std::vector<ClassTypeSymbol*> classes;
+    std::vector<ForwardClassDeclarationSymbol*> forwardDeclarations;
     std::vector<util::uuid> classIds;
 };
 

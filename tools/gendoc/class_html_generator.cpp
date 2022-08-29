@@ -109,6 +109,41 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
         h1Element->AppendChild(h1Text);
         bodyElement->AppendChild(h1Element);
         htmlElement->AppendChild(bodyElement);
+        soul::cpp20::symbols::TemplateDeclarationSymbol* templateDeclaration = symbol.ParentTemplateDeclaration();
+        if (templateDeclaration)
+        {
+            soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
+            soul::xml::Text* h2Text = soul::xml::MakeText("Template Parameters");;
+            h2Element->AppendChild(h2Text);
+            bodyElement->AppendChild(h2Element);
+            soul::xml::Element* tableElement = soul::xml::MakeElement("table");
+            bodyElement->AppendChild(tableElement);
+            tableElement->SetAttribute("class", "doc");
+            soul::xml::Element* trElement = soul::xml::MakeElement("tr");
+            tableElement->AppendChild(trElement);
+            soul::xml::Element* thTemplateParameterElement = soul::xml::MakeElement("th");
+            trElement->AppendChild(thTemplateParameterElement);
+            soul::xml::Text* thTemplateParameterText = soul::xml::MakeText("template parameter");
+            thTemplateParameterElement->AppendChild(thTemplateParameterText);
+            soul::xml::Element* thConstraintElement = soul::xml::MakeElement("th");
+            trElement->AppendChild(thConstraintElement);
+            soul::xml::Text* thConstraintText = soul::xml::MakeText("constraint");
+            thConstraintElement->AppendChild(thConstraintText);
+            for (const auto& templateParameter : templateDeclaration->TemplateParameters())
+            {
+                soul::xml::Element* trElement = soul::xml::MakeElement("tr");
+                tableElement->AppendChild(trElement);
+                soul::xml::Element* tdTemplateParameterElement = soul::xml::MakeElement("td");
+                tdTemplateParameterElement->SetAttribute("id", templateParameter->DocName());
+                trElement->AppendChild(tdTemplateParameterElement);
+                soul::xml::Text* templateParameterText = soul::xml::MakeText(util::ToUtf8(templateParameter->Name()));
+                tdTemplateParameterElement->AppendChild(templateParameterText);
+                soul::xml::Element* tdConstraintElement = soul::xml::MakeElement("td");
+                trElement->AppendChild(tdConstraintElement);
+                soul::xml::Text* constraintText = soul::xml::MakeText(util::ToUtf8(templateParameter->Constraint()->Name()));
+                tdConstraintElement->AppendChild(constraintText);
+            }
+        }
         currentElement = bodyElement;
         innerClass = true;
         DefaultVisitor::Visit(symbol);
@@ -186,6 +221,10 @@ void ClassHtmlGenerator::GenerateClassSection()
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thClassElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thClassElement);
     soul::xml::Text* thClassText = soul::xml::MakeText("class");
@@ -194,6 +233,17 @@ void ClassHtmlGenerator::GenerateClassSection()
     {
         soul::xml::Element* trClassElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trClassElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        trClassElement->AppendChild(tdSpecifiersElement);
+        soul::xml::Element* spanSpecifiersElement = soul::xml::MakeElement("span");
+        spanSpecifiersElement->SetAttribute("class", "specifier");
+        tdSpecifiersElement->AppendChild(spanSpecifiersElement);
+        std::string accessStr = soul::cpp20::symbols::AccessStr(cls->GetAccess());
+        if (!accessStr.empty())
+        {
+            soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
+            spanSpecifiersElement->AppendChild(accessText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         trClassElement->AppendChild(tdElement);
         soul::xml::Element* linkElement = soul::xml::MakeElement("a");
@@ -217,6 +267,10 @@ void ClassHtmlGenerator::GenerateEnumerationSection()
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thEnumElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thEnumElement);
     soul::xml::Text* thEnumText = soul::xml::MakeText("enum type");
@@ -225,6 +279,17 @@ void ClassHtmlGenerator::GenerateEnumerationSection()
     {
         soul::xml::Element* trEnumElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trEnumElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        soul::xml::Element* spanSpecifiersElement = soul::xml::MakeElement("span");
+        spanSpecifiersElement->SetAttribute("class", "specifier");
+        tdSpecifiersElement->AppendChild(spanSpecifiersElement);
+        trEnumElement->AppendChild(tdSpecifiersElement);
+        std::string accessStr = soul::cpp20::symbols::AccessStr(enumType->GetAccess());
+        if (!accessStr.empty())
+        {
+            soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
+            spanSpecifiersElement->AppendChild(accessText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         trEnumElement->AppendChild(tdElement);
         soul::xml::Element* linkElement = soul::xml::MakeElement("a");
@@ -248,6 +313,10 @@ void ClassHtmlGenerator::GenerateFunctionSection()
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thReturnTypeElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thReturnTypeElement);
     soul::xml::Text* thReturnTypeText = soul::xml::MakeText("return type");
@@ -260,6 +329,28 @@ void ClassHtmlGenerator::GenerateFunctionSection()
     {
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        trElement->AppendChild(tdSpecifiersElement);
+        soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
+        tdSpecifiersElement->AppendChild(spanSpecifierElement);
+        spanSpecifierElement->SetAttribute("class", "specifier");
+        std::string accessStr = soul::cpp20::symbols::AccessStr(function->GetAccess());
+        if (!accessStr.empty())
+        {
+            soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
+            spanSpecifierElement->AppendChild(accessText);
+        }
+        soul::cpp20::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
+        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        if (!specifierStr.empty())
+        {
+            if (!accessStr.empty())
+            {
+                spanSpecifierElement->AppendChild(soul::xml::MakeText(" "));
+            }
+            soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
+            spanSpecifierElement->AppendChild(specifierText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         tdElement->SetAttribute("class", "right");
         trElement->AppendChild(tdElement);
@@ -269,15 +360,13 @@ void ClassHtmlGenerator::GenerateFunctionSection()
             tdElement->AppendChild(returnTypeElement);
         }
         soul::xml::Element* tdFunctionElement = soul::xml::MakeElement("td");
+        tdFunctionElement->SetAttribute("id", function->DocName());
         trElement->AppendChild(tdFunctionElement);
-        soul::xml::Element* linkElement = soul::xml::MakeElement("a");
-        tdFunctionElement->AppendChild(linkElement);
-        linkElement->SetAttribute("href", "#" + function->DocName());
         soul::xml::Element* spanElement = soul::xml::MakeElement("span");
         spanElement->SetAttribute("xml:space", "preserve");
         soul::xml::Text* functionNameText = soul::xml::MakeText(util::ToUtf8(function->Name()));
-        linkElement->AppendChild(functionNameText);
-        spanElement->AppendChild(linkElement);
+        spanElement->AppendChild(functionNameText);
+        tdFunctionElement->AppendChild(spanElement);
         soul::xml::Text* lparenText = soul::xml::MakeText("(");
         spanElement->AppendChild(lparenText);
         bool first = true;
@@ -310,8 +399,11 @@ void ClassHtmlGenerator::GenerateFunctionSection()
         std::string qualifierStr = soul::cpp20::symbols::MakeFunctionQualifierStr(function->Qualifiers());
         if (!qualifierStr.empty())
         {
+            soul::xml::Element* spanQualifierElement = soul::xml::MakeElement("span");
+            spanQualifierElement->SetAttribute("class", "specifier");
             soul::xml::Text* qualifierText = soul::xml::MakeText(" " + qualifierStr);
-            spanElement->AppendChild(qualifierText);
+            spanQualifierElement->AppendChild(qualifierText);
+            spanElement->AppendChild(spanQualifierElement);
         }
         tdFunctionElement->AppendChild(spanElement);
     }
@@ -330,6 +422,10 @@ void ClassHtmlGenerator::GenerateVariableSection()
     tableElement->SetAttribute("class", "doc");
     soul::xml::Element* trElement = soul::xml::MakeElement("tr");
     tableElement->AppendChild(trElement);
+    soul::xml::Element* thSpecifiersElement = soul::xml::MakeElement("th");
+    trElement->AppendChild(thSpecifiersElement);
+    soul::xml::Text* thSpecifierText = soul::xml::MakeText("specifiers");
+    thSpecifiersElement->AppendChild(thSpecifierText);
     soul::xml::Element* thVariableElement = soul::xml::MakeElement("th");
     trElement->AppendChild(thVariableElement);
     soul::xml::Text* thVariableText = soul::xml::MakeText("variable");
@@ -346,6 +442,28 @@ void ClassHtmlGenerator::GenerateVariableSection()
     {
         soul::xml::Element* trElement = soul::xml::MakeElement("tr");
         tableElement->AppendChild(trElement);
+        soul::xml::Element* tdSpecifiersElement = soul::xml::MakeElement("td");
+        trElement->AppendChild(tdSpecifiersElement);
+        soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
+        tdSpecifiersElement->AppendChild(spanSpecifierElement);
+        spanSpecifierElement->SetAttribute("class", "specifier");
+        std::string accessStr = soul::cpp20::symbols::AccessStr(variable->GetAccess());
+        if (!accessStr.empty())
+        {
+            soul::xml::Text* accessText = soul::xml::MakeText(accessStr);
+            spanSpecifierElement->AppendChild(accessText);
+        }
+        soul::cpp20::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
+        std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
+        if (!specifierStr.empty())
+        {
+            if (!accessStr.empty())
+            {
+                spanSpecifierElement->AppendChild(soul::xml::MakeText(" "));
+            }
+            soul::xml::Text* specifierText = soul::xml::MakeText(specifierStr);
+            spanSpecifierElement->AppendChild(specifierText);
+        }
         soul::xml::Element* tdElement = soul::xml::MakeElement("td");
         tdElement->SetAttribute("id", variable->DocName());
         soul::xml::Text* tdVariableText = soul::xml::MakeText(util::ToUtf8(variable->Name()));

@@ -23,11 +23,11 @@ bool SpecializationLess::operator()(SpecializationSymbol* left, SpecializationSy
     int m = right->TemplateArguments().size();
     if (n < m)
     {
-        return left;
+        return true;
     }
     else if (n > m)
     {
-        return right;
+        return false;
     }
     for (int i = 0; i < n; ++i)
     {

@@ -209,10 +209,6 @@ void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& 
                 {
                     classMapVec[static_cast<int32_t>(i)] = cls->Index();
                 }
-                else
-                {
-                    int x = 0;
-                }
             }
         }
     }

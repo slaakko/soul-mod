@@ -25,7 +25,7 @@ class UsingDirectiveScope;
 
 enum class ScopeKind : int32_t
 {
-    none, namespaceScope, templateDeclarationScope, classScope, enumerationScope, functionScope, blockScope, usingDeclarationScope, usingDirectiveScope
+    none, namespaceScope, templateDeclarationScope, classScope, enumerationScope, functionScope, blockScope, usingDeclarationScope, usingDirectiveScope, instantiationScope
 };
 
 enum class SymbolGroupKind : int32_t;
@@ -40,11 +40,14 @@ public:
     ScopeKind Kind() const { return kind; }
     void SetKind(ScopeKind kind_) { kind = kind_; }
     void Install(Symbol* symbol);
+    void Install(Symbol* symbol, Symbol* from);
     void Uninstall(Symbol* symbol);
     Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags) const;
     bool IsClassScope() const { return kind == ScopeKind::classScope; }
+    bool IsNamespaceScope() const { return kind == ScopeKind::namespaceScope;  }
     bool IsTemplateDeclarationScope() const { return kind == ScopeKind::templateDeclarationScope; }
-    Scope* GroupScope();
+    virtual Scope* GroupScope();
+    virtual Scope* SymbolScope();
     virtual std::string FullName() const = 0;
     virtual bool IsContainerScope() const { return false; }
     virtual Scope* GetClassScope() const { return nullptr; }
@@ -120,6 +123,20 @@ public:
     NamespaceSymbol* Ns() const { return ns; }
 private:
     NamespaceSymbol* ns;
+    mutable bool recursive;
+};
+
+class InstantiationScope : public Scope
+{
+public:
+    InstantiationScope(Scope* parentScope_);
+    std::string FullName() const override;
+    Scope* GroupScope() override;
+    Scope* SymbolScope() override;
+    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const override;
+private:
+    Scope* parentScope;
+    mutable bool recursive;
 };
 
 } // namespace soul::cpp20::symbols

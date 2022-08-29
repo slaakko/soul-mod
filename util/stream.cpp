@@ -39,6 +39,19 @@ int64_t Stream::Tell()
     throw std::runtime_error("tell not supported");
 }
 
+void Stream::AddObserver(StreamObserver* observer)
+{
+    if (std::find(observers.begin(), observers.end(), observer) == observers.end())
+    {
+        observers.push_back(observer);
+    }
+}
+
+void Stream::RemoveObserver(StreamObserver* observer)
+{
+    observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+}
+
 void Stream::CopyTo(Stream& destination)
 {
     CopyTo(destination, 16384);
@@ -57,7 +70,14 @@ void Stream::CopyTo(Stream& destination, int64_t bufferSize)
 
 void Stream::SetPosition(int64_t position_)
 {
-    position = position_;
+    if (position != position_)
+    {
+        position = position_;
+        for (StreamObserver* observer : observers)
+        {
+            observer->PositionChanged(this);
+        }
+    }
 }
 
 Streams::Streams() : streams()

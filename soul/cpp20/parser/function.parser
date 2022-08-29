@@ -67,6 +67,30 @@ parser FunctionParser
             }
         ;
 
+    NoDeclSpecFunctionDefinition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifierSeqNode, 
+        var std::unique_ptr<soul::cpp20::ast::Node> declaratorNode, var std::unique_ptr<soul::cpp20::ast::Node> specifierNode, var int scopes) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ lexer.GetSourcePos(pos); })? 
+            Declarator(context):declarator
+            {
+                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                declaratorNode.reset(declarator); 
+            }
+            (   VirtSpecifierSeq(context):virtSpecifiers{ specifierNode.reset(virtSpecifiers); }
+            |   RequiresClause(context):requiresClause{ specifierNode.reset(requiresClause); }
+            |   empty
+            )
+            { 
+                scopes = soul::cpp20::symbols::BeginFunctionDefinition(declSpecifierSeqNode.get(), declaratorNode.get(), context); 
+            }
+            FunctionBody(context):functionBody
+            {
+                soul::cpp20::ast::Node* node = new soul::cpp20::ast::FunctionDefinitionNode(sourcePos, attributes, declSpecifierSeqNode.release(), declaratorNode.release(), 
+                    specifierNode.release(), functionBody);
+                soul::cpp20::symbols::EndFunctionDefinition(node, scopes, context); 
+                return node;
+            }
+        ;
+
     FunctionBody(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
         ::= Assign:assign{ sourcePos = lexer.GetSourcePos(pos); } 
             (   Default:def Semicolon:semicolon

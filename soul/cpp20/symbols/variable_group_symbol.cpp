@@ -103,7 +103,10 @@ void VariableGroupSymbol::Merge(VariableGroupSymbol* that)
 {
     for (const auto& variable : that->variables)
     {
-        variables.push_back(variable);
+        if (std::find(variables.cbegin(), variables.cend(), variable) == variables.end())
+        {
+            variables.push_back(variable);
+        }
     }
 }
 

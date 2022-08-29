@@ -22,10 +22,13 @@ public:
     void SetRBracePos(const soul::ast::SourcePos& rbPos_) { rbPos = rbPos_; }
     const soul::ast::SourcePos& LBracePos() const { return lbPos; }
     const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    bool Complete() const { return complete; }
+    void SetComplete() { complete = true; }
 private:
     std::unique_ptr<Node> classHead;
     soul::ast::SourcePos lbPos;
     soul::ast::SourcePos rbPos;
+    bool complete;
 };
 
 class ClassHeadNode : public CompoundNode

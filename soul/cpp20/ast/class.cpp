@@ -11,11 +11,11 @@ import soul.cpp20.ast.writer;
 
 namespace soul::cpp20::ast {
 
-ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::classSpecifierNode, sourcePos_)
+ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::classSpecifierNode, sourcePos_), complete(false)
 {
 }
 
-ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_) : SequenceNode(NodeKind::classSpecifierNode, sourcePos_), classHead(classHead_)
+ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_) : SequenceNode(NodeKind::classSpecifierNode, sourcePos_), classHead(classHead_), complete(false)
 {
 }
 
@@ -30,6 +30,7 @@ void ClassSpecifierNode::Write(Writer& writer)
     writer.Write(classHead.get());
     writer.Write(lbPos);
     writer.Write(rbPos);
+    writer.GetBinaryStreamWriter().Write(complete);
 }
 
 void ClassSpecifierNode::Read(Reader& reader)
@@ -38,6 +39,7 @@ void ClassSpecifierNode::Read(Reader& reader)
     classHead.reset(reader.ReadNode());
     lbPos = reader.ReadSourcePos();
     rbPos = reader.ReadSourcePos();
+    complete = reader.GetBinaryStreamReader().ReadBool();
 }
 
 ClassHeadNode::ClassHeadNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::classHeadNode, sourcePos_)

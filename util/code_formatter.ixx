@@ -42,8 +42,8 @@ public:
     void SetLogging() { logging = true; }
     void BeginContent() { ++contentCount; }
     void EndContent() { --contentCount; }
-    typedef std::basic_ostream<char, std::char_traits<char>> CoutType;
-    typedef CoutType& (*StandardEndLine)(CoutType&);
+    using CoutType = std::ostream;
+    using StandardEndLine = CoutType& (*)(CoutType&);
     CodeFormatter& operator<<(StandardEndLine manip);
 private:
     std::ostream& stream;

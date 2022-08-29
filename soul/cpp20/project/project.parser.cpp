@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/project/project.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/project/project.parser' using soul parser generator spg version 4.1.0
 
 module soul.cpp20.proj.parser;
 
@@ -261,6 +261,7 @@ soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::pr
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714819);
     std::unique_ptr<soul::parser::Value<std::string>> interfaceFilePath;
     std::unique_ptr<soul::parser::Value<std::string>> sourceFilePath;
+    std::unique_ptr<soul::parser::Value<std::string>> referenceFilePath;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -271,35 +272,63 @@ soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::pr
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
-                soul::parser::Match match = ProjectParser<Lexer>::InterfaceFilePath(lexer);
-                interfaceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
-                if (match.hit)
+                int64_t save = lexer.GetPos();
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
                 {
-                    proj->AddInterfaceFilePath(interfaceFilePath->value);
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = ProjectParser<Lexer>::InterfaceFilePath(lexer);
+                    interfaceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                    if (match.hit)
+                    {
+                        proj->AddInterfaceFilePath(interfaceFilePath->value);
+                    }
+                    *parentMatch3 = match;
                 }
                 *parentMatch2 = match;
+                if (!match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    lexer.SetPos(save);
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = ProjectParser<Lexer>::SourceFilePath(lexer);
+                            sourceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                            if (match.hit)
+                            {
+                                proj->AddSourceFilePath(sourceFilePath->value);
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch2 = match;
+                }
             }
             *parentMatch1 = match;
             if (!match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch3 = &match;
+                soul::parser::Match* parentMatch6 = &match;
                 lexer.SetPos(save);
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch4 = &match;
+                    soul::parser::Match* parentMatch7 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = ProjectParser<Lexer>::SourceFilePath(lexer);
-                        sourceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                        soul::parser::Match match = ProjectParser<Lexer>::ReferenceFilePath(lexer);
+                        referenceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                         if (match.hit)
                         {
-                            proj->AddSourceFilePath(sourceFilePath->value);
+                            proj->AddReferenceFilePath(referenceFilePath->value);
                         }
-                        *parentMatch4 = match;
+                        *parentMatch7 = match;
                     }
-                    *parentMatch3 = match;
+                    *parentMatch6 = match;
                 }
                 *parentMatch1 = match;
             }
@@ -529,6 +558,110 @@ soul::parser::Match ProjectParser<Lexer>::SourceFilePath(Lexer& lexer)
 }
 
 template<typename Lexer>
+soul::parser::Match ProjectParser<Lexer>::ReferenceFilePath(Lexer& lexer)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "ReferenceFilePath");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714822);
+    std::string filePath = std::string();
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    if (*lexer == REFERENCE)
+                    {
+                        ++lexer;
+                        match.hit = true;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match(false);
+                            if (*lexer == FILEPATH)
+                            {
+                                ++lexer;
+                                match.hit = true;
+                            }
+                            if (match.hit)
+                            {
+                                filePath = soul::cpp20::proj::parser::token::ParseFilePath(lexer.FileName(), lexer.GetToken(pos));
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch6 = &match;
+                {
+                    soul::parser::Match match(false);
+                    if (*lexer == SEMICOLON)
+                    {
+                        ++lexer;
+                        match.hit = true;
+                    }
+                    *parentMatch6 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            {
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ReferenceFilePath");
+                #endif SOUL_PARSER_DEBUG_SUPPORT
+                return soul::parser::Match(true, new soul::parser::Value<std::string>(filePath));
+            }
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ReferenceFilePath");
+        else soul::lexer::WriteFailureToLog(lexer, "ReferenceFilePath");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
 soul::parser::Match ProjectParser<Lexer>::QualifiedId(Lexer& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -540,7 +673,7 @@ soul::parser::Match ProjectParser<Lexer>::QualifiedId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714822);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714823);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

@@ -29,6 +29,11 @@ TemplateDeclarationSymbol* ConceptSymbol::ParentTemplateDeclaration()
     return nullptr;
 }
 
+void AddConcept(soul::cpp20::ast::Node*, Context* context)
+{
+    int x = 0; // TODO
+}
+
 bool ConceptLess::operator()(ConceptSymbol* left, ConceptSymbol* right) const
 {
     return left->Name() < right->Name();

@@ -29,7 +29,7 @@ private:
 };
 
 void BeginNamespace(soul::cpp20::ast::Node* node, Context* context);
-void EndNamespace(int level, Context* context);
+void EndNamespace(soul::cpp20::ast::Node* node, int level, Context* context);
 
 struct NamespaceLess
 {

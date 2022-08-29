@@ -8,6 +8,8 @@ module soul.cpp20.symbols.modules;
 import util;
 import std.filesystem;
 import soul.cpp20.symbols.namespaces;
+import soul.cpp20.symbols.classes;
+import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.visitor;
@@ -21,7 +23,7 @@ std::string MakeModuleFilePath(const std::string& root, const std::string& modul
     return util::GetFullPath(util::Path::Combine(root, moduleName + ".module"));
 }
 
-Module::Module(const std::string& name_) : name(name_), symbolTable(), file(-1)
+Module::Module(const std::string& name_) : name(name_), symbolTable(), file(-1), reading(false)
 {
     symbolTable.SetModule(this);
 }
@@ -58,6 +60,33 @@ void Module::Import(Module* that, ModuleMapper& moduleMapper)
         importSet.insert(that);
         that->Import(moduleMapper);
         symbolTable.Import(that->symbolTable);
+    }
+}
+
+void Module::ResolveForwardDeclarations()
+{
+    for (const auto& fwdSymbol : symbolTable.AllForwardDeclarations())
+    {
+        if (fwdSymbol->IsForwardClassDeclarationSymbol())
+        {
+            ForwardClassDeclarationSymbol* fwd = static_cast<ForwardClassDeclarationSymbol*>(fwdSymbol);
+            if (fwd->GetClassTypeSymbol() == nullptr)
+            {
+                Symbol* group = symbolTable.LookupSymbol(fwd);
+                if (group)
+                {
+                    if (group->IsClassGroupSymbol())
+                    {
+                        ClassGroupSymbol* classGroupSymbol = static_cast<ClassGroupSymbol*>(group);
+                        ClassTypeSymbol* classTypeSymbol = classGroupSymbol->GetClass(fwd->Arity());
+                        if (classTypeSymbol)
+                        {
+                            fwd->SetClassTypeSymbol(classTypeSymbol);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -132,8 +161,13 @@ void Module::Write(Writer& writer)
     symbolTable.WriteMaps(writer);
 }
 
-void Module::Read(Reader& reader, ModuleMapper& moduleMapper)
+void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
 {
+    if (reading)
+    {
+        throw std::runtime_error("circular module interface unit dependency for module '" + name + "' detected");
+    }
+    reading = true;
     name = reader.GetBinaryStreamReader().ReadUtf8String();
     uint32_t expCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < expCount; ++i)
@@ -145,19 +179,38 @@ void Module::Read(Reader& reader, ModuleMapper& moduleMapper)
     {
         AddImportModuleName(reader.GetBinaryStreamReader().ReadUtf8String());
     }
+}
+
+void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, soul::cpp20::ast::NodeMap* nodeMap)
+{
     symbolTable.Read(reader);
     evaluationContext.Read(reader);
     soul::cpp20::ast::Reader astReader(&reader.GetBinaryStreamReader());
+    astReader.SetNodeMap(nodeMap);
     files.Read(astReader);
-    symbolTable.ReadMaps(reader, astReader);
+    symbolTable.ReadMaps(reader, nodeMap);
     Import(moduleMapper);
-    symbolTable.Resolve();
+    symbolTable.Resolve(nodeMap);
     evaluationContext.Resolve(symbolTable);
+    reading = false;
+}
+
+bool ModuleNameLess::operator()(Module* left, Module* right) const
+{
+    return left->Name() < right->Name();
 }
 
 ModuleMapper::ModuleMapper()
 {
     roots.push_back(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "soul/cpp20/std")));
+}
+
+void ModuleMapper::AddRoot(const std::string& root)
+{
+    if (std::find(roots.cbegin(), roots.cend(), root) == roots.cend())
+    {
+        roots.push_back(root);
+    }
 }
 
 void ModuleMapper::AddModule(Module* module)
@@ -193,11 +246,22 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
 {
     Reader reader(moduleFilePath);
     std::unique_ptr<Module> module(new Module(moduleName));
-    module->Read(reader, *this);
+    module->ReadHeader(reader, *this);
     Module* modulePtr = module.get();
     moduleMap[moduleName] = modulePtr;
+    for (const std::string& importedModuleName : module->ImportModuleNames())
+    {
+        Module* importedModule = GetModule(importedModuleName);
+        module->AddImportedModule(importedModule);
+    }
+    module->CompleteRead(reader, *this, &nodeMap);
     modules.push_back(std::move(module));
     return modulePtr;
+}
+
+void ModuleMapper::ClearNodeMap()
+{
+    nodeMap.Clear();
 }
 
 Module* currentModule = nullptr;

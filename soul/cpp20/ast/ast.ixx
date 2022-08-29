@@ -19,6 +19,7 @@ export import soul.cpp20.ast.literal;
 export import soul.cpp20.ast.modules;
 export import soul.cpp20.ast.node;
 export import soul.cpp20.ast.node.list;
+export import soul.cpp20.ast.node.map;
 export import soul.cpp20.ast.qualifier;
 export import soul.cpp20.ast.punctuation;
 export import soul.cpp20.ast.reader;

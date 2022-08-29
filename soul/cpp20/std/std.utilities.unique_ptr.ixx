@@ -14,12 +14,8 @@ public:
     explicit unique_ptr(pointer p);
     unique_ptr(unique_ptr&& u);
     unique_ptr(nullptr_t);
-    template<class U>
-    unique_ptr(unique_ptr<U>& u);
     ~unique_ptr();
     unique_ptr& operator=(unique_ptr&& u);
-    template<class U>
-    unique_ptr& operator=(unique_ptr<U>&& u);
     unique_ptr operator=(nullptr_t);
     T& operator*() const;
     pointer operator->() const;

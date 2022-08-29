@@ -24,15 +24,11 @@ public:
     vector();
     explicit vector(size_type n);
     vector(size_type n, const T& value);
-    template<class InputIterator>
-    vector(InputIterator first, InputIterator last);
     vector(const vector& x);
     vector(vector&& x);
     ~vector();
     vector& operator=(const vector& x);
     vector& operator=(vector&& x);
-    template<class InputIterator>
-    void assign(InputIterator first, InputIterator last);
     void assign(size_type n, const T& value);
     
     iterator begin();
@@ -75,8 +71,6 @@ public:
     iterator insert(const_iterator position, const T& x);
     iterator insert(const_iterator position, T&& x);
     iterator insert(const_iterator position, size_type n, const T& x);
-    template<class InputIterator>
-    iterator insert(const_iterator position, InputIterator first, InputIterator last);
     iterator erase(const_iterator position);
     iterator erase(const_iterator first, const_iterator last);
     void swap(vector& x);

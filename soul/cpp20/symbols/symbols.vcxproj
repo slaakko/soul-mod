@@ -198,6 +198,8 @@
     <ClCompile Include="function_symbol.ixx" />
     <ClCompile Include="fundamental_type_symbol.cpp" />
     <ClCompile Include="fundamental_type_symbol.ixx" />
+    <ClCompile Include="instantiator.cpp" />
+    <ClCompile Include="instantiator.ixx" />
     <ClCompile Include="lookup.ixx" />
     <ClCompile Include="match.cpp" />
     <ClCompile Include="match.ixx" />

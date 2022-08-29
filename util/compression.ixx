@@ -5,6 +5,8 @@
 
 export module util.compression;
 
+import std.core;
+
 export namespace util {
 
 enum class CompressionMode : int

@@ -504,6 +504,7 @@ NodeFactoryCollection::NodeFactoryCollection()
     Register(NodeKind::subscriptExprNode, new NodeFactory<SubscriptExprNode>());
     Register(NodeKind::invokeExprNode, new NodeFactory<InvokeExprNode>());
     Register(NodeKind::pairNode, new NodeFactory<PairNode>());
+    Register(NodeKind::dotNode, new NodeFactory<DotNode>());
     Register(NodeKind::arrowNode, new NodeFactory<ArrowNode>());
     Register(NodeKind::memberExprNode, new NodeFactory<MemberExprNode>());
     Register(NodeKind::postfixIncExprNode, new NodeFactory<PostfixIncExprNode>());

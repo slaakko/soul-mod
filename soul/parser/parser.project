@@ -1,0 +1,5 @@
+project soul.parser;
+reference <../../util/util.project>;
+interface <match.ixx>;
+interface <parser.ixx>;
+interface <value.ixx>;

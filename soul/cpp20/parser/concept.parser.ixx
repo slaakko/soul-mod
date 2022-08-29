@@ -16,9 +16,21 @@ template<typename Lexer>
 struct ConceptParser
 {
     static soul::parser::Match ConceptDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match ConceptName(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match ConstraintExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match RequiresClause(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ConstraintLogicalOrExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match ConstraintLogicalAndExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match RequiresExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match RequirementParameterList(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match RequirementBody(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match RequirementSeq(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* requirementBody);
+    static soul::parser::Match Requirement(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match SimpleRequirement(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match TypeRequirement(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match CompoundRequirement(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match ReturnTypeRequirement(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match NestedRequirement(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match TypeConstraint(Lexer& lexer, soul::cpp20::symbols::Context* context);
 };
 

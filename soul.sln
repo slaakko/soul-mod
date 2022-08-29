@@ -210,6 +210,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lexer", "soul\cpp20\lexer\lexer.vcxproj", "{D11D6F6D-D91C-45AD-B9EA-20CF4A64C061}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "std", "std", "{328ECFB7-F039-45E6-B3FF-B510AAEEDE0C}"
+	ProjectSection(SolutionItems) = preProject
+		soul\cpp20\std\std.project = soul\cpp20\std\std.project
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "symbols", "soul\cpp20\symbols\symbols.vcxproj", "{936F4A64-4818-450A-B5D3-B285476F8488}"
 EndProject

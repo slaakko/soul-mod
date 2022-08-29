@@ -13,9 +13,24 @@ import soul.cpp20.project.init;
 import soul.cpp20.project.parser;
 import soul.cpp20.proj.ast;
 
+std::string Version()
+{
+    return "4.1.0";
+}
+
 void PrintHelp()
 {
-    // todo
+    std::cout << "soul.cpp20.build.cpp20build version " << Version() << std::endl;
+    std::cout << "Usage: cpp20build [options] { FILE.project | FILE.solution }" << std::endl;
+    std::cout << "Options:" << std::endl;
+    std::cout << "--help | -h" << std::endl;
+    std::cout << "  Print help and exit." << std::endl;
+    std::cout << "--verbose | -v" << std::endl;
+    std::cout << "  Be verbose." << std::endl;
+    std::cout << "--multithreaded | -m" << std::endl;
+    std::cout << "  Build using all cores." << std::endl;
+    std::cout << "--debug-parse | -d" << std::endl;
+    std::cout << "  Print source parsing log to \"parse.log\" file located in the current working directory." << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -26,6 +41,7 @@ int main(int argc, const char** argv)
         soul::cpp20::project::init::Init init;
         bool verbose = false;
         bool multithreaded = false;
+        bool debugParse = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
         {
@@ -44,6 +60,10 @@ int main(int argc, const char** argv)
                 else if (arg == "--multithreaded")
                 {
                     multithreaded = true;
+                }
+                else if (arg == "--debug-parse")
+                {
+                    debugParse = true;
                 }
                 else
                 {
@@ -72,6 +92,11 @@ int main(int argc, const char** argv)
                             multithreaded = true;
                             break;
                         }
+                        case 'd':
+                        {
+                            debugParse = true;
+                            break;
+                        }
                         default:
                         {
                             throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
@@ -90,17 +115,42 @@ int main(int argc, const char** argv)
             {
                 std::cout << "> " << file << std::endl;
             }
-            std::unique_ptr<soul::cpp20::proj::ast::Project> project = soul::cpp20::project::parser::ParseProjectFile(file);
-            soul::cpp20::project::build::BuildFlags buildFlags = soul::cpp20::project::build::BuildFlags::none;
-            if (verbose)
+            if (file.ends_with(".project"))
             {
-                buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::verbose;
+                std::unique_ptr<soul::cpp20::proj::ast::Project> project = soul::cpp20::project::parser::ParseProjectFile(file);
+                soul::cpp20::project::build::BuildFlags buildFlags = soul::cpp20::project::build::BuildFlags::none;
+                if (verbose)
+                {
+                    buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::verbose;
+                }
+                if (multithreaded)
+                {
+                    buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::multithreadedBuild;
+                }
+                if (debugParse)
+                {
+                    buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::debugParse;
+                }
+                soul::cpp20::project::build::Build(init.moduleMapper, project.get(), buildFlags);
             }
-            if (multithreaded)
+            else if (file.ends_with(".solution"))
             {
-                buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::multithreadedBuild;
+                std::unique_ptr<soul::cpp20::proj::ast::Solution> solution = soul::cpp20::project::parser::ParseSolutionFile(file);
+                soul::cpp20::project::build::BuildFlags buildFlags = soul::cpp20::project::build::BuildFlags::none;
+                if (verbose)
+                {
+                    buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::verbose;
+                }
+                if (multithreaded)
+                {
+                    buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::multithreadedBuild;
+                }
+                soul::cpp20::project::build::Build(init.moduleMapper, solution.get(), buildFlags);
             }
-            soul::cpp20::project::build::Build(init.moduleMapper, project.get(), buildFlags);
+            else
+            {
+                throw std::runtime_error("file '" + file + "' has invalid extension: not .project or .solution");
+            }
         }
     }
     catch (const std::exception& ex)

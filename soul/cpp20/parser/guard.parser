@@ -32,7 +32,11 @@ parser GuardParser
         ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseSavedMemberFunctionBody); }
         ;
 
-    NoDeclSpecDeclarationGuard(soul::cpp20::symbols::Context* context)
-        ::= empty{ pass = context->EnableDeclSpecFunctionDeclaration(); }
+    NoDeclSpecFunctionDeclarationGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->EnableNoDeclSpecFunctionDeclaration(); }
+        ;
+
+    NoDeclSpecFunctionDefinitionGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->EnableNoDeclSpecFunctionDefinition(); }
         ;
 }

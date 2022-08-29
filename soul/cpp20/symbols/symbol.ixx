@@ -31,6 +31,13 @@ enum class ScopeKind : int32_t;
 
 enum class DeclarationFlags : int32_t;
 
+enum class Access : int32_t
+{
+    none, public_, protected_, private_
+};
+
+std::string AccessStr(Access access);
+
 enum class SymbolKind : int32_t
 {
     null, 
@@ -39,8 +46,9 @@ enum class SymbolKind : int32_t
     aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
     conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, 
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
-    templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol, 
+    templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol,
     specializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
+    forwardClassDeclarationSymbol, boundTemplateParameterSymbol,
     max
 };
 
@@ -50,9 +58,10 @@ enum class SymbolGroupKind : int32_t
     functionSymbolGroup = 1 << 0,
     typeSymbolGroup = 1 << 1,
     variableSymbolGroup = 1 << 2,
-    conceptSymbolGroup = 1 << 3,
-    blockSymbolGroup = 1 << 4,
-    all = functionSymbolGroup | typeSymbolGroup | variableSymbolGroup | conceptSymbolGroup | blockSymbolGroup
+    enumConstantSymbolGroup = 1 << 3,
+    conceptSymbolGroup = 1 << 4,
+    blockSymbolGroup = 1 << 5,
+    all = functionSymbolGroup | typeSymbolGroup | variableSymbolGroup | enumConstantSymbolGroup | conceptSymbolGroup | blockSymbolGroup
 };
 
 constexpr SymbolGroupKind operator|(SymbolGroupKind left, SymbolGroupKind right)
@@ -80,8 +89,12 @@ public:
     SymbolKind Kind() const { return kind; }
     const util::uuid& Id() const { return id; }
     const std::u32string& Name() const { return name; }
+    void SetName(const std::u32string& name_);
+    Access GetAccess() const { return access; }
+    void SetAccess(Access access_) { access = access_; }
     void SetDeclarationFlags(DeclarationFlags declarationFlags_) { declarationFlags = declarationFlags_; }
     DeclarationFlags GetDeclarationFlags() const { return declarationFlags; }
+    virtual int PtrIndex() const { return -1; }
     virtual Scope* GetScope() { return nullptr; }
     virtual Scope* GetGroupScope() { return nullptr; }
     virtual std::u32string FullName() const;
@@ -114,13 +127,17 @@ public:
     bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
     bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol; }
+    bool IsForwardClassDeclarationSymbol() const { return kind == SymbolKind::forwardClassDeclarationSymbol; }
     bool IsEnumeratedTypeSymbol() const { return kind == SymbolKind::enumTypeSymbol; }
+    bool IsEnumConstantSymbol() const { return kind == SymbolKind::enumConstantSymbol; }
     bool IsFunctionGroupSymbol() const { return kind == SymbolKind::functionGroupSymbol; }
     bool IsFunctionSymbol() const { return  kind == SymbolKind::functionSymbol; }
+    bool IsFunctionTypeSymbol() const { return kind == SymbolKind::functionTypeSymbol; }
     bool IsBlockSymbol() const { return kind == SymbolKind::blockSymbol; }
     bool IsFundamentalTypeSymbol() const { return kind == SymbolKind::fundamentalTypeSymbol; }
     bool IsParameterSymbol() const { return kind == SymbolKind::parameterSymbol; }
     bool IsTemplateParameterSymbol() const { return kind == SymbolKind::templateParameterSymbol; }
+    bool IsBoundTemplateParameterSymbol() const { return kind == SymbolKind::boundTemplateParameterSymbol; }
     bool IsTemplateDeclarationSymbol() const { return kind == SymbolKind::templateDeclarationSymbol; }
     bool IsTypenameConstraintSymbol() const { return kind == SymbolKind::typenameConstraintSymbol; }
     bool IsVariableGroupSymbol() const { return kind == SymbolKind::variableGroupSymbol; }
@@ -134,6 +151,7 @@ private:
     std::u32string name;
     Symbol* parent;
     DeclarationFlags declarationFlags;
+    Access access;
 };
 
 bool SymbolsEqual(const std::vector<Symbol*>& left, const std::vector<Symbol*>& right);

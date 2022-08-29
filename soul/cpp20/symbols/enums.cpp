@@ -10,6 +10,7 @@ module soul.cpp20.symbols.enums;
 import util;
 import soul.cpp20.ast;
 import soul.cpp20.symbols.context;
+import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.scope.resolver;
@@ -197,6 +198,10 @@ void EnumCreator::Visit(soul::cpp20::ast::EnumeratorDefinitionNode& node)
             IntegerValue* integerValue = static_cast<IntegerValue*>(value);
             prevValue = integerValue->GetValue();
         }
+        if (first)
+        {
+            first = false;
+        }
     }
     else
     {
@@ -272,8 +277,12 @@ void AddEnumerators(soul::cpp20::ast::Node* node, Context* context)
     node->Accept(creator);
 }
 
-void EndEnumType(Context* context)
+void EndEnumType(soul::cpp20::ast::Node* node, Context* context)
 {
+    if (!context->GetSymbolTable()->CurrentScope()->GetSymbol()->IsEnumeratedTypeSymbol())
+    {
+        ThrowException("cpp20.symbols.enums: EndEnumeratedType(): enum scope expected", node->GetSourcePos(), context);
+    }
     context->GetSymbolTable()->EndEnumeratedType();
     context->GetSymbolTable()->EndScope();
 }

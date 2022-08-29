@@ -15,6 +15,7 @@ class TypeSymbol;
 
 enum class FunctionKind;
 enum class FunctionQualifiers;
+enum class DeclarationFlags : int32_t;
 
 enum class DeclaratorKind
 {
@@ -48,7 +49,8 @@ public:
 struct Declaration
 {
     Declaration();
-    Declaration(TypeSymbol* type_, Declarator* declarator_);
+    Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator* declarator_);
+    DeclarationFlags flags;
     TypeSymbol* type;
     std::unique_ptr<Declarator> declarator;
     Value* value;
@@ -73,8 +75,8 @@ private:
 
 class Context;
 
-std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, Context* context);
-std::vector<Declaration> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, Context* context);
-Declaration ProcessDeclarator(TypeSymbol* baseType, soul::cpp20::ast::Node* declarator, Context* context);
+std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context);
+std::vector<Declaration> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context);
+Declaration ProcessDeclarator(TypeSymbol* baseType, soul::cpp20::ast::Node* declarator, DeclarationFlags flags, Context* context);
 
 } // namespace soul::cpp20::symbols

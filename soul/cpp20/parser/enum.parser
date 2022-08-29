@@ -58,7 +58,7 @@ parser EnumParser
             }
         )
         {
-            soul::cpp20::symbols::EndEnumType(context);
+            soul::cpp20::symbols::EndEnumType(enumSpecifierNode.get(), context);
             return enumSpecifierNode.release();
         }
         ;
@@ -144,7 +144,7 @@ parser EnumParser
         {
             soul::cpp20::ast::Node* node = new soul::cpp20::ast::OpaqueEnumDeclarationNode(sourcePos, enumKey, enumHeadName, enumBase, attributes, semicolon);
             soul::cpp20::symbols::BeginEnumType(node, context);
-            soul::cpp20::symbols::EndEnumType(context);
+            soul::cpp20::symbols::EndEnumType(node, context);
             return node;
         }
         ;
@@ -156,14 +156,14 @@ parser EnumParser
             { 
                 soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, identifier)); 
                 soul::cpp20::symbols::BeginEnumType(node, context);
-                soul::cpp20::symbols::EndEnumType(context);
+                soul::cpp20::symbols::EndEnumType(node, context);
                 return node;
             }
         |   Identifier(context):identifier2
             { 
                 soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, identifier2); 
                 soul::cpp20::symbols::BeginEnumType(node, context);
-                soul::cpp20::symbols::EndEnumType(context);
+                soul::cpp20::symbols::EndEnumType(node, context);
                 return node;
             }
         )

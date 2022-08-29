@@ -90,7 +90,10 @@ void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
 {
     for (const auto& function : that->functions)
     {
-        functions.push_back(function);
+        if (std::find(functions.cbegin(), functions.cend(), function) == functions.end())
+        {
+            functions.push_back(function);
+        }
     }
 }
 

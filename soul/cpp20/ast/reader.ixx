@@ -12,6 +12,8 @@ import soul.cpp20.ast.node;
 
 export namespace soul::cpp20::ast {
 
+class NodeMap;
+
 class Reader
 {
 public:
@@ -23,13 +25,14 @@ public:
     std::u32string ReadStr();
     bool ReadBool();
     Node* ReadNode();
-    Node* GetNode(int32_t nodeId) const;
+    void SetNodeMap(NodeMap* nodeMap_) { nodeMap = nodeMap_; }
+    NodeMap* GetNodeMap() const { return nodeMap; }
 private:
     std::unique_ptr<util::FileStream> fileStream;
     std::unique_ptr<util::BufferedStream> bufferedStream;
     std::unique_ptr<util::BinaryStreamReader> binaryStreamReader;
     util::BinaryStreamReader* readerPtr;
-    std::map<int32_t, Node*> nodeMap;
+    NodeMap* nodeMap;
 };
 
 } // namespace soul::cpp20::ast

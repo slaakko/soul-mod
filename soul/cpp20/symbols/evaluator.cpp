@@ -10,6 +10,7 @@ import soul.cpp20.ast.identifier;
 import soul.cpp20.ast.visitor;
 import soul.cpp20.ast.expression;
 import soul.cpp20.symbols.context;
+import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.scope.resolver;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.value;
@@ -81,14 +82,19 @@ void Evaluator::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 
 void Evaluator::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
-    Symbol* symbol = scope->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup | SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::none);
+    Symbol* symbol = scope->Lookup(node.Str(), 
+        SymbolGroupKind::variableSymbolGroup | SymbolGroupKind::enumConstantSymbolGroup | SymbolGroupKind::typeSymbolGroup, 
+        ScopeLookup::allScopes, 
+        node.GetSourcePos(), 
+        context, 
+        LookupFlags::none);
     if (symbol)
     {
         value = context->GetEvaluationContext()->GetSymbolValue(symbol);
     }
     else
     {
-        throw std::runtime_error("symbol not found");
+        ThrowException("symbol not found", node.GetSourcePos(), context);
     }
 }
 
@@ -168,52 +174,52 @@ void Evaluator::Visit(soul::cpp20::ast::BinaryExprNode& node)
             {
                 case soul::cpp20::ast::NodeKind::plusNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() + rightInt->GetValue(), left->Rep() + U" + " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() + rightInt->GetValue(), leftInt->ToString() + U" + " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::minusNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() - rightInt->GetValue(), left->Rep() + U" - " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() - rightInt->GetValue(), leftInt->ToString() + U" - " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::mulNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() * rightInt->GetValue(), left->Rep() + U" * " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() * rightInt->GetValue(), leftInt->ToString() + U" * " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::divNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() / rightInt->GetValue(), left->Rep() + U" / " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() / rightInt->GetValue(), leftInt->ToString() + U" / " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::modNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() % rightInt->GetValue(), left->Rep() + U" % " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() % rightInt->GetValue(), leftInt->ToString() + U" % " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::shiftLeftNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() << rightInt->GetValue(), left->Rep() + U" << " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() << rightInt->GetValue(), leftInt->ToString() + U" << " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::shiftRightNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() >> rightInt->GetValue(), left->Rep() + U" >> " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() >> rightInt->GetValue(), leftInt->ToString() + U" >> " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::inclusiveOrNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() | rightInt->GetValue(), left->Rep() + U" | " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() | rightInt->GetValue(), leftInt->ToString() + U" | " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::exclusiveOrNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() ^ rightInt->GetValue(), left->Rep() + U" ^ " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() ^ rightInt->GetValue(), leftInt->ToString() + U" ^ " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::andNode:
                 {
-                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() & rightInt->GetValue(), left->Rep() + U" & " + right->Rep());
+                    value = evaluationContext->GetIntegerValue(leftInt->GetValue() & rightInt->GetValue(), leftInt->ToString() + U" & " + rightInt->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::equalNode:
@@ -257,22 +263,22 @@ void Evaluator::Visit(soul::cpp20::ast::BinaryExprNode& node)
             {
                 case soul::cpp20::ast::NodeKind::plusNode:
                 {
-                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() + rightFloat->GetValue(), left->Rep() + U" + " + right->Rep());
+                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() + rightFloat->GetValue(), leftFloat->ToString() + U" + " + rightFloat->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::minusNode:
                 {
-                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() - rightFloat->GetValue(), left->Rep() + U" - " + right->Rep());
+                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() - rightFloat->GetValue(), leftFloat->ToString() + U" - " + rightFloat->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::mulNode:
                 {
-                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() * rightFloat->GetValue(), left->Rep() + U" * " + right->Rep());
+                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() * rightFloat->GetValue(), leftFloat->ToString() + U" * " + rightFloat->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::divNode:
                 {
-                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() / rightFloat->GetValue(), left->Rep() + U" / " + right->Rep());
+                    value = evaluationContext->GetFloatingValue(leftFloat->GetValue() / rightFloat->GetValue(), leftFloat->ToString() + U" / " + rightFloat->ToString());
                     break;
                 }
                 case soul::cpp20::ast::NodeKind::equalNode:
@@ -339,7 +345,7 @@ void Evaluator::Visit(soul::cpp20::ast::BinaryExprNode& node)
         }
         default:
         {
-            throw std::runtime_error("soul.cpp20.symbols.evaluator: invalid binary operation");
+            ThrowException("soul.cpp20.symbols.evaluator: invalid binary operation", node.GetSourcePos(), context);
         }
     }
 }

@@ -27,20 +27,14 @@ public:
     basic_string(const basic_string& str);
     basic_string(const basic_string& str, size_type pos);
     basic_string(const basic_string& str, size_type pos, size_type n);
-    template<class T>
-    basic_string(const T& t);
     basic_string(const charT* s, size_type n);
     basic_string(const charT* s);
     basic_string(size_type n, charT c);
-    template<class InputIterator>
-    basic_string(InputIterator begin, InputIterator end);
     basic_string(basic_string&&);
     ~basic_string();
     
     basic_string& operator=(const basic_string& str);
     basic_string& operator=(basic_string&& str);
-    template<class T>
-    basic_string& operator=(const T& t);
     basic_string& operator=(const charT* s);
     basic_string& operator=(charT c);
     
@@ -78,49 +72,29 @@ public:
     charT& back();
     
     basic_string& operator+=(const basic_string& str);
-    template<class T>
-    basic_string& operator+=(const T& t);
     basic_string& operator+=(const charT* s);
     basic_string& operator+=(charT c);
     basic_string& append(const basic_string& str);
     basic_string& append(const basic_string& str, size_type pos, size_type n = npos);
-    template<class T> 
-    basic_string& append(const T& t);
-    template<class T> 
-    basic_string& append(const T& t, size_type pos, size_type n = npos);
     basic_string& append(const charT* s, size_type n);
     basic_string& append(const charT* s);
     basic_string& append(size_type n, charT c);
-    template<class InputIterator>
-    basic_string& append(InputIterator first, InputIterator last);
     void push_back(charT c);
     
     basic_string& assign(const basic_string& str);
     basic_string& assign(basic_string&& str);
     basic_string& assign(const basic_string& str, size_type pos, size_type n = npos);
-    template<class T> 
-    basic_string& assign(const T& t);
-    template<class T> 
-    basic_string& assign(const T& t, size_type pos, size_type n = npos);
     basic_string& assign(const charT* s, size_type n);
     basic_string& assign(const charT* s);
     basic_string& assign(size_type n, charT c);
-    template<class InputIterator>
-    basic_string& assign(InputIterator first, InputIterator last);
 
     basic_string& insert(size_type pos, const basic_string& str);
     basic_string& insert(size_type pos1, const basic_string& str, size_type pos2, size_type n = npos);
-    template<class T>
-    basic_string& insert(size_type pos, const T& t);
-    template<class T>
-    basic_string& insert(size_type pos1, const T& t, size_type pos2, size_type n = npos);
     basic_string& insert(size_type pos, const charT* s, size_type n);
     basic_string& insert(size_type pos, const charT* s);
     basic_string& insert(size_type pos, size_type n, charT c);
     iterator insert(const_iterator p, charT c);
     iterator insert(const_iterator p, size_type n, charT c);
-    template<class InputIterator>
-    iterator insert(const_iterator p, InputIterator first, InputIterator last);
 
     basic_string& erase(size_type pos = 0, size_type n = npos);
     iterator erase(const_iterator p);
@@ -130,21 +104,13 @@ public:
     
     basic_string& replace(size_type pos1, size_type n1, const basic_string& str);
     basic_string& replace(size_type pos1, size_type n1, const basic_string& str, size_type pos2, size_type n2 = npos);
-    template<class T>
-    basic_string& replace(size_type pos1, size_type n1, const T& t);
-    template<class T>
-    basic_string& replace(size_type pos1, size_type n1, const T& t, size_type pos2, size_type n2 = npos);
     basic_string& replace(size_type pos, size_type n1, const charT* s, size_type n2);
     basic_string& replace(size_type pos, size_type n1, const charT* s);
     basic_string& replace(size_type pos, size_type n1, size_type n2, charT c);
     basic_string& replace(const_iterator i1, const_iterator i2, const basic_string& str);
-    template<class T>
-    basic_string& replace(const_iterator i1, const_iterator i2, const T& t);
     basic_string& replace(const_iterator i1, const_iterator i2, const charT* s, size_type n);
     basic_string& replace(const_iterator i1, const_iterator i2, const charT* s);
     basic_string& replace(const_iterator i1, const_iterator i2, size_type n, charT c);
-    template<class InputIterator>
-    basic_string& replace(const_iterator i1, const_iterator i2, InputIterator j1, InputIterator j2);
     
     size_type copy(const charT* s, size_type n, size_type pos = 0) const;
     void swap(basic_string& str);
@@ -152,42 +118,30 @@ public:
     const charT* data() const;
     charT* data();
     
-    template<class T> 
-    size_type find(const T& t, size_type pos = 0) const;
     size_type find(const basic_string& str, size_type pos = 0) const;
     size_type find(const charT* s, size_type n, size_type pos) const;
     size_type find(const charT* s, size_type pos) const;
     size_type find(charT c, size_type pos = 0) const;
-    template<class T>
-    size_type rfind(const T& t, size_type n = npos) const;
     size_type rfind(const basic_string& str, size_type pos = npos) const;
     size_type rfind(const charT* s, size_type n, size_type pos) const;
     size_type rfind(const charT* s, size_type pos = npos) const;
     size_type rfind(charT c, size_type pos = npos) const;
     
-    template<class T> 
-    size_type find_first_of(const T& t, size_type pos = 0) const;
     size_type find_first_of(const basic_string& str, size_type pos = 0) const;
     size_type find_first_of(const charT* s, size_type pos, size_type n) const;
     size_type find_first_of(const charT* s, size_type pos = 0) const;
     size_type find_first_of(charT c, size_type pos = 0) const;
     
-    template<class T> 
-    size_type find_last_of(const T& t, size_type pos = npos) const;
     size_type find_last_of(const basic_string& str, size_type pos = npos) const;
     size_type find_last_of(const charT* s, size_type pos, size_type n) const;
     size_type find_last_of(const charT* s, size_type pos = npos) const;
     size_type find_last_of(charT c, size_type pos = npos) const;
     
-    template<class T> 
-    size_type find_first_not_of(const T& t, size_type pos = 0) const;
     size_type find_first_not_of(const basic_string& str, size_type pos = 0) const;
     size_type find_first_not_of(const charT* s, size_type pos, size_type n) const;
     size_type find_first_not_of(const charT* s, size_type pos = 0) const;
     size_type find_first_not_of(charT c, size_type pos = 0) const;
 
-    template<class T> 
-    size_type find_last_not_of(const T& t, size_type pos = npos) const;
     size_type find_last_not_of(const basic_string& str, size_type pos = npos) const;
     size_type find_last_not_of(const charT* s, size_type pos, size_type n) const;
     size_type find_last_not_of(const charT* s, size_type pos = npos) const;
@@ -195,12 +149,6 @@ public:
     
     basic_string substr(size_type pos = 0, size_type n = npos) const;
     
-    template<class T> 
-    int compare(const T& t) const;
-    template<class T> 
-    int compare(size_type pos1, size_type n1, const T& t) const;
-    template<class T>
-    int compare(size_type pos1, size_type n1, const T& t, size_type pos2, size_type n2 = npos) const;
     int compare(const basic_string& str) const;
     int compare(size_type pos1, size_type n1, const basic_string& str) const;
     int compare(size_type pos1, size_type n1, const basic_string& str, size_type pos2, size_type n2 = npos) const;
@@ -250,11 +198,6 @@ bool operator==(const charT* lhs, const basic_string& rhs);
 
 template<class charT>
 void swap(basic_string& lhs, basic_string& rhs);
-
-template<class charT, class U>
-typename basic_string<charT>::size_type erase(basic_string<charT>& c, const U& value);
-template<class charT, class Predicate>
-typename basic_string<charT>::size_type erase_if(basic_string<charT>& c, Predicate pred);
 
 using string = basic_string<char>;
 using u8string = basic_string<char8_t>;

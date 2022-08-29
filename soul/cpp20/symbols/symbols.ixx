@@ -9,6 +9,7 @@ export import soul.cpp20.symbols.alias.type.symbol;
 export import soul.cpp20.symbols.block;
 export import soul.cpp20.symbols.compound.type.symbol;
 export import soul.cpp20.symbols.classes;
+export import soul.cpp20.symbols.class_group.symbol;
 export import soul.cpp20.symbols.concepts;
 export import soul.cpp20.symbols.container.symbol;
 export import soul.cpp20.symbols.context;

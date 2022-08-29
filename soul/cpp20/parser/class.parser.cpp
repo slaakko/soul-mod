@@ -170,7 +170,7 @@ soul::parser::Match ClassParser<Lexer>::ClassSpecifier(Lexer& lexer, soul::cpp20
         {
             node->SetLBracePos(lbPos);
             node->SetRBracePos(rbPos);
-            soul::cpp20::symbols::EndClass(context);
+            soul::cpp20::symbols::EndClass(node.get(), context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassSpecifier");
@@ -1863,6 +1863,7 @@ soul::parser::Match ClassParser<Lexer>::MemberSpecification(Lexer& lexer, soul::
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 8201428699560542223);
+    std::unique_ptr<soul::cpp20::ast::Node> accessSpecifierNode = std::unique_ptr<soul::cpp20::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos colonPos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> accessSpecifier;
@@ -1894,6 +1895,7 @@ soul::parser::Match ClassParser<Lexer>::MemberSpecification(Lexer& lexer, soul::
                             if (match.hit)
                             {
                                 sourcePos = lexer.GetSourcePos(pos);
+                                accessSpecifierNode.reset(accessSpecifier.release());
                             }
                             *parentMatch5 = match;
                         }
@@ -1917,7 +1919,8 @@ soul::parser::Match ClassParser<Lexer>::MemberSpecification(Lexer& lexer, soul::
                                 if (match.hit)
                                 {
                                     colonPos = lexer.GetSourcePos(pos);
-                                    container->AddNode(new soul::cpp20::ast::BeginAccessGroupNode(sourcePos, accessSpecifier.release(), colonPos));
+                                    cpp20::symbols::SetCurrentAccess(accessSpecifierNode.get(), context);
+                                    container->AddNode(new soul::cpp20::ast::BeginAccessGroupNode(sourcePos, accessSpecifierNode.release(), colonPos));
                                 }
                                 *parentMatch7 = match;
                             }
@@ -2008,6 +2011,7 @@ soul::parser::Match ClassParser<Lexer>::MemberSpecification(Lexer& lexer, soul::
                                     if (match.hit)
                                     {
                                         sourcePos = lexer.GetSourcePos(pos);
+                                        accessSpecifierNode.reset(accessSpecifier.release());
                                     }
                                     *parentMatch17 = match;
                                 }
@@ -2031,7 +2035,8 @@ soul::parser::Match ClassParser<Lexer>::MemberSpecification(Lexer& lexer, soul::
                                         if (match.hit)
                                         {
                                             colonPos = lexer.GetSourcePos(pos);
-                                            container->AddNode(new soul::cpp20::ast::BeginAccessGroupNode(sourcePos, accessSpecifier.release(), colonPos));
+                                            cpp20::symbols::SetCurrentAccess(accessSpecifierNode.get(), context);
+                                            container->AddNode(new soul::cpp20::ast::BeginAccessGroupNode(sourcePos, accessSpecifierNode.release(), colonPos));
                                         }
                                         *parentMatch19 = match;
                                     }

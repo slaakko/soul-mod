@@ -93,7 +93,7 @@ soul::parser::Match TemplateParser<Lexer>::TemplateDeclaration(Lexer& lexer, sou
                             concepDefinition.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                soul::cpp20::symbols::EndTemplateDeclaration(context);
+                                soul::cpp20::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateDeclaration");
@@ -118,7 +118,7 @@ soul::parser::Match TemplateParser<Lexer>::TemplateDeclaration(Lexer& lexer, sou
                                     declaration.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
-                                        soul::cpp20::symbols::EndTemplateDeclaration(context);
+                                        soul::cpp20::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "TemplateDeclaration");

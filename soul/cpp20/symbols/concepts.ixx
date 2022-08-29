@@ -10,6 +10,8 @@ import soul.cpp20.ast.node;
 
 export namespace soul::cpp20::symbols {
 
+class Context;
+
 class ConceptSymbol : public Symbol
 {
 public:
@@ -24,5 +26,7 @@ struct ConceptLess
 {
     bool operator()(ConceptSymbol* left, ConceptSymbol* right) const;
 };
+
+void AddConcept(soul::cpp20::ast::Node*, Context* context);
 
 } // namespace soul::cpp20::symbols

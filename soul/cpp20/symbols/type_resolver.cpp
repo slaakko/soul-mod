@@ -8,12 +8,15 @@ module soul.cpp20.symbols.type.resolver;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.classes;
+import soul.cpp20.symbols.declaration;
+import soul.cpp20.symbols.declarator;
 import soul.cpp20.symbols.derivations;
 import soul.cpp20.symbols.fundamental.type.symbol;
 import soul.cpp20.symbols.compound.type.symbol;
 import soul.cpp20.symbols.specialization;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.scope.resolver;
+import soul.cpp20.symbols.templates;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
@@ -58,6 +61,7 @@ public:
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
     void Visit(soul::cpp20::ast::TemplateIdNode& node) override;
     void Visit(soul::cpp20::ast::TypeIdNode& node) override;
+    void Visit(soul::cpp20::ast::FunctionDeclaratorNode& node) override;
 private:
     Context* context;
     TypeSymbol* type;
@@ -68,7 +72,14 @@ private:
     bool createTypeSymbol;
 };
 
-TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_) : context(context_), type(nullptr), baseType(nullptr), flags(flags_), pointerCount(0), typeResolved(false), createTypeSymbol(false)
+TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_) : 
+    context(context_), 
+    type(nullptr), 
+    baseType(nullptr), 
+    flags(flags_), 
+    pointerCount(0), 
+    typeResolved(false), 
+    createTypeSymbol(false)
 {
 }
 
@@ -279,6 +290,10 @@ void TypeResolver::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 
 void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
+    if (node.Str() == U"size_type")
+    {
+        int x = 0;
+    }
     Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context);
     if (symbol)
     {
@@ -293,7 +308,7 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
     }
     else if (createTypeSymbol)
     {
-        Scope* scope = context->GetSymbolTable()->CurrentScope();
+        Scope* scope = context->GetSymbolTable()->CurrentScope()->SymbolScope();
         ContainerSymbol* containerSymbol = nullptr;
         if (scope->IsContainerScope())
         {
@@ -327,6 +342,7 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
     }
     else
     {
+        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
         type = context->GetSymbolTable()->GetErrorTypeSymbol();
     }
 }
@@ -341,7 +357,7 @@ void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
         TypeSymbol* templateArg = soul::cpp20::symbols::ResolveType(node.Items()[i], DeclarationFlags::none, context);
         templateArgs.push_back(templateArg);
     }
-    SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(typeSymbol, templateArgs);
+    TypeSymbol* specialization = Instantiate(typeSymbol, templateArgs, &node, context);
     type = specialization;
 }
 
@@ -354,6 +370,13 @@ void TypeResolver::Visit(soul::cpp20::ast::TypeIdNode& node)
         type = baseType;
     }
     node.Declarator()->Accept(*this);
+}
+
+void TypeResolver::Visit(soul::cpp20::ast::FunctionDeclaratorNode& node)
+{
+    ResolveType();
+    Declaration declaration = ProcessDeclarator(type, &node, flags, context);
+    type = declaration.type;
 }
 
 TypeSymbol* ResolveType(soul::cpp20::ast::Node* node, DeclarationFlags flags, Context* context)

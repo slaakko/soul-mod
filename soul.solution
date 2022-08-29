@@ -1,0 +1,6 @@
+solution soul;
+project <soul/cpp20/std/std.project>;
+project <util/util.project>;
+project <soul/ast/ast.project>;
+project <soul/lexer/lexer.project>;
+project <soul/parser/parser.project>;

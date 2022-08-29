@@ -112,6 +112,7 @@ public:
     bool IsClassNode() const { return kind == NodeKind::classNode; }
     bool IsStructNode() const { return kind == NodeKind::structNode;  }
     bool IsUnionNode() const { return kind == NodeKind::unionNode; }
+    bool IsClassSpecifierNode() const { return kind == NodeKind::classSpecifierNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

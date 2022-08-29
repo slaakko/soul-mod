@@ -13,6 +13,7 @@ import soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
+import soul.cpp20.symbols.templates;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
@@ -29,6 +30,7 @@ std::string ScopeKindStr(ScopeKind kind)
         case ScopeKind::blockScope: return "block scope";
         case ScopeKind::usingDeclarationScope: return "using declaration scope";
         case ScopeKind::usingDirectiveScope: return "using directive scope";
+        case ScopeKind::instantiationScope: return "instantiation scope";
     }
     return "<unknown scope>";
 }
@@ -52,46 +54,37 @@ void Scope::Import(Scope* that)
 
 void Scope::Install(Symbol* symbol)
 {
+    Install(symbol, symbol);
+}
+
+void Scope::Install(Symbol* symbol, Symbol* from)
+{
     SymbolGroupKind symbolGroupKind = symbol->GetSymbolGroupKind();
-    auto it = symbolMap.find(std::make_pair(symbol->InstallationName(), symbolGroupKind));
-    if (it != symbolMap.cend())
+    if (from != symbol)
     {
-        Symbol* existingSymbol = it->second;
-        if (existingSymbol != symbol)
+        if (from->IsFunctionGroupSymbol() && symbol->IsFunctionGroupSymbol())
         {
-            if (existingSymbol->IsFunctionGroupSymbol() && symbol->IsFunctionGroupSymbol())
-            {
-                FunctionGroupSymbol* existingFunctionGroup = static_cast<FunctionGroupSymbol*>(existingSymbol);
-                FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
-                existingFunctionGroup->Merge(functionGroup);
-            }
-            else if (existingSymbol->IsClassGroupSymbol() && symbol->IsClassGroupSymbol())
-            {
-                ClassGroupSymbol* existingClassGroup = static_cast<ClassGroupSymbol*>(existingSymbol);
-                ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
-                existingClassGroup->Merge(classGroup);
-            }
-            else if (existingSymbol->IsAliasGroupSymbol() && symbol->IsAliasGroupSymbol())
-            {
-                AliasGroupSymbol* existingAliasGroup = static_cast<AliasGroupSymbol*>(existingSymbol);
-                AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
-                existingAliasGroup->Merge(aliasGroup);
-            }
-            else if (existingSymbol->IsVariableGroupSymbol() && symbol->IsVariableGroupSymbol())
-            {
-                VariableGroupSymbol* existingVariableGroup = static_cast<VariableGroupSymbol*>(existingSymbol);
-                VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
-                existingVariableGroup->Merge(variableGroup);
-            }
-            else
-            {
-                throw std::runtime_error("cannot install symbol '" + util::ToUtf8(symbol->FullName()) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "': name conflicts with existing symbol '" +
-                    util::ToUtf8(existingSymbol->FullName()) + "'");
-            }
+            FunctionGroupSymbol* fromFunctionGroup = static_cast<FunctionGroupSymbol*>(from);
+            FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
+            functionGroup->Merge(fromFunctionGroup);
         }
-        else
+        else if (from->IsClassGroupSymbol() && symbol->IsClassGroupSymbol())
         {
-            return;
+            ClassGroupSymbol* fromClassGroup = static_cast<ClassGroupSymbol*>(from);
+            ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
+            classGroup->Merge(fromClassGroup);
+        }
+        else if (from->IsAliasGroupSymbol() && symbol->IsAliasGroupSymbol())
+        {
+            AliasGroupSymbol* fromAliasGroup = static_cast<AliasGroupSymbol*>(from);
+            AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
+            aliasGroup->Merge(fromAliasGroup);
+        }
+        else if (from->IsVariableGroupSymbol() && symbol->IsVariableGroupSymbol())
+        {
+            VariableGroupSymbol* fromVariableGroup = static_cast<VariableGroupSymbol*>(from);
+            VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
+            variableGroup->Merge(fromVariableGroup);
         }
     }
     symbolMap[std::make_pair(symbol->InstallationName(), symbolGroupKind)] = symbol;
@@ -153,6 +146,11 @@ Scope* Scope::GroupScope()
     {
         return this;
     }
+}
+
+Scope* Scope::SymbolScope()
+{
+    return this;
 }
 
 void Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
@@ -477,19 +475,72 @@ void UsingDeclarationScope::Lookup(const std::u32string& id, SymbolGroupKind sym
     Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, symbols);
 }
 
-UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_)
+UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_), recursive(false)
 {
     SetKind(ScopeKind::usingDirectiveScope);
 }
 
 void UsingDirectiveScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
 {
-    ns->GetScope()->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+    if (!recursive)
+    {
+        recursive = true;
+        ns->GetScope()->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+        recursive = false;
+    }
 }
 
 std::string UsingDirectiveScope::FullName() const
 {
     return util::ToUtf8(ns->FullName());
+}
+
+InstantiationScope::InstantiationScope(Scope* parentScope_) : parentScope(parentScope_), recursive(false)
+{
+    SetKind(ScopeKind::instantiationScope);
+}
+
+std::string InstantiationScope::FullName() const
+{
+    return parentScope->FullName();
+}
+
+Scope* InstantiationScope::GroupScope()
+{
+    return parentScope->GroupScope();
+}
+
+Scope* InstantiationScope::SymbolScope()
+{
+    return parentScope->SymbolScope();
+}
+
+void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
+{
+    std::vector<Symbol*> foundSymbols;
+    Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, foundSymbols);
+    for (const auto& symbol : foundSymbols)
+    {
+        if (symbol->IsBoundTemplateParameterSymbol())
+        {
+            BoundTemplateParameterSymbol* boundTemplateParameterSymbol = static_cast<BoundTemplateParameterSymbol*>(symbol);
+            symbols.push_back(boundTemplateParameterSymbol->BoundSymbol());
+        }
+        else
+        {
+            symbols.push_back(symbol);
+        }
+    }
+    if (symbols.empty())
+    {
+        if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
+        {
+            if (parentScope)
+            {
+                parentScope->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+            }
+        }
+    }
 }
 
 } // namespace soul::cpp20::symbols

@@ -7,6 +7,7 @@ export module soul.cpp20.symbols.function.symbol;
 
 import std.core;
 import soul.cpp20.symbols.symbol;
+import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.symbols.container.symbol;
 import soul.cpp20.ast.node;
 
@@ -89,6 +90,31 @@ private:
     TypeSymbol* returnType;
     util::uuid returnTypeId;
     std::vector<ParameterSymbol*> parameters;
+};
+
+class FunctionTypeSymbol : public TypeSymbol
+{
+public:
+    FunctionTypeSymbol();
+    FunctionTypeSymbol(const std::u32string& name_);
+    void MakeName();
+    std::string SymbolKindStr() const override { return "function type symbol"; }
+    std::string SymbolDocKindStr() const override { return "function_type"; }
+    TypeSymbol* ReturnType() const { return returnType; }
+    void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
+    const std::vector<TypeSymbol*>& ParameterTypes() const { return parameterTypes; }
+    void AddParameterType(TypeSymbol* parameterType);
+    int PtrIndex() const override { return ptrIndex; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
+private:
+    TypeSymbol* returnType;
+    util::uuid returnTypeId;
+    std::vector<TypeSymbol*> parameterTypes;
+    std::vector<util::uuid> parameterTypeIds;
+    int ptrIndex;
 };
 
 struct FunctionLess

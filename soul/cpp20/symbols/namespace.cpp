@@ -7,6 +7,12 @@ module soul.cpp20.symbols.namespaces;
 
 import soul.cpp20.ast;
 import soul.cpp20.symbols.context;
+import soul.cpp20.symbols.alias.group.symbol;
+import soul.cpp20.symbols.concept_group.symbol;
+import soul.cpp20.symbols.class_group.symbol;
+import soul.cpp20.symbols.exception;
+import soul.cpp20.symbols.function.group.symbol;
+import soul.cpp20.symbols.variable.group.symbol;
 import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.symbol.table;
 
@@ -48,7 +54,7 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
     {
         throw std::runtime_error("soul.cpp20.symbols.NamespaceSymbol::Import: namespace symbol expected");
     }
-    for (const auto& symbol : that->Symbols())
+    for (auto& symbol : that->Symbols())
     {
         if (symbol->IsNamespaceSymbol())
         {
@@ -57,9 +63,38 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
         }
         else
         {
-            if (symbol->CanInstall())
+            Symbol* installSymbol = symbol.get();
+            switch (symbol->Kind())
             {
-                currentScope->Install(symbol.get());
+                case SymbolKind::conceptGroupSymbol:
+                {
+                    installSymbol = currentScope->GetOrInsertConceptGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    break;
+                }
+                case SymbolKind::classGroupSymbol:
+                {
+                    installSymbol = currentScope->GetOrInsertClassGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    break;
+                }
+                case SymbolKind::aliasGroupSymbol:
+                {
+                    installSymbol = currentScope->GetOrInsertAliasGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    break;
+                }
+                case SymbolKind::functionGroupSymbol:
+                {
+                    installSymbol = currentScope->GetOrInsertFunctionGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    break;
+                }
+                case SymbolKind::variableGroupSymbol:
+                {
+                    installSymbol = currentScope->GetOrInsertVariableGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    break;
+                }
+            }
+            if (installSymbol->CanInstall())
+            {
+                currentScope->Install(installSymbol, symbol.get());
             }
         }
     }
@@ -119,8 +154,12 @@ void BeginNamespace(soul::cpp20::ast::Node* node, Context* context)
     node->Accept(creator);
 }
 
-void EndNamespace(int level, Context* context)
+void EndNamespace(soul::cpp20::ast::Node* node, int level, Context* context)
 {
+    if (!context->GetSymbolTable()->CurrentScope()->GetSymbol()->IsNamespaceSymbol())
+    {
+        ThrowException("cpp20.symbols.namespace: EndNamespace(): namespace scope expected", node->GetSourcePos(), context);
+    }
     context->GetSymbolTable()->EndNamespace(level);
 }
 

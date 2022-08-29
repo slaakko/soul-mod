@@ -76,7 +76,7 @@ bool Context::IsConstructorNameNode(soul::cpp20::ast::Node* node) const
     return false;
 }
 
-bool Context::EnableDeclSpecFunctionDeclaration() const
+bool Context::EnableNoDeclSpecFunctionDeclaration() const
 {
     Scope* currentScope = symbolTable->CurrentScope();
     if (currentScope->IsTemplateDeclarationScope())
@@ -84,6 +84,21 @@ bool Context::EnableDeclSpecFunctionDeclaration() const
         Symbol* symbol = currentScope->GetSymbol();
         Symbol* parent = symbol->Parent();
         if (parent->GetScope()->IsClassScope())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Context::EnableNoDeclSpecFunctionDefinition() const
+{
+    Scope* currentScope = symbolTable->CurrentScope();
+    if (currentScope->IsTemplateDeclarationScope())
+    {
+        Symbol* symbol = currentScope->GetSymbol();
+        Symbol* parent = symbol->Parent();
+        if (parent->GetScope()->IsNamespaceScope() || parent->GetScope()->IsClassScope())
         {
             return true;
         }

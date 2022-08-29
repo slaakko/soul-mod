@@ -16,5 +16,6 @@ constexpr int64_t SEMICOLON = (static_cast<int64_t>(tokenSetID) << 32) | 4;
 constexpr int64_t INTERFACE = (static_cast<int64_t>(tokenSetID) << 32) | 5;
 constexpr int64_t SOURCE = (static_cast<int64_t>(tokenSetID) << 32) | 6;
 constexpr int64_t FILEPATH = (static_cast<int64_t>(tokenSetID) << 32) | 7;
+constexpr int64_t REFERENCE = (static_cast<int64_t>(tokenSetID) << 32) | 8;
 
 } // soul::cpp20::proj::token

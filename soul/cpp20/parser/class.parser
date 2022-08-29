@@ -71,7 +71,7 @@ parser ClassParser
         {
             node->SetLBracePos(lbPos);
             node->SetRBracePos(rbPos);
-            soul::cpp20::symbols::EndClass(context);
+            soul::cpp20::symbols::EndClass(node.get(), context);
             return node.release();
         }
         ;
@@ -208,10 +208,16 @@ parser ClassParser
         |   DeclTypeSpecifier(context):declTypeSpecifier{ return declTypeSpecifier; }
         ;
 
-    MemberSpecification(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container, var soul::ast::SourcePos sourcePos, var soul::ast:: SourcePos colonPos)
+    MemberSpecification(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container, var std::unique_ptr<soul::cpp20::ast::Node> accessSpecifierNode, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos colonPos)
         ::= 
-        (   AccessSpecifier:accessSpecifier{ sourcePos = lexer.GetSourcePos(pos); } 
-            COLON{ colonPos = lexer.GetSourcePos(pos); container->AddNode(new soul::cpp20::ast::BeginAccessGroupNode(sourcePos, accessSpecifier, colonPos)); }
+        (   AccessSpecifier:accessSpecifier{ sourcePos = lexer.GetSourcePos(pos); accessSpecifierNode.reset(accessSpecifier); } 
+            COLON
+            { 
+                colonPos = lexer.GetSourcePos(pos); 
+                cpp20::symbols::SetCurrentAccess(accessSpecifierNode.get(), context);
+                container->AddNode(new soul::cpp20::ast::BeginAccessGroupNode(sourcePos, accessSpecifierNode.release(), colonPos)); 
+            }
         |   MemberDeclaration(context):memberDeclaration1{ container->AddNode(memberDeclaration1); }
         |   MemberDeclaration(context):memberDeclaration2{ container->AddNode(memberDeclaration2); }
         )+

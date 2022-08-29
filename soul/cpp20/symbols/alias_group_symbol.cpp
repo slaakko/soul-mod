@@ -103,7 +103,10 @@ void AliasGroupSymbol::Merge(AliasGroupSymbol* that)
 {
     for (const auto& aliasType : that->aliasTypeSymbols)
     {
-        aliasTypeSymbols.push_back(aliasType);
+        if (std::find(aliasTypeSymbols.cbegin(), aliasTypeSymbols.cend(), aliasType) == aliasTypeSymbols.end())
+        {
+            aliasTypeSymbols.push_back(aliasType);
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/project/project.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/project/project.parser' using soul parser generator spg version 4.1.0
 
 export module soul.cpp20.proj.parser;
 
@@ -21,6 +21,7 @@ struct ProjectParser
     static soul::parser::Match FilePath(Lexer& lexer, soul::cpp20::proj::ast::Project* proj);
     static soul::parser::Match InterfaceFilePath(Lexer& lexer);
     static soul::parser::Match SourceFilePath(Lexer& lexer);
+    static soul::parser::Match ReferenceFilePath(Lexer& lexer);
     static soul::parser::Match QualifiedId(Lexer& lexer);
 };
 

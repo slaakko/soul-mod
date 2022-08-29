@@ -16,10 +16,6 @@ public:
     
     reverse_iterator();
     explicit reverse_iterator(Iterator x);
-    template<class U>
-    reverse_iterator(const reverse_iterator<U>& u);
-    template<class U>
-    reverse_iterator& operator=(const reverse_iterator<U>& u);
     Iterator base() const;
     reference operator*() const;
     pointer operator->() const;

@@ -21,7 +21,7 @@ CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations&
     TypeSymbol(SymbolKind::compoundTypeSymbol, MakeCompoundTypeName(baseType_, derivations_)), baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid())
 {
 }
-
+    
 void CompoundTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
@@ -62,15 +62,37 @@ std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& der
     int pointerCount = PointerCount(derivations);
     if (pointerCount > 0)
     {
-        name.append(pointerCount, '*');
+        if (baseType->PtrIndex() == -1)
+        {
+            name.append(pointerCount, '*');
+        }
+        else
+        {
+            std::u32string ptrStr(pointerCount, '*');
+            name.insert(baseType->PtrIndex(), ptrStr);
+        }
     }
     if (HasDerivation(derivations, Derivation::lvalueRefDerivation))
     {
-        name.append(U"&");
+        if (baseType->PtrIndex() == -1)
+        {
+            name.append(U"&");
+        }
+        else
+        {
+            name.insert(baseType->PtrIndex(), U"&");
+        }
     }
     else if (HasDerivation(derivations, Derivation::rvalueRefDerivation))
     {
-        name.append(U"&&");
+        if (baseType->PtrIndex() == -1)
+        {
+            name.append(U"&&");
+        }
+        else
+        {
+            name.insert(baseType->PtrIndex(), U"&&");
+        }
     }
     return name;
 }

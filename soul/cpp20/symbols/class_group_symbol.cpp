@@ -43,6 +43,10 @@ Symbol* ClassGroupSymbol::GetSingleSymbol()
     {
         return classes.front();
     }
+    else if (forwardDeclarations.size() == 1)
+    {
+        return forwardDeclarations.front();
+    }
     else
     {
         return this;
@@ -56,6 +60,23 @@ ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const
         if (classTypeSymbol->Arity() == arity)
         {
             return classTypeSymbol;
+        }
+    }
+    return nullptr;
+}
+
+void ClassGroupSymbol::AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration)
+{
+    forwardDeclarations.push_back(forwardDeclaration);
+}
+
+ForwardClassDeclarationSymbol* ClassGroupSymbol::GetForwardDeclaration(int arity) const
+{
+    for (const auto& forwardDeclaration : forwardDeclarations)
+    {
+        if (forwardDeclaration->Arity() == arity)
+        {
+            return forwardDeclaration;
         }
     }
     return nullptr;
@@ -103,9 +124,18 @@ void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
 {
     for (const auto& cls : that->classes)
     {
-        classes.push_back(cls);
+        if (std::find(classes.cbegin(), classes.cend(), cls) == classes.end())
+        {
+            classes.push_back(cls);
+        }
     }
-
+    for (const auto& fwd : that->forwardDeclarations)
+    {
+        if (std::find(forwardDeclarations.cbegin(), forwardDeclarations.cend(), fwd) == forwardDeclarations.end())
+        {
+            forwardDeclarations.push_back(fwd);
+        }
+    }
 }
 
 } // namespace soul::cpp20::symbols

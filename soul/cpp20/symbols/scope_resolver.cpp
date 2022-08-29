@@ -8,7 +8,10 @@ module soul.cpp20.symbols.scope.resolver;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.namespaces;
+import soul.cpp20.symbols.declaration;
 import soul.cpp20.symbols.exception;
+import soul.cpp20.symbols.type.resolver;
+import soul.cpp20.symbols.type.symbol;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
@@ -21,6 +24,7 @@ public:
     void Visit(soul::cpp20::ast::NestedNameSpecifierNode& node) override;
     void Visit(soul::cpp20::ast::ColonColonNode& node) override;
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
+    void Visit(soul::cpp20::ast::TemplateIdNode& node) override;
 private:
     Context* context;
     bool first;
@@ -51,6 +55,10 @@ void ScopeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
     first = false;
     Symbol* symbol = currentScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::none);
+    if (!symbol)
+    {
+        symbol = context->GetSymbolTable()->LookupInScopeStack(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context, LookupFlags::none);
+    }
     if (symbol)
     {
         Scope* scope = symbol->GetScope();
@@ -67,6 +75,15 @@ void ScopeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
     {
         ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'", node.GetSourcePos(), context);
     }
+}
+
+void ScopeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
+{
+    first = false;
+    context->GetSymbolTable()->BeginScope(currentScope);
+    TypeSymbol* type = ResolveType(&node, DeclarationFlags::none, context);
+    currentScope = type->GetScope();
+    context->GetSymbolTable()->EndScope();
 }
 
 Scope* ResolveScope(soul::cpp20::ast::Node* nnsNode, Context* context)

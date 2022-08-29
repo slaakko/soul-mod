@@ -22,7 +22,7 @@ class ClassTypeSymbol : public TypeSymbol
 {
 public:
     ClassTypeSymbol(const std::u32string& name_);
-    virtual int Arity() const { return 0; }
+    int Arity();
     ClassKind GetClassKind() const { return classKind; }
     void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
     std::string SymbolKindStr() const override { return "class type symbol"; }
@@ -41,8 +41,33 @@ private:
     ClassKind classKind;
 };
 
+class ForwardClassDeclarationSymbol : public TypeSymbol
+{
+public:
+    ForwardClassDeclarationSymbol(const std::u32string& name_);
+    int Arity();
+    ClassKind GetClassKind() const { return classKind; }
+    void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
+    void SetClassTypeSymbol(ClassTypeSymbol* classTypeSymbol_) { classTypeSymbol = classTypeSymbol_; }
+    ClassTypeSymbol* GetClassTypeSymbol() const { return classTypeSymbol; }
+    std::string SymbolKindStr() const override { return "forward class declaration symbol"; }
+    std::string SymbolDocKindStr() const override { return "forward_class"; }
+    bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
+    TemplateDeclarationSymbol* ParentTemplateDeclaration();
+    void Accept(Visitor& visitor) override;
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+private:
+    ClassKind classKind;
+    ClassTypeSymbol* classTypeSymbol;
+    util::uuid classTypeSymbolId;
+};
+
 void BeginClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
-void EndClass(soul::cpp20::symbols::Context* context);
+void EndClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
+void AddForwardClassDeclaration(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
+void SetCurrentAccess(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
 
 struct ClassLess
 {
