@@ -26,6 +26,7 @@ import soul.cpp20.symbols.concept_group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
+import soul.cpp20.symbols.enum_group.symbol;
 import soul.cpp20.symbols.specialization;
 import soul.cpp20.symbols.symbol.table;
 import util.unicode;
@@ -145,6 +146,11 @@ void Symbol::Resolve(SymbolTable& symbolTable)
 
 SymbolTable* Symbol::GetSymbolTable() 
 {
+    Symbol* parentSymbol = parent;
+    if (parentSymbol && parentSymbol->IsSpecializationSymbol())
+    {
+        return parentSymbol->GetSymbolTable();
+    }
     NamespaceSymbol* ns = ParentNamespace();
     if (ns)
     {
@@ -238,6 +244,7 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::specializationSymbol:
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::enumTypeSymbol:
+        case SymbolKind::forwardEnumDeclarationSymbol:
         case SymbolKind::errorSymbol:
         case SymbolKind::nestedTypeSymbol:
         case SymbolKind::functionTypeSymbol:
@@ -283,6 +290,7 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::forwardClassDeclarationSymbol:
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::enumTypeSymbol:
+        case SymbolKind::forwardEnumDeclarationSymbol:
         case SymbolKind::fundamentalTypeSymbol:
         case SymbolKind::templateParameterSymbol:
         case SymbolKind::boundTemplateParameterSymbol:
@@ -407,7 +415,7 @@ int Match(Symbol* left, Symbol* right)
     return -1;
 }
 
-Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
+Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTable* symbolTable)
 {
     switch (symbolKind)
     {
@@ -430,6 +438,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         case SymbolKind::aliasGroupSymbol:
         {
             return new AliasGroupSymbol(name);
+        }
+        case SymbolKind::enumGroupSymbol:
+        {
+            return new EnumGroupSymbol(name);
         }
         case SymbolKind::boolValueSymbol:
         {
@@ -487,6 +499,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         {
             return new EnumeratedTypeSymbol(name);
         }
+        case SymbolKind::forwardEnumDeclarationSymbol:
+        {
+            return new ForwardEnumDeclarationSymbol(name);
+        }
         case SymbolKind::enumConstantSymbol:
         {
             return new EnumConstantSymbol(name);
@@ -533,7 +549,9 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         }
         case SymbolKind::specializationSymbol:
         {
-            return new SpecializationSymbol(name);
+            SpecializationSymbol* specialization = new SpecializationSymbol(name);
+            specialization->SetSymbolTable(symbolTable);
+            return specialization;
         }
         case SymbolKind::nestedTypeSymbol:
         {
@@ -551,8 +569,12 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name)
         {
             return new InvokeValue();
         }
+        case SymbolKind::constraintExprSymbol:
+        {
+            return new ConstraintExprSymbol();
+        }
     }
-    return nullptr;
+    throw std::runtime_error("not implemented");
 }
 
 } // namespace soul::cpp20::symbols

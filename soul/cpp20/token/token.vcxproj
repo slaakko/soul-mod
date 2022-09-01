@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="cpp20.token" />
+    <None Include="token.project" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpp20.token.ixx" />

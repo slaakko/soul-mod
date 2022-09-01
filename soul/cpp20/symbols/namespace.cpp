@@ -10,6 +10,7 @@ import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.concept_group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
+import soul.cpp20.symbols.enum_group.symbol;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
@@ -89,6 +90,11 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
                 case SymbolKind::variableGroupSymbol:
                 {
                     installSymbol = currentScope->GetOrInsertVariableGroup(symbol->Name(), soul::ast::SourcePos(), context);
+                    break;
+                }
+                case SymbolKind::enumGroupSymbol:
+                {
+                    installSymbol = currentScope->GetOrInsertEnumGroup(symbol->Name(), soul::ast::SourcePos(), context);
                     break;
                 }
             }

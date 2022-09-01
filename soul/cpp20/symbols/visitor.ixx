@@ -28,7 +28,9 @@ class ForwardClassDeclarationSymbol;
 class CompoundTypeSymbol;
 class ConceptGroupSymbol;
 class ConceptSymbol;
+class EnumGroupSymbol;
 class EnumeratedTypeSymbol;
+class ForwardEnumDeclarationSymbol;
 class EnumConstantSymbol;
 class FunctionGroupSymbol;
 class ParameterSymbol;
@@ -45,6 +47,7 @@ class ErrorTypeSymbol;
 class NestedTypeSymbol;
 class VariableGroupSymbol;
 class VariableSymbol;
+class ConstraintExprSymbol;
 
 class Visitor
 {
@@ -72,7 +75,9 @@ public:
     virtual void Visit(CompoundTypeSymbol& symbol) {}
     virtual void Visit(ConceptGroupSymbol& symbol) {}
     virtual void Visit(ConceptSymbol& symbol) {}
+    virtual void Visit(EnumGroupSymbol& symbol) {}
     virtual void Visit(EnumeratedTypeSymbol& symbol) {}
+    virtual void Visit(ForwardEnumDeclarationSymbol& symbol) {}
     virtual void Visit(EnumConstantSymbol& symbol) {}
     virtual void Visit(FunctionGroupSymbol& symbol) {}
     virtual void Visit(ParameterSymbol& symbol) {}
@@ -89,6 +94,7 @@ public:
     virtual void Visit(ErrorTypeSymbol& symbol) {}
     virtual void Visit(VariableGroupSymbol& symbol) {}
     virtual void Visit(VariableSymbol& symbol) {}
+    virtual void Visit(ConstraintExprSymbol& symbol) {}
     void SetVisitContainer(bool visitContainer_) { visitContainer = visitContainer_; }
 private:
     bool visitContainer;

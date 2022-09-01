@@ -10,8 +10,6 @@ import soul.lexer.token;
 import soul.lexer.base;
 import util.unicode;
 
-using namespace util;
-
 export namespace soul::re::token::parser {
 
 template<typename Char>
@@ -41,7 +39,7 @@ void ParseHexChar(const std::string& fileName, char32_t& value, const Char*& p, 
     }
     else
     {
-        throw std::runtime_error("hex character expected at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+        throw std::runtime_error("hex character expected at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
     }
 }
 
@@ -125,7 +123,7 @@ char32_t MakeEscapeValue(const std::string& fileName, const soul::lexer::Token<C
     escapeValue = ParseEscape(fileName, p, e, token);
     if (p != e)
     {
-        throw std::runtime_error("invalid escape at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+        throw std::runtime_error("invalid escape at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
     }
     return escapeValue;
 }

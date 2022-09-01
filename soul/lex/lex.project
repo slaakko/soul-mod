@@ -1,0 +1,6 @@
+project soul.lex;
+reference <../ast/ast.project>;
+reference <../lexer/lexer.project>;
+reference <../token/token.project>;
+reference <../../util/util.project>;
+interface <lex.ixx>;

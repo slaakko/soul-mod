@@ -158,6 +158,7 @@ void GenerateFunctionSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
         soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
+        spanSpecifierElement->SetAttribute("xml:space", "preserve");
         soul::cpp20::symbols::DeclarationFlags flags = function->GetDeclarationFlags();
         std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
         if (!specifierStr.empty())
@@ -263,6 +264,7 @@ void GenerateVariableSection(soul::xml::Element* bodyElement, NamespaceSymbols* 
         soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
+        spanSpecifierElement->SetAttribute("xml:space", "preserve");
         soul::cpp20::symbols::DeclarationFlags flags = variable->GetDeclarationFlags();
         std::string specifierStr = soul::cpp20::symbols::DeclarationFlagStr(flags);
         if (!specifierStr.empty())

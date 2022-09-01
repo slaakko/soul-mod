@@ -41,14 +41,14 @@ std::string AccessStr(Access access);
 enum class SymbolKind : int32_t
 {
     null, 
-    classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol,
+    classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
     boolValueSymbol, integerValueSymbol, floatingValueSymbol, genericTypeSymbol, nullPtrTypeSymbol,
     aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
     conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, 
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
     templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol,
     specializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
-    forwardClassDeclarationSymbol, boundTemplateParameterSymbol,
+    forwardClassDeclarationSymbol, forwardEnumDeclarationSymbol, boundTemplateParameterSymbol, constraintExprSymbol,
     max
 };
 
@@ -128,7 +128,10 @@ public:
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
     bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol; }
     bool IsForwardClassDeclarationSymbol() const { return kind == SymbolKind::forwardClassDeclarationSymbol; }
+    bool IsConceptSymbol() const { return kind == SymbolKind::conceptSymbol; }
+    bool IsEnumGroupSymbol() const { return kind == SymbolKind::enumGroupSymbol; }
     bool IsEnumeratedTypeSymbol() const { return kind == SymbolKind::enumTypeSymbol; }
+    bool IsForwardEnumDeclarationSymbol() const { return kind == SymbolKind::forwardEnumDeclarationSymbol; }
     bool IsEnumConstantSymbol() const { return kind == SymbolKind::enumConstantSymbol; }
     bool IsFunctionGroupSymbol() const { return kind == SymbolKind::functionGroupSymbol; }
     bool IsFunctionSymbol() const { return  kind == SymbolKind::functionSymbol; }
@@ -143,6 +146,7 @@ public:
     bool IsVariableGroupSymbol() const { return kind == SymbolKind::variableGroupSymbol; }
     bool IsVariableSymbol() const { return kind == SymbolKind::variableSymbol; }
     bool IsErrorTypeSymbol() const { return kind == SymbolKind::errorSymbol; }
+    bool IsConstraintExprSymbol() const { return kind == SymbolKind::constraintExprSymbol; }
     bool IsValueSymbol() const;
     SymbolGroupKind GetSymbolGroupKind() const;
 private:
@@ -159,6 +163,6 @@ bool SymbolsEqual(Symbol* left, Symbol* right);
 int Match(const std::vector<Symbol*>& left, const std::vector<Symbol*>& right);
 int Match(Symbol* left, Symbol* right);
 
-Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name);
+Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTable* symbolTable);
 
 } // namespace soul::cpp20::symbols

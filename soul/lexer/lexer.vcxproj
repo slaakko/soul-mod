@@ -172,6 +172,7 @@
     <ClCompile Include="keyword.ixx" />
     <ClCompile Include="lexeme.ixx" />
     <ClCompile Include="lexer.ixx" />
+    <ClCompile Include="lexer_class.ixx" />
     <ClCompile Include="lexing_util.ixx" />
     <ClCompile Include="parsing_log.cpp" />
     <ClCompile Include="parsing_log.ixx" />

@@ -11,12 +11,14 @@ import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.declaration;
 import soul.cpp20.symbols.declarator;
 import soul.cpp20.symbols.derivations;
+import soul.cpp20.symbols.evaluator;
 import soul.cpp20.symbols.fundamental.type.symbol;
 import soul.cpp20.symbols.compound.type.symbol;
 import soul.cpp20.symbols.specialization;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.scope.resolver;
 import soul.cpp20.symbols.templates;
+import soul.cpp20.symbols.value;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
@@ -37,6 +39,7 @@ public:
     void ResolveBaseType(soul::cpp20::ast::Node* node);
     void ResolveType();
     void Visit(soul::cpp20::ast::DefiningTypeIdNode& node) override;
+    void Visit(soul::cpp20::ast::TypeSpecifierSequenceNode& node) override;
     void Visit(soul::cpp20::ast::CharNode& node) override;
     void Visit(soul::cpp20::ast::Char8Node& node) override;
     void Visit(soul::cpp20::ast::Char16Node& node) override;
@@ -145,6 +148,17 @@ void TypeResolver::Visit(soul::cpp20::ast::DefiningTypeIdNode& node)
         type = baseType;
     }
     node.AbstractDeclarator()->Accept(*this);
+    ResolveType();
+}
+
+void TypeResolver::Visit(soul::cpp20::ast::TypeSpecifierSequenceNode& node)
+{
+    VisitSequenceContent(node);
+    if (!type)
+    {
+        ResolveBaseType(&node);
+        type = baseType;
+    }
     ResolveType();
 }
 
@@ -290,10 +304,6 @@ void TypeResolver::Visit(soul::cpp20::ast::QualifiedIdNode& node)
 
 void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
-    if (node.Str() == U"size_type")
-    {
-        int x = 0;
-    }
     Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context);
     if (symbol)
     {
@@ -350,11 +360,30 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
 void TypeResolver::Visit(soul::cpp20::ast::TemplateIdNode& node)
 {
     TypeSymbol* typeSymbol = soul::cpp20::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context);
-    std::vector<TypeSymbol*> templateArgs;
+    TemplateDeclarationSymbol* templateDeclaration = nullptr;
+    if (typeSymbol->IsClassTypeSymbol())
+    {
+        ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
+        templateDeclaration = classTemplate->ParentTemplateDeclaration();
+    }
+    std::vector<Symbol*> templateArgs;
     int n = node.Items().size();
     for (int i = 0; i < n; ++i)
     {
-        TypeSymbol* templateArg = soul::cpp20::symbols::ResolveType(node.Items()[i], DeclarationFlags::none, context);
+        soul::cpp20::ast::Node* argItem = node.Items()[i];
+        TemplateParameterSymbol* templateParameter = nullptr;
+        if (templateDeclaration && i < templateDeclaration->Arity())
+        {
+            templateParameter = templateDeclaration->TemplateParameters()[i];
+            ParameterSymbol* parameter = templateParameter->GetParameterSymbol();
+            if (parameter)
+            {
+                Value* value = Evaluate(argItem, context);
+                templateArgs.push_back(value);
+                continue;
+            }
+        }
+        TypeSymbol* templateArg = soul::cpp20::symbols::ResolveType(argItem, DeclarationFlags::none, context);
         templateArgs.push_back(templateArg);
     }
     TypeSymbol* specialization = Instantiate(typeSymbol, templateArgs, &node, context);

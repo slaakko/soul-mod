@@ -140,8 +140,11 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
                 tdTemplateParameterElement->AppendChild(templateParameterText);
                 soul::xml::Element* tdConstraintElement = soul::xml::MakeElement("td");
                 trElement->AppendChild(tdConstraintElement);
-                soul::xml::Text* constraintText = soul::xml::MakeText(util::ToUtf8(templateParameter->Constraint()->Name()));
-                tdConstraintElement->AppendChild(constraintText);
+                if (templateParameter->Constraint())
+                {
+                    soul::xml::Text* constraintText = soul::xml::MakeText(util::ToUtf8(templateParameter->Constraint()->Name()));
+                    tdConstraintElement->AppendChild(constraintText);
+                }
             }
         }
         currentElement = bodyElement;
@@ -334,6 +337,7 @@ void ClassHtmlGenerator::GenerateFunctionSection()
         soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
+        spanSpecifierElement->SetAttribute("xml:space", "preserve");
         std::string accessStr = soul::cpp20::symbols::AccessStr(function->GetAccess());
         if (!accessStr.empty())
         {
@@ -447,6 +451,7 @@ void ClassHtmlGenerator::GenerateVariableSection()
         soul::xml::Element* spanSpecifierElement = soul::xml::MakeElement("span");
         tdSpecifiersElement->AppendChild(spanSpecifierElement);
         spanSpecifierElement->SetAttribute("class", "specifier");
+        spanSpecifierElement->SetAttribute("xml:space", "preserve");
         std::string accessStr = soul::cpp20::symbols::AccessStr(variable->GetAccess());
         if (!accessStr.empty())
         {

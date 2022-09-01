@@ -13,6 +13,7 @@ import soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
+import soul.cpp20.symbols.enum_group.symbol;
 import soul.cpp20.symbols.templates;
 import util.unicode;
 
@@ -228,6 +229,11 @@ AliasGroupSymbol* Scope::GetOrInsertAliasGroup(const std::u32string& name, const
     ThrowException("cannot add alias group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
+EnumGroupSymbol* Scope::GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    ThrowException("cannot add enum group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
+}
+
 ContainerScope::ContainerScope() : Scope(), parentScope(nullptr), usingDeclarationScope(nullptr), containerSymbol(nullptr)
 {
 }
@@ -394,6 +400,22 @@ ClassGroupSymbol* ContainerScope::GetOrInsertClassGroup(const std::u32string& na
     ClassGroupSymbol* classGroupSymbol = new ClassGroupSymbol(name);
     AddSymbol(classGroupSymbol, sourcePos, context);
     return classGroupSymbol;
+}
+
+EnumGroupSymbol* ContainerScope::GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    Symbol* symbol = Scope::Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::dontResolveSingle);
+    if (symbol)
+    {
+        if (symbol->Kind() == SymbolKind::enumGroupSymbol)
+        {
+            EnumGroupSymbol* enumGroupSymbol = static_cast<EnumGroupSymbol*>(symbol);
+            return enumGroupSymbol;
+        }
+    }
+    EnumGroupSymbol* enumGroupSymbol = new EnumGroupSymbol(name);
+    AddSymbol(enumGroupSymbol, sourcePos, context);
+    return enumGroupSymbol;
 }
 
 FunctionGroupSymbol* ContainerScope::GetOrInsertFunctionGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context)

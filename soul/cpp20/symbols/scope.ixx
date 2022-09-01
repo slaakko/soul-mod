@@ -20,6 +20,7 @@ class FunctionGroupSymbol;
 class ConceptGroupSymbol;
 class VariableGroupSymbol;
 class AliasGroupSymbol;
+class EnumGroupSymbol;
 class UsingDeclarationScope;
 class UsingDirectiveScope;
 
@@ -65,6 +66,7 @@ public:
     virtual ConceptGroupSymbol* GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void Import(Scope* that);
 private:
     ScopeKind kind;
@@ -95,6 +97,7 @@ public:
     ConceptGroupSymbol* GetOrInsertConceptGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     VariableGroupSymbol* GetOrInsertVariableGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     Scope* parentScope;
     std::vector<Scope*> baseScopes;

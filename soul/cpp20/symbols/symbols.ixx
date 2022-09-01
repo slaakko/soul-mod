@@ -15,6 +15,7 @@ export import soul.cpp20.symbols.container.symbol;
 export import soul.cpp20.symbols.context;
 export import soul.cpp20.symbols.declaration;
 export import soul.cpp20.symbols.enums;
+export import soul.cpp20.symbols.enum_group.symbol;
 export import soul.cpp20.symbols.exception;
 export import soul.cpp20.symbols.function.symbol;
 export import soul.cpp20.symbols.fundamental.type.symbol;

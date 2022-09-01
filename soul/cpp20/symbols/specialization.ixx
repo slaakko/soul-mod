@@ -5,9 +5,9 @@
 
 export module soul.cpp20.symbols.specialization;
 
+import std.core;
 import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.type.symbol;
-import std.core;
 
 export namespace soul::cpp20::symbols {
 
@@ -21,19 +21,22 @@ public:
     std::string SymbolDocKindStr() const override { return "specialization"; }
     TypeSymbol* ClassTemplate() const { return classTemplate; }
     void SetClassTemplate(TypeSymbol* classTemplate_);
-    const std::vector<TypeSymbol*>& TemplateArguments() const { return templateArguments; }
-    void AddTemplateArgument(TypeSymbol* templateArgument); 
+    const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
+    void AddTemplateArgument(Symbol* templateArgument); 
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    SymbolTable* GetSymbolTable() override { return symbolTable; }
+    void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
 private:
     TypeSymbol* classTemplate;
-    std::vector<TypeSymbol*> templateArguments;
-    std::vector<util::uuid> ids;
+    std::vector<Symbol*> templateArguments;
+    std::vector<std::pair<util::uuid, bool>> ids;
+    SymbolTable* symbolTable;
     bool instantiated;
 };
 
-std::u32string MakeSpecializationName(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments);
+std::u32string MakeSpecializationName(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
 
 } // namespace soul::cpp20::symbols

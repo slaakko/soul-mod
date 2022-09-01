@@ -2,4 +2,4 @@ export module bug;
 
 import std.core;
 
-std::map<int, int> m;
+enum class foo : int64_t;

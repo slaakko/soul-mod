@@ -5,6 +5,7 @@
 
 export module soul.cpp20.symbols.namespaces;
 
+import std.core;
 import soul.cpp20.ast.node;
 import soul.cpp20.symbols.container.symbol;
 

@@ -16,8 +16,11 @@ import soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
+import soul.cpp20.symbols.enum_group.symbol;
 import soul.cpp20.symbols.block;
 import soul.cpp20.symbols.classes;
+import soul.cpp20.symbols.concepts;
+import soul.cpp20.symbols.concept_group.symbol;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.compound.type.symbol;
 import soul.cpp20.symbols.enums;
@@ -91,6 +94,11 @@ void SymbolTable::PopTopScopeIndex()
 {
     topScopeIndex = topScopeIndexStack.top();
     topScopeIndexStack.pop();
+}
+
+void SymbolTable::SetCurrentAccess(Access access)
+{
+    currentAccess = access;
 }
 
 void SymbolTable::PushAccess(Access access)
@@ -723,7 +731,20 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, so
     MapNode(node, classTypeSymbol);
     SetSpecifierNode(classTypeSymbol, node);
     BeginScope(classTypeSymbol->GetScope());
-    PushAccess(Access::private_);
+    switch (classKind)
+    {
+        case ClassKind::class_:
+        {
+            PushAccess(Access::private_);
+            break;
+        }
+        case ClassKind::struct_:
+        case ClassKind::union_:
+        {
+            PushAccess(Access::public_);
+            break;
+        }
+    }
 }
 
 void SymbolTable::EndClass()
@@ -765,14 +786,11 @@ void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKi
 
 void SymbolTable::BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, soul::cpp20::ast::Node* node, Context* context)
 {
-    Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
-    if (symbol && symbol->IsEnumeratedTypeSymbol())
+    EnumGroupSymbol* enumGroup = currentScope->GroupScope()->GetOrInsertEnumGroup(name, node->GetSourcePos(), context);
+    EnumeratedTypeSymbol* enumType = enumGroup->GetEnumType();
+    if (enumType)
     {
-        EnumeratedTypeSymbol* enumTypeSymbol = static_cast<EnumeratedTypeSymbol*>(symbol);
-        enumTypeSymbol->SetEnumTypeKind(kind);
-        enumTypeSymbol->SetUnderlyingType(underlyingType);
-        BeginScope(enumTypeSymbol->GetScope());
-        return;
+        ThrowException("enumerated type '" + util::ToUtf8(name) + " not unique", node->GetSourcePos(), context);
     }
     EnumeratedTypeSymbol* enumTypeSymbol = new EnumeratedTypeSymbol(name);
     enumTypeSymbol->SetAccess(CurrentAccess());
@@ -780,12 +798,31 @@ void SymbolTable::BeginEnumeratedType(const std::u32string& name, EnumTypeKind k
     enumTypeSymbol->SetUnderlyingType(underlyingType);
     currentScope->SymbolScope()->AddSymbol(enumTypeSymbol, node->GetSourcePos(), context);
     MapNode(node, enumTypeSymbol);
+    enumGroup->SetEnumType(enumTypeSymbol);
     BeginScope(enumTypeSymbol->GetScope());
 }
 
 void SymbolTable::EndEnumeratedType()
 {
     EndScope();
+}
+
+void SymbolTable::AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, soul::cpp20::ast::Node* node, Context* context)
+{
+    EnumGroupSymbol* enumGroup = currentScope->GroupScope()->GetOrInsertEnumGroup(name, node->GetSourcePos(), context);
+    if (enumGroup->GetForwardDeclaration())
+    {
+        return;
+    }
+    ForwardEnumDeclarationSymbol* forwardDeclarationSymbol = new ForwardEnumDeclarationSymbol(name);
+    forwardDeclarationSymbol->SetAccess(CurrentAccess());
+    forwardDeclarationSymbol->SetEnumTypeKind(enumTypeKind);
+    forwardDeclarationSymbol->SetUnderlyingType(underlyingType);
+    currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol, node->GetSourcePos(), context);
+    enumGroup->SetForwardDeclaration(forwardDeclarationSymbol);
+    MapNode(node, forwardDeclarationSymbol);
+    forwardDeclarations.insert(forwardDeclarationSymbol);
+    allForwardDeclarations.insert(forwardDeclarationSymbol);
 }
 
 void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, soul::cpp20::ast::Node* node, Context* context)
@@ -844,9 +881,14 @@ void SymbolTable::RemoveTemplateDeclaration()
     }
 }
 
-void SymbolTable::AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, soul::cpp20::ast::Node* defaultTemplateArgNode, Context* context)
+void SymbolTable::AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, soul::cpp20::ast::Node* defaultTemplateArgNode, 
+    Context* context)
 {
     TemplateParameterSymbol* templateParameterSymbol = new TemplateParameterSymbol(constraint, name, index, defaultTemplateArgNode);
+    if (parameter)
+    {
+        templateParameterSymbol->AddSymbol(parameter, node->GetSourcePos(), context);
+    }
     currentScope->SymbolScope()->AddSymbol(templateParameterSymbol, node->GetSourcePos(), context);
     MapNode(node, templateParameterSymbol);
 }
@@ -907,11 +949,22 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, const Derivation
     return compoundType;
 }
 
-SpecializationSymbol* SymbolTable::MakeSpecialization(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments)
+ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context)
+{
+    ConceptGroupSymbol* conceptGroup = currentScope->GroupScope()->GetOrInsertConceptGroup(name, node->GetSourcePos(), context);
+    ConceptSymbol* conceptSymbol = new ConceptSymbol(name);
+    conceptGroup->AddConcept(conceptSymbol);
+    currentScope->SymbolScope()->AddSymbol(conceptSymbol, node->GetSourcePos(), context);
+    MapNode(node, conceptSymbol);
+    return conceptSymbol;
+}
+
+SpecializationSymbol* SymbolTable::MakeSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
 {
     std::unique_ptr<SpecializationSymbol> symbol(new SpecializationSymbol(MakeSpecializationName(classTemplate, templateArguments)));
+    symbol->SetSymbolTable(this);
     symbol->SetClassTemplate(classTemplate);
-    for (TypeSymbol* templateArg : templateArguments)
+    for (Symbol* templateArg : templateArguments)
     {
         symbol->AddTemplateArgument(templateArg);
     }

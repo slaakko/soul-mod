@@ -12,6 +12,9 @@ import soul.cpp20.ast.templates;
 
 export namespace soul::cpp20::symbols {
 
+class Value;
+class ParameterSymbol;
+
 class TypenameConstraintSymbol : public TypeSymbol
 {
 public:
@@ -26,11 +29,13 @@ class TemplateParameterSymbol : public TypeSymbol
 public:
     TemplateParameterSymbol(const std::u32string& name_);
     TemplateParameterSymbol(Symbol* constraint_, const std::u32string& name_, int index_, soul::cpp20::ast::Node* defaultTemplateArgNode_);
+    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string SymbolKindStr() const override { return "template parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "template_paremeter"; }
     Symbol* Constraint() const { return constraint; }
     soul::cpp20::ast::Node* DefaultTemplateArg() const { return defaultTemplateArgNode; }
     int Index() const { return index; }
+    ParameterSymbol* GetParameterSymbol() const { return parameterSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -41,6 +46,7 @@ private:
     int index;
     soul::cpp20::ast::Node* defaultTemplateArgNode;
     int32_t defaultTemplateArgNodeId;
+    ParameterSymbol* parameterSymbol;
 };
 
 class BoundTemplateParameterSymbol : public TypeSymbol
@@ -78,6 +84,6 @@ void EndTemplateDeclaration(soul::cpp20::ast::Node* node, Context* context);
 void RemoveTemplateDeclaration(Context* context);
 void AddTemplateParameter(soul::cpp20::ast::Node* templateParameterNode, int index, Context* context);
 bool TemplateArgCanBeTypeId(soul::cpp20::ast::Node* templateIdNode, int index);
-TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<TypeSymbol*>& templateArgs, soul::cpp20::ast::TemplateIdNode* node, Context* context);
+TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& templateArgs, soul::cpp20::ast::TemplateIdNode* node, Context* context);
 
 } // namespace soul::cpp20::symbols

@@ -1,0 +1,10 @@
+project soul.xml.xml_parser;
+reference <../dom/dom.project>;
+reference <../processor/processor.project>;
+reference <../../ast/ast.project>;
+reference <../../lexer/lexer.project>;
+reference <../../parser/parser.project>;
+reference <../../../util/util.project>;
+interface <xml_document.parser.ixx>;
+interface <xml_parser.ixx>;
+interface <xml_parser_rules.ixx>;

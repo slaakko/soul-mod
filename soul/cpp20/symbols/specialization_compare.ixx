@@ -5,6 +5,8 @@
 
 export module soul.cpp20.symbols.specialization.compare;
 
+import std.core;
+
 export namespace soul::cpp20::symbols {
 
 class SpecializationSymbol;

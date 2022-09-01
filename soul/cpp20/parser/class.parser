@@ -224,7 +224,7 @@ parser ClassParser
         ;
 
     MemberDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifiersNode, 
-        var std::unique_ptr<soul::cpp20::ast::Node> declaratorsNode) : soul::cpp20::ast::Node*
+        var std::unique_ptr<soul::cpp20::ast::Node> declaratorsNode, var bool nextIsRBrace) : soul::cpp20::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })? 
             (MemberDeclSpecifiers(context):declSpecifiers{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); declSpecifiersNode.reset(declSpecifiers); })? 
             (MemberDeclaratorList(context):declarators{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); declaratorsNode.reset(declarators); })? 
@@ -272,6 +272,22 @@ parser ClassParser
         |   AliasDeclaration(context):aliasDeclaration{ return aliasDeclaration; }
         |   OpaqueEnumDeclaration(context):opaqueEnumDeclaration{ return opaqueEnumDeclaration; }
         |   EmptyDeclaration:emptyDeclaration{ return emptyDeclaration; }
+        |   RBraceNext:next{ nextIsRBrace = true; pass = false; }
+        |   empty
+            { 
+                if (!nextIsRBrace) 
+                {
+                    ThrowMemberDeclarationExpected(lexer.GetSourcePos(pos), context);
+                }
+                else
+                {
+                    pass = false;
+                }
+            }
+        ;
+
+    RBraceNext
+        ::= &(RBRACE)
         ;
 
     MemberDeclSpecifiers(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*

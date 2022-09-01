@@ -10,6 +10,8 @@ import std.filesystem;
 import soul.cpp20.symbols.namespaces;
 import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.class_group.symbol;
+import soul.cpp20.symbols.enums;
+import soul.cpp20.symbols.enum_group.symbol;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.visitor;
@@ -82,6 +84,26 @@ void Module::ResolveForwardDeclarations()
                         if (classTypeSymbol)
                         {
                             fwd->SetClassTypeSymbol(classTypeSymbol);
+                        }
+                    }
+                }
+            }
+        }
+        else if (fwdSymbol->IsForwardEnumDeclarationSymbol())
+        {
+            ForwardEnumDeclarationSymbol* fwd = static_cast<ForwardEnumDeclarationSymbol*>(fwdSymbol);
+            if (fwd->GetEnumeratedTypeSymbol() == nullptr)
+            {
+                Symbol* group = symbolTable.LookupSymbol(fwd);
+                if (group)
+                {
+                    if (group->IsEnumGroupSymbol())
+                    {
+                        EnumGroupSymbol* enumGroupSymbol = static_cast<EnumGroupSymbol*>(group);
+                        EnumeratedTypeSymbol* enumTypeSymbol = enumGroupSymbol->GetEnumType();
+                        if (enumTypeSymbol)
+                        {
+                            fwd->SetEnumeratedTypeSymbol(enumTypeSymbol);
                         }
                     }
                 }
@@ -183,6 +205,7 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
 
 void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, soul::cpp20::ast::NodeMap* nodeMap)
 {
+    reader.SetSymbolTable(&symbolTable);
     symbolTable.Read(reader);
     evaluationContext.Read(reader);
     soul::cpp20::ast::Reader astReader(&reader.GetBinaryStreamReader());

@@ -5,6 +5,7 @@
 
 export module soul.cpp20.symbols.context;
 
+import std.core;
 import soul.lexer.base;
 import soul.cpp20.ast.node;
 

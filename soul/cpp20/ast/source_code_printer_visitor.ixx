@@ -5,6 +5,7 @@
 
 export module soul.cpp20.ast.source.code.printer.visitor;
 
+import std.core;
 import soul.cpp20.ast.visitor;
 import util.code.formatter;
 

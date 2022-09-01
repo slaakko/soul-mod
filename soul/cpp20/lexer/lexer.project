@@ -1,0 +1,5 @@
+project soul.cpp20.lexer;
+reference <../token/token.project>;
+reference <../../lexer/lexer.project>;
+reference <../../../util/util.project>;
+interface <cpp20.lexer.fwd.ixx>;

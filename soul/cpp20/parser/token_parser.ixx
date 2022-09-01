@@ -35,5 +35,6 @@ soul::cpp20::ast::StringLiteralNode* ParseStringLiteral(const soul::ast::SourceP
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);
 soul::cpp20::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);
+void ThrowMemberDeclarationExpected(const soul::ast::SourcePos& sourcePos, const std::string& fileName);
 
 } // namespace soul::cpp20::parser::token

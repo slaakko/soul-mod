@@ -45,13 +45,25 @@ parser ConceptParser
         )
         {
             soul::cpp20::ast::ConceptDefinitionNode* conceptDefinitionNode = new soul::cpp20::ast::ConceptDefinitionNode(sourcePos, conceptName, assign, constraintExpr, semicolon);
-            soul::cpp20::symbols::AddConcept(conceptDefinitionNode, context);
+            soul::cpp20::symbols::ProcessConcept(conceptDefinitionNode, context);
             return conceptDefinitionNode;
         }
         ;
     
-    ConceptName(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+    ConceptName(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> identifierNode) : soul::cpp20::ast::Node*
         ::= Identifier(context):identifier{ return identifier; }
+        ;
+
+    ConceptNameChecked(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> identifierNode) : soul::cpp20::ast::Node*
+        ::= Identifier(context):identifier
+            { 
+                identifierNode.reset(identifier);
+                pass = soul::cpp20::symbols::IsConceptName(identifierNode.get(), context);
+                if (pass)
+                {
+                    return identifierNode.release(); 
+                }
+            }
         ;
 
     ConstraintExpression(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
@@ -210,8 +222,8 @@ parser ConceptParser
         (
             (
                 (   NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } 
-                    ConceptName(context):conceptName1{ conceptName.reset(new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns, conceptName1)); }
-                |   ConceptName(context):conceptName2{ conceptName.reset(conceptName2); }
+                    ConceptNameChecked(context):conceptName1{ conceptName.reset(new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns, conceptName1)); }
+                |   ConceptNameChecked(context):conceptName2{ conceptName.reset(conceptName2); }
                 )
                 {
                     node.reset(new soul::cpp20::ast::TypeConstraintNode(sourcePos, conceptName.release())); 

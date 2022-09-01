@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="rex.expr" />
+    <None Include="rex.project" />
     <None Include="rex.slg" />
     <None Include="rex.spg" />
     <None Include="rex.token" />

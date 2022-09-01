@@ -14,6 +14,11 @@ ConceptGroupSymbol::ConceptGroupSymbol(const std::u32string& name_) : Symbol(Sym
 {
 }
 
+void ConceptGroupSymbol::AddConcept(ConceptSymbol* conceptSymbol)
+{
+    concepts.push_back(conceptSymbol);
+}
+
 Symbol* ConceptGroupSymbol::GetSingleSymbol() 
 {
     if (concepts.size() == 1)

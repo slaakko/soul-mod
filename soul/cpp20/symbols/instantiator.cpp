@@ -27,14 +27,28 @@ void Instantiator::Visit(soul::cpp20::ast::ClassSpecifierNode& node)
     if (innerClass)
     {
         BeginClass(&node, context);
-        context->GetSymbolTable()->PushAccess(Access::private_);
         VisitSequenceContent(node);
-        context->GetSymbolTable()->PopAccess();
         EndClass(&node, context);
     }
     else
     {
-        context->GetSymbolTable()->PushAccess(Access::private_);
+        std::u32string name;
+        ClassKind kind;
+        GetClassAttributes(&node, name, kind);
+        switch (kind)
+        {
+            case ClassKind::class_:
+            {
+                context->GetSymbolTable()->PushAccess(Access::private_);
+                break;
+            }
+            case ClassKind::struct_:
+            case ClassKind::union_:
+            {
+                context->GetSymbolTable()->PushAccess(Access::public_);
+                break;
+            }
+        }
         innerClass = true;
         VisitSequenceContent(node);
         innerClass = false;

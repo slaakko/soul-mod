@@ -1,0 +1,14 @@
+project soul.cpp;
+reference <../ast/ast.project>;
+reference <../lexer/lexer.project>;
+reference <../parser/parser.project>;
+reference <../token/token.project>;
+reference <../lex/lex.project>;
+reference <../../util/util.project>;
+interface <declaration.parser.ixx>;
+interface <declarator.parser.ixx>;
+interface <expression.parser.ixx>;
+interface <identifier.parser.ixx>;
+interface <literal.parser.ixx>;
+interface <statement.parser.ixx>;
+interface <parsers.ixx>;

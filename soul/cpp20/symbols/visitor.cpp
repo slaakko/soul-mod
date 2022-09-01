@@ -129,7 +129,14 @@ void DefaultVisitor::Visit(SpecializationSymbol& symbol)
 
 void DefaultVisitor::Visit(TemplateParameterSymbol& symbol)
 {
-    symbol.Constraint()->Accept(*this);
+    if (symbol.Constraint())
+    {
+        symbol.Constraint()->Accept(*this);
+    }
+    if (symbol.GetParameterSymbol())
+    {
+        symbol.GetParameterSymbol()->Accept(*this);
+    }
 }
 
 void DefaultVisitor::Visit(TemplateDeclarationSymbol& symbol)

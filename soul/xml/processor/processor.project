@@ -1,0 +1,10 @@
+project soul.xml.processor;
+reference <../dom/dom.project>;
+reference <../../ast/ast.project>;
+reference <../../lexer/lexer.project>;
+reference <../../../util/util.project>;
+interface <attribute.ixx>;
+interface <content_handler.ixx>;
+interface <entity.ixx>;
+interface <processor.ixx>;
+interface <xml_processor.ixx>;

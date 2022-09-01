@@ -28,6 +28,20 @@ EnumeratedTypeSymbol::EnumeratedTypeSymbol(const std::u32string& name_) : TypeSy
     GetScope()->SetKind(ScopeKind::enumerationScope);
 }
 
+bool EnumeratedTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+{
+    switch (scopeKind)
+    {
+        case ScopeKind::namespaceScope:
+        case ScopeKind::classScope:
+        {
+            return true;
+        }
+    }
+    return false;
+
+}
+
 void EnumeratedTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
@@ -63,6 +77,86 @@ void EnumeratedTypeSymbol::Resolve(SymbolTable& symbolTable)
 void EnumeratedTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+ForwardEnumDeclarationSymbol::ForwardEnumDeclarationSymbol(const std::u32string& name_) : 
+    TypeSymbol(SymbolKind::forwardEnumDeclarationSymbol, name_), 
+    underlyingType(nullptr), 
+    enumTypeKind(EnumTypeKind::enum_)
+{
+    GetScope()->SetKind(ScopeKind::enumerationScope);
+}
+
+bool ForwardEnumDeclarationSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
+{
+    switch (scopeKind)
+    {
+        case ScopeKind::namespaceScope:
+        case ScopeKind::classScope:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void ForwardEnumDeclarationSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void ForwardEnumDeclarationSymbol::Write(Writer& writer)
+{
+    TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(enumTypeKind));
+    bool hasUnderlyingType = underlyingType != nullptr;
+    writer.GetBinaryStreamWriter().Write(hasUnderlyingType);
+    if (hasUnderlyingType)
+    {
+        writer.GetBinaryStreamWriter().Write(underlyingType->Id());
+    }
+    writer.GetBinaryStreamWriter().Write(enumTypeSymbol != nullptr);
+    if (enumTypeSymbol)
+    {
+        writer.GetBinaryStreamWriter().Write(enumTypeSymbol->Id());
+    }
+}
+
+void ForwardEnumDeclarationSymbol::Read(Reader& reader)
+{
+    TypeSymbol::Read(reader);
+    enumTypeKind = static_cast<EnumTypeKind>(reader.GetBinaryStreamReader().ReadByte());
+    bool hasUnderlyingType = reader.GetBinaryStreamReader().ReadBool();
+    if (hasUnderlyingType)
+    {
+        reader.GetBinaryStreamReader().ReadUuid(underlyingTypeId);
+    }
+    bool hasEnumType = reader.GetBinaryStreamReader().ReadBool();
+    if (hasEnumType)
+    {
+        reader.GetBinaryStreamReader().ReadUuid(enumTypeSymbolId);
+    }
+}
+
+void ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol::Resolve(symbolTable);
+    if (underlyingTypeId != util::nil_uuid())
+    {
+        underlyingType = symbolTable.GetType(underlyingTypeId);
+    }
+    if (enumTypeSymbolId != util::nil_uuid())
+    {
+        TypeSymbol* type = symbolTable.GetType(enumTypeSymbolId);
+        if (type->IsEnumeratedTypeSymbol())
+        {
+            enumTypeSymbol = static_cast<EnumeratedTypeSymbol*>(type);
+        }
+        else
+        {
+            throw std::runtime_error("soul.cpp20.symbols.enums: enum type expected");
+        }
+    }
 }
 
 EnumConstantSymbol::EnumConstantSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumConstantSymbol, name_)
@@ -130,6 +224,7 @@ private:
     bool first;
     bool createEnumeratedType;
     bool createEnumerators;
+    bool opaque;
 };
 
 EnumCreator::EnumCreator(Context* context_, bool createEnumeratedType_, bool createEnumerators_) :
@@ -141,7 +236,8 @@ EnumCreator::EnumCreator(Context* context_, bool createEnumeratedType_, bool cre
     prevValue(0),
     first(false),
     createEnumeratedType(createEnumeratedType_),
-    createEnumerators(createEnumerators_)
+    createEnumerators(createEnumerators_),
+    opaque(false)
 {
 }
 
@@ -227,17 +323,21 @@ void EnumCreator::Visit(soul::cpp20::ast::EnumeratorNode& node)
 
 void EnumCreator::Visit(soul::cpp20::ast::ElaboratedEnumSpecifierNode& node)
 {
+    opaque = true;
     node.Child()->Accept(*this);
+    opaque = false;
 }
 
 void EnumCreator::Visit(soul::cpp20::ast::OpaqueEnumDeclarationNode& node)
 {
+    opaque = true;
     node.EnumKey()->Accept(*this);
     if (node.EnumBase())
     {
         node.EnumBase()->Accept(*this);
     }
     node.EnumHeadName()->Accept(*this);
+    opaque = false;
 }
 
 void EnumCreator::Visit(soul::cpp20::ast::QualifiedIdNode& node)
@@ -251,7 +351,14 @@ void EnumCreator::Visit(soul::cpp20::ast::IdentifierNode& node)
     if (createEnumeratedType)
     {
         context->GetSymbolTable()->BeginScope(scope);
-        context->GetSymbolTable()->BeginEnumeratedType(node.Str(), enumTypeKind, underlyingType, &node, context);
+        if (opaque)
+        {
+            context->GetSymbolTable()->AddForwardEnumDeclaration(node.Str(), enumTypeKind, underlyingType, &node, context);
+        }
+        else
+        {
+            context->GetSymbolTable()->BeginEnumeratedType(node.Str(), enumTypeKind, underlyingType, &node, context);
+        }
     }
     if (createEnumerators)
     {
@@ -284,6 +391,13 @@ void EndEnumType(soul::cpp20::ast::Node* node, Context* context)
         ThrowException("cpp20.symbols.enums: EndEnumeratedType(): enum scope expected", node->GetSourcePos(), context);
     }
     context->GetSymbolTable()->EndEnumeratedType();
+    context->GetSymbolTable()->EndScope();
+}
+
+void ProcessEnumForwardDeclaration(soul::cpp20::ast::Node* node, Context* context)
+{
+    EnumCreator creator(context, true, false);
+    node->Accept(creator);
     context->GetSymbolTable()->EndScope();
 }
 

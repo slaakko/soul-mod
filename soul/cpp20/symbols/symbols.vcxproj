@@ -188,6 +188,8 @@
     <ClCompile Include="derivations.ixx" />
     <ClCompile Include="enums.cpp" />
     <ClCompile Include="enums.ixx" />
+    <ClCompile Include="enum_group_symbol.cpp" />
+    <ClCompile Include="enum_group_symbol.ixx" />
     <ClCompile Include="evaluator.cpp" />
     <ClCompile Include="evaluator.ixx" />
     <ClCompile Include="exception.cpp" />
@@ -213,7 +215,7 @@
     <ClCompile Include="scope.ixx" />
     <ClCompile Include="scope_resolver.cpp" />
     <ClCompile Include="scope_resolver.ixx" />
-    <ClCompile Include="specialiazation_compare.ixx" />
+    <ClCompile Include="specialization_compare.ixx" />
     <ClCompile Include="specialization.ixx" />
     <ClCompile Include="specialization.cpp" />
     <ClCompile Include="specialization_compare.cpp" />
@@ -242,6 +244,9 @@
     <ClCompile Include="visitor.ixx" />
     <ClCompile Include="writer.cpp" />
     <ClCompile Include="writer.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="symbols.project" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

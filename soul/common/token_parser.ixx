@@ -11,8 +11,6 @@ import soul.lexer.token;
 import soul.lexer.base;
 import util.unicode;
 
-using namespace util;
-
 export namespace soul::common::token::parser {
 
 template<typename Char>
@@ -42,7 +40,7 @@ void ParseHexChar(const std::string& fileName, char32_t& value, const Char*& p, 
     }
     else
     {
-        throw std::runtime_error("hex character expected at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+        throw std::runtime_error("hex character expected at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
     }
 }
 
@@ -135,7 +133,7 @@ char32_t ParseCharLiteral(const std::string& fileName, const soul::lexer::Token<
                 }
                 else
                 {
-                    throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+                    throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
                 }
             }
             else
@@ -147,7 +145,7 @@ char32_t ParseCharLiteral(const std::string& fileName, const soul::lexer::Token<
                 }
                 else
                 {
-                    throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+                    throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
                 }
                 ++p;
             }
@@ -158,12 +156,12 @@ char32_t ParseCharLiteral(const std::string& fileName, const soul::lexer::Token<
         }
         if (p != e)
         {
-            throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+            throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
         }
     }
     else
     {
-        throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+        throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
     }
     return charLit;
 }
@@ -196,12 +194,12 @@ std::u32string ParseStringLiteral(const std::string& fileName, const soul::lexer
         }
         if (p != e)
         {
-            throw std::runtime_error("invalid string literal at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+            throw std::runtime_error("invalid string literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
         }
     }
     else
     {
-        throw std::runtime_error("invalid string literal at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+        throw std::runtime_error("invalid string literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
     }
     return stringLiteral;
 }
@@ -245,9 +243,9 @@ std::string MakeExprStringValue(const std::string& fileName, const soul::lexer::
     }
     if (p != e)
     {
-        throw std::runtime_error("invalid expression string literal at " + fileName + ":" + std::to_string(token.line) + ": " + ToUtf8(token.match.ToString()));
+        throw std::runtime_error("invalid expression string literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
     }
-    return ToUtf8(strValue);
+    return util::ToUtf8(strValue);
 }
 
 template<typename Char>
@@ -271,9 +269,9 @@ std::string MakeFilePath(const std::string& fileName, const soul::lexer::Token<C
     }
     if (p != e)
     {
-        throw std::runtime_error("invalid file path at " + fileName + ":" + std::to_string(token.line) + " : '" + ToUtf8(token.match.ToString()) + "'");
+        throw std::runtime_error("invalid file path at " + fileName + ":" + std::to_string(token.line) + " : '" + util::ToUtf8(token.match.ToString()) + "'");
     }
-    return ToUtf8(strValue);
+    return util::ToUtf8(strValue);
 }
 
 } // namespace soul::common::token::parser

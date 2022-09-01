@@ -170,10 +170,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="re.project" />
     <None Include="re_parser.parser" />
     <None Include="re_parser.spg" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="re.ixx" />
     <ClCompile Include="re_parser.cpp" />
     <ClCompile Include="re_parser.ixx" />
     <ClCompile Include="token_parser.ixx" />

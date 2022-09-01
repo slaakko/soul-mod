@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="xml_document.parser" />
+    <None Include="xml_parser.project" />
     <None Include="xml_parser.spg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

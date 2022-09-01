@@ -5,6 +5,8 @@
 
 export module soul.cpp20.symbols.classes;
 
+import std.core;
+import soul.cpp20.symbols.scope;
 import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.ast.node;
 
@@ -68,6 +70,8 @@ void BeginClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* con
 void EndClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
 void AddForwardClassDeclaration(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
 void SetCurrentAccess(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
+void GetClassAttributes(soul::cpp20::ast::Node* node, std::u32string& name, soul::cpp20::symbols::ClassKind& kind);
+void ThrowMemberDeclarationExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
 
 struct ClassLess
 {

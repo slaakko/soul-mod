@@ -8,6 +8,7 @@ interface <error.ixx>;
 interface <file_map.ixx>;
 interface <keyword.ixx>;
 interface <lexeme.ixx>;
+interface <lexer_class.ixx>;
 interface <lexer.ixx>;
 interface <lexing_util.ixx>;
 interface <parsing_log.ixx>;

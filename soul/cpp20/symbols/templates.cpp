@@ -3,19 +3,28 @@
 // Distributed under the MIT license
 // =================================
 
+module;
+#include <boost/uuid/uuid.hpp>
+
 module soul.cpp20.symbols.templates;
 
 import soul.cpp20.ast;
 import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.context;
+import soul.cpp20.symbols.declaration;
+import soul.cpp20.symbols.declarator;
+import soul.cpp20.symbols.evaluator;
 import soul.cpp20.symbols.exception;
+import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.specialization;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.type.resolver;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.value;
 import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.instantiator;
+import soul.cpp20.symbols.function.symbol;
 import util;
 
 namespace soul::cpp20::symbols {
@@ -34,19 +43,39 @@ TemplateParameterSymbol::TemplateParameterSymbol(const std::u32string& name_) :
     constraint(), 
     index(-1), 
     defaultTemplateArgNode(nullptr),
-    defaultTemplateArgNodeId(-1)
+    defaultTemplateArgNodeId(-1),
+    parameterSymbol(nullptr)
 {
 }
 
 TemplateParameterSymbol::TemplateParameterSymbol(Symbol* constraint_, const std::u32string& name_, int index_, soul::cpp20::ast::Node* defaultTemplateArgNode_) :
-    TypeSymbol(SymbolKind::templateParameterSymbol, name_), constraint(constraint_), index(index_), defaultTemplateArgNode(defaultTemplateArgNode_), defaultTemplateArgNodeId(-1)
+    TypeSymbol(SymbolKind::templateParameterSymbol, name_), 
+    constraint(constraint_),
+    index(index_), 
+    defaultTemplateArgNode(defaultTemplateArgNode_), 
+    defaultTemplateArgNodeId(-1),
+    parameterSymbol(nullptr)
 {
+}
+
+void TemplateParameterSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    TypeSymbol::AddSymbol(symbol, sourcePos, context);
+    if (symbol->IsParameterSymbol())
+    {
+        parameterSymbol = static_cast<ParameterSymbol*>(symbol);
+    }
 }
 
 void TemplateParameterSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(constraint->Id());
+    util::uuid constraintId = util::nil_uuid();
+    if (constraint)
+    {
+        constraintId = constraint->Id();
+    }
+    writer.GetBinaryStreamWriter().Write(constraintId);
     writer.GetBinaryStreamWriter().Write(index);
     bool hasDefaultTemplateArg = defaultTemplateArgNode != nullptr;
     writer.GetBinaryStreamWriter().Write(hasDefaultTemplateArg);
@@ -71,7 +100,10 @@ void TemplateParameterSymbol::Read(Reader& reader)
 void TemplateParameterSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
-    constraint = symbolTable.GetConstraint(constraintId);
+    if (constraintId != util::nil_uuid())
+    {
+        constraint = symbolTable.GetConstraint(constraintId);
+    }
     if (defaultTemplateArgNodeId != -1)
     {
         soul::cpp20::ast::NodeMap* nodeMap = symbolTable.GetNodeMap();
@@ -176,7 +208,7 @@ void TemplateParameterCreator::Visit(soul::cpp20::ast::TypeParameterNode& node)
     {
         defaultTemplateArgNode = node.TypeId();
     }
-    context->GetSymbolTable()->AddTemplateParameter(templateParamName, &node, constraint, index, defaultTemplateArgNode, context);
+    context->GetSymbolTable()->AddTemplateParameter(templateParamName, &node, constraint, index, nullptr, defaultTemplateArgNode, context);
 }
 
 void TemplateParameterCreator::Visit(soul::cpp20::ast::TypenameNode& node)
@@ -191,7 +223,25 @@ void TemplateParameterCreator::Visit(soul::cpp20::ast::ClassNode& node)
 
 void TemplateParameterCreator::Visit(soul::cpp20::ast::ParameterNode& node)
 {
-    // todo
+    Declaration declaration = ProcessParameterDeclaration(&node, context);
+    TypeSymbol* type = declaration.type;
+    if (declaration.declarator->Kind() == DeclaratorKind::simpleDeclarator)
+    {
+        SimpleDeclarator* declarator = static_cast<SimpleDeclarator*>(declaration.declarator.get());
+        std::u32string templateParamName = declarator->Name();
+        Value* value = nullptr;
+        if (node.Initializer())
+        {
+            value = Evaluate(node.Initializer(), context);
+        }
+        ParameterSymbol* parameter = new ParameterSymbol(templateParamName, type);
+        parameter->SetDefaultValue(value);
+        context->GetSymbolTable()->AddTemplateParameter(templateParamName, &node, nullptr, index, parameter, nullptr, context);
+    }
+    else 
+    {
+        ThrowException("simple declarator expected", node.GetSourcePos(), context);
+    }
 }
 
 void TemplateParameterCreator::Visit(soul::cpp20::ast::IdentifierNode& node)
@@ -213,7 +263,7 @@ bool TemplateArgCanBeTypeId(soul::cpp20::ast::Node* templateIdNode, int index)
     return true; // TODO
 }
 
-TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<TypeSymbol*>& templateArgs, soul::cpp20::ast::TemplateIdNode* node, Context* context)
+TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& templateArgs, soul::cpp20::ast::TemplateIdNode* node, Context* context)
 {
     SpecializationSymbol* specialization = context->GetSymbolTable()->MakeSpecialization(typeSymbol, templateArgs);
     if (specialization->Instantiated()) return specialization;
@@ -253,13 +303,20 @@ TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<TypeSymbol*>& 
             for (int i = 0; i < arity; ++i)
             {
                 TemplateParameterSymbol* templateParameter = templateDeclaration->TemplateParameters()[i];
-                TypeSymbol* templateArg = nullptr;
+                Symbol* templateArg = nullptr;
                 if (i >= argCount)
                 {
                     soul::cpp20::ast::Node* defaultTemplateArgNode = templateParameter->DefaultTemplateArg();
-                    context->GetSymbolTable()->BeginScope(&instantiationScope);
-                    templateArg = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
-                    context->GetSymbolTable()->EndScope();
+                    if (defaultTemplateArgNode)
+                    {
+                        context->GetSymbolTable()->BeginScope(&instantiationScope);
+                        templateArg = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
+                        context->GetSymbolTable()->EndScope();
+                    }
+                    else
+                    {
+                        ThrowException("soul.cpp20.symbols.templates: template parameter " + std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
+                    }
                 }
                 else
                 {

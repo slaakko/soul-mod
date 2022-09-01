@@ -215,6 +215,9 @@
     <ClCompile Include="xml_generator_visitor.cpp" />
     <ClCompile Include="xml_generator_visitor.ixx" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ast.project" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

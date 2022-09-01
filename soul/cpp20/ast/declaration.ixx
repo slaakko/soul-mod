@@ -5,6 +5,7 @@
 
 export module soul.cpp20.ast.declaration;
 
+import std.core;
 import soul.cpp20.ast.node;
 
 export namespace soul::cpp20::ast {

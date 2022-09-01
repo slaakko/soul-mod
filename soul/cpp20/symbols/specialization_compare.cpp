@@ -31,8 +31,8 @@ bool SpecializationLess::operator()(SpecializationSymbol* left, SpecializationSy
     }
     for (int i = 0; i < n; ++i)
     {
-        TypeSymbol* leftArg = left->TemplateArguments()[i];
-        TypeSymbol* rightArg = right->TemplateArguments()[i];
+        Symbol* leftArg = left->TemplateArguments()[i];
+        Symbol* rightArg = right->TemplateArguments()[i];
         if (leftArg < rightArg)
         {
             return true;

@@ -17,6 +17,7 @@ struct ConceptParser
 {
     static soul::parser::Match ConceptDefinition(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ConceptName(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match ConceptNameChecked(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ConstraintExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match RequiresClause(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ConstraintLogicalOrExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);

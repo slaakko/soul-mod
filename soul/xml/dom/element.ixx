@@ -5,6 +5,7 @@
 
 export module soul.xml.element;
 
+import std.core;
 import soul.xml.parent.node;
 import soul.xml.attribute.node;
 

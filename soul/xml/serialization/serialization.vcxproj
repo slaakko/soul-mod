@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="serialization.project" />
     <None Include="xmlser.expr" />
     <None Include="xmlser.keyword" />
     <None Include="xmlser.slg" />

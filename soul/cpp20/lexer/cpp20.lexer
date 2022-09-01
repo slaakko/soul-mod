@@ -15,8 +15,8 @@ lexer Cpp20Lexer
     {
         "{separators}" {}
         "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
-        "{floating_literal}" { return FLOATING_LITERAL; }
         "{integer_literal}" { return INTEGER_LITERAL; }
+        "{floating_literal}" { return FLOATING_LITERAL; }
         "{character_literal}" { return CHARACTER_LITERAL; }
         "{begin_raw_string_literal}" { return BEGIN_RAW_STRING_LITERAL; }
         "{string_literal}" { return STRING_LITERAL; }

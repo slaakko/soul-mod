@@ -16,6 +16,7 @@ template<typename Lexer>
 struct TypeParser
 {
     static soul::parser::Match TypeSpecifierSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match TypeSpecifierSeqReset(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match DefiningTypeId(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match DefiningTypeSpecifierSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match DefiningTypeSpecifierReset(Lexer& lexer, soul::cpp20::symbols::Context* context);

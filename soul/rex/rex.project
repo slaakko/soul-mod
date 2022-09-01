@@ -1,0 +1,16 @@
+project soul.rex;
+reference <../ast/ast.project>;
+reference <../lexer/lexer.project>;
+reference <../parser/parser.project>;
+reference <../token/token.project>;
+reference <../../util/util.project>;
+interface <algorithm.ixx>;
+interface <context.ixx>;
+interface <match.ixx>;
+interface <nfa.ixx>;
+interface <rex.ixx>;
+interface <rex.token.ixx>;
+interface <rex_parser.ixx>;
+interface <rex.lexer.fwd.ixx>;
+interface <rex_rules.ixx>;
+interface <symbol.ixx>;

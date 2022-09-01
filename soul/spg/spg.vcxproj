@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="parser_file.parser" />
+    <None Include="spg.project" />
     <None Include="spg_file.parser" />
     <None Include="spg_parsers.spg" />
   </ItemGroup>

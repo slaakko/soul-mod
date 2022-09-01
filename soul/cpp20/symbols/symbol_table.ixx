@@ -50,6 +50,7 @@ class Symbol;
 class Scope;
 class AliasTypeSymbol;
 class ClassTypeSymbol;
+class ConceptSymbol;
 class EnumeratedTypeSymbol;
 class SpecializationSymbol;
 class CompoundTypeSymbol;
@@ -104,6 +105,7 @@ public:
     void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, soul::cpp20::ast::Node* node, Context* context);
     void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, soul::cpp20::ast::Node* node, Context* context);
     void EndEnumeratedType();
+    void AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, soul::cpp20::ast::Node* node, Context* context);
     void AddEnumerator(const std::u32string& name, Value* value, soul::cpp20::ast::Node* node, Context* context);
     void BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
     void EndBlock();
@@ -111,7 +113,8 @@ public:
     void BeginTemplateDeclaration(soul::cpp20::ast::Node* node, Context* context);
     void EndTemplateDeclaration();
     void RemoveTemplateDeclaration();
-    void AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, soul::cpp20::ast::Node* defaultTemplateArgNode, Context* context);
+    void AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, 
+        soul::cpp20::ast::Node* defaultTemplateArgNode, Context* context);
     FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
     void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context);
@@ -119,7 +122,8 @@ public:
     void AddUsingDeclaration(soul::cpp20::ast::Node* node, Symbol* symbol, Context* context);
     void AddUsingDirective(NamespaceSymbol* ns, soul::cpp20::ast::Node* node, Context* context);
     TypeSymbol* MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations);
-    SpecializationSymbol* MakeSpecialization(TypeSymbol* classTemplate, const std::vector<TypeSymbol*>& templateArguments);
+    ConceptSymbol* AddConcept(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context);
+    SpecializationSymbol* MakeSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
@@ -153,7 +157,7 @@ public:
     const std::set<Symbol*>& ForwardDeclarations() const { return forwardDeclarations; }
     const std::set<Symbol*>& AllForwardDeclarations() const { return allForwardDeclarations; }
     Access CurrentAccess() const { return currentAccess; }
-    void SetCurrentAccess(Access access) { currentAccess = access; }
+    void SetCurrentAccess(Access access);
     void PushAccess(Access access);
     void PopAccess();
 private:

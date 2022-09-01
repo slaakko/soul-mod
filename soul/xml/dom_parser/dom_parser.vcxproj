@@ -156,7 +156,6 @@
     <ClCompile Include="document_handler.ixx" />
     <ClCompile Include="dom_parser.cpp" />
     <ClCompile Include="dom_parser.ixx" />
-    <ClCompile Include="parsing_flags.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
@@ -171,6 +170,9 @@
     <ProjectReference Include="..\xml_parser\xml_parser.vcxproj">
       <Project>{a2abd336-9f9b-4bdf-9a5b-d275c5c06408}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dom_parser.project" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

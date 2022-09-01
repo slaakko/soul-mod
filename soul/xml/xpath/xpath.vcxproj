@@ -203,6 +203,7 @@
     <None Include="xpath.expr" />
     <None Include="xpath.keyword" />
     <None Include="xpath.lexer" />
+    <None Include="xpath.project" />
     <None Include="xpath.token" />
     <None Include="xpath.parser" />
   </ItemGroup>

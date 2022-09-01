@@ -3,19 +3,17 @@
 // Distributed under the MIT license
 // =================================
 
-export module soul.token.parser;
+export module soul.lexer.token.parser;
 
 import std.core;
 import util.unicode;
-
-using namespace util;
 
 export namespace soul::lexer {
 
 template<typename Char>
 constexpr std::string ToString(const Char* begin, const Char* end)
 {
-    return ToUtf8(std::basic_string<Char>(begin, end));
+    return util::ToUtf8(std::basic_string<Char>(begin, end));
 }
 
 constexpr std::string ToString(const char8_t* begin, const char8_t* end)

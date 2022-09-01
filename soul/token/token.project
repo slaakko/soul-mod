@@ -1,0 +1,6 @@
+project soul.token;
+reference <../../util/util.project>;
+interface <soul.cpp.op.token.ixx>;
+interface <soul.cpp.token.ixx>;
+interface <soul.punctuation.token.ixx>;
+interface <soul.tool.token.ixx>;

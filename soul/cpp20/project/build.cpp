@@ -6,6 +6,7 @@
 module soul.cpp20.project.build;
 
 import util;
+import soul.lexer;
 import soul.cpp20.project.parser;
 import soul.cpp20.lexer;
 import cpp20.parser.spg.rules;

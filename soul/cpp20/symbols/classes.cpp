@@ -252,7 +252,7 @@ void ClassResolver::Visit(soul::cpp20::ast::UnionNode& node)
     classKind = soul::cpp20::symbols::ClassKind::union_;
 }
 
-void GetClassAttributeas(soul::cpp20::ast::Node* node, std::u32string& name, soul::cpp20::symbols::ClassKind& kind)
+void GetClassAttributes(soul::cpp20::ast::Node* node, std::u32string& name, soul::cpp20::symbols::ClassKind& kind)
 {
     ClassResolver resolver;
     node->Accept(resolver);
@@ -264,7 +264,7 @@ void BeginClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* con
 {
     std::u32string name;
     soul::cpp20::symbols::ClassKind kind;
-    GetClassAttributeas(node, name, kind);
+    GetClassAttributes(node, name, kind);
     context->GetSymbolTable()->BeginClass(name, kind, node, context);
     context->PushSetFlag(ContextFlags::parseMemberFunction);
 }
@@ -294,7 +294,7 @@ void AddForwardClassDeclaration(soul::cpp20::ast::Node* node, soul::cpp20::symbo
 {
     std::u32string name;
     soul::cpp20::symbols::ClassKind kind;
-    GetClassAttributeas(node, name, kind);
+    GetClassAttributes(node, name, kind);
     context->GetSymbolTable()->AddForwardClassDeclaration(name, kind, node, context);
 }
 
@@ -323,6 +323,11 @@ void SetCurrentAccess(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Contex
 bool ClassLess::operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const
 {
     return left->Name() < right->Name();
+}
+
+void ThrowMemberDeclarationExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)
+{
+    ThrowException("class member declaration expected", sourcePos, context);
 }
 
 } // namespace soul::cpp20::symbols

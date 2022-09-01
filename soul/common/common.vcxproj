@@ -171,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="common.parser" />
+    <None Include="common.project" />
     <None Include="common_parser.spg" />
   </ItemGroup>
   <ItemGroup>

@@ -9,21 +9,19 @@ import util;
 
 namespace soul::slg {
 
-using namespace util;
-
 void MakeCompressedClassMap(const std::string& root, const std::string& classMapName, bool verbose)
 {
-    std::string classMapFileName = Path::Combine(root, classMapName);
-    std::string compressedClassMapFileName = Path::Combine(root, classMapName + ".compressed");
-    FileStream inputFileStream(classMapFileName, OpenMode::read | OpenMode::binary);
-    BufferedStream bufferedInputFileStream(inputFileStream);
-    BinaryStreamReader reader(bufferedInputFileStream);
+    std::string classMapFileName = util::Path::Combine(root, classMapName);
+    std::string compressedClassMapFileName = util::Path::Combine(root, classMapName + ".compressed");
+    util::FileStream inputFileStream(classMapFileName, util::OpenMode::read | util::OpenMode::binary);
+    util::BufferedStream bufferedInputFileStream(inputFileStream);
+    util::BinaryStreamReader reader(bufferedInputFileStream);
     int32_t size = reader.ReadInt();
-    FileStream outputFileStream(compressedClassMapFileName, OpenMode::write | OpenMode::binary);
-    BinaryStreamWriter rawWriter(outputFileStream);
+    util::FileStream outputFileStream(compressedClassMapFileName, util::OpenMode::write | util::OpenMode::binary);
+    util::BinaryStreamWriter rawWriter(outputFileStream);
     rawWriter.Write(size);
-    DeflateStream compressedStream(CompressionMode::compress, outputFileStream);
-    BinaryStreamWriter writer(compressedStream);
+    util::DeflateStream compressedStream(util::CompressionMode::compress, outputFileStream);
+    util::BinaryStreamWriter writer(compressedStream);
     for (int64_t i = 0; i < size; ++i)
     {
         uint32_t cls = reader.ReadInt();
@@ -37,10 +35,10 @@ void MakeCompressedClassMap(const std::string& root, const std::string& classMap
 
 void MakeResourceFile(const std::string& root, const std::string& classMapName, bool verbose)
 {
-    std::string resourceFileName = Path::Combine(root, classMapName + ".rc");
+    std::string resourceFileName = util::Path::Combine(root, classMapName + ".rc");
     std::string compressedClassMapFileName = "./" + classMapName + ".compressed";
     std::ofstream resourceFile(resourceFileName);
-    CodeFormatter formatter(resourceFile);
+    util::CodeFormatter formatter(resourceFile);
     formatter.WriteLine(classMapName + " RCDATA \"" + compressedClassMapFileName + "\"");
     if (verbose)
     {

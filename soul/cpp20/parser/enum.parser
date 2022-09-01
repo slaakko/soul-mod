@@ -27,7 +27,7 @@ parser EnumParser
     using IdentifierParser.Unnamed;
     using PunctuationParser.Comma;
     using PunctuationParser.Semicolon;
-    using TypeParser.TypeSpecifierSeq;
+    using TypeParser.TypeSpecifierSeqReset;
 
     EnumName(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
         ::= Identifier(context):identifier{ return identifier; }
@@ -92,7 +92,7 @@ parser EnumParser
     EnumBase(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
         ::= 
         (
-            COLON{ sourcePos = lexer.GetSourcePos(pos); } TypeSpecifierSeq(context):typeSpecifiers
+            COLON{ sourcePos = lexer.GetSourcePos(pos); } TypeSpecifierSeqReset(context):typeSpecifiers
         )
         {
             return new soul::cpp20::ast::EnumBaseNode(sourcePos, typeSpecifiers);
@@ -143,8 +143,7 @@ parser EnumParser
         )
         {
             soul::cpp20::ast::Node* node = new soul::cpp20::ast::OpaqueEnumDeclarationNode(sourcePos, enumKey, enumHeadName, enumBase, attributes, semicolon);
-            soul::cpp20::symbols::BeginEnumType(node, context);
-            soul::cpp20::symbols::EndEnumType(node, context);
+            soul::cpp20::symbols::ProcessEnumForwardDeclaration(node, context);
             return node;
         }
         ;
@@ -155,15 +154,13 @@ parser EnumParser
             Identifier(context):identifier
             { 
                 soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, identifier)); 
-                soul::cpp20::symbols::BeginEnumType(node, context);
-                soul::cpp20::symbols::EndEnumType(node, context);
+                soul::cpp20::symbols::ProcessEnumForwardDeclaration(node, context);
                 return node;
             }
         |   Identifier(context):identifier2
             { 
                 soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, identifier2); 
-                soul::cpp20::symbols::BeginEnumType(node, context);
-                soul::cpp20::symbols::EndEnumType(node, context);
+                soul::cpp20::symbols::ProcessEnumForwardDeclaration(node, context);
                 return node;
             }
         )

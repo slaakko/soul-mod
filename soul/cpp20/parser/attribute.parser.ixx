@@ -16,6 +16,17 @@ template<typename Lexer>
 struct AttributeParser
 {
     static soul::parser::Match AttributeSpecifierSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match AttributeSpecifier(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match AttributeList(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
+    static soul::parser::Match AttributeUsingPrefix(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match AttributeNamespace(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match Attribute(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match AttributeToken(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match AttributeScopedToken(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match AttributeArgumentClause(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match BalancedTokenSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match BalancedToken(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match AlignmentSpecifier(Lexer& lexer, soul::cpp20::symbols::Context* context);
 };
 
 } // namespace soul::cpp20::parser::attribute

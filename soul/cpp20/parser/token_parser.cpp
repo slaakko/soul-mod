@@ -838,6 +838,15 @@ soul::cpp20::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& so
     {
         throw std::runtime_error("invalid identifier in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));
     }
+    if (s == U"Lookup")
+    {
+        int x = 0;
+    }
+    if (s == U"SymbolGroupKind")
+    {
+        int x = 0;
+    }
     return new soul::cpp20::ast::IdentifierNode(sourcePos, s);
 }
+
 } // namespace soul::cpp20::parser::token

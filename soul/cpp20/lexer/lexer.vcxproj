@@ -154,6 +154,7 @@
   <ItemGroup>
     <None Include="cpp20.lexer" />
     <None Include="cpp20.slg" />
+    <None Include="lexer.project" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\lexer\lexer.vcxproj">

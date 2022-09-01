@@ -106,6 +106,7 @@ void TypeElementGenerator::Visit(soul::cpp20::symbols::ConceptSymbol& symbol)
 
 void TypeElementGenerator::Visit(soul::cpp20::symbols::AliasTypeSymbol& symbol)
 {
+    soul::cpp20::symbols::Symbol* parent = symbol.Parent();
     soul::xml::Element* linkElement = soul::xml::MakeElement("a");
     std::string href;
     if (!module && !containerSymbol)

@@ -5,6 +5,7 @@
 
 export module soul.cpp20.ast.statement;
 
+import std.core;
 import soul.cpp20.ast.node;
 import soul.ast.lexer.pos.pair;
 

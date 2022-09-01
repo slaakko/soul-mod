@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-module soul.xml.processor;
+module soul.xml.xml_processor;
 
 import soul.xml.error;
 import soul.xml.processor.entity;
@@ -263,4 +263,4 @@ std::string XmlProcessor::GetNamespaceUri(const std::string& namespacePrefix, co
     return std::string();
 }
 
-} // namespace soul::xml::processor {
+} // namespace soul::xml::processor

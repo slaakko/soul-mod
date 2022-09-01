@@ -186,6 +186,7 @@
     <None Include="literal.parser" />
     <None Include="module.parser" />
     <None Include="module_dependency.parser" />
+    <None Include="parser.project" />
     <None Include="punctuation.parser" />
     <None Include="simple_type.parser" />
     <None Include="statement.parser" />

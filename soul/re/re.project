@@ -1,0 +1,8 @@
+project soul.re;
+reference <../ast/ast.project>;
+reference <../lex/lex.project>;
+reference <../lexer/lexer.project>;
+reference <../parser/parser.project>;
+reference <../token/token.project>;
+reference <../../util/util.project>;
+interface <re_parser.ixx>;
