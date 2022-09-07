@@ -104,36 +104,18 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch7 = &match;
                     {
-                        soul::parser::Match match(true);
-                        int64_t save = lexer.GetPos();
+                        soul::parser::Match match(false);
                         soul::parser::Match* parentMatch8 = &match;
                         {
-                            soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch9 = &match;
-                            {
-                                soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch10 = &match;
-                                {
-                                    int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = DeclarationParser<Lexer>::DeclSpecifierSeq(lexer, context);
-                                    declSpecifiers.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
-                                    if (match.hit)
-                                    {
-                                        declSpecifierSeqNode.reset(declSpecifiers.release());
-                                        if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
-                                    }
-                                    *parentMatch10 = match;
-                                }
-                                *parentMatch9 = match;
-                            }
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = DeclarationParser<Lexer>::DeclSpecifierSeq(lexer, context);
+                            declSpecifiers.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                             if (match.hit)
                             {
-                                *parentMatch8 = match;
+                                declSpecifierSeqNode.reset(declSpecifiers.release());
+                                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
                             }
-                            else
-                            {
-                                lexer.SetPos(save);
-                            }
+                            *parentMatch8 = match;
                         }
                         *parentMatch7 = match;
                     }
@@ -144,10 +126,10 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
             if (match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch11 = &match;
+                soul::parser::Match* parentMatch9 = &match;
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch12 = &match;
+                    soul::parser::Match* parentMatch10 = &match;
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = DeclarationParser<Lexer>::Declarator(lexer, context);
@@ -157,9 +139,9 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
                             if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
                             declaratorNode.reset(declarator.release());
                         }
-                        *parentMatch12 = match;
+                        *parentMatch10 = match;
                     }
-                    *parentMatch11 = match;
+                    *parentMatch9 = match;
                 }
                 *parentMatch2 = match;
             }
@@ -168,25 +150,25 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
         if (match.hit)
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch13 = &match;
+            soul::parser::Match* parentMatch11 = &match;
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch14 = &match;
+                soul::parser::Match* parentMatch12 = &match;
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch15 = &match;
+                    soul::parser::Match* parentMatch13 = &match;
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch16 = &match;
+                        soul::parser::Match* parentMatch14 = &match;
                         {
                             int64_t save = lexer.GetPos();
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch17 = &match;
+                            soul::parser::Match* parentMatch15 = &match;
                             {
                                 int64_t save = lexer.GetPos();
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch18 = &match;
+                                soul::parser::Match* parentMatch16 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = ClassParser<Lexer>::VirtSpecifierSeq(lexer, context);
@@ -195,17 +177,17 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
                                     {
                                         specifierNode.reset(virtSpecifiers.release());
                                     }
-                                    *parentMatch18 = match;
+                                    *parentMatch16 = match;
                                 }
-                                *parentMatch17 = match;
+                                *parentMatch15 = match;
                                 if (!match.hit)
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch19 = &match;
+                                    soul::parser::Match* parentMatch17 = &match;
                                     lexer.SetPos(save);
                                     {
                                         soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch20 = &match;
+                                        soul::parser::Match* parentMatch18 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
                                             soul::parser::Match match = ConceptParser<Lexer>::RequiresClause(lexer, context);
@@ -214,35 +196,35 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
                                             {
                                                 specifierNode.reset(requiresClause.release());
                                             }
-                                            *parentMatch20 = match;
+                                            *parentMatch18 = match;
                                         }
-                                        *parentMatch19 = match;
+                                        *parentMatch17 = match;
                                     }
-                                    *parentMatch17 = match;
+                                    *parentMatch15 = match;
                                 }
                             }
-                            *parentMatch16 = match;
+                            *parentMatch14 = match;
                             if (!match.hit)
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch21 = &match;
+                                soul::parser::Match* parentMatch19 = &match;
                                 lexer.SetPos(save);
                                 {
                                     soul::parser::Match match(true);
-                                    *parentMatch21 = match;
+                                    *parentMatch19 = match;
                                 }
-                                *parentMatch16 = match;
+                                *parentMatch14 = match;
                             }
                         }
-                        *parentMatch15 = match;
+                        *parentMatch13 = match;
                     }
                     if (match.hit)
                     {
                         scopes = soul::cpp20::symbols::BeginFunctionDefinition(declSpecifierSeqNode.get(), declaratorNode.get(), context);
                     }
-                    *parentMatch14 = match;
+                    *parentMatch12 = match;
                 }
-                *parentMatch13 = match;
+                *parentMatch11 = match;
             }
             *parentMatch1 = match;
         }
@@ -251,10 +233,10 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
     if (match.hit)
     {
         soul::parser::Match match(false);
-        soul::parser::Match* parentMatch22 = &match;
+        soul::parser::Match* parentMatch20 = &match;
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch23 = &match;
+            soul::parser::Match* parentMatch21 = &match;
             {
                 int64_t pos = lexer.GetPos();
                 soul::parser::Match match = FunctionParser<Lexer>::FunctionBody(lexer, context);
@@ -270,9 +252,9 @@ soul::parser::Match FunctionParser<Lexer>::FunctionDefinition(Lexer& lexer, soul
                         return soul::parser::Match(true, node);
                     }
                 }
-                *parentMatch23 = match;
+                *parentMatch21 = match;
             }
-            *parentMatch22 = match;
+            *parentMatch20 = match;
         }
         *parentMatch0 = match;
     }

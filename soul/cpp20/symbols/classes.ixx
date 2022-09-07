@@ -9,8 +9,15 @@ import std.core;
 import soul.cpp20.symbols.scope;
 import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.ast.node;
+import soul.cpp20.ast.statement;
 
 export namespace soul::cpp20::symbols {
+
+class Context;
+
+using RecordedParseFn = void (*)(soul::cpp20::ast::CompoundStatementNode* compoundStatementNode, Context* context);
+
+void SetRecordedParseFn(RecordedParseFn fn);
 
 class TemplateDeclarationSymbol;
 class TemplateParameterSymbol;
@@ -31,16 +38,22 @@ public:
     std::string SymbolDocKindStr() const override { return "class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration();
-    const std::vector<Symbol*>& BaseClasses() const { return baseClasses; }
-    void AddBaseClass(Symbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    const std::vector<TypeSymbol*>& BaseClasses() const { return baseClasses; }
+    void AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    const std::vector<TypeSymbol*>& DerivedClasses() const { return derivedClasses; }
+    void AddDerivedClass(TypeSymbol* derivedClass);
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    int Level() const { return level; }
+    void SetLevel(int level_) { level = level_; }
 private:
-    std::vector<Symbol*> baseClasses;
+    std::vector<TypeSymbol*> baseClasses;
     std::vector<util::uuid> baseClassIds;
     ClassKind classKind;
+    std::vector<TypeSymbol*> derivedClasses;
+    int level;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol
@@ -71,7 +84,9 @@ void EndClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* conte
 void AddForwardClassDeclaration(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
 void SetCurrentAccess(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
 void GetClassAttributes(soul::cpp20::ast::Node* node, std::u32string& name, soul::cpp20::symbols::ClassKind& kind);
+void ParseInlineMemberFunctions(soul::cpp20::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, soul::cpp20::symbols::Context* context);
 void ThrowMemberDeclarationExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
+void ThrowStatementExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
 
 struct ClassLess
 {

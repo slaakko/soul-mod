@@ -69,4 +69,13 @@ using wfstream = basic_fstream<wchar_t>;
 using wsyncbuf = basic_syncbuf<wchar_t>;
 using wosyncstream = basic_osyncstream<wchar_t>;
 
+class ios_base
+{
+public:
+	enum class openmode
+	{
+		app, ate, binary, in, out, trunc
+	};
+};
+
 } // namespace std

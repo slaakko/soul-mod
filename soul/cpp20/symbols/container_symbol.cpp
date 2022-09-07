@@ -27,7 +27,7 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     Scope* childScope = symbol->GetScope();
     if (childScope)
     {
-        childScope->SetParentScope(&scope);
+        childScope->AddParentScope(&scope);
     }
     if (symbol->CanInstall())
     {
@@ -48,6 +48,11 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     {
         FunctionSymbol* function = static_cast<FunctionSymbol*>(symbol);
         context->GetSymbolTable()->MapFunction(function);
+    }
+    if (symbol->IsFunctionDefinitionSymbol())
+    {
+        FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(symbol);
+        context->GetSymbolTable()->MapFunctionDefinition(functionDefinition);
     }
     if (symbol->IsVariableSymbol())
     {

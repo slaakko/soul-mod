@@ -192,6 +192,72 @@ void FunctionSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::functionDefinitionSymbol, name_)
+{
+}
+
+void FunctionDefinitionSymbol::Write(Writer& writer)
+{
+    ContainerSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(qualifiers));
+    if (returnType)
+    {
+        writer.GetBinaryStreamWriter().Write(returnType->Id());
+    }
+    else
+    {
+        writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+    }
+    if (declaration)
+    {
+        writer.GetBinaryStreamWriter().Write(declaration->Id());
+    }
+    else
+    {
+        writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+    }
+}
+
+void FunctionDefinitionSymbol::Read(Reader& reader)
+{
+    ContainerSymbol::Read(reader);
+    qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
+    reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
+    reader.GetBinaryStreamReader().ReadUuid(declarationId);
+}
+
+void FunctionDefinitionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) 
+{
+    ContainerSymbol::AddSymbol(symbol, sourcePos, context);
+    if (symbol->IsParameterSymbol())
+    {
+        parameters.push_back(static_cast<ParameterSymbol*>(symbol));
+    }
+}
+
+void FunctionDefinitionSymbol::AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    AddSymbol(parameter, sourcePos, context);
+}
+
+void FunctionDefinitionSymbol::Accept(Visitor& visitor) 
+{
+    visitor.Visit(*this);
+}
+
+void FunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable)
+{
+    ContainerSymbol::Resolve(symbolTable);
+    if (returnTypeId != util::nil_uuid())
+    {
+        returnType = symbolTable.GetType(returnTypeId);
+    }
+    if (declarationId != util::nil_uuid())
+    {
+        declaration = symbolTable.GetFunction(declarationId);
+    }
+}
+
 bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const
 {
     if (int(left->GetFunctionKind()) < int(right->GetFunctionKind())) return true;

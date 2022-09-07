@@ -42,9 +42,6 @@ public:
     void SetLogging() { logging = true; }
     void BeginContent() { ++contentCount; }
     void EndContent() { --contentCount; }
-    using CoutType = std::ostream;
-    using StandardEndLine = CoutType& (*)(CoutType&);
-    CodeFormatter& operator<<(StandardEndLine manip);
 private:
     std::ostream& stream;
     int indent;
@@ -58,6 +55,10 @@ private:
     bool logging;
 };
 
+using CoutType = std::ostream;
+using StandardEndLine = CoutType& (*)(CoutType&);
+
+CodeFormatter& operator<<(CodeFormatter& f, StandardEndLine manip);
 CodeFormatter& operator<<(CodeFormatter& f, const std::string& s);
 CodeFormatter& operator<<(CodeFormatter& f, const char* s);
 CodeFormatter& operator<<(CodeFormatter& f, const char8_t* s);

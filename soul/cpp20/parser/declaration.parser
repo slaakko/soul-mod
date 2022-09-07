@@ -79,13 +79,45 @@ parser DeclarationParser
         }
         ;
 
+    NamespaceDeclarationSeq(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> sequence, var bool nextIsRBrace) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Declaration(context):first
+            { 
+                sequence.reset(new soul::cpp20::ast::DeclarationSequenceNode(lexer.GetSourcePos(pos))); 
+                sequence->AddNode(first);
+            }
+            (   Declaration(context):next{ sequence->AddNode(next); }
+            |   RBraceNext:next{ nextIsRBrace = true; pass = false; }
+            |   empty
+                { 
+                    if (!nextIsRBrace) 
+                    {
+                        ThrowDeclarationExpected(lexer.GetSourcePos(pos), context);
+                    }
+                    else
+                    {
+                        pass = false;
+                    }
+                }
+            )*
+        )
+        {
+            return sequence.release();
+        }
+        ;
+
+    RBraceNext
+        ::= &(RBRACE)
+        ;
+
     Declaration(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
         ::= ImportDeclaration(context):moduleImportDeclaration{ return moduleImportDeclaration; }
         |   ExportDeclaration(context):exportDeclaration{ return exportDeclaration; }
         |   BlockDeclaration(context):blockDeclaration{ return blockDeclaration; }
         |   NoDeclSpecFunctionDeclaration(context):noDeclSpecDecl{ return noDeclSpecDecl; }
-        |   FunctionDefinition(context):functionDefinition{ return functionDefinition; }
         |   NoDeclSpecFunctionDefinition(context):noDeclSpecDef{ return noDeclSpecDef; }
+        |   FunctionDefinition(context):functionDefinition{ return functionDefinition; }
         |   DeductionGuide(context):deductionGuide{ return deductionGuide; }
         |   ExplicitInstantiation(context):explicitInstantiation{ return explicitInstantiation; }
         |   ExplicitSpecialization(context):explicitSpecialization{ return explicitSpecialization; }
@@ -285,7 +317,7 @@ parser DeclarationParser
     NamespaceBody(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
         ::= 
         (
-            (DeclarationSeq(context):declarations{ sourcePos = lexer.GetSourcePos(pos); })?
+            (NamespaceDeclarationSeq(context):declarations{ sourcePos = lexer.GetSourcePos(pos); })?
         )
         {
             return new soul::cpp20::ast::NamespaceBodyNode(sourcePos, declarations);

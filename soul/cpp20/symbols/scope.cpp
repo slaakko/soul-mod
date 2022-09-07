@@ -6,6 +6,7 @@
 module soul.cpp20.symbols.scope;
 
 import soul.cpp20.symbols.symbol;
+import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.namespaces;
 import soul.cpp20.symbols.concept_group.symbol;
@@ -14,7 +15,9 @@ import soul.cpp20.symbols.class_group.symbol;
 import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.variable.group.symbol;
 import soul.cpp20.symbols.enum_group.symbol;
+import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.templates;
+import soul.cpp20.ast.error;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
@@ -87,6 +90,12 @@ void Scope::Install(Symbol* symbol, Symbol* from)
             VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
             variableGroup->Merge(fromVariableGroup);
         }
+        else if (from->IsEnumGroupSymbol() && symbol->IsEnumGroupSymbol())
+        {
+            EnumGroupSymbol* fromEnumGroup = static_cast<EnumGroupSymbol*>(from);
+            EnumGroupSymbol* enumGroup = static_cast<EnumGroupSymbol*>(symbol);
+            enumGroup->Merge(fromEnumGroup);
+        }
     }
     symbolMap[std::make_pair(symbol->InstallationName(), symbolGroupKind)] = symbol;
 }
@@ -141,7 +150,7 @@ Scope* Scope::GroupScope()
 {
     if (IsTemplateDeclarationScope())
     {
-        return ParentScope();
+        return ParentScopes().front();
     }
     else
     {
@@ -181,12 +190,14 @@ void Scope::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Con
 
 std::unique_ptr<Symbol> Scope::RemoveSymbol(Symbol* symbol)
 {
+    soul::cpp20::ast::SetExceptionThrown();
     throw std::runtime_error("could not remove symbol");
 }
 
-void Scope::SetParentScope(Scope* parentScope_)
+void Scope::AddParentScope(Scope* parentScope_)
 {
-    throw std::runtime_error("could not set parent scope");
+    soul::cpp20::ast::SetExceptionThrown();
+    throw std::runtime_error("could not add parent scope");
 }
 
 void Scope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -234,8 +245,18 @@ EnumGroupSymbol* Scope::GetOrInsertEnumGroup(const std::u32string& name, const s
     ThrowException("cannot add enum group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
-ContainerScope::ContainerScope() : Scope(), parentScope(nullptr), usingDeclarationScope(nullptr), containerSymbol(nullptr)
+ContainerScope::ContainerScope() : Scope(), parentScopes(), usingDeclarationScope(nullptr), containerSymbol(nullptr)
 {
+}
+
+void ContainerScope::AddParentScope(Scope* parentScope)
+{
+    parentScopes.push_back(parentScope);
+}
+
+void ContainerScope::ClearParentScopes()
+{
+    parentScopes.clear();
 }
 
 void ContainerScope::Import(Scope* that)
@@ -268,8 +289,7 @@ Scope* ContainerScope::GetClassScope() const
     {
         return const_cast<Scope*>(static_cast<const Scope*>(this));
     }
-    Scope* parentScope = ParentScope();
-    if (parentScope)
+    for (Scope* parentScope : ParentScopes())
     {
         return parentScope->GetClassScope();
     }
@@ -309,9 +329,9 @@ void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGrou
         Scope::Lookup(id, symbolGroupKind, scopeLookup, symbols);
         if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
         {
-            if (symbols.empty())
+            for (const auto& parentScope : parentScopes)
             {
-                if (parentScope)
+                if (symbols.empty())
                 {
                     parentScope->Lookup(id, symbolGroupKind, scopeLookup, symbols);
                 }

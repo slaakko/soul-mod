@@ -17,10 +17,26 @@ import soul.cpp20.symbols.templates;
 import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
+import soul.cpp20.symbols.type.resolver;
 
 namespace soul::cpp20::symbols {
 
-ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::classTypeSymbol, name_), classKind(ClassKind::class_)
+RecordedParseFn recordedParseFn = nullptr;
+
+void SetRecordedParseFn(RecordedParseFn fn)
+{
+    recordedParseFn = fn;
+}
+
+void RecordedParse(soul::cpp20::ast::CompoundStatementNode* compoundStatementNode, Context* context)
+{
+    if (recordedParseFn)
+    {
+        recordedParseFn(compoundStatementNode, context);
+    }
+}
+
+ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::classTypeSymbol, name_), classKind(ClassKind::class_), level(0)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -40,10 +56,18 @@ bool ClassTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-void ClassTypeSymbol::AddBaseClass(Symbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
+void ClassTypeSymbol::AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     baseClasses.push_back(baseClass);
     GetScope()->AddBaseScope(baseClass->GetScope(), sourcePos, context);
+}
+
+void ClassTypeSymbol::AddDerivedClass(TypeSymbol* derivedClass)
+{
+    if (std::find(derivedClasses.begin(), derivedClasses.end(), derivedClass) == derivedClasses.end())
+    {
+        derivedClasses.push_back(derivedClass);
+    }
 }
 
 void ClassTypeSymbol::Accept(Visitor& visitor)
@@ -82,7 +106,10 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
     for (const util::uuid& baseClassId : baseClassIds)
     {
         Symbol* baseClassSymbol = GetSymbol(baseClassId);
-        baseClasses.push_back(baseClassSymbol);
+        if (baseClassSymbol->IsClassTypeSymbol())
+        {
+            baseClasses.push_back(static_cast<ClassTypeSymbol*>(baseClassSymbol));
+        }
     }
 }
 
@@ -181,6 +208,7 @@ void ForwardClassDeclarationSymbol::Resolve(SymbolTable& symbolTable)
         }
         else
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("soul.cpp20.symbols.classes: class type expected");
         }
     }
@@ -252,6 +280,25 @@ void ClassResolver::Visit(soul::cpp20::ast::UnionNode& node)
     classKind = soul::cpp20::symbols::ClassKind::union_;
 }
 
+class BaseClassResolver : public soul::cpp20::ast::DefaultVisitor
+{
+public:
+    BaseClassResolver(Context* context_);
+    void Visit(soul::cpp20::ast::BaseSpecifierNode& node) override;
+private:
+    Context* context;
+};
+
+BaseClassResolver::BaseClassResolver(Context* context_) : context(context_)
+{
+}
+
+void BaseClassResolver::Visit(soul::cpp20::ast::BaseSpecifierNode& node)
+{
+    TypeSymbol* baseClass = ResolveType(node.ClassOrDeclType(), DeclarationFlags::none, context);
+    context->GetSymbolTable()->AddBaseClass(baseClass, node.GetSourcePos(), context);
+}
+
 void GetClassAttributes(soul::cpp20::ast::Node* node, std::u32string& name, soul::cpp20::symbols::ClassKind& kind)
 {
     ClassResolver resolver;
@@ -266,16 +313,19 @@ void BeginClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* con
     soul::cpp20::symbols::ClassKind kind;
     GetClassAttributes(node, name, kind);
     context->GetSymbolTable()->BeginClass(name, kind, node, context);
+    BaseClassResolver resolver(context);
+    node->Accept(resolver);
     context->PushSetFlag(ContextFlags::parseMemberFunction);
 }
 
 void EndClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context)
 {
-    Symbol* classTypeSymbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
-    if (!classTypeSymbol->IsClassTypeSymbol())
+    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
+    if (!symbol->IsClassTypeSymbol())
     {
         ThrowException("cpp20.symbols.classes: EndClass(): class scope expected", node->GetSourcePos(), context);
     }
+    ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
     soul::cpp20::ast::Node* specNode = context->GetSymbolTable()->GetSpecifierNode(classTypeSymbol);
     if (specNode && specNode->IsClassSpecifierNode())
     {
@@ -288,6 +338,10 @@ void EndClass(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* conte
     }
     context->PopFlags();
     context->GetSymbolTable()->EndClass();
+    if (classTypeSymbol->Level() == 0)
+    {
+        ParseInlineMemberFunctions(specNode, classTypeSymbol, context);
+    }
 }
 
 void AddForwardClassDeclaration(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context)
@@ -320,6 +374,60 @@ void SetCurrentAccess(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Contex
     }
 }
 
+class InlineMemberFunctionParserVisitor : public soul::cpp20::ast::DefaultVisitor
+{
+public:
+    InlineMemberFunctionParserVisitor(Context* context_);
+    void Visit(soul::cpp20::ast::FunctionDefinitionNode& node) override;
+private:
+    Context* context;
+};
+
+InlineMemberFunctionParserVisitor::InlineMemberFunctionParserVisitor(Context* context_) : context(context_)
+{
+}
+
+void InlineMemberFunctionParserVisitor::Visit(soul::cpp20::ast::FunctionDefinitionNode& node)
+{
+    try
+    {
+        if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration))
+        {
+            soul::cpp20::ast::Node* fnBody = node.FunctionBody();
+            soul::cpp20::ast::CompoundStatementNode* compoundStatementNode = nullptr;
+            if (fnBody->IsConstructorNode())
+            {
+                soul::cpp20::ast::ConstructorNode* constructorNode = static_cast<soul::cpp20::ast::ConstructorNode*>(fnBody);
+                compoundStatementNode = static_cast<soul::cpp20::ast::CompoundStatementNode*>(constructorNode->Right());
+            }
+            else if (fnBody->IsFunctionBodyNode())
+            {
+                soul::cpp20::ast::FunctionBodyNode* functionBody = static_cast<soul::cpp20::ast::FunctionBodyNode*>(node.FunctionBody());
+                compoundStatementNode = static_cast<soul::cpp20::ast::CompoundStatementNode*>(functionBody->Child());
+            }
+            if (compoundStatementNode)
+            {
+                if (compoundStatementNode->GetLexerPosPair().IsValid())
+                {
+                    RecordedParse(compoundStatementNode, context);
+                }
+            }
+        }
+    }
+    catch (const std::exception& ex)
+    {
+        ThrowException("error parsing inline member function body: " + std::string(ex.what()), node.GetSourcePos(), context);
+    }
+}
+
+void ParseInlineMemberFunctions(soul::cpp20::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, soul::cpp20::symbols::Context* context)
+{
+    context->GetSymbolTable()->BeginScope(classTypeSymbol->GetScope());
+    InlineMemberFunctionParserVisitor visitor(context);
+    classSpecifierNode->Accept(visitor);
+    context->GetSymbolTable()->EndScope();
+}
+
 bool ClassLess::operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const
 {
     return left->Name() < right->Name();
@@ -328,6 +436,11 @@ bool ClassLess::operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const
 void ThrowMemberDeclarationExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)
 {
     ThrowException("class member declaration expected", sourcePos, context);
+}
+
+void ThrowStatementExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)
+{
+    ThrowException("statement expected", sourcePos, context);
 }
 
 } // namespace soul::cpp20::symbols

@@ -48,8 +48,8 @@ public:
     virtual void EraseTokens() = 0;
     virtual void Increment() = 0;
     virtual void MoveToEnd() = 0;
-    virtual void BeginRecordedParse(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair) {}
-    virtual void EndRecordedParse() {}
+    virtual void BeginRecordedParse(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair) = 0;
+    virtual void EndRecordedParse() = 0;
 };
 
 } // namespace soul::lexer

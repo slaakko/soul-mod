@@ -5,6 +5,7 @@
 
 module soul.cpp20.symbols.symbol;
 
+import soul.cpp20.ast.error;
 import soul.cpp20.symbols.alias.type.symbol;
 import soul.cpp20.symbols.block;
 import soul.cpp20.symbols.classes;
@@ -123,6 +124,7 @@ void Symbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Co
 
 std::unique_ptr<Symbol> Symbol::RemoveSymbol(Symbol* symbol)
 {
+    soul::cpp20::ast::SetExceptionThrown();
     throw std::runtime_error("cannot remove symbol");
 }
 
@@ -213,7 +215,7 @@ bool Symbol::CanInstall() const
         case SymbolKind::classTypeSymbol:
         case SymbolKind::conceptSymbol:
         case SymbolKind::functionSymbol:
-        case SymbolKind::parameterSymbol:
+        case SymbolKind::functionDefinitionSymbol:
         case SymbolKind::variableSymbol:
         case SymbolKind::templateDeclarationSymbol:
         case SymbolKind::typenameConstraintSymbol:
@@ -221,6 +223,7 @@ bool Symbol::CanInstall() const
         {
             return false; 
         }
+        case SymbolKind::parameterSymbol:
         case SymbolKind::functionTypeSymbol:
         case SymbolKind::templateParameterSymbol:
         case SymbolKind::boundTemplateParameterSymbol:
@@ -237,6 +240,7 @@ bool Symbol::IsTypeSymbol() const
     {
         case SymbolKind::aliasGroupSymbol: 
         case SymbolKind::classGroupSymbol:
+        case SymbolKind::enumGroupSymbol:
         case SymbolKind::aliasTypeSymbol:
         case SymbolKind::arrayTypeSymbol:
         case SymbolKind::classTypeSymbol:
@@ -284,9 +288,11 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
     {
         case SymbolKind::aliasGroupSymbol:
         case SymbolKind::classGroupSymbol:
+        case SymbolKind::enumGroupSymbol:
         case SymbolKind::namespaceSymbol:
         case SymbolKind::aliasTypeSymbol:
         case SymbolKind::classTypeSymbol:
+        case SymbolKind::functionTypeSymbol:
         case SymbolKind::forwardClassDeclarationSymbol:
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::enumTypeSymbol:
@@ -303,10 +309,13 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
             return SymbolGroupKind::conceptSymbolGroup;
         }
         case SymbolKind::functionGroupSymbol:
+        case SymbolKind::functionSymbol:
+        case SymbolKind::functionDefinitionSymbol:
         {
             return SymbolGroupKind::functionSymbolGroup;
         }
         case SymbolKind::variableGroupSymbol:
+        case SymbolKind::parameterSymbol:
         {
             return SymbolGroupKind::variableSymbolGroup;
         }
@@ -461,10 +470,12 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         }
         case SymbolKind::genericTypeSymbol:
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("not implemented");
         }
         case SymbolKind::nullPtrTypeSymbol:
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("not implemented");
         }
         case SymbolKind::aliasTypeSymbol:
@@ -473,6 +484,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         }
         case SymbolKind::arrayTypeSymbol:
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("not implemented");
         }
         case SymbolKind::blockSymbol:
@@ -511,6 +523,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new FunctionSymbol(name);
         }
+        case SymbolKind::functionDefinitionSymbol:
+        {
+            return new FunctionDefinitionSymbol(name);
+        }
         case SymbolKind::functionTypeSymbol:
         {
             return new FunctionTypeSymbol(name);
@@ -537,6 +553,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         }
         case SymbolKind::varArgTypeSymbol:
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("not implemented");
         }
         case SymbolKind::variableSymbol:
@@ -574,6 +591,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
             return new ConstraintExprSymbol();
         }
     }
+    soul::cpp20::ast::SetExceptionThrown();
     throw std::runtime_error("not implemented");
 }
 

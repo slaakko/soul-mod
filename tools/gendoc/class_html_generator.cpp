@@ -6,6 +6,7 @@
 module gendoc.class_html_generator;
 
 import gendoc.type_element_generator;
+import gendoc.class_diagram;
 import util;
 import soul.cpp20.symbols;
 import soul.xml.dom;
@@ -62,6 +63,8 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
     else
     {
         currentClass = &symbol;
+        std::string diagramFileName;
+        bool diagramGenerated = GenerateClassDiagramFile(modulePath, &symbol, diagramFileName);
         filePath = util::GetFullPath(util::Path::Combine(modulePath, symbol.DocName() + ".html"));
         soul::xml::Element* htmlElement = soul::xml::MakeElement("html");
         doc.AppendChild(htmlElement);
@@ -74,21 +77,21 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
         std::string title = util::ToUtf8(symbol.Name());
         switch (symbol.GetClassKind())
         {
-        case soul::cpp20::symbols::ClassKind::class_:
-        {
-            title.append(" Class");
-            break;
-        }
-        case soul::cpp20::symbols::ClassKind::struct_:
-        {
-            title.append(" Struct");
-            break;
-        }
-        case soul::cpp20::symbols::ClassKind::union_:
-        {
-            title.append(" Union");
-            break;
-        }
+            case soul::cpp20::symbols::ClassKind::class_:
+            {
+                title.append(" Class");
+                break;
+            }
+            case soul::cpp20::symbols::ClassKind::struct_:
+            {
+                title.append(" Struct");
+                break;
+            }
+            case soul::cpp20::symbols::ClassKind::union_:
+            {
+                title.append(" Union");
+                break;
+            }
         }
         if (symbol.ParentTemplateDeclaration())
         {
@@ -104,10 +107,32 @@ void ClassHtmlGenerator::Visit(soul::cpp20::symbols::ClassTypeSymbol& symbol)
         linkElement->SetAttribute("type", "text/css");
         headElement->AppendChild(linkElement);
         bodyElement = soul::xml::MakeElement("body");
+        if (diagramGenerated)
+        {
+            soul::xml::Element* scriptElement = soul::xml::MakeElement("script");
+            scriptElement->SetAttribute("type", "text/javascript");
+            scriptElement->SetAttribute("src", diagramFileName);
+            scriptElement->AppendChild(soul::xml::MakeText(" "));
+            headElement->AppendChild(scriptElement);
+        }
         soul::xml::Element* h1Element = soul::xml::MakeElement("h1");
         soul::xml::Text* h1Text = soul::xml::MakeText(title);
         h1Element->AppendChild(h1Text);
         bodyElement->AppendChild(h1Element);
+        if (diagramGenerated)
+        {
+            bodyElement->SetAttribute("onload", "drawClassDiagram()");
+            soul::xml::Element* divElement = soul::xml::MakeElement("div");
+            divElement->SetAttribute("class", "diagram");
+            soul::xml::Element* svgElement = soul::xml::MakeElement("svg");
+            svgElement->SetAttribute("width", "0");
+            svgElement->SetAttribute("height", "0");
+            svgElement->SetAttribute("id", "classDiagram");
+            svgElement->SetAttribute("xmlns", "http://www.w3.org/2000/svg");
+            svgElement->SetAttribute("version", "2.0");
+            divElement->AppendChild(svgElement);
+            bodyElement->AppendChild(divElement);
+        }
         htmlElement->AppendChild(bodyElement);
         soul::cpp20::symbols::TemplateDeclarationSymbol* templateDeclaration = symbol.ParentTemplateDeclaration();
         if (templateDeclaration)

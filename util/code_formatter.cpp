@@ -146,11 +146,11 @@ void CodeFormatter::Flush()
     stream.flush();
 }
 
-CodeFormatter& CodeFormatter::operator<<(StandardEndLine manip)
+CodeFormatter& operator<<(CodeFormatter& f, StandardEndLine manip)
 {
-    WriteLine();
-    Flush();
-    return *this;
+    f.WriteLine();
+    f.Flush();
+    return f;
 }
 
 CodeFormatter& operator<<(CodeFormatter& f, const std::string& s)

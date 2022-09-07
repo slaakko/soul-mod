@@ -22,7 +22,7 @@ public:
     std::string SymbolKindStr() const override { return "variable symbol"; }
     std::string SymbolDocKindStr() const override { return "variable"; }
     TypeSymbol* GetType() const { return type; }
-    void SetType(TypeSymbol* type_) { type = type_; }
+    void SetType(TypeSymbol* type_);
     Value* GetValue() const { return value; }
     void SetValue(Value* value_) { value = value_; }
     void Write(Writer& writer) override;

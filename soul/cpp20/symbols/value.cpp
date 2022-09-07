@@ -15,6 +15,7 @@ import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.visitor;
+import soul.cpp20.ast.error;
 
 namespace soul::cpp20::symbols {
 
@@ -539,6 +540,7 @@ void EvaluationContext::Read(Reader& reader)
         }
         else
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("soul.cpp20.symbols.value: value symbol expected");
         }
     }

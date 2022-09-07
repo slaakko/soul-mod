@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="class_diagram.cpp" />
+    <ClCompile Include="class_diagram.ixx" />
     <ClCompile Include="class_html_generator.cpp" />
     <ClCompile Include="class_html_generator.ixx" />
     <ClCompile Include="enum_html_generator.cpp" />

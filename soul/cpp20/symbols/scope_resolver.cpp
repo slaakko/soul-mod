@@ -12,6 +12,7 @@ import soul.cpp20.symbols.declaration;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.type.resolver;
 import soul.cpp20.symbols.type.symbol;
+import soul.cpp20.symbols.alias.type.symbol;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
@@ -61,14 +62,26 @@ void ScopeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
     }
     if (symbol)
     {
-        Scope* scope = symbol->GetScope();
-        if (scope)
+        while (symbol && symbol->IsAliasTypeSymbol())
         {
-            currentScope = scope;
+            AliasTypeSymbol* aliasTypeSymbol = static_cast<AliasTypeSymbol*>(symbol);
+            symbol = aliasTypeSymbol->ReferredType();
+        }
+        if (symbol)
+        {
+            Scope* scope = symbol->GetScope();
+            if (scope)
+            {
+                currentScope = scope;
+            }
+            else
+            {
+                ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not have a scope", node.GetSourcePos(), context);
+            }
         }
         else
         {
-            ThrowException("symbol '" + util::ToUtf8(symbol->FullName()) + "' does not have a scope", node.GetSourcePos(), context);
+            ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found from " + ScopeKindStr(currentScope->Kind()) + " '" + currentScope->FullName() + "'", node.GetSourcePos(), context);
         }
     }
     else

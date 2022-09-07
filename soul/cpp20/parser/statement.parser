@@ -42,6 +42,7 @@ parser StatementParser
     using GuardParser.MemberFunctionTemplateGuard;
     using GuardParser.SavedMemberFunctionBodyGuard;
     using PunctuationParser.Semicolon;
+    using PunctuationParser.Ellipsis;
     using TypeParser.TypeSpecifierSeq;
 
     Statement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
@@ -51,8 +52,8 @@ parser StatementParser
         |   IterationStatement(context):iterationStatement{ return iterationStatement; }
         |   JumpStatement(context):jumpStatement{ return jumpStatement; }
         |   TryStatement(context):tryStatement{ return tryStatement; }
-        |   DeclarationStatement(context):declarationStatement{ return declarationStatement; }
         |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
+        |   DeclarationStatement(context):declarationStatement{ return declarationStatement; }
         ;
 
     LabeledStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos labelPos, var int64_t labelP, 
@@ -83,7 +84,7 @@ parser StatementParser
         ;
 
     CompoundStatementUnguarded(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, 
-        var std::unique_ptr<soul::cpp20::ast::CompoundStatementNode> compoundStatementNode, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : soul::cpp20::ast::Node*
+        var std::unique_ptr<soul::cpp20::ast::CompoundStatementNode> compoundStatementNode, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos, var bool nextIsRBrace) : soul::cpp20::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (
             LBRACE
@@ -93,8 +94,19 @@ parser StatementParser
                 compoundStatementNode->SetAttributes(attributes); 
                 soul::cpp20::symbols::BeginBlock(sourcePos, context); 
             }
-            (
-                Statement(context):stmt{ compoundStatementNode->AddNode(stmt); }
+            (   Statement(context):stmt{ compoundStatementNode->AddNode(stmt); }
+            |   RBraceNext:next{ nextIsRBrace = true; pass = false; }
+            |   empty
+                { 
+                    if (!nextIsRBrace) 
+                    {
+                        ThrowStatementExpected(lexer.GetSourcePos(pos), context);
+                    }
+                    else
+                    {
+                        pass = false;
+                    }
+                }
             )* 
             RBRACE{ rbPos = lexer.GetSourcePos(pos); }
         )
@@ -105,6 +117,10 @@ parser StatementParser
             soul::cpp20::symbols::EndBlock(context);
             return compoundStatementNode.release();
         }
+        ;
+
+    RBraceNext
+        ::= &(RBRACE)
         ;
 
     CompoundStatementGuarded(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::CompoundStatementNode> compoundStatementNode) : soul::cpp20::ast::Node*
@@ -151,8 +167,8 @@ parser StatementParser
             if (!compoundStatementNode) 
             {
                 pass = false; 
-                lexer.BeginRecordedParse(compoundStatementNode->GetLexerPosPair()); 
             }
+            lexer.BeginRecordedParse(compoundStatementNode->GetLexerPosPair()); 
         }
         (
             LBRACE{ soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos); compoundStatementNode->SetLBracePos(sourcePos); soul::cpp20::symbols::BeginBlock(sourcePos, context); }
@@ -465,9 +481,10 @@ parser StatementParser
             |   AbstractDeclarator(context):abstractDeclarator{ declarator.reset(abstractDeclarator); }
             |   empty
             )
+        |   Ellipsis:ellipsis{ return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, nullptr, nullptr, ellipsis, attributes); }
         )
         {
-            return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers.release(), declarator.release(), attributes);
+            return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers.release(), declarator.release(), nullptr, attributes);
         }
         ;
 

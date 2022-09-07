@@ -69,7 +69,7 @@ void SpecializationSymbol::Read(Reader& reader)
 
 void SpecializationSymbol::Resolve(SymbolTable& symbolTable)
 {
-    TypeSymbol::Resolve(symbolTable);
+    // note: not calling TypeSymbol::Resolve(symbolTable); on purpose
     classTemplate = static_cast<ClassTypeSymbol*>(symbolTable.GetType(ids[0].first));
     for (int i = 1; i < ids.size(); ++i)
     {

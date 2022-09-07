@@ -199,7 +199,11 @@ parser TypeParser
                     { 
                         return new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns.release(), new soul::cpp20::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)); 
                     }
-                |   NestedNameSpecifier(context):nns2{ nns.reset(nns2); soul::cpp20::symbols::BeginScope(nns.get(), context); sourcePos = lexer.GetSourcePos(pos); }
+                |   NestedNameSpecifier(context):nns2
+                    { 
+                        nns.reset(nns2); 
+                        soul::cpp20::symbols::BeginScope(nns.get(), context); sourcePos = lexer.GetSourcePos(pos); 
+                    }
                     TypeName(context):typeName
                     { 
                         std::unique_ptr<soul::cpp20::ast::Node> typeNameNode;

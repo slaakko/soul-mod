@@ -1,4 +1,4 @@
-export module std.chrono.steady_clock;
+export module std.chrono.clock;
 
 import std.type.fundamental;
 import std.chrono.duration;
@@ -16,5 +16,7 @@ public:
 	static constexpr bool is_steady = true;
 	static time_point now();
 };
+
+using file_clock = steady_clock;
 
 } // std::chrono

@@ -1,3 +1,4 @@
 project bug;
 reference <../std/std.project>;
-interface <main>;
+interface <bug.ixx>;
+

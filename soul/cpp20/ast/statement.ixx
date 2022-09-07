@@ -443,16 +443,18 @@ class ExceptionDeclarationNode : public CompoundNode
 {
 public:
     ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_);
-    ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_, Node* attributes_);
+    ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_, Node* ellipsis_, Node* attributes_);
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     Node* TypeSpecifiers() const { return typeSpecifiers.get(); }
     Node* Declarator() const { return declarator.get(); }
+    Node* Ellipsis() const { return ellipsis.get(); }
     Node* Attributes() const { return attributes.get(); }
 private:
     std::unique_ptr<Node> typeSpecifiers;
     std::unique_ptr<Node> declarator;
+    std::unique_ptr<Node> ellipsis;
     std::unique_ptr<Node> attributes;
 };
 

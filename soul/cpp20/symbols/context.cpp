@@ -12,7 +12,7 @@ import soul.cpp20.symbols.symbol;
 
 namespace soul::cpp20::symbols {
 
-Context::Context() : symbolTable(nullptr), lexer(nullptr), flags(ContextFlags::none)
+Context::Context() : symbolTable(nullptr), lexer(nullptr), flags(ContextFlags::none), node(nullptr)
 {
 }
 
@@ -61,7 +61,7 @@ void Context::PushResetFlag(ContextFlags flag)
 
 bool Context::IsConstructorNameNode(soul::cpp20::ast::Node* node) const
 {
-    if (!GetFlag(ContextFlags::parsingParameters) && !GetFlag(ContextFlags::retMemberDeclSpecifiers))
+    if (!GetFlag(ContextFlags::parsingParameters) && !GetFlag(ContextFlags::retMemberDeclSpecifiers) && !GetFlag(ContextFlags::parsingTemplateId))
     {
         Scope* currentScope = symbolTable->CurrentScope();
         if (currentScope->IsClassScope())
@@ -104,6 +104,18 @@ bool Context::EnableNoDeclSpecFunctionDefinition() const
         }
     }
     return false;
+}
+
+void Context::PushNode(soul::cpp20::ast::Node* node_)
+{
+    nodeStack.push(node);
+    node = node_;
+}
+
+void Context::PopNode()
+{
+    node = nodeStack.top();
+    nodeStack.pop();
 }
 
 } // namespace soul::cpp20::symbols

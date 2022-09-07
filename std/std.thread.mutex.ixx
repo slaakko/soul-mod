@@ -28,4 +28,20 @@ public:
 	void unlock();
 };
 
+template<class Mutex>
+class lock_guard
+{
+public:
+	lock_guard(Mutex& mtx);
+	~lock_guard();
+};
+
+template<class Mutex>
+class unique_lock
+{
+public:
+	unique_lock(Mutex& mtx);
+	~unique_lock();
+};
+
 } // namespace std

@@ -10,11 +10,14 @@ import soul.cpp20.symbols.declarator;
 import soul.cpp20.symbols.evaluator;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.function.symbol;
+import soul.cpp20.symbols.function.group.symbol;
 import soul.cpp20.symbols.fundamental.type.symbol;
 import soul.cpp20.symbols.type.resolver;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.ast.error;
+import util;
 
 namespace soul::cpp20::symbols {
 
@@ -151,6 +154,7 @@ public:
     void Visit(soul::cpp20::ast::VoidNode& node) override;
     void Visit(soul::cpp20::ast::ConstNode& node) override;
     void Visit(soul::cpp20::ast::VolatileNode& node) override;
+    void Visit(soul::cpp20::ast::PlaceholderTypeSpecifierNode& node) override;
 
     void Visit(soul::cpp20::ast::FriendNode& node) override;
     void Visit(soul::cpp20::ast::TypedefNode& node) override;
@@ -371,8 +375,8 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::FloatNode& node)
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::DoubleNode& node)
 {
-CheckDuplicateSpecifier(flags, DeclarationFlags::doubleFlag, "double", node.GetSourcePos(), context);
-flags = flags | DeclarationFlags::doubleFlag;
+    CheckDuplicateSpecifier(flags, DeclarationFlags::doubleFlag, "double", node.GetSourcePos(), context);
+    flags = flags | DeclarationFlags::doubleFlag;
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::VoidNode& node)
@@ -391,6 +395,12 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::VolatileNode& node)
 {
     CheckDuplicateSpecifier(flags, DeclarationFlags::volatileFlag, "volatile", node.GetSourcePos(), context);
     flags = flags | DeclarationFlags::volatileFlag;
+}
+
+void DeclarationProcessor::Visit(soul::cpp20::ast::PlaceholderTypeSpecifierNode& node)
+{
+    CheckDuplicateSpecifier(flags, DeclarationFlags::autoFlag, "auto", node.GetSourcePos(), context);
+    flags = flags | DeclarationFlags::autoFlag;
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::FriendNode& node)
@@ -545,6 +555,7 @@ Declaration ProcessParameterDeclaration(soul::cpp20::ast::Node* node, Context* c
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.declaration: single declaration expected");
     }
 }
@@ -565,6 +576,7 @@ Declaration ProcessFunctionDeclaration(soul::cpp20::ast::Node* node, Context* co
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.declaration: single declaration expected");
     }
 }
@@ -581,21 +593,82 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
         if (declaration.declarator->Kind() == DeclaratorKind::functionDeclarator)
         {
             FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declaration.declarator.get());
-            context->GetSymbolTable()->BeginScope(functionDeclarator->GetScope());
-            ++scopes;
-            Symbol* symbol = context->GetSymbolTable()->Lookup(functionDeclarator->Name(), SymbolGroupKind::functionSymbolGroup, declarator->GetSourcePos(), context);
+            FunctionQualifiers qualifiers = functionDeclarator->GetFunctionQualifiers();
+            Symbol* symbol = context->GetSymbolTable()->Lookup(functionDeclarator->Name(), SymbolGroupKind::functionSymbolGroup, declarator->GetSourcePos(), context, LookupFlags::dontResolveSingle);
             if (symbol)
             {
-                if (symbol->IsFunctionSymbol())
+                if (symbol->IsFunctionGroupSymbol())
                 {
-                    context->GetSymbolTable()->BeginScope(symbol->GetScope());
+                    FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
+                    std::vector<TypeSymbol*> parameterTypes;
+                    for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+                    {
+                        parameterTypes.push_back(parameterDeclaration.type);
+                    }
+                    FunctionSymbol* functionSymbol = functionGroup->ResolveFunction(parameterTypes, qualifiers);
+                    FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(
+                        util::ToUtf32(functionDeclarator->GetScope()->FullName()) + U"::" + functionDeclarator->Name(), parameterTypes, qualifiers, declarator, functionSymbol, context);
+                    for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+                    {
+                        soul::ast::SourcePos sourcePos;
+                        std::u32string name;
+                        soul::cpp20::ast::Node* node = nullptr;
+                        if (parameterDeclaration.declarator)
+                        {
+                            name = parameterDeclaration.declarator->Name();
+                            node = parameterDeclaration.declarator->Node();
+                            sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
+                        }
+                        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+                        if (parameterDeclaration.value)
+                        {
+                            parameter->SetDefaultValue(parameterDeclaration.value);
+                        }
+                        definition->AddParameter(parameter, sourcePos, context);
+                    }
+                    definition->SetReturnType(declaration.type);
+                    context->GetSymbolTable()->BeginScope(definition->GetScope());
+                    definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                     ++scopes;
                 }
+            }
+            else
+            {
+                std::vector<TypeSymbol*> parameterTypes;
+                for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+                {
+                    parameterTypes.push_back(parameterDeclaration.type);
+                }
+                FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(
+                    util::ToUtf32(functionDeclarator->GetScope()->FullName()) + U"::" + functionDeclarator->Name(), parameterTypes, qualifiers, declarator, nullptr, context);
+                for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+                {
+                    soul::ast::SourcePos sourcePos;
+                    std::u32string name;
+                    soul::cpp20::ast::Node* node = nullptr;
+                    if (parameterDeclaration.declarator)
+                    {
+                        name = parameterDeclaration.declarator->Name();
+                        node = parameterDeclaration.declarator->Node();
+                        sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
+                    }
+                    ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+                    if (parameterDeclaration.value)
+                    {
+                        parameter->SetDefaultValue(parameterDeclaration.value);
+                    }
+                    definition->AddParameter(parameter, sourcePos, context);
+                }
+                definition->SetReturnType(declaration.type);
+                context->GetSymbolTable()->BeginScope(definition->GetScope());
+                definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                ++scopes;
             }
         }
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.declaration: single declaration expected");
     }
     return scopes;
@@ -622,6 +695,11 @@ void Write(Writer& writer, DeclarationFlags flags)
 void Read(Reader& reader, DeclarationFlags& flags)
 {
     flags = static_cast<DeclarationFlags>(reader.GetBinaryStreamReader().ReadULEB128UInt());
+}
+
+void ThrowDeclarationExpected(const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    ThrowException("declaration expected", sourcePos, context);
 }
 
 } // namespace soul::cpp20::symbols

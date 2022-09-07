@@ -154,6 +154,7 @@ void ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symbolTable)
         }
         else
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("soul.cpp20.symbols.enums: enum type expected");
         }
     }
@@ -289,7 +290,7 @@ void EnumCreator::Visit(soul::cpp20::ast::EnumeratorDefinitionNode& node)
     if (node.Value())
     {
         value = Evaluate(node.Value(), context);
-        if (value->IsIntegerValue())
+        if (value && value->IsIntegerValue())
         {
             IntegerValue* integerValue = static_cast<IntegerValue*>(value);
             prevValue = integerValue->GetValue();

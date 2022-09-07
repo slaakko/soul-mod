@@ -18,6 +18,7 @@ struct StatementParser
     static soul::parser::Match Statement(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match LabeledStatement(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match CompoundStatementUnguarded(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match RBraceNext(Lexer& lexer);
     static soul::parser::Match CompoundStatementGuarded(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match CompoundStatementSaved(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match CompoundStatement(Lexer& lexer, soul::cpp20::symbols::Context* context);

@@ -704,8 +704,8 @@ ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& s
 {
 }
 
-ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_, Node* attributes_) :
-    CompoundNode(NodeKind::exceptionDeclarationNode, sourcePos_), typeSpecifiers(typeSpecifiers_), declarator(declarator_), attributes(attributes_)
+ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_, Node* ellipsis_, Node* attributes_) :
+    CompoundNode(NodeKind::exceptionDeclarationNode, sourcePos_), typeSpecifiers(typeSpecifiers_), declarator(declarator_), ellipsis(ellipsis_), attributes(attributes_)
 {
 }
 
@@ -719,6 +719,7 @@ void ExceptionDeclarationNode::Write(Writer& writer)
     CompoundNode::Write(writer);
     writer.Write(typeSpecifiers.get());
     writer.Write(declarator.get());
+    writer.Write(ellipsis.get());
     writer.Write(attributes.get());
 }
 
@@ -727,6 +728,7 @@ void ExceptionDeclarationNode::Read(Reader& reader)
     CompoundNode::Read(reader);
     typeSpecifiers.reset(reader.ReadNode());
     declarator.reset(reader.ReadNode());
+    ellipsis.reset(reader.ReadNode());
     attributes.reset(reader.ReadNode());
 }
 

@@ -15,6 +15,7 @@ import soul.ast.lexer.pos.pair;
 
 export namespace soul::cpp20::parser::recorded::parse {
 
+void Init();
 soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::Lexer<soul::cpp20::lexer::Cpp20Lexer<char32_t>, char32_t>& lexer);
 void PushSavedCompoundStatementNode(soul::cpp20::ast::CompoundStatementNode* node, soul::cpp20::symbols::Context* context);
 void PopSavedCompoundStatementNode(soul::cpp20::symbols::Context* context);

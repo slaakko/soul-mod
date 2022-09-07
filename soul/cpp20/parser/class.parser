@@ -38,6 +38,7 @@ parser ClassParser
     using EnumParser.OpaqueEnumDeclaration;
     using ExpressionParser.ExpressionList;
     using FunctionParser.FunctionDefinition;
+    using FunctionParser.NoDeclSpecFunctionDefinition;
     using IdentifierParser.Identifier;
     using IdentifierParser.NestedNameSpecifier;
     using IdentifierParser.Unnamed;
@@ -300,7 +301,8 @@ parser ClassParser
         ;
 
     MemberFunctionDefinition(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
-        ::= FunctionDefinition(context):functionDefinition{ return functionDefinition; }
+        ::= NoDeclSpecFunctionDefinition(context):noDeclSpecFunctionDefinition{ return noDeclSpecFunctionDefinition; }
+        |   FunctionDefinition(context):functionDefinition{ return functionDefinition; }
         ;
 
     RetMemberFunctionDefinition(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*

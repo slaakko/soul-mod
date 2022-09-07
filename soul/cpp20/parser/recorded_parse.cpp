@@ -6,9 +6,19 @@
 module soul.cpp20.parser.recorded.parse;
 
 import soul.cpp20.token;
+import soul.cpp20.parser.statement;
+import soul.cpp20.lexer;
+import soul.cpp20.symbols;
 
 namespace soul::cpp20::parser::recorded::parse {
 
+void RecordedParse(soul::cpp20::ast::CompoundStatementNode* node, soul::cpp20::symbols::Context* context);
+
+void Init()
+{
+    soul::cpp20::symbols::SetRecordedParseFn(RecordedParse);
+}
+    
 soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::Lexer<soul::cpp20::lexer::Cpp20Lexer<char32_t>, char32_t>& lexer)
 {
     int64_t start = lexer.GetPos();
@@ -50,23 +60,37 @@ soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::L
 
 void PushSavedCompoundStatementNode(soul::cpp20::ast::CompoundStatementNode* node, soul::cpp20::symbols::Context* context)
 {
-    int x = 0;
+    context->PushNode(node);
 }
 
 void PopSavedCompoundStatementNode(soul::cpp20::symbols::Context* context)
 {
-    int x = 0;
+    context->PopNode();
 }
 
 soul::cpp20::ast::CompoundStatementNode* GetSavedCompoundStatementNode(soul::cpp20::symbols::Context* context)
 {
     soul::cpp20::ast::CompoundStatementNode* compoundStatementNode = nullptr;
+    soul::cpp20::ast::Node* n = context->GetNode();
+    if (n && n->IsCompoundStatementNode())
+    {
+        return static_cast<soul::cpp20::ast::CompoundStatementNode*>(n);
+    }
+    else
+    {
+        throw std::runtime_error("context has no compound statement node");
+    }
     return compoundStatementNode;
 }
 
 void RecordedParse(soul::cpp20::ast::CompoundStatementNode* node, soul::cpp20::symbols::Context* context)
 {
-    int x = 0;
+    context->PushSetFlag(soul::cpp20::symbols::ContextFlags::parseSavedMemberFunctionBody);
+    PushSavedCompoundStatementNode(node, context);
+    using Lexer = soul::lexer::Lexer<soul::cpp20::lexer::Cpp20Lexer<char32_t>, char32_t>;
+    soul::cpp20::parser::statement::StatementParser<Lexer>::CompoundStatement(*static_cast<Lexer*>(context->GetLexer()), context);
+    PopSavedCompoundStatementNode(context);
+    context->PopFlags();
 }
 
 } // namespace soul::cpp20::parser::recorded::parse

@@ -9,6 +9,9 @@ import std.core;
 
 export namespace util {
 
+using CoutType = std::ostream;
+using StandardEndLine = CoutType & (*)(CoutType&);
+
 class LogFileWriter
 {
 public:
@@ -18,16 +21,15 @@ public:
     void WriteLine();
     void WriteLine(const std::string& line);
     void Write(const std::string& s);
-    using CoutType = std::ostream;
-    using StandardEndLine = CoutType& (*)(CoutType&);
-    LogFileWriter& operator<<(StandardEndLine manip);
     std::ostream& LogFile() { return logFile; }
+    bool IsOpen() const { return open; }
 private:
     bool open;
     std::string logFilePath;
     std::ofstream logFile;
 };
 
+LogFileWriter& operator<<(LogFileWriter& writer, StandardEndLine manip);
 LogFileWriter& operator<<(LogFileWriter& writer, const std::string& s);
 LogFileWriter& operator<<(LogFileWriter& writer, const char* s);
 LogFileWriter& operator<<(LogFileWriter& writer, char c);

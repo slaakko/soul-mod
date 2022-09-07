@@ -1,5 +1,5 @@
 solution soul;
-project <soul/cpp20/std/std.project>;
+project <std/std.project>;
 project <util/util.project>;
 project <soul/ast/ast.project>;
 project <soul/lexer/lexer.project>;
@@ -23,3 +23,5 @@ project <soul/cpp20/token/token.project>;
 project <soul/cpp20/lexer/lexer.project>;
 project <soul/cpp20/symbols/symbols.project>;
 project <soul/cpp20/parser/parser.project>;
+project <soul/cpp20/project/project.project>;
+

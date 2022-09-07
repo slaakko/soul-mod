@@ -184,14 +184,15 @@ void Project::BuildCppProject()
     project->InitModules();
     for (int file : project->InterfaceFiles())
     {
-        soul::cpp20::project::build::ScanDependencies(project.get(), file);
+        std::string interfaceUnitName;
+        soul::cpp20::project::build::ScanDependencies(project.get(), file, false, interfaceUnitName);
     }
     project->SetScanned();
     project->LoadModules(init.nodeIdFactory, init.moduleMapper, init.symbols);
     bool build = force || !project->UpToDate();
     if (!build)
     {
-        project->ResolveForwardDeclarations(init.moduleMapper);
+        project->ResolveForwardDeclarationsAndAddDerivedClasses(init.moduleMapper);
         return;
     }
     soul::cpp20::project::build::BuildFlags flags = soul::cpp20::project::build::BuildFlags::none;

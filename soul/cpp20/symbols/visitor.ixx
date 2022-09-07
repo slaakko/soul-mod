@@ -36,6 +36,7 @@ class FunctionGroupSymbol;
 class ParameterSymbol;
 class FunctionSymbol;
 class FunctionTypeSymbol;
+class FunctionDefinitionSymbol;
 class FundamentalTypeSymbol;
 class NamespaceSymbol;
 class SpecializationSymbol;
@@ -83,6 +84,7 @@ public:
     virtual void Visit(ParameterSymbol& symbol) {}
     virtual void Visit(FunctionSymbol& symbol) {}
     virtual void Visit(FunctionTypeSymbol& symbol) {}
+    virtual void Visit(FunctionDefinitionSymbol& symbol) {}
     virtual void Visit(FundamentalTypeSymbol& symbol) {}
     virtual void Visit(NamespaceSymbol& symbol) {}
     virtual void Visit(SpecializationSymbol& symbol) {}

@@ -18,6 +18,8 @@ template<typename Lexer>
 struct DeclarationParser
 {
     static soul::parser::Match DeclarationSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match NamespaceDeclarationSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match RBraceNext(Lexer& lexer);
     static soul::parser::Match Declaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match BlockDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match NoDeclSpecFunctionDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);

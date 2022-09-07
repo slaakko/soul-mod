@@ -7,4 +7,6 @@ reference <../../lexer/lexer.project>;
 reference <../../parser/parser.project>;
 reference <../../../util/util.project>;
 interface <document_handler.ixx>;
+source <document_handler.cpp>;
 interface <dom_parser.ixx>;
+source <dom_parser.cpp>;

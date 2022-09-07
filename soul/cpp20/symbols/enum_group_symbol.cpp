@@ -13,6 +13,7 @@ import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.visitor;
+import soul.cpp20.ast.error;
 
 namespace soul::cpp20::symbols {
 
@@ -89,18 +90,20 @@ void EnumGroupSymbol::Resolve(SymbolTable& symbolTable)
         }
         else
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("enum type expected");
         }
     }
     if (fwdDeclId != util::nil_uuid())
     {
-        TypeSymbol* type = symbolTable.GetType(enumTypeId);
+        TypeSymbol* type = symbolTable.GetType(fwdDeclId);
         if (type->IsForwardEnumDeclarationSymbol())
         {
             forwardDeclaration = static_cast<ForwardEnumDeclarationSymbol*>(type);
         }
         else
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("enum forward declaration expected");
         }
     }
@@ -111,5 +114,16 @@ void EnumGroupSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+void EnumGroupSymbol::Merge(EnumGroupSymbol* that)
+{
+    if (!enumType && that->enumType)
+    {
+        enumType = that->enumType;
+    }
+    if (!forwardDeclaration && that->forwardDeclaration)
+    {
+        forwardDeclaration = that->forwardDeclaration;
+    }
+}
 
 } // soul::cpp20::symbols

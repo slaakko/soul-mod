@@ -12,6 +12,7 @@ import soul.cpp20.symbols.lookup;
 export namespace soul::cpp20::symbols {
 
 class Symbol;
+class Module;
 class Context;
 class NamespaceSymbol;
 class ContainerSymbol;
@@ -56,8 +57,9 @@ public:
     virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const;
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
-    virtual Scope* ParentScope() const { return nullptr; }
-    virtual void SetParentScope(Scope* parentScope_);
+    virtual std::vector<Scope*> ParentScopes() const { return std::vector<Scope*>(); }
+    virtual void AddParentScope(Scope* parentScope_);
+    virtual void ClearParentScopes() {}
     virtual void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -78,8 +80,9 @@ class ContainerScope : public Scope
 public:
     ContainerScope();
     void Import(Scope* that) override;
-    Scope* ParentScope() const override { return parentScope; }
-    void SetParentScope(Scope* parentScope_) override { parentScope = parentScope_; }
+    std::vector<Scope*> ParentScopes() const override { return parentScopes; }
+    void AddParentScope(Scope* parentScope) override;
+    void ClearParentScopes() override;
     bool IsContainerScope() const override { return true; }
     Scope* GetClassScope() const override;
     void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -99,7 +102,7 @@ public:
     AliasGroupSymbol* GetOrInsertAliasGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
     EnumGroupSymbol* GetOrInsertEnumGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
-    Scope* parentScope;
+    std::vector<Scope*> parentScopes;
     std::vector<Scope*> baseScopes;
     Scope* usingDeclarationScope;
     ContainerSymbol* containerSymbol;

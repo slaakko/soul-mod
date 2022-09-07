@@ -152,6 +152,7 @@
     <None Include="project.keyword" />
     <None Include="project.lexer" />
     <None Include="project.parser" />
+    <None Include="project.project" />
     <None Include="project.slg" />
     <None Include="project.spg" />
     <None Include="project.token" />
@@ -177,6 +178,7 @@
     <ClCompile Include="project.parser.cpp" />
     <ClCompile Include="project.parser.ixx" />
     <ClCompile Include="project.token.ixx" />
+    <ClCompile Include="project.ixx" />
     <ClCompile Include="project_rules.cpp" />
     <ClCompile Include="project_rules.ixx" />
     <ClCompile Include="solution.lexer.cpp" />

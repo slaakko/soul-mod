@@ -11,6 +11,7 @@ module soul.cpp20.symbols.symbol.table;
 import util.unicode;
 import util.uuid;
 import soul.lexer;
+import soul.cpp20.ast.error;
 import soul.cpp20.symbols.alias.type.symbol;
 import soul.cpp20.symbols.alias.group.symbol;
 import soul.cpp20.symbols.class_group.symbol;
@@ -48,7 +49,8 @@ SymbolTable::SymbolTable() :
     topScopeIndex(0),
     addToRecomputeNameSet(false), 
     currentAccess(Access::none),
-    nodeMap(nullptr)
+    nodeMap(nullptr),
+    classLevel(0)
 {
     globalNs->SetSymbolTable(this);
 }
@@ -56,6 +58,11 @@ SymbolTable::SymbolTable() :
 void SymbolTable::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+void SymbolTable::SetCurrentScope(Scope* scope)
+{
+    currentScope = scope;
 }
 
 void SymbolTable::PushScope()
@@ -67,6 +74,7 @@ void SymbolTable::PopScope()
 {
     if (scopeStack.empty())
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("scope stack is empty");
     }
     currentScope = scopeStack.back();
@@ -113,6 +121,12 @@ void SymbolTable::PopAccess()
     accessStack.pop();
 }
 
+void SymbolTable::AddClass(ClassTypeSymbol* cls)
+{
+    classes.insert(cls);
+    allClasses.insert(cls);
+}
+
 void SymbolTable::Init()
 {
     if (module->Name() == "std.type.fundamental")
@@ -134,10 +148,12 @@ void SymbolTable::Import(const SymbolTable& that)
     ImportSymbolNodeMap(that);
     ImportTypeMap(that);
     ImportFunctionMap(that);
+    ImportFunctionDefinitionMap(that);
     ImportVariableMap(that);
     ImportConstraintMap(that);
     ImportForwardDeclarations(that);
     ImportSpecifierMap(that);
+    ImportClasses(that);
     typenameConstraintSymbol = that.typenameConstraintSymbol;
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
@@ -199,6 +215,14 @@ void SymbolTable::ImportFunctionMap(const SymbolTable& that)
     }
 }
 
+void SymbolTable::ImportFunctionDefinitionMap(const SymbolTable& that)
+{
+    for (const auto& p : that.functionDefinitionMap)
+    {
+        functionDefinitionMap.insert(p);
+    }
+}
+
 void SymbolTable::ImportVariableMap(const SymbolTable& that)
 {
     for (const auto& p : that.variableMap)
@@ -228,6 +252,14 @@ void SymbolTable::ImportSpecifierMap(const SymbolTable& that)
     for (const auto& spec : that.allSpecifierNodeMap)
     {
         allSpecifierNodeMap.insert(spec);
+    }
+}
+
+void SymbolTable::ImportClasses(const SymbolTable& that)
+{
+    for (auto cls : that.allClasses)
+    {
+        allClasses.insert(cls);
     }
 }
 
@@ -265,6 +297,13 @@ void SymbolTable::WriteMaps(Writer& writer)
         writer.GetBinaryStreamWriter().Write(uuid);
         int32_t nodeId = spec.second->Id();
         writer.GetBinaryStreamWriter().Write(nodeId);
+    }
+    uint32_t nc = classes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(nc);
+    for (auto cls : classes)
+    {
+        const util::uuid& uuid = cls->Id();
+        writer.GetBinaryStreamWriter().Write(uuid);
     }
 }
 
@@ -312,6 +351,18 @@ void SymbolTable::ReadMaps(Reader& reader, soul::cpp20::ast::NodeMap* nodeMap)
         specifierNodeMap[symbol] = node;
         allSpecifierNodeMap[symbol] = node;
     }
+    uint32_t nc = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < nc; ++i)
+    {
+        util::uuid clsId;
+        reader.GetBinaryStreamReader().ReadUuid(clsId);
+        Symbol* symbol = soul::cpp20::symbols::GetSymbol(clsId);
+        if (symbol->IsClassTypeSymbol())
+        {
+            classes.insert(static_cast<ClassTypeSymbol*>(symbol));
+            allClasses.insert(static_cast<ClassTypeSymbol*>(symbol));
+        }
+    }
 }
 
 void SymbolTable::Write(Writer& writer)
@@ -348,6 +399,7 @@ void SymbolTable::Read(Reader& reader)
         }
         else
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("soul.cpp20.symbols.symbol_table: specialization expected");
         }
     }
@@ -362,6 +414,7 @@ void SymbolTable::Read(Reader& reader)
         }
         else
         {
+            soul::cpp20::ast::SetExceptionThrown();
             throw std::runtime_error("soul.cpp20.symbols.symbol_table: compound type expected");
         }
     }
@@ -407,7 +460,7 @@ Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGr
     Symbol* symbol = Lookup(name, symbolGroupKind, sourcePos, context, LookupFlags::none);
     if (!symbol)
     {
-        return LookupInScopeStack(name, symbolGroupKind, sourcePos, context, LookupFlags::none);
+        symbol = LookupInScopeStack(name, symbolGroupKind, sourcePos, context, LookupFlags::none);
     }
     return symbol;
 }
@@ -510,13 +563,14 @@ soul::cpp20::ast::Node* SymbolTable::GetNode(Symbol* symbol) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("node for symbol '" + util::ToUtf8(symbol->Name()) + "' not found");
     }
 }
 
 void SymbolTable::RemoveNode(soul::cpp20::ast::Node* node)
 {
-    if (soul::lexer::parsing_error_thrown || ExceptionThrown()) return;
+    if (soul::lexer::parsing_error_thrown || ExceptionThrown() || soul::cpp20::ast::ExceptionThrown()) return;
     Symbol* symbol = nullptr;
     auto it = nodeSymbolMap.find(node);
     if (it != nodeSymbolMap.cend())
@@ -571,6 +625,7 @@ Symbol* SymbolTable::GetSymbol(soul::cpp20::ast::Node* node) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("symbol for node not found");
     }
 }
@@ -597,6 +652,7 @@ TypeSymbol* SymbolTable::GetType(const util::uuid& id) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("type for id '" + util::ToString(id) + "' not found");
     }
 }
@@ -724,6 +780,8 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, so
     }
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
     ClassTypeSymbol* classTypeSymbol = new ClassTypeSymbol(name);
+    classTypeSymbol->SetLevel(classLevel++);
+    AddClass(classTypeSymbol);
     classTypeSymbol->SetAccess(CurrentAccess());
     classTypeSymbol->SetClassKind(classKind);
     currentScope->SymbolScope()->AddSymbol(classTypeSymbol, node->GetSourcePos(), context);
@@ -747,8 +805,23 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, so
     }
 }
 
+void SymbolTable::AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    Symbol* symbol = currentScope->GetSymbol();
+    if (symbol->IsClassTypeSymbol())
+    {
+        ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
+        classTypeSymbol->AddBaseClass(baseClass, sourcePos, context);
+    }
+    else
+    {
+        ThrowException("class type symbol expected", sourcePos, context);
+    }
+}
+
 void SymbolTable::EndClass()
 {
+    --classLevel;
     PopAccess();
     EndScope();
 }
@@ -790,7 +863,7 @@ void SymbolTable::BeginEnumeratedType(const std::u32string& name, EnumTypeKind k
     EnumeratedTypeSymbol* enumType = enumGroup->GetEnumType();
     if (enumType)
     {
-        ThrowException("enumerated type '" + util::ToUtf8(name) + " not unique", node->GetSourcePos(), context);
+        ThrowException("enumerated type '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
     }
     EnumeratedTypeSymbol* enumTypeSymbol = new EnumeratedTypeSymbol(name);
     enumTypeSymbol->SetAccess(CurrentAccess());
@@ -855,6 +928,7 @@ void SymbolTable::RemoveBlock()
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.symbol_table: block expected");
     }
 }
@@ -905,6 +979,27 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, soul::cpp20
     functionGroup->AddFunction(functionSymbol);
     MapNode(node, functionSymbol);
     return functionSymbol;
+}
+
+FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, soul::cpp20::ast::Node* node,
+    FunctionSymbol* declaration, Context* context)
+{
+    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(name, node->GetSourcePos(), context);
+    FunctionDefinitionSymbol* prev = functionGroup->GetFunctionDefinition(parameterTypes, qualifiers);
+    if (prev)
+    {
+        PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
+    }
+    FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
+    functionDefinition->SetFunctionQualifiers(qualifiers);
+    functionDefinition->SetDeclaration(declaration);
+    if (declaration)
+    {
+        functionDefinition->SetAccess(declaration->GetAccess());
+    }
+    currentScope->SymbolScope()->AddSymbol(functionDefinition, node->GetSourcePos(), context);
+    functionGroup->AddFunctionDefinition(functionDefinition);
+    return functionDefinition;
 }
 
 ParameterSymbol* SymbolTable::CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context)
@@ -1030,6 +1125,7 @@ TypeSymbol* SymbolTable::GetFundamentalTypeSymbol(FundamentalTypeKind kind)
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("fundamental type " + std::to_string(static_cast<int32_t>(kind)) + " not found");
     }
 }
@@ -1037,6 +1133,11 @@ TypeSymbol* SymbolTable::GetFundamentalTypeSymbol(FundamentalTypeKind kind)
 void SymbolTable::MapFunction(FunctionSymbol* function)
 {
     functionMap[function->Id()] = function;
+}
+
+void SymbolTable::MapFunctionDefinition(FunctionDefinitionSymbol* functionDefinition)
+{
+    functionDefinitionMap[functionDefinition->Id()] = functionDefinition;
 }
 
 void SymbolTable::MapVariable(VariableSymbol* variable)
@@ -1058,7 +1159,22 @@ FunctionSymbol* SymbolTable::GetFunction(const util::uuid& id) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.symbol_table: function for id '" + util::ToString(id) + "' not found");
+    }
+}
+
+FunctionDefinitionSymbol* SymbolTable::GetFunctionDefinition(const util::uuid& id) const
+{
+    auto it = functionDefinitionMap.find(id);
+    if (it != functionDefinitionMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        soul::cpp20::ast::SetExceptionThrown();
+        throw std::runtime_error("soul.cpp20.symbols.symbol_table: function definition for id '" + util::ToString(id) + "' not found");
     }
 }
 
@@ -1071,6 +1187,7 @@ AliasTypeSymbol* SymbolTable::GetAliasType(const util::uuid& id) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.symbol_table: alias type expected");
     }
 }
@@ -1084,6 +1201,7 @@ ClassTypeSymbol* SymbolTable::GetClass(const util::uuid& id) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.symbol_table: class type expected");
     }
 }
@@ -1097,6 +1215,7 @@ VariableSymbol* SymbolTable::GetVariable(const util::uuid& id) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("variable for id '" + util::ToString(id) + "' not found");
     }
 }
@@ -1110,6 +1229,7 @@ Symbol* SymbolTable::GetConstraint(const util::uuid& id) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("constraint for id '" + util::ToString(id) + "' not found");
     }
 }
@@ -1139,6 +1259,19 @@ void SymbolTable::RecomputeNames()
     recomputeNameSet.clear();
 }
 
+TypeSymbol* SymbolTable::GetFundamentalType(FundamentalTypeKind kind) const
+{
+    auto it = fundamentalTypeMap.find(static_cast<int32_t>(kind));
+    if (it != fundamentalTypeMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 Symbols::Symbols()
 {
 }
@@ -1157,6 +1290,7 @@ Symbol* Symbols::GetSymbol(const util::uuid& symbolId)
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.Reader: symbol id " + util::ToString(symbolId) + " not found");
     }
 }

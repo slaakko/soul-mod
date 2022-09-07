@@ -25,7 +25,7 @@ parser GuardParser
         ;
 
     MemberFunctionTemplateGuard(soul::cpp20::symbols::Context* context)
-        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseMemberFunction | soul::cpp20::symbols::ContextFlags::parsingTemplateDeclaration); }
+        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseMemberFunction) && !context->GetFlag(soul::cpp20::symbols::ContextFlags::parsingTemplateDeclaration); }
         ;
 
     SavedMemberFunctionBodyGuard(soul::cpp20::symbols::Context* context)

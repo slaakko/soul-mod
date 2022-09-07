@@ -2785,10 +2785,17 @@ void DefaultVisitor::Visit(ExceptionDeclarationNode& node)
     {
         node.Attributes()->Accept(*this);
     }
-    node.TypeSpecifiers()->Accept(*this);
+    if (node.TypeSpecifiers())
+    {
+        node.TypeSpecifiers()->Accept(*this);
+    }
     if (node.Declarator())
     {
         node.Declarator()->Accept(*this);
+    }
+    if (node.Ellipsis())
+    {
+        node.Ellipsis()->Accept(*this);
     }
     EndVisit(node);
 }

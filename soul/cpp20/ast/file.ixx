@@ -20,14 +20,4 @@ struct File
     std::unique_ptr<Node> content;
 };
 
-class Files
-{
-public:
-    void AddFile(File* file);
-    void Write(Writer& writer);
-    void Read(Reader& reader);
-private:
-    std::vector<std::unique_ptr<File>> files;
-};
-
 } // namespace soul::cpp20::ast

@@ -1,5 +1,0 @@
-export module bug;
-
-import std.core;
-
-enum class foo : int64_t;

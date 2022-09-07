@@ -60,6 +60,7 @@ public:
     void Visit(soul::cpp20::ast::RvalueRefNode& node) override;
     void Visit(soul::cpp20::ast::PtrNode& node) override;
     void Visit(soul::cpp20::ast::TypenameSpecifierNode& node) override;
+    void Visit(soul::cpp20::ast::DeclTypeSpecifierNode& node) override;
     void Visit(soul::cpp20::ast::QualifiedIdNode& node) override;
     void Visit(soul::cpp20::ast::IdentifierNode& node) override;
     void Visit(soul::cpp20::ast::TemplateIdNode& node) override;
@@ -291,6 +292,12 @@ void TypeResolver::Visit(soul::cpp20::ast::TypenameSpecifierNode& node)
     createTypeSymbol = false;
     EndScope(context);
     context->GetSymbolTable()->PopTopScopeIndex();
+}
+
+void TypeResolver::Visit(soul::cpp20::ast::DeclTypeSpecifierNode& node)
+{
+    // TODO: resolve type of node.Expression();
+    type = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::autoType);
 }
 
 void TypeResolver::Visit(soul::cpp20::ast::QualifiedIdNode& node)

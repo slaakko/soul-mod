@@ -83,6 +83,7 @@ void ConceptSymbol::Read(Reader& reader)
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.concepts: ConceptSymbol::Read(): constraint expression expected");
     }
 }

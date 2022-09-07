@@ -31,6 +31,7 @@ public:
     void Import(ModuleMapper& moduleMapper);
     void Import(Module* that, ModuleMapper& moduleMapper);
     void ResolveForwardDeclarations();
+    void AddDerivedClasses();
     void Write(const std::string& root);
     void Write(Writer& writer);
     void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
@@ -50,7 +51,10 @@ public:
     const std::vector<Module*>& ImportedModules() const { return importedModules; }
     void AddDependsOnModule(Module* dependsOnModule);
     const std::vector<Module*>& DependsOnModules() const { return dependsOnModules; }
-    soul::cpp20::ast::Files& Files() { return files; }
+    void SetFile(soul::cpp20::ast::File* astFile_);
+    soul::cpp20::ast::File* GetFile() { return astFile.get(); }
+    const std::vector<Module*>& ImplementationUnits() const { return implementationUnits; }
+    void AddImplementationUnit(Module* implementationUnit);
 private:
     int file;
     std::string name;
@@ -60,8 +64,9 @@ private:
     std::vector<Module*> importedModules;
     SymbolTable symbolTable;
     EvaluationContext evaluationContext;
+    std::vector<Module*> implementationUnits;
     std::vector<Module*> dependsOnModules;
-    soul::cpp20::ast::Files files;
+    std::unique_ptr<soul::cpp20::ast::File> astFile;
     std::set<Module*> importSet;
     bool reading;
 };

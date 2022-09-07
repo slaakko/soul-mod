@@ -66,11 +66,17 @@ public:
     bool IsConstructorNameNode(soul::cpp20::ast::Node* node) const;
     bool EnableNoDeclSpecFunctionDeclaration() const;
     bool EnableNoDeclSpecFunctionDefinition() const;
+    void PushNode(soul::cpp20::ast::Node* node_);
+    void PopNode();
+    soul::cpp20::ast::Node* GetNode() const { return node; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
     ContextFlags flags;
     std::stack<ContextFlags> flagStack;
+    std::stack<soul::cpp20::ast::Node*> nodeStack;
+    soul::cpp20::ast::Node* node;
+
 };
 
 } // namespace soul::cpp20::symbols

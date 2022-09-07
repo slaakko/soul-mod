@@ -31,7 +31,7 @@ constexpr BuildFlags operator~(BuildFlags flags)
     return BuildFlags(~int32_t(flags));
 }
 
-void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file);
+void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file, bool implementationUnit, std::string& interfaceUnitName);
 soul::cpp20::symbols::Module* GetModule(soul::cpp20::symbols::ModuleMapper& moduleMapper, const std::string& moduleName);
 void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags);
 void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags);

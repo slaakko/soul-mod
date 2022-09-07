@@ -1,9 +1,16 @@
 project soul.ast;
 reference <../../util/util.project>;
 interface <common.ixx>;
+source <common.cpp>;
 interface <cpp.ixx>;
+source <cpp.cpp>;
 interface <lexer_pos_pair.ixx>;
 interface <re.ixx>;
+source <re.cpp>;
 interface <slg.ixx>;
+source <slg.cpp>;
 interface <spg.ixx>;
+// source <spg.cpp>;
 interface <source_pos.ixx>;
+source <source_pos.cpp>;
+

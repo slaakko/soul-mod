@@ -42,7 +42,7 @@ public:
     void SetScanned() { scanned = true; }
     const std::vector<std::unique_ptr<soul::cpp20::symbols::Module>>& Modules() const { return modules; }
     const std::vector<std::string>& ModuleNames() const { return moduleNames; }
-    void ResolveForwardDeclarations(soul::cpp20::symbols::ModuleMapper& moduleMapper);
+    void ResolveForwardDeclarationsAndAddDerivedClasses(soul::cpp20::symbols::ModuleMapper& moduleMapper);
 private:
     std::string filePath;
     std::string root;

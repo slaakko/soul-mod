@@ -3106,23 +3106,57 @@ soul::parser::Match ClassParser<Lexer>::MemberFunctionDefinition(Lexer& lexer, s
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
     soul::lexer::RuleGuard ruleGuard(lexer, 8201428699560542228);
+    std::unique_ptr<soul::cpp20::ast::Node> noDeclSpecFunctionDefinition;
     std::unique_ptr<soul::cpp20::ast::Node> functionDefinition;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
-        soul::parser::Match match = FunctionParser<Lexer>::FunctionDefinition(lexer, context);
-        functionDefinition.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
-        if (match.hit)
+        int64_t save = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
         {
+            int64_t pos = lexer.GetPos();
+            soul::parser::Match match = FunctionParser<Lexer>::NoDeclSpecFunctionDefinition(lexer, context);
+            noDeclSpecFunctionDefinition.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+            if (match.hit)
             {
-                #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberFunctionDefinition");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
-                return soul::parser::Match(true, functionDefinition.release());
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberFunctionDefinition");
+                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    return soul::parser::Match(true, noDeclSpecFunctionDefinition.release());
+                }
             }
+            *parentMatch1 = match;
         }
         *parentMatch0 = match;
+        if (!match.hit)
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            lexer.SetPos(save);
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = FunctionParser<Lexer>::FunctionDefinition(lexer, context);
+                    functionDefinition.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
+                    if (match.hit)
+                    {
+                        {
+                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberFunctionDefinition");
+                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            return soul::parser::Match(true, functionDefinition.release());
+                        }
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch0 = match;
+        }
     }
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)

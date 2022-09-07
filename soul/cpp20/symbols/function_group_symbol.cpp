@@ -57,6 +57,12 @@ void FunctionGroupSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(function->Id());
     }
+    uint32_t fdCount = definitions.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(fdCount);
+    for (FunctionDefinitionSymbol* definition : definitions)
+    {
+        writer.GetBinaryStreamWriter().Write(definition->Id());
+    }
 }
 
 void FunctionGroupSymbol::Read(Reader& reader)
@@ -69,6 +75,13 @@ void FunctionGroupSymbol::Read(Reader& reader)
         reader.GetBinaryStreamReader().ReadUuid(functionId);
         functionIds.push_back(functionId);
     }
+    uint32_t fdCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < fdCount; ++i)
+    {
+        util::uuid functionDefinitionId;
+        reader.GetBinaryStreamReader().ReadUuid(functionDefinitionId);
+        functionDefinitionIds.push_back(functionDefinitionId);
+    }
 }
 
 void FunctionGroupSymbol::Resolve(SymbolTable& symbolTable)
@@ -78,6 +91,11 @@ void FunctionGroupSymbol::Resolve(SymbolTable& symbolTable)
     {
         FunctionSymbol* function = symbolTable.GetFunction(functionId);
         functions.push_back(function);
+    }
+    for (const auto& functionDefinitionId : functionDefinitionIds)
+    {
+        FunctionDefinitionSymbol* functionDefinition = symbolTable.GetFunctionDefinition(functionDefinitionId);
+        definitions.push_back(functionDefinition);
     }
 }
 
@@ -95,6 +113,65 @@ void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
             functions.push_back(function);
         }
     }
+}
+
+FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const
+{
+    for (const auto& function : functions)
+    {
+        if (function->Arity() == parameterTypes.size())
+        {
+            bool found = qualifiers == function->Qualifiers();
+            if (found)
+            {
+                for (int i = 0; i < function->Arity(); ++i)
+                {
+                    if (function->Parameters()[i]->Type() != parameterTypes[i])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    return function;
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const
+{
+    for (const auto& functionDefinition : definitions)
+    {
+        if (functionDefinition->Arity() == parameterTypes.size())
+        {
+            bool found = qualifiers == functionDefinition->Qualifiers();
+            if (found)
+            {
+                for (int i = 0; i < functionDefinition->Arity(); ++i)
+                {
+                    if (functionDefinition->Parameters()[i]->Type() != parameterTypes[i])
+                    {
+                        found = false;
+                        break;
+                    }
+                }
+                if (found)
+                {
+                    return functionDefinition;
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+void FunctionGroupSymbol::AddFunctionDefinition(FunctionDefinitionSymbol* definition_)
+{
+    definitions.push_back(definition_);
 }
 
 } // namespace soul::cpp20::symbols

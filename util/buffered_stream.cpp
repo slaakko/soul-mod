@@ -5,6 +5,8 @@
 
 module util.buffered.stream;
 
+import util.stream;
+
 namespace util {
 
 BufferedStream::BufferedStream(Stream& baseStream_) : BufferedStream(baseStream_, 4096)

@@ -9,6 +9,7 @@ import std.core;
 import soul.lexer.base;
 import soul.lexer.token;
 import util.unicode;
+import soul.cpp20.ast.error;
 
 export namespace soul::cpp20::proj::parser::token {
 
@@ -33,6 +34,7 @@ std::string ParseFilePath(const std::string& fileName, const soul::lexer::Token<
     }
     if (p != e)
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("invalid file path at " + fileName + ":" + std::to_string(token.line) + " : '" + util::ToUtf8(token.match.ToString()) + "'");
     }
     return util::ToUtf8(strValue);

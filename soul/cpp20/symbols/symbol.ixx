@@ -44,7 +44,7 @@ enum class SymbolKind : int32_t
     classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
     boolValueSymbol, integerValueSymbol, floatingValueSymbol, genericTypeSymbol, nullPtrTypeSymbol,
     aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
-    conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, 
+    conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, functionDefinitionSymbol,
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
     templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol,
     specializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
@@ -119,6 +119,7 @@ public:
     bool CanInstall() const;
     bool IsTypeSymbol() const;
     bool IsNamespaceSymbol() const { return kind == SymbolKind::namespaceSymbol; }
+    bool IsGlobalNamespace() const { return kind == SymbolKind::namespaceSymbol && parent == nullptr; }
     bool IsSpecializationSymbol() const { return kind == SymbolKind::specializationSymbol;  }
     bool IsCompoundTypeSymbol() const { return kind == SymbolKind::compoundTypeSymbol; }
     bool IsIntegerValueSymbol() const { return kind == SymbolKind::integerValueSymbol; }
@@ -136,6 +137,7 @@ public:
     bool IsFunctionGroupSymbol() const { return kind == SymbolKind::functionGroupSymbol; }
     bool IsFunctionSymbol() const { return  kind == SymbolKind::functionSymbol; }
     bool IsFunctionTypeSymbol() const { return kind == SymbolKind::functionTypeSymbol; }
+    bool IsFunctionDefinitionSymbol() const { return kind == SymbolKind::functionDefinitionSymbol; }
     bool IsBlockSymbol() const { return kind == SymbolKind::blockSymbol; }
     bool IsFundamentalTypeSymbol() const { return kind == SymbolKind::fundamentalTypeSymbol; }
     bool IsParameterSymbol() const { return kind == SymbolKind::parameterSymbol; }

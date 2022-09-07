@@ -8,6 +8,7 @@ module soul.cpp20.proj.ast;
 import std.filesystem;
 import util;
 import soul.cpp20.ast.node;
+import soul.cpp20.ast.error;
 
 namespace soul::cpp20::proj::ast {
 
@@ -20,6 +21,7 @@ void LoadImportedModules(Project* project, soul::cpp20::symbols::Module* module,
         {
             module->AddImportedModule(projectModule);
             module->AddDependsOnModule(projectModule);
+            LoadImportedModules(project, module, projectModule, moduleMapper);
         }
         else
         {
@@ -81,53 +83,48 @@ void Project::LoadModules(soul::cpp20::ast::NodeIdFactory* nodeIdFactory, soul::
     loaded = true;
     for (const auto& module : modules)
     {
-        moduleMap[module->Name()] = module.get();
-        moduleNames.push_back(module->Name());
+        if (module)
+        {
+            moduleMap[module->Name()] = module.get();
+            moduleNames.push_back(module->Name());
+        }
     }
     soul::cpp20::ast::SetNodeIdFactory(nodeIdFactory);
     soul::cpp20::symbols::SetSymbols(symbols);
     for (const auto& module : modules)
     {
-        if (module->Name() != "std.type.fundamental" && module->ExportModuleNames().empty() && module->ImportModuleNames().empty())
+        if (!module) continue;
+        for (const auto& exportedModuleName : module->ExportModuleNames())
         {
-            soul::cpp20::symbols::Module* importedModule = moduleMapper.GetModule("std.type.fundamental");
+            soul::cpp20::symbols::Module* exportedModule = GetModule(exportedModuleName);
+            if (exportedModule)
+            {
+                module->AddExportedModule(exportedModule);
+                module->AddDependsOnModule(exportedModule);
+            }
+            else
+            {
+                soul::cpp20::ast::SetExceptionThrown();
+                throw std::runtime_error("exported module '" + exportedModuleName + "' not found");
+            }
+        }
+        for (const auto& importedModuleName : module->ImportModuleNames())
+        {
+            soul::cpp20::symbols::Module* importedModule = GetModule(importedModuleName);
+            bool loaded = false;
+            if (!importedModule)
+            {
+                importedModule = moduleMapper.GetModule(importedModuleName);
+                loaded = true;
+            }
             module->AddImportedModule(importedModule);
             module->AddDependsOnModule(importedModule);
-            module->Import(importedModule, moduleMapper);
-        }
-        else
-        {
-            for (const auto& exportedModuleName : module->ExportModuleNames())
+            LoadImportedModules(this, module.get(), importedModule, moduleMapper);
+            if (loaded)
             {
-                soul::cpp20::symbols::Module* exportedModule = GetModule(exportedModuleName);
-                if (exportedModule)
+                for (soul::cpp20::symbols::Module* exportedModule : importedModule->ExportedModules())
                 {
-                    module->AddExportedModule(exportedModule);
-                    module->AddDependsOnModule(exportedModule);
-                }
-                else
-                {
-                    throw std::runtime_error("exported module '" + exportedModuleName + "' not found");
-                }
-            }
-            for (const auto& importedModuleName : module->ImportModuleNames())
-            {
-                soul::cpp20::symbols::Module* importedModule = GetModule(importedModuleName);
-                bool loaded = false;
-                if (!importedModule)
-                {
-                    importedModule = moduleMapper.GetModule(importedModuleName);
-                    loaded = true;
-                }
-                module->AddImportedModule(importedModule);
-                module->AddDependsOnModule(importedModule);
-                LoadImportedModules(this, module.get(), importedModule, moduleMapper);
-                if (loaded)
-                {
-                    for (soul::cpp20::symbols::Module* exportedModule : importedModule->ExportedModules())
-                    {
-                        module->Import(exportedModule, moduleMapper);
-                    }
+                    module->Import(exportedModule, moduleMapper);
                 }
             }
         }
@@ -142,6 +139,7 @@ void Project::SetModule(int file, soul::cpp20::symbols::Module* module)
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("invalid file index");
     }
 }
@@ -167,6 +165,7 @@ soul::cpp20::symbols::Module* Project::GetModule(int file) const
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("invalid file index");
     }
 }
@@ -179,6 +178,7 @@ soul::cpp20::symbols::Module* Project::ReleaseModule(int file)
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("invalid file index");
     }
 }
@@ -217,7 +217,7 @@ void Project::AddReferenceFilePath(const std::string& referenceFilePath)
     referenceFilePaths.push_back(referenceFilePath);
 }
 
-void Project::ResolveForwardDeclarations(soul::cpp20::symbols::ModuleMapper& moduleMapper)
+void Project::ResolveForwardDeclarationsAndAddDerivedClasses(soul::cpp20::symbols::ModuleMapper& moduleMapper)
 {
     soul::cpp20::symbols::Module projectModule(Name() + ".#project");
     for (const auto& moduleName : moduleNames)
@@ -226,6 +226,7 @@ void Project::ResolveForwardDeclarations(soul::cpp20::symbols::ModuleMapper& mod
         projectModule.Import(module, moduleMapper);
     }
     projectModule.ResolveForwardDeclarations();
+    projectModule.AddDerivedClasses();
 }
 
 Solution::Solution(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_)

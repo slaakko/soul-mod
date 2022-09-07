@@ -68,6 +68,7 @@ class FunctionSymbol : public ContainerSymbol
 {
 public:
     FunctionSymbol(const std::u32string& name_);
+    int Arity() const { return parameters.size(); }
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
     FunctionKind GetFunctionKind() const { return kind; }
@@ -90,6 +91,35 @@ private:
     TypeSymbol* returnType;
     util::uuid returnTypeId;
     std::vector<ParameterSymbol*> parameters;
+};
+
+class FunctionDefinitionSymbol : public ContainerSymbol
+{
+public:
+    FunctionDefinitionSymbol(const std::u32string& name_);
+    int Arity() const { return parameters.size(); }
+    FunctionQualifiers Qualifiers() const { return qualifiers; }
+    void SetFunctionQualifiers(FunctionQualifiers qualifiers_) { qualifiers = qualifiers_; }
+    std::string SymbolKindStr() const override { return "function definition symbol"; }
+    std::string SymbolDocKindStr() const override { return "function_definition"; }
+    void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
+    FunctionSymbol* Declaration() const { return declaration; }
+    void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
+    TypeSymbol* ReturnType() const { return returnType; }
+    void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
+    void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
+private:
+    FunctionQualifiers qualifiers;
+    TypeSymbol* returnType;
+    util::uuid returnTypeId;
+    std::vector<ParameterSymbol*> parameters;
+    FunctionSymbol* declaration;
+    util::uuid declarationId;
 };
 
 class FunctionTypeSymbol : public TypeSymbol

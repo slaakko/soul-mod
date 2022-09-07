@@ -7,4 +7,5 @@ reference <../../parser/parser.project>;
 reference <../../../util/util.project>;
 interface <xml_document.parser.ixx>;
 interface <xml_parser.ixx>;
+source <xml_parser.cpp>;
 interface <xml_parser_rules.ixx>;

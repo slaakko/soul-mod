@@ -22,13 +22,6 @@ LogFileWriter::LogFileWriter(const std::string& logFilePath) : LogFileWriter(log
 {
 }
 
-LogFileWriter& LogFileWriter::operator<<(StandardEndLine manip)
-{
-    if (!open) return *this;
-    WriteLine();
-    return *this;
-}
-
 void LogFileWriter::WriteCurrentDateTime()
 {
     if (!open) return;
@@ -52,6 +45,13 @@ void LogFileWriter::Write(const std::string& s)
 {
     if (!open) return;
     logFile << s;
+}
+
+LogFileWriter& operator<<(LogFileWriter& writer, StandardEndLine manip)
+{
+    if (!writer.IsOpen()) return writer;
+    writer.WriteLine();
+    return writer;
 }
 
 LogFileWriter& operator<<(LogFileWriter& writer, const std::string& s)

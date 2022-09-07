@@ -209,11 +209,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "expression", "expression", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lexer", "soul\cpp20\lexer\lexer.vcxproj", "{D11D6F6D-D91C-45AD-B9EA-20CF4A64C061}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "std", "std", "{328ECFB7-F039-45E6-B3FF-B510AAEEDE0C}"
-	ProjectSection(SolutionItems) = preProject
-		soul\cpp20\std\std.project = soul\cpp20\std\std.project
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "symbols", "soul\cpp20\symbols\symbols.vcxproj", "{936F4A64-4818-450A-B5D3-B285476F8488}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parser", "soul\cpp20\parser\parser.vcxproj", "{086C283B-2155-4874-94CA-C98717FEEFE6}"
@@ -223,6 +218,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "build", "soul\cpp20\build\build.vcxproj", "{6033D54A-AD3B-4537-8146-2B45C8857CFB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gendoc", "tools\gendoc\gendoc.vcxproj", "{D2A763BC-DB17-4DED-9C28-8F6A16FA6103}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "std", "std", "{8EF5DD6D-E5DC-4499-B576-D1D78BA8463A}"
+	ProjectSection(SolutionItems) = preProject
+		std\std.project = std\std.project
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1173,7 +1173,6 @@ Global
 		{B824E046-26EA-455A-91A2-AFEAAC1CB737} = {EA7BDE78-1C9D-4134-AF2D-A57C59B86C56}
 		{0C81FB2C-5AAC-4EE5-A6DF-7EE721489206} = {EA7BDE78-1C9D-4134-AF2D-A57C59B86C56}
 		{D11D6F6D-D91C-45AD-B9EA-20CF4A64C061} = {EA7BDE78-1C9D-4134-AF2D-A57C59B86C56}
-		{328ECFB7-F039-45E6-B3FF-B510AAEEDE0C} = {EA7BDE78-1C9D-4134-AF2D-A57C59B86C56}
 		{936F4A64-4818-450A-B5D3-B285476F8488} = {EA7BDE78-1C9D-4134-AF2D-A57C59B86C56}
 		{086C283B-2155-4874-94CA-C98717FEEFE6} = {EA7BDE78-1C9D-4134-AF2D-A57C59B86C56}
 		{9FAF9C96-091F-4413-ADC5-A9873D78B68D} = {EA7BDE78-1C9D-4134-AF2D-A57C59B86C56}

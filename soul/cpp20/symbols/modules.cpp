@@ -17,6 +17,7 @@ import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.visitor;
 import soul.cpp20.ast.reader;
 import soul.cpp20.ast.writer;
+import soul.cpp20.ast.error;
 
 namespace soul::cpp20::symbols {
 
@@ -112,6 +113,20 @@ void Module::ResolveForwardDeclarations()
     }
 }
 
+void Module::AddDerivedClasses()
+{
+    for (auto cls : symbolTable.Classes())
+    {
+        for (auto baseClass : cls->BaseClasses())
+        {
+            if (baseClass->IsClassTypeSymbol())
+            {
+                static_cast<ClassTypeSymbol*>(baseClass)->AddDerivedClass(cls);
+            }
+        }
+    }
+}
+
 void Module::Write(const std::string& root)
 {
     std::string moduleFilePath = MakeModuleFilePath(root, name);
@@ -122,6 +137,16 @@ void Module::Write(const std::string& root)
 void Module::Init()
 {
     symbolTable.Init();
+}
+
+void Module::SetFile(soul::cpp20::ast::File* astFile_)
+{
+    astFile.reset(astFile_);
+}
+
+void Module::AddImplementationUnit(Module* implementationUnit)
+{
+    implementationUnits.push_back(implementationUnit);
 }
 
 void Module::AddExportModuleName(const std::string& exportModuleName)
@@ -179,7 +204,7 @@ void Module::Write(Writer& writer)
     symbolTable.Write(writer);
     evaluationContext.Write(writer);
     soul::cpp20::ast::Writer astWriter(&writer.GetBinaryStreamWriter());
-    files.Write(astWriter);
+    astFile->Write(astWriter);
     symbolTable.WriteMaps(writer);
 }
 
@@ -187,6 +212,7 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
 {
     if (reading)
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("circular module interface unit dependency for module '" + name + "' detected");
     }
     reading = true;
@@ -210,7 +236,8 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, soul::cpp2
     evaluationContext.Read(reader);
     soul::cpp20::ast::Reader astReader(&reader.GetBinaryStreamReader());
     astReader.SetNodeMap(nodeMap);
-    files.Read(astReader);
+    astFile.reset(new soul::cpp20::ast::File());
+    astFile->Read(astReader);
     symbolTable.ReadMaps(reader, nodeMap);
     Import(moduleMapper);
     symbolTable.Resolve(nodeMap);
@@ -225,7 +252,7 @@ bool ModuleNameLess::operator()(Module* left, Module* right) const
 
 ModuleMapper::ModuleMapper()
 {
-    roots.push_back(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "soul/cpp20/std")));
+    roots.push_back(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "std")));
 }
 
 void ModuleMapper::AddRoot(const std::string& root)
@@ -261,6 +288,7 @@ Module* ModuleMapper::GetModule(const std::string& moduleName)
                 return LoadModule(moduleName, moduleFilePath);
             }
         }
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("module '" + moduleName + "' not found");
     }
 }

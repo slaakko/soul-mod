@@ -58,6 +58,7 @@ class NamespaceSymbol;
 class TypeSymbol;
 class FundamentalTypeSymbol;
 class FunctionSymbol;
+class FunctionDefinitionSymbol;
 class ParameterSymbol;
 class Value;
 class VariableSymbol;
@@ -89,7 +90,7 @@ public:
     TypeSymbol* GetErrorTypeSymbol() { return errorTypeSymbol; }
     void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) { errorTypeSymbol = errorTypeSymbol_; }
     Scope* CurrentScope() const { return currentScope; }
-    void SetCurrentScope(Scope* scope) { currentScope = scope; }
+    void SetCurrentScope(Scope* scope);
     void PushScope();
     void PopScope();
     void BeginScope(Scope* scope);
@@ -101,6 +102,7 @@ public:
     void BeginNamespace(soul::cpp20::ast::Node* node, Context* context);
     void EndNamespace(int level);
     void BeginClass(const std::u32string& name, ClassKind classKind, soul::cpp20::ast::Node* node, Context* context);
+    void AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     void EndClass();
     void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, soul::cpp20::ast::Node* node, Context* context);
     void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, soul::cpp20::ast::Node* node, Context* context);
@@ -116,6 +118,8 @@ public:
     void AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, 
         soul::cpp20::ast::Node* defaultTemplateArgNode, Context* context);
     FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
+    FunctionDefinitionSymbol* AddFunctionDefinition(const std::u32string& name, const std::vector<TypeSymbol*>& paramterTypes, FunctionQualifiers qualifiers, soul::cpp20::ast::Node* node, 
+        FunctionSymbol* declaration, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
     void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context);
     void AddAliasType(soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
@@ -143,13 +147,16 @@ public:
     void MapType(TypeSymbol* type);
     void MapFundamentalType(FundamentalTypeSymbol* fundamentalTypeSymbol);
     void MapFunction(FunctionSymbol* function);
+    void MapFunctionDefinition(FunctionDefinitionSymbol* functionDefinition);
     void MapVariable(VariableSymbol* variable);
     void MapConstraint(Symbol* constraint);
     FunctionSymbol* GetFunction(const util::uuid& id) const;
+    FunctionDefinitionSymbol* GetFunctionDefinition(const util::uuid& id) const;
     AliasTypeSymbol* GetAliasType(const util::uuid& id) const;
     ClassTypeSymbol* GetClass(const util::uuid& id) const;
     VariableSymbol* GetVariable(const util::uuid& id) const;
     Symbol* GetConstraint(const util::uuid& id) const;
+    TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const;
     void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
     bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
     void AddToRecomputeNameSet(CompoundTypeSymbol* compoundTypeSymbol);
@@ -160,6 +167,8 @@ public:
     void SetCurrentAccess(Access access);
     void PushAccess(Access access);
     void PopAccess();
+    void AddClass(ClassTypeSymbol* cls);
+    const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -171,10 +180,12 @@ private:
     void ImportSymbolNodeMap(const SymbolTable& that);
     void ImportTypeMap(const SymbolTable& that);
     void ImportFunctionMap(const SymbolTable& that);
+    void ImportFunctionDefinitionMap(const SymbolTable& that);
     void ImportVariableMap(const SymbolTable& that);
     void ImportConstraintMap(const SymbolTable& that);
     void ImportForwardDeclarations(const SymbolTable& that);
     void ImportSpecifierMap(const SymbolTable& that);
+    void ImportClasses(const SymbolTable& that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
     std::vector<std::unique_ptr<Symbol>> specializations;
@@ -192,6 +203,7 @@ private:
     std::map<Symbol*, soul::cpp20::ast::Node*> allSpecifierNodeMap;
     std::map<util::uuid, TypeSymbol*> typeMap;
     std::map<util::uuid, FunctionSymbol*> functionMap;
+    std::map<util::uuid, FunctionDefinitionSymbol*> functionDefinitionMap;
     std::map<util::uuid, VariableSymbol*> variableMap;
     std::map<util::uuid, Symbol*> constraintMap;
     Symbol* typenameConstraintSymbol;
@@ -205,6 +217,9 @@ private:
     Access currentAccess;
     std::stack<Access> accessStack;
     soul::cpp20::ast::NodeMap* nodeMap;
+    std::set<ClassTypeSymbol*> classes;
+    std::set<ClassTypeSymbol*> allClasses;
+    int classLevel;
 };
 
 class Symbols

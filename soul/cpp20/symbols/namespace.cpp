@@ -53,6 +53,7 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
     }
     else
     {
+        soul::cpp20::ast::SetExceptionThrown();
         throw std::runtime_error("soul.cpp20.symbols.NamespaceSymbol::Import: namespace symbol expected");
     }
     for (auto& symbol : that->Symbols())

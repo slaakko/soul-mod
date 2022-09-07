@@ -30,30 +30,4 @@ void File::Read(Reader& reader)
     content.reset(reader.ReadNode());
 }
 
-void Files::AddFile(File* file)
-{
-    files.push_back(std::unique_ptr<File>(file));
-}
-
-void Files::Write(Writer& writer)
-{
-    uint32_t n = files.size();
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
-    for (const auto& file : files)
-    {
-        file->Write(writer);
-    }
-}
-
-void Files::Read(Reader& reader)
-{
-    uint32_t n = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < n; ++i)
-    {
-        File* file = new File();
-        file->Read(reader);
-        AddFile(file);
-    }
-}
-
 } // namespace soul::cpp20::ast

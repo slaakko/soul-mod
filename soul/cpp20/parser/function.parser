@@ -45,7 +45,7 @@ parser FunctionParser
     FunctionDefinition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifierSeqNode, 
         var std::unique_ptr<soul::cpp20::ast::Node> declaratorNode, var std::unique_ptr<soul::cpp20::ast::Node> specifierNode, var int scopes) : soul::cpp20::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ lexer.GetSourcePos(pos); })? 
-            (DeclSpecifierSeq(context):declSpecifiers{ declSpecifierSeqNode.reset(declSpecifiers); if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); })? 
+            DeclSpecifierSeq(context):declSpecifiers{ declSpecifierSeqNode.reset(declSpecifiers); if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
             Declarator(context):declarator
             {
                 if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);

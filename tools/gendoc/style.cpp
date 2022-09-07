@@ -76,6 +76,12 @@ void MakeStyleFile(const std::string& rootDir)
     formatter.DecIndent();
     formatter.WriteLine("}");
     formatter.WriteLine();
+    formatter.WriteLine(".diagram");
+    formatter.WriteLine("{");
+    formatter.IncIndent();
+    formatter.WriteLine("text-align: center;");
+    formatter.DecIndent();
+    formatter.WriteLine("}");
 }
 
 } // namespace gendoc

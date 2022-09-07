@@ -28,6 +28,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    void Merge(EnumGroupSymbol* that);
 private:
     EnumeratedTypeSymbol* enumType;
     util::uuid enumTypeId;

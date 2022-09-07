@@ -296,7 +296,7 @@ TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& temp
                     node->GetSourcePos(), 
                     context);
             }
-            specialization->GetScope()->SetParentScope(context->GetSymbolTable()->CurrentScope());
+            specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
             context->GetSymbolTable()->BeginScope(specialization->GetScope());
             InstantiationScope instantiationScope(specialization->GetScope());
             std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
@@ -330,10 +330,18 @@ TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& temp
             }
             context->GetSymbolTable()->BeginScope(&instantiationScope);
             Instantiator instantiator(context);
-            classNode->Accept(instantiator);
+            try
+            {
+                classNode->Accept(instantiator);
+            }
+            catch (const std::exception& ex)
+            {
+                ThrowException("soul.cpp20.symbols.templates: error instantiating specialization '" + 
+                    util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), node->GetSourcePos(), context);
+            }
             context->GetSymbolTable()->EndScope();
             context->GetSymbolTable()->EndScope();
-            specialization->GetScope()->SetParentScope(nullptr);
+            specialization->GetScope()->ClearParentScopes();
         }
         else
         {

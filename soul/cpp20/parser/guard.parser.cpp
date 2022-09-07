@@ -161,7 +161,7 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionTemplateGuard(Lexer& lexer
         soul::parser::Match match(true);
         if (match.hit)
         {
-            pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseMemberFunction | soul::cpp20::symbols::ContextFlags::parsingTemplateDeclaration);
+            pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseMemberFunction) && !context->GetFlag(soul::cpp20::symbols::ContextFlags::parsingTemplateDeclaration);
         }
         if (match.hit && !pass)
         {

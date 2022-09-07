@@ -312,21 +312,30 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::LvalueRefNode& node)
 {
     Derivations derivations;
     derivations.vec.push_back(Derivation::lvalueRefDerivation);
-    baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    if (baseType)
+    {
+        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    }
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::RvalueRefNode& node)
 {
     Derivations derivations;
     derivations.vec.push_back(Derivation::rvalueRefDerivation);
-    baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    if (baseType)
+    {
+        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    }
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::PtrNode& node)
 {
     Derivations derivations;
     derivations.vec.push_back(Derivation::pointerDerivation);
-    baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    if (baseType)
+    {
+        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    }
 }
 
 void DeclaratorProcessor::Visit(soul::cpp20::ast::DestructorIdNode& node)

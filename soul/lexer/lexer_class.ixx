@@ -14,6 +14,8 @@ import soul.lexer.base;
 import soul.lexer.concepts;
 import soul.lexer.error;
 import soul.lexer.parsing.log;
+import soul.lexer.token;
+import soul.ast.lexer.pos.pair;
 
 export namespace soul::lexer {
 
@@ -38,6 +40,25 @@ constexpr LexerFlags operator~(LexerFlags flag)
 }
 
 bool parsing_error_thrown = false;
+
+template<class Char, class LexerBaseT>
+struct LexerState
+{
+    LexerState(LexerBaseT* lexer) : token(lexer), line(0), lexeme(), pos(), tokens(), flags(), recordedPosPair(), farthestPos(), currentPos()
+    {
+    }
+    soul::lexer::Token<Char, LexerBaseT> token;
+    int line;
+    Lexeme<Char> lexeme;
+    const Char* pos;
+    std::vector<soul::lexer::Token<Char, LexerBaseT>> tokens;
+    LexerFlags flags;
+    soul::ast::lexer::pos::pair::LexerPosPair recordedPosPair;
+    int64_t farthestPos;
+    std::vector<int64_t> ruleContext;
+    std::vector<int64_t> farthestRuleContext;
+    int64_t currentPos;
+};
 
 template<typename Stack>
     requires RuleStack<Stack>
@@ -105,7 +126,8 @@ public:
         ruleNameMapPtr(nullptr),
         farthestPos(GetPos()),
         log(nullptr),
-        vars()
+        vars(),
+        state(this)
     {
         ComputeLineStarts();
     }
@@ -115,23 +137,41 @@ public:
     }
     void operator++()
     {
-        if (current != tokens.end())
+        if (GetFlag(LexerFlags::recordedParse))
         {
-            ++current;
-        }
-        if (current == tokens.end())
-        {
-            NextToken();
+            // precondition: !tokens.empty() && tokens.back().id == END_TOKEN
+            int64_t currentPos = GetPos();
+            if (currentPos == recordedPosPair.end)
+            {
+                current = tokens.end() - 1; // set current to last token whose id is END_TOKEN
+                pos = tokens.back().match.end;
+            }
+            else
+            {
+                ++current;
+            }
+            line = current->line;
         }
         else
         {
-            line = current->line;
-        }
-        int64_t p = GetPos();
-        if (p > farthestPos)
-        {
-            farthestPos = p;
-            farthestRuleContext = ruleContext;
+            if (current != tokens.end())
+            {
+                ++current;
+            }
+            if (current == tokens.end())
+            {
+                NextToken();
+            }
+            else
+            {
+                line = current->line;
+            }
+            int64_t p = GetPos();
+            if (p > farthestPos)
+            {
+                farthestPos = p;
+                farthestRuleContext = ruleContext;
+            }
         }
     }
     int64_t GetPos() const override
@@ -425,6 +465,63 @@ public:
         tokens.push_back(endToken);
         current = tokens.end() - 1;
     }
+    void BeginRecordedParse(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair) override
+    {
+        PushState();
+        if (tokens.empty() || tokens.back().id != END_TOKEN)
+        {
+            Token<Char, LexerBase<Char>> endToken(END_TOKEN, this);
+            endToken.match.begin = end;
+            endToken.match.end = end;
+            tokens.push_back(endToken);
+        }
+        recordedPosPair = lexerPosPair;
+        SetPos(recordedPosPair.start);
+        SetFlag(LexerFlags::recordedParse);
+    }
+    void EndRecordedParse() override
+    {
+        PopState();
+    }
+    void PushState()
+    {
+        stateStack.push(GetState());
+    }
+    void PopState()
+    {
+        SetState(stateStack.top());
+        stateStack.pop();
+    }
+    LexerState<Char, LexerBase<Char>> GetState()
+    {
+        LexerState<Char, LexerBase<Char>> state(this);
+        state.token = token;
+        state.line = line;
+        state.lexeme = lexeme;
+        state.pos = pos;
+        state.tokens = tokens;
+        state.flags = flags;
+        state.recordedPosPair = recordedPosPair;
+        state.farthestPos = farthestPos;
+        state.ruleContext = ruleContext;
+        state.farthestRuleContext = farthestRuleContext;
+        state.currentPos = GetPos();
+        return state;
+    }
+    void SetState(const LexerState<Char, LexerBase<Char>>& state)
+    {
+        token = state.token;
+        line = state.line;
+        lexeme = state.lexeme;
+        pos = state.pos;
+        tokens = state.tokens;
+        flags = state.flags;
+        recordedPosPair = state.recordedPosPair;
+        farthestPos = state.farthestPos;
+        ruleContext = state.ruleContext;
+        farthestRuleContext = state.farthestRuleContext;
+        SetPos(state.currentPos);
+    }
 private:
     void NextToken()
     {
@@ -532,6 +629,7 @@ private:
         lineStarts.push_back(end);
     }
     LexerFlags flags;
+    soul::ast::lexer::pos::pair::LexerPosPair recordedPosPair;
     Char separatorChar;
     std::vector<Token<Char, LexerBase<Char>>> tokens;
     std::vector<Token<Char, LexerBase<Char>>>::iterator current;
@@ -554,6 +652,8 @@ private:
     std::map<int64_t, std::string>* ruleNameMapPtr;
     ParsingLog* log;
     Machine::Variables vars;
+    LexerState<Char, LexerBase<Char>> state;
+    std::stack<LexerState<Char, LexerBase<Char>>> stateStack;
 };
 
 inline std::string GetEndTokenInfo()

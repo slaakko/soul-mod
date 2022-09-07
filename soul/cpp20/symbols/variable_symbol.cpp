@@ -61,6 +61,11 @@ void VariableSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+void VariableSymbol::SetType(TypeSymbol* type_) 
+{ 
+    type = type_; 
+}
+
 bool VariableLess::operator()(VariableSymbol* left, VariableSymbol* right) const
 {
     return left->Name() < right->Name();
