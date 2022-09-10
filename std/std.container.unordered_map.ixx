@@ -70,9 +70,9 @@ public:
     iterator erase(const_iterator first, const_iterator last);
     void swap(unordered_map&);
     void clear();
-	
-	hasher hash_function() const;
-	key_equal key_eq() const;	
+    
+    hasher hash_function() const;
+    key_equal key_eq() const;   
     
     iterator find(const key_type& x);
     const_iterator find(const key_type& x) const;

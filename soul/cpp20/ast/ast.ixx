@@ -33,3 +33,4 @@ export import soul.cpp20.ast.util;
 export import soul.cpp20.ast.visitor;
 export import soul.cpp20.ast.writer;
 export import soul.cpp20.ast.output;
+export import soul.cpp20.ast.xml;

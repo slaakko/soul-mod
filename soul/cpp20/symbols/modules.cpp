@@ -31,6 +31,11 @@ Module::Module(const std::string& name_) : name(name_), symbolTable(), file(-1),
     symbolTable.SetModule(this);
 }
 
+void Module::SetFilePath(const std::string& filePath_)
+{
+    filePath = filePath_;
+}
+
 void Module::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -144,9 +149,23 @@ void Module::SetFile(soul::cpp20::ast::File* astFile_)
     astFile.reset(astFile_);
 }
 
+void Module::LoadImplementationUnits(ModuleMapper& moduleMapper)
+{
+    for (const auto& implementationUnitName : implementationUnitNames)
+    {
+        Module* implementationUnit = moduleMapper.GetModule(implementationUnitName);
+        AddImplementationUnit(implementationUnit);
+    }
+}
+
 void Module::AddImplementationUnit(Module* implementationUnit)
 {
     implementationUnits.push_back(implementationUnit);
+}
+
+void Module::SetImplementationUnitNames(const std::vector<std::string>& names)
+{
+    implementationUnitNames = names;
 }
 
 void Module::AddExportModuleName(const std::string& exportModuleName)
@@ -189,6 +208,7 @@ void Module::AddDependsOnModule(Module* dependsOnModule)
 void Module::Write(Writer& writer)
 {
     writer.GetBinaryStreamWriter().Write(name);
+    writer.GetBinaryStreamWriter().Write(filePath);
     uint32_t expCount = exportModuleNames.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(expCount);
     for (const auto& exportedModuleName : exportModuleNames)
@@ -200,6 +220,12 @@ void Module::Write(Writer& writer)
     for (const auto& importedModuleName : importModuleNames)
     {
         writer.GetBinaryStreamWriter().Write(importedModuleName);
+    }
+    uint32_t implementationUnitNameCount = implementationUnitNames.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(implementationUnitNameCount);
+    for (const auto& implementationUnitName : implementationUnitNames)
+    {
+        writer.GetBinaryStreamWriter().Write(implementationUnitName);
     }
     symbolTable.Write(writer);
     evaluationContext.Write(writer);
@@ -217,6 +243,7 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
     }
     reading = true;
     name = reader.GetBinaryStreamReader().ReadUtf8String();
+    filePath = reader.GetBinaryStreamReader().ReadUtf8String();
     uint32_t expCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < expCount; ++i)
     {
@@ -226,6 +253,11 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
     for (uint32_t i = 0; i < impCount; ++i)
     {
         AddImportModuleName(reader.GetBinaryStreamReader().ReadUtf8String());
+    }
+    uint32_t implementationUnitNameCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < implementationUnitNameCount; ++i)
+    {
+        implementationUnitNames.push_back(reader.GetBinaryStreamReader().ReadUtf8String());
     }
 }
 
@@ -297,6 +329,7 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
 {
     Reader reader(moduleFilePath);
     std::unique_ptr<Module> module(new Module(moduleName));
+    module->SetFilePath(moduleFilePath);
     module->ReadHeader(reader, *this);
     Module* modulePtr = module.get();
     moduleMap[moduleName] = modulePtr;

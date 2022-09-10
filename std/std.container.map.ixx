@@ -50,12 +50,12 @@ public:
     bool empty() const;
     size_type size() const;
     size_type max_size() const;
-	
+    
     mapped_type& operator[](const key_type& x);
     mapped_type& operator[](key_type&& x);
     mapped_type& at(const key_type& x);
     const mapped_type& at(const key_type& x) const;
-	
+    
     pair<iterator, bool> insert(const value_type& x);
     pair<iterator, bool> insert(value_type&& x);
     iterator insert(const_iterator position, const value_type& x);

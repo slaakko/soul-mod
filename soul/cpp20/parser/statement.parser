@@ -74,7 +74,7 @@ parser StatementParser
             {
                 return new soul::cpp20::ast::CaseStatementNode(sourcePos, caseExpr, stmt2, attributes, casePos, colonPos);
             }
-        |   DEFAULT{ defaultPos = sourcePos; if (!sourcePos.IsValid()) sourcePos = defaultPos; }
+        |   DEFAULT{ defaultPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = defaultPos; }
             COLON{ colonPos = lexer.GetSourcePos(pos); } 
             Statement(context):stmt3
             {
@@ -350,7 +350,7 @@ parser StatementParser
         var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (
-            FOR{ forPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) soul::cpp20::symbols::BeginBlock(sourcePos, context); }
+            FOR{ forPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = forPos; soul::cpp20::symbols::BeginBlock(sourcePos, context); }
             LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
             InitStatement(context):initStmt 
             Condition(context):cond? 
@@ -481,7 +481,7 @@ parser StatementParser
             |   AbstractDeclarator(context):abstractDeclarator{ declarator.reset(abstractDeclarator); }
             |   empty
             )
-        |   Ellipsis:ellipsis{ return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, nullptr, nullptr, ellipsis, attributes); }
+        |   Ellipsis:ellipsis{  if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, nullptr, nullptr, ellipsis, attributes); }
         )
         {
             return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers.release(), declarator.release(), nullptr, attributes);

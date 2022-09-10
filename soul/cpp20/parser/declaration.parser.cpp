@@ -2992,7 +2992,7 @@ soul::parser::Match DeclarationParser<Lexer>::NestedNamespaceDefinition(Lexer& l
                         }
                         if (match.hit)
                         {
-                            rbPos = sourcePos;
+                            rbPos = lexer.GetSourcePos(pos);
                             soul::cpp20::symbols::EndNamespace(nns.get(), nsLevel, context);
                         }
                         *parentMatch17 = match;
@@ -4702,7 +4702,7 @@ soul::parser::Match DeclarationParser<Lexer>::StaticAssertDeclaration(Lexer& lex
                                         }
                                         if (match.hit)
                                         {
-                                            lpPos = lexer.GetSourcePos(pos);
+                                            rpPos = lexer.GetSourcePos(pos);
                                         }
                                         *parentMatch16 = match;
                                     }

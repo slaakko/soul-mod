@@ -7,7 +7,7 @@ export namespace std {
 template<class T>
 struct hash
 {
-	size_t operator()(const T& x) const;
+    size_t operator()(const T& x) const;
 };
 
 } // namespace std

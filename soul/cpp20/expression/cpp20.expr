@@ -9,6 +9,8 @@ expressions soul.cpp20.expr
     newline = "\r\n|\n|\r";
     line_comment = "//[^\n\r]*{newline}";
     block_comment = "/\*([^*]|\*[^/])*\*/";
+    block_comment_start = "/\*";
+    block_comment_end = "\*/";
     pp_line = "[\t ]*#[^\x0\r\n]*{newline}";
     separators = "({pp_line}|{line_comment}|{block_comment}|{ws})+";
     hexdigit = "[0-9a-fA-F]";

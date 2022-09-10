@@ -5968,6 +5968,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer, sou
                                                     cppCastExpr.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
+                                                        sourcePos = lexer.GetSourcePos(pos);
                                                         expr.reset(cppCastExpr.release());
                                                     }
                                                     *parentMatch11 = match;
@@ -5987,6 +5988,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer, sou
                                                             typeIdExpr.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
+                                                                sourcePos = lexer.GetSourcePos(pos);
                                                                 expr.reset(typeIdExpr.release());
                                                             }
                                                             *parentMatch13 = match;
@@ -6356,6 +6358,7 @@ soul::parser::Match ExpressionParser<Lexer>::PostfixExpression(Lexer& lexer, sou
                                                 invokeExpr.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
+                                                    sourcePos = lexer.GetSourcePos(pos);
                                                     expr.reset(invokeExpr.release());
                                                 }
                                                 *parentMatch49 = match;

@@ -550,8 +550,8 @@ parser ExpressionParser
         var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
         ::= 
         (
-            (   CppCastExpression(context):cppCastExpr{ expr.reset(cppCastExpr); }
-            |   TypeIdExpression(context):typeIdExpr{ expr.reset(typeIdExpr); }
+            (   CppCastExpression(context):cppCastExpr{ sourcePos = lexer.GetSourcePos(pos); expr.reset(cppCastExpr); }
+            |   TypeIdExpression(context):typeIdExpr{ sourcePos = lexer.GetSourcePos(pos); expr.reset(typeIdExpr); }
             |   SimpleTypeSpecifierReset(context):simpleTypeSpecifier1{ sourcePos = lexer.GetSourcePos(pos); } 
                 LPAREN{ lpPos = lexer.GetSourcePos(pos); invokeNode.reset(new soul::cpp20::ast::InvokeExprNode(sourcePos, simpleTypeSpecifier1)); } 
                 ExpressionList(context, invokeNode.get()):args2? 
@@ -568,7 +568,7 @@ parser ExpressionParser
                 RPAREN{ rpPos = lexer.GetSourcePos(pos); invokeNode->SetLParenPos(lpPos); invokeNode->SetRParenPos(rpPos); expr.reset(invokeNode.release()); }
             |   TypenameSpecifier(context):typenameSpecifier2{ sourcePos = lexer.GetSourcePos(pos); expr.reset(new soul::cpp20::ast::InvokeExprNode(sourcePos, simpleTypeSpecifier2)); } 
                 BracedInitList(context):args5{ expr->AddNode(args5); }
-            |   ConceptGuard(context):conceptGuard IntrinsicInvokeExpr(context):invokeExpr{ expr.reset(invokeExpr); }
+            |   ConceptGuard(context):conceptGuard IntrinsicInvokeExpr(context):invokeExpr{ sourcePos = lexer.GetSourcePos(pos); expr.reset(invokeExpr); }
             |   PrimaryExpression(context):primaryExpr{ expr.reset(primaryExpr); sourcePos = lexer.GetSourcePos(pos); }
             )
             (

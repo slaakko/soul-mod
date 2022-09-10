@@ -278,7 +278,7 @@ void Project::GenerateModuleDocs(Project* nsProject)
 void Project::GenerateModuleDoc(const std::string& moduleName, Project* nsProject)
 {
     soul::cpp20::symbols::Module* module = soul::cpp20::project::build::GetModule(init.moduleMapper, moduleName);
-    GenerateModuleHtml(rootDir, module, nsProject);
+    GenerateModuleHtml(rootDir, module, init.moduleMapper, nsProject);
 }
 
 void Project::GenerateNamespaceDocs()

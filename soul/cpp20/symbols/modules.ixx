@@ -26,6 +26,8 @@ class Module
 {
 public:
     Module(const std::string& name_);
+    void SetFilePath(const std::string& filePath_);
+    const std::string& FilePath() const { return filePath; }
     const std::string& Name() const { return name; }
     void Accept(Visitor& visitor);
     void Import(ModuleMapper& moduleMapper);
@@ -53,15 +55,20 @@ public:
     const std::vector<Module*>& DependsOnModules() const { return dependsOnModules; }
     void SetFile(soul::cpp20::ast::File* astFile_);
     soul::cpp20::ast::File* GetFile() { return astFile.get(); }
+    const std::vector<std::string>& ImplementationUnitNames() const { return implementationUnitNames; }
+    void SetImplementationUnitNames(const std::vector<std::string>& names);
     const std::vector<Module*>& ImplementationUnits() const { return implementationUnits; }
     void AddImplementationUnit(Module* implementationUnit);
+    void LoadImplementationUnits(ModuleMapper& moduleMapper);
 private:
     int file;
     std::string name;
+    std::string filePath;
     std::vector<std::string> exportModuleNames;
     std::vector<Module*> exportedModules;
     std::vector<std::string> importModuleNames;
     std::vector<Module*> importedModules;
+    std::vector<std::string> implementationUnitNames;
     SymbolTable symbolTable;
     EvaluationContext evaluationContext;
     std::vector<Module*> implementationUnits;

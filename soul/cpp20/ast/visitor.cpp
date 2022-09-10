@@ -628,12 +628,12 @@ void DefaultVisitor::Visit(NamespaceDefinitionNode& node)
 
 void DefaultVisitor::Visit(NamespaceBodyNode& node)
 {
-    BeginVisit(node);
     if (node.Declarations())
     {
+        BeginVisit(node);
         node.Declarations()->Accept(*this);
+        EndVisit(node);
     }
-    EndVisit(node);
 }
 
 void DefaultVisitor::Visit(NamespaceAliasDefinitionNode& node)
@@ -1559,9 +1559,15 @@ void DefaultVisitor::Visit(InvokeExprNode& node)
 {
     BeginVisit(node);
     node.Subject()->Accept(*this);
-    VisitOperator("(", node.LParenPos());
+    if (node.LParenPos().IsValid())
+    {
+        VisitOperator("(", node.LParenPos());
+    }
     VisitListContent(node);
-    VisitOperator(")", node.RParenPos());
+    if (node.RParenPos().IsValid())
+    {
+        VisitOperator(")", node.RParenPos());
+    }
     EndVisit(node);
 }
 

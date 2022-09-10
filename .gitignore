@@ -26,6 +26,7 @@ bind
 *.classmap.compressed
 *.org
 *.module
+*.ast.xml
 setup.package.bin
 setup.package.index.xml
 bootstrap

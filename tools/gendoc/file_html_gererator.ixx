@@ -3,15 +3,13 @@
 // Distributed under the MIT license
 // =================================
 
-export module gendoc.module_html_generator;
+export module gendoc.file_html_generator;
 
 import std.core;
 import soul.cpp20.symbols.modules;
 
 export namespace gendoc {
 
-class Project;
-
-void GenerateModuleHtml(const std::string& rootDir, soul::cpp20::symbols::Module* module, soul::cpp20::symbols::ModuleMapper& moduleMapper, Project* nsProject);
+void GenerateFileHtml(soul::cpp20::symbols::Module* module, const std::string& moduleDir);
 
 } // namespace gendoc

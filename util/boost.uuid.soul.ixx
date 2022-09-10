@@ -11,7 +11,7 @@ namespace boost::uuids {
 
 struct uuid
 {
-	using value_type = uint8_t;
+    using value_type = uint8_t;
 };
 
 } // namespace boost::uuids

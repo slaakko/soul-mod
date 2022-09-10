@@ -202,11 +202,14 @@ bool Project::UpToDate() const
 {
     for (const auto& module : modules)
     {
-        const std::string& moduleSourceFilePath = GetModuleSourceFilePath(module->File());
-        std::string moduleFilePath = soul::cpp20::symbols::MakeModuleFilePath(root, module->Name());
-        if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
+        if (module)
         {
-            return false;
+            const std::string& moduleSourceFilePath = GetModuleSourceFilePath(module->File());
+            std::string moduleFilePath = soul::cpp20::symbols::MakeModuleFilePath(root, module->Name());
+            if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
+            {
+                return false;
+            }
         }
     }
     return true;

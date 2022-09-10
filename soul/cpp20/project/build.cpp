@@ -184,7 +184,7 @@ void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file, bool i
     interfaceUnitName = visitor.InterfaceUnitName();
 }
 
-void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags)
+void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags)
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -195,6 +195,7 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::
     soul::cpp20::ast::NodeIdFactory nodeIdFactory;
     soul::cpp20::ast::SetNodeIdFactory(&nodeIdFactory);
     soul::cpp20::symbols::Symbols symbols;
+    std::map<std::string, std::vector<std::string>> implementationNameMap;
     project->InitModules();
     if (!project->Scanned())
     {
@@ -203,6 +204,13 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::
         {
             std::string interfaceUnitName;
             ScanDependencies(project, file, false, interfaceUnitName);
+        }
+        for (int file : project->SourceFiles())
+        {
+            std::string interfaceUnitName;
+            ScanDependencies(project, file, true, interfaceUnitName);
+            soul::cpp20::symbols::Module* implementationModule = project->GetModule(file);
+            implementationNameMap[interfaceUnitName].push_back(implementationModule->Name());
         }
     }
     project->LoadModules(&nodeIdFactory, moduleMapper, &symbols);
@@ -224,12 +232,19 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::
         lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
         soul::cpp20::symbols::Context context;
         soul::cpp20::symbols::Module* module = project->GetModule(file);
+        module->SetFilePath(filePath);
         soul::cpp20::symbols::SetCurrentModule(module);
         module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<soul::cpp20::ast::Node> node = soul::cpp20::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        if ((flags & BuildFlags::xml) != BuildFlags::none)
+        {
+            std::string xmlFilePath = filePath + ".ast.xml";
+            soul::cpp20::ast::WriteXml(node.get(), xmlFilePath);
+        }
         module->SetFile(new soul::cpp20::ast::File(util::Path::GetFileName(filePath), node.release()));
+        module->SetImplementationUnitNames(implementationNameMap[module->Name()]);
         projectModule.Import(module, moduleMapper);
         module->Write(project->Root());
         moduleMapper.AddModule(project->ReleaseModule(file));
@@ -249,11 +264,17 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::
         lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
         soul::cpp20::symbols::Context context;
         soul::cpp20::symbols::Module* module = project->GetModule(file);
+        module->SetFilePath(filePath);
         soul::cpp20::symbols::SetCurrentModule(module);
         module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<soul::cpp20::ast::Node> node = soul::cpp20::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        if ((flags & BuildFlags::xml) != BuildFlags::none)
+        {
+            std::string xmlFilePath = filePath + ".ast.xml";
+            soul::cpp20::ast::WriteXml(node.get(), xmlFilePath);
+        }
         module->SetFile(new soul::cpp20::ast::File(util::Path::GetFileName(filePath), node.release()));
         module->Write(project->Root());
         soul::cpp20::symbols::Module* interfaceUnitModule = moduleMapper.GetModule(interfaceUnitName);
@@ -318,7 +339,7 @@ std::vector<soul::cpp20::proj::ast::Project*> MakeTopologicalOrder(soul::cpp20::
     return topologicalOrder;
 }
 
-void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags)
+void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags)
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -341,6 +362,16 @@ void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::
     {
         std::cout << "solution '" << solution->Name() << "' built successfully" << std::endl;
     }
+}
+
+void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags)
+{
+    BuildSequentally(moduleMapper, project, flags);
+}
+
+void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags)
+{
+    BuildSequentally(moduleMapper, solution, flags);
 }
 
 } // namespace soul::cpp20::project::build

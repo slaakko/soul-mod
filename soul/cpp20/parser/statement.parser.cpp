@@ -608,7 +608,7 @@ soul::parser::Match StatementParser<Lexer>::LabeledStatement(Lexer& lexer, soul:
                                         }
                                         if (match.hit)
                                         {
-                                            defaultPos = sourcePos;
+                                            defaultPos = lexer.GetSourcePos(pos);
                                             if (!sourcePos.IsValid()) sourcePos = defaultPos;
                                         }
                                         *parentMatch28 = match;
@@ -3509,7 +3509,8 @@ soul::parser::Match StatementParser<Lexer>::ForStatement(Lexer& lexer, soul::cpp
                                                     if (match.hit)
                                                     {
                                                         forPos = lexer.GetSourcePos(pos);
-                                                        if (!sourcePos.IsValid()) soul::cpp20::symbols::BeginBlock(sourcePos, context);
+                                                        if (!sourcePos.IsValid()) sourcePos = forPos;
+                                                        soul::cpp20::symbols::BeginBlock(sourcePos, context);
                                                     }
                                                     *parentMatch14 = match;
                                                 }
@@ -5184,6 +5185,7 @@ soul::parser::Match StatementParser<Lexer>::ExceptionDeclaration(Lexer& lexer, s
                                     ellipsis.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
+                                        if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExceptionDeclaration");

@@ -154,6 +154,7 @@
   <ItemGroup>
     <None Include="cpp20.lexer" />
     <None Include="cpp20.slg" />
+    <None Include="cpp20.token.line.lexer" />
     <None Include="lexer.project" />
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +168,10 @@
   <ItemGroup>
     <ClCompile Include="cpp20.lexer.cpp" />
     <ClCompile Include="cpp20.lexer.ixx" />
+    <ClCompile Include="cpp20.token.line.lexer.cpp" />
+    <ClCompile Include="cpp20.token.line.lexer.ixx" />
+    <ClCompile Include="line_tokenizer.cpp" />
+    <ClCompile Include="line_tokenizer.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

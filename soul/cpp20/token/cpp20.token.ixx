@@ -148,6 +148,14 @@ constexpr int64_t SEMICOLON = (static_cast<int64_t>(tokenSetID) << 32) | 136;
 constexpr int64_t ELLIPSIS = (static_cast<int64_t>(tokenSetID) << 32) | 137;
 constexpr int64_t ANGLE_HEADER_NAME = (static_cast<int64_t>(tokenSetID) << 32) | 138;
 constexpr int64_t QUOTE_HEADER_NAME = (static_cast<int64_t>(tokenSetID) << 32) | 139;
-constexpr int64_t MAX = (static_cast<int64_t>(tokenSetID) << 32) | 140;
+constexpr int64_t KEYWORD = (static_cast<int64_t>(tokenSetID) << 32) | 140;
+constexpr int64_t WS = (static_cast<int64_t>(tokenSetID) << 32) | 141;
+constexpr int64_t NEWLINE = (static_cast<int64_t>(tokenSetID) << 32) | 142;
+constexpr int64_t LINE_COMMENT = (static_cast<int64_t>(tokenSetID) << 32) | 143;
+constexpr int64_t BLOCK_COMMENT_START = (static_cast<int64_t>(tokenSetID) << 32) | 144;
+constexpr int64_t BLOCK_COMMENT_END = (static_cast<int64_t>(tokenSetID) << 32) | 145;
+constexpr int64_t OTHER = (static_cast<int64_t>(tokenSetID) << 32) | 146;
+constexpr int64_t PP_LINE = (static_cast<int64_t>(tokenSetID) << 32) | 147;
+constexpr int64_t MAX = (static_cast<int64_t>(tokenSetID) << 32) | 148;
 
 } // soul::cpp20::token

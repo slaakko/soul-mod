@@ -214,6 +214,8 @@
     <ClCompile Include="visitor.ixx" />
     <ClCompile Include="writer.cpp" />
     <ClCompile Include="writer.ixx" />
+    <ClCompile Include="xml.cpp" />
+    <ClCompile Include="xml.ixx" />
     <ClCompile Include="xml_generator_visitor.cpp" />
     <ClCompile Include="xml_generator_visitor.ixx" />
   </ItemGroup>

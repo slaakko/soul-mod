@@ -282,7 +282,7 @@ parser DeclarationParser
             )
             LBRACE{ lbPos = lexer.GetSourcePos(pos); soul::cpp20::symbols::BeginNamespace(nns.get(), context); }
             NamespaceBody(context):nsBody
-            RBRACE{ rbPos = sourcePos; soul::cpp20::symbols::EndNamespace(nns.get(), nsLevel, context); }
+            RBRACE{ rbPos = lexer.GetSourcePos(pos); soul::cpp20::symbols::EndNamespace(nns.get(), nsLevel, context); }
         )
         {
             return new soul::cpp20::ast::NamespaceDefinitionNode(sourcePos, nskw, nns.release(), nsBody, nullptr, nullptr, lbPos, rbPos);
@@ -446,7 +446,7 @@ parser DeclarationParser
             (
                 Comma:comma
                 StringLiteral(context):stringLiteral
-                RPAREN{ lpPos = lexer.GetSourcePos(pos); }
+                RPAREN{ rpPos = lexer.GetSourcePos(pos); }
                 Semicolon:semicolon
                 {
                     return new soul::cpp20::ast::StaticAssertDeclarationNode(sourcePos, staticAssert, constantExpr, comma, stringLiteral, semicolon, lpPos, rpPos);

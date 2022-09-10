@@ -8,6 +8,7 @@ module gendoc.module_html_generator;
 import gendoc.type_element_generator;
 import gendoc.class_html_generator;
 import gendoc.enum_html_generator;
+import gendoc.file_html_generator;
 import gendoc.project;
 import std.filesystem;
 import util;
@@ -24,6 +25,7 @@ public:
     void EndVisitExports() override;
     void BeginVisitImports() override;
     void EndVisitImports() override;
+    const std::string& ModuleDir() const { return moduleDir; }
     void Visit(soul::cpp20::symbols::Module& module) override;
     void Visit(soul::cpp20::symbols::NamespaceSymbol& symbol) override;
     void Visit(soul::cpp20::symbols::ConceptSymbol& symbol) override;
@@ -215,6 +217,25 @@ void ModuleHtmlGenerator::Visit(soul::cpp20::symbols::Module& module)
         soul::xml::Text* h1Text = soul::xml::MakeText(title);
         h1Element->AppendChild(h1Text);
         bodyElement->AppendChild(h1Element);
+        soul::xml::Element* h2Element = soul::xml::MakeElement("h2");
+        h2Element->AppendChild(soul::xml::MakeText("Interface"));
+        soul::xml::Element* interfaceFileLink = soul::xml::MakeElement("a");
+        soul::cpp20::ast::File* file = module.GetFile();
+        interfaceFileLink->SetAttribute("href", "file/" + util::Path::GetFileName(file->filePath) + ".html");
+        interfaceFileLink->AppendChild(soul::xml::MakeText(util::Path::GetFileName(file->filePath)));
+        bodyElement->AppendChild(h2Element);
+        bodyElement->AppendChild(interfaceFileLink);
+        soul::xml::Element* h2ImplElement = soul::xml::MakeElement("h2");
+        h2ImplElement->AppendChild(soul::xml::MakeText("Implementation"));
+        bodyElement->AppendChild(h2ImplElement);
+        for (const auto& implementationUnit : module.ImplementationUnits())
+        {
+            soul::xml::Element* implementationFileLink = soul::xml::MakeElement("a");
+            soul::cpp20::ast::File* file = implementationUnit->GetFile();
+            implementationFileLink->SetAttribute("href", "file/" + util::Path::GetFileName(file->filePath) + ".html");
+            implementationFileLink->AppendChild(soul::xml::MakeText(util::Path::GetFileName(file->filePath)));
+            bodyElement->AppendChild(implementationFileLink);
+        }
         htmlElement->AppendChild(bodyElement);
         currentElement = bodyElement;
         DefaultVisitor::Visit(module);
@@ -676,11 +697,13 @@ void ModuleHtmlGenerator::WriteDoc()
     GenerateEnumDocs();
 }
 
-void GenerateModuleHtml(const std::string& rootDir, soul::cpp20::symbols::Module* module, Project* nsProject)
+void GenerateModuleHtml(const std::string& rootDir, soul::cpp20::symbols::Module* module, soul::cpp20::symbols::ModuleMapper& moduleMapper, Project* nsProject)
 {
+    module->LoadImplementationUnits(moduleMapper);
     ModuleHtmlGenerator generator(rootDir, nsProject);
     module->Accept(generator);
     generator.WriteDoc();
+    GenerateFileHtml(module, generator.ModuleDir());
 }
 
 } // namespace gendoc

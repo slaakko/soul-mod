@@ -1980,6 +1980,7 @@ soul::parser::Match ConceptParser<Lexer>::TypeConstraint(Lexer& lexer, soul::cpp
                                             conceptName2.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
+                                                sourcePos = lexer.GetSourcePos(pos);
                                                 conceptName.reset(conceptName2.release());
                                             }
                                             *parentMatch12 = match;

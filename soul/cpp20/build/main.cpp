@@ -31,6 +31,8 @@ void PrintHelp()
     std::cout << "  Build using all cores." << std::endl;
     std::cout << "--debug-parse | -d" << std::endl;
     std::cout << "  Print source parsing log to \"parse.log\" file located in the current working directory." << std::endl;
+    std::cout << "--xml | -x" << std::endl;
+    std::cout << "  Write ASTs as XML." << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -42,6 +44,7 @@ int main(int argc, const char** argv)
         bool verbose = false;
         bool multithreaded = false;
         bool debugParse = false;
+        bool xml = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
         {
@@ -64,6 +67,10 @@ int main(int argc, const char** argv)
                 else if (arg == "--debug-parse")
                 {
                     debugParse = true;
+                }
+                else if (arg == "--xml")
+                {
+                    xml = true;
                 }
                 else
                 {
@@ -95,6 +102,11 @@ int main(int argc, const char** argv)
                         case 'd':
                         {
                             debugParse = true;
+                            break;
+                        }
+                        case 'x':
+                        {
+                            xml = true;
                             break;
                         }
                         default:
@@ -131,6 +143,10 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::debugParse;
                 }
+                if (xml)
+                {
+                    buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::xml;
+                }
                 soul::cpp20::project::build::Build(init.moduleMapper, project.get(), buildFlags);
             }
             else if (file.ends_with(".solution"))
@@ -144,6 +160,10 @@ int main(int argc, const char** argv)
                 if (multithreaded)
                 {
                     buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::multithreadedBuild;
+                }
+                if (xml)
+                {
+                    buildFlags = buildFlags | soul::cpp20::project::build::BuildFlags::xml;
                 }
                 soul::cpp20::project::build::Build(init.moduleMapper, solution.get(), buildFlags);
             }

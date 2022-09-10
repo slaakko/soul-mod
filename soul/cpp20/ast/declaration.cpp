@@ -513,7 +513,7 @@ ParenthesizedDeclaratorNode::ParenthesizedDeclaratorNode(const soul::ast::Source
 }
 
 ParenthesizedDeclaratorNode::ParenthesizedDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* declarator_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::parenthesizedDeclaratorNode, sourcePos_), declarator(declarator_)
+    CompoundNode(NodeKind::parenthesizedDeclaratorNode, sourcePos_), declarator(declarator_), lpPos(lpPos_), rpPos(rpPos_)
 {
 }
 
@@ -600,92 +600,6 @@ void ConstInitNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
 }
-
-/*
-CDeclNode::CDeclNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::cdeclNode, sourcePos_)
-{
-}
-
-void CDeclNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-FastCallNode::FastCallNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::fastCallNode, sourcePos_)
-{
-}
-
-void FastCallNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-StdCallNode::StdCallNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::stdCallNode, sourcePos_)
-{
-}
-
-void StdCallNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-ThisCallNode::ThisCallNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::thisCallNode, sourcePos_)
-{
-}
-
-void ThisCallNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-VectorCallNode::VectorCallNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::vectorCallNode, sourcePos_)
-{
-}
-
-void VectorCallNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-UnalignedNode::UnalignedNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::unalignedNode, sourcePos_)
-{
-}
-
-void UnalignedNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-DeclSpecNode::DeclSpecNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::declSpecNode, sourcePos_)
-{
-}
-
-DeclSpecNode::DeclSpecNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::declSpecNode, sourcePos_), identifier(identifier_), lpPos(lpPos_), rpPos(rpPos_)
-{
-}
-
-void DeclSpecNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-void DeclSpecNode::Write(Writer& writer)
-{
-    CompoundNode::Write(writer);
-    writer.Write(identifier.get());
-    writer.Write(lpPos);
-    writer.Write(rpPos);
-}
-
-void DeclSpecNode::Read(Reader& reader)
-{
-    CompoundNode::Read(reader);
-    identifier.reset(reader.ReadNode());
-    lpPos = reader.ReadSourcePos();
-    rpPos = reader.ReadSourcePos();
-}
-*/
 
 InlineNode::InlineNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::inlineNode, sourcePos_)
 {

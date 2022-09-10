@@ -1,14 +1,14 @@
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/lexer/cpp20.lexer' using soul lexer generator slg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp20/lexer/cpp20.token.line.lexer' using soul lexer generator slg version 4.1.0
 
-module soul.cpp20.lexer;
+module soul.cpp20.token.line.lexer;
 
 using namespace soul::cpp20::token;
 
-namespace soul::cpp20::lexer {
+namespace soul::cpp20::token::line::lexer {
 
 soul::ast::slg::TokenCollection* GetTokens()
 {
-    static soul::ast::slg::TokenCollection tokens("soul.cpp20.lexer.tokens");
+    static soul::ast::slg::TokenCollection tokens("soul.cpp20.token.line.lexer.tokens");
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
@@ -164,7 +164,7 @@ soul::ast::slg::TokenCollection* GetTokens()
     return &tokens;
 }
 
-Cpp20Lexer_Variables::Cpp20Lexer_Variables() :
+Cpp20TokenLineLexer_Variables::Cpp20TokenLineLexer_Variables() :
     langleCount()
 {
 }
@@ -533,4 +533,4 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
     return &keywordMap;
 }
 
-} // namespace soul::cpp20::lexer
+} // namespace soul::cpp20::token::line::lexer

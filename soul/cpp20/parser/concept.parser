@@ -223,7 +223,7 @@ parser ConceptParser
             (
                 (   NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } 
                     ConceptNameChecked(context):conceptName1{ conceptName.reset(new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns, conceptName1)); }
-                |   ConceptNameChecked(context):conceptName2{ conceptName.reset(conceptName2); }
+                |   ConceptNameChecked(context):conceptName2{ sourcePos = lexer.GetSourcePos(pos); conceptName.reset(conceptName2); }
                 )
                 {
                     node.reset(new soul::cpp20::ast::TypeConstraintNode(sourcePos, conceptName.release())); 

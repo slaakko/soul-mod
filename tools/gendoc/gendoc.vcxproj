@@ -156,6 +156,8 @@
     <ClCompile Include="class_html_generator.ixx" />
     <ClCompile Include="enum_html_generator.cpp" />
     <ClCompile Include="enum_html_generator.ixx" />
+    <ClCompile Include="file_html_generator.cpp" />
+    <ClCompile Include="file_html_gererator.ixx" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="module_html_generastor.ixx" />
     <ClCompile Include="module_html_generator.cpp" />
@@ -171,6 +173,9 @@
     <ClCompile Include="type_element_generator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\soul\cpp20\lexer\lexer.vcxproj">
+      <Project>{d11d6f6d-d91c-45ad-b9ea-20cf4a64c061}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\soul\cpp20\project\project.vcxproj">
       <Project>{9faf9c96-091f-4413-adc5-a9873d78b68d}</Project>
     </ProjectReference>
@@ -192,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\soul\cpp20\lexer\soul.cpp20.lexer.classmap.rc" />
+    <ResourceCompile Include="..\..\soul\cpp20\lexer\soul.cpp20.token.line.lexer.classmap.rc" />
     <ResourceCompile Include="..\..\soul\cpp20\project\soul.cpp20.proj.lexer.classmap.rc" />
     <ResourceCompile Include="..\..\soul\cpp20\project\soul.cpp20.sln.lexer.classmap.rc" />
     <ResourceCompile Include="..\..\soul\xml\xpath\soul.xml.xpath.lexer.classmap.rc" />

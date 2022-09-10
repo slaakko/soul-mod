@@ -7,7 +7,7 @@ module soul.cpp20.ast.error;
 
 namespace soul::cpp20::ast {
 
-    bool exceptionThrown = false;
+bool exceptionThrown = false;
 
 void SetExceptionThrown()
 {
