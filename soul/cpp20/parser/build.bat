@@ -1,2 +1,2 @@
 @echo off
-spg -v cpp20.spg
+spg -vx cpp20.spg

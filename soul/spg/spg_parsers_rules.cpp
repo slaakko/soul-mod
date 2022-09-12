@@ -19,7 +19,7 @@ std::map<int64_t, std::string>* GetRuleNameMapPtr()
         { 6146011665574920201, "ParserFileParser.ParamOrVariable" },
         { 6146011665574920202, "ParserFileParser.ReturnType" },
         { 6146011665574920203, "ParserFileParser.RuleBody" },
-        { 6146011665574920204, "ParserFileParser.Alternative" },
+        { 6146011665574920204, "ParserFileParser.Choice" },
         { 6146011665574920205, "ParserFileParser.Sequence" },
         { 6146011665574920206, "ParserFileParser.Difference" },
         { 6146011665574920207, "ParserFileParser.List" },

@@ -1,0 +1,302 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.function;
+
+[interface]import soul.cpp20.symbols.context;
+[interface]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.parser.attribute;
+[implementation]import soul.cpp20.parser.classes;
+[implementation]import soul.cpp20.parser.concepts;
+[implementation]import soul.cpp20.parser.declaration;
+[implementation]import soul.cpp20.parser.initialization;
+[implementation]import soul.cpp20.parser.punctuation;
+[implementation]import soul.cpp20.parser.statement;
+[implementation]import soul.cpp20.parser.type;
+[implementation]import soul.cpp20.symbols;
+
+parser FunctionParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ClassParser.CtorInitializer;
+    using ClassParser.VirtSpecifierSeq;
+    using ConceptParser.RequiresClause;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclarationParser.Declarator;
+    using DeclarationParser.AbstractDeclarator;
+    using DeclarationParser.PtrOperator;
+    using InitializationParser.InitializerClause;
+    using PunctuationParser.Assign;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using PunctuationParser.Semicolon;
+    using StatementParser.CompoundStatement;
+    using StatementParser.HandlerSeq;
+    using TypeParser.DeclTypeSpecifier;
+    using TypeParser.TypeSpecifierSeq;
+    using TypeParser.TypeName;
+
+    FunctionDefinition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifierSeqNode, 
+        var std::unique_ptr<soul::cpp20::ast::Node> declaratorNode, var std::unique_ptr<soul::cpp20::ast::Node> specifierNode, var int scopes) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ lexer.GetSourcePos(pos); })? 
+            DeclSpecifierSeq(context):declSpecifiers{ declSpecifierSeqNode.reset(declSpecifiers); if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            Declarator(context):declarator
+            {
+                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                declaratorNode.reset(declarator); 
+            }
+            (   VirtSpecifierSeq(context):virtSpecifiers{ specifierNode.reset(virtSpecifiers); }
+            |   RequiresClause(context):requiresClause{ specifierNode.reset(requiresClause); }
+            |   empty
+            )
+            { 
+                scopes = soul::cpp20::symbols::BeginFunctionDefinition(declSpecifierSeqNode.get(), declaratorNode.get(), context); 
+            }
+            FunctionBody(context):functionBody
+            {
+                soul::cpp20::ast::Node* node = new soul::cpp20::ast::FunctionDefinitionNode(sourcePos, attributes, declSpecifierSeqNode.release(), declaratorNode.release(), 
+                    specifierNode.release(), functionBody);
+                soul::cpp20::symbols::EndFunctionDefinition(node, scopes, context); 
+                return node;
+            }
+        ;
+
+    NoDeclSpecFunctionDefinition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifierSeqNode, 
+        var std::unique_ptr<soul::cpp20::ast::Node> declaratorNode, var std::unique_ptr<soul::cpp20::ast::Node> specifierNode, var int scopes) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ lexer.GetSourcePos(pos); })? 
+            Declarator(context):declarator
+            {
+                if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                declaratorNode.reset(declarator); 
+            }
+            (   VirtSpecifierSeq(context):virtSpecifiers{ specifierNode.reset(virtSpecifiers); }
+            |   RequiresClause(context):requiresClause{ specifierNode.reset(requiresClause); }
+            |   empty
+            )
+            { 
+                scopes = soul::cpp20::symbols::BeginFunctionDefinition(declSpecifierSeqNode.get(), declaratorNode.get(), context); 
+            }
+            FunctionBody(context):functionBody
+            {
+                soul::cpp20::ast::Node* node = new soul::cpp20::ast::FunctionDefinitionNode(sourcePos, attributes, declSpecifierSeqNode.release(), declaratorNode.release(), 
+                    specifierNode.release(), functionBody);
+                soul::cpp20::symbols::EndFunctionDefinition(node, scopes, context); 
+                return node;
+            }
+        ;
+
+    FunctionBody(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= Assign:assign{ sourcePos = lexer.GetSourcePos(pos); } 
+            (   Default:def Semicolon:semicolon
+                { 
+                    return new soul::cpp20::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign, def, semicolon); 
+                } 
+            |   Delete:del Semicolon:semicolon2
+                { 
+                    return new soul::cpp20::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign, del, semicolon2); 
+                }
+            )
+        |   CtorInitializer(context):ctorInitializer{ sourcePos = lexer.GetSourcePos(pos); } 
+            CompoundStatement(context):compoundStatement
+            {
+                return new soul::cpp20::ast::ConstructorNode(sourcePos, ctorInitializer, compoundStatement);
+            }
+        |   CompoundStatement(context):compoundStatement2
+            {   
+                return new soul::cpp20::ast::FunctionBodyNode(lexer.GetSourcePos(pos), compoundStatement2); 
+            }
+        |   FunctionTryBlock(context):functionTryBlock
+            {
+                return functionTryBlock;
+            }
+        ;
+
+    Default : soul::cpp20::ast::Node*
+        ::= DEFAULT{ return new soul::cpp20::ast::DefaultNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    Delete : soul::cpp20::ast::Node*
+        ::= DELETE{ return new soul::cpp20::ast::DeleteNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    ParameterDeclarationClause(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
+        ::= empty{ context->PushSetFlag(soul::cpp20::symbols::ContextFlags::parsingParameters); }
+        (   ParameterDeclarationList(context, container):paramList2 Comma:comma Ellipsis:ellipsis{ container->AddNode(comma); container->AddNode(ellipsis); }
+        |   empty{ container->Clear(); } 
+            ParameterDeclarationList(context, container):paramList1? (Ellipsis:ellipsis{ container->AddNode(ellipsis); })? 
+            (Comma:comma Ellipsis:ellipsis{ container->AddNode(comma); container->AddNode(ellipsis); })?
+        )
+        {
+            context->PopFlags();
+        }
+        /
+        {
+            context->PopFlags();
+        }
+        ;
+
+    ParameterDeclarationList(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
+        ::= 
+        (
+            ParameterDeclaration(context):first{ container->AddNode(first); }
+            (
+                Comma:comma 
+                ParameterDeclaration(context):next{ container->AddNode(comma); container->AddNode(next); }
+            )*
+        )
+        ;
+
+    ParameterDeclaration(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::ParameterNode> parameterNode) : soul::cpp20::ast::Node*
+        ::= empty{ parameterNode.reset(new soul::cpp20::ast::ParameterNode(lexer.GetSourcePos(pos))); }
+        (
+            (AttributeSpecifierSeq(context):attributes{ parameterNode->SetAttributes(attributes); })?
+            DeclSpecifierSeq(context):declSpecifierSeq{ parameterNode->SetDeclSpecifiers(declSpecifierSeq); }
+            (   Declarator(context):declarator{ parameterNode->SetDeclarator(declarator); }
+            |   AbstractDeclarator(context):abstractDeclarator{ parameterNode->SetDeclarator(abstractDeclarator); }
+            )?
+            (
+                Assign:assign{ parameterNode->SetAssign(assign); }
+                InitializerClause(context):initializer{ parameterNode->SetInitializer(initializer); }
+            )?
+        )
+        {
+            return parameterNode.release();
+        }
+        ;
+
+    OperatorFunctionId(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            OperatorKw:operatorKw{ sourcePos = lexer.GetSourcePos(pos); }
+            Operator(context):op
+        )
+        {
+            return new soul::cpp20::ast::OperatorFunctionIdNode(sourcePos, operatorKw, op);
+        }
+        ;
+
+    ConversionFunctionId(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            OperatorKw:operatorKw{ sourcePos = lexer.GetSourcePos(pos); }
+            ConversionTypeId(context):conversionTypeId
+        )
+        {
+            return new soul::cpp20::ast::ConversionFunctionIdNode(sourcePos, operatorKw, conversionTypeId);
+        }
+        ;
+
+    DestructorId(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= TILDE{ sourcePos = lexer.GetSourcePos(pos); } 
+        (   TypeName(context):typeName{ node.reset(typeName); }
+        |   DeclTypeSpecifier(context):declTypeSpecifier{ node.reset(declTypeSpecifier); }
+        )
+        {
+            return new soul::cpp20::ast::DestructorIdNode(sourcePos, node.release());
+        }
+        ;
+
+    ConversionTypeId(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            TypeSpecifierSeq(context):typeSpecifierSeq{ sourcePos = lexer.GetSourcePos(pos); } 
+            ConversionDeclarator(context):declarator?
+        )
+        {
+            return new soul::cpp20::ast::ConversionTypeIdNode(sourcePos, typeSpecifierSeq, declarator);
+        }
+        ;
+
+    ConversionDeclarator(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            PtrOperator(context):op{ sourcePos = lexer.GetSourcePos(pos); } 
+            ConversionDeclarator(context):declarator?
+        )
+        {
+            return new soul::cpp20::ast::ConversionDeclaratorNode(sourcePos, op, declarator);
+        }
+        ;
+
+    OperatorKw : soul::cpp20::ast::Node*
+        ::= OPERATOR{ return new soul::cpp20::ast::OperatorNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    Operator(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : soul::cpp20::ast::Node*
+        ::= 
+        (   NEW{ sourcePos = lexer.GetSourcePos(pos); } 
+            LBRACKET{ lbPos = lexer.GetSourcePos(pos); } 
+            RBRACKET{ rbPos = lexer.GetSourcePos(pos); return new soul::cpp20::ast::NewArrayOpNode(sourcePos, lbPos, rbPos); }
+        |   NEW{ return new soul::cpp20::ast::NewOpNode(lexer.GetSourcePos(pos)); }
+        |   DELETE{ sourcePos = lexer.GetSourcePos(pos); } 
+            LBRACKET{ lbPos = sourcePos; } 
+            RBRACKET{ rbPos = sourcePos; return new soul::cpp20::ast::DeleteArrayOpNode(sourcePos, lbPos, rbPos); }
+        |   DELETE{ return new soul::cpp20::ast::DeleteOpNode(lexer.GetSourcePos(pos)); }
+        |   CO_AWAIT{ return new soul::cpp20::ast::CoAwaitOpNode(lexer.GetSourcePos(pos)); }
+        |   LPAREN{ sourcePos = lexer.GetSourcePos(pos); } 
+            RPAREN{ return new soul::cpp20::ast::InvokeOpNode(sourcePos); }
+        |   LBRACKET{ sourcePos = lexer.GetSourcePos(pos); } 
+            RBRACKET{ return new soul::cpp20::ast::SubscriptOpNode(sourcePos); }
+        |   ARROW{ return new soul::cpp20::ast::ArrowNode(lexer.GetSourcePos(pos)); }
+        |   ARROW_STAR{ return new soul::cpp20::ast::ArrowStarNode(lexer.GetSourcePos(pos)); }
+        |   TILDE{ return new soul::cpp20::ast::ComplementNode(lexer.GetSourcePos(pos)); }
+        |   EXCLAMATION{ return new soul::cpp20::ast::NotNode(lexer.GetSourcePos(pos)); }
+        |   PLUS{ return new soul::cpp20::ast::PlusNode(lexer.GetSourcePos(pos)); }
+        |   MINUS{ return new soul::cpp20::ast::MinusNode(lexer.GetSourcePos(pos)); }
+        |   STAR{ return new soul::cpp20::ast::MulNode(lexer.GetSourcePos(pos)); }
+        |   DIV{ return new soul::cpp20::ast::DivNode(lexer.GetSourcePos(pos)); }
+        |   MOD{ return new soul::cpp20::ast::ModNode(lexer.GetSourcePos(pos)); }
+        |   XOR{ return new soul::cpp20::ast::ExclusiveOrNode(lexer.GetSourcePos(pos)); }
+        |   AMP{ return new soul::cpp20::ast::AndNode(lexer.GetSourcePos(pos)); }
+        |   OR{ return new soul::cpp20::ast::InclusiveOrNode(lexer.GetSourcePos(pos)); }
+        |   ASSIGN{ return new soul::cpp20::ast::AssignNode(lexer.GetSourcePos(pos)); }
+        |   ADD_ASSIGN{ return new soul::cpp20::ast::PlusAssignNode(lexer.GetSourcePos(pos)); }
+        |   SUB_ASSIGN{ return new soul::cpp20::ast::MinusAssignNode(lexer.GetSourcePos(pos)); }
+        |   MUL_ASSIGN{ return new soul::cpp20::ast::MulAssignNode(lexer.GetSourcePos(pos)); }
+        |   DIV_ASSIGN{ return new soul::cpp20::ast::DivAssignNode(lexer.GetSourcePos(pos)); }
+        |   REM_ASSIGN{ return new soul::cpp20::ast::ModAssignNode(lexer.GetSourcePos(pos)); }
+        |   XOR_ASSIGN{ return new soul::cpp20::ast::XorAssignNode(lexer.GetSourcePos(pos)); }
+        |   AND_ASSIGN{ return new soul::cpp20::ast::AndAssignNode(lexer.GetSourcePos(pos)); }
+        |   OR_ASSIGN{ return new soul::cpp20::ast::OrAssignNode(lexer.GetSourcePos(pos)); }
+        |   SHIFT_LEFT_ASSIGN{ return new soul::cpp20::ast::ShiftLeftAssignNode(lexer.GetSourcePos(pos)); }
+        |   SHIFT_RIGHT_ASSIGN{ return new soul::cpp20::ast::ShiftRightAssignNode(lexer.GetSourcePos(pos)); } 
+        |   EQ{ return new soul::cpp20::ast::EqualNode(lexer.GetSourcePos(pos)); }
+        |   NEQ{ return new soul::cpp20::ast::NotEqualNode(lexer.GetSourcePos(pos)); }
+        |   LEQ{ return new soul::cpp20::ast::LessOrEqualNode(lexer.GetSourcePos(pos)); }
+        |   GEQ{ return new soul::cpp20::ast::GreaterOrEqualNode(lexer.GetSourcePos(pos)); }
+        |   SPACE_SHIP{ return new soul::cpp20::ast::CompareNode(lexer.GetSourcePos(pos)); }
+        |   LANGLE{ return new soul::cpp20::ast::LessNode(lexer.GetSourcePos(pos)); }
+        |   RANGLE{ return new soul::cpp20::ast::GreaterNode(lexer.GetSourcePos(pos)); }
+        |   AMP_AMP{ return new soul::cpp20::ast::ConjunctionNode(lexer.GetSourcePos(pos)); }
+        |   OR_OR{ return new soul::cpp20::ast::DisjunctionNode(lexer.GetSourcePos(pos)); }
+        |   SHIFT_LEFT{ return new soul::cpp20::ast::ShiftLeftNode(lexer.GetSourcePos(pos)); }
+        |   SHIFT_RIGHT{ return new soul::cpp20::ast::ShiftRightNode(lexer.GetSourcePos(pos)); }
+        |   PLUS_PLUS{ return new soul::cpp20::ast::PrefixIncNode(lexer.GetSourcePos(pos)); }
+        |   MINUS_MINUS{ return new soul::cpp20::ast::PrefixDecNode(lexer.GetSourcePos(pos)); }
+        |   COMMA{ return new soul::cpp20::ast::CommaNode(lexer.GetSourcePos(pos)); }
+        )
+        ;
+
+    Noexcept : soul::cpp20::ast::Node*
+        ::= NOEXCEPT{ return new soul::cpp20::ast::NoexceptNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    FunctionTryBlock(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            TRY{ sourcePos = lexer.GetSourcePos(pos); }
+            CtorInitializer(context):ctorInitializer?
+            CompoundStatement(context):tryBlock 
+            HandlerSeq(context):handlers
+        )
+        {
+            return new soul::cpp20::ast::FunctionTryBlockNode(sourcePos, ctorInitializer, tryBlock, handlers);
+        }
+        ;
+}

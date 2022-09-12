@@ -1,0 +1,346 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.type;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.symbols;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.parser.attribute;
+[implementation]import soul.cpp20.parser.classes;
+[implementation]import soul.cpp20.parser.concepts;
+[implementation]import soul.cpp20.parser.declaration;
+[implementation]import soul.cpp20.parser.enums;
+[implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.function;
+[implementation]import soul.cpp20.parser.guard;
+[implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.simple.type;
+[implementation]import soul.cpp20.parser.templates;
+
+parser TypeParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ClassParser.ClassSpecifier;
+    using ClassParser.ClassKey;
+    using ConceptParser.TypeConstraint;
+    using DeclarationParser.AbstractDeclarator;
+    using DeclarationParser.CVQualifier;
+    using EnumParser.EnumSpecifier;
+    using EnumParser.ElaboratedEnumSpecifier;
+    using ExpressionParser.Expression;
+    using FunctionParser.DestructorId;
+    using GuardParser.NotDefiningTypeSpecifierGuard;
+    using SimpleTypeParser.SimpleType;
+    using IdentifierParser.Identifier;
+    using IdentifierParser.NestedNameSpecifier;
+    using IdentifierParser.Template;
+    using IdentifierParser.TypeIdentifier;
+    using TemplateParser.SimpleTemplateId;
+
+    TypeSpecifierSeq(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> sequence) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            TypeSpecifier(context):first{ sequence.reset(new soul::cpp20::ast::TypeSpecifierSequenceNode(lexer.GetSourcePos(pos))); sequence->AddNode(first); } 
+            (
+                TypeSpecifier(context):next{ sequence->AddNode(next); }
+            )*
+            (AttributeSpecifierSeq(context):attributes{ sequence->AddNode(attributes); })?
+        )
+        {
+            return sequence.release();
+        }
+        ;
+
+    TypeSpecifierSeqReset(soul::cpp20::symbols::Context* context) : Node*
+        ::= empty{ context->PushResetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); }
+            TypeSpecifierSeq(context):typeSpecifierSeq{ context->PopFlags(); return typeSpecifierSeq; } / { context->PopFlags(); }
+        ;
+
+
+    DefiningTypeId(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            DefiningTypeSpecifierSeq(context):definingTypeSpecifierSeq{ sourcePos = lexer.GetSourcePos(pos); } 
+            AbstractDeclarator(context):abstractDeclararator?
+        )
+        {
+            return new DefiningTypeIdNode(sourcePos, definingTypeSpecifierSeq, abstractDeclararator);
+        }
+        ;
+
+    DefiningTypeSpecifierSeq(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node) : soul::cpp20::ast::Node*
+        ::= 
+        (   
+            DefiningTypeSpecifierReset(context):first{ node.reset(new soul::cpp20::ast::DefiningTypeSpecifierSequenceNode(lexer.GetSourcePos(pos))); node->AddNode(first); }
+            (
+                DefiningTypeSpecifierReset(context):next{ node->AddNode(next); }
+            )*
+            (AttributeSpecifierSeq(context):attributes{ node->AddNode(attributes); })?
+        )
+        {
+            return node.release();
+        }
+        ;
+
+
+    DefiningTypeSpecifierReset(soul::cpp20::symbols::Context* context) : Node*
+        ::= empty{ context->PushResetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); }
+            DefiningTypeSpecifier(context):definingTypeSpecifier{ context->PopFlags(); return definingTypeSpecifier; } / { context->PopFlags(); }
+        ;
+
+    DefiningTypeSpecifier(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= 
+        (   ClassSpecifier(context):classSpecifier
+            {
+                context->SetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); 
+                return classSpecifier; 
+            }
+        |   EnumSpecifier(context):enumSpecifier
+            {
+                context->SetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); 
+                return enumSpecifier; 
+            }
+        |   TypeSpecifier(context):typeSpecifier
+            {
+                return typeSpecifier; 
+            }
+        )
+        ;
+
+    TypeSpecifier(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= SimpleTypeSpecifier(context):simpleTypeSpecifier
+            {
+                context->SetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); 
+                return simpleTypeSpecifier; 
+            }
+        |   ElaboratedTypeSpecifier(context):elaboratedTypeSpecifier
+            { 
+                context->SetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); 
+                return elaboratedTypeSpecifier; 
+            }
+        |   TypenameSpecifier(context):typenameSpecifier
+            { 
+                context->SetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); 
+                return typenameSpecifier; 
+            }
+        |   CVQualifier:cvQualifier{ return cvQualifier; }
+        ;
+
+    ElaboratedTypeSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos nnsPos, var soul::ast::SourcePos tmpPos) : 
+        soul::cpp20::ast::Node*
+        ::= ClassKey:classKey{ sourcePos = lexer.GetSourcePos(pos); }
+            AttributeSpecifierSeq(context):attributes?
+            (
+                NestedNameSpecifier(context):nns{ nnsPos = lexer.GetSourcePos(pos); } 
+                (   
+                    Template:tmp{ tmpPos = lexer.GetSourcePos(pos); }
+                    SimpleTemplateId(context):simpleTemplateId
+                    {
+                        soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
+                            new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, new soul::cpp20::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)), nullptr);
+                        soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
+                        return node;
+                    }
+                |   SimpleTemplateId(context):simpleTemplateId2
+                    {
+                        soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
+                            new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, simpleTemplateId2), nullptr);
+                        soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
+                        return node;
+                    }
+                |   Identifier(context):identifier
+                    {
+                        soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
+                            new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, identifier), attributes);
+                        soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
+                        return node;
+                    }
+                )
+            |   SimpleTemplateId(context):simpleTemplateId3
+                {
+                    soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, simpleTemplateId3, nullptr);
+                    soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
+                    return node;
+                }
+            |   Identifier(context):identifier2
+                {
+                    soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, identifier2, attributes);
+                    soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
+                    return node;
+                }
+            )
+        |   ElaboratedEnumSpecifier(context):elaboratedEnumSpecifier{ return elaboratedEnumSpecifier; }
+        ;
+
+    SimpleTypeSpecifierReset(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= empty{ context->PushResetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); }
+            SimpleTypeSpecifier(context):simpleTypeSpecifier{ context->PopFlags(); return simpleTypeSpecifier; } / { context->PopFlags(); }
+        ;
+
+    SimpleTypeSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos tmpPos, 
+        var std::unique_ptr<soul::cpp20::ast::Node> nns, var bool isConstructorNameNode) : soul::cpp20::ast::Node*
+        ::= 
+        (   SimpleType:simpleType
+            { 
+                return simpleType; 
+            }
+        |   NotDefiningTypeSpecifierGuard(context):guard
+            (
+                (   NestedNameSpecifier(context):nns1{ nns.reset(nns1); sourcePos = lexer.GetSourcePos(pos); } 
+                    Template:tmp{ tmpPos = lexer.GetSourcePos(pos); } 
+                    SimpleTemplateId(context):simpleTemplateId
+                    { 
+                        return new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns.release(), new soul::cpp20::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)); 
+                    }
+                |   NestedNameSpecifier(context):nns2
+                    { 
+                        nns.reset(nns2); 
+                        soul::cpp20::symbols::BeginScope(nns.get(), context); sourcePos = lexer.GetSourcePos(pos); 
+                    }
+                    TypeName(context):typeName
+                    { 
+                        std::unique_ptr<soul::cpp20::ast::Node> typeNameNode;
+                        typeNameNode.reset(typeName);
+                        isConstructorNameNode = context->IsConstructorNameNode(typeNameNode.get());
+                        soul::cpp20::symbols::EndScope(context);
+                        if (isConstructorNameNode)
+                        {
+                            pass = false;
+                        }
+                        else
+                        {
+                            return new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns.release(), typeNameNode.release()); 
+                        }
+                    }
+                    /
+                    {
+                        soul::cpp20::symbols::EndScope(context);
+                    }
+                |   empty{ if (isConstructorNameNode) pass = false; } 
+                    TypeName(context):typeName2
+                    {
+                        std::unique_ptr<soul::cpp20::ast::Node> typeNameNode;
+                        typeNameNode.reset(typeName2);
+                        if (context->IsConstructorNameNode(typeNameNode.get()))
+                        {
+                            pass = false;
+                        }
+                        else
+                        {
+                            return typeNameNode.release();
+                        }
+                    }
+                |   DeclTypeSpecifier(context):declTypeSpecifier
+                    { 
+                        return declTypeSpecifier; 
+                    }
+                |   PlaceholderTypeSpecifier(context):placeholderTypeSpecifier
+                    { 
+                        return placeholderTypeSpecifier; 
+                    }
+                )
+            )
+        )
+        ;
+
+    TypeName(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= SimpleTemplateId(context):templateId{ return templateId; }
+        |   TypeIdentifier(context):typeIdentifier{ return typeIdentifier;  }        
+        ;
+
+    TypeId(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            empty{ context->PushResetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); }
+            TypeSpecifierSeq(context):typeSpecifiers{ sourcePos = lexer.GetSourcePos(pos); } 
+            AbstractDeclarator(context):abstractDeclarator?
+        )
+        {
+            context->PopFlags();
+            return new soul::cpp20::ast::TypeIdNode(sourcePos, typeSpecifiers, abstractDeclarator);
+        }
+        /
+        {
+            context->PopFlags();
+        }
+        ;
+
+    TypenameSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> templateNode, 
+        var bool typenameSeen, var std::unique_ptr<soul::cpp20::ast::Node> leaf) : soul::cpp20::ast::Node*
+        ::= TYPENAME{ sourcePos = lexer.GetSourcePos(pos); context->PushSetFlag(soul::cpp20::symbols::ContextFlags::assumeType); typenameSeen = true; } 
+            empty{ context->PushResetFlag(soul::cpp20::symbols::ContextFlags::assumeType); } 
+            NestedNameSpecifier(context):nns{ context->PopFlags(); } / { context->PopFlags(); }
+            (   (Template:t{ templateNode.reset(t); })?
+                SimpleTemplateId(context):simpleTemplateId
+                {
+                    context->PopFlags();
+                    leaf.reset(simpleTemplateId);
+                    return new soul::cpp20::ast::TypenameSpecifierNode(sourcePos, nns, leaf.release(), templateNode.release());
+                }
+            |   Identifier(context):identifier
+                {
+                    context->PopFlags();
+                    leaf.reset(identifier);
+                    return new soul::cpp20::ast::TypenameSpecifierNode(sourcePos, nns, leaf.release(), nullptr);
+                }
+            )
+            |
+            empty
+            {
+                if (typenameSeen)
+                {
+                    context->PopFlags();
+                }
+                pass = false;
+            }
+        ;
+
+    DeclTypeSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+        soul::cpp20::ast::Node*
+        ::= 
+        (
+            DECLTYPE{ sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            Expression(context):expr 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new soul::cpp20::ast::DeclTypeSpecifierNode(sourcePos, expr, lpPos, rpPos);
+        }
+        ;
+
+    PlaceholderTypeSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos dtPos, var soul::ast::SourcePos autoPos, 
+        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (TypeConstraint(context):typeConstraint{ sourcePos = lexer.GetSourcePos(pos); })? 
+            (
+                AUTO
+                { 
+                    if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos);
+                    autoPos = lexer.GetSourcePos(pos);
+                    return new soul::cpp20::ast::PlaceholderTypeSpecifierNode(sourcePos, typeConstraint, dtPos, autoPos, lpPos, rpPos);
+                } 
+            )
+            |
+            (
+                (
+                    DECLTYPE{ dtPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); } 
+                    LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+                    AUTO{ autoPos = lexer.GetSourcePos(pos); } 
+                    RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+                )
+                {
+                    return new soul::cpp20::ast::PlaceholderTypeSpecifierNode(sourcePos, typeConstraint, dtPos, autoPos, lpPos, rpPos);
+                }
+            )
+        )
+        ;
+}

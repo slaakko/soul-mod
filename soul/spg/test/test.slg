@@ -1,0 +1,5 @@
+project test.lexer.slg;
+tokens <test.token>;
+keywords <test.keyword>;
+expressions <test.expr>;
+lexer <test.lexer>;

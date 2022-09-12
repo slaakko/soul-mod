@@ -41,6 +41,9 @@ void PrintHelp()
     std::cout << "--no-debug-support | -n" << std::endl;
     std::cout << "  Do not generate parser debugging code." << std::endl;
     std::cout << std::endl;
+    std::cout << "--optimize | -o" << std::endl;
+    std::cout << "  Do switch optimization." << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -50,6 +53,8 @@ int main(int argc, const char** argv)
         Init();
         bool verbose = false;
         bool noDebugSupport = false;
+        bool optimize = false;
+        bool xml = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
         {
@@ -68,6 +73,14 @@ int main(int argc, const char** argv)
                 else if (arg == "--no-debug-support")
                 {
                     noDebugSupport = true;
+                }
+                else if (arg == "--optimize")
+                {
+                    optimize = true;
+                }
+                else if (arg == "xml")
+                {
+                    xml = true;
                 }
                 else
                 {
@@ -96,6 +109,16 @@ int main(int argc, const char** argv)
                             noDebugSupport = true;
                             break;
                         }
+                        case 'o' :
+                        {
+                            optimize = true;
+                            break;
+                        }
+                        case 'x':
+                        {
+                            xml = true;
+                            break;
+                        }
                         default:
                         {
                             throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
@@ -112,7 +135,7 @@ int main(int argc, const char** argv)
         for (const std::string& file : files)
         {
             std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::ParseSpgFile(file, fileMap, verbose);
-            soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, Version());
+            soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, optimize, xml, Version());
         }
     }
     catch (const std::exception& ex)

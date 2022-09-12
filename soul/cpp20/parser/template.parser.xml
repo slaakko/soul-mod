@@ -1,0 +1,352 @@
+<parserFile>
+ <grammar name="TemplateParser">
+  <rule first="{}" name="TemplateDeclaration">
+   <sequence first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="TemplateHead"/>
+    </action>
+    <group first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="ConceptDefinition"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="Declaration"/>
+       </action>
+      </choice>
+      <action first="{}">
+       <empty first="{}"/>
+      </action>
+     </choice>
+    </group>
+   </sequence>
+  </rule>
+  <rule first="{}" name="TemplateHead">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="TEMPLATE"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="TemplateParameterList"/>
+       </action>
+      </sequence>
+      <optional first="{}">
+       <group first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="RequiresClause"/>
+        </action>
+       </group>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="TemplateParameterList">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <token first="{}" name="LANGLE"/>
+        </action>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="TemplateParameter"/>
+        </action>
+       </sequence>
+       <kleene first="{}">
+        <group first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <nonterminal first="{}" ruleName="Comma"/>
+          </action>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="TemplateParameter"/>
+          </action>
+         </sequence>
+        </group>
+       </kleene>
+      </sequence>
+      <action first="{}">
+       <token first="{}" name="RANGLE"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="TemplateParameter">
+   <choice first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="TypeParameter"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="ParameterDeclaration"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="TypeParameter">
+   <sequence first="{}">
+    <optional first="{}">
+     <group first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="TemplateHead"/>
+      </action>
+     </group>
+    </optional>
+    <group first="{}">
+     <choice first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="TypeParameterKey"/>
+       </action>
+       <group first="{}">
+        <choice first="{}">
+         <sequence first="{}">
+          <sequence first="{}">
+           <nonterminal first="{}" ruleName="Identifier"/>
+           <nonterminal first="{}" ruleName="Assign"/>
+          </sequence>
+          <group first="{}">
+           <choice first="{}">
+            <action first="{}">
+             <nonterminal first="{}" ruleName="IdExpression"/>
+            </action>
+            <action first="{}">
+             <nonterminal first="{}" ruleName="TypeId"/>
+            </action>
+           </choice>
+          </group>
+         </sequence>
+         <action first="{}">
+          <group first="{}">
+           <sequence first="{}">
+            <optional first="{}">
+             <nonterminal first="{}" ruleName="Ellipsis"/>
+            </optional>
+            <optional first="{}">
+             <nonterminal first="{}" ruleName="Identifier"/>
+            </optional>
+           </sequence>
+          </group>
+         </action>
+        </choice>
+       </group>
+      </sequence>
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="TypeConstraint"/>
+       </action>
+       <group first="{}">
+        <choice first="{}">
+         <sequence first="{}">
+          <sequence first="{}">
+           <nonterminal first="{}" ruleName="Identifier"/>
+           <nonterminal first="{}" ruleName="Assign"/>
+          </sequence>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="TypeId"/>
+          </action>
+         </sequence>
+         <action first="{}">
+          <group first="{}">
+           <sequence first="{}">
+            <optional first="{}">
+             <nonterminal first="{}" ruleName="Ellipsis"/>
+            </optional>
+            <optional first="{}">
+             <nonterminal first="{}" ruleName="Identifier"/>
+            </optional>
+           </sequence>
+          </group>
+         </action>
+        </choice>
+       </group>
+      </sequence>
+     </choice>
+    </group>
+   </sequence>
+  </rule>
+  <rule first="{}" name="TypeParameterKey">
+   <choice first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Typename"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Class"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="Typename">
+   <action first="{}">
+    <token first="{}" name="TYPENAME"/>
+   </action>
+  </rule>
+  <rule first="{}" name="Class">
+   <action first="{}">
+    <token first="{}" name="CLASS"/>
+   </action>
+  </rule>
+  <rule first="{}" name="TemplateId">
+   <choice first="{}">
+    <group first="{}">
+     <action first="{}">
+      <group first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <sequence first="{}">
+          <group first="{}">
+           <choice first="{}">
+            <action first="{}">
+             <nonterminal first="{}" ruleName="OperatorFunctionId"/>
+            </action>
+            <action first="{}">
+             <nonterminal first="{}" ruleName="LiteralOperatorId"/>
+            </action>
+           </choice>
+          </group>
+          <action first="{}">
+           <token first="{}" name="LANGLE"/>
+          </action>
+         </sequence>
+         <optional first="{}">
+          <nonterminal first="{}" ruleName="TemplateArgumentList"/>
+         </optional>
+        </sequence>
+        <action first="{}">
+         <token first="{}" name="RANGLE"/>
+        </action>
+       </sequence>
+      </group>
+     </action>
+    </group>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="SimpleTemplateId"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="SimpleTemplateId">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="TemplateName"/>
+        </action>
+        <action first="{}">
+         <token first="{}" name="LANGLE"/>
+        </action>
+       </sequence>
+       <optional first="{}">
+        <nonterminal first="{}" ruleName="TemplateArgumentList"/>
+       </optional>
+      </sequence>
+      <action first="{}">
+       <token first="{}" name="RANGLE"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="TemplateName">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="Identifier"/>
+   </action>
+  </rule>
+  <rule first="{}" name="TemplateArgumentList">
+   <sequence first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="TemplateArgument"/>
+      </action>
+      <kleene first="{}">
+       <group first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="Comma"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="TemplateArgument"/>
+         </action>
+        </sequence>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+    <optional first="{}">
+     <group first="{}">
+      <action first="{}">
+       <token first="{}" name="ELLIPSIS"/>
+      </action>
+     </group>
+    </optional>
+   </sequence>
+  </rule>
+  <rule first="{}" name="TemplateArgument">
+   <choice first="{}">
+    <choice first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <empty first="{}"/>
+       </action>
+       <nonterminal first="{}" ruleName="TypeId"/>
+      </sequence>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="TemplateArgNext"/>
+      </action>
+     </sequence>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="ConstantExpression"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="IdExpression"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="TemplateArgNext">
+   <lookahead first="{}">
+    <group first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <token first="{}" name="RANGLE"/>
+       <token first="{}" name="COMMA"/>
+      </choice>
+      <token first="{}" name="ELLIPSIS"/>
+     </choice>
+    </group>
+   </lookahead>
+  </rule>
+  <rule first="{}" name="DeductionGuide">
+   <action first="{}">
+    <empty first="{}"/>
+   </action>
+  </rule>
+  <rule first="{}" name="ExplicitInstantiation">
+   <action first="{}">
+    <empty first="{}"/>
+   </action>
+  </rule>
+  <rule first="{}" name="ExplicitSpecialization">
+   <action first="{}">
+    <empty first="{}"/>
+   </action>
+  </rule>
+  <rule first="{}" name="Extern">
+   <action first="{}">
+    <token first="{}" name="EXTERN"/>
+   </action>
+  </rule>
+  <rule first="{}" name="Template">
+   <action first="{}">
+    <token first="{}" name="TEMPLATE"/>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

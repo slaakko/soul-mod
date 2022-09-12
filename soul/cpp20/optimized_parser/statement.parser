@@ -1,0 +1,531 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.statement;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.symbols;
+[implementation]import soul.cpp20.parser.attribute;
+[implementation]import soul.cpp20.parser.declaration;
+[implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.initialization;
+[implementation]import soul.cpp20.parser.token;
+[implementation]import soul.cpp20.parser.recorded.parse;
+[implementation]import soul.cpp20.parser.guard;
+[implementation]import soul.cpp20.parser.punctuation;
+[implementation]import soul.cpp20.parser.type;
+[implementation]import soul.ast.lexer.pos.pair;
+
+parser StatementParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using DeclarationParser.AbstractDeclarator;
+    using DeclarationParser.BlockDeclaration;
+    using DeclarationParser.SimpleDeclaration;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclarationParser.Declarator;
+    using DeclarationParser.RefQualifier;
+    using ExpressionParser.ConstantExpression;
+    using ExpressionParser.Expression;
+    using IdentifierParser.Identifier;
+    using IdentifierParser.IdentifierList;
+    using InitializationParser.BraceOrEqualInitializer;
+    using InitializationParser.ExprOrBracedInitList;
+    using GuardParser.MemberFunctionTemplateGuard;
+    using GuardParser.SavedMemberFunctionBodyGuard;
+    using PunctuationParser.Semicolon;
+    using PunctuationParser.Ellipsis;
+    using TypeParser.TypeSpecifierSeq;
+
+    Statement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= LabeledStatement(context):labeledStatement{ return labeledStatement; }
+        |   CompoundStatement(context):compoundStatement{ return compoundStatement; }
+        |   SelectionStatement(context):selectionStatement{ return selectionStatement; }
+        |   IterationStatement(context):iterationStatement{ return iterationStatement; }
+        |   JumpStatement(context):jumpStatement{ return jumpStatement; }
+        |   TryStatement(context):tryStatement{ return tryStatement; }
+        |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
+        |   DeclarationStatement(context):declarationStatement{ return declarationStatement; }
+        ;
+
+    LabeledStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos labelPos, var int64_t labelP, 
+        var soul::ast::SourcePos colonPos, var soul::ast::SourcePos casePos, var soul::ast::SourcePos defaultPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            ID{ sourcePos = lexer.GetSourcePos(pos); labelPos = sourcePos; labelP = pos; }
+            COLON{ colonPos = lexer.GetSourcePos(pos); } 
+            Statement(context):stmt
+            {
+                soul::cpp20::ast::IdentifierNode* identifierNode = soul::cpp20::parser::token::ParseIdentifier(labelPos, lexer.FileName(), lexer.GetToken(labelP));
+                return new soul::cpp20::ast::LabeledStatementNode(sourcePos, identifierNode, stmt, attributes, colonPos);
+            }
+        |   CASE{ casePos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = casePos; } 
+            ConstantExpression(context):caseExpr 
+            COLON{ colonPos = lexer.GetSourcePos(pos); }
+            Statement(context):stmt2
+            {
+                return new soul::cpp20::ast::CaseStatementNode(sourcePos, caseExpr, stmt2, attributes, casePos, colonPos);
+            }
+        |   DEFAULT{ defaultPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = defaultPos; }
+            COLON{ colonPos = lexer.GetSourcePos(pos); } 
+            Statement(context):stmt3
+            {
+                return new soul::cpp20::ast::DefaultStatementNode(sourcePos, stmt3, attributes, defaultPos, colonPos);
+            }
+        )
+        ;
+
+    CompoundStatementUnguarded(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, 
+        var std::unique_ptr<soul::cpp20::ast::CompoundStatementNode> compoundStatementNode, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos, var bool nextIsRBrace) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            LBRACE
+            { 
+                lbPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = lbPos;
+                compoundStatementNode.reset(new soul::cpp20::ast::CompoundStatementNode(sourcePos)); 
+                compoundStatementNode->SetAttributes(attributes); 
+                soul::cpp20::symbols::BeginBlock(sourcePos, context); 
+            }
+            (   Statement(context):stmt{ compoundStatementNode->AddNode(stmt); }
+            |   RBraceNext:next{ nextIsRBrace = true; pass = false; }
+            |   empty
+                { 
+                    if (!nextIsRBrace) 
+                    {
+                        ThrowStatementExpected(lexer.GetSourcePos(pos), context);
+                    }
+                    else
+                    {
+                        pass = false;
+                    }
+                }
+            )* 
+            RBRACE{ rbPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            compoundStatementNode->SetLBracePos(lbPos);
+            compoundStatementNode->SetRBracePos(rbPos); 
+            soul::cpp20::symbols::MapNode(compoundStatementNode.get(), context);
+            soul::cpp20::symbols::EndBlock(context);
+            return compoundStatementNode.release();
+        }
+        ;
+
+    RBraceNext
+        ::= &(RBRACE)
+        ;
+
+    CompoundStatementGuarded(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::CompoundStatementNode> compoundStatementNode) : soul::cpp20::ast::Node*
+        ::= 
+        (   AttributeSpecifierSeq(context):attributes
+            { 
+                soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos);
+                soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair = soul::cpp20::parser::recorded::parse::RecordCompoundStatement(lexer); 
+                if (lexerPosPair.IsValid())
+                {
+                    compoundStatementNode.reset(new soul::cpp20::ast::CompoundStatementNode(sourcePos));  
+                    compoundStatementNode->SetLexerPosPair(lexerPosPair);
+                    compoundStatementNode->SetAttributes(attributes);
+                }
+                else
+                {
+                    pass = false;
+                }
+            }
+        |   empty
+            {
+                soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos);
+                soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair = soul::cpp20::parser::recorded::parse::RecordCompoundStatement(lexer); 
+                if (lexerPosPair.IsValid())
+                {
+                    compoundStatementNode.reset(new soul::cpp20::ast::CompoundStatementNode(sourcePos));  
+                    compoundStatementNode->SetLexerPosPair(lexerPosPair);
+                }
+                else
+                {
+                    pass = false;
+                }
+            }
+        )
+        {
+            return compoundStatementNode.release();
+        }
+        ;
+
+    CompoundStatementSaved(soul::cpp20::symbols::Context* context, var soul::cpp20::ast::CompoundStatementNode* compoundStatementNode) : soul::cpp20::ast::Node*
+        ::= empty
+        { 
+            compoundStatementNode = soul::cpp20::parser::recorded::parse::GetSavedCompoundStatementNode(context); 
+            if (!compoundStatementNode) 
+            {
+                pass = false; 
+            }
+            lexer.BeginRecordedParse(compoundStatementNode->GetLexerPosPair()); 
+        }
+        (
+            LBRACE{ soul::ast::SourcePos sourcePos = lexer.GetSourcePos(pos); compoundStatementNode->SetLBracePos(sourcePos); soul::cpp20::symbols::BeginBlock(sourcePos, context); }
+            (
+                Statement(context):stmt{ compoundStatementNode->AddNode(stmt); }
+            )* 
+            RBRACE
+            { 
+                compoundStatementNode->SetRBracePos(lexer.GetSourcePos(pos));
+                lexer.EndRecordedParse(); 
+                soul::cpp20::symbols::MapNode(compoundStatementNode, context);
+                soul::cpp20::symbols::EndBlock(context); 
+                return compoundStatementNode; 
+            }
+        )
+        |   empty
+        {
+            lexer.EndRecordedParse();
+            pass = false;
+        }
+        ;
+
+    CompoundStatement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= 
+        (   MemberFunctionTemplateGuard(context):memberFunctionTemplateGuard
+            CompoundStatementGuarded(context):guardedCompoundStatement{ return guardedCompoundStatement; }
+        |   SavedMemberFunctionBodyGuard(context):savedMemberFunctionBodyGuard{ context->ResetFlag(soul::cpp20::symbols::ContextFlags::parseSavedMemberFunctionBody); }
+            CompoundStatementSaved(context):savedCompoundStatement{ return savedCompoundStatement; }
+        |   CompoundStatementUnguarded(context):unguardedCompoundStatement{ return unguardedCompoundStatement; }
+        )
+        ;
+
+    SelectionStatement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= IfStatement(context):ifStmt{ return ifStmt; }
+        |   SwitchStatement(context):switchStmt{ return switchStmt; }
+        ;
+
+    IfStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos ifPos, var soul::ast::SourcePos constExprPos, 
+        var soul::ast::SourcePos elsePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            IF{ ifPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = ifPos; soul::cpp20::symbols::BeginBlock(sourcePos, context); } 
+            (CONSTEXPR{ constExprPos = lexer.GetSourcePos(pos); })? 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            InitStatement(context):initStmt? 
+            Condition(context):cond 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+            Statement(context):thenStmt 
+            (   ELSE{ elsePos = lexer.GetSourcePos(pos); }
+                Statement(context):elseStmt
+            )?
+        )
+        {
+            soul::cpp20::ast::IfStatementNode* node = new soul::cpp20::ast::IfStatementNode(
+                sourcePos, initStmt, cond, thenStmt, elseStmt, attributes, ifPos, lpPos, rpPos, constExprPos, elsePos);
+            soul::cpp20::symbols::MapNode(node, context);
+            soul::cpp20::symbols::EndBlock(context); 
+            return node;
+        }
+        ;
+
+    SwitchStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos switchPos, var soul::ast::SourcePos lpPos, 
+        var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            SWITCH{ switchPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = switchPos; soul::cpp20::symbols::BeginBlock(sourcePos, context); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            InitStatement(context):initStmt? 
+            Condition(context):cond 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+            Statement(context):stmt
+        )
+        {
+            soul::cpp20::ast::SwitchStatementNode* node = new soul::cpp20::ast::SwitchStatementNode(sourcePos, initStmt, cond, stmt, attributes, switchPos, lpPos, rpPos);
+            soul::cpp20::symbols::MapNode(node, context);
+            soul::cpp20::symbols::EndBlock(context); 
+            return node;
+        }
+        ;
+
+    IterationStatement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= WhileStatement(context):whileStmt{ return whileStmt; }
+        |   DoStatement(context):doStmt{ return doStmt; }
+        |   RangeForStatement(context):rangeForStmt{ return rangeForStmt; }
+        |   ForStatement(context):forStmt{ return forStmt; }
+        ;
+
+    WhileStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos whilePos, var soul::ast::SourcePos lpPos, 
+        var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            WHILE{ whilePos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = whilePos; soul::cpp20::symbols::BeginBlock(sourcePos, context);  } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            Condition(context):cond 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+            Statement(context):stmt
+        )
+        {
+            soul::cpp20::ast::WhileStatementNode* node = new soul::cpp20::ast::WhileStatementNode(sourcePos, cond, stmt, attributes, whilePos, lpPos, rpPos);
+            soul::cpp20::symbols::MapNode(node, context);
+            soul::cpp20::symbols::EndBlock(context); 
+            return node;
+        }
+        ;
+
+    DoStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos doPos, var soul::ast::SourcePos whilePos, 
+        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            DO{ doPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = doPos; }
+            Statement(context):stmt 
+            WHILE{ whilePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            Expression(context):expr 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::DoStatementNode(sourcePos, stmt, expr, attributes, semicolon, doPos, whilePos, lpPos, rpPos);
+        }
+        ;
+
+    RangeForStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos forPos, var soul::ast::SourcePos lpPos, 
+        var soul::ast::SourcePos rpPos, var soul::ast::SourcePos colonPos, var bool blockOpen) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            FOR{ forPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = forPos; soul::cpp20::symbols::BeginBlock(sourcePos, context); blockOpen = true; }
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            InitStatement(context):initStmt? 
+            ForRangeDeclaration(context):declaration 
+            COLON{ colonPos = lexer.GetSourcePos(pos); } 
+            ForRangeInitializer(context):initializer 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            Statement(context):stmt
+        )
+        {
+            soul::cpp20::ast::RangeForStatementNode* node = new soul::cpp20::ast::RangeForStatementNode(
+                sourcePos, initStmt, declaration, initializer, stmt, attributes, forPos, lpPos, rpPos, colonPos);
+            soul::cpp20::symbols::MapNode(node, context);
+            soul::cpp20::symbols::EndBlock(context); 
+            return node;
+        }
+        /
+        {
+            if (blockOpen)
+            {
+                soul::cpp20::symbols::RemoveBlock(context);
+            }
+        }
+        ;
+
+    ForRangeDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> node, 
+        var std::unique_ptr<soul::cpp20::ast::Node> declSpecifierSeq, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            DeclSpecifierSeq(context):declSpecifierSeq1{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); declSpecifierSeq.reset(declSpecifierSeq1); }
+            (   Declarator(context):declarator{ node.reset(new soul::cpp20::ast::ForRangeDeclarationNode(sourcePos, declSpecifierSeq.release(), declarator, attributes)); }
+            |   (   
+                    RefQualifier:refQualifier? 
+                    LBRACKET{ lbPos = lexer.GetSourcePos(pos); } 
+                    IdentifierList(context):identifiers 
+                    RBRACKET{ rbPos = lexer.GetSourcePos(pos); }
+                )
+                {
+                    node.reset(new soul::cpp20::ast::StructuredBindingNode(sourcePos, declSpecifierSeq.release(), refQualifier, identifiers, nullptr, attributes, nullptr, lbPos, rbPos));
+                }
+            )
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    ForRangeInitializer(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= ExprOrBracedInitList(context):initializer{ return initializer; }
+        ;
+
+    ForStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos forPos, var soul::ast::SourcePos lpPos, 
+        var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            FOR{ forPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = forPos; soul::cpp20::symbols::BeginBlock(sourcePos, context); }
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            InitStatement(context):initStmt 
+            Condition(context):cond? 
+            Semicolon:semicolon 
+            Expression(context):loopExpr? 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+            Statement(context):stmt
+        )
+        {
+            soul::cpp20::ast::ForStatementNode* node = new soul::cpp20::ast::ForStatementNode(sourcePos, initStmt, cond, loopExpr, stmt, attributes, semicolon, forPos, lpPos, rpPos);
+            soul::cpp20::symbols::MapNode(node, context);
+            soul::cpp20::symbols::EndBlock(context); 
+            return node;
+        }
+        ;
+
+    JumpStatement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= BreakStatement(context):breakStatement{ return breakStatement; }
+        |   ContinueStatement(context):continueStatement{ return continueStatement; }
+        |   ReturnStatement(context):returnStatement{ return returnStatement; }
+        |   CoroutineReturnStatement(context):coRoutineReturnStatement{ return coRoutineReturnStatement; }
+        |   GotoStatement(context):gotoStatement{ return gotoStatement; }
+        ;
+
+    BreakStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos breakPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            BREAK{ breakPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = breakPos; }
+            Semicolon:semicolon
+        )
+        {
+            return new BreakStatementNode(sourcePos, attributes, semicolon, breakPos); 
+        }
+        ;
+
+    ContinueStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos continuePos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            CONTINUE{ continuePos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = continuePos; }
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::ContinueStatementNode(sourcePos, attributes, semicolon, continuePos);
+        }
+        ;
+
+    ReturnStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos returnPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            RETURN{ returnPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = returnPos; }
+            ExprOrBracedInitList(context):returnValue?
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::ReturnStatementNode(sourcePos, returnValue, attributes, semicolon, returnPos);
+        }
+        ;
+
+    CoroutineReturnStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos coReturnPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            CO_RETURN{ coReturnPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = coReturnPos; }
+            ExprOrBracedInitList(context):returnValue?
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::CoReturnStatementNode(sourcePos, returnValue, attributes, semicolon, coReturnPos);
+        }
+        ;
+
+    GotoStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos gotoPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            GOTO{ gotoPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = gotoPos; }
+            Identifier(context):target
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::GotoStatementNode(sourcePos, target, attributes, semicolon, gotoPos);
+        }
+        ;
+
+    TryStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos tryPos) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            TRY{ tryPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = tryPos; }
+            CompoundStatement(context):tryBlock 
+            HandlerSeq(context):handlers
+        )
+        {
+            return new soul::cpp20::ast::TryStatementNode(sourcePos, tryBlock, handlers, attributes, tryPos);
+        }
+        ;
+
+    HandlerSeq(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> handlerSequenceNode) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Handler(context):first{ handlerSequenceNode.reset(new soul::cpp20::ast::HandlerSequenceNode(lexer.GetSourcePos(pos))); handlerSequenceNode->AddNode(first); }
+            (
+                Handler(context):next{ handlerSequenceNode->AddNode(next); }
+            )*
+        )
+        {
+            return handlerSequenceNode.release();
+        }
+        ;
+
+    Handler(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            CATCH{ sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            ExceptionDeclaration(context):exception 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+            CompoundStatement(context):catchBlock
+        )
+        {
+            return new soul::cpp20::ast::HandlerNode(sourcePos, exception, catchBlock, lpPos, rpPos);
+        }
+        ;
+
+    ExceptionDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> typeSpecifiers, 
+        var std::unique_ptr<soul::cpp20::ast::Node> declarator) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (
+            TypeSpecifierSeq(context):typeSpecifiersSeq{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); typeSpecifiers.reset(typeSpecifiersSeq); }
+            (   Declarator(context):declarator1{ declarator.reset(declarator1); } 
+            |   AbstractDeclarator(context):abstractDeclarator{ declarator.reset(abstractDeclarator); }
+            |   empty
+            )
+        |   Ellipsis:ellipsis{  if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, nullptr, nullptr, ellipsis, attributes); }
+        )
+        {
+            return new soul::cpp20::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers.release(), declarator.release(), nullptr, attributes);
+        }
+        ;
+
+    DeclarationStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::=
+        (
+            BlockDeclaration(context):declaration{ sourcePos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new soul::cpp20::ast::DeclarationStatementNode(sourcePos, declaration);
+        }
+        ;
+
+    ExpressionStatement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> expr) : soul::cpp20::ast::Node*
+        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+        (   
+            (   Expression(context):expr1{ expr.reset(expr1); if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            |   empty
+            )
+            Semicolon:semicolon{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new soul::cpp20::ast::ExpressionStatementNode(sourcePos, expr.release(), attributes, semicolon);
+        }
+        ;
+
+    InitStatement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= SimpleDeclaration(context):simpleDeclaration{ return simpleDeclaration; }
+        |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
+        ;
+
+    Condition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> declSpecifiers) : soul::cpp20::ast::Node*
+        ::= 
+        (   (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+            DeclSpecifierSeq(context):declSpecifierSeq{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); declSpecifiers.reset(declSpecifierSeq); }
+            Declarator(context):declarator 
+            BraceOrEqualInitializer(context):initializer
+            {
+                return new soul::cpp20::ast::InitConditionNode(sourcePos, declSpecifiers.release(), declarator, initializer, attributes);
+            }
+        |   Expression(context):expr{ return expr; }
+        )
+        ;
+}

@@ -1,0 +1,122 @@
+<parserFile>
+ <grammar name="LiteralParser">
+  <rule first="{}" name="Literal">
+   <choice first="{}">
+    <choice first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <choice first="{}">
+        <choice first="{}">
+         <choice first="{}">
+          <choice first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="UserDefinedLiteral"/>
+           </action>
+           <action first="{}">
+            <token first="{}" name="INTEGER_LITERAL"/>
+           </action>
+          </choice>
+          <action first="{}">
+           <token first="{}" name="FLOATING_LITERAL"/>
+          </action>
+         </choice>
+         <action first="{}">
+          <token first="{}" name="CHARACTER_LITERAL"/>
+         </action>
+        </choice>
+        <action first="{}">
+         <token first="{}" name="BEGIN_RAW_STRING_LITERAL"/>
+        </action>
+       </choice>
+       <action first="{}">
+        <token first="{}" name="STRING_LITERAL"/>
+       </action>
+      </choice>
+      <action first="{}">
+       <token first="{}" name="TRUE"/>
+      </action>
+     </choice>
+     <action first="{}">
+      <token first="{}" name="FALSE"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <token first="{}" name="NULLPTR"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="UserDefinedLiteral">
+   <action first="{}">
+    <group first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <choice first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <token first="{}" name="INTEGER_LITERAL"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="UdSuffix"/>
+         </action>
+        </sequence>
+        <sequence first="{}">
+         <action first="{}">
+          <token first="{}" name="FLOATING_LITERAL"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="UdSuffix"/>
+         </action>
+        </sequence>
+       </choice>
+       <sequence first="{}">
+        <action first="{}">
+         <token first="{}" name="STRING_LITERAL"/>
+        </action>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="UdSuffix"/>
+        </action>
+       </sequence>
+      </choice>
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="CHARACTER_LITERAL"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="UdSuffix"/>
+       </action>
+      </sequence>
+     </choice>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="UdSuffix">
+   <action first="{}">
+    <token first="{}" name="ID"/>
+   </action>
+  </rule>
+  <rule first="{}" name="LiteralOperatorId">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="OPERATOR"/>
+       </action>
+       <action first="{}">
+        <token first="{}" name="STRING_LITERAL"/>
+       </action>
+      </sequence>
+      <action first="{}">
+       <token first="{}" name="ID"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="StringLiteral">
+   <action first="{}">
+    <token first="{}" name="STRING_LITERAL"/>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

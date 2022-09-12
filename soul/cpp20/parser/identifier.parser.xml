@@ -1,0 +1,170 @@
+<parserFile>
+ <grammar name="IdentifierParser">
+  <rule first="{}" name="Identifier">
+   <action first="{}">
+    <token first="{}" name="ID"/>
+   </action>
+  </rule>
+  <rule first="{}" name="UnqualifiedId">
+   <choice first="{}">
+    <choice first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <choice first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="TemplateId"/>
+        </action>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Identifier"/>
+        </action>
+       </choice>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="OperatorFunctionId"/>
+       </action>
+      </choice>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="ConversionFunctionId"/>
+      </action>
+     </choice>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="LiteralOperatorId"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="DestructorId"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="QualifiedId">
+   <group first="{}">
+    <sequence first="{}">
+     <action first="{}">
+      <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+     </action>
+     <group first="{}">
+      <choice first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Template"/>
+        </action>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="UnqualifiedId"/>
+        </action>
+       </sequence>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="UnqualifiedId"/>
+       </action>
+      </choice>
+     </group>
+    </sequence>
+   </group>
+  </rule>
+  <rule first="{}" name="Template">
+   <action first="{}">
+    <token first="{}" name="TEMPLATE"/>
+   </action>
+  </rule>
+  <rule first="{}" name="NestedNameSpecifier">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <empty first="{}"/>
+       </action>
+       <optional first="{}">
+        <group first="{}">
+         <action first="{}">
+          <token first="{}" name="COLON_COLON"/>
+         </action>
+        </group>
+       </optional>
+      </sequence>
+      <kleene first="{}">
+       <group first="{}">
+        <choice first="{}">
+         <sequence first="{}">
+          <sequence first="{}">
+           <optional first="{}">
+            <group first="{}">
+             <action first="{}">
+              <token first="{}" name="TEMPLATE"/>
+             </action>
+            </group>
+           </optional>
+           <action first="{}">
+            <nonterminal first="{}" ruleName="SimpleTemplateId"/>
+           </action>
+          </sequence>
+          <action first="{}">
+           <token first="{}" name="COLON_COLON"/>
+          </action>
+         </sequence>
+         <sequence first="{}">
+          <action first="{}">
+           <token first="{}" name="ID"/>
+          </action>
+          <action first="{}">
+           <token first="{}" name="COLON_COLON"/>
+          </action>
+         </sequence>
+        </choice>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="IdentifierList">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="Identifier"/>
+      </action>
+      <kleene first="{}">
+       <group first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="Comma"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="Identifier"/>
+         </action>
+        </sequence>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="TypeIdentifier">
+   <choice first="{}">
+    <sequence first="{}">
+     <nonterminal first="{}" ruleName="AssumeTypeGuard"/>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="TypeIdentifierUnchecked"/>
+     </action>
+    </sequence>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="TypeIdentifierChecked"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="TypeIdentifierUnchecked">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="Identifier"/>
+   </action>
+  </rule>
+  <rule first="{}" name="TypeIdentifierChecked">
+   <action first="{}">
+    <token first="{}" name="ID"/>
+   </action>
+  </rule>
+  <rule first="{}" name="Unnamed">
+   <action first="{}">
+    <empty first="{}"/>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

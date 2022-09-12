@@ -1,0 +1,244 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.concepts;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.symbols;
+[implementation]import soul.cpp20.parser.type;
+[implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.function;
+[implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.punctuation;
+[implementation]import soul.cpp20.parser.templates;
+
+parser ConceptParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using TypeParser.TypeName;
+    using ExpressionParser.Expression;
+    using ExpressionParser.LogicalOrExpression;
+    using ExpressionParser.PrimaryExpression;
+    using FunctionParser.Noexcept;
+    using FunctionParser.ParameterDeclarationClause;
+    using IdentifierParser.Identifier;
+    using IdentifierParser.NestedNameSpecifier;
+    using PunctuationParser.Assign;
+    using PunctuationParser.Semicolon;
+    using TemplateParser.TemplateArgumentList;
+
+    ConceptDefinition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            CONCEPT{ sourcePos = lexer.GetSourcePos(pos); } 
+            ConceptName(context):conceptName 
+            Assign:assign{ context->PushSetFlag(soul::cpp20::symbols::ContextFlags::parsingConceptDefinition); }
+            ConstraintExpression(context):constraintExpr{ context->PopFlags(); } / { context->PopFlags(); }
+            Semicolon:semicolon
+        )
+        {
+            soul::cpp20::ast::ConceptDefinitionNode* conceptDefinitionNode = new soul::cpp20::ast::ConceptDefinitionNode(sourcePos, conceptName, assign, constraintExpr, semicolon);
+            soul::cpp20::symbols::ProcessConcept(conceptDefinitionNode, context);
+            return conceptDefinitionNode;
+        }
+        ;
+    
+    ConceptName(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> identifierNode) : soul::cpp20::ast::Node*
+        ::= Identifier(context):identifier{ return identifier; }
+        ;
+
+    ConceptNameChecked(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> identifierNode) : soul::cpp20::ast::Node*
+        ::= Identifier(context):identifier
+            { 
+                identifierNode.reset(identifier);
+                pass = soul::cpp20::symbols::IsConceptName(identifierNode.get(), context);
+                if (pass)
+                {
+                    return identifierNode.release(); 
+                }
+            }
+        ;
+
+    ConstraintExpression(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= LogicalOrExpression(context):logicalOrExpr{ return logicalOrExpr; }
+        ;
+
+    RequiresClause(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            REQUIRES{ sourcePos = lexer.GetSourcePos(pos); }
+            ConstraintLogicalOrExpression(context):orExpr
+        )
+        {
+            return new soul::cpp20::ast::RequiresClauseNode(sourcePos, orExpr);
+        }
+        ;
+
+    ConstraintLogicalOrExpression(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos opPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            ConstraintLogicalAndExpression(context):left{ node.reset(left); sourcePos = lexer.GetSourcePos(pos); }
+            (
+                OR_OR{ opPos = lexer.GetSourcePos(pos); } 
+                ConstraintLogicalAndExpression(context):right{ node.reset(new soul::cpp20::ast::BinaryExprNode(sourcePos, new soul::cpp20::ast::DisjunctionNode(opPos), node.release(), right)); }
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    ConstraintLogicalAndExpression(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos opPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            PrimaryExpression(context):left{ node.reset(left); }
+            (
+                AMP_AMP{ opPos = lexer.GetSourcePos(pos); } 
+                PrimaryExpression(context):right{ node.reset(new soul::cpp20::ast::BinaryExprNode(sourcePos, new soul::cpp20::ast::ConjunctionNode(opPos), node.release(), right)); }
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+
+    RequiresExpression(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            REQUIRES{ sourcePos = lexer.GetSourcePos(pos); } RequirementParameterList(context):params? RequirementBody(context):body
+        )
+        {
+            return new soul::cpp20::ast::RequiresExprNode(sourcePos, params, body);
+        }
+        ;
+
+    RequirementParameterList(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::ParameterListNode> node, 
+        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::=
+        (
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); node.reset(new soul::cpp20::ast::ParameterListNode(lpPos)); } 
+            ParameterDeclarationClause(context, node.get()):paramDeclClause 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            node->SetLParenPos(lpPos);
+            node->SetRParenPos(rpPos);
+            return node.release();
+        }
+        ;
+
+    RequirementBody(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::RequirementBodyNode> node, 
+        var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            LBRACE{ lbPos = lexer.GetSourcePos(pos); node.reset(new soul::cpp20::ast::RequirementBodyNode(lbPos)); }
+            RequirementSeq(context, node.get()):requirementSeq
+            RBRACE{ rbPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            node->SetLBracePos(lbPos);
+            node->SetRBracePos(rbPos);
+            return node.release();
+        }
+        ;
+
+    RequirementSeq(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* requirementBody) 
+        ::= 
+        (
+            Requirement(context):requirement{ requirementBody->AddNode(requirement); }
+        )+
+        ;
+
+    Requirement(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= NestedRequirement(context):nestedRequirement{ return nestedRequirement; }
+        |   TypeRequirement(context):typeRequirement{ return typeRequirement; }
+        |   CompoundRequirement(context):compoundRequirement{ return compoundRequirement; }
+        |   SimpleRequirement(context):simpleRequirement{ return simpleRequirement; }
+        ;
+
+    SimpleRequirement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= Expression(context):expr{ sourcePos = lexer.GetSourcePos(pos); } Semicolon:semicolon{ return new soul::cpp20::ast::SimpleRequirementNode(sourcePos, expr, semicolon); }
+        ;
+
+    TypeRequirement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= TYPENAME{ sourcePos = lexer.GetSourcePos(pos); } 
+            NestedNameSpecifier(context):nns? 
+            empty{ context->PushSetFlag(soul::cpp20::symbols::ContextFlags::assumeType); }
+            TypeName(context):typeName{ context->PopFlags(); } / { context->PopFlags(); }
+            Semicolon:semicolon
+        { 
+            return new soul::cpp20::ast::TypeRequirementNode(sourcePos, nns, typeName, semicolon); 
+        }
+        ;
+
+    CompoundRequirement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            LBRACE{ lbPos = lexer.GetSourcePos(pos); }
+            Expression(context):expr 
+            RBRACE{ rbPos = lexer.GetSourcePos(pos); }
+            Noexcept:noexcept_? 
+            ReturnTypeRequirement(context):returnTypeRequirement?
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::CompoundRequirementNode(lbPos, expr, noexcept_, returnTypeRequirement, semicolon, lbPos, rbPos);
+        }
+        ;
+
+    ReturnTypeRequirement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            ARROW{ sourcePos = lexer.GetSourcePos(pos); } TypeConstraint(context):typeConstraint
+        )
+        {
+            return new soul::cpp20::ast::ReturnTypeRequirementNode(sourcePos, typeConstraint);
+        }
+        ;
+
+    NestedRequirement(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            REQUIRES{ sourcePos = lexer.GetSourcePos(pos); } ConstraintExpression(context):constraintExpr Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::NestedRequirementNode(sourcePos, constraintExpr, semicolon);
+        }
+        ;
+
+    TypeConstraint(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::TypeConstraintNode> node, var std::unique_ptr<soul::cpp20::ast::Node> conceptName, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos laPos, var soul::ast::SourcePos raPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (
+                (   NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } 
+                    ConceptNameChecked(context):conceptName1{ conceptName.reset(new soul::cpp20::ast::QualifiedIdNode(sourcePos, nns, conceptName1)); }
+                |   ConceptNameChecked(context):conceptName2{ sourcePos = lexer.GetSourcePos(pos); conceptName.reset(conceptName2); }
+                )
+                {
+                    node.reset(new soul::cpp20::ast::TypeConstraintNode(sourcePos, conceptName.release())); 
+                }
+            )
+            (
+                LANGLE{ laPos = lexer.GetSourcePos(pos); ++vars->langleCount; context->PushSetFlag(soul::cpp20::symbols::ContextFlags::parsingTemplateId); node->SetHasTemplateArgumentList(); }
+                TemplateArgumentList(context, node.get()):templateArgs?
+                RANGLE{ raPos = lexer.GetSourcePos(pos); --vars->langleCount; context->PopFlags(); } / { --vars->langleCount; context->PopFlags(); }
+            )?
+        )
+        {
+            node->SetLAnglePos(laPos);
+            node->SetRAnglePos(raPos);
+            return node.release();
+        }
+    ;
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gendoc>
+	<project name="lib1"/>
+	<root dir=".."/>;
+	<cppProject filePath="../../code/lib1/lib1.project"/>
+</gendoc>

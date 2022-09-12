@@ -1,0 +1,17 @@
+export module test.parser;
+
+[implementation]import test.token;
+[implementation]import test.lexer;
+
+parser TestParser
+{
+	lexer test::lexer::TestLexer<char32_t>;
+	
+	main;
+	
+    ClassKey : int
+        ::= CLASS{ return 1; }
+        |   STRUCT{ return 2; }
+        |   UNION{ return 3; }
+        ;
+}

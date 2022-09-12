@@ -1,0 +1,675 @@
+<parserFile>
+ <grammar name="ClassParser">
+  <rule first="{}" name="ClassSpecifier">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="ClassHead"/>
+        </action>
+        <action first="{}">
+         <token first="{}" name="LBRACE"/>
+        </action>
+       </sequence>
+       <optional first="{}">
+        <nonterminal first="{}" ruleName="MemberSpecification"/>
+       </optional>
+      </sequence>
+      <action first="{}">
+       <token first="{}" name="RBRACE"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ClassHead">
+   <group first="{}">
+    <sequence first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="ClassKey"/>
+      </action>
+      <optional first="{}">
+       <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+      </optional>
+     </sequence>
+     <group first="{}">
+      <choice first="{}">
+       <action first="{}">
+        <group first="{}">
+         <sequence first="{}">
+          <sequence first="{}">
+           <nonterminal first="{}" ruleName="ClassHeadName"/>
+           <optional first="{}">
+            <nonterminal first="{}" ruleName="ClassVirtSpecifier"/>
+           </optional>
+          </sequence>
+          <optional first="{}">
+           <nonterminal first="{}" ruleName="BaseClause"/>
+          </optional>
+         </sequence>
+        </group>
+       </action>
+       <action first="{}">
+        <group first="{}">
+         <sequence first="{}">
+          <nonterminal first="{}" ruleName="Unnamed"/>
+          <optional first="{}">
+           <nonterminal first="{}" ruleName="BaseClause"/>
+          </optional>
+         </sequence>
+        </group>
+       </action>
+      </choice>
+     </group>
+    </sequence>
+   </group>
+  </rule>
+  <rule first="{}" name="ClassKey">
+   <choice first="{}">
+    <choice first="{}">
+     <action first="{}">
+      <token first="{}" name="CLASS"/>
+     </action>
+     <action first="{}">
+      <token first="{}" name="STRUCT"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <token first="{}" name="UNION"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="ClassHeadName">
+   <choice first="{}">
+    <sequence first="{}">
+     <action first="{}">
+      <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+     </action>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="ClassName"/>
+     </action>
+    </sequence>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="ClassName"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="ClassName">
+   <choice first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="SimpleTemplateId"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Identifier"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="ClassVirtSpecifier">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="FinalKeyword"/>
+   </action>
+  </rule>
+  <rule first="{}" name="VirtSpecifierSeq">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="VirtSpecifier"/>
+      </action>
+      <kleene first="{}">
+       <group first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="VirtSpecifier"/>
+        </action>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="VirtSpecifier">
+   <choice first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="OverrideKeyword"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="FinalKeyword"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="OverrideKeyword">
+   <action first="{}">
+    <group first="{}">
+     <action first="{}">
+      <token first="{}" name="ID"/>
+     </action>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="FinalKeyword">
+   <action first="{}">
+    <group first="{}">
+     <action first="{}">
+      <token first="{}" name="ID"/>
+     </action>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="BaseClause">
+   <sequence first="{}">
+    <action first="{}">
+     <token first="{}" name="COLON"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="BaseSpecifierList"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="BaseSpecifierList">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="BaseSpecifier"/>
+       </action>
+       <kleene first="{}">
+        <group first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <nonterminal first="{}" ruleName="Comma"/>
+          </action>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="BaseSpecifier"/>
+          </action>
+         </sequence>
+        </group>
+       </kleene>
+      </sequence>
+      <optional first="{}">
+       <group first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Ellipsis"/>
+        </action>
+       </group>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="BaseSpecifier">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <optional first="{}">
+        <group first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+         </action>
+        </group>
+       </optional>
+       <group first="{}">
+        <choice first="{}">
+         <choice first="{}">
+          <sequence first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="VirtualSpecifier"/>
+           </action>
+           <optional first="{}">
+            <group first="{}">
+             <action first="{}">
+              <nonterminal first="{}" ruleName="AccessSpecifier"/>
+             </action>
+            </group>
+           </optional>
+          </sequence>
+          <sequence first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="AccessSpecifier"/>
+           </action>
+           <optional first="{}">
+            <group first="{}">
+             <action first="{}">
+              <nonterminal first="{}" ruleName="VirtualSpecifier"/>
+             </action>
+            </group>
+           </optional>
+          </sequence>
+         </choice>
+         <empty first="{}"/>
+        </choice>
+       </group>
+      </sequence>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="ClassOrDeclType"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ClassOrDeclType">
+   <choice first="{}">
+    <choice first="{}">
+     <choice first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+        </action>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Template"/>
+        </action>
+       </sequence>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="SimpleTemplateId"/>
+       </action>
+      </sequence>
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="Identifier"/>
+       </action>
+      </sequence>
+     </choice>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="TypeName"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="DeclTypeSpecifier"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="MemberSpecification">
+   <positive first="{}">
+    <group first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="AccessSpecifier"/>
+        </action>
+        <action first="{}">
+         <token first="{}" name="COLON"/>
+        </action>
+       </sequence>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="MemberDeclaration"/>
+       </action>
+      </choice>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="MemberDeclaration"/>
+      </action>
+     </choice>
+    </group>
+   </positive>
+  </rule>
+  <rule first="{}" name="MemberDeclaration">
+   <choice first="{}">
+    <choice first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <choice first="{}">
+        <choice first="{}">
+         <choice first="{}">
+          <choice first="{}">
+           <choice first="{}">
+            <choice first="{}">
+             <choice first="{}">
+              <choice first="{}">
+               <choice first="{}">
+                <choice first="{}">
+                 <sequence first="{}">
+                  <sequence first="{}">
+                   <sequence first="{}">
+                    <optional first="{}">
+                     <group first="{}">
+                      <action first="{}">
+                       <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+                      </action>
+                     </group>
+                    </optional>
+                    <optional first="{}">
+                     <group first="{}">
+                      <action first="{}">
+                       <nonterminal first="{}" ruleName="MemberDeclSpecifiers"/>
+                      </action>
+                     </group>
+                    </optional>
+                   </sequence>
+                   <optional first="{}">
+                    <group first="{}">
+                     <action first="{}">
+                      <nonterminal first="{}" ruleName="MemberDeclaratorList"/>
+                     </action>
+                    </group>
+                   </optional>
+                  </sequence>
+                  <action first="{}">
+                   <group first="{}">
+                    <action first="{}">
+                     <nonterminal first="{}" ruleName="Semicolon"/>
+                    </action>
+                   </group>
+                  </action>
+                 </sequence>
+                 <sequence first="{}">
+                  <sequence first="{}">
+                   <sequence first="{}">
+                    <optional first="{}">
+                     <group first="{}">
+                      <action first="{}">
+                       <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+                      </action>
+                     </group>
+                    </optional>
+                    <action first="{}">
+                     <nonterminal first="{}" ruleName="RetMemberDeclSpecifiers"/>
+                    </action>
+                   </sequence>
+                   <action first="{}">
+                    <nonterminal first="{}" ruleName="MemberDeclaratorList"/>
+                   </action>
+                  </sequence>
+                  <action first="{}">
+                   <nonterminal first="{}" ruleName="Semicolon"/>
+                  </action>
+                 </sequence>
+                </choice>
+                <action first="{}">
+                 <nonterminal first="{}" ruleName="MemberFunctionDefinition"/>
+                </action>
+               </choice>
+               <action first="{}">
+                <nonterminal first="{}" ruleName="RetMemberFunctionDefinition"/>
+               </action>
+              </choice>
+              <action first="{}">
+               <nonterminal first="{}" ruleName="UsingDeclaration"/>
+              </action>
+             </choice>
+             <action first="{}">
+              <nonterminal first="{}" ruleName="UsingEnumDeclaration"/>
+             </action>
+            </choice>
+            <action first="{}">
+             <nonterminal first="{}" ruleName="StaticAssertDeclaration"/>
+            </action>
+           </choice>
+           <action first="{}">
+            <nonterminal first="{}" ruleName="MemberTemplateDeclaration"/>
+           </action>
+          </choice>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="ExplicitSpecialization"/>
+          </action>
+         </choice>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="DeductionGuide"/>
+         </action>
+        </choice>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="AliasDeclaration"/>
+        </action>
+       </choice>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="OpaqueEnumDeclaration"/>
+       </action>
+      </choice>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="EmptyDeclaration"/>
+      </action>
+     </choice>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="RBraceNext"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <empty first="{}"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="RBraceNext">
+   <lookahead first="{}">
+    <group first="{}">
+     <token first="{}" name="RBRACE"/>
+    </group>
+   </lookahead>
+  </rule>
+  <rule first="{}" name="MemberDeclSpecifiers">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="DeclSpecifierSeq"/>
+   </action>
+  </rule>
+  <rule first="{}" name="RetMemberDeclSpecifiers">
+   <sequence first="{}">
+    <action first="{}">
+     <empty first="{}"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="DeclSpecifierSeq"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="MemberFunctionDefinition">
+   <choice first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="NoDeclSpecFunctionDefinition"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="FunctionDefinition"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="RetMemberFunctionDefinition">
+   <sequence first="{}">
+    <action first="{}">
+     <empty first="{}"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="FunctionDefinition"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="MemberTemplateDeclaration">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="TemplateDeclaration"/>
+   </action>
+  </rule>
+  <rule first="{}" name="MemberDeclaratorList">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="MemberDeclarator"/>
+      </action>
+      <kleene first="{}">
+       <group first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="Comma"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="MemberDeclarator"/>
+         </action>
+        </sequence>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="MemberDeclarator">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Declarator"/>
+        </action>
+        <group first="{}">
+         <choice first="{}">
+          <choice first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="RequiresClause"/>
+           </action>
+           <action first="{}">
+            <nonterminal first="{}" ruleName="BraceOrEqualInitializer"/>
+           </action>
+          </choice>
+          <action first="{}">
+           <empty first="{}"/>
+          </action>
+         </choice>
+        </group>
+       </sequence>
+       <optional first="{}">
+        <group first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="VirtSpecifierSeq"/>
+         </action>
+        </group>
+       </optional>
+      </sequence>
+      <optional first="{}">
+       <group first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="PureSpecifier"/>
+        </action>
+       </group>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="CtorInitializer">
+   <sequence first="{}">
+    <action first="{}">
+     <token first="{}" name="COLON"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="MemberInitializerList"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="MemberInitializerList">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="MemberInitializer"/>
+       </action>
+       <kleene first="{}">
+        <group first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <nonterminal first="{}" ruleName="Comma"/>
+          </action>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="MemberInitializer"/>
+          </action>
+         </sequence>
+        </group>
+       </kleene>
+      </sequence>
+      <optional first="{}">
+       <group first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Ellipsis"/>
+        </action>
+       </group>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="MemberInitializer">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="MemberInitializerId"/>
+      </action>
+      <group first="{}">
+       <choice first="{}">
+        <sequence first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <token first="{}" name="LPAREN"/>
+          </action>
+          <optional first="{}">
+           <nonterminal first="{}" ruleName="ExpressionList"/>
+          </optional>
+         </sequence>
+         <action first="{}">
+          <token first="{}" name="RPAREN"/>
+         </action>
+        </sequence>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="BracedInitList"/>
+        </action>
+       </choice>
+      </group>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="MemberInitializerId">
+   <choice first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="ClassOrDeclType"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Identifier"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="PureSpecifier">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <token first="{}" name="ASSIGN"/>
+      </action>
+      <action first="{}">
+       <token first="{}" name="INTEGER_LITERAL"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="AccessSpecifier">
+   <choice first="{}">
+    <choice first="{}">
+     <action first="{}">
+      <token first="{}" name="PUBLIC"/>
+     </action>
+     <action first="{}">
+      <token first="{}" name="PROTECTED"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Private"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="Private">
+   <action first="{}">
+    <token first="{}" name="PRIVATE"/>
+   </action>
+  </rule>
+  <rule first="{}" name="VirtualSpecifier">
+   <action first="{}">
+    <token first="{}" name="VIRTUAL"/>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

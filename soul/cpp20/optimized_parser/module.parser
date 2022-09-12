@@ -1,0 +1,178 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.modules;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.parser.attribute;
+[implementation]import soul.cpp20.parser.classes;
+[implementation]import soul.cpp20.parser.declaration;
+[implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.punctuation;
+
+parser ModuleParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ClassParser.Private;
+    using DeclarationParser.DeclarationSeq;
+    using DeclarationParser.Declaration;
+    using IdentifierParser.Identifier;
+    using PunctuationParser.Colon;
+    using PunctuationParser.Semicolon;
+
+    ModuleDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (
+                ExportKeyword(context):exportKw{ sourcePos = lexer.GetSourcePos(pos); }
+            )? 
+            ModuleKeyword(context):moduleKw{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            ModuleName:moduleName 
+            ModulePartition(context):modulePartition? 
+            AttributeSpecifierSeq(context):attributes? 
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::ModuleDeclarationNode(sourcePos, exportKw, moduleKw, moduleName, modulePartition, attributes, semicolon);
+        }
+        ;
+
+    ModuleName(var std::u32string moduleNameStr, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            ID{ moduleNameStr = lexer.GetToken(pos).ToString(); sourcePos = lexer.GetSourcePos(pos); } 
+            (
+                DOT ID{ moduleNameStr.append(1, '.').append(lexer.GetToken(pos).ToString()); }
+            )*
+        )
+        {
+            return new soul::cpp20::ast::ModuleNameNode(sourcePos, moduleNameStr);
+        }
+        ;
+
+    ExportDeclaration(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node, var soul::ast::SourcePos sourcePos,
+        var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            ExportKeyword(context):exprt{ sourcePos = lexer.GetSourcePos(pos); }
+            (
+                (
+                    LBRACE{ lbPos = lexer.GetSourcePos(pos); }
+                    DeclarationSeq(context):declarations?
+                    RBRACE{ rbPos = lexer.GetSourcePos(pos); }
+                )
+                {
+                    node.reset(new soul::cpp20::ast::ExportDeclarationNode(sourcePos, exprt, declarations, lbPos, rbPos));
+                }
+            |   ImportDeclaration(context):imprt
+                {
+                    node.reset(new soul::cpp20::ast::ExportDeclarationNode(sourcePos, exprt, imprt, soul::ast::SourcePos(), soul::ast::SourcePos()));
+                }
+            |   Declaration(context):declaration
+                {
+                    node.reset(new soul::cpp20::ast::ExportDeclarationNode(sourcePos, exprt, declaration, soul::ast::SourcePos(), soul::ast::SourcePos()));
+                }
+            )
+            {
+                return node.release();
+            }
+        )
+        ;
+
+    ImportDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> subject) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            ImportKeyword(context):imprt{ sourcePos = lexer.GetSourcePos(pos); }
+            (   ModuleName:moduleName{ subject.reset(moduleName); }
+            |   ModulePartition(context):modulePartition{ subject.reset(modulePartition); }
+            |   HeaderName(context):headerName{ subject.reset(headerName); }
+            )
+            AttributeSpecifierSeq(context):attributes? 
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::ImportDeclarationNode(sourcePos, imprt, subject.release(), attributes, semicolon);
+        }
+        ;
+
+    ModulePartition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Colon:colon{ sourcePos = lexer.GetSourcePos(pos); }
+            ModuleName:moduleName
+        )
+        {
+            return new soul::cpp20::ast::ModulePartitionNode(sourcePos, moduleName);
+        }
+        ;    
+
+    ExportKeyword(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Identifier(context):identifier{ sourcePos = lexer.GetSourcePos(pos); pass = lexer.GetToken(pos).ToString() == U"export"; }
+        )
+        {
+            return new soul::cpp20::ast::ExportNode(sourcePos);
+        }
+        ;
+
+    ImportKeyword(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Identifier(context):identifier{ sourcePos = lexer.GetSourcePos(pos); pass = lexer.GetToken(pos).ToString() == U"import"; }
+        )
+        {
+            return new soul::cpp20::ast::ImportNode(sourcePos);
+        }
+        ;
+
+    ModuleKeyword(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Identifier(context):identifier{ sourcePos = lexer.GetSourcePos(pos); pass = lexer.GetToken(pos).ToString() == U"module"; }
+        )
+        {
+            return new soul::cpp20::ast::ModuleNode(sourcePos);
+        }
+        ;
+
+    GlobalModuleFragment(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            ModuleKeyword(context):moduleKw{ sourcePos = lexer.GetSourcePos(pos); }
+            Semicolon:semicolon 
+            DeclarationSeq(context):declarations?
+        )
+        {
+            return new soul::cpp20::ast::GlobalModuleFragmentNode(sourcePos, moduleKw, semicolon, declarations);
+        }
+        ;
+
+    PrivateModuleFragment(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::=
+        (
+            ModuleKeyword(context):moduleKw{ sourcePos = lexer.GetSourcePos(pos); }
+            Colon:colon
+            Private:privat
+            Semicolon:semicolon
+            DeclarationSeq(context):declarations?
+        )
+        {
+            return new soul::cpp20::ast::PrivateModuleFragmentNode(sourcePos, moduleKw, colon, privat, semicolon, declarations);
+        }
+        ;
+
+    HeaderName(soul::cpp20::symbols::Context* context) : Node*
+        ::= ANGLE_HEADER_NAME{ return new soul::cpp20::ast::AngleHeaderName(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()); }
+        |   QUOTE_HEADER_NAME{ return new soul::cpp20::ast::QuoteHeaderName(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()); }
+        ;
+
+}

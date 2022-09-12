@@ -1,0 +1,3 @@
+solution example;
+project <lib1/lib1.project>;
+project <lib2/lib2.project>;

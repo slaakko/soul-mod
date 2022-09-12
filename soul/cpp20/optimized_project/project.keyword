@@ -1,0 +1,9 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+keywords soul.cpp20.proj.keyword
+{
+    ("project", PROJECT), ("interface", INTERFACE), ("source", SOURCE), ("reference", REFERENCE)
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gendoc>
+	<project name="example"/>
+	<subproject path="lib1"/>
+	<subproject path="lib2"/>
+	<generateNamespaceDocs value="true"/>;
+</gendoc>

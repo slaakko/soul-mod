@@ -1,0 +1,113 @@
+body
+{
+    max-width: 1200px;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+    color: #005ab4;
+    font-family: sans-serif;
+}
+
+table.doc
+{
+    background-color: FloralWhite;
+    color: black;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #dddddd;
+    border-collapse: collapse;
+}
+
+th, td
+{
+    border: 1px solid #dddddd;
+    padding: 8px;
+}
+
+td.right
+{
+    text-align: right;
+    border: 1px solid #dddddd;
+    padding: 8px;
+}
+
+th
+{
+    background-color: #ffecc6
+}
+
+.specifier
+{
+    color: blue;
+    font-weight: bold;
+}
+
+.diagram
+{
+    text-align: center;
+}
+
+.code
+{
+    font-family: Cascadia Mono;
+    font-size: small;
+}
+
+.code .line .keyword
+{
+    color: #0000ff;
+}
+
+.code .line .identifier
+{
+    color: black;
+}
+
+.code .line .pp
+{
+    color: gray;
+}
+
+.code .line .other
+{
+    color: black;
+}
+
+.code .line .operator
+{
+    color: black;
+}
+
+.code .line .token
+{
+    color: black;
+}
+
+.code .line .literal
+{
+    color: #e21f1f
+}
+
+.code .line .comment
+{
+    color: green
+}
+
+.code .line .lineNumber
+{
+    color: #2b91af
+}
+
+.code .line a:link
+{
+    text-decoration: none;
+    color: black;
+}
+
+.code .line a:hover
+{
+    text-decoration: underline;
+    color: blue;
+}
+

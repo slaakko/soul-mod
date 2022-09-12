@@ -1,0 +1,318 @@
+<parserFile>
+ <grammar name="ConceptParser">
+  <rule first="{}" name="ConceptDefinition">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <token first="{}" name="CONCEPT"/>
+         </action>
+         <nonterminal first="{}" ruleName="ConceptName"/>
+        </sequence>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Assign"/>
+        </action>
+       </sequence>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="ConstraintExpression"/>
+       </action>
+      </sequence>
+      <nonterminal first="{}" ruleName="Semicolon"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ConceptName">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="Identifier"/>
+   </action>
+  </rule>
+  <rule first="{}" name="ConceptNameChecked">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="Identifier"/>
+   </action>
+  </rule>
+  <rule first="{}" name="ConstraintExpression">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="LogicalOrExpression"/>
+   </action>
+  </rule>
+  <rule first="{}" name="RequiresClause">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <token first="{}" name="REQUIRES"/>
+      </action>
+      <nonterminal first="{}" ruleName="ConstraintLogicalOrExpression"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ConstraintLogicalOrExpression">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="ConstraintLogicalAndExpression"/>
+      </action>
+      <kleene first="{}">
+       <group first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <token first="{}" name="OR_OR"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="ConstraintLogicalAndExpression"/>
+         </action>
+        </sequence>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ConstraintLogicalAndExpression">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="PrimaryExpression"/>
+      </action>
+      <kleene first="{}">
+       <group first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <token first="{}" name="AMP_AMP"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="PrimaryExpression"/>
+         </action>
+        </sequence>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="RequiresExpression">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="REQUIRES"/>
+       </action>
+       <optional first="{}">
+        <nonterminal first="{}" ruleName="RequirementParameterList"/>
+       </optional>
+      </sequence>
+      <nonterminal first="{}" ruleName="RequirementBody"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="RequirementParameterList">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="LPAREN"/>
+       </action>
+       <nonterminal first="{}" ruleName="ParameterDeclarationClause"/>
+      </sequence>
+      <action first="{}">
+       <token first="{}" name="RPAREN"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="RequirementBody">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="LBRACE"/>
+       </action>
+       <nonterminal first="{}" ruleName="RequirementSeq"/>
+      </sequence>
+      <action first="{}">
+       <token first="{}" name="RBRACE"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="RequirementSeq">
+   <positive first="{}">
+    <group first="{}">
+     <action first="{}">
+      <nonterminal first="{}" ruleName="Requirement"/>
+     </action>
+    </group>
+   </positive>
+  </rule>
+  <rule first="{}" name="Requirement">
+   <choice first="{}">
+    <choice first="{}">
+     <choice first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="NestedRequirement"/>
+      </action>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="TypeRequirement"/>
+      </action>
+     </choice>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="CompoundRequirement"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="SimpleRequirement"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="SimpleRequirement">
+   <sequence first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Expression"/>
+    </action>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Semicolon"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="TypeRequirement">
+   <sequence first="{}">
+    <sequence first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="TYPENAME"/>
+       </action>
+       <optional first="{}">
+        <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+       </optional>
+      </sequence>
+      <action first="{}">
+       <empty first="{}"/>
+      </action>
+     </sequence>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="TypeName"/>
+     </action>
+    </sequence>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Semicolon"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="CompoundRequirement">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <token first="{}" name="LBRACE"/>
+          </action>
+          <nonterminal first="{}" ruleName="Expression"/>
+         </sequence>
+         <action first="{}">
+          <token first="{}" name="RBRACE"/>
+         </action>
+        </sequence>
+        <optional first="{}">
+         <nonterminal first="{}" ruleName="Noexcept"/>
+        </optional>
+       </sequence>
+       <optional first="{}">
+        <nonterminal first="{}" ruleName="ReturnTypeRequirement"/>
+       </optional>
+      </sequence>
+      <nonterminal first="{}" ruleName="Semicolon"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ReturnTypeRequirement">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <token first="{}" name="ARROW"/>
+      </action>
+      <nonterminal first="{}" ruleName="TypeConstraint"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="NestedRequirement">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <token first="{}" name="REQUIRES"/>
+       </action>
+       <nonterminal first="{}" ruleName="ConstraintExpression"/>
+      </sequence>
+      <nonterminal first="{}" ruleName="Semicolon"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="TypeConstraint">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <group first="{}">
+       <action first="{}">
+        <group first="{}">
+         <choice first="{}">
+          <sequence first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+           </action>
+           <action first="{}">
+            <nonterminal first="{}" ruleName="ConceptNameChecked"/>
+           </action>
+          </sequence>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="ConceptNameChecked"/>
+          </action>
+         </choice>
+        </group>
+       </action>
+      </group>
+      <optional first="{}">
+       <group first="{}">
+        <sequence first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <token first="{}" name="LANGLE"/>
+          </action>
+          <optional first="{}">
+           <nonterminal first="{}" ruleName="TemplateArgumentList"/>
+          </optional>
+         </sequence>
+         <action first="{}">
+          <token first="{}" name="RANGLE"/>
+         </action>
+        </sequence>
+       </group>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

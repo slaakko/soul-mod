@@ -1,0 +1,13 @@
+export module test.lexer;
+
+import test.token;
+import test.keyword;
+import test.expr;
+
+lexer TestLexer
+{
+	rules
+	{
+		"{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+	}
+}

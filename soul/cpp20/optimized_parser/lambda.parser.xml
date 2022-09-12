@@ -1,0 +1,9 @@
+<parserFile>
+ <grammar name="LambdaParser">
+  <rule first="{#}" name="LambdaExpression">
+   <action first="{#}">
+    <empty first="{#}"/>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

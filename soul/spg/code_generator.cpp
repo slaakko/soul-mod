@@ -26,7 +26,9 @@ class CodeGeneratorVisitor : public soul::ast::spg::DefaultVisitor
 {
 public:
     CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bool verbose_, bool noDebugSupport_, const std::string& version_, soul::lexer::FileMap& fileMap_);
-    void Visit(soul::ast::spg::AlternativeParser& parser) override;
+    void Visit(soul::ast::spg::ChoiceParser& parser) override;
+    void Visit(soul::ast::spg::SwitchParser& parser) override;
+    void Visit(soul::ast::spg::CaseParser& parser) override;
     void Visit(soul::ast::spg::SequenceParser& parser) override;
     void Visit(soul::ast::spg::DifferenceParser& parser) override;
     void Visit(soul::ast::spg::ListParser& parser) override;
@@ -43,7 +45,7 @@ public:
     void Visit(soul::ast::spg::CharParser& parser) override;
     void Visit(soul::ast::spg::StringParser& parser) override;
     void Visit(soul::ast::spg::CharSetParser& parser) override;
-    void Visit(soul::ast::spg::GroupingParser& parser) override;
+    void Visit(soul::ast::spg::GroupParser& parser) override;
     void Visit(soul::ast::spg::RuleParser& parser) override;
     void Visit(soul::ast::spg::GrammarParser& parser) override;
     void Visit(soul::ast::spg::ParserFile& parserFile) override;
@@ -69,7 +71,7 @@ CodeGeneratorVisitor::CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bo
 {
 }
 
-void CodeGeneratorVisitor::Visit(soul::ast::spg::AlternativeParser& parser)
+void CodeGeneratorVisitor::Visit(soul::ast::spg::ChoiceParser& parser)
 {
     if (stage == CodeGenerationStage::generateTokenSwitch)
     {
@@ -126,6 +128,44 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::AlternativeParser& parser)
             setParentMatchNumber = prevSetParentMatchNumber0;
         }
     }
+}
+
+void CodeGeneratorVisitor::Visit(soul::ast::spg::SwitchParser& parser)
+{
+    int prevSetParentMatchNumber0 = setParentMatchNumber;
+    formatter->WriteLine("soul::parser::Match match(false);");
+    setParentMatchNumber = parentMatchNumber;
+    formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+    formatter->WriteLine("switch (*lexer)");
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    for (const auto& caseParser : parser.CaseParsers())
+    {
+        caseParser->Accept(*this);
+    }
+    formatter->DecIndent();
+    formatter->WriteLine("}");
+    setParentMatchNumber = prevSetParentMatchNumber0;
+}
+
+void CodeGeneratorVisitor::Visit(soul::ast::spg::CaseParser& parser)
+{
+    for (const auto& token : parser.First().Tokens())
+    {
+        formatter->WriteLine("case " + token + ":");
+    }
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    parser.Child()->Accept(*this);
+    formatter->WriteLine("if (match.hit)");
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
+    formatter->DecIndent();
+    formatter->WriteLine("}");
+    formatter->WriteLine("break;");
+    formatter->DecIndent();
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::SequenceParser& parser)
@@ -456,6 +496,10 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
             nonterminalName = nt->InstanceName();
         }
         soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
+        if (!returnType)
+        {
+            int x = 0;
+        }
         ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
         parser.SuccessCode()->Write(*formatter);
         stage = CodeGenerationStage::endGenerateTokenSwitch;
@@ -507,6 +551,10 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
             nonterminalName = nt->InstanceName();
         }
         soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
+        if (!returnType)
+        {
+            int x = 0;
+        }
         ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
         parser.SuccessCode()->Write(*formatter);
         if (parser.FailureCode())
@@ -695,7 +743,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::CharSetParser& parser)
     }
 }
 
-void CodeGeneratorVisitor::Visit(soul::ast::spg::GroupingParser& parser)
+void CodeGeneratorVisitor::Visit(soul::ast::spg::GroupParser& parser)
 {
     if (stage == CodeGenerationStage::generateImplementation)
     {

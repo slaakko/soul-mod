@@ -1,0 +1,4 @@
+keywords test.keyword
+{
+	("class", CLASS), ("struct", STRUCT), ("union", UNION)
+}

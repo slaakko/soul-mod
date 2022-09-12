@@ -166,11 +166,17 @@
     <ClCompile Include="error.ixx" />
     <ClCompile Include="file_parsers.cpp" />
     <ClCompile Include="file_parsers.ixx" />
+    <ClCompile Include="first_set_computer.ixx" />
+    <ClCompile Include="first_set_computer.cpp" />
+    <ClCompile Include="xml_printer.cpp" />
+    <ClCompile Include="xml_printer.ixx" />
     <ClCompile Include="linking.cpp" />
     <ClCompile Include="linking.ixx" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="nonterminal_info.cpp" />
     <ClCompile Include="nonterminal_info.ixx" />
+    <ClCompile Include="optimizer.cpp" />
+    <ClCompile Include="optimizer.ixx" />
     <ClCompile Include="parser_file.parser.cpp" />
     <ClCompile Include="parser_file.parser.ixx" />
     <ClCompile Include="parser_generator.cpp" />
@@ -207,6 +213,9 @@
     </ProjectReference>
     <ProjectReference Include="..\token\token.vcxproj">
       <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\xml\dom\dom.vcxproj">
+      <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

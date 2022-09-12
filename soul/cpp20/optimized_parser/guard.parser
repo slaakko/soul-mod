@@ -1,0 +1,42 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.guard;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.lexer;
+
+parser GuardParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    ConceptGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parsingConceptDefinition); }
+        ;
+
+    NotDefiningTypeSpecifierGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = !context->GetFlag(soul::cpp20::symbols::ContextFlags::hasDefiningTypeSpecifier); }
+        ;
+
+    AssumeTypeGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::assumeType); }
+        ;
+
+    MemberFunctionTemplateGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseMemberFunction) && !context->GetFlag(soul::cpp20::symbols::ContextFlags::parsingTemplateDeclaration); }
+        ;
+
+    SavedMemberFunctionBodyGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseSavedMemberFunctionBody); }
+        ;
+
+    NoDeclSpecFunctionDeclarationGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->EnableNoDeclSpecFunctionDeclaration(); }
+        ;
+
+    NoDeclSpecFunctionDefinitionGuard(soul::cpp20::symbols::Context* context)
+        ::= empty{ pass = context->EnableNoDeclSpecFunctionDefinition(); }
+        ;
+}

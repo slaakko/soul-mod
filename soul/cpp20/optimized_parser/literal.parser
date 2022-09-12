@@ -1,0 +1,84 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.literal;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.parser.token;
+
+parser LiteralParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    Literal(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= UserDefinedLiteral(context):udLiteral{ return udLiteral; }
+        |   INTEGER_LITERAL{ return soul::cpp20::parser::token::ParseIntegerLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)); }
+        |   FLOATING_LITERAL{ return soul::cpp20::parser::token::ParseFloatingLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)); }
+        |   CHARACTER_LITERAL{ return soul::cpp20::parser::token::ParseCharacterLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)); }
+        |   BEGIN_RAW_STRING_LITERAL{ lexer.SetPos(pos); return soul::cpp20::parser::token::ParseRawStringLiteral(lexer.GetSourcePos(pos), lexer); }
+        |   STRING_LITERAL{ return soul::cpp20::parser::token::ParseStringLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)); }
+        |   TRUE{ return new soul::cpp20::ast::BooleanLiteralNode(lexer.GetSourcePos(pos), true, lexer.GetToken(pos).ToString()); }
+        |   FALSE{ return new soul::cpp20::ast::BooleanLiteralNode(lexer.GetSourcePos(pos), false, lexer.GetToken(pos).ToString()); }
+        |   NULLPTR{ return new soul::cpp20::ast::NullPtrLiteralNode(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()); }
+        ;
+
+    UserDefinedLiteral(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var int64_t p, var std::unique_ptr<soul::cpp20::ast::Node> udLiteralNode) : 
+        soul::cpp20::ast::Node*
+        ::= 
+        (   INTEGER_LITERAL{ sourcePos = lexer.GetSourcePos(pos); p = pos; }
+            UdSuffix:udSuffix
+            { 
+                udLiteralNode.reset(new soul::cpp20::ast::UserDefinedLiteraNode(sourcePos, 
+                    soul::cpp20::parser::token::ParseIntegerLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix)); 
+            }
+        |   FLOATING_LITERAL{ sourcePos = lexer.GetSourcePos(pos); p = pos; }
+            UdSuffix:udSuffix
+            { 
+                udLiteralNode.reset(new soul::cpp20::ast::UserDefinedLiteraNode(sourcePos, 
+                    soul::cpp20::parser::token::ParseFloatingLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix)); 
+            }
+        |   STRING_LITERAL{ sourcePos = lexer.GetSourcePos(pos); p = pos; }
+            UdSuffix:udSuffix
+            { 
+                udLiteralNode.reset(new soul::cpp20::ast::UserDefinedLiteraNode(sourcePos, 
+                soul::cpp20::parser::token::ParseStringLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix)); 
+            }
+        |   CHARACTER_LITERAL{ sourcePos = lexer.GetSourcePos(pos); p = pos; }
+            UdSuffix:udSuffix
+            { 
+                udLiteralNode.reset(new soul::cpp20::ast::UserDefinedLiteraNode(sourcePos, 
+                    soul::cpp20::parser::token::ParseCharacterLiteral(sourcePos, lexer.FileName(), lexer.GetToken(p)), udSuffix)); 
+            }
+        )
+        {
+            return udLiteralNode.release();
+        }
+        ;
+
+    UdSuffix : soul::cpp20::ast::Node*
+        ::= ID{ return soul::cpp20::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)); }
+        ;
+
+    LiteralOperatorId(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, 
+        var soul::ast::SourcePos stringLitPos, var soul::ast::SourcePos idPos, var int64_t idp) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            OPERATOR{ sourcePos = lexer.GetSourcePos(pos); } 
+            STRING_LITERAL{ stringLitPos = lexer.GetSourcePos(pos); pass = lexer.GetToken(pos).ToString() == U""; } 
+            ID{ idPos = lexer.GetSourcePos(pos); idp = pos; }
+        )
+        {
+            return new soul::cpp20::ast::LiteralOperatorIdNode(sourcePos, soul::cpp20::parser::token::ParseIdentifier(idPos, lexer.FileName(), lexer.GetToken(idp)), stringLitPos);
+        }
+        ;
+
+    StringLiteral(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= STRING_LITERAL{ return soul::cpp20::parser::token::ParseStringLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)); }
+        ;
+}
+

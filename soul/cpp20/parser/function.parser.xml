@@ -1,0 +1,608 @@
+<parserFile>
+ <grammar name="FunctionParser">
+  <rule first="{}" name="FunctionDefinition">
+   <sequence first="{}">
+    <sequence first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <optional first="{}">
+        <group first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+         </action>
+        </group>
+       </optional>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="DeclSpecifierSeq"/>
+       </action>
+      </sequence>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="Declarator"/>
+      </action>
+     </sequence>
+     <action first="{}">
+      <group first="{}">
+       <choice first="{}">
+        <choice first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="VirtSpecifierSeq"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="RequiresClause"/>
+         </action>
+        </choice>
+        <empty first="{}"/>
+       </choice>
+      </group>
+     </action>
+    </sequence>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="FunctionBody"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="NoDeclSpecFunctionDefinition">
+   <sequence first="{}">
+    <sequence first="{}">
+     <sequence first="{}">
+      <optional first="{}">
+       <group first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+        </action>
+       </group>
+      </optional>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="Declarator"/>
+      </action>
+     </sequence>
+     <action first="{}">
+      <group first="{}">
+       <choice first="{}">
+        <choice first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="VirtSpecifierSeq"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="RequiresClause"/>
+         </action>
+        </choice>
+        <empty first="{}"/>
+       </choice>
+      </group>
+     </action>
+    </sequence>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="FunctionBody"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="FunctionBody">
+   <choice first="{}">
+    <choice first="{}">
+     <choice first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="Assign"/>
+       </action>
+       <group first="{}">
+        <choice first="{}">
+         <sequence first="{}">
+          <nonterminal first="{}" ruleName="Default"/>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="Semicolon"/>
+          </action>
+         </sequence>
+         <sequence first="{}">
+          <nonterminal first="{}" ruleName="Delete"/>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="Semicolon"/>
+          </action>
+         </sequence>
+        </choice>
+       </group>
+      </sequence>
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="CtorInitializer"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="CompoundStatement"/>
+       </action>
+      </sequence>
+     </choice>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="CompoundStatement"/>
+     </action>
+    </choice>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="FunctionTryBlock"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="Default">
+   <action first="{}">
+    <token first="{}" name="DEFAULT"/>
+   </action>
+  </rule>
+  <rule first="{}" name="Delete">
+   <action first="{}">
+    <token first="{}" name="DELETE"/>
+   </action>
+  </rule>
+  <rule first="{}" name="ParameterDeclarationClause">
+   <sequence first="{}">
+    <action first="{}">
+     <empty first="{}"/>
+    </action>
+    <action first="{}">
+     <group first="{}">
+      <choice first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <nonterminal first="{}" ruleName="ParameterDeclarationList"/>
+         <nonterminal first="{}" ruleName="Comma"/>
+        </sequence>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="Ellipsis"/>
+        </action>
+       </sequence>
+       <sequence first="{}">
+        <sequence first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <empty first="{}"/>
+          </action>
+          <optional first="{}">
+           <nonterminal first="{}" ruleName="ParameterDeclarationList"/>
+          </optional>
+         </sequence>
+         <optional first="{}">
+          <group first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="Ellipsis"/>
+           </action>
+          </group>
+         </optional>
+        </sequence>
+        <optional first="{}">
+         <group first="{}">
+          <sequence first="{}">
+           <nonterminal first="{}" ruleName="Comma"/>
+           <action first="{}">
+            <nonterminal first="{}" ruleName="Ellipsis"/>
+           </action>
+          </sequence>
+         </group>
+        </optional>
+       </sequence>
+      </choice>
+     </group>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="ParameterDeclarationList">
+   <group first="{}">
+    <sequence first="{}">
+     <action first="{}">
+      <nonterminal first="{}" ruleName="ParameterDeclaration"/>
+     </action>
+     <kleene first="{}">
+      <group first="{}">
+       <sequence first="{}">
+        <nonterminal first="{}" ruleName="Comma"/>
+        <action first="{}">
+         <nonterminal first="{}" ruleName="ParameterDeclaration"/>
+        </action>
+       </sequence>
+      </group>
+     </kleene>
+    </sequence>
+   </group>
+  </rule>
+  <rule first="{}" name="ParameterDeclaration">
+   <sequence first="{}">
+    <action first="{}">
+     <empty first="{}"/>
+    </action>
+    <action first="{}">
+     <group first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <optional first="{}">
+          <group first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+           </action>
+          </group>
+         </optional>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="DeclSpecifierSeq"/>
+         </action>
+        </sequence>
+        <optional first="{}">
+         <group first="{}">
+          <choice first="{}">
+           <action first="{}">
+            <nonterminal first="{}" ruleName="Declarator"/>
+           </action>
+           <action first="{}">
+            <nonterminal first="{}" ruleName="AbstractDeclarator"/>
+           </action>
+          </choice>
+         </group>
+        </optional>
+       </sequence>
+       <optional first="{}">
+        <group first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <nonterminal first="{}" ruleName="Assign"/>
+          </action>
+          <action first="{}">
+           <nonterminal first="{}" ruleName="InitializerClause"/>
+          </action>
+         </sequence>
+        </group>
+       </optional>
+      </sequence>
+     </group>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="OperatorFunctionId">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="OperatorKw"/>
+      </action>
+      <nonterminal first="{}" ruleName="Operator"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ConversionFunctionId">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="OperatorKw"/>
+      </action>
+      <nonterminal first="{}" ruleName="ConversionTypeId"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="DestructorId">
+   <sequence first="{}">
+    <action first="{}">
+     <token first="{}" name="TILDE"/>
+    </action>
+    <action first="{}">
+     <group first="{}">
+      <choice first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="TypeName"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="DeclTypeSpecifier"/>
+       </action>
+      </choice>
+     </group>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{}" name="ConversionTypeId">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="TypeSpecifierSeq"/>
+      </action>
+      <optional first="{}">
+       <nonterminal first="{}" ruleName="ConversionDeclarator"/>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ConversionDeclarator">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="PtrOperator"/>
+      </action>
+      <optional first="{}">
+       <nonterminal first="{}" ruleName="ConversionDeclarator"/>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="OperatorKw">
+   <action first="{}">
+    <token first="{}" name="OPERATOR"/>
+   </action>
+  </rule>
+  <rule first="{}" name="Operator">
+   <group first="{}">
+    <choice first="{}">
+     <choice first="{}">
+      <choice first="{}">
+       <choice first="{}">
+        <choice first="{}">
+         <choice first="{}">
+          <choice first="{}">
+           <choice first="{}">
+            <choice first="{}">
+             <choice first="{}">
+              <choice first="{}">
+               <choice first="{}">
+                <choice first="{}">
+                 <choice first="{}">
+                  <choice first="{}">
+                   <choice first="{}">
+                    <choice first="{}">
+                     <choice first="{}">
+                      <choice first="{}">
+                       <choice first="{}">
+                        <choice first="{}">
+                         <choice first="{}">
+                          <choice first="{}">
+                           <choice first="{}">
+                            <choice first="{}">
+                             <choice first="{}">
+                              <choice first="{}">
+                               <choice first="{}">
+                                <choice first="{}">
+                                 <choice first="{}">
+                                  <choice first="{}">
+                                   <choice first="{}">
+                                    <choice first="{}">
+                                     <choice first="{}">
+                                      <choice first="{}">
+                                       <choice first="{}">
+                                        <choice first="{}">
+                                         <choice first="{}">
+                                          <choice first="{}">
+                                           <choice first="{}">
+                                            <choice first="{}">
+                                             <choice first="{}">
+                                              <choice first="{}">
+                                               <sequence first="{}">
+                                                <sequence first="{}">
+                                                 <action first="{}">
+                                                  <token first="{}" name="NEW"/>
+                                                 </action>
+                                                 <action first="{}">
+                                                  <token first="{}" name="LBRACKET"/>
+                                                 </action>
+                                                </sequence>
+                                                <action first="{}">
+                                                 <token first="{}" name="RBRACKET"/>
+                                                </action>
+                                               </sequence>
+                                               <action first="{}">
+                                                <token first="{}" name="NEW"/>
+                                               </action>
+                                              </choice>
+                                              <sequence first="{}">
+                                               <sequence first="{}">
+                                                <action first="{}">
+                                                 <token first="{}" name="DELETE"/>
+                                                </action>
+                                                <action first="{}">
+                                                 <token first="{}" name="LBRACKET"/>
+                                                </action>
+                                               </sequence>
+                                               <action first="{}">
+                                                <token first="{}" name="RBRACKET"/>
+                                               </action>
+                                              </sequence>
+                                             </choice>
+                                             <action first="{}">
+                                              <token first="{}" name="DELETE"/>
+                                             </action>
+                                            </choice>
+                                            <action first="{}">
+                                             <token first="{}" name="CO_AWAIT"/>
+                                            </action>
+                                           </choice>
+                                           <sequence first="{}">
+                                            <action first="{}">
+                                             <token first="{}" name="LPAREN"/>
+                                            </action>
+                                            <action first="{}">
+                                             <token first="{}" name="RPAREN"/>
+                                            </action>
+                                           </sequence>
+                                          </choice>
+                                          <sequence first="{}">
+                                           <action first="{}">
+                                            <token first="{}" name="LBRACKET"/>
+                                           </action>
+                                           <action first="{}">
+                                            <token first="{}" name="RBRACKET"/>
+                                           </action>
+                                          </sequence>
+                                         </choice>
+                                         <action first="{}">
+                                          <token first="{}" name="ARROW"/>
+                                         </action>
+                                        </choice>
+                                        <action first="{}">
+                                         <token first="{}" name="ARROW_STAR"/>
+                                        </action>
+                                       </choice>
+                                       <action first="{}">
+                                        <token first="{}" name="TILDE"/>
+                                       </action>
+                                      </choice>
+                                      <action first="{}">
+                                       <token first="{}" name="EXCLAMATION"/>
+                                      </action>
+                                     </choice>
+                                     <action first="{}">
+                                      <token first="{}" name="PLUS"/>
+                                     </action>
+                                    </choice>
+                                    <action first="{}">
+                                     <token first="{}" name="MINUS"/>
+                                    </action>
+                                   </choice>
+                                   <action first="{}">
+                                    <token first="{}" name="STAR"/>
+                                   </action>
+                                  </choice>
+                                  <action first="{}">
+                                   <token first="{}" name="DIV"/>
+                                  </action>
+                                 </choice>
+                                 <action first="{}">
+                                  <token first="{}" name="MOD"/>
+                                 </action>
+                                </choice>
+                                <action first="{}">
+                                 <token first="{}" name="XOR"/>
+                                </action>
+                               </choice>
+                               <action first="{}">
+                                <token first="{}" name="AMP"/>
+                               </action>
+                              </choice>
+                              <action first="{}">
+                               <token first="{}" name="OR"/>
+                              </action>
+                             </choice>
+                             <action first="{}">
+                              <token first="{}" name="ASSIGN"/>
+                             </action>
+                            </choice>
+                            <action first="{}">
+                             <token first="{}" name="ADD_ASSIGN"/>
+                            </action>
+                           </choice>
+                           <action first="{}">
+                            <token first="{}" name="SUB_ASSIGN"/>
+                           </action>
+                          </choice>
+                          <action first="{}">
+                           <token first="{}" name="MUL_ASSIGN"/>
+                          </action>
+                         </choice>
+                         <action first="{}">
+                          <token first="{}" name="DIV_ASSIGN"/>
+                         </action>
+                        </choice>
+                        <action first="{}">
+                         <token first="{}" name="REM_ASSIGN"/>
+                        </action>
+                       </choice>
+                       <action first="{}">
+                        <token first="{}" name="XOR_ASSIGN"/>
+                       </action>
+                      </choice>
+                      <action first="{}">
+                       <token first="{}" name="AND_ASSIGN"/>
+                      </action>
+                     </choice>
+                     <action first="{}">
+                      <token first="{}" name="OR_ASSIGN"/>
+                     </action>
+                    </choice>
+                    <action first="{}">
+                     <token first="{}" name="SHIFT_LEFT_ASSIGN"/>
+                    </action>
+                   </choice>
+                   <action first="{}">
+                    <token first="{}" name="SHIFT_RIGHT_ASSIGN"/>
+                   </action>
+                  </choice>
+                  <action first="{}">
+                   <token first="{}" name="EQ"/>
+                  </action>
+                 </choice>
+                 <action first="{}">
+                  <token first="{}" name="NEQ"/>
+                 </action>
+                </choice>
+                <action first="{}">
+                 <token first="{}" name="LEQ"/>
+                </action>
+               </choice>
+               <action first="{}">
+                <token first="{}" name="GEQ"/>
+               </action>
+              </choice>
+              <action first="{}">
+               <token first="{}" name="SPACE_SHIP"/>
+              </action>
+             </choice>
+             <action first="{}">
+              <token first="{}" name="LANGLE"/>
+             </action>
+            </choice>
+            <action first="{}">
+             <token first="{}" name="RANGLE"/>
+            </action>
+           </choice>
+           <action first="{}">
+            <token first="{}" name="AMP_AMP"/>
+           </action>
+          </choice>
+          <action first="{}">
+           <token first="{}" name="OR_OR"/>
+          </action>
+         </choice>
+         <action first="{}">
+          <token first="{}" name="SHIFT_LEFT"/>
+         </action>
+        </choice>
+        <action first="{}">
+         <token first="{}" name="SHIFT_RIGHT"/>
+        </action>
+       </choice>
+       <action first="{}">
+        <token first="{}" name="PLUS_PLUS"/>
+       </action>
+      </choice>
+      <action first="{}">
+       <token first="{}" name="MINUS_MINUS"/>
+      </action>
+     </choice>
+     <action first="{}">
+      <token first="{}" name="COMMA"/>
+     </action>
+    </choice>
+   </group>
+  </rule>
+  <rule first="{}" name="Noexcept">
+   <action first="{}">
+    <token first="{}" name="NOEXCEPT"/>
+   </action>
+  </rule>
+  <rule first="{}" name="FunctionTryBlock">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <token first="{}" name="TRY"/>
+        </action>
+        <optional first="{}">
+         <nonterminal first="{}" ruleName="CtorInitializer"/>
+        </optional>
+       </sequence>
+       <nonterminal first="{}" ruleName="CompoundStatement"/>
+      </sequence>
+      <nonterminal first="{}" ruleName="HandlerSeq"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

@@ -1,0 +1,168 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.enums;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.parser.attribute;
+[implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.punctuation;
+[implementation]import soul.cpp20.parser.type;
+[implementation]import soul.cpp20.symbols;
+[implementation]import soul.cpp20.ast;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+
+parser EnumParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ExpressionParser.ConstantExpression;
+    using IdentifierParser.Identifier;
+    using IdentifierParser.NestedNameSpecifier;
+    using IdentifierParser.Unnamed;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Semicolon;
+    using TypeParser.TypeSpecifierSeqReset;
+
+    EnumName(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= Identifier(context):identifier{ return identifier; }
+        ;
+
+    EnumSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos, 
+        var std::unique_ptr<soul::cpp20::ast::EnumSpecifierNode> enumSpecifierNode) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            EnumHead(context):enumHead{ sourcePos = lexer.GetSourcePos(pos); } 
+            LBRACE
+            { 
+                lbPos = lexer.GetSourcePos(pos); 
+                enumSpecifierNode.reset(new soul::cpp20::ast::EnumSpecifierNode(sourcePos, enumHead)); 
+                soul::cpp20::symbols::BeginEnumType(enumSpecifierNode.get(), context); 
+            } 
+            (
+                EnumeratorList(context, enumSpecifierNode.get()):el{ soul::cpp20::symbols::AddEnumerators(enumSpecifierNode.get(), context); } 
+                (
+                    Comma:comma{ enumSpecifierNode->AddNode(comma); }
+                )?
+            )?
+            RBRACE
+            { 
+                rbPos = lexer.GetSourcePos(pos); 
+                enumSpecifierNode->SetLBracePos(lbPos); 
+                enumSpecifierNode->SetRBracePos(rbPos); 
+            }
+        )
+        {
+            soul::cpp20::symbols::EndEnumType(enumSpecifierNode.get(), context);
+            return enumSpecifierNode.release();
+        }
+        ;
+
+    EnumHead(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> name) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            EnumKey:enumKey{ sourcePos = lexer.GetSourcePos(pos); } 
+            AttributeSpecifierSeq(context):attributes?
+            (   EnumHeadName(context):enumHeadName{ name.reset(enumHeadName); } 
+            |   Unnamed:unnamed{ name.reset(unnamed); }
+            ) 
+            EnumBase(context):enumBase?
+        )
+        {
+            return new soul::cpp20::ast::EnumHeadNode(sourcePos, enumKey, name.release(), enumBase, attributes);
+        }
+        ;
+
+    EnumKey(var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= ENUM{ sourcePos = lexer.GetSourcePos(pos); } CLASS{ return new soul::cpp20::ast::EnumClassNode(sourcePos, lexer.GetSourcePos(pos)); }
+        |   ENUM{ sourcePos = lexer.GetSourcePos(pos); } STRUCT{ return new soul::cpp20::ast::EnumStructNode(sourcePos, lexer.GetSourcePos(pos)); }
+        |   ENUM{ sourcePos = lexer.GetSourcePos(pos); return new soul::cpp20::ast::EnumNode(sourcePos); }
+        ;
+
+    EnumHeadName(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= NestedNameSpecifier(context):nns Identifier(context):identifier{ return new QualifiedIdNode(lexer.GetSourcePos(pos), nns, identifier); }
+        |   Identifier(context):identifier2{ return identifier2;}
+        ;
+
+    EnumBase(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            COLON{ sourcePos = lexer.GetSourcePos(pos); } TypeSpecifierSeqReset(context):typeSpecifiers
+        )
+        {
+            return new soul::cpp20::ast::EnumBaseNode(sourcePos, typeSpecifiers);
+        }
+        ;
+
+    EnumeratorList(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
+        ::= EnumeratorDefinition(context):first{ container->AddNode(first); }
+        (
+            Comma:comma{ container->AddNode(comma); }
+            EnumeratorDefinition(context):next{ container->AddNode(next); }
+        )*
+        ;
+
+    EnumeratorDefinition(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos assignPos, var std::unique_ptr<Node> value) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Enumerator(context):enumerator{ sourcePos = lexer.GetSourcePos(pos); }
+            (
+                ASSIGN{ assignPos = lexer.GetSourcePos(pos); }
+                ConstantExpression(context):expr{ value.reset(expr); }
+            )?
+        )
+        {
+            return new soul::cpp20::ast::EnumeratorDefinitionNode(sourcePos, enumerator, value.release(), assignPos);
+        }
+        ;
+
+    Enumerator(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Identifier(context):identifier{ sourcePos = lexer.GetSourcePos(pos); } 
+            AttributeSpecifierSeq(context):attributes?
+        )
+        {
+            return new soul::cpp20::ast::EnumeratorNode(sourcePos, identifier, attributes);
+        }
+        ;
+
+    OpaqueEnumDeclaration(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            EnumKey:enumKey{ sourcePos = lexer.GetSourcePos(pos); }
+            AttributeSpecifierSeq(context):attributes? 
+            EnumHeadName(context):enumHeadName 
+            EnumBase(context):enumBase? 
+            Semicolon:semicolon
+        )
+        {
+            soul::cpp20::ast::Node* node = new soul::cpp20::ast::OpaqueEnumDeclarationNode(sourcePos, enumKey, enumHeadName, enumBase, attributes, semicolon);
+            soul::cpp20::symbols::ProcessEnumForwardDeclaration(node, context);
+            return node;
+        }
+        ;
+
+    ElaboratedEnumSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos nnsPos) : soul::cpp20::ast::Node*
+        ::= ENUM{ sourcePos = lexer.GetSourcePos(pos); } 
+        (   NestedNameSpecifier(context):nns{ nnsPos = lexer.GetSourcePos(pos); } 
+            Identifier(context):identifier
+            { 
+                soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, identifier)); 
+                soul::cpp20::symbols::ProcessEnumForwardDeclaration(node, context);
+                return node;
+            }
+        |   Identifier(context):identifier2
+            { 
+                soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedEnumSpecifierNode(sourcePos, identifier2); 
+                soul::cpp20::symbols::ProcessEnumForwardDeclaration(node, context);
+                return node;
+            }
+        )
+        ;
+}

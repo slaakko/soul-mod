@@ -1,0 +1,10 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+project soul.cpp20.proj.slg;
+tokens <project.token>;
+keywords <project.keyword>;
+expressions <project.expr>;
+lexer <project.lexer>;

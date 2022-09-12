@@ -1,0 +1,230 @@
+<parserFile>
+ <grammar name="EnumParser">
+  <rule first="{}" name="EnumName">
+   <action first="{}">
+    <nonterminal first="{}" ruleName="Identifier"/>
+   </action>
+  </rule>
+  <rule first="{}" name="EnumSpecifier">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="EnumHead"/>
+        </action>
+        <action first="{}">
+         <token first="{}" name="LBRACE"/>
+        </action>
+       </sequence>
+       <optional first="{}">
+        <group first="{}">
+         <sequence first="{}">
+          <action first="{}">
+           <nonterminal first="{}" ruleName="EnumeratorList"/>
+          </action>
+          <optional first="{}">
+           <group first="{}">
+            <action first="{}">
+             <nonterminal first="{}" ruleName="Comma"/>
+            </action>
+           </group>
+          </optional>
+         </sequence>
+        </group>
+       </optional>
+      </sequence>
+      <action first="{}">
+       <token first="{}" name="RBRACE"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="EnumHead">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <action first="{}">
+         <nonterminal first="{}" ruleName="EnumKey"/>
+        </action>
+        <optional first="{}">
+         <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+        </optional>
+       </sequence>
+       <group first="{}">
+        <choice first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="EnumHeadName"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="Unnamed"/>
+         </action>
+        </choice>
+       </group>
+      </sequence>
+      <optional first="{}">
+       <nonterminal first="{}" ruleName="EnumBase"/>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="EnumKey">
+   <choice first="{}">
+    <choice first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <token first="{}" name="ENUM"/>
+      </action>
+      <action first="{}">
+       <token first="{}" name="CLASS"/>
+      </action>
+     </sequence>
+     <sequence first="{}">
+      <action first="{}">
+       <token first="{}" name="ENUM"/>
+      </action>
+      <action first="{}">
+       <token first="{}" name="STRUCT"/>
+      </action>
+     </sequence>
+    </choice>
+    <action first="{}">
+     <token first="{}" name="ENUM"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="EnumHeadName">
+   <choice first="{}">
+    <sequence first="{}">
+     <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="Identifier"/>
+     </action>
+    </sequence>
+    <action first="{}">
+     <nonterminal first="{}" ruleName="Identifier"/>
+    </action>
+   </choice>
+  </rule>
+  <rule first="{}" name="EnumBase">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <token first="{}" name="COLON"/>
+      </action>
+      <nonterminal first="{}" ruleName="TypeSpecifierSeqReset"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="EnumeratorList">
+   <sequence first="{}">
+    <action first="{}">
+     <nonterminal first="{}" ruleName="EnumeratorDefinition"/>
+    </action>
+    <kleene first="{}">
+     <group first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="Comma"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="EnumeratorDefinition"/>
+       </action>
+      </sequence>
+     </group>
+    </kleene>
+   </sequence>
+  </rule>
+  <rule first="{}" name="EnumeratorDefinition">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="Enumerator"/>
+      </action>
+      <optional first="{}">
+       <group first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <token first="{}" name="ASSIGN"/>
+         </action>
+         <action first="{}">
+          <nonterminal first="{}" ruleName="ConstantExpression"/>
+         </action>
+        </sequence>
+       </group>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="Enumerator">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <action first="{}">
+       <nonterminal first="{}" ruleName="Identifier"/>
+      </action>
+      <optional first="{}">
+       <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+      </optional>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="OpaqueEnumDeclaration">
+   <action first="{}">
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="EnumKey"/>
+         </action>
+         <optional first="{}">
+          <nonterminal first="{}" ruleName="AttributeSpecifierSeq"/>
+         </optional>
+        </sequence>
+        <nonterminal first="{}" ruleName="EnumHeadName"/>
+       </sequence>
+       <optional first="{}">
+        <nonterminal first="{}" ruleName="EnumBase"/>
+       </optional>
+      </sequence>
+      <nonterminal first="{}" ruleName="Semicolon"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="ElaboratedEnumSpecifier">
+   <sequence first="{}">
+    <action first="{}">
+     <token first="{}" name="ENUM"/>
+    </action>
+    <group first="{}">
+     <choice first="{}">
+      <sequence first="{}">
+       <action first="{}">
+        <nonterminal first="{}" ruleName="NestedNameSpecifier"/>
+       </action>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="Identifier"/>
+       </action>
+      </sequence>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="Identifier"/>
+      </action>
+     </choice>
+    </group>
+   </sequence>
+  </rule>
+ </grammar>
+</parserFile>

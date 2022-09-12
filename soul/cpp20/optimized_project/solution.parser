@@ -1,0 +1,70 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.sln.parser;
+
+[interface]import soul.cpp20.proj.ast;
+[implementation]import soul.cpp20.sln.token;
+[implementation]import soul.cpp20.sln.lexer;
+[implementation]import soul.cpp20.proj.parser.token;
+[implementation]import soul.cpp20.symbols;
+
+parser SolutionParser
+{
+    lexer soul::cpp20::sln::lexer::SolutionLexer<char32_t>;
+    main;
+
+    SolutionFile(var std::unique_ptr<soul::cpp20::proj::ast::Solution> sln) : soul::cpp20::proj::ast::Solution*
+        ::= 
+        (
+            SolutionDeclaration:solutionDeclaration{ sln.reset(solutionDeclaration); }
+            (
+                FilePath(sln.get()):filePath
+            )*
+        )
+        {
+            return sln.release();
+        }
+        ;
+
+    SolutionDeclaration : soul::cpp20::proj::ast::Solution*
+        ::= 
+        (
+            SOLUTION QualifiedId:solutionName SEMICOLON
+        )
+        {
+            return new soul::cpp20::proj::ast::Solution(lexer.FileName(), solutionName);
+        }
+        ;
+
+    FilePath(soul::cpp20::proj::ast::Solution* sln)
+        ::= 
+        (   ProjectFilePath:projectFilePath{ sln->AddProjectFilePath(projectFilePath); }
+        )
+		;
+
+    ProjectFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            PROJECT FILEPATH{ filePath = soul::cpp20::proj::parser::token::ParseFilePath(lexer.FileName(), lexer.GetToken(pos)); } SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+	QualifiedId(var std::string str) : std::string
+		::= 
+        (
+            ID{ str.append(util::ToUtf8(lexer.GetToken(pos).ToString())); } 
+            (
+                DOT ID{ str.append(1, '.').append(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+            )*
+        )
+        { 
+            return str; 
+        }
+		;
+}

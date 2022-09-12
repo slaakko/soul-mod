@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/spg/parser_file.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/spg/parser_file.parser' using soul parser generator spg version 4.1.0
 
 export module soul.spg.parser.file.parser;
 
@@ -27,7 +27,7 @@ struct ParserFileParser
     static soul::parser::Match ParamOrVariable(Lexer& lexer);
     static soul::parser::Match ReturnType(Lexer& lexer);
     static soul::parser::Match RuleBody(Lexer& lexer);
-    static soul::parser::Match Alternative(Lexer& lexer);
+    static soul::parser::Match Choice(Lexer& lexer);
     static soul::parser::Match Sequence(Lexer& lexer);
     static soul::parser::Match Difference(Lexer& lexer);
     static soul::parser::Match List(Lexer& lexer);

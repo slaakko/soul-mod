@@ -123,15 +123,15 @@ parser ParserFileParser
         ;
 
     RuleBody : soul::ast::spg::Parser*
-        ::= Alternative:alt{ return alt; }
+        ::= Choice:choice{ return choice; }
         ;
 
-    Alternative(var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
+    Choice(var std::unique_ptr<soul::ast::spg::Parser> value) : soul::ast::spg::Parser*
         ::= 
         (
             Sequence:left{ value.reset(left); } 
             (
-                PIPE Sequence:right!{ value.reset(new soul::ast::spg::AlternativeParser(lexer.GetSourcePos(pos), value.release(), right)); }
+                PIPE Sequence:right!{ value.reset(new soul::ast::spg::ChoiceParser(lexer.GetSourcePos(pos), value.release(), right)); }
             )*
         )
         {
@@ -201,7 +201,7 @@ parser ParserFileParser
         (
             (   RuleCall:ruleCall{ value.reset(ruleCall); }
             |   Primitive:primitive{ value.reset(primitive); }
-            |   Grouping:grouping{ value.reset(grouping); }
+            |   Grouping:group{ value.reset(group); }
             )
             (
                 EXCLAMATION{ value.reset(new soul::ast::spg::ExpectationParser(lexer.GetSourcePos(pos), value.release())); }
@@ -268,11 +268,11 @@ parser ParserFileParser
         ::= 
         (
             LPAREN 
-            Alternative:alt
+            Choice:choice
             RPAREN!
         )
         {
-            return new soul::ast::spg::GroupingParser(lexer.GetSourcePos(pos), alt);
+            return new soul::ast::spg::GroupParser(lexer.GetSourcePos(pos), choice);
         }
 		;
 }

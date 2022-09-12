@@ -1,0 +1,6 @@
+project lib1;
+interface <lib1.ixx>;
+interface <ex1.ixx>;
+source <ex1.cpp>;
+interface <ex2.ixx>;
+source <ex2.cpp>;

@@ -1,0 +1,176 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul.cpp20.parser.attribute;
+
+[interface]import soul.cpp20.symbols.context;
+[implementation]import soul.cpp20.token;
+[implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.punctuation;
+[implementation]import soul.cpp20.parser.type;
+[implementation]import soul.cpp20.ast;
+
+parser AttributeParser
+{
+    lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using ExpressionParser.ConstantExpression;
+    using IdentifierParser.Identifier;
+    using PunctuationParser.ColonColon;
+    using PunctuationParser.Comma;
+    using PunctuationParser.LParen;
+    using PunctuationParser.RParen;
+    using PunctuationParser.LBracket;
+    using PunctuationParser.RBracket;
+    using PunctuationParser.LBrace;
+    using PunctuationParser.RBrace;
+    using PunctuationParser.Ellipsis;
+    using TypeParser.TypeId;
+
+    AttributeSpecifierSeq(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> node) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            AttributeSpecifier(context):first{ node.reset(new soul::cpp20::ast::AttributeSpecifierSequenceNode(lexer.GetSourcePos(pos))); node->AddNode(first); }
+            (
+                AttributeSpecifier(context):next{ node->AddNode(next); }
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    AttributeSpecifier(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, 
+        var soul::ast::SourcePos lbPos1, var soul::ast::SourcePos lbPos2,
+        var soul::ast::SourcePos rbPos1, var soul::ast::SourcePos rbPos2,
+        var std::unique_ptr<soul::cpp20::ast::AttributeSpecifierNode> attributeSpecifierNode) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            LBRACKET{ lbPos1 = lexer.GetSourcePos(pos); sourcePos = lbPos1; }
+            LBRACKET{ lbPos2 = lexer.GetSourcePos(pos); sourcePos = lbPos2; attributeSpecifierNode.reset(new soul::cpp20::ast::AttributeSpecifierNode(sourcePos)); } 
+            (AttributeUsingPrefix(context):usingPrefix{ attributeSpecifierNode->SetUsingPrefix(usingPrefix); })? 
+            AttributeList(context, attributeSpecifierNode.get()):attributeList
+            RBRACKET{ rbPos1 = lexer.GetSourcePos(pos); } 
+            RBRACKET{ rbPos2 = lexer.GetSourcePos(pos); attributeSpecifierNode->SetBracketPositions(lbPos1, lbPos2, rbPos1, rbPos2); return attributeSpecifierNode.release(); } 
+        |   AlignmentSpecifier(context):alignmentSpecifier{ return alignmentSpecifier; }
+        )
+        ;
+
+    AttributeList(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
+        ::= 
+        (
+            (   Attribute(context):firstOpt{ container->AddNode(firstOpt); }
+            )? 
+            (   Comma:comma1{ container->AddNode(comma1); } 
+                (   Attribute(context):nextOpt{ container->AddNode(nextOpt); }
+                )?
+            )*
+        |   empty{ container->Clear(); }
+            Attribute(context):first{ container->AddNode(first); } 
+            (   Comma:comma2{ container->AddNode(comma2); } 
+                Attribute(context):next{ container->AddNode(next); } 
+                Ellipsis:ellipsis{ container->AddNode(ellipsis); }
+            )*
+        )
+        ;
+
+    AttributeUsingPrefix(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos colonPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            USING{ sourcePos = lexer.GetSourcePos(pos); } AttributeNamespace(context):ns COLON{ colonPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new soul::cpp20::ast::AttributeUsingPrefixNode(sourcePos, ns, colonPos);
+        }
+        ;
+
+    AttributeNamespace(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= Identifier(context):ns{ return ns; }
+        ;
+
+    Attribute(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            AttributeToken(context):attributeToken{ sourcePos = lexer.GetSourcePos(pos); } AttributeArgumentClause(context):attributeArgs?
+        )
+        {
+            return new soul::cpp20::ast::AttributeNode(sourcePos, attributeToken, attributeArgs);
+        }
+        ;
+
+    AttributeToken(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= AttributeScopedToken(context):scopedToken{ return scopedToken; }
+        |   Identifier(context):identifier{ return identifier; }
+        ;
+
+    AttributeScopedToken(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            AttributeNamespace(context):ns{ sourcePos = lexer.GetSourcePos(pos); } ColonColon:colonColon Identifier(context):identifier
+        )
+        {
+            return new soul::cpp20::ast::AttributeScopedTokenNode(sourcePos, ns, colonColon, identifier);
+        }
+        ;
+
+    AttributeArgumentClause(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } BalancedTokenSeq(context):balancedTokenSeq? RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+        )
+        {
+            return new soul::cpp20::ast::AttributeArgumentsNode(sourcePos, balancedTokenSeq, lpPos, rpPos);
+        }
+        ;
+
+    BalancedTokenSeq(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> sequence) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            BalancedToken(context):first{ sequence.reset(new soul::cpp20::ast::BalancedTokenSequenceNode(lexer.GetSourcePos(pos))); sequence->AddNode(first); }
+            (
+                BalancedToken(context):next{ sequence->AddNode(next); }
+            )*
+        )
+        {
+            return sequence.release();
+        }
+        ;
+
+    BalancedToken(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> seq) : soul::cpp20::ast::Node*
+        ::= 
+        (   LParen:lp{ seq.reset(new soul::cpp20::ast::BalancedTokenSequenceNode(lexer.GetSourcePos(pos))); seq->AddNode(lp); } 
+            BalancedTokenSeq(context):c1{ seq->AddNode(c1); } 
+            RParen:rp{ seq->AddNode(rp); }
+        |   LBracket:lb{ seq.reset(new soul::cpp20::ast::BalancedTokenSequenceNode(lexer.GetSourcePos(pos))); seq->AddNode(lb); } 
+            BalancedTokenSeq(context):c2{ seq->AddNode(c2); } 
+            RBracket:rb{ seq->AddNode(rb); }
+        |   LBrace:lbr{ seq.reset(new soul::cpp20::ast::BalancedTokenSequenceNode(lexer.GetSourcePos(pos))); seq->AddNode(lbr); } 
+            BalancedTokenSeq(context):c3{ seq->AddNode(c3); } 
+            RBrace:rbr{ seq->AddNode(rbr); }
+        |   (any - (LPAREN | RPAREN | LBRACKET | RBRACKET | LBRACE | RBRACE)){ seq.reset(new soul::cpp20::ast::TokenNode(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString())); }
+        )
+        {
+            return seq.release();
+        }
+        ;
+
+    AlignmentSpecifier(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> alignment, var soul::ast::SourcePos sourcePos, 
+        var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= 
+        (   ALIGNAS{ sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); }
+            (   TypeId(context):typeId{ alignment.reset(typeId); } 
+            |   ConstantExpression(context):constantExpr{ alignment.reset(constantExpr); }
+            )
+            Ellipsis:ellipsis?
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new soul::cpp20::ast::AlignmentSpecifierNode(sourcePos, alignment.release(), ellipsis, lpPos, rpPos);
+        }
+        ;
+}

@@ -9,7 +9,9 @@ import std.filesystem;
 import util;
 import soul.spg.file.parsers;
 import soul.spg.linking;
+import soul.spg.optimizer;
 import soul.spg.code.generator;
+import soul.spg.xml.printer;
 import soul.ast.common;
 
 namespace soul::spg {
@@ -80,7 +82,7 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
     }
 }
 
-void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fileMap, bool verbose, bool noDebugSupport, const std::string& version)
+void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fileMap, bool verbose, bool noDebugSupport, bool optimize, bool xml, const std::string& version)
 {
     std::cout << "generating parsers for project '" << spgFile->ProjectName() << "'..." << std::endl;
     std::string root = util::Path::GetDirectoryName(spgFile->FilePath());
@@ -100,8 +102,19 @@ void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fil
         }
     }
     Link(spgFile, verbose, fileMap);
+    std::unique_ptr<soul::ast::spg::SpgFile> optimizedSpg;
+    if (optimize)
+    {
+        optimizedSpg = Optimize(spgFile, verbose, xml, fileMap);
+        spgFile = optimizedSpg.get();
+    }
+    if (xml)
+    {
+        PrintXml(spgFile, verbose, optimize);
+    }
     GenerateCode(spgFile, verbose, noDebugSupport, version, fileMap);
     GenerateRuleNameModule(spgFile, verbose);
+    optimizedSpg.reset();
     std::cout << "parsers for project '" << spgFile->ProjectName() << "' generated successfully." << std::endl;
 }
 
