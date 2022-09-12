@@ -93,7 +93,7 @@ parser DeclarationParser
                 { 
                     if (!nextIsRBrace) 
                     {
-                        ThrowDeclarationExpected(lexer.GetSourcePos(pos), context);
+                        ThrowDeclarationParsingError(lexer.GetSourcePos(pos), context);
                     }
                     else
                     {

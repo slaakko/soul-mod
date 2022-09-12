@@ -9,12 +9,159 @@ export module soul.cpp20.parser.lambda;
 [implementation]import soul.cpp20.ast;
 [implementation]import soul.cpp20.token;
 [implementation]import soul.cpp20.lexer;
+[implementation]import soul.cpp20.parser.attribute;
+[implementation]import soul.cpp20.parser.concepts;
+[implementation]import soul.cpp20.parser.declaration;
+[implementation]import soul.cpp20.parser.function;
+[implementation]import soul.cpp20.parser.identifier;
+[implementation]import soul.cpp20.parser.initialization;
+[implementation]import soul.cpp20.parser.punctuation;
+[implementation]import soul.cpp20.parser.statement;
+[implementation]import soul.cpp20.parser.templates;
 
 parser LambdaParser
 {
     lexer soul::cpp20::lexer::Cpp20Lexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ConceptParser.RequiresClause;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclarationParser.NoexceptSpecifier;
+    using DeclarationParser.TrailingReturnType;
+    using FunctionParser.ParameterDeclarationClause;
+    using IdentifierParser.Identifier;
+    using InitializationParser.Initializer;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using StatementParser.CompoundStatement;
+    using TemplateParser.TemplateParameterList;
     
-    LambdaExpression(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
-        ::= empty{ pass = false; }
+    LambdaExpression(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (   LambdaIntroducer(context):introducer{ sourcePos = lexer.GetSourcePos(pos); }
+            LambdaTemplateParams(context):templateParams?
+            LambdaDeclarator(context):declarator
+            CompoundStatement(context):body
+        )
+        {
+            return new soul::cpp20::ast::LambdaExpressionNode(sourcePos, introducer, templateParams, declarator, body);
+        }
+        ;
+
+    LambdaIntroducer(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : 
+        soul::cpp20::ast::Node*
+        ::= 
+        (
+            LBRACKET{ sourcePos = lexer.GetSourcePos(pos); lbPos = sourcePos; }
+            LambdaCapture(context):capture?
+            RBRACKET{ rbPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new soul::cpp20::ast::LambdaIntroducerNode(sourcePos, capture, lbPos, rbPos);
+        }
+        ;
+
+    LambdaCapture(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> node) : soul::cpp20::ast::Node*
+        ::= empty{ node.reset(new soul::cpp20::ast::LambdaCaptureNode(lexer.GetSourcePos(pos))); }
+        (   CaptureList(context, node.get()):captureList
+        |   CaptureDefault:captureDefault{ node->AddNode(captureDefault); } 
+            (
+                Comma:comma{ node->AddNode(comma); } 
+                CaptureList(context, node.get()):captureList2
+            )?
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    CaptureDefault : soul::cpp20::ast::Node*
+        ::= AMP{ return new soul::cpp20::ast::DefaultRefCaptureNode(lexer.GetSourcePos(pos)); }
+        |   ASSIGN{ return new soul::cpp20::ast::DefaultCopyCaptureNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    CaptureList(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
+        ::= Capture(context):first{ container->AddNode(first); }
+            (
+                Comma:comma{ container->AddNode(comma); }
+                Capture(context):next{ container->AddNode(next); }
+            )*
+        ;
+
+    Capture(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
+        ::= InitCapture(context):initCapture{ return initCapture; }
+        |   SimpleCapture(context):simpleCapture{ return simpleCapture; }
+        ;
+
+    InitCapture(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<soul::cpp20::ast::Node> byRefCaptureNode) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (AMP{ sourcePos = lexer.GetSourcePos(pos); byRefCaptureNode.reset(new soul::cpp20::ast::ByRefCaptureNode(sourcePos)); })? 
+            (Ellipsis:ellipsis{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); })? 
+            Identifier(context):identifier{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            Initializer(context):initializer
+        )
+        {
+            return new soul::cpp20::ast::InitCaptureNode(sourcePos, identifier, initializer, byRefCaptureNode.release(), ellipsis);
+        }
+        ;
+
+    SimpleCapture(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos thisPos, 
+        var std::unique_ptr<soul::cpp20::ast::Node> byRefCaptureNode) : soul::cpp20::ast::Node*
+        ::= 
+        (   STAR{ sourcePos = lexer.GetSourcePos(pos); }
+            THIS{ thisPos = lexer.GetSourcePos(pos); return new soul::cpp20::ast::CurrentObjectCopyCapture(sourcePos, thisPos); }
+        |   THIS{ sourcePos = lexer.GetSourcePos(pos); thisPos = sourcePos; return new soul::cpp20::ast::CurrentObjectByRefCapture(sourcePos, thisPos); }
+        |   
+            (
+                (AMP{ sourcePos = lexer.GetSourcePos(pos); byRefCaptureNode.reset(new soul::cpp20::ast::ByRefCaptureNode(sourcePos)); })? 
+                Identifier(context):identifier{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+                Ellipsis:ellipsis?
+            )
+        )
+        {
+            return new soul::cpp20::ast::SimpleCaptureNode(sourcePos, identifier, byRefCaptureNode.release(), ellipsis);
+        }
+        ;
+
+    LambdaDeclarator(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos,
+        var std::unique_ptr<soul::cpp20::ast::ParameterListNode> parameterList) : soul::cpp20::ast::Node*
+        ::=
+        (
+            (
+                LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; }
+                ParameterDeclarationClause(context, parameterList.get()):params 
+                RPAREN{ rpPos = lexer.GetSourcePos(pos); parameterList->SetLParenPos(lpPos); parameterList->SetRParenPos(rpPos); }
+            )?
+            LambdaSpecifiers(context):specifiers{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            RequiresClause(context):requiresClause?
+        )
+        {
+            return new soul::cpp20::ast::LambdaDeclaratorNode(sourcePos, parameterList.release(), specifiers, requiresClause);
+        }
+        ;
+
+    LambdaSpecifiers(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (DeclSpecifierSeq(context):declSpecifiers{ sourcePos = lexer.GetSourcePos(pos); })?
+            (NoexceptSpecifier(context):noexceptSpecifier{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); })?
+            (AttributeSpecifierSeq(context):attributes{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); })?
+            (TrailingReturnType(context):trailingReturnType{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); })?
+        )
+        {
+            return new soul::cpp20::ast::LambdaSpecifiersNode(sourcePos, declSpecifiers, noexceptSpecifier, attributes, trailingReturnType);
+        }
+        ;
+
+    LambdaTemplateParams(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            TemplateParameterList(context):templateParams{ sourcePos = lexer.GetSourcePos(pos); }
+            RequiresClause(context):requiresClause?
+        )
+        {
+            return new soul::cpp20::ast::LambdaTemplateParamsNode(sourcePos, templateParams, requiresClause);
+        }
         ;
 }

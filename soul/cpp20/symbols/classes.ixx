@@ -85,8 +85,8 @@ void AddForwardClassDeclaration(soul::cpp20::ast::Node* node, soul::cpp20::symbo
 void SetCurrentAccess(soul::cpp20::ast::Node* node, soul::cpp20::symbols::Context* context);
 void GetClassAttributes(soul::cpp20::ast::Node* node, std::u32string& name, soul::cpp20::symbols::ClassKind& kind);
 void ParseInlineMemberFunctions(soul::cpp20::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, soul::cpp20::symbols::Context* context);
-void ThrowMemberDeclarationExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
-void ThrowStatementExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
+void ThrowMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
+void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context);
 
 struct ClassLess
 {

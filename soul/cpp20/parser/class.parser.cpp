@@ -2888,7 +2888,7 @@ soul::parser::Match ClassParser<Lexer>::MemberDeclaration(Lexer& lexer, soul::cp
                     {
                         if (!nextIsRBrace)
                         {
-                            ThrowMemberDeclarationExpected(lexer.GetSourcePos(pos), context);
+                            ThrowMemberDeclarationParsingError(lexer.GetSourcePos(pos), context);
                         }
                         else
                         {

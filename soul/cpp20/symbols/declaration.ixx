@@ -89,6 +89,6 @@ void ProcessMemberFunctionDefinition(soul::cpp20::ast::Node* node, Context* cont
 void Write(Writer& writer, DeclarationFlags flags);
 void Read(Reader& reader, DeclarationFlags& flags);
 
-void ThrowDeclarationExpected(const soul::ast::SourcePos& sourcePos, Context* context);
+void ThrowDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace soul::cpp20::symbols

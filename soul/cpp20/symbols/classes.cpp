@@ -433,14 +433,14 @@ bool ClassLess::operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const
     return left->Name() < right->Name();
 }
 
-void ThrowMemberDeclarationExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)
+void ThrowMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)
 {
-    ThrowException("class member declaration expected", sourcePos, context);
+    ThrowException("class member declaration parsing error", sourcePos, context);
 }
 
-void ThrowStatementExpected(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)
+void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, soul::cpp20::symbols::Context* context)
 {
-    ThrowException("statement expected", sourcePos, context);
+    ThrowException("statement parsing error", sourcePos, context);
 }
 
 } // namespace soul::cpp20::symbols

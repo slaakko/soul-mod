@@ -16,6 +16,16 @@ template<typename Lexer>
 struct LambdaParser
 {
     static soul::parser::Match LambdaExpression(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match LambdaIntroducer(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match LambdaCapture(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match CaptureDefault(Lexer& lexer);
+    static soul::parser::Match CaptureList(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
+    static soul::parser::Match Capture(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match InitCapture(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match SimpleCapture(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match LambdaDeclarator(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match LambdaSpecifiers(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match LambdaTemplateParams(Lexer& lexer, soul::cpp20::symbols::Context* context);
 };
 
 } // namespace soul::cpp20::parser::lambda

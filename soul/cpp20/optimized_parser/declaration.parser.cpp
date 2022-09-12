@@ -279,7 +279,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceDeclarationSeq(Lexer& lex
                                                     {
                                                         if (!nextIsRBrace)
                                                         {
-                                                            ThrowDeclarationExpected(lexer.GetSourcePos(pos), context);
+                                                            ThrowDeclarationParsingError(lexer.GetSourcePos(pos), context);
                                                         }
                                                         else
                                                         {

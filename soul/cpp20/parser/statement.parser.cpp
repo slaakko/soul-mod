@@ -869,7 +869,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementUnguarded(Lexer& le
                                                                 {
                                                                     if (!nextIsRBrace)
                                                                     {
-                                                                        ThrowStatementExpected(lexer.GetSourcePos(pos), context);
+                                                                        ThrowStatementParsingError(lexer.GetSourcePos(pos), context);
                                                                     }
                                                                     else
                                                                     {

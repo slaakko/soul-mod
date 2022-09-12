@@ -697,9 +697,9 @@ void Read(Reader& reader, DeclarationFlags& flags)
     flags = static_cast<DeclarationFlags>(reader.GetBinaryStreamReader().ReadULEB128UInt());
 }
 
-void ThrowDeclarationExpected(const soul::ast::SourcePos& sourcePos, Context* context)
+void ThrowDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    ThrowException("declaration expected", sourcePos, context);
+    ThrowException("declaration parsing error", sourcePos, context);
 }
 
 } // namespace soul::cpp20::symbols
