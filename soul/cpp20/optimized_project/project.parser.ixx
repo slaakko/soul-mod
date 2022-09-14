@@ -18,6 +18,7 @@ struct ProjectParser
     static std::unique_ptr<soul::cpp20::proj::ast::Project> Parse(Lexer& lexer);
     static soul::parser::Match ProjectFile(Lexer& lexer);
     static soul::parser::Match ProjectDeclaration(Lexer& lexer);
+    static soul::parser::Match Define(Lexer& lexer, soul::cpp20::proj::ast::Project* proj);
     static soul::parser::Match FilePath(Lexer& lexer, soul::cpp20::proj::ast::Project* proj);
     static soul::parser::Match InterfaceFilePath(Lexer& lexer);
     static soul::parser::Match SourceFilePath(Lexer& lexer);

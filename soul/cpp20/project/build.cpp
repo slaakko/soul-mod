@@ -9,6 +9,8 @@ import util;
 import soul.lexer;
 import soul.cpp20.project.parser;
 import soul.cpp20.lexer;
+import soul.cpp20.pp;
+import soul.cpp20.pp.state;
 import cpp20.parser.spg.rules;
 import soul.cpp20.parser.module_dependency;
 import soul.cpp20.ast;
@@ -220,6 +222,12 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = soul::cpp20::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
+        lexer.SetPPHook(soul::cpp20::pp::PreprocessPPLine);
+        soul::cpp20::pp::state::State* state = soul::cpp20::pp::state::LexerStateMap::Instance().GetState(&lexer);
+        for (const auto& define : project->Defines())
+        {
+            state->Define(define.symbol, define.value);
+        }
         lexer.SetFile(file);
         std::unique_ptr<std::ofstream> logFile;
         std::unique_ptr<soul::lexer::XmlParsingLog> log;
@@ -260,6 +268,7 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = soul::cpp20::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
+        lexer.SetPPHook(soul::cpp20::pp::PreprocessPPLine);
         lexer.SetFile(file);
         lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
         soul::cpp20::symbols::Context context;

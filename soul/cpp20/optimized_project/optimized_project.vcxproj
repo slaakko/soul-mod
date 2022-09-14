@@ -209,6 +209,9 @@
     <ProjectReference Include="..\optimized_parser\optimized_parser.vcxproj">
       <Project>{bd9cd66f-80f4-4b76-bf23-9ea90eeb77fc}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\optimized_pp\optimized_pp.vcxproj">
+      <Project>{7ef988e4-b8a5-45f1-8272-ff122cb23ca1}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\symbols\symbols.vcxproj">
       <Project>{936f4a64-4818-450a-b5d3-b285476f8488}</Project>
     </ProjectReference>

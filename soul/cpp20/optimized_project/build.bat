@@ -1,5 +1,5 @@
 @echo off
 slg -v project.slg
-spg -v project.spg
+spg -vox project.spg
 slg -v solution.slg
-spg -v solution.spg
+spg -vox solution.spg

@@ -18,5 +18,7 @@ lexer ProjectLexer
         "{filepath}" { return FILEPATH; }
         ";" { return SEMICOLON; }
         "\." { return DOT; }
+        "=" { return ASSIGN; }
+        "{digit_sequence}" { return VALUE; }
     }
 }

@@ -20,8 +20,8 @@ parser ProjectParser
         ::= 
         (
             ProjectDeclaration:projectDeclaration{ proj.reset(projectDeclaration); }
-            (
-                FilePath(proj.get()):filePath
+            (   FilePath(proj.get()):filePath
+            |   Define(proj.get()):define
             )*
         )
         {
@@ -36,6 +36,17 @@ parser ProjectParser
         )
         {
             return new soul::cpp20::proj::ast::Project(lexer.FileName(), projectName);
+        }
+        ;
+
+    Define(soul::cpp20::proj::ast::Project* proj, var std::string symbol, var int64_t value)
+        ::= DEFINE ID{ symbol = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
+            (   ASSIGN VALUE{ value = std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+            |   empty{ value = 1; }
+            )
+            SEMICOLON
+        {
+            proj->AddDefine(symbol, value);
         }
         ;
 
@@ -77,7 +88,7 @@ parser ProjectParser
         }
         ;
 
-	QualifiedId(var std::string str) : std::string
+    QualifiedId(var std::string str) : std::string
 		::= 
         (
             ID{ str.append(util::ToUtf8(lexer.GetToken(pos).ToString())); } 

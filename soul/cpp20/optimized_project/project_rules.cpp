@@ -10,11 +10,12 @@ std::map<int64_t, std::string>* GetRuleNameMapPtr()
     static std::map<int64_t, std::string> ruleNameMap = {
         { 7646038738983714817, "ProjectParser.ProjectFile" },
         { 7646038738983714818, "ProjectParser.ProjectDeclaration" },
-        { 7646038738983714819, "ProjectParser.FilePath" },
-        { 7646038738983714820, "ProjectParser.InterfaceFilePath" },
-        { 7646038738983714821, "ProjectParser.SourceFilePath" },
-        { 7646038738983714822, "ProjectParser.ReferenceFilePath" },
-        { 7646038738983714823, "ProjectParser.QualifiedId" }
+        { 7646038738983714819, "ProjectParser.Define" },
+        { 7646038738983714820, "ProjectParser.FilePath" },
+        { 7646038738983714821, "ProjectParser.InterfaceFilePath" },
+        { 7646038738983714822, "ProjectParser.SourceFilePath" },
+        { 7646038738983714823, "ProjectParser.ReferenceFilePath" },
+        { 7646038738983714824, "ProjectParser.QualifiedId" }
     };
     return &ruleNameMap;
 }

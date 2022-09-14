@@ -12,6 +12,10 @@ import soul.cpp20.ast.error;
 
 namespace soul::cpp20::proj::ast {
 
+Define::Define(const std::string& symbol_, int64_t value_) : symbol(symbol_), value(value_)
+{
+}
+
 void LoadImportedModules(Project* project, soul::cpp20::symbols::Module* module, soul::cpp20::symbols::Module* importedModule, soul::cpp20::symbols::ModuleMapper& moduleMapper)
 {
     for (const std::string& importedModuleName : importedModule->ImportModuleNames())
@@ -37,6 +41,11 @@ void LoadImportedModules(Project* project, soul::cpp20::symbols::Module* module,
 Project::Project(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_), initialized(false), scanned(false), loaded(false)
 {
     root = util::Path::GetDirectoryName(filePath);
+}
+
+void Project::AddDefine(const std::string& symbol, int64_t value)
+{
+    defines.push_back(Define(symbol, value));
 }
 
 void Project::AddRoots(soul::cpp20::symbols::ModuleMapper& moduleMapper)

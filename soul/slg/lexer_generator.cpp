@@ -179,21 +179,6 @@ void MakeClassPartition(soul::ast::re::LexerContext& lexerContext)
         soul::ast::re::Class* cls = lexerContext.Partition()[i];
         cls->SetIndex(i);
     }
-/*
-    if (debug)
-    {
-        CodeFormatter formatter(std::cout);
-        formatter.WriteLine("partition:");
-        for (int i = 0; i < lexerContext.Partition().size(); ++i)
-        {
-            soul::ast::re::Class* cls = lexerContext.Partition()[i];
-            formatter.Write(std::to_string(cls->Index()));
-            formatter.Write(" : ");
-            cls->Print(formatter);
-            formatter.WriteLine();
-        }
-    }
-*/
 }
 
 void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& root, bool verbose)
@@ -276,13 +261,6 @@ void MakeMasterNfa(soul::ast::re::LexerContext& lexerContext)
         soul::ast::re::Nfa* ruleNfa = lexerContext.GetNfa(rule->NfaIndex());
         start->AddEdge(soul::ast::re::NfaEdge(lexerContext.MakeEpsilon(), ruleNfa->Start()));
     }
-/*
-    if (debug)
-    {
-        CodeFormatter formatter(std::cout);
-        formatter.WriteLine("MASTER NFA: " + std::to_string(masterNfa.Start()->Id()));
-    }
-*/
 }
 
 void MakeDfa(soul::ast::re::LexerContext& lexerContext)

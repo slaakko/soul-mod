@@ -16,10 +16,13 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(ID, "ID", "identifier"));
         tokens.AddToken(new soul::ast::slg::Token(DOT, "DOT", "'.'"));
         tokens.AddToken(new soul::ast::slg::Token(SEMICOLON, "SEMICOLON", "';'"));
+        tokens.AddToken(new soul::ast::slg::Token(ASSIGN, "ASSIGN", "'='"));
         tokens.AddToken(new soul::ast::slg::Token(INTERFACE, "INTERFACE", "'interface'"));
         tokens.AddToken(new soul::ast::slg::Token(SOURCE, "SOURCE", "'source'"));
         tokens.AddToken(new soul::ast::slg::Token(FILEPATH, "FILEPATH", "file path"));
         tokens.AddToken(new soul::ast::slg::Token(REFERENCE, "REFERENCE", "'reference'"));
+        tokens.AddToken(new soul::ast::slg::Token(DEFINE, "DEFINE", "'define'"));
+        tokens.AddToken(new soul::ast::slg::Token(VALUE, "VALUE", "value"));
     }
     return &tokens;
 }
@@ -40,6 +43,7 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "interface", INTERFACE },
          { "source", SOURCE },
          { "reference", REFERENCE },
+         { "define", DEFINE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char> keywordMap(keywords);
@@ -54,6 +58,7 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"interface", INTERFACE },
          { u8"source", SOURCE },
          { u8"reference", REFERENCE },
+         { u8"define", DEFINE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);
@@ -68,6 +73,7 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"interface", INTERFACE },
          { u"source", SOURCE },
          { u"reference", REFERENCE },
+         { u"define", DEFINE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);
@@ -82,6 +88,7 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"interface", INTERFACE },
          { U"source", SOURCE },
          { U"reference", REFERENCE },
+         { U"define", DEFINE },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);

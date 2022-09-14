@@ -1,0 +1,11 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+import soul.cpp20.token;
+
+keywords soul.cpp20.pp.keyword
+{
+    ("include", INCLUDE), ("if", IF), ("elif", ELIF), ("else", ELSE), ("ifdef", IFDEF), ("ifndef", IFNDEF), ("endif", ENDIF), ("undef", UNDEF), ("defined", DEFINED)
+}

@@ -30,6 +30,7 @@ struct TemplateParser
     static soul::parser::Match TemplateArgument(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* templateIdNode, int index);
     static soul::parser::Match TemplateArgNext(Lexer& lexer);
     static soul::parser::Match DeductionGuide(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match Arrow(Lexer& lexer);
     static soul::parser::Match ExplicitInstantiation(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ExplicitSpecialization(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match Extern(Lexer& lexer);

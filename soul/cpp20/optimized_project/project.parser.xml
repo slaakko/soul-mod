@@ -1,0 +1,147 @@
+<parserFile>
+ <grammar name="ProjectParser">
+  <rule first="{PROJECT}" name="ProjectFile">
+   <action first="{PROJECT}">
+    <group first="{PROJECT}">
+     <sequence first="{PROJECT}">
+      <action first="{PROJECT}">
+       <nonterminal first="{PROJECT}" ruleName="ProjectDeclaration"/>
+      </action>
+      <kleene first="{#, DEFINE, INTERFACE, REFERENCE, SOURCE}">
+       <group first="{DEFINE, INTERFACE, REFERENCE, SOURCE}">
+        <choice first="{DEFINE, INTERFACE, REFERENCE, SOURCE}">
+         <nonterminal first="{INTERFACE, REFERENCE, SOURCE}" ruleName="FilePath"/>
+         <nonterminal first="{DEFINE}" ruleName="Define"/>
+        </choice>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{PROJECT}" name="ProjectDeclaration">
+   <action first="{PROJECT}">
+    <group first="{PROJECT}">
+     <sequence first="{PROJECT}">
+      <sequence first="{PROJECT}">
+       <token first="{PROJECT}" name="PROJECT"/>
+       <nonterminal first="{ID}" ruleName="QualifiedId"/>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{DEFINE}" name="Define">
+   <sequence first="{DEFINE}">
+    <sequence first="{DEFINE}">
+     <sequence first="{DEFINE}">
+      <token first="{DEFINE}" name="DEFINE"/>
+      <action first="{ID}">
+       <token first="{ID}" name="ID"/>
+      </action>
+     </sequence>
+     <group first="{#, ASSIGN}">
+      <choice first="{#, ASSIGN}">
+       <sequence first="{ASSIGN}">
+        <token first="{ASSIGN}" name="ASSIGN"/>
+        <action first="{VALUE}">
+         <token first="{VALUE}" name="VALUE"/>
+        </action>
+       </sequence>
+       <action first="{#}">
+        <empty first="{#}"/>
+       </action>
+      </choice>
+     </group>
+    </sequence>
+    <action first="{SEMICOLON}">
+     <token first="{SEMICOLON}" name="SEMICOLON"/>
+    </action>
+   </sequence>
+  </rule>
+  <rule first="{INTERFACE, REFERENCE, SOURCE}" name="FilePath">
+   <group first="{INTERFACE, REFERENCE, SOURCE}">
+    <choice first="{INTERFACE, REFERENCE, SOURCE}">
+     <choice first="{INTERFACE, SOURCE}">
+      <action first="{INTERFACE}">
+       <nonterminal first="{INTERFACE}" ruleName="InterfaceFilePath"/>
+      </action>
+      <action first="{SOURCE}">
+       <nonterminal first="{SOURCE}" ruleName="SourceFilePath"/>
+      </action>
+     </choice>
+     <action first="{REFERENCE}">
+      <nonterminal first="{REFERENCE}" ruleName="ReferenceFilePath"/>
+     </action>
+    </choice>
+   </group>
+  </rule>
+  <rule first="{INTERFACE}" name="InterfaceFilePath">
+   <action first="{INTERFACE}">
+    <group first="{INTERFACE}">
+     <sequence first="{INTERFACE}">
+      <sequence first="{INTERFACE}">
+       <token first="{INTERFACE}" name="INTERFACE"/>
+       <action first="{FILEPATH}">
+        <token first="{FILEPATH}" name="FILEPATH"/>
+       </action>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{SOURCE}" name="SourceFilePath">
+   <action first="{SOURCE}">
+    <group first="{SOURCE}">
+     <sequence first="{SOURCE}">
+      <sequence first="{SOURCE}">
+       <token first="{SOURCE}" name="SOURCE"/>
+       <action first="{FILEPATH}">
+        <token first="{FILEPATH}" name="FILEPATH"/>
+       </action>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{REFERENCE}" name="ReferenceFilePath">
+   <action first="{REFERENCE}">
+    <group first="{REFERENCE}">
+     <sequence first="{REFERENCE}">
+      <sequence first="{REFERENCE}">
+       <token first="{REFERENCE}" name="REFERENCE"/>
+       <action first="{FILEPATH}">
+        <token first="{FILEPATH}" name="FILEPATH"/>
+       </action>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{ID}" name="QualifiedId">
+   <action first="{ID}">
+    <group first="{ID}">
+     <sequence first="{ID}">
+      <action first="{ID}">
+       <token first="{ID}" name="ID"/>
+      </action>
+      <kleene first="{#, DOT}">
+       <group first="{DOT}">
+        <sequence first="{DOT}">
+         <token first="{DOT}" name="DOT"/>
+         <action first="{ID}">
+          <token first="{ID}" name="ID"/>
+         </action>
+        </sequence>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

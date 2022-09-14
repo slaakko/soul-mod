@@ -104,9 +104,11 @@ template<typename Machine, typename Char>
 class Lexer : public LexerBase<Char>
 {
 public:
+    using LexerType = Lexer<Machine, Char>;
     using CharType = Char;
     using TokenType = Token<Char, LexerBase<Char>>;
     using VariableClassType = Machine::Variables;
+    using PPHook = void (*)(LexerType& lexer, TokenType& token);
 
     Lexer(const Char* start_, const Char* end_, const std::string& fileName_) :
         flags(LexerFlags::none),
@@ -127,7 +129,9 @@ public:
         farthestPos(GetPos()),
         log(nullptr),
         vars(),
-        state(this)
+        state(this),
+        ppHook(nullptr),
+        skip(false)
     {
         ComputeLineStarts();
     }
@@ -278,6 +282,10 @@ public:
     Token<Char, LexerBase<Char>>& CurrentToken() override
     {
         return token;
+    }
+    void EraseTail() override
+    {
+        tokens.erase(current + 1, tokens.end());
     }
     const Lexeme<Char>& CurrentLexeme() const override
     {
@@ -449,10 +457,6 @@ public:
     {
         current->match.end = end;
     }
-    void EraseTokens() override
-    {
-        tokens.erase(current + 1, tokens.end());
-    }
     void Increment() override
     {
         operator++();
@@ -482,6 +486,17 @@ public:
     void EndRecordedParse() override
     {
         PopState();
+    }
+    void SetPPHook(PPHook ppHook_)
+    {
+        ppHook = ppHook_;
+    }
+    void PreprocessCurrentToken() override
+    {
+        if (ppHook)
+        {
+            ppHook(*this, token); 
+        }
     }
     void PushState()
     {
@@ -521,6 +536,15 @@ public:
         ruleContext = state.ruleContext;
         farthestRuleContext = state.farthestRuleContext;
         SetPos(state.currentPos);
+    }
+    void Skip(bool skip_) 
+    {
+        skip = skip_;
+        current = tokens.end();
+    }
+    bool Skipping() const
+    {
+        return skip;
     }
 private:
     void NextToken()
@@ -580,10 +604,18 @@ private:
                 }
                 else
                 {
-                    tokens.push_back(token);
-                    current = tokens.end() - 1;
-                    pos = token.match.end;
-                    return;
+                    if (!skip)
+                    {
+                        tokens.push_back(token);
+                        current = tokens.end() - 1;
+                        pos = token.match.end;
+                        return;
+                    }
+                    else
+                    {
+                        pos = token.match.end;
+                        return;
+                    }
                 }
             }
             if (c == '\n' && countLines)
@@ -654,6 +686,8 @@ private:
     Machine::Variables vars;
     LexerState<Char, LexerBase<Char>> state;
     std::stack<LexerState<Char, LexerBase<Char>>> stateStack;
+    PPHook ppHook;
+    bool skip;
 };
 
 inline std::string GetEndTokenInfo()

@@ -325,17 +325,97 @@
   </rule>
   <rule first="{}" name="DeductionGuide">
    <action first="{}">
-    <empty first="{}"/>
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <sequence first="{}">
+          <sequence first="{}">
+           <sequence first="{}">
+            <optional first="{}">
+             <group first="{}">
+              <action first="{}">
+               <nonterminal first="{}" ruleName="ExplicitSpecifier"/>
+              </action>
+             </group>
+            </optional>
+            <action first="{}">
+             <nonterminal first="{}" ruleName="TemplateName"/>
+            </action>
+           </sequence>
+           <action first="{}">
+            <token first="{}" name="LPAREN"/>
+           </action>
+          </sequence>
+          <nonterminal first="{}" ruleName="ParameterDeclarationClause"/>
+         </sequence>
+         <action first="{}">
+          <token first="{}" name="RPAREN"/>
+         </action>
+        </sequence>
+        <nonterminal first="{}" ruleName="Arrow"/>
+       </sequence>
+       <nonterminal first="{}" ruleName="SimpleTemplateId"/>
+      </sequence>
+      <nonterminal first="{}" ruleName="Semicolon"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{}" name="Arrow">
+   <action first="{}">
+    <token first="{}" name="ARROW"/>
    </action>
   </rule>
   <rule first="{}" name="ExplicitInstantiation">
    <action first="{}">
-    <empty first="{}"/>
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <optional first="{}">
+        <group first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="Extern"/>
+         </action>
+        </group>
+       </optional>
+       <action first="{}">
+        <nonterminal first="{}" ruleName="Template"/>
+       </action>
+      </sequence>
+      <nonterminal first="{}" ruleName="Declaration"/>
+     </sequence>
+    </group>
    </action>
   </rule>
   <rule first="{}" name="ExplicitSpecialization">
    <action first="{}">
-    <empty first="{}"/>
+    <group first="{}">
+     <sequence first="{}">
+      <sequence first="{}">
+       <sequence first="{}">
+        <sequence first="{}">
+         <action first="{}">
+          <nonterminal first="{}" ruleName="Template"/>
+         </action>
+         <action first="{}">
+          <token first="{}" name="LANGLE"/>
+         </action>
+        </sequence>
+        <action first="{}">
+         <token first="{}" name="RANGLE"/>
+        </action>
+       </sequence>
+       <action first="{}">
+        <empty first="{}"/>
+       </action>
+      </sequence>
+      <action first="{}">
+       <nonterminal first="{}" ruleName="Declaration"/>
+      </action>
+     </sequence>
+    </group>
    </action>
   </rule>
   <rule first="{}" name="Extern">

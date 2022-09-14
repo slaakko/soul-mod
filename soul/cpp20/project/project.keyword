@@ -5,5 +5,5 @@
 
 keywords soul.cpp20.proj.keyword
 {
-    ("project", PROJECT), ("interface", INTERFACE), ("source", SOURCE), ("reference", REFERENCE)
+    ("project", PROJECT), ("interface", INTERFACE), ("source", SOURCE), ("reference", REFERENCE), ("define", DEFINE)
 }

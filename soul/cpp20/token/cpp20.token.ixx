@@ -156,6 +156,15 @@ constexpr int64_t BLOCK_COMMENT_START = (static_cast<int64_t>(tokenSetID) << 32)
 constexpr int64_t BLOCK_COMMENT_END = (static_cast<int64_t>(tokenSetID) << 32) | 145;
 constexpr int64_t OTHER = (static_cast<int64_t>(tokenSetID) << 32) | 146;
 constexpr int64_t PP_LINE = (static_cast<int64_t>(tokenSetID) << 32) | 147;
-constexpr int64_t MAX = (static_cast<int64_t>(tokenSetID) << 32) | 148;
+constexpr int64_t HASH = (static_cast<int64_t>(tokenSetID) << 32) | 148;
+constexpr int64_t DEFINE = (static_cast<int64_t>(tokenSetID) << 32) | 149;
+constexpr int64_t INCLUDE = (static_cast<int64_t>(tokenSetID) << 32) | 150;
+constexpr int64_t IFDEF = (static_cast<int64_t>(tokenSetID) << 32) | 151;
+constexpr int64_t IFNDEF = (static_cast<int64_t>(tokenSetID) << 32) | 152;
+constexpr int64_t ELIF = (static_cast<int64_t>(tokenSetID) << 32) | 153;
+constexpr int64_t ENDIF = (static_cast<int64_t>(tokenSetID) << 32) | 154;
+constexpr int64_t UNDEF = (static_cast<int64_t>(tokenSetID) << 32) | 155;
+constexpr int64_t DEFINED = (static_cast<int64_t>(tokenSetID) << 32) | 156;
+constexpr int64_t MAX = (static_cast<int64_t>(tokenSetID) << 32) | 157;
 
 } // soul::cpp20::token

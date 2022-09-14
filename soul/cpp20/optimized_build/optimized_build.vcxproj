@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>cpp20build_optd</TargetName>
+    <TargetName>cpp20buildd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>cpp20build_opt</TargetName>
+    <TargetName>cpp20build</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="..\lexer\soul.cpp20.lexer.classmap.rc" />
+    <ResourceCompile Include="..\optimized_pp\soul.cpp20.pp.lexer.classmap.rc" />
     <ResourceCompile Include="..\optimized_project\soul.cpp20.proj.lexer.classmap.rc" />
     <ResourceCompile Include="..\optimized_project\soul.cpp20.sln.lexer.classmap.rc" />
   </ItemGroup>

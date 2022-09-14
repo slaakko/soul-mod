@@ -110,7 +110,31 @@ soul::parser::Match ProjectParser<Lexer>::ProjectFile(Lexer& lexer)
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
                                 {
-                                    soul::parser::Match match = ProjectParser<Lexer>::FilePath(lexer, proj.get());
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch7 = &match;
+                                    switch (*lexer)
+                                    {
+                                        case INTERFACE:
+                                        case REFERENCE:
+                                        case SOURCE:
+                                        {
+                                            soul::parser::Match match = ProjectParser<Lexer>::FilePath(lexer, proj.get());
+                                            if (match.hit)
+                                            {
+                                                *parentMatch7 = match;
+                                            }
+                                            break;
+                                        }
+                                        case DEFINE:
+                                        {
+                                            soul::parser::Match match = ProjectParser<Lexer>::Define(lexer, proj.get());
+                                            if (match.hit)
+                                            {
+                                                *parentMatch7 = match;
+                                            }
+                                            break;
+                                        }
+                                    }
                                     *parentMatch6 = match;
                                 }
                                 if (match.hit)
@@ -247,6 +271,183 @@ soul::parser::Match ProjectParser<Lexer>::ProjectDeclaration(Lexer& lexer)
 }
 
 template<typename Lexer>
+soul::parser::Match ProjectParser<Lexer>::Define(Lexer& lexer, soul::cpp20::proj::ast::Project* proj)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "Define");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714819);
+    std::string symbol = std::string();
+    int64_t value = int64_t();
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                if (*lexer == DEFINE)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        if (*lexer == ID)
+                        {
+                            ++lexer;
+                            match.hit = true;
+                        }
+                        if (match.hit)
+                        {
+                            symbol = util::ToUtf8(lexer.GetToken(pos).ToString());
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch5 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch6 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch7 = &match;
+                    {
+                        int64_t save = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch8 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            if (*lexer == ASSIGN)
+                            {
+                                ++lexer;
+                                match.hit = true;
+                            }
+                            *parentMatch8 = match;
+                        }
+                        if (match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch9 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch10 = &match;
+                                {
+                                    int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match(false);
+                                    if (*lexer == VALUE)
+                                    {
+                                        ++lexer;
+                                        match.hit = true;
+                                    }
+                                    if (match.hit)
+                                    {
+                                        value = std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString()));
+                                    }
+                                    *parentMatch10 = match;
+                                }
+                                *parentMatch9 = match;
+                            }
+                            *parentMatch8 = match;
+                        }
+                        *parentMatch7 = match;
+                        if (!match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch11 = &match;
+                            lexer.SetPos(save);
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch12 = &match;
+                                {
+                                    int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match(true);
+                                    if (match.hit)
+                                    {
+                                        value = 1;
+                                    }
+                                    *parentMatch12 = match;
+                                }
+                                *parentMatch11 = match;
+                            }
+                            *parentMatch7 = match;
+                        }
+                    }
+                    *parentMatch6 = match;
+                }
+                *parentMatch5 = match;
+            }
+            *parentMatch1 = match;
+        }
+        *parentMatch0 = match;
+    }
+    if (match.hit)
+    {
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch13 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch14 = &match;
+            {
+                int64_t pos = lexer.GetPos();
+                soul::parser::Match match(false);
+                if (*lexer == SEMICOLON)
+                {
+                    ++lexer;
+                    match.hit = true;
+                }
+                if (match.hit)
+                {
+                    proj->AddDefine(symbol, value);
+                }
+                *parentMatch14 = match;
+            }
+            *parentMatch13 = match;
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Define");
+        else soul::lexer::WriteFailureToLog(lexer, "Define");
+    }
+    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
 soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::proj::ast::Project* proj)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -258,7 +459,7 @@ soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::pr
         soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714819);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714820);
     std::unique_ptr<soul::parser::Value<std::string>> interfaceFilePath;
     std::unique_ptr<soul::parser::Value<std::string>> sourceFilePath;
     std::unique_ptr<soul::parser::Value<std::string>> referenceFilePath;
@@ -267,14 +468,12 @@ soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::pr
     {
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
+        switch (*lexer)
         {
-            int64_t save = lexer.GetPos();
-            soul::parser::Match match(false);
-            soul::parser::Match* parentMatch2 = &match;
+            case INTERFACE:
             {
-                int64_t save = lexer.GetPos();
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch3 = &match;
+                soul::parser::Match* parentMatch2 = &match;
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ProjectParser<Lexer>::InterfaceFilePath(lexer);
@@ -283,54 +482,53 @@ soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::pr
                     {
                         proj->AddInterfaceFilePath(interfaceFilePath->value);
                     }
-                    *parentMatch3 = match;
-                }
-                *parentMatch2 = match;
-                if (!match.hit)
-                {
-                    soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch4 = &match;
-                    lexer.SetPos(save);
-                    {
-                        soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch5 = &match;
-                        {
-                            int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = ProjectParser<Lexer>::SourceFilePath(lexer);
-                            sourceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
-                            if (match.hit)
-                            {
-                                proj->AddSourceFilePath(sourceFilePath->value);
-                            }
-                            *parentMatch5 = match;
-                        }
-                        *parentMatch4 = match;
-                    }
                     *parentMatch2 = match;
                 }
+                if (match.hit)
+                {
+                    *parentMatch1 = match;
+                }
+                break;
             }
-            *parentMatch1 = match;
-            if (!match.hit)
+            case SOURCE:
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch6 = &match;
-                lexer.SetPos(save);
+                soul::parser::Match* parentMatch3 = &match;
                 {
-                    soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch7 = &match;
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = ProjectParser<Lexer>::SourceFilePath(lexer);
+                    sourceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                    if (match.hit)
                     {
-                        int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = ProjectParser<Lexer>::ReferenceFilePath(lexer);
-                        referenceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
-                        if (match.hit)
-                        {
-                            proj->AddReferenceFilePath(referenceFilePath->value);
-                        }
-                        *parentMatch7 = match;
+                        proj->AddSourceFilePath(sourceFilePath->value);
                     }
-                    *parentMatch6 = match;
+                    *parentMatch3 = match;
                 }
-                *parentMatch1 = match;
+                if (match.hit)
+                {
+                    *parentMatch1 = match;
+                }
+                break;
+            }
+            case REFERENCE:
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch4 = &match;
+                {
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match = ProjectParser<Lexer>::ReferenceFilePath(lexer);
+                    referenceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
+                    if (match.hit)
+                    {
+                        proj->AddReferenceFilePath(referenceFilePath->value);
+                    }
+                    *parentMatch4 = match;
+                }
+                if (match.hit)
+                {
+                    *parentMatch1 = match;
+                }
+                break;
             }
         }
         *parentMatch0 = match;
@@ -361,7 +559,7 @@ soul::parser::Match ProjectParser<Lexer>::InterfaceFilePath(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceFilePath");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714820);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714821);
     std::string filePath = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -465,7 +663,7 @@ soul::parser::Match ProjectParser<Lexer>::SourceFilePath(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SourceFilePath");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714821);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714822);
     std::string filePath = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -569,7 +767,7 @@ soul::parser::Match ProjectParser<Lexer>::ReferenceFilePath(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ReferenceFilePath");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714822);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714823);
     std::string filePath = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -673,7 +871,7 @@ soul::parser::Match ProjectParser<Lexer>::QualifiedId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714823);
+    soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714824);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

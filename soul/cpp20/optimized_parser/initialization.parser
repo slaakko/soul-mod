@@ -10,6 +10,7 @@ export module soul.cpp20.parser.initialization;
 [implementation]import soul.cpp20.token;
 [implementation]import soul.cpp20.lexer;
 [implementation]import soul.cpp20.parser.expression;
+[implementation]import soul.cpp20.parser.identifier;
 [implementation]import soul.cpp20.parser.punctuation;
 
 parser InitializationParser
@@ -19,6 +20,7 @@ parser InitializationParser
     using ExpressionParser.Expression;
     using ExpressionParser.AssignmentExpression;
     using ExpressionParser.ExpressionList;
+    using IdentifierParser.Identifier;
     using PunctuationParser.Comma;
     using PunctuationParser.Ellipsis;
     using PunctuationParser.LBrace;
@@ -56,7 +58,36 @@ parser InitializationParser
         ;
 
     DesignatedInitializerList(soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container)
-        ::= empty{ pass = false; }
+        ::= 
+        (
+            DesignatedInitializerClause(context):first{ container->AddNode(first); }
+            (
+                Comma:comma{ container->AddNode(comma); }
+                DesignatedInitializerClause(context):next{ container->AddNode(next); }
+            )*
+        )
+        ;
+
+    DesignatedInitializerClause(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            Designator(context):designator{ sourcePos = lexer.GetSourcePos(pos); }
+            BraceOrEqualInitializer(context):initializer
+        )
+        {
+            return new soul::cpp20::ast::DesignatedInitializerNode(sourcePos, designator, initializer);
+        }
+        ;
+
+    Designator(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            DOT{ sourcePos = lexer.GetSourcePos(pos); }
+            Identifier(context):identifier
+        )
+        {
+            return new soul::cpp20::ast::DesignatorNode(sourcePos, identifier);
+        }
         ;
 
     ExprOrBracedInitList(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*

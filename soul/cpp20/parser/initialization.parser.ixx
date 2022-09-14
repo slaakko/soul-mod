@@ -21,6 +21,8 @@ struct InitializationParser
     static soul::parser::Match InitializerClause(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match InitializerList(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
     static soul::parser::Match DesignatedInitializerList(Lexer& lexer, soul::cpp20::symbols::Context* context, soul::cpp20::ast::Node* container);
+    static soul::parser::Match DesignatedInitializerClause(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match Designator(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ExprOrBracedInitList(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match BraceOrEqualInitializer(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match BracedInitList(Lexer& lexer, soul::cpp20::symbols::Context* context);

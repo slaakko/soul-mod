@@ -11,6 +11,13 @@ import soul.cpp20.symbols;
 
 export namespace soul::cpp20::proj::ast {
 
+struct Define
+{
+    Define(const std::string& symbol_, int64_t value_);
+    std::string symbol;
+    int64_t value;
+};
+
 class Project
 {
 public:
@@ -42,6 +49,8 @@ public:
     void SetScanned() { scanned = true; }
     const std::vector<std::unique_ptr<soul::cpp20::symbols::Module>>& Modules() const { return modules; }
     const std::vector<std::string>& ModuleNames() const { return moduleNames; }
+    const std::vector<Define>& Defines() const { return defines; }
+    void AddDefine(const std::string& symbol, int64_t value);
     void ResolveForwardDeclarationsAndAddDerivedClasses(soul::cpp20::symbols::ModuleMapper& moduleMapper);
 private:
     std::string filePath;
@@ -59,6 +68,7 @@ private:
     bool scanned;
     bool loaded;
     std::vector<std::string> moduleNames;
+    std::vector<Define> defines;
 };
 
 class Solution

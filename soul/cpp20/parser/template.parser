@@ -27,15 +27,18 @@ parser TemplateParser
     using ConceptParser.RequiresClause;
     using ConceptParser.TypeConstraint;
     using DeclarationParser.Declaration;
+    using DeclarationParser.ExplicitSpecifier;
     using ExpressionParser.ConstantExpression;
     using ExpressionParser.IdExpression;
     using FunctionParser.OperatorFunctionId;
     using FunctionParser.ParameterDeclaration;
+    using FunctionParser.ParameterDeclarationClause;
     using IdentifierParser.Identifier;
     using LiteralParser.LiteralOperatorId;
     using PunctuationParser.Assign;
     using PunctuationParser.Comma;
     using PunctuationParser.Ellipsis;
+    using PunctuationParser.Semicolon;
     using TypeParser.TypeId;
 
     TemplateDeclaration(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::Node> templateHeadNode, 
@@ -271,16 +274,53 @@ parser TemplateParser
         ::= &(RANGLE | COMMA | ELLIPSIS)
         ;
 
-    DeductionGuide(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
-        ::= empty{ pass = false; }
+    DeductionGuide(soul::cpp20::symbols::Context* context, var std::unique_ptr<soul::cpp20::ast::ParameterListNode> params, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (ExplicitSpecifier(context):explicitSpecifier{ sourcePos = lexer.GetSourcePos(pos); })?
+            TemplateName(context):templateName{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); params.reset(new soul::cpp20::ast::ParameterListNode(lexer.GetSourcePos(pos))); }
+            ParameterDeclarationClause(context, params.get()):paramDeclarationClause
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+            Arrow:arrow 
+            SimpleTemplateId(context):templateId
+            Semicolon:semicolon
+        )
+        {
+            return new soul::cpp20::ast::DeductionGuideNode(sourcePos, templateName, params.release(), arrow, templateId, explicitSpecifier, semicolon, lpPos, rpPos);
+        }
         ;
 
-    ExplicitInstantiation(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
-        ::= empty{ pass = false; }
+    Arrow : soul::cpp20::ast::Node*
+        ::= ARROW{ return new soul::cpp20::ast::ArrowNode(lexer.GetSourcePos(pos)); }
         ;
 
-    ExplicitSpecialization(soul::cpp20::symbols::Context* context) : soul::cpp20::ast::Node*
-        ::= empty{ pass = false; }
+    ExplicitInstantiation(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos) : soul::cpp20::ast::Node*
+        ::= 
+        (
+            (Extern:extrn{ sourcePos = lexer.GetSourcePos(pos); })? 
+            Template:tmp{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            Declaration(context):declaration
+        )
+        {
+            return new soul::cpp20::ast::ExplicitInstantiationNode(sourcePos, extrn, tmp, declaration);
+        }
+        ;
+
+    ExplicitSpecialization(soul::cpp20::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos laPos, var soul::ast::SourcePos raPos) : 
+        soul::cpp20::ast::Node*
+        ::= 
+        (
+            Template:tmp{ sourcePos = lexer.GetSourcePos(pos); }
+            LANGLE{ laPos = lexer.GetSourcePos(pos); }
+            RANGLE{ raPos = lexer.GetSourcePos(pos); }
+            empty{ context->PushSetFlag(soul::cpp20::symbols::ContextFlags::parsingTemplateDeclaration); }
+            Declaration(context):declaration{ context->PopFlags(); } / { context->PopFlags(); }
+        )
+        {
+            return new soul::cpp20::ast::ExplicitSpecializationNode(sourcePos, tmp, declaration, laPos, raPos);
+        }
         ;
 
     Extern : soul::cpp20::ast::Node*

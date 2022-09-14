@@ -20,6 +20,7 @@ lexer Cpp20Lexer
         "{character_literal}" { return CHARACTER_LITERAL; }
         "{begin_raw_string_literal}" { return BEGIN_RAW_STRING_LITERAL; }
         "{string_literal}" { return STRING_LITERAL; }
+        "{pp_line}" { if (lexer.Skipping()) return PP_LINE; else lexer.PreprocessCurrentToken(); }
         "::" { return COLON_COLON; }
         "," { return COMMA; }
         "=" { return ASSIGN; }
@@ -48,7 +49,7 @@ lexer Cpp20Lexer
         "<" { return LANGLE; }
         ">" { return RANGLE; }
         "<<" { return SHIFT_LEFT; }
-        ">>" $(1) { return SHIFT_RIGHT; }
+        ">>" (1) { return SHIFT_RIGHT; }
         "\+" { return PLUS; }
         "-" { return MINUS; }
         "\*" { return STAR; }

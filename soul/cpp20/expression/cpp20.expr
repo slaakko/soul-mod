@@ -12,7 +12,7 @@ expressions soul.cpp20.expr
     block_comment_start = "/\*";
     block_comment_end = "\*/";
     pp_line = "[\t ]*#[^\x0\r\n]*{newline}";
-    separators = "({pp_line}|{line_comment}|{block_comment}|{ws})+";
+    separators = "({line_comment}|{block_comment}|{ws})+";
     hexdigit = "[0-9a-fA-F]";
     hex4 = "{hexdigit}{hexdigit}{hexdigit}{hexdigit}";
     hex8 = "{hex4}{hex4}";
@@ -48,4 +48,6 @@ expressions soul.cpp20.expr
     schar = "[^\r\n\\\"]|{escape}|{univcn}";
     begin_raw_string_literal = "{encoding_prefix}?R\"";
     string_literal = "{encoding_prefix}?\"{schar}*\";
+    angle_header_name = "<[^\r\n>]+>";
+    quote_header_name = "\"[^\r\n\"]+\"";
 }

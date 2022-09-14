@@ -159,6 +159,15 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(BLOCK_COMMENT_END, "BLOCK_COMMENT_END", "block comment end"));
         tokens.AddToken(new soul::ast::slg::Token(OTHER, "OTHER", "other"));
         tokens.AddToken(new soul::ast::slg::Token(PP_LINE, "PP_LINE", "preprocessing line"));
+        tokens.AddToken(new soul::ast::slg::Token(HASH, "HASH", "'#'"));
+        tokens.AddToken(new soul::ast::slg::Token(DEFINE, "DEFINE", "'define'"));
+        tokens.AddToken(new soul::ast::slg::Token(INCLUDE, "INCLUDE", "'include'"));
+        tokens.AddToken(new soul::ast::slg::Token(IFDEF, "IFDEF", "'ifdef'"));
+        tokens.AddToken(new soul::ast::slg::Token(IFNDEF, "IFNDEF", "'ifndef'"));
+        tokens.AddToken(new soul::ast::slg::Token(ELIF, "ELIF", "'elif'"));
+        tokens.AddToken(new soul::ast::slg::Token(ENDIF, "ENDIF", "'endif'"));
+        tokens.AddToken(new soul::ast::slg::Token(UNDEF, "UNDEF", "'undef'"));
+        tokens.AddToken(new soul::ast::slg::Token(DEFINED, "DEFINED", "'defined'"));
         tokens.AddToken(new soul::ast::slg::Token(MAX, "MAX", "max"));
     }
     return &tokens;

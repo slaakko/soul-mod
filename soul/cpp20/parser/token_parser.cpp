@@ -715,7 +715,7 @@ soul::cpp20::ast::RawStringLiteralNode* ParseRawStringLiteral(const soul::ast::S
         lexer.CurrentToken().match.end = p;
         lexer.CurrentLexeme().end = p;
         lexer.SetCurrentMatchEnd(p);
-        lexer.EraseTokens();
+        lexer.EraseTail();
         lexer.SetPos(p);
         lexer.Increment();
     }

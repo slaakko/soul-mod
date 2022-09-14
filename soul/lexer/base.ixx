@@ -23,6 +23,7 @@ public:
     using Self = LexerBase<Char>;
     virtual void Retract() = 0;
     virtual int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const = 0;
+    virtual void EraseTail() = 0;
     virtual Token<Char, Self>& CurrentToken() = 0;
     virtual const Lexeme<Char>& CurrentLexeme() const = 0;
     virtual Lexeme<Char>& CurrentLexeme() = 0;
@@ -45,11 +46,13 @@ public:
     virtual const Char* End() const = 0;
     virtual void SetPos(const Char* p) = 0;
     virtual void SetCurrentMatchEnd(const Char* end) = 0;
-    virtual void EraseTokens() = 0;
     virtual void Increment() = 0;
     virtual void MoveToEnd() = 0;
     virtual void BeginRecordedParse(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair) = 0;
     virtual void EndRecordedParse() = 0;
+    virtual void PreprocessCurrentToken() = 0;
+    virtual void Skip(bool skip_) = 0;
+    virtual bool Skipping() const = 0;
 };
 
 } // namespace soul::lexer
