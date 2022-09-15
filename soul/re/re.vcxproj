@@ -171,13 +171,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="re.project" />
-    <None Include="re_parser.parser" />
-    <None Include="re_parser.spg" />
+    <None Include="re.parser" />
+    <None Include="re.spg" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="re.ixx" />
-    <ClCompile Include="re_parser.cpp" />
-    <ClCompile Include="re_parser.ixx" />
+    <ClCompile Include="re.parser.cpp" />
+    <ClCompile Include="re.parser.ixx" />
+    <ClCompile Include="re_rules.cpp" />
+    <ClCompile Include="re_rules.ixx" />
     <ClCompile Include="token_parser.ixx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

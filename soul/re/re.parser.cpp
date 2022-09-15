@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/re/re_parser.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/re/re.parser' using soul parser generator spg version 4.1.0
 
 module soul.re.parser;
 
@@ -31,7 +31,7 @@ soul::ast::re::Nfa RegExParser<Lexer>::Parse(Lexer& lexer, soul::ast::re::LexerC
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = RegExParser<Lexer>::RegularExpression(lexer, lexerContext);
     value.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
@@ -41,7 +41,7 @@ soul::ast::re::Nfa RegExParser<Lexer>::Parse(Lexer& lexer, soul::ast::re::LexerC
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -71,7 +71,7 @@ soul::parser::Match RegExParser<Lexer>::RegularExpression(Lexer& lexer, soul::as
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "RegularExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526657);
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> alternative;
     soul::parser::Match match(false);
@@ -85,7 +85,7 @@ soul::parser::Match RegExParser<Lexer>::RegularExpression(Lexer& lexer, soul::as
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RegularExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<soul::ast::re::Nfa>(alternative->value));
             }
         }
@@ -97,7 +97,7 @@ soul::parser::Match RegExParser<Lexer>::RegularExpression(Lexer& lexer, soul::as
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RegularExpression");
         else soul::lexer::WriteFailureToLog(lexer, "RegularExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -116,7 +116,7 @@ soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Alternative");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526658);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> left;
@@ -230,7 +230,7 @@ soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re:
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Alternative");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<soul::ast::re::Nfa>(value));
             }
         }
@@ -242,7 +242,7 @@ soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Alternative");
         else soul::lexer::WriteFailureToLog(lexer, "Alternative");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -261,7 +261,7 @@ soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Catenation");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526659);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> left;
@@ -342,7 +342,7 @@ soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Catenation");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<soul::ast::re::Nfa>(value));
             }
         }
@@ -354,7 +354,7 @@ soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Catenation");
         else soul::lexer::WriteFailureToLog(lexer, "Catenation");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -373,7 +373,7 @@ soul::parser::Match RegExParser<Lexer>::Repetition(Lexer& lexer, soul::ast::re::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Repetition");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526660);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> left;
@@ -515,7 +515,7 @@ soul::parser::Match RegExParser<Lexer>::Repetition(Lexer& lexer, soul::ast::re::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Repetition");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<soul::ast::re::Nfa>(value));
             }
         }
@@ -527,7 +527,7 @@ soul::parser::Match RegExParser<Lexer>::Repetition(Lexer& lexer, soul::ast::re::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Repetition");
         else soul::lexer::WriteFailureToLog(lexer, "Repetition");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -546,7 +546,7 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Primary");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526661);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> alt;
@@ -861,7 +861,7 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Primary");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<soul::ast::re::Nfa>(value));
             }
         }
@@ -873,7 +873,7 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Primary");
         else soul::lexer::WriteFailureToLog(lexer, "Primary");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -892,7 +892,7 @@ soul::parser::Match RegExParser<Lexer>::Class(Lexer& lexer, soul::ast::re::Lexer
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Class");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526662);
     soul::ast::re::Class* cls = nullptr;
     std::unique_ptr<soul::ast::re::Symbol> r;
@@ -1062,7 +1062,7 @@ soul::parser::Match RegExParser<Lexer>::Class(Lexer& lexer, soul::ast::re::Lexer
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Class");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, cls);
             }
         }
@@ -1074,7 +1074,7 @@ soul::parser::Match RegExParser<Lexer>::Class(Lexer& lexer, soul::ast::re::Lexer
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Class");
         else soul::lexer::WriteFailureToLog(lexer, "Class");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1093,7 +1093,7 @@ soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::Lexer
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Range");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526663);
     soul::ast::re::Symbol* symbol = nullptr;
     std::unique_ptr<soul::parser::Value<char32_t>> s;
@@ -1192,7 +1192,7 @@ soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::Lexer
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Range");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, symbol);
             }
         }
@@ -1204,7 +1204,7 @@ soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::Lexer
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Range");
         else soul::lexer::WriteFailureToLog(lexer, "Range");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1223,7 +1223,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Char");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526664);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -1236,7 +1236,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('('));
                 }
             }
@@ -1249,7 +1249,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>(')'));
                 }
             }
@@ -1262,7 +1262,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('['));
                 }
             }
@@ -1275,7 +1275,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('{'));
                 }
             }
@@ -1288,7 +1288,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('}'));
                 }
             }
@@ -1301,7 +1301,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('|'));
                 }
             }
@@ -1314,7 +1314,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('*'));
                 }
             }
@@ -1327,7 +1327,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('+'));
                 }
             }
@@ -1340,7 +1340,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('?'));
                 }
             }
@@ -1353,7 +1353,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('.'));
                 }
             }
@@ -1366,7 +1366,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>(MakeEscapeValue(lexer.FileName(), lexer.GetToken(pos))));
                 }
             }
@@ -1379,7 +1379,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('^'));
                 }
             }
@@ -1392,7 +1392,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>('-'));
                 }
             }
@@ -1406,7 +1406,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<char32_t>(match.front()));
                 }
             }
@@ -1419,7 +1419,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Char");
         else soul::lexer::WriteFailureToLog(lexer, "Char");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1438,7 +1438,7 @@ soul::parser::Match RegExParser<Lexer>::ExpressionReference(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionReference");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526665);
     std::string s = std::string();
     soul::parser::Match match(false);
@@ -1556,7 +1556,7 @@ soul::parser::Match RegExParser<Lexer>::ExpressionReference(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExpressionReference");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<std::string>(s));
                         }
                     }
@@ -1574,7 +1574,7 @@ soul::parser::Match RegExParser<Lexer>::ExpressionReference(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExpressionReference");
         else soul::lexer::WriteFailureToLog(lexer, "ExpressionReference");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

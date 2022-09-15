@@ -17,7 +17,7 @@
        </action>
       </sequence>
       <action first="{#, ALIGNAS, AMP, AMP_AMP, ARROW, COLON_COLON, CONST, ELLIPSIS, ID, LBRACKET, LPAREN, OPERATOR, STAR, TEMPLATE, TILDE, VOLATILE}">
-       <nonterminal first="{#, ALIGNAS, AMP, AMP_AMP, ARROW, COLON_COLON, CONST, ELLIPSIS, ID, LBRACKET, LPAREN, OPERATOR, STAR, TEMPLATE, TILDE, VOLATILE}" ruleName="Declarator"/>
+       <nonterminal first="{#, ALIGNAS, AMP, AMP_AMP, ARROW, COLON_COLON, CONST, ELLIPSIS, ID, LBRACKET, LPAREN, OPERATOR, STAR, TEMPLATE, TILDE, VOLATILE}" ruleName="DeclaratorPushClassScope"/>
       </action>
      </sequence>
      <action first="{#, ID, REQUIRES}">
@@ -57,7 +57,7 @@
        </group>
       </optional>
       <action first="{#, ALIGNAS, AMP, AMP_AMP, ARROW, COLON_COLON, CONST, ELLIPSIS, ID, LBRACKET, LPAREN, OPERATOR, STAR, TEMPLATE, TILDE, VOLATILE}">
-       <nonterminal first="{#, ALIGNAS, AMP, AMP_AMP, ARROW, COLON_COLON, CONST, ELLIPSIS, ID, LBRACKET, LPAREN, OPERATOR, STAR, TEMPLATE, TILDE, VOLATILE}" ruleName="Declarator"/>
+       <nonterminal first="{#, ALIGNAS, AMP, AMP_AMP, ARROW, COLON_COLON, CONST, ELLIPSIS, ID, LBRACKET, LPAREN, OPERATOR, STAR, TEMPLATE, TILDE, VOLATILE}" ruleName="DeclaratorPushClassScope"/>
       </action>
      </sequence>
      <action first="{#, ID, REQUIRES}">

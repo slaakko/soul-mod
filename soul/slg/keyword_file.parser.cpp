@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/keyword_file.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/keyword_file.parser' using soul parser generator spg version 4.1.0
 
 module soul.slg.keyword.file.parser;
 
@@ -31,7 +31,7 @@ std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<Lexer>::Parse(Lex
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = KeywordFileParser<Lexer>::KeywordFile(lexer);
     value.reset(static_cast<soul::ast::slg::KeywordFile*>(match.value));
@@ -41,7 +41,7 @@ std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<Lexer>::Parse(Lex
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -71,7 +71,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860993);
     std::unique_ptr<soul::ast::slg::KeywordFile> keywordFile = std::unique_ptr<soul::ast::slg::KeywordFile>();
     std::unique_ptr<soul::ast::slg::KeywordCollection> keywordCollection = std::unique_ptr<soul::ast::slg::KeywordCollection>();
@@ -352,7 +352,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "KeywordFile");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, keywordFile.release());
             }
         }
@@ -364,7 +364,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "KeywordFile");
         else soul::lexer::WriteFailureToLog(lexer, "KeywordFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -383,7 +383,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860994);
     std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
@@ -428,7 +428,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Imports");
         else soul::lexer::WriteFailureToLog(lexer, "Imports");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -447,7 +447,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Keyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860995);
     std::string str = std::string();
     std::string tokenName = std::string();
@@ -623,7 +623,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Keyword");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::ast::slg::Keyword(str, tokenName));
             }
         }
@@ -635,7 +635,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Keyword");
         else soul::lexer::WriteFailureToLog(lexer, "Keyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

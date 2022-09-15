@@ -17,5 +17,6 @@ Scope* ResolveScope(soul::cpp20::ast::Node* nnsNode, Context* context);
 
 void BeginScope(soul::cpp20::ast::Node* nnsNode, Context* context);
 void EndScope(Context* context);
+void AddParentScope(soul::cpp20::ast::Node* node, Context* context);
 
 } // namespace soul::cpp20::symbols

@@ -54,11 +54,13 @@ public:
     virtual bool IsContainerScope() const { return false; }
     virtual Scope* GetClassScope() const { return nullptr; }
     virtual Symbol* GetSymbol() { return nullptr; }
-    virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const;
+    virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const;
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual std::vector<Scope*> ParentScopes() const { return std::vector<Scope*>(); }
     virtual void AddParentScope(Scope* parentScope_);
+    virtual void PushParentScope(Scope* parentScope);
+    virtual void PopParentScope();
     virtual void ClearParentScopes() {}
     virtual void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -82,6 +84,8 @@ public:
     void Import(Scope* that) override;
     std::vector<Scope*> ParentScopes() const override { return parentScopes; }
     void AddParentScope(Scope* parentScope) override;
+    void PushParentScope(Scope* parentScope) override;
+    void PopParentScope() override;
     void ClearParentScopes() override;
     bool IsContainerScope() const override { return true; }
     Scope* GetClassScope() const override;
@@ -92,7 +96,7 @@ public:
     void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string FullName() const override;
-    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const override;
+    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const override;
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
     ClassGroupSymbol* GetOrInsertClassGroup(const std::u32string& name, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -108,6 +112,7 @@ private:
     ContainerSymbol* containerSymbol;
     std::vector<UsingDirectiveScope*> usingDirectiveScopes;
     std::vector<std::unique_ptr<Scope>> scopes;
+    bool parentScopePushed;
 };
 
 class UsingDeclarationScope : public Scope
@@ -115,7 +120,7 @@ class UsingDeclarationScope : public Scope
 public:
     UsingDeclarationScope(ContainerScope* parentScope_);
     std::string FullName() const override;
-    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const override;
+    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const override;
 private:
     ContainerScope* parentScope;
 };
@@ -124,12 +129,11 @@ class UsingDirectiveScope : public Scope
 {
 public:
     UsingDirectiveScope(NamespaceSymbol* ns_);
-    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const override;
+    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const override;
     std::string FullName() const override;
     NamespaceSymbol* Ns() const { return ns; }
 private:
     NamespaceSymbol* ns;
-    mutable bool recursive;
 };
 
 class InstantiationScope : public Scope
@@ -139,10 +143,9 @@ public:
     std::string FullName() const override;
     Scope* GroupScope() override;
     Scope* SymbolScope() override;
-    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const override;
+    void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const override;
 private:
     Scope* parentScope;
-    mutable bool recursive;
 };
 
 } // namespace soul::cpp20::symbols

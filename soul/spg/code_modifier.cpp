@@ -107,8 +107,7 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::ReturnStatementNode& node)
                     new soul::ast::cpp::LiteralNode(sourcePos, "parser_debug_write_to_log"),
                     expressionStatementNode, nullptr);
                 debugBlock->Add(ifStatementNode);
-                soul::ast::cpp::EndIfStatementNode* endifStatementNode = new soul::ast::cpp::EndIfStatementNode(sourcePos, 
-                    new soul::ast::cpp::LiteralNode(sourcePos, "SOUL_PARSER_DEBUG_SUPPORT"));
+                soul::ast::cpp::EndIfStatementNode* endifStatementNode = new soul::ast::cpp::EndIfStatementNode(sourcePos);
                 debugBlock->Add(endifStatementNode);
                 soul::ast::cpp::StatementNode* returnStmtNode = new soul::ast::cpp::ReturnStatementNode(sourcePos, invokeMatch);
                 debugBlock->Add(returnStmtNode);

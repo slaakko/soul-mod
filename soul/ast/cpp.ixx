@@ -762,13 +762,10 @@ private:
 class EndIfStatementNode : public StatementNode
 {
 public:
-    EndIfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* comment_);
+    EndIfStatementNode(const soul::ast::SourcePos& sourcePos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
-    Node* Comment() const { return comment.get(); }
-private:
-    std::unique_ptr<Node> comment;
 };
 
 class AssignInitNode : public Node
@@ -1113,7 +1110,6 @@ public:
     void Visit(HandlerNode& node) override;
     void Visit(TryStatementNode& node) override;
     void Visit(IfdefStatementNode& node) override;
-    void Visit(EndIfStatementNode& node) override;
     void Visit(AssignInitNode& node) override;
     void Visit(InitializerNode& node) override;
     void Visit(InitDeclaratorNode& node) override;

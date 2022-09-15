@@ -1,2 +1,2 @@
 project soul.rex.spg;
-parser <rex_parser.parser>;
+parser <rex.parser>;

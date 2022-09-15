@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/source_file.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/source_file.parser' using soul parser generator spg version 4.1.0
 
 module minilang.parser.source.file;
 
@@ -25,7 +25,7 @@ std::unique_ptr<minilang::ast::SourceFileNode> SourceFileParser<Lexer>::Parse(Le
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = SourceFileParser<Lexer>::SourceFile(lexer);
     value.reset(static_cast<minilang::ast::SourceFileNode*>(match.value));
@@ -35,7 +35,7 @@ std::unique_ptr<minilang::ast::SourceFileNode> SourceFileParser<Lexer>::Parse(Le
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -65,7 +65,7 @@ soul::parser::Match SourceFileParser<Lexer>::SourceFile(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SourceFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 604673310139088897);
     std::unique_ptr<minilang::ast::SourceFileNode> sourceFile = std::unique_ptr<minilang::ast::SourceFileNode>();
     std::unique_ptr<minilang::ast::FunctionNode> function;
@@ -144,7 +144,7 @@ soul::parser::Match SourceFileParser<Lexer>::SourceFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SourceFile");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, sourceFile.release());
             }
         }
@@ -156,7 +156,7 @@ soul::parser::Match SourceFileParser<Lexer>::SourceFile(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SourceFile");
         else soul::lexer::WriteFailureToLog(lexer, "SourceFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

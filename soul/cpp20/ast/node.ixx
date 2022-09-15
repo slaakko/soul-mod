@@ -116,6 +116,7 @@ public:
     bool IsCompoundStatementNode() const { return kind == NodeKind::compoundStatementNode; }
     bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
     bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
+    bool IsQualifiedIdNode() const { return kind == NodeKind::qualifiedIdNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

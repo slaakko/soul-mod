@@ -28,7 +28,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136641);
     std::unique_ptr<soul::cpp20::ast::Node> udLiteral;
     soul::parser::Match match(false);
@@ -74,7 +74,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                                             {
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                #endif
                                                 return soul::parser::Match(true, udLiteral.release());
                                             }
                                         }
@@ -102,7 +102,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                                                     {
                                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                        #endif
                                                         return soul::parser::Match(true, soul::cpp20::parser::token::ParseIntegerLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
                                                     }
                                                 }
@@ -135,7 +135,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                                                 {
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                    #endif
                                                     return soul::parser::Match(true, soul::cpp20::parser::token::ParseFloatingLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
                                                 }
                                             }
@@ -168,7 +168,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                                             {
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                #endif
                                                 return soul::parser::Match(true, soul::cpp20::parser::token::ParseCharacterLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
                                             }
                                         }
@@ -202,7 +202,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, soul::cpp20::parser::token::ParseRawStringLiteral(lexer.GetSourcePos(pos), lexer));
                                         }
                                     }
@@ -235,7 +235,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, soul::cpp20::parser::token::ParseStringLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
                                     }
                                 }
@@ -268,7 +268,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                    #endif
                                     return soul::parser::Match(true, new soul::cpp20::ast::BooleanLiteralNode(lexer.GetSourcePos(pos), true, lexer.GetToken(pos).ToString()));
                                 }
                             }
@@ -301,7 +301,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, new soul::cpp20::ast::BooleanLiteralNode(lexer.GetSourcePos(pos), false, lexer.GetToken(pos).ToString()));
                             }
                         }
@@ -334,7 +334,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::cpp20::ast::NullPtrLiteralNode(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()));
                         }
                     }
@@ -351,7 +351,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, soul::cpp20::sym
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
         else soul::lexer::WriteFailureToLog(lexer, "Literal");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -370,7 +370,7 @@ soul::parser::Match LiteralParser<Lexer>::UserDefinedLiteral(Lexer& lexer, soul:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UserDefinedLiteral");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136642);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     int64_t p = int64_t();
@@ -610,7 +610,7 @@ soul::parser::Match LiteralParser<Lexer>::UserDefinedLiteral(Lexer& lexer, soul:
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UserDefinedLiteral");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, udLiteralNode.release());
             }
         }
@@ -622,7 +622,7 @@ soul::parser::Match LiteralParser<Lexer>::UserDefinedLiteral(Lexer& lexer, soul:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UserDefinedLiteral");
         else soul::lexer::WriteFailureToLog(lexer, "UserDefinedLiteral");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -641,7 +641,7 @@ soul::parser::Match LiteralParser<Lexer>::UdSuffix(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UdSuffix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136643);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -658,7 +658,7 @@ soul::parser::Match LiteralParser<Lexer>::UdSuffix(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UdSuffix");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, soul::cpp20::parser::token::ParseIdentifier(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
             }
         }
@@ -670,7 +670,7 @@ soul::parser::Match LiteralParser<Lexer>::UdSuffix(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UdSuffix");
         else soul::lexer::WriteFailureToLog(lexer, "UdSuffix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -689,7 +689,7 @@ soul::parser::Match LiteralParser<Lexer>::LiteralOperatorId(Lexer& lexer, soul::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LiteralOperatorId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136644);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos stringLitPos = soul::ast::SourcePos();
@@ -792,7 +792,7 @@ soul::parser::Match LiteralParser<Lexer>::LiteralOperatorId(Lexer& lexer, soul::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LiteralOperatorId");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::LiteralOperatorIdNode(sourcePos, soul::cpp20::parser::token::ParseIdentifier(idPos, lexer.FileName(), lexer.GetToken(idp)), stringLitPos));
             }
         }
@@ -804,7 +804,7 @@ soul::parser::Match LiteralParser<Lexer>::LiteralOperatorId(Lexer& lexer, soul::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LiteralOperatorId");
         else soul::lexer::WriteFailureToLog(lexer, "LiteralOperatorId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -823,7 +823,7 @@ soul::parser::Match LiteralParser<Lexer>::StringLiteral(Lexer& lexer, soul::cpp2
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "StringLiteral");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136645);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -840,7 +840,7 @@ soul::parser::Match LiteralParser<Lexer>::StringLiteral(Lexer& lexer, soul::cpp2
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StringLiteral");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, soul::cpp20::parser::token::ParseStringLiteral(lexer.GetSourcePos(pos), lexer.FileName(), lexer.GetToken(pos)));
             }
         }
@@ -852,7 +852,7 @@ soul::parser::Match LiteralParser<Lexer>::StringLiteral(Lexer& lexer, soul::cpp2
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StringLiteral");
         else soul::lexer::WriteFailureToLog(lexer, "StringLiteral");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

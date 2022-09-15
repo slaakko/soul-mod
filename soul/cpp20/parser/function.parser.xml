@@ -17,7 +17,7 @@
        </action>
       </sequence>
       <action first="{}">
-       <nonterminal first="{}" ruleName="Declarator"/>
+       <nonterminal first="{}" ruleName="DeclaratorPushClassScope"/>
       </action>
      </sequence>
      <action first="{}">
@@ -53,7 +53,7 @@
        </group>
       </optional>
       <action first="{}">
-       <nonterminal first="{}" ruleName="Declarator"/>
+       <nonterminal first="{}" ruleName="DeclaratorPushClassScope"/>
       </action>
      </sequence>
      <action first="{}">

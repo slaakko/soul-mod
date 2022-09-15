@@ -5,4 +5,6 @@ reference <../lexer/lexer.project>;
 reference <../parser/parser.project>;
 reference <../token/token.project>;
 reference <../../util/util.project>;
-interface <re_parser.ixx>;
+interface <re.parser.ixx>;
+interface <token_parser.ixx>;
+source <re.parser.cpp>;

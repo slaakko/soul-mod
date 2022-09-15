@@ -584,8 +584,13 @@ Declaration ProcessFunctionDeclaration(soul::cpp20::ast::Node* node, Context* co
 int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul::cpp20::ast::Node* declarator, Context* context)
 {
     int scopes = 0;
+    if (declarator->GetSourcePos().file == 11 && declarator->GetSourcePos().line == 113)
+    {
+        int x = 0;
+    }
     DeclarationProcessor processor(context);
     processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
+    context->GetSymbolTable()->CurrentScope()->PopParentScope();
     std::vector<Declaration> declarations = processor.GetDeclarations();
     if (declarations.size() == 1)
     {

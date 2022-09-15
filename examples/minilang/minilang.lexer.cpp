@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/minilang.lexer' using soul lexer generator slg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/minilang.lexer' using soul lexer generator slg version 4.1.0
 
 module minilang.lexer;
 

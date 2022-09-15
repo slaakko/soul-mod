@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/expression_file.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/expression_file.parser' using soul parser generator spg version 4.1.0
 
 module soul.slg.expression.file.parser;
 
@@ -33,7 +33,7 @@ std::unique_ptr<soul::ast::slg::ExpressionFile> ExpressionFileParser<Lexer>::Par
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = ExpressionFileParser<Lexer>::ExpressionFile(lexer);
     value.reset(static_cast<soul::ast::slg::ExpressionFile*>(match.value));
@@ -43,7 +43,7 @@ std::unique_ptr<soul::ast::slg::ExpressionFile> ExpressionFileParser<Lexer>::Par
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -73,7 +73,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5410810734487535617);
     std::unique_ptr<soul::ast::slg::ExpressionFile> expressionFile = std::unique_ptr<soul::ast::slg::ExpressionFile>();
     std::unique_ptr<soul::ast::slg::ExpressionCollection> expressionCollection = std::unique_ptr<soul::ast::slg::ExpressionCollection>();
@@ -280,7 +280,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExpressionFile");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expressionFile.release());
             }
         }
@@ -292,7 +292,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::ExpressionFile(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExpressionFile");
         else soul::lexer::WriteFailureToLog(lexer, "ExpressionFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -311,7 +311,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Expression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5410810734487535618);
     std::string name = std::string();
     int line = int();
@@ -443,7 +443,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::ast::slg::Expression(name, exprString->value, line));
             }
         }
@@ -455,7 +455,7 @@ soul::parser::Match ExpressionFileParser<Lexer>::Expression(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expression");
         else soul::lexer::WriteFailureToLog(lexer, "Expression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

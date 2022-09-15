@@ -1,2 +1,2 @@
 @echo off
-spg -v re_parser.spg
+spg -v re.spg

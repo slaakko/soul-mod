@@ -27,7 +27,7 @@ std::unique_ptr<soul::cpp20::proj::ast::Project> ProjectParser<Lexer>::Parse(Lex
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = ProjectParser<Lexer>::ProjectFile(lexer);
     value.reset(static_cast<soul::cpp20::proj::ast::Project*>(match.value));
@@ -37,7 +37,7 @@ std::unique_ptr<soul::cpp20::proj::ast::Project> ProjectParser<Lexer>::Parse(Lex
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -67,7 +67,7 @@ soul::parser::Match ProjectParser<Lexer>::ProjectFile(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ProjectFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714817);
     std::unique_ptr<soul::cpp20::proj::ast::Project> proj = std::unique_ptr<soul::cpp20::proj::ast::Project>();
     std::unique_ptr<soul::cpp20::proj::ast::Project> projectDeclaration;
@@ -153,7 +153,7 @@ soul::parser::Match ProjectParser<Lexer>::ProjectFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ProjectFile");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, proj.release());
             }
         }
@@ -165,7 +165,7 @@ soul::parser::Match ProjectParser<Lexer>::ProjectFile(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ProjectFile");
         else soul::lexer::WriteFailureToLog(lexer, "ProjectFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -184,7 +184,7 @@ soul::parser::Match ProjectParser<Lexer>::ProjectDeclaration(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ProjectDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714818);
     std::unique_ptr<soul::parser::Value<std::string>> projectName;
     soul::parser::Match match(false);
@@ -243,7 +243,7 @@ soul::parser::Match ProjectParser<Lexer>::ProjectDeclaration(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ProjectDeclaration");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::proj::ast::Project(lexer.FileName(), projectName->value));
             }
         }
@@ -255,7 +255,7 @@ soul::parser::Match ProjectParser<Lexer>::ProjectDeclaration(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ProjectDeclaration");
         else soul::lexer::WriteFailureToLog(lexer, "ProjectDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -274,7 +274,7 @@ soul::parser::Match ProjectParser<Lexer>::Define(Lexer& lexer, soul::cpp20::proj
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Define");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714819);
     std::string symbol = std::string();
     int64_t value = int64_t();
@@ -432,7 +432,7 @@ soul::parser::Match ProjectParser<Lexer>::Define(Lexer& lexer, soul::cpp20::proj
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Define");
         else soul::lexer::WriteFailureToLog(lexer, "Define");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -451,7 +451,7 @@ soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::pr
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714820);
     std::unique_ptr<soul::parser::Value<std::string>> interfaceFilePath;
     std::unique_ptr<soul::parser::Value<std::string>> sourceFilePath;
@@ -535,7 +535,7 @@ soul::parser::Match ProjectParser<Lexer>::FilePath(Lexer& lexer, soul::cpp20::pr
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FilePath");
         else soul::lexer::WriteFailureToLog(lexer, "FilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -554,7 +554,7 @@ soul::parser::Match ProjectParser<Lexer>::InterfaceFilePath(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceFilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714821);
     std::string filePath = std::string();
     soul::parser::Match match(false);
@@ -627,7 +627,7 @@ soul::parser::Match ProjectParser<Lexer>::InterfaceFilePath(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InterfaceFilePath");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(filePath));
             }
         }
@@ -639,7 +639,7 @@ soul::parser::Match ProjectParser<Lexer>::InterfaceFilePath(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InterfaceFilePath");
         else soul::lexer::WriteFailureToLog(lexer, "InterfaceFilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -658,7 +658,7 @@ soul::parser::Match ProjectParser<Lexer>::SourceFilePath(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SourceFilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714822);
     std::string filePath = std::string();
     soul::parser::Match match(false);
@@ -731,7 +731,7 @@ soul::parser::Match ProjectParser<Lexer>::SourceFilePath(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SourceFilePath");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(filePath));
             }
         }
@@ -743,7 +743,7 @@ soul::parser::Match ProjectParser<Lexer>::SourceFilePath(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SourceFilePath");
         else soul::lexer::WriteFailureToLog(lexer, "SourceFilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -762,7 +762,7 @@ soul::parser::Match ProjectParser<Lexer>::ReferenceFilePath(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ReferenceFilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714823);
     std::string filePath = std::string();
     soul::parser::Match match(false);
@@ -835,7 +835,7 @@ soul::parser::Match ProjectParser<Lexer>::ReferenceFilePath(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ReferenceFilePath");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(filePath));
             }
         }
@@ -847,7 +847,7 @@ soul::parser::Match ProjectParser<Lexer>::ReferenceFilePath(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ReferenceFilePath");
         else soul::lexer::WriteFailureToLog(lexer, "ReferenceFilePath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -866,7 +866,7 @@ soul::parser::Match ProjectParser<Lexer>::QualifiedId(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7646038738983714824);
     std::string str = std::string();
     soul::parser::Match match(false);
@@ -973,7 +973,7 @@ soul::parser::Match ProjectParser<Lexer>::QualifiedId(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedId");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(str));
             }
         }
@@ -985,7 +985,7 @@ soul::parser::Match ProjectParser<Lexer>::QualifiedId(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedId");
         else soul::lexer::WriteFailureToLog(lexer, "QualifiedId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

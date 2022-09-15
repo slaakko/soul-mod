@@ -117,4 +117,23 @@ void EndScope(Context* context)
     context->GetSymbolTable()->EndScope();
 }
 
+void AddParentScope(soul::cpp20::ast::Node* node, Context* context)
+{
+    if (context->GetFlag(ContextFlags::addClassScope))
+    {
+        if (node->IsQualifiedIdNode())
+        {
+            if (context->GetSymbolTable()->CurrentScope()->IsNamespaceScope())
+            {
+                soul::cpp20::ast::QualifiedIdNode* qualifiedIdNode = static_cast<soul::cpp20::ast::QualifiedIdNode*>(node);
+                Scope* scope = ResolveScope(qualifiedIdNode->Left(), context);
+                if (scope->IsClassScope())
+                {
+                    context->GetSymbolTable()->CurrentScope()->PushParentScope(scope);
+                }
+            }
+        }
+    }
+}
+
 } // namespace soul::cpp20::symbols

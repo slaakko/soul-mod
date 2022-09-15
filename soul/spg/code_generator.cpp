@@ -816,7 +816,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             formatter->WriteLine("soul::lexer::WriteBeginRuleToLog(lexer, \"" + parser.Name() + "\");");
             formatter->DecIndent();
             formatter->WriteLine("}");
-            formatter->WriteLine("#endif // SOUL_PARSER_DEBUG_SUPPORT");
+            formatter->WriteLine("#endif");
         }
         formatter->WriteLine("soul::lexer::RuleGuard ruleGuard(lexer, " + std::to_string(parser.Id()) + ");");
         for (const auto& variable : parser.Vars())
@@ -887,7 +887,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             formatter->WriteLine("else soul::lexer::WriteFailureToLog(lexer, \"" + parser.Name() + "\");");
             formatter->DecIndent();
             formatter->WriteLine("}");
-            formatter->WriteLine("#endif // SOUL_PARSER_DEBUG_SUPPORT");
+            formatter->WriteLine("#endif");
         }
         formatter->WriteLine("if (!match.hit)");
         formatter->WriteLine("{");
@@ -1037,7 +1037,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                     formatter->WriteLine("lexer.Log()->IncIndent();");
                     formatter->DecIndent();
                     formatter->WriteLine("}");
-                    formatter->WriteLine("#endif // SOUL_PARSER_DEBUG_SUPPORT");
+                    formatter->WriteLine("#endif");
                 }
                 formatter->WriteLine("++lexer;");
                 std::string ruleName = rule->Grammar()->Name() + "<Lexer>::" + rule->Name();
@@ -1079,7 +1079,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                     formatter->WriteLine("lexer.Log()->WriteEndRule(\"parse\");");
                     formatter->DecIndent();
                     formatter->WriteLine("}");
-                    formatter->WriteLine("#endif // SOUL_PARSER_DEBUG_SUPPORT");
+                    formatter->WriteLine("#endif");
                 }
                 formatter->WriteLine("if (match.hit)");
                 formatter->WriteLine("{");

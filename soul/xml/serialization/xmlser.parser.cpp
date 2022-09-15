@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/xml/serialization/xmlser.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/xml/serialization/xmlser.parser' using soul parser generator spg version 4.1.0
 
 module soul.xml.serialization.parser;
 
@@ -25,7 +25,7 @@ std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> XmlSerParser<Lexe
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = XmlSerParser<Lexer>::SourceFile(lexer);
     value.reset(static_cast<soul::xml::serialization::ast::SourceFileNode*>(match.value));
@@ -35,7 +35,7 @@ std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> XmlSerParser<Lexe
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -65,7 +65,7 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SourceFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527553);
     std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> sourceFile = std::unique_ptr<soul::xml::serialization::ast::SourceFileNode>();
     std::unique_ptr<soul::xml::serialization::ast::ExportModule> module;
@@ -186,7 +186,7 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SourceFile");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, sourceFile.release());
             }
         }
@@ -198,7 +198,7 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SourceFile");
         else soul::lexer::WriteFailureToLog(lexer, "SourceFile");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -217,7 +217,7 @@ soul::parser::Match XmlSerParser<Lexer>::NamespaceContent(Lexer& lexer, soul::xm
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceContent");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527554);
     std::unique_ptr<soul::xml::serialization::ast::Node> declaration;
     std::unique_ptr<soul::xml::serialization::ast::Node> definition;
@@ -291,7 +291,7 @@ soul::parser::Match XmlSerParser<Lexer>::NamespaceContent(Lexer& lexer, soul::xm
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NamespaceContent");
         else soul::lexer::WriteFailureToLog(lexer, "NamespaceContent");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -310,7 +310,7 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Declaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527555);
     std::unique_ptr<soul::xml::serialization::ast::Node> forwardClassDeclaration;
     std::unique_ptr<soul::xml::serialization::ast::Node> usingAliasDeclaration;
@@ -329,7 +329,7 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, forwardClassDeclaration.release());
                 }
             }
@@ -353,7 +353,7 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, usingAliasDeclaration.release());
                         }
                     }
@@ -370,7 +370,7 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Declaration");
         else soul::lexer::WriteFailureToLog(lexer, "Declaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -389,7 +389,7 @@ soul::parser::Match XmlSerParser<Lexer>::ForwardClassDeclaration(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ForwardClassDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527556);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string classId = std::string();
@@ -473,7 +473,7 @@ soul::parser::Match XmlSerParser<Lexer>::ForwardClassDeclaration(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ForwardClassDeclaration");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::xml::serialization::ast::ForwardClassDeclarationNode(sourcePos, classId));
             }
         }
@@ -485,7 +485,7 @@ soul::parser::Match XmlSerParser<Lexer>::ForwardClassDeclaration(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ForwardClassDeclaration");
         else soul::lexer::WriteFailureToLog(lexer, "ForwardClassDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -504,7 +504,7 @@ soul::parser::Match XmlSerParser<Lexer>::UsingAliasDeclaration(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingAliasDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527557);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string id = std::string();
@@ -625,7 +625,7 @@ soul::parser::Match XmlSerParser<Lexer>::UsingAliasDeclaration(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UsingAliasDeclaration");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::xml::serialization::ast::UsingAliasNode(sourcePos, id, qualifiedCppId->value));
             }
         }
@@ -637,7 +637,7 @@ soul::parser::Match XmlSerParser<Lexer>::UsingAliasDeclaration(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UsingAliasDeclaration");
         else soul::lexer::WriteFailureToLog(lexer, "UsingAliasDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -656,7 +656,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Definition");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527558);
     std::unique_ptr<soul::xml::serialization::ast::Node> cls;
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> enm;
@@ -685,7 +685,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Definition");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, cls.release());
                         }
                     }
@@ -709,7 +709,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Definition");
-                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                    #endif
                                     return soul::parser::Match(true, enm.release());
                                 }
                             }
@@ -738,7 +738,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Definition");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, ns.release());
                             }
                         }
@@ -767,7 +767,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Definition");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, cppBlock.release());
                         }
                     }
@@ -784,7 +784,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Definition");
         else soul::lexer::WriteFailureToLog(lexer, "Definition");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -803,7 +803,7 @@ soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Class");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527559);
     std::unique_ptr<soul::xml::serialization::ast::ClassNode> cls = std::unique_ptr<soul::xml::serialization::ast::ClassNode>();
     soul::parser::Match match(false);
@@ -939,7 +939,7 @@ soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Class");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, cls.release());
             }
         }
@@ -951,7 +951,7 @@ soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Class");
         else soul::lexer::WriteFailureToLog(lexer, "Class");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -970,7 +970,7 @@ soul::parser::Match XmlSerParser<Lexer>::Inheritance(Lexer& lexer, soul::xml::se
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Inheritance");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527560);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1019,7 +1019,7 @@ soul::parser::Match XmlSerParser<Lexer>::Inheritance(Lexer& lexer, soul::xml::se
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Inheritance");
         else soul::lexer::WriteFailureToLog(lexer, "Inheritance");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1038,7 +1038,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassContent(Lexer& lexer, soul::xml::s
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ClassContent");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527561);
     std::unique_ptr<soul::xml::serialization::ast::MemberVariableNode> memberVariable;
     std::unique_ptr<soul::xml::serialization::ast::CppBlockNode> cppBlock;
@@ -1112,7 +1112,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassContent(Lexer& lexer, soul::xml::s
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassContent");
         else soul::lexer::WriteFailureToLog(lexer, "ClassContent");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1131,7 +1131,7 @@ soul::parser::Match XmlSerParser<Lexer>::MemberVariable(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "MemberVariable");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527562);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string id = std::string();
@@ -1203,7 +1203,7 @@ soul::parser::Match XmlSerParser<Lexer>::MemberVariable(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberVariable");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::xml::serialization::ast::MemberVariableNode(sourcePos, type.release(), id));
             }
         }
@@ -1215,7 +1215,7 @@ soul::parser::Match XmlSerParser<Lexer>::MemberVariable(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberVariable");
         else soul::lexer::WriteFailureToLog(lexer, "MemberVariable");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1234,7 +1234,7 @@ soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Type");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527563);
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> type = std::unique_ptr<soul::xml::serialization::ast::TypeNode>();
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> scalarType;
@@ -1419,7 +1419,7 @@ soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, type.release());
             }
         }
@@ -1431,7 +1431,7 @@ soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
         else soul::lexer::WriteFailureToLog(lexer, "Type");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1450,7 +1450,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ScalarType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527564);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -1463,7 +1463,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::BoolNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1476,7 +1476,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::SByteNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1489,7 +1489,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::ByteNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1502,7 +1502,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::ShortNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1515,7 +1515,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::UShortNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1528,7 +1528,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::IntNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1541,7 +1541,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::UIntNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1554,7 +1554,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::LongNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1567,7 +1567,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::ULongNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1580,7 +1580,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::FloatNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1593,7 +1593,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::DoubleNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1606,7 +1606,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::CharNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1619,7 +1619,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::WCharNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1632,7 +1632,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::UCharNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1645,7 +1645,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::UuidNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1658,7 +1658,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::StringNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1671,7 +1671,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::WStringNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1684,7 +1684,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::UStringNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1697,7 +1697,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::DateNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1710,7 +1710,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::DateTimeNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1723,7 +1723,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::TimePointNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1736,7 +1736,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::serialization::ast::DurationNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -1749,7 +1749,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ScalarType");
         else soul::lexer::WriteFailureToLog(lexer, "ScalarType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1768,7 +1768,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassType(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ClassType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527565);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1785,7 +1785,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassType(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassType");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::xml::serialization::ast::ClassIdNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
             }
         }
@@ -1797,7 +1797,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassType(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassType");
         else soul::lexer::WriteFailureToLog(lexer, "ClassType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1816,7 +1816,7 @@ soul::parser::Match XmlSerParser<Lexer>::CppBlock(Lexer& lexer, bool implementat
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "CppBlock");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527566);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string cppText = std::string();
@@ -1856,7 +1856,7 @@ soul::parser::Match XmlSerParser<Lexer>::CppBlock(Lexer& lexer, bool implementat
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CppBlock");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, node);
             }
         }
@@ -1868,7 +1868,7 @@ soul::parser::Match XmlSerParser<Lexer>::CppBlock(Lexer& lexer, bool implementat
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CppBlock");
         else soul::lexer::WriteFailureToLog(lexer, "CppBlock");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1887,7 +1887,7 @@ soul::parser::Match XmlSerParser<Lexer>::Enum(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Enum");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527567);
     std::unique_ptr<soul::xml::serialization::ast::EnumTypeNode> enm = std::unique_ptr<soul::xml::serialization::ast::EnumTypeNode>();
     soul::parser::Match match(false);
@@ -2008,7 +2008,7 @@ soul::parser::Match XmlSerParser<Lexer>::Enum(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Enum");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, enm.release());
             }
         }
@@ -2020,7 +2020,7 @@ soul::parser::Match XmlSerParser<Lexer>::Enum(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Enum");
         else soul::lexer::WriteFailureToLog(lexer, "Enum");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2039,7 +2039,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumContent(Lexer& lexer, soul::xml::se
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumContent");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527568);
     std::unique_ptr<soul::xml::serialization::ast::EnumConstantNode> enumConstant;
     soul::parser::Match match(false);
@@ -2130,7 +2130,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumContent(Lexer& lexer, soul::xml::se
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumContent");
         else soul::lexer::WriteFailureToLog(lexer, "EnumContent");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2149,7 +2149,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumConstant(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumConstant");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527569);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2166,7 +2166,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumConstant(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumConstant");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::xml::serialization::ast::EnumConstantNode(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
             }
         }
@@ -2178,7 +2178,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumConstant(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumConstant");
         else soul::lexer::WriteFailureToLog(lexer, "EnumConstant");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2197,7 +2197,7 @@ soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Namespace");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527570);
     std::unique_ptr<soul::xml::serialization::ast::NamespaceNode> ns = std::unique_ptr<soul::xml::serialization::ast::NamespaceNode>();
     std::unique_ptr<soul::parser::Value<std::string>> nsId;
@@ -2302,7 +2302,7 @@ soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Namespace");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, ns.release());
             }
         }
@@ -2314,7 +2314,7 @@ soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Namespace");
         else soul::lexer::WriteFailureToLog(lexer, "Namespace");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2333,7 +2333,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedId(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527571);
     std::string str = std::string();
     soul::parser::Match match(false);
@@ -2440,7 +2440,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedId(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedId");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(str));
             }
         }
@@ -2452,7 +2452,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedId(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedId");
         else soul::lexer::WriteFailureToLog(lexer, "QualifiedId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2471,7 +2471,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedCppId(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527572);
     std::string str = std::string();
     soul::parser::Match match(false);
@@ -2626,7 +2626,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedCppId(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedCppId");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(str));
             }
         }
@@ -2638,7 +2638,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedCppId(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QualifiedCppId");
         else soul::lexer::WriteFailureToLog(lexer, "QualifiedCppId");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2657,7 +2657,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportModule");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527573);
     std::unique_ptr<soul::xml::serialization::ast::ExportModule> exp = std::unique_ptr<soul::xml::serialization::ast::ExportModule>();
     std::unique_ptr<soul::parser::Value<std::string>> moduleName;
@@ -2750,7 +2750,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExportModule");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, exp.release());
             }
         }
@@ -2762,7 +2762,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExportModule");
         else soul::lexer::WriteFailureToLog(lexer, "ExportModule");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2781,7 +2781,7 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Import");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527574);
     std::unique_ptr<soul::xml::serialization::ast::Import> imp = std::unique_ptr<soul::xml::serialization::ast::Import>();
     soul::xml::serialization::ast::ImportPrefix prefix = soul::xml::serialization::ast::ImportPrefix();
@@ -2919,7 +2919,7 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Import");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, imp.release());
             }
         }
@@ -2931,7 +2931,7 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Import");
         else soul::lexer::WriteFailureToLog(lexer, "Import");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2950,7 +2950,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportPrefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527575);
     std::unique_ptr<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>> implementationPrefix;
     std::unique_ptr<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>> interfacePrefix;
@@ -2969,7 +2969,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ImportPrefix");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>(implementationPrefix->value));
                 }
             }
@@ -2993,7 +2993,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ImportPrefix");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>(interfacePrefix->value));
                         }
                     }
@@ -3010,7 +3010,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ImportPrefix");
         else soul::lexer::WriteFailureToLog(lexer, "ImportPrefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3029,7 +3029,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527576);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3058,7 +3058,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExportKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "ExportKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3077,7 +3077,7 @@ soul::parser::Match XmlSerParser<Lexer>::ModuleKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527577);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3106,7 +3106,7 @@ soul::parser::Match XmlSerParser<Lexer>::ModuleKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ModuleKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "ModuleKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3125,7 +3125,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527578);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3154,7 +3154,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ImportKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "ImportKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3173,7 +3173,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationPrefix(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationPrefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527579);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3221,7 +3221,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationPrefix(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ImplementationPrefix");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>(soul::xml::serialization::ast::ImportPrefix::implementationPrefix));
                     }
                 }
@@ -3237,7 +3237,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationPrefix(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ImplementationPrefix");
         else soul::lexer::WriteFailureToLog(lexer, "ImplementationPrefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3256,7 +3256,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfacePrefix(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfacePrefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527580);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3304,7 +3304,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfacePrefix(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InterfacePrefix");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>(soul::xml::serialization::ast::ImportPrefix::interfacePrefix));
                     }
                 }
@@ -3320,7 +3320,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfacePrefix(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InterfacePrefix");
         else soul::lexer::WriteFailureToLog(lexer, "InterfacePrefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3339,7 +3339,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527581);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3368,7 +3368,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ImplementationKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "ImplementationKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3387,7 +3387,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfaceKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527582);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3416,7 +3416,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfaceKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InterfaceKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "InterfaceKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

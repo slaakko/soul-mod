@@ -955,6 +955,18 @@
     </sequence>
    </group>
   </rule>
+  <rule first="{}" name="DeclaratorPushClassScope">
+   <group first="{}">
+    <sequence first="{}">
+     <action first="{}">
+      <empty first="{}"/>
+     </action>
+     <action first="{}">
+      <nonterminal first="{}" ruleName="Declarator"/>
+     </action>
+    </sequence>
+   </group>
+  </rule>
   <rule first="{}" name="Declarator">
    <group first="{}">
     <choice first="{}">

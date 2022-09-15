@@ -44,7 +44,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaExpression(Lexer& lexer, soul::cp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LambdaExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478081);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> introducer;
@@ -138,7 +138,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaExpression(Lexer& lexer, soul::cp
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::LambdaExpressionNode(sourcePos, introducer.release(), templateParams.release(), declarator.release(), body.release()));
             }
         }
@@ -150,7 +150,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaExpression(Lexer& lexer, soul::cp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaExpression");
         else soul::lexer::WriteFailureToLog(lexer, "LambdaExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -169,7 +169,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaIntroducer(Lexer& lexer, soul::cp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LambdaIntroducer");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478082);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
@@ -265,7 +265,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaIntroducer(Lexer& lexer, soul::cp
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaIntroducer");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::LambdaIntroducerNode(sourcePos, capture.release(), lbPos, rbPos));
             }
         }
@@ -277,7 +277,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaIntroducer(Lexer& lexer, soul::cp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaIntroducer");
         else soul::lexer::WriteFailureToLog(lexer, "LambdaIntroducer");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -296,7 +296,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaCapture(Lexer& lexer, soul::cpp20
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LambdaCapture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478083);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> node = std::unique_ptr<soul::cpp20::ast::Node>();
@@ -425,7 +425,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaCapture(Lexer& lexer, soul::cpp20
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaCapture");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, node.release());
                     }
                 }
@@ -441,7 +441,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaCapture(Lexer& lexer, soul::cpp20
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaCapture");
         else soul::lexer::WriteFailureToLog(lexer, "LambdaCapture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -460,7 +460,7 @@ soul::parser::Match LambdaParser<Lexer>::CaptureDefault(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "CaptureDefault");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478084);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -473,7 +473,7 @@ soul::parser::Match LambdaParser<Lexer>::CaptureDefault(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CaptureDefault");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::cpp20::ast::DefaultRefCaptureNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -486,7 +486,7 @@ soul::parser::Match LambdaParser<Lexer>::CaptureDefault(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CaptureDefault");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::cpp20::ast::DefaultCopyCaptureNode(lexer.GetSourcePos(pos)));
                 }
             }
@@ -499,7 +499,7 @@ soul::parser::Match LambdaParser<Lexer>::CaptureDefault(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CaptureDefault");
         else soul::lexer::WriteFailureToLog(lexer, "CaptureDefault");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -518,7 +518,7 @@ soul::parser::Match LambdaParser<Lexer>::CaptureList(Lexer& lexer, soul::cpp20::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "CaptureList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478085);
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> comma;
@@ -617,7 +617,7 @@ soul::parser::Match LambdaParser<Lexer>::CaptureList(Lexer& lexer, soul::cpp20::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CaptureList");
         else soul::lexer::WriteFailureToLog(lexer, "CaptureList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -636,7 +636,7 @@ soul::parser::Match LambdaParser<Lexer>::Capture(Lexer& lexer, soul::cpp20::symb
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Capture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478086);
     std::unique_ptr<soul::cpp20::ast::Node> initCapture;
     std::unique_ptr<soul::cpp20::ast::Node> simpleCapture;
@@ -655,7 +655,7 @@ soul::parser::Match LambdaParser<Lexer>::Capture(Lexer& lexer, soul::cpp20::symb
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Capture");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, initCapture.release());
                 }
             }
@@ -679,7 +679,7 @@ soul::parser::Match LambdaParser<Lexer>::Capture(Lexer& lexer, soul::cpp20::symb
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Capture");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, simpleCapture.release());
                         }
                     }
@@ -696,7 +696,7 @@ soul::parser::Match LambdaParser<Lexer>::Capture(Lexer& lexer, soul::cpp20::symb
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Capture");
         else soul::lexer::WriteFailureToLog(lexer, "Capture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -715,7 +715,7 @@ soul::parser::Match LambdaParser<Lexer>::InitCapture(Lexer& lexer, soul::cpp20::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "InitCapture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478087);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> byRefCaptureNode = std::unique_ptr<soul::cpp20::ast::Node>();
@@ -857,7 +857,7 @@ soul::parser::Match LambdaParser<Lexer>::InitCapture(Lexer& lexer, soul::cpp20::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitCapture");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::InitCaptureNode(sourcePos, identifier.release(), initializer.release(), byRefCaptureNode.release(), ellipsis.release()));
             }
         }
@@ -869,7 +869,7 @@ soul::parser::Match LambdaParser<Lexer>::InitCapture(Lexer& lexer, soul::cpp20::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitCapture");
         else soul::lexer::WriteFailureToLog(lexer, "InitCapture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -888,7 +888,7 @@ soul::parser::Match LambdaParser<Lexer>::SimpleCapture(Lexer& lexer, soul::cpp20
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleCapture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478088);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos thisPos = soul::ast::SourcePos();
@@ -952,7 +952,7 @@ soul::parser::Match LambdaParser<Lexer>::SimpleCapture(Lexer& lexer, soul::cpp20
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleCapture");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, new soul::cpp20::ast::CurrentObjectCopyCapture(sourcePos, thisPos));
                                     }
                                 }
@@ -986,7 +986,7 @@ soul::parser::Match LambdaParser<Lexer>::SimpleCapture(Lexer& lexer, soul::cpp20
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleCapture");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, new soul::cpp20::ast::CurrentObjectByRefCapture(sourcePos, thisPos));
                                     }
                                 }
@@ -1111,7 +1111,7 @@ soul::parser::Match LambdaParser<Lexer>::SimpleCapture(Lexer& lexer, soul::cpp20
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleCapture");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::SimpleCaptureNode(sourcePos, identifier.release(), byRefCaptureNode.release(), ellipsis.release()));
             }
         }
@@ -1123,7 +1123,7 @@ soul::parser::Match LambdaParser<Lexer>::SimpleCapture(Lexer& lexer, soul::cpp20
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleCapture");
         else soul::lexer::WriteFailureToLog(lexer, "SimpleCapture");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1142,7 +1142,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaDeclarator(Lexer& lexer, soul::cp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LambdaDeclarator");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478089);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
@@ -1301,7 +1301,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaDeclarator(Lexer& lexer, soul::cp
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaDeclarator");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::LambdaDeclaratorNode(sourcePos, parameterList.release(), specifiers.release(), requiresClause.release()));
             }
         }
@@ -1313,7 +1313,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaDeclarator(Lexer& lexer, soul::cp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaDeclarator");
         else soul::lexer::WriteFailureToLog(lexer, "LambdaDeclarator");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1332,7 +1332,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaSpecifiers(Lexer& lexer, soul::cp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LambdaSpecifiers");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478090);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> declSpecifiers;
@@ -1515,7 +1515,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaSpecifiers(Lexer& lexer, soul::cp
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaSpecifiers");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::LambdaSpecifiersNode(sourcePos, declSpecifiers.release(), noexceptSpecifier.release(), attributes.release(), trailingReturnType.release()));
             }
         }
@@ -1527,7 +1527,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaSpecifiers(Lexer& lexer, soul::cp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaSpecifiers");
         else soul::lexer::WriteFailureToLog(lexer, "LambdaSpecifiers");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1546,7 +1546,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaTemplateParams(Lexer& lexer, soul
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LambdaTemplateParams");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5939336778434478091);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> templateParams;
@@ -1606,7 +1606,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaTemplateParams(Lexer& lexer, soul
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaTemplateParams");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::LambdaTemplateParamsNode(sourcePos, templateParams.release(), requiresClause.release()));
             }
         }
@@ -1618,7 +1618,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaTemplateParams(Lexer& lexer, soul
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LambdaTemplateParams");
         else soul::lexer::WriteFailureToLog(lexer, "LambdaTemplateParams");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

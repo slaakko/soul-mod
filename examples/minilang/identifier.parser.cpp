@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/identifier.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/identifier.parser' using soul parser generator spg version 4.1.0
 
 module minilang.parser.identifier;
 
@@ -26,7 +26,7 @@ soul::parser::Match IdentifierParser<Lexer>::Identifier(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Identifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 2933912217394872321);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -44,7 +44,7 @@ soul::parser::Match IdentifierParser<Lexer>::Identifier(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Identifier");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new minilang::ast::IdentifierNode(token.ToString()));
             }
         }
@@ -56,7 +56,7 @@ soul::parser::Match IdentifierParser<Lexer>::Identifier(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Identifier");
         else soul::lexer::WriteFailureToLog(lexer, "Identifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

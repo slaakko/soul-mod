@@ -10,7 +10,7 @@ source <re.cpp>;
 interface <slg.ixx>;
 source <slg.cpp>;
 interface <spg.ixx>;
-// source <spg.cpp>;
+source <spg.cpp>;
 interface <source_pos.ixx>;
 source <source_pos.cpp>;
 

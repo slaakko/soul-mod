@@ -1,5 +1,11 @@
 project soul.cpp20.lexer;
 reference <../token/token.project>;
 reference <../../lexer/lexer.project>;
+reference <../../ast/ast.project>;
 reference <../../../util/util.project>;
-interface <cpp20.lexer.fwd.ixx>;
+interface <cpp20.lexer.ixx>;
+source <cpp20.lexer.cpp>;
+interface <cpp20.token.line.lexer.ixx>;
+source <cpp20.token.line.lexer.cpp>;
+interface <line_tokenizer.ixx>;
+source <line_tokenizer.cpp>;

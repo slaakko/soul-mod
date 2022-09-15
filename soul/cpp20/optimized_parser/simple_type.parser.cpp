@@ -26,7 +26,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3815342804792508417);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -49,7 +49,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::CharNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -78,7 +78,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::Char8Node(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -107,7 +107,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::Char16Node(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -136,7 +136,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::Char32Node(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -165,7 +165,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::WCharNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -194,7 +194,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::BoolNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -223,7 +223,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::ShortNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -252,7 +252,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::IntNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -281,7 +281,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::LongNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -310,7 +310,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::SignedNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -339,7 +339,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::UnsignedNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -368,7 +368,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::FloatNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -397,7 +397,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::DoubleNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -426,7 +426,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::cpp20::ast::VoidNode(lexer.GetSourcePos(pos)));
                     }
                 }
@@ -445,7 +445,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleType");
         else soul::lexer::WriteFailureToLog(lexer, "SimpleType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

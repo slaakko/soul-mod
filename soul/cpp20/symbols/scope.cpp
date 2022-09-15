@@ -110,7 +110,8 @@ Symbol* Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind,
     LookupFlags flags) const
 {
     std::vector<Symbol*> symbols;
-    Lookup(id, symbolGroupKind, scopeLookup, symbols);
+    std::set<Scope*> visited;
+    Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
     if (symbols.empty())
     {
         return nullptr;
@@ -163,20 +164,26 @@ Scope* Scope::SymbolScope()
     return this;
 }
 
-void Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
+void Scope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const
 {
-    std::vector<SymbolGroupKind> symbolGroupKindVec = SymbolGroupKindstoSymbolGroupKindVec(symbolGroupKinds);
-    for (SymbolGroupKind symbolGroupKind : symbolGroupKindVec)
+    if (symbols.empty())
     {
-        if ((scopeLookup & ScopeLookup::thisAndBaseScopes) != ScopeLookup::none)
+        std::vector<SymbolGroupKind> symbolGroupKindVec = SymbolGroupKindstoSymbolGroupKindVec(symbolGroupKinds);
+        for (SymbolGroupKind symbolGroupKind : symbolGroupKindVec)
         {
-            auto it = symbolMap.find(std::make_pair(id, symbolGroupKind));
-            if (it != symbolMap.cend())
+            if (symbols.empty())
             {
-                Symbol* symbol = it->second;
-                if (std::find(symbols.begin(), symbols.end(), symbol) == symbols.end())
+                if ((scopeLookup & ScopeLookup::thisAndBaseScopes) != ScopeLookup::none)
                 {
-                    symbols.push_back(symbol);
+                    auto it = symbolMap.find(std::make_pair(id, symbolGroupKind));
+                    if (it != symbolMap.cend())
+                    {
+                        Symbol* symbol = it->second;
+                        if (std::find(symbols.begin(), symbols.end(), symbol) == symbols.end())
+                        {
+                            symbols.push_back(symbol);
+                        }
+                    }
                 }
             }
         }
@@ -198,6 +205,18 @@ void Scope::AddParentScope(Scope* parentScope_)
 {
     soul::cpp20::ast::SetExceptionThrown();
     throw std::runtime_error("could not add parent scope");
+}
+
+void Scope::PushParentScope(Scope* parentScope)
+{
+    soul::cpp20::ast::SetExceptionThrown();
+    throw std::runtime_error("could not push parent scope");
+}
+
+void Scope::PopParentScope()
+{
+    soul::cpp20::ast::SetExceptionThrown();
+    throw std::runtime_error("could not pop parent scope");
 }
 
 void Scope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -245,13 +264,31 @@ EnumGroupSymbol* Scope::GetOrInsertEnumGroup(const std::u32string& name, const s
     ThrowException("cannot add enum group '" + util::ToUtf8(name) + "' to " + ScopeKindStr(kind) + " '" + FullName() + "'", sourcePos, context);
 }
 
-ContainerScope::ContainerScope() : Scope(), parentScopes(), usingDeclarationScope(nullptr), containerSymbol(nullptr)
+ContainerScope::ContainerScope() : Scope(), parentScopes(), usingDeclarationScope(nullptr), containerSymbol(nullptr), parentScopePushed(false)
 {
 }
 
 void ContainerScope::AddParentScope(Scope* parentScope)
 {
     parentScopes.push_back(parentScope);
+}
+
+void ContainerScope::PushParentScope(Scope* parentScope)
+{
+    if (!parentScopePushed)
+    {
+        parentScopePushed = true;
+        parentScopes.push_back(parentScope);
+    }
+}
+
+void ContainerScope::PopParentScope()
+{
+    if (parentScopePushed)
+    {
+        parentScopePushed = false;
+        parentScopes.pop_back();
+    }
 }
 
 void ContainerScope::ClearParentScopes()
@@ -321,19 +358,19 @@ std::string ContainerScope::FullName() const
     return util::ToUtf8(containerSymbol->FullName());
 }
 
-void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
+void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const
 {
     std::vector<SymbolGroupKind> symbolGroupKindVec = SymbolGroupKindstoSymbolGroupKindVec(symbolGroupKinds);
     for (SymbolGroupKind symbolGroupKind : symbolGroupKindVec)
     {
-        Scope::Lookup(id, symbolGroupKind, scopeLookup, symbols);
+        Scope::Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
         if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
         {
             for (const auto& parentScope : parentScopes)
             {
                 if (symbols.empty())
                 {
-                    parentScope->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+                    parentScope->Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
                 }
             }
         }
@@ -343,7 +380,7 @@ void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGrou
             {
                 for (Scope* baseScope : baseScopes)
                 {
-                    baseScope->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+                    baseScope->Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
                 }
             }
         }
@@ -353,11 +390,17 @@ void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGrou
             {
                 if (usingDeclarationScope)
                 {
-                    usingDeclarationScope->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+                    if (symbols.empty())
+                    {
+                        usingDeclarationScope->Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
+                    }
                 }
                 for (Scope* usingDirectiveScope : usingDirectiveScopes)
                 {
-                    usingDirectiveScope->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+                    if (symbols.empty())
+                    {
+                        usingDirectiveScope->Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
+                    }
                 }
             }
         }
@@ -512,23 +555,22 @@ std::string UsingDeclarationScope::FullName() const
     return parentScope->FullName();
 }
 
-void UsingDeclarationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
+void UsingDeclarationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const
 {
-    Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, symbols);
+    Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, symbols, visited);
 }
 
-UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_), recursive(false)
+UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_)
 {
     SetKind(ScopeKind::usingDirectiveScope);
 }
 
-void UsingDirectiveScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
+void UsingDirectiveScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const
 {
-    if (!recursive)
+    if (visited.find(ns->GetScope()) == visited.end())
     {
-        recursive = true;
-        ns->GetScope()->Lookup(id, symbolGroupKind, scopeLookup, symbols);
-        recursive = false;
+        visited.insert(ns->GetScope());
+        ns->GetScope()->Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
     }
 }
 
@@ -537,7 +579,7 @@ std::string UsingDirectiveScope::FullName() const
     return util::ToUtf8(ns->FullName());
 }
 
-InstantiationScope::InstantiationScope(Scope* parentScope_) : parentScope(parentScope_), recursive(false)
+InstantiationScope::InstantiationScope(Scope* parentScope_) : parentScope(parentScope_)
 {
     SetKind(ScopeKind::instantiationScope);
 }
@@ -557,10 +599,10 @@ Scope* InstantiationScope::SymbolScope()
     return parentScope->SymbolScope();
 }
 
-void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols) const
+void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, std::vector<Symbol*>& symbols, std::set<Scope*>& visited) const
 {
     std::vector<Symbol*> foundSymbols;
-    Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, foundSymbols);
+    Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, foundSymbols, visited);
     for (const auto& symbol : foundSymbols)
     {
         if (symbol->IsBoundTemplateParameterSymbol())
@@ -579,7 +621,7 @@ void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbol
         {
             if (parentScope)
             {
-                parentScope->Lookup(id, symbolGroupKind, scopeLookup, symbols);
+                parentScope->Lookup(id, symbolGroupKind, scopeLookup, symbols, visited);
             }
         }
     }

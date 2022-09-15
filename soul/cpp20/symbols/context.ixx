@@ -25,7 +25,8 @@ enum class ContextFlags : int32_t
     parseSavedMemberFunctionBody = 1 << 6,
     parsingTemplateDeclaration = 1 << 7,
     parseMemberFunction = 1 << 8,
-    retMemberDeclSpecifiers = 1 << 9
+    retMemberDeclSpecifiers = 1 << 9,
+    addClassScope = 1 << 10
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

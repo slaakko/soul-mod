@@ -1,6 +1,6 @@
-module re.parser.rules;
+module re.rules;
 
-namespace re::parser::rules {
+namespace re::rules {
 
 std::mutex ruleMtx;
 
@@ -21,4 +21,4 @@ std::map<int64_t, std::string>* GetRuleNameMapPtr()
     return &ruleNameMap;
 }
 
-} // re::parser::rules
+} // re::rules

@@ -30,7 +30,7 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, soul:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Initializer");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607169);
     std::unique_ptr<soul::cpp20::ast::Node> initializer = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::ExpressionListNode> exprListNode = std::unique_ptr<soul::cpp20::ast::ExpressionListNode>();
@@ -140,7 +140,7 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, soul:
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Initializer");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, initializer.release());
             }
         }
@@ -152,7 +152,7 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, soul:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Initializer");
         else soul::lexer::WriteFailureToLog(lexer, "Initializer");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -171,7 +171,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "InitializerClause");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607170);
     std::unique_ptr<soul::cpp20::ast::Node> bracedInitList;
     std::unique_ptr<soul::cpp20::ast::Node> assignmentExpr;
@@ -190,7 +190,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitializerClause");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, bracedInitList.release());
                 }
             }
@@ -214,7 +214,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitializerClause");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, assignmentExpr.release());
                         }
                     }
@@ -231,7 +231,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitializerClause");
         else soul::lexer::WriteFailureToLog(lexer, "InitializerClause");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -250,7 +250,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, s
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "InitializerList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607171);
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> comma;
@@ -399,7 +399,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, s
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitializerList");
         else soul::lexer::WriteFailureToLog(lexer, "InitializerList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -418,7 +418,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607172);
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> comma;
@@ -522,7 +522,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DesignatedInitializerList");
         else soul::lexer::WriteFailureToLog(lexer, "DesignatedInitializerList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -541,7 +541,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerClause");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607173);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> designator;
@@ -588,7 +588,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DesignatedInitializerClause");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::DesignatedInitializerNode(sourcePos, designator.release(), initializer.release()));
             }
         }
@@ -600,7 +600,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DesignatedInitializerClause");
         else soul::lexer::WriteFailureToLog(lexer, "DesignatedInitializerClause");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -619,7 +619,7 @@ soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, soul::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Designator");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607174);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> identifier;
@@ -669,7 +669,7 @@ soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, soul::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Designator");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::DesignatorNode(sourcePos, identifier.release()));
             }
         }
@@ -681,7 +681,7 @@ soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, soul::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Designator");
         else soul::lexer::WriteFailureToLog(lexer, "Designator");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -700,7 +700,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ExprOrBracedInitList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607175);
     std::unique_ptr<soul::cpp20::ast::Node> bracedInitList;
     std::unique_ptr<soul::cpp20::ast::Node> expr;
@@ -719,7 +719,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExprOrBracedInitList");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, bracedInitList.release());
                 }
             }
@@ -743,7 +743,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExprOrBracedInitList");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, expr.release());
                         }
                     }
@@ -760,7 +760,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExprOrBracedInitList");
         else soul::lexer::WriteFailureToLog(lexer, "ExprOrBracedInitList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -779,7 +779,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "BraceOrEqualInitializer");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607176);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> initializer;
@@ -825,7 +825,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BraceOrEqualInitializer");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::cpp20::ast::AssignmentInitNode(sourcePos, initializer.release()));
                         }
                     }
@@ -853,7 +853,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BraceOrEqualInitializer");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, bracedInitList.release());
                         }
                     }
@@ -870,7 +870,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BraceOrEqualInitializer");
         else soul::lexer::WriteFailureToLog(lexer, "BraceOrEqualInitializer");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -889,7 +889,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, so
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "BracedInitList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607177);
     std::unique_ptr<soul::cpp20::ast::Node> initList = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> lbrace;
@@ -1084,7 +1084,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, so
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BracedInitList");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, initList.release());
             }
         }
@@ -1096,7 +1096,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, so
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "BracedInitList");
         else soul::lexer::WriteFailureToLog(lexer, "BracedInitList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

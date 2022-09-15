@@ -21,6 +21,7 @@ export import soul.cpp20.symbols.function.symbol;
 export import soul.cpp20.symbols.fundamental.type.symbol;
 export import soul.cpp20.symbols.modules;
 export import soul.cpp20.symbols.namespaces;
+export import soul.cpp20.symbols.scope;
 export import soul.cpp20.symbols.scope.resolver;
 export import soul.cpp20.symbols.specialization;
 export import soul.cpp20.symbols.symbol;

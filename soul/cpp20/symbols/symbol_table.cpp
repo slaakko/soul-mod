@@ -502,7 +502,8 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
         if (!scope) break;
         Symbol* lookupSymbol = components[i];
         std::vector<Symbol*> symbols;
-        scope->Lookup(lookupSymbol->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, symbols);
+        std::set<Scope*> visited;
+        scope->Lookup(lookupSymbol->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, symbols, visited);
         if (symbols.size() == 1)
         {
             Symbol* found = symbols.front();

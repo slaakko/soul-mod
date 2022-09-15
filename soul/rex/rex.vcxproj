@@ -159,8 +159,8 @@
     <None Include="rex.slg" />
     <None Include="rex.spg" />
     <None Include="rex.token" />
-    <None Include="rex_lexer.lexer" />
-    <None Include="rex_parser.parser" />
+    <None Include="rex.lexer" />
+    <None Include="rex.parser" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="algorithm.cpp" />
@@ -172,11 +172,11 @@
     <ClCompile Include="nfa.cpp" />
     <ClCompile Include="nfa.ixx" />
     <ClCompile Include="rex.ixx" />
+    <ClCompile Include="rex.lexer.cpp" />
+    <ClCompile Include="rex.lexer.ixx" />
+    <ClCompile Include="rex.parser.cpp" />
+    <ClCompile Include="rex.parser.ixx" />
     <ClCompile Include="rex.token.ixx" />
-    <ClCompile Include="rex_lexer.cpp" />
-    <ClCompile Include="rex_lexer.ixx" />
-    <ClCompile Include="rex_parser.cpp" />
-    <ClCompile Include="rex_parser.ixx" />
     <ClCompile Include="rex_rules.cpp" />
     <ClCompile Include="rex_rules.ixx" />
     <ClCompile Include="symbol.cpp" />

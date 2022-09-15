@@ -22,7 +22,7 @@ soul::parser::Match GuardParser<Lexer>::ConceptGuard(Lexer& lexer, soul::cpp20::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ConceptGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674561);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -46,7 +46,7 @@ soul::parser::Match GuardParser<Lexer>::ConceptGuard(Lexer& lexer, soul::cpp20::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ConceptGuard");
         else soul::lexer::WriteFailureToLog(lexer, "ConceptGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -65,7 +65,7 @@ soul::parser::Match GuardParser<Lexer>::NotDefiningTypeSpecifierGuard(Lexer& lex
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NotDefiningTypeSpecifierGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674562);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -89,7 +89,7 @@ soul::parser::Match GuardParser<Lexer>::NotDefiningTypeSpecifierGuard(Lexer& lex
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NotDefiningTypeSpecifierGuard");
         else soul::lexer::WriteFailureToLog(lexer, "NotDefiningTypeSpecifierGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -108,7 +108,7 @@ soul::parser::Match GuardParser<Lexer>::AssumeTypeGuard(Lexer& lexer, soul::cpp2
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AssumeTypeGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674563);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -132,7 +132,7 @@ soul::parser::Match GuardParser<Lexer>::AssumeTypeGuard(Lexer& lexer, soul::cpp2
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AssumeTypeGuard");
         else soul::lexer::WriteFailureToLog(lexer, "AssumeTypeGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -151,7 +151,7 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionTemplateGuard(Lexer& lexer
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "MemberFunctionTemplateGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674564);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -175,7 +175,7 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionTemplateGuard(Lexer& lexer
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberFunctionTemplateGuard");
         else soul::lexer::WriteFailureToLog(lexer, "MemberFunctionTemplateGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -194,7 +194,7 @@ soul::parser::Match GuardParser<Lexer>::SavedMemberFunctionBodyGuard(Lexer& lexe
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "SavedMemberFunctionBodyGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674565);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -218,7 +218,7 @@ soul::parser::Match GuardParser<Lexer>::SavedMemberFunctionBodyGuard(Lexer& lexe
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SavedMemberFunctionBodyGuard");
         else soul::lexer::WriteFailureToLog(lexer, "SavedMemberFunctionBodyGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -237,7 +237,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDeclarationGuard(Lexer
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDeclarationGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674566);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -261,7 +261,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDeclarationGuard(Lexer
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NoDeclSpecFunctionDeclarationGuard");
         else soul::lexer::WriteFailureToLog(lexer, "NoDeclSpecFunctionDeclarationGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -280,7 +280,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDefinitionGuard(Lexer&
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDefinitionGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674567);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -304,7 +304,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDefinitionGuard(Lexer&
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NoDeclSpecFunctionDefinitionGuard");
         else soul::lexer::WriteFailureToLog(lexer, "NoDeclSpecFunctionDefinitionGuard");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

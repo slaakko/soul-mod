@@ -55,6 +55,7 @@ struct DeclarationParser
     static soul::parser::Match ExplicitSpecifier(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match InitDeclaratorList(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match InitDeclarator(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match DeclaratorPushClassScope(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match Declarator(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match PtrDeclarator(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match NoPtrDeclarator(Lexer& lexer, soul::cpp20::symbols::Context* context, bool trailingDecl);

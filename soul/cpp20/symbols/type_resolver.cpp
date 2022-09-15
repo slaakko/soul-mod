@@ -331,7 +331,8 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
         {
             ContainerScope* containerScope = static_cast<ContainerScope*>(scope);
             std::vector<Symbol*> symbols;
-            containerScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, symbols);
+            std::set<Scope*> visited;
+            containerScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, symbols, visited);
             if (!symbols.empty())
             {
                 Symbol* symbol = symbols.front();

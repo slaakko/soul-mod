@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/xml/xpath/xpath.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/xml/xpath/xpath.parser' using soul parser generator spg version 4.1.0
 
 module soul.xml.xpath.parser;
 
@@ -25,7 +25,7 @@ std::unique_ptr<soul::xml::xpath::expr::Expr> XPathParser<Lexer>::Parse(Lexer& l
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = XPathParser<Lexer>::Expr(lexer);
     value.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
@@ -35,7 +35,7 @@ std::unique_ptr<soul::xml::xpath::expr::Expr> XPathParser<Lexer>::Parse(Lexer& l
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -65,7 +65,7 @@ soul::parser::Match XPathParser<Lexer>::Expr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Expr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127425);
     std::unique_ptr<soul::xml::xpath::expr::Expr> orExpr;
     soul::parser::Match match(false);
@@ -84,7 +84,7 @@ soul::parser::Match XPathParser<Lexer>::Expr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, orExpr.release());
             }
         }
@@ -96,7 +96,7 @@ soul::parser::Match XPathParser<Lexer>::Expr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expr");
         else soul::lexer::WriteFailureToLog(lexer, "Expr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -115,7 +115,7 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "OrExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127426);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -211,7 +211,7 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OrExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -223,7 +223,7 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OrExpr");
         else soul::lexer::WriteFailureToLog(lexer, "OrExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -242,7 +242,7 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AndExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127427);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -338,7 +338,7 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AndExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -350,7 +350,7 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AndExpr");
         else soul::lexer::WriteFailureToLog(lexer, "AndExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -369,7 +369,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EqualityExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127428);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -480,7 +480,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -492,7 +492,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityExpr");
         else soul::lexer::WriteFailureToLog(lexer, "EqualityExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -511,7 +511,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "RelationalExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127429);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -622,7 +622,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -634,7 +634,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalExpr");
         else soul::lexer::WriteFailureToLog(lexer, "RelationalExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -653,7 +653,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127430);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -764,7 +764,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -776,7 +776,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveExpr");
         else soul::lexer::WriteFailureToLog(lexer, "AdditiveExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -795,7 +795,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127431);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -906,7 +906,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -918,7 +918,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeExpr");
         else soul::lexer::WriteFailureToLog(lexer, "MultiplicativeExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -937,7 +937,7 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UnaryExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127432);
     std::unique_ptr<soul::xml::xpath::expr::Expr> subject;
     std::unique_ptr<soul::xml::xpath::expr::Expr> unionExpr;
@@ -972,7 +972,7 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpr");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::xml::xpath::expr::UnaryExpr(soul::xml::xpath::expr::Operator::minus, subject.release()));
                         }
                     }
@@ -1000,7 +1000,7 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpr");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, unionExpr.release());
                         }
                     }
@@ -1017,7 +1017,7 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpr");
         else soul::lexer::WriteFailureToLog(lexer, "UnaryExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1036,7 +1036,7 @@ soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UnionExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127433);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -1137,7 +1137,7 @@ soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnionExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -1149,7 +1149,7 @@ soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnionExpr");
         else soul::lexer::WriteFailureToLog(lexer, "UnionExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1168,7 +1168,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "PathExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127434);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> locationPath;
@@ -1223,7 +1223,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PathExpr");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, locationPath.release());
                     }
                 }
@@ -1312,7 +1312,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                                                             {
                                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PathExpr");
-                                                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                                #endif
                                                                 return soul::parser::Match(true, new soul::xml::xpath::expr::BinaryExpr(soul::xml::xpath::expr::Operator::slash, expr.release(), right.release()));
                                                             }
                                                         }
@@ -1320,7 +1320,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                                                             {
                                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PathExpr");
-                                                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                                #endif
                                                                 return soul::parser::Match(true, soul::xml::xpath::expr::MakeSlashSlashExpr(expr.release(), right.release()));
                                                             }
                                                         }
@@ -1346,7 +1346,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PathExpr");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, expr.release());
                                     }
                                 }
@@ -1369,7 +1369,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PathExpr");
         else soul::lexer::WriteFailureToLog(lexer, "PathExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1388,7 +1388,7 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127435);
     std::unique_ptr<soul::xml::xpath::expr::Expr> absoluteLocationPath;
     std::unique_ptr<soul::xml::xpath::expr::Expr> relativeLocationPath;
@@ -1407,7 +1407,7 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LocationPath");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, absoluteLocationPath.release());
                 }
             }
@@ -1431,7 +1431,7 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LocationPath");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, relativeLocationPath.release());
                         }
                     }
@@ -1448,7 +1448,7 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LocationPath");
         else soul::lexer::WriteFailureToLog(lexer, "LocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1467,7 +1467,7 @@ soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AbsoluteLocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127436);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> abbreviatedAbsoluteLocationPath;
@@ -1574,7 +1574,7 @@ soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbsoluteLocationPath");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -1586,7 +1586,7 @@ soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbsoluteLocationPath");
         else soul::lexer::WriteFailureToLog(lexer, "AbsoluteLocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1605,7 +1605,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(Lexer& l
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAbsoluteLocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127437);
     std::unique_ptr<soul::xml::xpath::expr::Expr> right;
     soul::parser::Match match(false);
@@ -1635,7 +1635,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(Lexer& l
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedAbsoluteLocationPath");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, soul::xml::xpath::expr::MakeSlashSlashExpr(new soul::xml::xpath::expr::Root, right.release()));
                     }
                 }
@@ -1651,7 +1651,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(Lexer& l
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedAbsoluteLocationPath");
         else soul::lexer::WriteFailureToLog(lexer, "AbbreviatedAbsoluteLocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1670,7 +1670,7 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "RelativeLocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127438);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
@@ -1783,7 +1783,7 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelativeLocationPath");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -1795,7 +1795,7 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelativeLocationPath");
         else soul::lexer::WriteFailureToLog(lexer, "RelativeLocationPath");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1814,7 +1814,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Step");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127439);
     std::unique_ptr<soul::xml::xpath::expr::LocationStepExpr> expr = std::unique_ptr<soul::xml::xpath::expr::LocationStepExpr>();
     std::unique_ptr<soul::parser::Value<soul::xml::Axis>> axis;
@@ -1941,7 +1941,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Step");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -1953,7 +1953,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Step");
         else soul::lexer::WriteFailureToLog(lexer, "Step");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1972,7 +1972,7 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AxisSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127440);
     std::unique_ptr<soul::parser::Value<soul::xml::Axis>> axis;
     std::unique_ptr<soul::parser::Value<soul::xml::Axis>> abbreviatedAxisSpecifier;
@@ -2007,7 +2007,7 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisSpecifier");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(axis->value));
                         }
                     }
@@ -2035,7 +2035,7 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisSpecifier");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(abbreviatedAxisSpecifier->value));
                         }
                     }
@@ -2052,7 +2052,7 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisSpecifier");
         else soul::lexer::WriteFailureToLog(lexer, "AxisSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2071,7 +2071,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AxisName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127441);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2092,7 +2092,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::ancestor));
                     }
                 }
@@ -2100,7 +2100,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::ancestorOrSelf));
                     }
                 }
@@ -2108,7 +2108,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::attribute));
                     }
                 }
@@ -2116,7 +2116,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::child));
                     }
                 }
@@ -2124,7 +2124,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::descendant));
                     }
                 }
@@ -2132,7 +2132,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::descendantOrSelf));
                     }
                 }
@@ -2140,7 +2140,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::following));
                     }
                 }
@@ -2148,7 +2148,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::followingSibling));
                     }
                 }
@@ -2156,7 +2156,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::ns));
                     }
                 }
@@ -2164,7 +2164,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::parent));
                     }
                 }
@@ -2172,7 +2172,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::preceding));
                     }
                 }
@@ -2180,7 +2180,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::precedingSibling));
                     }
                 }
@@ -2188,7 +2188,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::self));
                     }
                 }
@@ -2210,7 +2210,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AxisName");
         else soul::lexer::WriteFailureToLog(lexer, "AxisName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2229,7 +2229,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAxisSpecifier(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAxisSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127442);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2250,7 +2250,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAxisSpecifier(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedAxisSpecifier");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::attribute));
                 }
             }
@@ -2273,7 +2273,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAxisSpecifier(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedAxisSpecifier");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<soul::xml::Axis>(soul::xml::Axis::child));
                         }
                     }
@@ -2290,7 +2290,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAxisSpecifier(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedAxisSpecifier");
         else soul::lexer::WriteFailureToLog(lexer, "AbbreviatedAxisSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2309,7 +2309,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NodeTest");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127443);
     std::unique_ptr<soul::xml::xpath::expr::Literal> pi;
     std::unique_ptr<soul::xml::xpath::expr::NodeTest> nodeType;
@@ -2396,7 +2396,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeTest");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::xml::xpath::expr::PILiteralNodeTest(pi.release()));
                         }
                     }
@@ -2465,7 +2465,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeTest");
-                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                    #endif
                                     return soul::parser::Match(true, nodeType.release());
                                 }
                             }
@@ -2499,7 +2499,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeTest");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, nameTest.release());
                             }
                         }
@@ -2518,7 +2518,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeTest");
         else soul::lexer::WriteFailureToLog(lexer, "NodeTest");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2537,7 +2537,7 @@ soul::parser::Match XPathParser<Lexer>::Literal(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127444);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -2550,7 +2550,7 @@ soul::parser::Match XPathParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::xpath::expr::Literal(soul::xml::xpath::token::parser::ParseDQString(lexer.FileName(), lexer.GetToken(pos))));
                 }
             }
@@ -2563,7 +2563,7 @@ soul::parser::Match XPathParser<Lexer>::Literal(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::xpath::expr::Literal(soul::xml::xpath::token::parser::ParseSQString(lexer.FileName(), lexer.GetToken(pos))));
                 }
             }
@@ -2576,7 +2576,7 @@ soul::parser::Match XPathParser<Lexer>::Literal(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Literal");
         else soul::lexer::WriteFailureToLog(lexer, "Literal");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2595,7 +2595,7 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NodeType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127445);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2616,7 +2616,7 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::xml::xpath::expr::NodeTest(soul::xml::xpath::expr::NodeTestKind::commentNodeTest));
                     }
                 }
@@ -2624,7 +2624,7 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::xml::xpath::expr::NodeTest(soul::xml::xpath::expr::NodeTestKind::textNodeTest));
                     }
                 }
@@ -2632,7 +2632,7 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::xml::xpath::expr::NodeTest(soul::xml::xpath::expr::NodeTestKind::piNodeTest));
                     }
                 }
@@ -2640,7 +2640,7 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::xml::xpath::expr::NodeTest(soul::xml::xpath::expr::NodeTestKind::anyNodeTest));
                     }
                 }
@@ -2662,7 +2662,7 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NodeType");
         else soul::lexer::WriteFailureToLog(lexer, "NodeType");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2681,7 +2681,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NameTest");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127446);
     std::unique_ptr<soul::parser::Value<std::string>> ncname;
     std::unique_ptr<soul::parser::Value<std::string>> qname;
@@ -2708,7 +2708,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NameTest");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::xml::xpath::expr::NodeTest(soul::xml::xpath::expr::NodeTestKind::principalNodeTest));
                     }
                 }
@@ -2768,7 +2768,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NameTest");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, new soul::xml::xpath::expr::PrefixNodeTest(ncname->value));
                                     }
                                 }
@@ -2801,7 +2801,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NameTest");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::xml::xpath::expr::NameNodeTest(qname->value));
                         }
                     }
@@ -2818,7 +2818,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NameTest");
         else soul::lexer::WriteFailureToLog(lexer, "NameTest");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2837,7 +2837,7 @@ soul::parser::Match XPathParser<Lexer>::NCName(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "NCName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127447);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2854,7 +2854,7 @@ soul::parser::Match XPathParser<Lexer>::NCName(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NCName");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(util::ToUtf8(lexer.GetToken(pos).ToString())));
             }
         }
@@ -2866,7 +2866,7 @@ soul::parser::Match XPathParser<Lexer>::NCName(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "NCName");
         else soul::lexer::WriteFailureToLog(lexer, "NCName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2885,7 +2885,7 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "QName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127448);
     std::unique_ptr<soul::parser::Value<std::string>> prefixedName;
     std::unique_ptr<soul::parser::Value<std::string>> unprefixedName;
@@ -2904,7 +2904,7 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QName");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<std::string>(prefixedName->value));
                 }
             }
@@ -2928,7 +2928,7 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QName");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<std::string>(unprefixedName->value));
                         }
                     }
@@ -2945,7 +2945,7 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "QName");
         else soul::lexer::WriteFailureToLog(lexer, "QName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2964,7 +2964,7 @@ soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "PrefixedName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127449);
     std::unique_ptr<soul::parser::Value<std::string>> prefix;
     std::unique_ptr<soul::parser::Value<std::string>> localPart;
@@ -3020,7 +3020,7 @@ soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrefixedName");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(prefix->value + ":" + localPart->value));
             }
         }
@@ -3032,7 +3032,7 @@ soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrefixedName");
         else soul::lexer::WriteFailureToLog(lexer, "PrefixedName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3051,7 +3051,7 @@ soul::parser::Match XPathParser<Lexer>::Prefix(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Prefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127450);
     std::unique_ptr<soul::parser::Value<std::string>> ncname;
     soul::parser::Match match(false);
@@ -3065,7 +3065,7 @@ soul::parser::Match XPathParser<Lexer>::Prefix(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Prefix");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(ncname->value));
             }
         }
@@ -3077,7 +3077,7 @@ soul::parser::Match XPathParser<Lexer>::Prefix(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Prefix");
         else soul::lexer::WriteFailureToLog(lexer, "Prefix");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3096,7 +3096,7 @@ soul::parser::Match XPathParser<Lexer>::UnprefixedName(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UnprefixedName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127451);
     std::unique_ptr<soul::parser::Value<std::string>> localPart;
     soul::parser::Match match(false);
@@ -3110,7 +3110,7 @@ soul::parser::Match XPathParser<Lexer>::UnprefixedName(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnprefixedName");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(localPart->value));
             }
         }
@@ -3122,7 +3122,7 @@ soul::parser::Match XPathParser<Lexer>::UnprefixedName(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnprefixedName");
         else soul::lexer::WriteFailureToLog(lexer, "UnprefixedName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3141,7 +3141,7 @@ soul::parser::Match XPathParser<Lexer>::LocalPart(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LocalPart");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127452);
     std::unique_ptr<soul::parser::Value<std::string>> ncname;
     soul::parser::Match match(false);
@@ -3155,7 +3155,7 @@ soul::parser::Match XPathParser<Lexer>::LocalPart(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LocalPart");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(ncname->value));
             }
         }
@@ -3167,7 +3167,7 @@ soul::parser::Match XPathParser<Lexer>::LocalPart(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LocalPart");
         else soul::lexer::WriteFailureToLog(lexer, "LocalPart");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3186,7 +3186,7 @@ soul::parser::Match XPathParser<Lexer>::Predicate(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Predicate");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127453);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr;
     soul::parser::Match match(false);
@@ -3245,7 +3245,7 @@ soul::parser::Match XPathParser<Lexer>::Predicate(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Predicate");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -3257,7 +3257,7 @@ soul::parser::Match XPathParser<Lexer>::Predicate(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Predicate");
         else soul::lexer::WriteFailureToLog(lexer, "Predicate");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3276,7 +3276,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedStep(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedStep");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127454);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -3289,7 +3289,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedStep(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedStep");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::xpath::expr::LocationStepExpr(soul::xml::Axis::parent, new soul::xml::xpath::expr::NodeTest(soul::xml::xpath::expr::NodeTestKind::anyNodeTest)));
                 }
             }
@@ -3302,7 +3302,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedStep(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedStep");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::xml::xpath::expr::LocationStepExpr(soul::xml::Axis::self, new soul::xml::xpath::expr::NodeTest(soul::xml::xpath::expr::NodeTestKind::anyNodeTest)));
                 }
             }
@@ -3315,7 +3315,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedStep(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AbbreviatedStep");
         else soul::lexer::WriteFailureToLog(lexer, "AbbreviatedStep");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3334,7 +3334,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionCall");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127455);
     std::unique_ptr<soul::xml::xpath::expr::FunctionCall> functionCall = std::unique_ptr<soul::xml::xpath::expr::FunctionCall>();
     std::unique_ptr<soul::parser::Value<std::string>> functionName;
@@ -3514,7 +3514,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionCall");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, functionCall.release());
             }
         }
@@ -3526,7 +3526,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionCall");
         else soul::lexer::WriteFailureToLog(lexer, "FunctionCall");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3545,7 +3545,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127456);
     std::unique_ptr<soul::parser::Value<std::string>> qname;
     std::unique_ptr<soul::xml::xpath::expr::NodeTest> nodeType;
@@ -3589,7 +3589,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionName");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<std::string>(qname->value));
             }
         }
@@ -3601,7 +3601,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionName");
         else soul::lexer::WriteFailureToLog(lexer, "FunctionName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3620,7 +3620,7 @@ soul::parser::Match XPathParser<Lexer>::Argument(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Argument");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127457);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr;
     soul::parser::Match match(false);
@@ -3634,7 +3634,7 @@ soul::parser::Match XPathParser<Lexer>::Argument(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Argument");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -3646,7 +3646,7 @@ soul::parser::Match XPathParser<Lexer>::Argument(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Argument");
         else soul::lexer::WriteFailureToLog(lexer, "Argument");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3665,7 +3665,7 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "FilterExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127458);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> primaryExpr;
@@ -3746,7 +3746,7 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FilterExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, expr.release());
             }
         }
@@ -3758,7 +3758,7 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FilterExpr");
         else soul::lexer::WriteFailureToLog(lexer, "FilterExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3777,7 +3777,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "PrimaryExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127459);
     std::unique_ptr<soul::xml::xpath::expr::Expr> functionCall;
     std::unique_ptr<soul::xml::xpath::expr::Expr> variableReference;
@@ -3811,7 +3811,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, functionCall.release());
                             }
                         }
@@ -3835,7 +3835,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, variableReference.release());
                                     }
                                 }
@@ -3909,7 +3909,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                    #endif
                                     return soul::parser::Match(true, new soul::xml::xpath::expr::UnaryExpr(soul::xml::xpath::expr::Operator::parens, expr.release()));
                                 }
                             }
@@ -3938,7 +3938,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, literal.release());
                             }
                         }
@@ -3967,7 +3967,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, number.release());
                         }
                     }
@@ -3984,7 +3984,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
         else soul::lexer::WriteFailureToLog(lexer, "PrimaryExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4003,7 +4003,7 @@ soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "VariableReference");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127460);
     std::unique_ptr<soul::parser::Value<std::string>> qname;
     soul::parser::Match match(false);
@@ -4042,7 +4042,7 @@ soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "VariableReference");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::xml::xpath::expr::VariableReference(qname->value));
             }
         }
@@ -4054,7 +4054,7 @@ soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "VariableReference");
         else soul::lexer::WriteFailureToLog(lexer, "VariableReference");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4073,7 +4073,7 @@ soul::parser::Match XPathParser<Lexer>::Number(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Number");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127461);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4090,7 +4090,7 @@ soul::parser::Match XPathParser<Lexer>::Number(Lexer& lexer)
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Number");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::xml::xpath::expr::NumberExpr(lexer.GetToken(pos).ToDouble()));
             }
         }
@@ -4102,7 +4102,7 @@ soul::parser::Match XPathParser<Lexer>::Number(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Number");
         else soul::lexer::WriteFailureToLog(lexer, "Number");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4121,7 +4121,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EqualityOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127462);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -4134,7 +4134,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::equal));
                 }
             }
@@ -4147,7 +4147,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::notEqual));
                 }
             }
@@ -4160,7 +4160,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityOp");
         else soul::lexer::WriteFailureToLog(lexer, "EqualityOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4179,7 +4179,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "RelationalOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127463);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -4192,7 +4192,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::less));
                 }
             }
@@ -4205,7 +4205,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::greater));
                 }
             }
@@ -4218,7 +4218,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::lessOrEqual));
                 }
             }
@@ -4231,7 +4231,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::greaterOrEqual));
                 }
             }
@@ -4244,7 +4244,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalOp");
         else soul::lexer::WriteFailureToLog(lexer, "RelationalOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4263,7 +4263,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127464);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -4276,7 +4276,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::plus));
                 }
             }
@@ -4289,7 +4289,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::minus));
                 }
             }
@@ -4302,7 +4302,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveOp");
         else soul::lexer::WriteFailureToLog(lexer, "AdditiveOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4321,7 +4321,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127465);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4346,7 +4346,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeOp");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                        #endif
                         return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::mul));
                     }
                 }
@@ -4369,7 +4369,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeOp");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::div));
                             }
                         }
@@ -4397,7 +4397,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeOp");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::mod));
                         }
                     }
@@ -4414,7 +4414,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeOp");
         else soul::lexer::WriteFailureToLog(lexer, "MultiplicativeOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4433,7 +4433,7 @@ soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "CombinePathOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127466);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -4446,7 +4446,7 @@ soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CombinePathOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::slash));
                 }
             }
@@ -4459,7 +4459,7 @@ soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CombinePathOp");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new soul::parser::Value<soul::xml::xpath::expr::Operator>(soul::xml::xpath::expr::Operator::slashSlash));
                 }
             }
@@ -4472,7 +4472,7 @@ soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CombinePathOp");
         else soul::lexer::WriteFailureToLog(lexer, "CombinePathOp");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4491,7 +4491,7 @@ soul::parser::Match XPathParser<Lexer>::OrKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "OrKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127467);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4520,7 +4520,7 @@ soul::parser::Match XPathParser<Lexer>::OrKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OrKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "OrKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4539,7 +4539,7 @@ soul::parser::Match XPathParser<Lexer>::AndKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AndKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127468);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4568,7 +4568,7 @@ soul::parser::Match XPathParser<Lexer>::AndKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AndKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "AndKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4587,7 +4587,7 @@ soul::parser::Match XPathParser<Lexer>::DivKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "DivKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127469);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4616,7 +4616,7 @@ soul::parser::Match XPathParser<Lexer>::DivKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DivKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "DivKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4635,7 +4635,7 @@ soul::parser::Match XPathParser<Lexer>::ModKeyword(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ModKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127470);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4664,7 +4664,7 @@ soul::parser::Match XPathParser<Lexer>::ModKeyword(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ModKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "ModKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -4683,7 +4683,7 @@ soul::parser::Match XPathParser<Lexer>::ProcessingInstructionKeyword(Lexer& lexe
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ProcessingInstructionKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127471);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4712,7 +4712,7 @@ soul::parser::Match XPathParser<Lexer>::ProcessingInstructionKeyword(Lexer& lexe
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ProcessingInstructionKeyword");
         else soul::lexer::WriteFailureToLog(lexer, "ProcessingInstructionKeyword");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

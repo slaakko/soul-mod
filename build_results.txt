@@ -1,9 +1,0 @@
-unoptimized (build_unopt.bat)
-36692 milliseconds elapsed
-36702 milliseconds elapsed
-36718 milliseconds elapsed
-
-optimized (build.bat)
-35904 milliseconds elapsed
-36008 milliseconds elapsed
-36012 milliseconds elapsed

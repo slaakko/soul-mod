@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/type.parser' using soul parser generator spg version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/type.parser' using soul parser generator spg version 4.1.0
 
 module minilang.parser.type;
 
@@ -26,7 +26,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Type");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 1020028859917008897);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
@@ -39,7 +39,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new minilang::ast::IntNode);
                 }
             }
@@ -52,7 +52,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new minilang::ast::BoolNode);
                 }
             }
@@ -65,7 +65,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
                 {
                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
-                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                    #endif
                     return soul::parser::Match(true, new minilang::ast::VoidNode);
                 }
             }
@@ -78,7 +78,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Type");
         else soul::lexer::WriteFailureToLog(lexer, "Type");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

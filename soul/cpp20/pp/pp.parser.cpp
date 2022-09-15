@@ -22,7 +22,7 @@ void PPParser<Lexer>::Parse(Lexer& lexer, soul::cpp20::pp::state::State* state)
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
     soul::parser::Match match = PPParser<Lexer>::PPLIne(lexer, state);
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -31,7 +31,7 @@ void PPParser<Lexer>::Parse(Lexer& lexer, soul::cpp20::pp::state::State* state)
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -61,7 +61,7 @@ soul::parser::Match PPParser<Lexer>::PPLIne(Lexer& lexer, soul::cpp20::pp::state
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "PPLIne");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000449);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -90,7 +90,7 @@ soul::parser::Match PPParser<Lexer>::PPLIne(Lexer& lexer, soul::cpp20::pp::state
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PPLIne");
         else soul::lexer::WriteFailureToLog(lexer, "PPLIne");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -109,7 +109,7 @@ soul::parser::Match PPParser<Lexer>::PPCommand(Lexer& lexer, soul::cpp20::pp::st
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "PPCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000450);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -295,7 +295,7 @@ soul::parser::Match PPParser<Lexer>::PPCommand(Lexer& lexer, soul::cpp20::pp::st
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PPCommand");
         else soul::lexer::WriteFailureToLog(lexer, "PPCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -314,7 +314,7 @@ soul::parser::Match PPParser<Lexer>::IfCommand(Lexer& lexer, soul::cpp20::pp::st
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "IfCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000451);
     std::unique_ptr<soul::parser::Value<int64_t>> value;
     soul::parser::Match match(false);
@@ -355,7 +355,7 @@ soul::parser::Match PPParser<Lexer>::IfCommand(Lexer& lexer, soul::cpp20::pp::st
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IfCommand");
         else soul::lexer::WriteFailureToLog(lexer, "IfCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -374,7 +374,7 @@ soul::parser::Match PPParser<Lexer>::ElifCommand(Lexer& lexer, soul::cpp20::pp::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ElifCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000452);
     std::unique_ptr<soul::parser::Value<int64_t>> value;
     soul::parser::Match match(false);
@@ -415,7 +415,7 @@ soul::parser::Match PPParser<Lexer>::ElifCommand(Lexer& lexer, soul::cpp20::pp::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElifCommand");
         else soul::lexer::WriteFailureToLog(lexer, "ElifCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -434,7 +434,7 @@ soul::parser::Match PPParser<Lexer>::IfdefCommand(Lexer& lexer, soul::cpp20::pp:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "IfdefCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000453);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -478,7 +478,7 @@ soul::parser::Match PPParser<Lexer>::IfdefCommand(Lexer& lexer, soul::cpp20::pp:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IfdefCommand");
         else soul::lexer::WriteFailureToLog(lexer, "IfdefCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -497,7 +497,7 @@ soul::parser::Match PPParser<Lexer>::IfndefCommand(Lexer& lexer, soul::cpp20::pp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "IfndefCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000454);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -541,7 +541,7 @@ soul::parser::Match PPParser<Lexer>::IfndefCommand(Lexer& lexer, soul::cpp20::pp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IfndefCommand");
         else soul::lexer::WriteFailureToLog(lexer, "IfndefCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -560,7 +560,7 @@ soul::parser::Match PPParser<Lexer>::ElseCommand(Lexer& lexer, soul::cpp20::pp::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ElseCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000455);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -584,7 +584,7 @@ soul::parser::Match PPParser<Lexer>::ElseCommand(Lexer& lexer, soul::cpp20::pp::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElseCommand");
         else soul::lexer::WriteFailureToLog(lexer, "ElseCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -603,7 +603,7 @@ soul::parser::Match PPParser<Lexer>::EndifCommand(Lexer& lexer, soul::cpp20::pp:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EndifCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000456);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -627,7 +627,7 @@ soul::parser::Match PPParser<Lexer>::EndifCommand(Lexer& lexer, soul::cpp20::pp:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EndifCommand");
         else soul::lexer::WriteFailureToLog(lexer, "EndifCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -646,7 +646,7 @@ soul::parser::Match PPParser<Lexer>::DefineCommand(Lexer& lexer, soul::cpp20::pp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "DefineCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000457);
     std::string symbol = std::string();
     soul::parser::Match match(false);
@@ -754,7 +754,7 @@ soul::parser::Match PPParser<Lexer>::DefineCommand(Lexer& lexer, soul::cpp20::pp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefineCommand");
         else soul::lexer::WriteFailureToLog(lexer, "DefineCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -773,7 +773,7 @@ soul::parser::Match PPParser<Lexer>::UndefCommand(Lexer& lexer, soul::cpp20::pp:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UndefCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000458);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -817,7 +817,7 @@ soul::parser::Match PPParser<Lexer>::UndefCommand(Lexer& lexer, soul::cpp20::pp:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UndefCommand");
         else soul::lexer::WriteFailureToLog(lexer, "UndefCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -836,7 +836,7 @@ soul::parser::Match PPParser<Lexer>::IncludeCommand(Lexer& lexer, soul::cpp20::p
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "IncludeCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000459);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -875,7 +875,7 @@ soul::parser::Match PPParser<Lexer>::IncludeCommand(Lexer& lexer, soul::cpp20::p
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "IncludeCommand");
         else soul::lexer::WriteFailureToLog(lexer, "IncludeCommand");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -894,7 +894,7 @@ soul::parser::Match PPParser<Lexer>::Header(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Header");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000460);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -930,7 +930,7 @@ soul::parser::Match PPParser<Lexer>::Header(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Header");
         else soul::lexer::WriteFailureToLog(lexer, "Header");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -949,7 +949,7 @@ soul::parser::Match PPParser<Lexer>::Expression(Lexer& lexer, soul::cpp20::pp::s
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Expression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000461);
     std::unique_ptr<soul::parser::Value<int64_t>> expr;
     soul::parser::Match match(false);
@@ -963,7 +963,7 @@ soul::parser::Match PPParser<Lexer>::Expression(Lexer& lexer, soul::cpp20::pp::s
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(expr->value));
             }
         }
@@ -975,7 +975,7 @@ soul::parser::Match PPParser<Lexer>::Expression(Lexer& lexer, soul::cpp20::pp::s
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expression");
         else soul::lexer::WriteFailureToLog(lexer, "Expression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -994,7 +994,7 @@ soul::parser::Match PPParser<Lexer>::LogicalOrExpr(Lexer& lexer, soul::cpp20::pp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LogicalOrExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000462);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -1095,7 +1095,7 @@ soul::parser::Match PPParser<Lexer>::LogicalOrExpr(Lexer& lexer, soul::cpp20::pp
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LogicalOrExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -1107,7 +1107,7 @@ soul::parser::Match PPParser<Lexer>::LogicalOrExpr(Lexer& lexer, soul::cpp20::pp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LogicalOrExpr");
         else soul::lexer::WriteFailureToLog(lexer, "LogicalOrExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1126,7 +1126,7 @@ soul::parser::Match PPParser<Lexer>::LogicalAndExpr(Lexer& lexer, soul::cpp20::p
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "LogicalAndExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000463);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -1227,7 +1227,7 @@ soul::parser::Match PPParser<Lexer>::LogicalAndExpr(Lexer& lexer, soul::cpp20::p
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LogicalAndExpr");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -1239,7 +1239,7 @@ soul::parser::Match PPParser<Lexer>::LogicalAndExpr(Lexer& lexer, soul::cpp20::p
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LogicalAndExpr");
         else soul::lexer::WriteFailureToLog(lexer, "LogicalAndExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1258,7 +1258,7 @@ soul::parser::Match PPParser<Lexer>::InclusiveOrExpression(Lexer& lexer, soul::c
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "InclusiveOrExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000464);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -1359,7 +1359,7 @@ soul::parser::Match PPParser<Lexer>::InclusiveOrExpression(Lexer& lexer, soul::c
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InclusiveOrExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -1371,7 +1371,7 @@ soul::parser::Match PPParser<Lexer>::InclusiveOrExpression(Lexer& lexer, soul::c
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InclusiveOrExpression");
         else soul::lexer::WriteFailureToLog(lexer, "InclusiveOrExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1390,7 +1390,7 @@ soul::parser::Match PPParser<Lexer>::ExclusiveOrExpression(Lexer& lexer, soul::c
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ExclusiveOrExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000465);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -1491,7 +1491,7 @@ soul::parser::Match PPParser<Lexer>::ExclusiveOrExpression(Lexer& lexer, soul::c
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExclusiveOrExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -1503,7 +1503,7 @@ soul::parser::Match PPParser<Lexer>::ExclusiveOrExpression(Lexer& lexer, soul::c
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExclusiveOrExpression");
         else soul::lexer::WriteFailureToLog(lexer, "ExclusiveOrExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1522,7 +1522,7 @@ soul::parser::Match PPParser<Lexer>::AndExpression(Lexer& lexer, soul::cpp20::pp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AndExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000466);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -1623,7 +1623,7 @@ soul::parser::Match PPParser<Lexer>::AndExpression(Lexer& lexer, soul::cpp20::pp
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AndExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -1635,7 +1635,7 @@ soul::parser::Match PPParser<Lexer>::AndExpression(Lexer& lexer, soul::cpp20::pp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AndExpression");
         else soul::lexer::WriteFailureToLog(lexer, "AndExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1654,7 +1654,7 @@ soul::parser::Match PPParser<Lexer>::EqualityExpression(Lexer& lexer, soul::cpp2
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EqualityExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000467);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -1804,7 +1804,7 @@ soul::parser::Match PPParser<Lexer>::EqualityExpression(Lexer& lexer, soul::cpp2
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -1816,7 +1816,7 @@ soul::parser::Match PPParser<Lexer>::EqualityExpression(Lexer& lexer, soul::cpp2
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityExpression");
         else soul::lexer::WriteFailureToLog(lexer, "EqualityExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1835,7 +1835,7 @@ soul::parser::Match PPParser<Lexer>::RelationalExpression(Lexer& lexer, soul::cp
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "RelationalExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000468);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -2083,7 +2083,7 @@ soul::parser::Match PPParser<Lexer>::RelationalExpression(Lexer& lexer, soul::cp
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -2095,7 +2095,7 @@ soul::parser::Match PPParser<Lexer>::RelationalExpression(Lexer& lexer, soul::cp
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalExpression");
         else soul::lexer::WriteFailureToLog(lexer, "RelationalExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2114,7 +2114,7 @@ soul::parser::Match PPParser<Lexer>::ShiftExpression(Lexer& lexer, soul::cpp20::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ShiftExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000469);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -2264,7 +2264,7 @@ soul::parser::Match PPParser<Lexer>::ShiftExpression(Lexer& lexer, soul::cpp20::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ShiftExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -2276,7 +2276,7 @@ soul::parser::Match PPParser<Lexer>::ShiftExpression(Lexer& lexer, soul::cpp20::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ShiftExpression");
         else soul::lexer::WriteFailureToLog(lexer, "ShiftExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2295,7 +2295,7 @@ soul::parser::Match PPParser<Lexer>::AdditiveExpression(Lexer& lexer, soul::cpp2
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000470);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -2445,7 +2445,7 @@ soul::parser::Match PPParser<Lexer>::AdditiveExpression(Lexer& lexer, soul::cpp2
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -2457,7 +2457,7 @@ soul::parser::Match PPParser<Lexer>::AdditiveExpression(Lexer& lexer, soul::cpp2
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveExpression");
         else soul::lexer::WriteFailureToLog(lexer, "AdditiveExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2476,7 +2476,7 @@ soul::parser::Match PPParser<Lexer>::MultiplicativeExpression(Lexer& lexer, soul
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000471);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
@@ -2675,7 +2675,7 @@ soul::parser::Match PPParser<Lexer>::MultiplicativeExpression(Lexer& lexer, soul
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeExpression");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
             }
         }
@@ -2687,7 +2687,7 @@ soul::parser::Match PPParser<Lexer>::MultiplicativeExpression(Lexer& lexer, soul
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeExpression");
         else soul::lexer::WriteFailureToLog(lexer, "MultiplicativeExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2706,7 +2706,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, soul::cpp20::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "UnaryExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000472);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> plusExpr;
@@ -2760,7 +2760,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, soul::cpp20::
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(plusExpr->value));
                                         }
                                     }
@@ -2804,7 +2804,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, soul::cpp20::
                                                 {
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
-                                                    #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                    #endif
                                                     return soul::parser::Match(true, new soul::parser::Value<int64_t>(-minusExpr->value));
                                                 }
                                             }
@@ -2853,7 +2853,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, soul::cpp20::
                                             {
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
-                                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                                #endif
                                                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(static_cast<int64_t>(!(notExpr->value != 0))));
                                             }
                                         }
@@ -2902,7 +2902,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, soul::cpp20::
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(~complementExpr->value));
                                         }
                                     }
@@ -2935,7 +2935,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, soul::cpp20::
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(primaryExpr->value));
                             }
                         }
@@ -2954,7 +2954,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, soul::cpp20::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
         else soul::lexer::WriteFailureToLog(lexer, "UnaryExpression");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -2973,7 +2973,7 @@ soul::parser::Match PPParser<Lexer>::PrimaryExpr(Lexer& lexer, soul::cpp20::pp::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "PrimaryExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000473);
     std::unique_ptr<soul::parser::Value<int64_t>> defined;
     std::unique_ptr<soul::parser::Value<int64_t>> value;
@@ -3000,7 +3000,7 @@ soul::parser::Match PPParser<Lexer>::PrimaryExpr(Lexer& lexer, soul::cpp20::pp::
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(defined->value));
                         }
                     }
@@ -3060,7 +3060,7 @@ soul::parser::Match PPParser<Lexer>::PrimaryExpr(Lexer& lexer, soul::cpp20::pp::
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(value->value));
                                         }
                                     }
@@ -3097,7 +3097,7 @@ soul::parser::Match PPParser<Lexer>::PrimaryExpr(Lexer& lexer, soul::cpp20::pp::
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, new soul::parser::Value<int64_t>(std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString()))));
                             }
                         }
@@ -3130,7 +3130,7 @@ soul::parser::Match PPParser<Lexer>::PrimaryExpr(Lexer& lexer, soul::cpp20::pp::
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(state->GetSymbolValue(util::ToUtf8(lexer.GetToken(pos).ToString()))));
                         }
                     }
@@ -3147,7 +3147,7 @@ soul::parser::Match PPParser<Lexer>::PrimaryExpr(Lexer& lexer, soul::cpp20::pp::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
         else soul::lexer::WriteFailureToLog(lexer, "PrimaryExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -3166,7 +3166,7 @@ soul::parser::Match PPParser<Lexer>::DefinedExpr(Lexer& lexer, soul::cpp20::pp::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "DefinedExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 8694736574321000474);
     std::string symbol = std::string();
     soul::parser::Match match(false);
@@ -3255,7 +3255,7 @@ soul::parser::Match PPParser<Lexer>::DefinedExpr(Lexer& lexer, soul::cpp20::pp::
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(1));
                                         }
                                     }
@@ -3264,7 +3264,7 @@ soul::parser::Match PPParser<Lexer>::DefinedExpr(Lexer& lexer, soul::cpp20::pp::
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(0));
                                         }
                                     }
@@ -3300,7 +3300,7 @@ soul::parser::Match PPParser<Lexer>::DefinedExpr(Lexer& lexer, soul::cpp20::pp::
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(1));
                                         }
                                     }
@@ -3309,7 +3309,7 @@ soul::parser::Match PPParser<Lexer>::DefinedExpr(Lexer& lexer, soul::cpp20::pp::
                                         {
                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
-                                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                                            #endif
                                             return soul::parser::Match(true, new soul::parser::Value<int64_t>(0));
                                         }
                                     }
@@ -3333,7 +3333,7 @@ soul::parser::Match PPParser<Lexer>::DefinedExpr(Lexer& lexer, soul::cpp20::pp::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
         else soul::lexer::WriteFailureToLog(lexer, "DefinedExpr");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

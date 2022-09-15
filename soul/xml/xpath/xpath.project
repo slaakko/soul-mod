@@ -9,16 +9,19 @@ reference <../../../util/util.project>;
 interface <context.ixx>;
 source <context.cpp>;
 interface <evaluate.ixx>;
-// source <evaluate.cpp>;
+// source <evaluate.cpp>; // try
 interface <expr.ixx>;
 source <expr.cpp>;
 interface <function.ixx>;
-// source <function.cpp>;
+// source <function.cpp>; // ||
 interface <object.ixx>;
 source <object.cpp>;
 interface <parser_rules.ixx>;
+source <parser_rules.cpp>;
 interface <token_parser.ixx>;
 interface <xpath.ixx>;
-interface <xpath.lexer.fwd.ixx>;
+interface <xpath.lexer.ixx>;
+source <xpath.lexer.cpp>;
 interface <xpath.parser.ixx>;
+source <xpath.parser.cpp>;
 interface <xpath.token.ixx>;

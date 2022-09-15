@@ -38,7 +38,7 @@ soul::parser::Match EnumParser<Lexer>::EnumName(Lexer& lexer, soul::cpp20::symbo
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932673);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> identifier;
@@ -53,7 +53,7 @@ soul::parser::Match EnumParser<Lexer>::EnumName(Lexer& lexer, soul::cpp20::symbo
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumName");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, identifier.release());
             }
         }
@@ -65,7 +65,7 @@ soul::parser::Match EnumParser<Lexer>::EnumName(Lexer& lexer, soul::cpp20::symbo
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumName");
         else soul::lexer::WriteFailureToLog(lexer, "EnumName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -84,7 +84,7 @@ soul::parser::Match EnumParser<Lexer>::EnumSpecifier(Lexer& lexer, soul::cpp20::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932674);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
@@ -270,7 +270,7 @@ soul::parser::Match EnumParser<Lexer>::EnumSpecifier(Lexer& lexer, soul::cpp20::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumSpecifier");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, enumSpecifierNode.release());
             }
         }
@@ -282,7 +282,7 @@ soul::parser::Match EnumParser<Lexer>::EnumSpecifier(Lexer& lexer, soul::cpp20::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumSpecifier");
         else soul::lexer::WriteFailureToLog(lexer, "EnumSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -301,7 +301,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHead(Lexer& lexer, soul::cpp20::symbo
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumHead");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932675);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> name = std::unique_ptr<soul::cpp20::ast::Node>();
@@ -453,7 +453,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHead(Lexer& lexer, soul::cpp20::symbo
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHead");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::EnumHeadNode(sourcePos, enumKey.release(), name.release(), enumBase.release(), attributes.release()));
             }
         }
@@ -465,7 +465,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHead(Lexer& lexer, soul::cpp20::symbo
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHead");
         else soul::lexer::WriteFailureToLog(lexer, "EnumHead");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -484,7 +484,7 @@ soul::parser::Match EnumParser<Lexer>::EnumKey(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumKey");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932676);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::parser::Match match(false);
@@ -536,7 +536,7 @@ soul::parser::Match EnumParser<Lexer>::EnumKey(Lexer& lexer)
                             {
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumKey");
-                                #endif SOUL_PARSER_DEBUG_SUPPORT
+                                #endif
                                 return soul::parser::Match(true, new soul::cpp20::ast::EnumClassNode(sourcePos, lexer.GetSourcePos(pos)));
                             }
                         }
@@ -594,7 +594,7 @@ soul::parser::Match EnumParser<Lexer>::EnumKey(Lexer& lexer)
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumKey");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, new soul::cpp20::ast::EnumStructNode(sourcePos, lexer.GetSourcePos(pos)));
                                     }
                                 }
@@ -632,7 +632,7 @@ soul::parser::Match EnumParser<Lexer>::EnumKey(Lexer& lexer)
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumKey");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new soul::cpp20::ast::EnumNode(sourcePos));
                         }
                     }
@@ -649,7 +649,7 @@ soul::parser::Match EnumParser<Lexer>::EnumKey(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumKey");
         else soul::lexer::WriteFailureToLog(lexer, "EnumKey");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -668,7 +668,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHeadName(Lexer& lexer, soul::cpp20::s
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumHeadName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932677);
     std::unique_ptr<soul::cpp20::ast::Node> nns;
     std::unique_ptr<soul::cpp20::ast::Node> identifier;
@@ -700,7 +700,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHeadName(Lexer& lexer, soul::cpp20::s
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHeadName");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, new QualifiedIdNode(lexer.GetSourcePos(pos), nns.release(), identifier.release()));
                         }
                     }
@@ -728,7 +728,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHeadName(Lexer& lexer, soul::cpp20::s
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHeadName");
-                            #endif SOUL_PARSER_DEBUG_SUPPORT
+                            #endif
                             return soul::parser::Match(true, identifier2.release());
                         }
                     }
@@ -745,7 +745,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHeadName(Lexer& lexer, soul::cpp20::s
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumHeadName");
         else soul::lexer::WriteFailureToLog(lexer, "EnumHeadName");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -764,7 +764,7 @@ soul::parser::Match EnumParser<Lexer>::EnumBase(Lexer& lexer, soul::cpp20::symbo
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumBase");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932678);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<Node> typeSpecifiers;
@@ -814,7 +814,7 @@ soul::parser::Match EnumParser<Lexer>::EnumBase(Lexer& lexer, soul::cpp20::symbo
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumBase");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::EnumBaseNode(sourcePos, typeSpecifiers.release()));
             }
         }
@@ -826,7 +826,7 @@ soul::parser::Match EnumParser<Lexer>::EnumBase(Lexer& lexer, soul::cpp20::symbo
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumBase");
         else soul::lexer::WriteFailureToLog(lexer, "EnumBase");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -845,7 +845,7 @@ soul::parser::Match EnumParser<Lexer>::EnumeratorList(Lexer& lexer, soul::cpp20:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932679);
     std::unique_ptr<soul::cpp20::ast::Node> first;
     std::unique_ptr<soul::cpp20::ast::Node> comma;
@@ -944,7 +944,7 @@ soul::parser::Match EnumParser<Lexer>::EnumeratorList(Lexer& lexer, soul::cpp20:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumeratorList");
         else soul::lexer::WriteFailureToLog(lexer, "EnumeratorList");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -963,7 +963,7 @@ soul::parser::Match EnumParser<Lexer>::EnumeratorDefinition(Lexer& lexer, soul::
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorDefinition");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932680);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos assignPos = soul::ast::SourcePos();
@@ -1070,7 +1070,7 @@ soul::parser::Match EnumParser<Lexer>::EnumeratorDefinition(Lexer& lexer, soul::
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumeratorDefinition");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::EnumeratorDefinitionNode(sourcePos, enumerator.release(), value.release(), assignPos));
             }
         }
@@ -1082,7 +1082,7 @@ soul::parser::Match EnumParser<Lexer>::EnumeratorDefinition(Lexer& lexer, soul::
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EnumeratorDefinition");
         else soul::lexer::WriteFailureToLog(lexer, "EnumeratorDefinition");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1101,7 +1101,7 @@ soul::parser::Match EnumParser<Lexer>::Enumerator(Lexer& lexer, soul::cpp20::sym
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "Enumerator");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932681);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> identifier;
@@ -1161,7 +1161,7 @@ soul::parser::Match EnumParser<Lexer>::Enumerator(Lexer& lexer, soul::cpp20::sym
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Enumerator");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, new soul::cpp20::ast::EnumeratorNode(sourcePos, identifier.release(), attributes.release()));
             }
         }
@@ -1173,7 +1173,7 @@ soul::parser::Match EnumParser<Lexer>::Enumerator(Lexer& lexer, soul::cpp20::sym
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Enumerator");
         else soul::lexer::WriteFailureToLog(lexer, "Enumerator");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1192,7 +1192,7 @@ soul::parser::Match EnumParser<Lexer>::OpaqueEnumDeclaration(Lexer& lexer, soul:
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "OpaqueEnumDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932682);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> enumKey;
@@ -1318,7 +1318,7 @@ soul::parser::Match EnumParser<Lexer>::OpaqueEnumDeclaration(Lexer& lexer, soul:
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OpaqueEnumDeclaration");
-                #endif SOUL_PARSER_DEBUG_SUPPORT
+                #endif
                 return soul::parser::Match(true, node);
             }
         }
@@ -1330,7 +1330,7 @@ soul::parser::Match EnumParser<Lexer>::OpaqueEnumDeclaration(Lexer& lexer, soul:
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "OpaqueEnumDeclaration");
         else soul::lexer::WriteFailureToLog(lexer, "OpaqueEnumDeclaration");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
@@ -1349,7 +1349,7 @@ soul::parser::Match EnumParser<Lexer>::ElaboratedEnumSpecifier(Lexer& lexer, sou
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ElaboratedEnumSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932683);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
@@ -1424,7 +1424,7 @@ soul::parser::Match EnumParser<Lexer>::ElaboratedEnumSpecifier(Lexer& lexer, sou
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedEnumSpecifier");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, node);
                                     }
                                 }
@@ -1454,7 +1454,7 @@ soul::parser::Match EnumParser<Lexer>::ElaboratedEnumSpecifier(Lexer& lexer, sou
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedEnumSpecifier");
-                                        #endif SOUL_PARSER_DEBUG_SUPPORT
+                                        #endif
                                         return soul::parser::Match(true, node);
                                     }
                                 }
@@ -1477,7 +1477,7 @@ soul::parser::Match EnumParser<Lexer>::ElaboratedEnumSpecifier(Lexer& lexer, sou
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedEnumSpecifier");
         else soul::lexer::WriteFailureToLog(lexer, "ElaboratedEnumSpecifier");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;
