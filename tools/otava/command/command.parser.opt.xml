@@ -1,0 +1,82 @@
+<parserFile>
+ <grammar name="CommandParser">
+  <rule first="{ASSEMBLE, BUILD, DUMP, IC}" name="Command">
+   <switch first="{ASSEMBLE, BUILD, DUMP, IC}">
+    <case first="{BUILD}">
+     <action first="{BUILD}">
+      <nonterminal first="{BUILD}" ruleName="BuildCommand"/>
+     </action>
+    </case>
+    <case first="{DUMP}">
+     <action first="{DUMP}">
+      <nonterminal first="{DUMP}" ruleName="DumpCommand"/>
+     </action>
+    </case>
+    <case first="{ASSEMBLE}">
+     <action first="{ASSEMBLE}">
+      <nonterminal first="{ASSEMBLE}" ruleName="AssembleCommand"/>
+     </action>
+    </case>
+    <case first="{IC}">
+     <action first="{IC}">
+      <nonterminal first="{IC}" ruleName="IntermediateCompileCommand"/>
+     </action>
+    </case>
+   </switch>
+  </rule>
+  <rule first="{BUILD}" name="BuildCommand">
+   <action first="{BUILD}">
+    <group first="{BUILD}">
+     <sequence first="{BUILD}">
+      <token first="{BUILD}" name="BUILD"/>
+      <nonterminal first="{FILEPATH, ID}" ruleName="FilePath"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{DUMP}" name="DumpCommand">
+   <action first="{DUMP}">
+    <group first="{DUMP}">
+     <sequence first="{DUMP}">
+      <token first="{DUMP}" name="DUMP"/>
+      <nonterminal first="{FILEPATH, ID}" ruleName="FilePath"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{ASSEMBLE}" name="AssembleCommand">
+   <action first="{ASSEMBLE}">
+    <group first="{ASSEMBLE}">
+     <sequence first="{ASSEMBLE}">
+      <token first="{ASSEMBLE}" name="ASSEMBLE"/>
+      <nonterminal first="{FILEPATH, ID}" ruleName="FilePath"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{IC}" name="IntermediateCompileCommand">
+   <action first="{IC}">
+    <group first="{IC}">
+     <sequence first="{IC}">
+      <token first="{IC}" name="IC"/>
+      <nonterminal first="{FILEPATH, ID}" ruleName="FilePath"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{FILEPATH, ID}" name="FilePath">
+   <switch first="{FILEPATH, ID}">
+    <case first="{ID}">
+     <action first="{ID}">
+      <token first="{ID}" name="ID"/>
+     </action>
+    </case>
+    <case first="{FILEPATH}">
+     <action first="{FILEPATH}">
+      <token first="{FILEPATH}" name="FILEPATH"/>
+     </action>
+    </case>
+   </switch>
+  </rule>
+ </grammar>
+</parserFile>

@@ -10,8 +10,14 @@ template<class charT>
 class basic_streambuf;
 template<class charT>
 class basic_istream;
+
 template<class charT>
-class basic_ostream;
+class basic_ostream
+{
+public:
+    basic_ostream<charT>& flush();
+};
+
 template<class charT>
 class basic_iostream;
 template<class charT>
@@ -77,5 +83,11 @@ public:
         app, ate, binary, in, out, trunc
     };
 };
+
+istream cin;
+ostream cout;
+ostream cerr;
+ostream clog;
+ostream& endl(ostream& os);
 
 } // namespace std

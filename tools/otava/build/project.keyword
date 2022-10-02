@@ -1,0 +1,9 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+keywords otava.project_keyword
+{
+    ("project", PROJECT), ("interface", INTERFACE), ("source", SOURCE), ("reference", REFERENCE), ("define", DEFINE)
+}

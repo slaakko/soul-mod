@@ -42,8 +42,8 @@ struct StatementParser
     static soul::parser::Match HandlerSeq(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match Handler(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ExceptionDeclaration(Lexer& lexer, soul::cpp20::symbols::Context* context);
-    static soul::parser::Match DeclarationStatement(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match ExpressionStatement(Lexer& lexer, soul::cpp20::symbols::Context* context);
+    static soul::parser::Match DeclarationStatement(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match InitStatement(Lexer& lexer, soul::cpp20::symbols::Context* context);
     static soul::parser::Match Condition(Lexer& lexer, soul::cpp20::symbols::Context* context);
 };

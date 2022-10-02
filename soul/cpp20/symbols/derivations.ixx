@@ -34,6 +34,10 @@ inline bool operator<(const Derivations& left, const Derivations& right)
 
 bool HasDerivation(const Derivations& derivations, Derivation derivation);
 int PointerCount(const Derivations& derivations);
+Derivations RemoveConst(const Derivations& derivations); 
+Derivations RemovePointer(const Derivations& derivations);
+Derivations RemoveLValueRef(const Derivations& derivations);
+Derivations RemoveRValueRef(const Derivations& derivations);
 
 class Writer;
 class Reader;

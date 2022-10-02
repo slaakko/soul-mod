@@ -1,0 +1,5 @@
+project otava.pp.lexer.slg;
+tokens <../token/otava.token>;
+keywords <pp.keyword>;
+expressions <../expression/otava.expr>;
+lexer <pp.lexer>;

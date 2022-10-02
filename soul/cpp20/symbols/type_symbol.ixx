@@ -14,6 +14,21 @@ class TypeSymbol : public ContainerSymbol
 {
 public:
     TypeSymbol(SymbolKind kind_, const std::u32string& name_);
+    virtual TypeSymbol* GetBaseType() { return this; }
+    bool IsAutoTypeSymbol() const;
+    bool IsPointerType() const;
+    bool IsConstType() const;
+    bool IsLValueRefType() const;
+    bool IsRValueRefType() const;
+    TypeSymbol* AddConst();
+    TypeSymbol* RemoveConst();
+    TypeSymbol* AddPointer();
+    TypeSymbol* RemovePointer();
+    TypeSymbol* AddLValueRef();
+    TypeSymbol* RemoveLValueRef();
+    TypeSymbol* AddRValueRef();
+    TypeSymbol* RemoveRValueRef();
+    TypeSymbol* DirectType();
 };
 
 class NestedTypeSymbol : public TypeSymbol

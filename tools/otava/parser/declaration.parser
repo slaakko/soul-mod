@@ -1,0 +1,907 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.declaration;
+
+[interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import otava.symbols;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.parser.attribute;
+[implementation]import otava.parser.type;
+[implementation]import otava.parser.function;
+[implementation]import otava.parser.guard;
+[implementation]import otava.parser.concepts;
+[implementation]import otava.parser.enums;
+[implementation]import otava.parser.expression;
+[implementation]import otava.parser.identifier;
+[implementation]import otava.parser.initialization;
+[implementation]import otava.parser.literal;
+[implementation]import otava.parser.modules;
+[implementation]import otava.parser.punctuation;
+[implementation]import otava.parser.templates;
+[implementation]import otava.parser.type;
+
+parser DeclarationParser
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+
+    using AttributeParser.AttributeSpecifierSeq;
+    using ConceptParser.RequiresClause;
+    using EnumParser.OpaqueEnumDeclaration;
+    using EnumParser.ElaboratedEnumSpecifier;
+    using ExpressionParser.ConstantExpression;
+    using ExpressionParser.IdExpression;
+    using FunctionParser.ParameterDeclarationClause;
+    using FunctionParser.FunctionDefinition;
+    using FunctionParser.NoDeclSpecFunctionDefinition;
+    using GuardParser.NoDeclSpecFunctionDeclarationGuard;
+    using IdentifierParser.Identifier;
+    using IdentifierParser.IdentifierList;
+    using IdentifierParser.NestedNameSpecifier;
+    using IdentifierParser.UnqualifiedId;
+    using InitializationParser.Initializer;
+    using LiteralParser.StringLiteral;
+    using ModuleParser.ExportDeclaration;
+    using ModuleParser.ImportDeclaration;
+    using PunctuationParser.Semicolon;
+    using PunctuationParser.Comma;
+    using PunctuationParser.Ellipsis;
+    using PunctuationParser.Assign;
+    using PunctuationParser.ColonColon;
+    using TemplateParser.DeductionGuide;
+    using TemplateParser.ExplicitInstantiation;
+    using TemplateParser.ExplicitSpecialization;
+    using TemplateParser.TemplateDeclaration;
+    using TemplateParser.Extern;
+    using TemplateParser.Typename;
+    using TypeParser.DefiningTypeSpecifier;
+    using TypeParser.TypeId;
+    using TypeParser.DefiningTypeId;
+
+    DeclarationSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> sequence) : otava::ast::Node*
+        ::= 
+        (
+            Declaration(context):first
+            { 
+                sequence.reset(new otava::ast::DeclarationSequenceNode(lexer.GetSourcePos(pos))); 
+                sequence->AddNode(first);
+            }
+            (
+                Declaration(context):next{ sequence->AddNode(next); }
+            )*
+        )
+        {
+            return sequence.release();
+        }
+        ;
+
+    NamespaceDeclarationSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> sequence, var bool nextIsRBrace) : otava::ast::Node*
+        ::= 
+        (
+            Declaration(context):first
+            { 
+                sequence.reset(new otava::ast::DeclarationSequenceNode(lexer.GetSourcePos(pos))); 
+                sequence->AddNode(first);
+            }
+            (   Declaration(context):next{ sequence->AddNode(next); }
+            |   RBraceNext:next{ nextIsRBrace = true; pass = false; }
+            |   empty
+                { 
+                    if (!nextIsRBrace) 
+                    {
+                        ThrowDeclarationParsingError(lexer.GetSourcePos(pos), context);
+                    }
+                    else
+                    {
+                        pass = false;
+                    }
+                }
+            )*
+        )
+        {
+            return sequence.release();
+        }
+        ;
+
+    RBraceNext
+        ::= &(RBRACE)
+        ;
+
+    Declaration(otava::symbols::Context* context) : otava::ast::Node*
+        ::= ImportDeclaration(context):moduleImportDeclaration{ return moduleImportDeclaration; }
+        |   ExportDeclaration(context):exportDeclaration{ return exportDeclaration; }
+        |   BlockDeclaration(context):blockDeclaration{ return blockDeclaration; }
+        |   NoDeclSpecFunctionDeclaration(context):noDeclSpecDecl{ return noDeclSpecDecl; }
+        |   NoDeclSpecFunctionDefinition(context):noDeclSpecDef{ return noDeclSpecDef; }
+        |   FunctionDefinition(context):functionDefinition{ return functionDefinition; }
+        |   DeductionGuide(context):deductionGuide{ return deductionGuide; }
+        |   ExplicitInstantiation(context):explicitInstantiation{ return explicitInstantiation; }
+        |   ExplicitSpecialization(context):explicitSpecialization{ return explicitSpecialization; }
+        |   TemplateDeclaration(context):templateDeclaration{ return templateDeclaration; }
+        |   LinkageSpecification(context):linkageSpecification{ return linkageSpecification; }
+        |   NamespaceDefinition(context):namespaceDefinition{ return namespaceDefinition; }
+        |   EmptyDeclaration:emptyDeclaration{ return emptyDeclaration; }
+        |   AttributeDeclaration(context):attributeDeclaration{ return attributeDeclaration; }
+        ;
+
+    BlockDeclaration(otava::symbols::Context* context) : otava::ast::Node*
+        ::= OpaqueEnumDeclaration(context):opaqueEnumDeclaration{ return opaqueEnumDeclaration; }
+        |   SimpleDeclaration(context):simpleDeclaration{ return simpleDeclaration; }
+        |   AsmDeclaration(context):asmDeclaration{ return asmDeclaration; }
+        |   NamespaceAliasDefinition(context):namespaceAliasDefinition{ return namespaceAliasDefinition; }
+        |   UsingDeclaration(context):usingDeclaration{ return usingDeclaration; }
+        |   UsingEnumDeclaration(context):usingEnumDeclaration{ return usingEnumDeclaration; }
+        |   UsingDirective(context):usingDirective{ return usingDirective; }
+        |   StaticAssertDeclaration(context):staticAssertDeclaration{ return staticAssertDeclaration; }
+        |   AliasDeclaration(context):aliasDeclaration{ return aliasDeclaration; }
+        ;
+
+    NoDeclSpecFunctionDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   NoDeclSpecFunctionDeclarationGuard(context):guard
+            (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+            Declarator(context):declarator{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            Semicolon:semicolon
+        )
+        {
+            otava::ast::NoDeclSpecFunctionDeclarationNode* node = new otava::ast::NoDeclSpecFunctionDeclarationNode(sourcePos, attributes, declarator, semicolon);
+            otava::symbols::ProcessMemberDeclaration(node, context);
+            return node;
+        }
+        ;
+
+    EmptyDeclaration : otava::ast::Node*
+        ::= SEMICOLON{ return new otava::ast::EmptyDeclarationNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    SimpleDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            (
+                (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+                DeclSpecifierSeq(context):declSpecifierSeq{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+                InitDeclaratorList(context):initDeclaratorList?
+                Semicolon:semicolon
+            )
+            {
+                std::unique_ptr<otava::ast::Node> node(new otava::ast::SimpleDeclarationNode(sourcePos, declSpecifierSeq, initDeclaratorList, attributes, semicolon)); 
+                otava::symbols::ProcessSimpleDeclaration(node.get(), context);
+                return node.release();
+            }
+        |   (AttributeSpecifierSeq(context):attributes3{ sourcePos = lexer.GetSourcePos(pos); })? 
+            DeclSpecifierSeq(context):declSpecifierSeq3{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); } 
+            RefQualifier:ref? 
+            LBRACKET{ lbPos = lexer.GetSourcePos(pos); }
+            IdentifierList(context):identifiers
+            RBRACKET{ rbPos = lexer.GetSourcePos(pos); }
+            Initializer(context):initializer
+            Semicolon:semicolon3
+            {
+                return new otava::ast::StructuredBindingNode(sourcePos, declSpecifierSeq3, ref, identifiers, initializer, attributes3, semicolon3, lbPos, rbPos);
+            }
+        )
+        ;
+
+    AsmDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
+            Asm:asm_{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            StringLiteral(context):asmText
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
+            Semicolon:semicolon
+        )
+        {
+            return new otava::ast::AsmDeclarationNode(sourcePos, asm_, asmText, semicolon, attributes, lpPos, rpPos);
+        }
+        ;
+
+    Asm : otava::ast::Node*
+        ::= ASM{ return new otava::ast::AsmNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    LinkageSpecification(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node, var soul::ast::SourcePos sourcePos, 
+        var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
+        ::=
+        (
+            Extern:extrn{ sourcePos = lexer.GetSourcePos(pos); } 
+            StringLiteral(context):linkage 
+            (
+                LBRACE{ lbPos = lexer.GetSourcePos(pos); } 
+                DeclarationSeq(context):declarations? 
+                (RBRACE{ rbPos = lexer.GetSourcePos(pos); })
+                {
+                    node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkage, declarations, lbPos, rbPos)); 
+                }
+            |   Declaration(context):declaration
+                {
+                    node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkage, declaration, soul::ast::SourcePos(), soul::ast::SourcePos())); 
+                }
+            )
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    NamespaceDefinition(otava::symbols::Context* context) : otava::ast::Node*
+        ::= NestedNamespaceDefinition(context):nestedNamespaceDefinition{ return nestedNamespaceDefinition; }
+        |   NamedNamespaceDefinition(context):namedNamespaceDefinition{ return namedNamespaceDefinition; }
+        |   UnnamedNamespaceDefinition(context):unnamedNamespaceDefinition{ return unnamedNamespaceDefinition; }
+        ;
+
+    NamedNamespaceDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos, 
+        var std::unique_ptr<otava::ast::Node> nsName) : otava::ast::Node*
+        ::= 
+        (
+            (Inline:inln{ sourcePos = lexer.GetSourcePos(pos); })?
+            Namespace:nskw {  if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            AttributeSpecifierSeq(context):attributes?
+            Identifier(context):nsn{ nsName.reset(nsn); otava::symbols::BeginNamespace(nsName.get(), context); }
+            LBRACE{ lbPos = lexer.GetSourcePos(pos); }
+            NamespaceBody(context):nsBody
+            RBRACE{ rbPos = lexer.GetSourcePos(pos); otava::symbols::EndNamespace(nsName.get(), 1, context); }
+        )
+        {
+            return new otava::ast::NamespaceDefinitionNode(sourcePos, nskw, nsName.release(), nsBody, inln, attributes, lbPos, rbPos);
+        }
+        ;
+
+    UnnamedNamespaceDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            (Inline:inln{ sourcePos = lexer.GetSourcePos(pos); })?
+            Namespace:nskw{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            AttributeSpecifierSeq(context):attributes?
+            LBRACE{ lbPos = lexer.GetSourcePos(pos); }
+            NamespaceBody(context):nsBody
+            RBRACE{ rbPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new otava::ast::NamespaceDefinitionNode(sourcePos, nskw, nullptr, nsBody, inln, attributes, lbPos, rbPos);
+        }
+        ;
+
+    NestedNamespaceDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::NestedNameSpecifierNode> nns,
+        var std::unique_ptr<otava::ast::Node> qualifiedNsName, var std::unique_ptr<otava::ast::Node> nsNameNode, 
+        var soul::ast::SourcePos nnsPos, var soul::ast::SourcePos inlnPos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos, var int nsLevel) : otava::ast::Node*
+        ::= 
+        (
+            Namespace:nskw{ sourcePos = lexer.GetSourcePos(pos); }
+            (
+                empty{ nns.reset(new otava::ast::NestedNameSpecifierNode(sourcePos)); }
+                NestedNamespaceSpecifier(context, nns.get()):level{ nnsPos = sourcePos; nsLevel = level; }
+            )
+            LBRACE{ lbPos = lexer.GetSourcePos(pos); otava::symbols::BeginNamespace(nns.get(), context); }
+            NamespaceBody(context):nsBody
+            RBRACE{ rbPos = lexer.GetSourcePos(pos); otava::symbols::EndNamespace(nns.get(), nsLevel, context); }
+        )
+        {
+            return new otava::ast::NamespaceDefinitionNode(sourcePos, nskw, nns.release(), nsBody, nullptr, nullptr, lbPos, rbPos);
+        }
+        ;
+
+    NamespaceAliasDefinition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            Namespace:ns{ sourcePos = lexer.GetSourcePos(pos); } Identifier(context):id Assign:assign QualifiedNamespaceSpecifier(context):qns Semicolon:semicolon
+        )
+        {
+            return new otava::ast::NamespaceAliasDefinitionNode(sourcePos, id, assign, qns, semicolon);
+        }
+        ;
+
+    QualifiedNamespaceSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } 
+            NamespaceName(context):nsName
+            {
+                return new otava::ast::QualifiedIdNode(sourcePos, nns, nsName);
+            }
+        |   NamespaceName(context):nsName2
+            { 
+                return nsName2; 
+            }
+        )
+        ;
+
+    NamespaceBody(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            (NamespaceDeclarationSeq(context):declarations{ sourcePos = lexer.GetSourcePos(pos); })?
+        )
+        {
+            return new otava::ast::NamespaceBodyNode(sourcePos, declarations);
+        }
+        ;
+
+    NestedNamespaceSpecifier(otava::symbols::Context* context, otava::ast::Node* container, var int level) : int
+        ::= 
+        (
+            Identifier(context):first{ container->AddNode(first); level = 1; } 
+            (   ColonColon:colonColon{ container->AddNode(colonColon); } 
+                (Inline:inln{ container->AddNode(inln); })?
+                Identifier(context):next{ container->AddNode(next); ++level; }
+            )+
+        )
+        {
+            return level;
+        }
+        ;
+
+    Namespace : otava::ast::Node*
+        ::= NAMESPACE{ return new otava::ast::NamespaceNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    NamespaceName(otava::symbols::Context* context) : otava::ast::Node*
+        ::= Identifier(context):identifier{ return identifier; }
+        ;
+
+    UsingDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   
+            Using:usng{ sourcePos = lexer.GetSourcePos(pos); } 
+            UsingDeclaratorList(context):usingDeclarators 
+            Semicolon:semicolon
+        )
+        {
+            otava::ast::Node* node = new otava::ast::UsingDeclarationNode(sourcePos, usng, usingDeclarators, semicolon);
+            otava::symbols::AddUsingDeclaration(node, context); 
+            return node;
+        }
+        ;
+
+    Using : otava::ast::Node*
+        ::= USING{ return new otava::ast::UsingNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    UsingDeclaratorList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (
+            UsingDeclarator(context):first{ node.reset(new otava::ast::UsingDeclaratorListNode(lexer.GetSourcePos(pos))); node->AddNode(first); }
+            (
+                Comma:comma{ node->AddNode(comma); } 
+                UsingDeclarator(context):next{ node->AddNode(next); }
+            )*
+            (Ellipsis:ellipsis{ node->AddNode(ellipsis); })?
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    UsingDeclarator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos nnsPos) : otava::ast::Node*
+        ::= 
+        (
+            Typename:typename_{ sourcePos = lexer.GetSourcePos(pos); } 
+            NestedNameSpecifier(context):nns{ nnsPos = lexer.GetSourcePos(pos); } 
+            UnqualifiedId(context):unqualifiedId
+            {
+                return new otava::ast::PrefixNode(sourcePos, typename_, new otava::ast::QualifiedIdNode(nnsPos, nns, unqualifiedId));
+            }
+        |   NestedNameSpecifier(context):nns2{ sourcePos = lexer.GetSourcePos(pos); } 
+            UnqualifiedId(context):unqualifiedId2
+            { 
+                return new otava::ast::QualifiedIdNode(sourcePos, nns2, unqualifiedId2); 
+            }
+        )
+        ;
+
+    UsingEnumDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            Using:usng{ sourcePos = lexer.GetSourcePos(pos); } 
+            ElaboratedEnumSpecifier(context):ees 
+            Semicolon:semicolon
+        )
+        {
+            otava::ast::Node* node = new otava::ast::UsingEnumDeclarationNode(sourcePos, usng, ees, semicolon);
+            // sngcpp::symbols::AddUsingEnumDeclaration(node, ctx); TODO
+            return node;
+        }
+        ;
+
+    UsingDirective(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos nnsPos) : otava::ast::Node*
+        ::= 
+        (
+            (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })? 
+            Using:usng{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); }
+            Namespace:nskw
+            (   NestedNameSpecifier(context):nns{ nnsPos = lexer.GetSourcePos(pos); } 
+                NamespaceName(context):nsName 
+                Semicolon:semicolon
+                {
+                    otava::ast::UsingDirectiveNode* node = new otava::ast::UsingDirectiveNode(sourcePos, usng, nskw, 
+                        new otava::ast::QualifiedIdNode(nnsPos, nns, nsName), semicolon, attributes);
+                    otava::symbols::AddUsingDirective(node, context); 
+                    return node;
+                }
+            |   NamespaceName(context):nsName2 
+                Semicolon:semicolon2
+                {
+                    otava::ast::UsingDirectiveNode* node = new otava::ast::UsingDirectiveNode(sourcePos, usng, nskw, nsName2, semicolon2, attributes);
+                    otava::symbols::AddUsingDirective(node, context); 
+                    return node;
+                }
+            )
+        )
+        ;
+
+    StaticAssertDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            StaticAssert:staticAssert{ sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); }
+            ConstantExpression(context):constantExpr
+            (
+                Comma:comma
+                StringLiteral(context):stringLiteral
+                RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+                Semicolon:semicolon
+                {
+                    return new otava::ast::StaticAssertDeclarationNode(sourcePos, staticAssert, constantExpr, comma, stringLiteral, semicolon, lpPos, rpPos);
+                }
+            |   RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+                Semicolon:semicolon2
+                {
+                    return new otava::ast::StaticAssertDeclarationNode(sourcePos, staticAssert, constantExpr, nullptr, nullptr, semicolon2, lpPos, rpPos);
+                }
+            )
+        )
+        ;
+
+    StaticAssert : otava::ast::Node*
+        ::= STATIC_ASSERT{ return new otava::ast::StaticAssertNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    AliasDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   Using:usng{ sourcePos = lexer.GetSourcePos(pos); } 
+            Identifier(context):identifier 
+            AttributeSpecifierSeq(context):attributes? 
+            Assign:assign 
+            DefiningTypeId(context):definingTypeId
+            Semicolon:semicolon
+        )
+        {
+            otava::ast::AliasDeclarationNode* aliasDeclarationNode = new otava::ast::AliasDeclarationNode(sourcePos, usng, identifier, assign, definingTypeId, 
+                attributes, semicolon);
+            otava::symbols::ProcessAliasDeclaration(aliasDeclarationNode, context); 
+            return aliasDeclarationNode;
+        }
+        ;
+
+    DeclSpecifierSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> sequence) : otava::ast::Node*
+        ::= 
+        (
+            empty{ context->PushResetFlag(otava::symbols::ContextFlags::hasDefiningTypeSpecifier | otava::symbols::ContextFlags::friendSpecifier); }
+            DeclSpecifier(context):first{ sequence.reset(new otava::ast::DeclSpecifierSequenceNode(lexer.GetSourcePos(pos))); sequence->AddNode(first); } 
+            (
+                DeclSpecifier(context):next{ sequence->AddNode(next); }
+            )*
+            (
+                AttributeSpecifierSeq(context):attributes{ sequence->AddNode(attributes); }
+            )?
+        )
+        {
+            context->PopFlags();
+            return sequence.release();
+        }
+        /
+        {
+            context->PopFlags();
+        }
+        ;
+
+    Inline : otava::ast::Node*
+        ::= INLINE{ return new otava::ast::InlineNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    DeclSpecifier(otava::symbols::Context* context) : otava::ast::Node*
+        ::= StorageClassSpecifier:storageClassSpecifier{ return storageClassSpecifier; }
+        |   DefiningTypeSpecifier(context):definingTypeSpecifier{ return definingTypeSpecifier; }
+        |   FunctionSpecifier(context):functionSpecifier{ return functionSpecifier; }
+        |   Inline:inln{ return inln; }
+        |   FRIEND{ context->SetFlag(otava::symbols::ContextFlags::friendSpecifier); return new otava::ast::FriendNode(lexer.GetSourcePos(pos)); }
+        |   TYPEDEF{ return new otava::ast::TypedefNode(lexer.GetSourcePos(pos)); }
+        |   CONSTEXPR{ return new otava::ast::ConstExprNode(lexer.GetSourcePos(pos)); }
+        |   CONSTEVAL{ return new otava::ast::ConstEvalNode(lexer.GetSourcePos(pos)); }
+        |   CONSTINIT{ return new otava::ast::ConstInitNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    StorageClassSpecifier : otava::ast::Node*
+        ::= STATIC{ return new otava::ast::StaticNode(lexer.GetSourcePos(pos)); }
+        |   THREAD_LOCAL{ return new otava::ast::ThreadLocalNode(lexer.GetSourcePos(pos)); }
+        |   EXTERN{ return new otava::ast::ExternNode(lexer.GetSourcePos(pos)); }
+        |   MUTABLE{ return new otava::ast::MutableNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    FunctionSpecifier(otava::symbols::Context* context) : otava::ast::Node*
+        ::= VIRTUAL{ return new otava::ast::VirtualNode(lexer.GetSourcePos(pos)); }
+        |   ExplicitSpecifier(context):explicitSpecifier{ return explicitSpecifier; }
+        ;
+
+    ExplicitSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        ::= 
+        (   EXPLICIT{ sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            ConstantExpression(context):expr 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); return new otava::ast::ConditionalExplicitNode(sourcePos, expr, lpPos, rpPos); }
+        |   EXPLICIT{ return new otava::ast::ExplicitNode(lexer.GetSourcePos(pos)); }
+        )
+        ;
+
+    InitDeclaratorList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> list) : otava::ast::Node*
+        ::= 
+        (
+            InitDeclarator(context):first{ list.reset(new otava::ast::InitDeclaratorListNode(lexer.GetSourcePos(pos))); list->AddNode(first); } 
+            (
+                Comma:comma{ list->AddNode(comma); } 
+                InitDeclarator(context):next{ list->AddNode(next); }
+            )*
+        )
+        {
+            return list.release();
+        }
+        ;
+
+    InitDeclarator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            Declarator(context):declarator{ sourcePos = lexer.GetSourcePos(pos); }
+            (   RequiresClause(context):requiresClause{ return new otava::ast::InitDeclaratorNode(sourcePos, declarator, requiresClause); }
+            |   Initializer(context):initializer{ return new otava::ast::InitDeclaratorNode(sourcePos, declarator, initializer); }
+            |   empty{ return declarator; }
+            )
+        )
+        ;
+
+    DeclaratorPushClassScope(otava::symbols::Context* context) : otava::ast::Node*
+        ::= 
+        (
+            empty{ context->PushSetFlag(otava::symbols::ContextFlags::addClassScope); }
+            Declarator(context):declarator{ context->PopFlags(); return declarator; } / { context->PopFlags(); }
+        )
+        ;
+
+    Declarator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            (
+                NoPtrDeclarator(context, true):declarator{ sourcePos = lexer.GetSourcePos(pos); }
+                ParametersAndQualifiers(context):paramsAndQualifiers 
+                TrailingReturnType(context):trailingReturnType
+            )
+            {
+                return new otava::ast::TrailingFunctionDeclaratorNode(sourcePos, declarator, paramsAndQualifiers, trailingReturnType);
+            }
+        |
+            (
+                PtrDeclarator(context):ptrDeclarator
+            )
+            {
+                return ptrDeclarator;
+            }
+        )
+        ;
+
+    PtrDeclarator(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> ptrDeclarator) : otava::ast::Node*
+        ::= 
+        (
+            PtrOperator(context):first{ ptrDeclarator.reset(new otava::ast::PtrDeclaratorNode(lexer.GetSourcePos(pos))); ptrDeclarator->AddNode(first); } 
+            (
+                PtrOperator(context):next{ ptrDeclarator->AddNode(next); }
+            )* 
+            NoPtrDeclarator(context, false):noPtrDeclarator{ ptrDeclarator->AddNode(noPtrDeclarator); return ptrDeclarator.release(); }
+        )
+        |   NoPtrDeclarator(context, false):noPtrDecl{ return noPtrDecl; }
+        ;
+
+    NoPtrDeclarator(otava::symbols::Context* context, bool trailingDecl, var std::unique_ptr<otava::ast::Node> node,
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) :
+            otava::ast::Node*
+        ::=
+        (
+            (   LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; } 
+                PtrDeclarator(context):declarator 
+                RPAREN{ rpPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::ParenthesizedDeclaratorNode(sourcePos, declarator, lpPos, rpPos)); }
+            |   DeclaratorId(context):declaratorId{ sourcePos = lexer.GetSourcePos(pos); } 
+                AttributeSpecifierSeq(context):attributes{ node.reset(new otava::ast::TrailingAttributesNode(sourcePos, declaratorId, attributes)); }
+            |   DeclaratorId(context):declaratorId2{ sourcePos = lexer.GetSourcePos(pos); node.reset(declaratorId2); }
+            )
+            (   LBRACKET{ lbPos = lexer.GetSourcePos(pos); } 
+                ConstantExpression(context):index? 
+                RBRACKET{ rbPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::ArrayDeclaratorNode(sourcePos, node.release(), index, lbPos, rbPos)); } 
+                (   AttributeSpecifierSeq(context):attributes2{ node.reset(new otava::ast::TrailingAttributesNode(lbPos, node.release(), attributes2)); }
+                |   empty
+                )
+            |   ParametersAndQualifiers(context):paramsAndQualifiers
+                { 
+                    if (trailingDecl)
+                    {
+                        pass = false;
+                    }
+                    else
+                    {
+                        node.reset(new otava::ast::FunctionDeclaratorNode(sourcePos, node.release(), paramsAndQualifiers)); 
+                    }
+                } 
+            )*            
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    ParametersAndQualifiers(otava::symbols::Context* context, var std::unique_ptr<otava::ast::ParameterListNode> parameterListNode,
+        var std::unique_ptr<otava::ast::TrailingQualifiersNode> trailingQualifiersNode,
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
+        ::= 
+        (
+            LPAREN
+            { 
+                sourcePos = lexer.GetSourcePos(pos); 
+                lpPos = sourcePos; 
+                parameterListNode.reset(new otava::ast::ParameterListNode(sourcePos)); 
+                parameterListNode->SetLParenPos(lpPos); 
+            } 
+            ParameterDeclarationClause(context, parameterListNode.get()):params 
+            RPAREN
+            { 
+                rpPos = lexer.GetSourcePos(pos); 
+                parameterListNode->SetRParenPos(rpPos); 
+                trailingQualifiersNode.reset(new otava::ast::TrailingQualifiersNode(sourcePos, parameterListNode.release())); 
+            }
+            (CVQualifierSeq:cvQualifiers{ trailingQualifiersNode->AddNode(cvQualifiers); })?
+            (RefQualifier:refQualifier{ trailingQualifiersNode->AddNode(refQualifier); })?
+            (NoexceptSpecifier(context):noexceptSpecifier{ trailingQualifiersNode->AddNode(noexceptSpecifier); })?
+            (ThrowSpecifier(context):throwSpecifier{ trailingQualifiersNode->AddNode(throwSpecifier); })?
+            (AttributeSpecifierSeq(context):attributes{ trailingQualifiersNode->AddNode(attributes); })?
+        )
+        {
+            if (trailingQualifiersNode->Nodes().IsEmpty())
+            {
+                return trailingQualifiersNode->ReleaseSubject();
+            }
+            else
+            {
+                return trailingQualifiersNode.release();
+            }
+        }
+        ;
+
+    TrailingReturnType(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            ARROW{ sourcePos = lexer.GetSourcePos(pos); }
+            TypeId(context):typeId
+        )
+        {
+            return new otava::ast::TrailingReturnTypeNode(sourcePos, typeId);
+        }
+        ;
+
+    PtrOperator(otava::symbols::Context* context, var std::unique_ptr<otava::ast::TrailingQualifiersNode> trailingQualifiersNode, 
+        var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   (NestedNameSpecifier(context):nns{ sourcePos = lexer.GetSourcePos(pos); } Ptr:ptr)
+            { 
+                trailingQualifiersNode.reset(new otava::ast::TrailingQualifiersNode(sourcePos, new otava::ast::QualifiedPtrNode(sourcePos, nns, ptr)));
+            }
+            (AttributeSpecifierSeq(context):attributes{ trailingQualifiersNode->AddNode(attributes); })? 
+            (CVQualifierSeq:cvQualifiers{ trailingQualifiersNode->AddNode(cvQualifiers); })?
+        |   Ptr:ptr2
+            { 
+                sourcePos = lexer.GetSourcePos(pos);
+                trailingQualifiersNode.reset(new otava::ast::TrailingQualifiersNode(sourcePos, ptr2));
+            } 
+            (AttributeSpecifierSeq(context):attributes2{ trailingQualifiersNode->AddNode(attributes2); })? 
+            (CVQualifierSeq:cvQualifiers2{ trailingQualifiersNode->AddNode(cvQualifiers2); })?
+        |   LvalueRef:lvalueRef
+            { 
+                sourcePos = lexer.GetSourcePos(pos);
+                trailingQualifiersNode.reset(new otava::ast::TrailingQualifiersNode(sourcePos, lvalueRef));
+            } 
+            (AttributeSpecifierSeq(context):attributes3{ trailingQualifiersNode->AddNode(attributes3); })?
+        |   RvalueRef:rvalueRef
+            { 
+                sourcePos = lexer.GetSourcePos(pos);
+                trailingQualifiersNode.reset(new otava::ast::TrailingQualifiersNode(sourcePos, rvalueRef));
+            } 
+            (AttributeSpecifierSeq(context):attributes4{ trailingQualifiersNode->AddNode(attributes4); })?
+        )
+        {
+            if (trailingQualifiersNode->Nodes().IsEmpty())
+            {
+                return trailingQualifiersNode->ReleaseSubject();
+            }
+            else
+            {
+                return trailingQualifiersNode.release();
+            }
+        }
+        ;
+
+    AbstractDeclarator(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   NoPtrAbstractDeclarator(context, true):declarator{ sourcePos = lexer.GetSourcePos(pos); } 
+            ParametersAndQualifiers(context):params 
+            TrailingReturnType(context):trailingReturnType
+            {
+                return new otava::ast::TrailingFunctionDeclaratorNode(sourcePos, declarator, params, trailingReturnType);
+            }
+        |   PtrAbstractDeclarator(context):ptrAbstractDeclarator{ return ptrAbstractDeclarator; }
+        |   AbstractPackDeclarator(context):abstractPackDeclarator{ return abstractPackDeclarator; }
+        )
+        ;
+
+    NoPtrAbstractDeclarator(otava::symbols::Context* context, bool trailingDecl, var std::unique_ptr<otava::ast::Node> node, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            (   LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; } 
+                PtrAbstractDeclarator(context):declarator 
+                RPAREN{ rpPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::ParenthesizedDeclaratorNode(sourcePos, declarator, lpPos, rpPos)); }
+            |   empty{ sourcePos = lexer.GetSourcePos(pos); node.reset(new otava::ast::AbstractDeclaratorNode(sourcePos)); }
+            )
+            (   LBRACKET{ lbPos = lexer.GetSourcePos(pos); } 
+                ConstantExpression(context):index? 
+                RBRACKET{ rbPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::ArrayDeclaratorNode(sourcePos, node.release(), index, lbPos, rbPos)); } 
+                (   AttributeSpecifierSeq(context):attributes2{ node.reset(new otava::ast::TrailingAttributesNode(lbPos, node.release(), attributes2)); }
+                |   empty
+                )
+            |   ParametersAndQualifiers(context):paramsAndQualifiers
+                { 
+                    if (trailingDecl)
+                    {
+                        pass = false;
+                    }
+                    else
+                    {
+                        node.reset(new otava::ast::FunctionDeclaratorNode(sourcePos, node.release(), paramsAndQualifiers)); 
+                    }
+                } 
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    PtrAbstractDeclarator(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (
+            PtrOperator(context):first{ node.reset(new otava::ast::PtrDeclaratorNode(lexer.GetSourcePos(pos))); node->AddNode(first); } 
+            (
+                PtrOperator(context):next{ node->AddNode(next); }
+            )* 
+            (   NoPtrAbstractDeclarator(context, false):noPtrAbstractDeclarator{ node->AddNode(noPtrAbstractDeclarator); }
+            |   empty
+            )
+        |   NoPtrAbstractDeclarator(context, false):noPtrAbstractDecl{ node.reset(noPtrAbstractDecl); }
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    AbstractPackDeclarator(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*
+        ::= 
+        (   NoPtrAbstractPackDeclarator(context):noPtrAbstractPackDeclarator{ return noPtrAbstractPackDeclarator; }
+        |   PtrOperator(context):first{ node.reset(new otava::ast::PtrDeclaratorNode(lexer.GetSourcePos(pos))); node->AddNode(first); } 
+            (
+                PtrOperator(context):next{ node->AddNode(next); }
+            )* 
+            NoPtrAbstractPackDeclarator(context):noPtrAbstractPackDeclarator2{ node->AddNode(noPtrAbstractPackDeclarator2); return node.release(); }
+        )
+        ;
+
+    NoPtrAbstractPackDeclarator(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
+        ::= 
+        (
+            Ellipsis:ellipsis{ node.reset(ellipsis); sourcePos = lexer.GetSourcePos(pos); }
+            (   ParametersAndQualifiers(context):paramsAndQualifiers{ node.reset(new otava::ast::FunctionDeclaratorNode(sourcePos, node.release(), paramsAndQualifiers)); }
+            |   LBRACKET{ lbPos = lexer.GetSourcePos(pos); } 
+                ConstantExpression(context):index? 
+                RBRACKET{ rbPos = lexer.GetSourcePos(pos); node.reset(new otava::ast::ArrayDeclaratorNode(sourcePos, node.release(), index, lbPos, rbPos)); } 
+            )*
+        )
+        {
+            return node.release();
+        }
+        ;
+
+    DeclaratorId(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> idExprNode, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   Ellipsis:ellipsis{ sourcePos = lexer.GetSourcePos(pos); } IdExpression(context):idExpr{ return new otava::ast::PackDeclaratorIdNode(sourcePos, ellipsis, idExpr); }
+        |   IdExpression(context):idExpr2{ idExprNode.reset(idExpr2); otava::symbols::AddParentScope(idExprNode.get(), context); return idExprNode.release(); }
+        )
+        ;
+
+    Ptr : otava::ast::Node*
+        ::= STAR{ return new otava::ast::PtrNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    LvalueRef : otava::ast::Node*
+        ::= AMP{ return new otava::ast::LvalueRefNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    RvalueRef : otava::ast::Node*
+        ::= AMP_AMP{ return new otava::ast::RvalueRefNode(lexer.GetSourcePos(pos)); }
+        ;
+
+    RefQualifier : otava::ast::Node*
+        ::= RvalueRef:rvalueRef{ return rvalueRef; }
+        |   LvalueRef:lvalueRef{ return lvalueRef; }
+        ;
+
+    CVQualifierSeq(var std::unique_ptr<otava::ast::Node> sequence) : otava::ast::Node*
+        ::= 
+        (
+            CVQualifier:first{ sequence.reset(new otava::ast::CVQualifierSequenceNode(lexer.GetSourcePos(pos))); sequence->AddNode(first); } 
+            (
+                CVQualifier:next{ sequence->AddNode(next); }
+            )*
+        )
+        {
+            return sequence.release();
+        }
+        ;
+
+    CVQualifier : otava::ast::Node*
+        ::= CONST{ return new otava::ast::ConstNode(lexer.GetSourcePos(pos)); }
+        |   VOLATILE{ return new otava::ast::VolatileNode(lexer.GetSourcePos(pos)); }
+        ;
+
+
+    NoexceptSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            NOEXCEPT{ sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            ConstantExpression(context):constantExpr 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+        |   NOEXCEPT{ sourcePos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new otava::ast::NoexceptSpecifierNode(sourcePos, constantExpr, lpPos, rpPos);
+        }
+        ;
+
+    ThrowSpecifier(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : 
+        otava::ast::Node*
+        ::= 
+        (
+            THROW{ sourcePos = lexer.GetSourcePos(pos); } 
+            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
+            RPAREN{ rpPos = lexer.GetSourcePos(pos); }
+        )
+        {
+            return new otava::ast::ThrowSpecifierNode(sourcePos, lpPos, rpPos);
+        }
+        ;
+
+    AttributeDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (   
+            AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); }
+            Semicolon:semicolon
+        )
+        {
+            return new otava::ast::AttributeDeclarationNode(sourcePos, attributes, semicolon);
+        }
+        ;
+}

@@ -75,6 +75,7 @@ FileStream::FileStream(const std::string& filePath_, OpenMode openMode) : filePa
         mode += "b";
     }
     std::string nativeFilePath = Utf8StringToPlatformString(filePath);
+#ifdef _WIN32
     errno_t error = fopen_s(&file, nativeFilePath.c_str(), mode.c_str());
     if (error)
     {
@@ -83,30 +84,48 @@ FileStream::FileStream(const std::string& filePath_, OpenMode openMode) : filePa
         throw std::runtime_error("could not open file '" + std::string(filePath) + "': " + PlatformStringToUtf8(buf));
     }
     needToClose = true;
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+    file = fopen(nativeFilePath.c_str(), mode.c_str());
+    if (!file)
+    { 
+        throw std::runtime_error("could not open file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+    }
+    needToClose = true;
+#else
+
+#error unknown platform
+
+#endif
 }
 
 FileStream::~FileStream()
 {
     if (file && needToClose)
     {
-        std::fclose(file);
+        fclose(file);
     }
 }
 
 int FileStream::ReadByte()
 {
-    int result = std::fgetc(file);
+    int result = fgetc(file);
     if (result == EOF)
     {
-        if (std::feof(file))
+        if (feof(file))
         {
             return -1;
         }
         else
         {
+#ifdef _WIN32
             char buf[4096];
             strerror_s(buf, sizeof(buf), errno);
             throw std::runtime_error("could not read from file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+            throw std::runtime_error("could not read from file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+#else
+#error unknown platform
+#endif
         }
     }
     SetPosition(Position() + 1);
@@ -115,12 +134,18 @@ int FileStream::ReadByte()
 
 int64_t FileStream::Read(uint8_t* buf, int64_t count)
 {
-    int64_t result = std::fread(buf, 1, count, file);
-    if (std::ferror(file))
+    int64_t result = fread(buf, 1, count, file);
+    if (ferror(file))
     {
+#ifdef _WIN32
         char buf[4096];
         strerror_s(buf, sizeof(buf), errno);
         throw std::runtime_error("could not read from file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+        throw std::runtime_error("could not read from file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+#else
+#error unknown platform
+#endif
     }
     SetPosition(Position() + result);
     return result;
@@ -128,36 +153,54 @@ int64_t FileStream::Read(uint8_t* buf, int64_t count)
 
 void FileStream::Write(uint8_t x)
 {
-    int result = std::fputc(x, file);
+    int result = fputc(x, file);
     if (result == EOF)
     {
+#ifdef _WIN32
         char buf[4096];
         strerror_s(buf, sizeof(buf), errno);
         throw std::runtime_error("could not write to file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+        throw std::runtime_error("could not write to file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+#else
+#error unknown platform
+#endif
     }
     SetPosition(Position() + 1);
 }
 
 void FileStream::Write(uint8_t* buf, int64_t count)
 {
-    int64_t result = std::fwrite(buf, 1, count, file);
+    int64_t result = fwrite(buf, 1, count, file);
     if (result != count)
     {
+#ifdef _WIN32
         char buf[4096];
         strerror_s(buf, sizeof(buf), errno);
         throw std::runtime_error("could not write to file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+        throw std::runtime_error("could not write to file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+#else
+#error unknown platform
+#endif
     }
     SetPosition(Position() + result);
 }
 
 void FileStream::Flush()
 {
-    int result = std::fflush(file);
+    int result = fflush(file);
     if (result != 0)
     {
-    char buf[4096];
-    strerror_s(buf, sizeof(buf), errno);
-    throw std::runtime_error("could not flush file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#ifdef _WIN32
+        char buf[4096];
+        strerror_s(buf, sizeof(buf), errno);
+        throw std::runtime_error("could not flush file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+        throw std::runtime_error("could not flush file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+#else
+#error unknown platform
+#endif
     }
 }
 
@@ -185,13 +228,19 @@ void FileStream::Seek(int64_t pos, Origin origin)
 #ifdef _WIN32
     int result = _fseeki64(file, pos, seekOrigin);
 #else
-    int result = std::fseek(file, pos, seekOrigin);
+    int result = fseek(file, pos, seekOrigin);
 #endif
     if (result != 0)
     {
+#ifdef _WIN32
         char buf[4096];
         strerror_s(buf, sizeof(buf), errno);
         throw std::runtime_error("could not seek file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+        throw std::runtime_error("could not seek file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+#else
+#error unknown platform
+#endif
     }
     switch (origin)
     {
@@ -215,12 +264,18 @@ void FileStream::Seek(int64_t pos, Origin origin)
 
 int64_t FileStream::Tell()
 {
-    int64_t result = std::ftell(file);
+    int64_t result = ftell(file);
     if (result == -1)
     {
+#ifdef _WIN32
         char buf[4096];
         strerror_s(buf, sizeof(buf), errno);
         throw std::runtime_error("could not tell file '" + filePath + "': " + PlatformStringToUtf8(buf));
+#elif defined(__linux) || defined(__unix) || defined(__posix)
+        throw std::runtime_error("could not tell file '" + std::string(filePath) + "': " + std::string(strerror(errno)));
+#else
+#error unknown platform
+#endif
     }
     return result;
 }

@@ -20,6 +20,17 @@ LabeledStatementNode::LabeledStatementNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
+Node* LabeledStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    LabeledStatementNode* clone = new LabeledStatementNode(GetSourcePos(), label->Clone(), stmt->Clone(), clonedAttributes, colonPos);
+    return clone;
+}
+
 void LabeledStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -47,9 +58,21 @@ CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_) : C
 {
 }
 
-CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& casePos_, const soul::ast::SourcePos& colonPos_) :
+CaseStatementNode::CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& casePos_, 
+    const soul::ast::SourcePos& colonPos_) :
     CompoundNode(NodeKind::caseStatmentNode, sourcePos_), caseExpr(caseExpr_), stmt(stmt_), attributes(attributes_), casePos(casePos_), colonPos(colonPos_)
 {
+}
+
+Node* CaseStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    CaseStatementNode* clone = new CaseStatementNode(GetSourcePos(), caseExpr->Clone(), stmt->Clone(), clonedAttributes, casePos, colonPos);
+    return clone;
 }
 
 void CaseStatementNode::Accept(Visitor& visitor)
@@ -81,9 +104,21 @@ DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
-DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& defaultPos_, const soul::ast::SourcePos& colonPos_) :
+DefaultStatementNode::DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& defaultPos_, 
+    const soul::ast::SourcePos& colonPos_) :
     CompoundNode(NodeKind::defaultStatementNode, sourcePos_), stmt(stmt_), attributes(attributes_), defaultPos(defaultPos_), colonPos(colonPos_)
 {
+}
+
+Node* DefaultStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    DefaultStatementNode* clone = new DefaultStatementNode(GetSourcePos(), stmt->Clone(), clonedAttributes, defaultPos, colonPos);
+    return clone;
 }
 
 void DefaultStatementNode::Accept(Visitor& visitor)
@@ -109,7 +144,8 @@ void DefaultStatementNode::Read(Reader& reader)
     colonPos = reader.ReadSourcePos();
 }
 
-CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::compoundStatementNode, sourcePos_)
+CompoundStatementNode::CompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : 
+    SequenceNode(NodeKind::compoundStatementNode, sourcePos_), functionScope(nullptr)
 {
 }
 
@@ -126,6 +162,22 @@ int CompoundStatementNode::Level() const
         parent = parent->Parent();
     }
     return 0;
+}
+
+Node* CompoundStatementNode::Clone() const
+{
+    CompoundStatementNode* clone = new CompoundStatementNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    if (attributes)
+    {
+        clone->SetAttributes(attributes->Clone());
+    }
+    clone->SetLBracePos(lbPos);
+    clone->SetRBracePos(rbPos);
+    return clone;
 }
 
 void CompoundStatementNode::Accept(Visitor& visitor)
@@ -163,6 +215,28 @@ IfStatementNode::IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* i
     CompoundNode(NodeKind::ifStatementNode, sourcePos_), initStmt(initStmt_), cond(cond_), thenStmt(thenStmt_), elseStmt(elseStmt_), attributes(attributes_),
     ifPos(ifPos_), lpPos(lpPos_), rpPos(rpPos_), constExprPos(constExprPos_), elsePos(elsePos_)
 {
+}
+
+Node* IfStatementNode::Clone() const
+{
+    Node* clonedInitStmt = nullptr;
+    if (initStmt)
+    {
+        clonedInitStmt = initStmt->Clone();
+    }
+    Node* clonedElseStmt = nullptr;
+    if (elseStmt)
+    {
+        clonedElseStmt = elseStmt->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    IfStatementNode* clone = new IfStatementNode(GetSourcePos(), clonedInitStmt, cond->Clone(), thenStmt->Clone(), clonedElseStmt, clonedAttributes,
+        ifPos, lpPos, rpPos, constExprPos, elsePos);
+    return clone;
 }
 
 void IfStatementNode::Accept(Visitor& visitor)
@@ -204,9 +278,26 @@ SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_)
 {
 }
 
-SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+SwitchStatementNode::SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     CompoundNode(NodeKind::switchStatemeNode, sourcePos_), initStmt(initStmt_), cond(cond_), stmt(stmt_), attributes(attributes_), switchPos(switchPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* SwitchStatementNode::Clone() const
+{
+    Node* clonedInitStmt = nullptr;
+    if (initStmt)
+    {
+        clonedInitStmt = initStmt->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    SwitchStatementNode* clone = new SwitchStatementNode(GetSourcePos(), clonedInitStmt, cond->Clone(), stmt->Clone(), clonedAttributes, switchPos, lpPos, rpPos);
+    return clone;
 }
 
 void SwitchStatementNode::Accept(Visitor& visitor)
@@ -242,9 +333,21 @@ WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_) :
 {
 }
 
-WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& whilePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
+WhileStatementNode::WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& whilePos_, 
+    const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     CompoundNode(NodeKind::whileStatementNode, sourcePos_), cond(cond_), stmt(stmt_), attributes(attributes_), whilePos(whilePos_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* WhileStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    WhileStatementNode* clone = new WhileStatementNode(GetSourcePos(), cond->Clone(), stmt->Clone(), clonedAttributes, whilePos, lpPos, rpPos);
+    return clone;
 }
 
 void WhileStatementNode::Accept(Visitor& visitor)
@@ -280,8 +383,20 @@ DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_) : Compo
 
 DoStatementNode::DoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* stmt_, Node* expr_, Node* attributes_, Node* semicolon_,
     const soul::ast::SourcePos& doPos_, const soul::ast::SourcePos& whilePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
-    CompoundNode(NodeKind::doStatementNode, sourcePos_), stmt(stmt_), expr(expr_), attributes(attributes_), semicolon(semicolon_), doPos(doPos_), whilePos(whilePos_), lpPos(lpPos_), rpPos(rpPos_)
+    CompoundNode(NodeKind::doStatementNode, sourcePos_), stmt(stmt_), expr(expr_), attributes(attributes_), semicolon(semicolon_), doPos(doPos_), whilePos(whilePos_), 
+    lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* DoStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    DoStatementNode* clone = new DoStatementNode(GetSourcePos(), stmt->Clone(), expr->Clone(), clonedAttributes, semicolon->Clone(), doPos, whilePos, lpPos, rpPos);
+    return clone;
 }
 
 void DoStatementNode::Accept(Visitor& visitor)
@@ -326,6 +441,23 @@ RangeForStatementNode::RangeForStatementNode(const soul::ast::SourcePos& sourceP
 {
 }
 
+Node* RangeForStatementNode::Clone() const
+{
+    Node* clonedInitStmt = nullptr;
+    if (initStmt)
+    {
+        clonedInitStmt = initStmt->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    RangeForStatementNode* clone = new RangeForStatementNode(GetSourcePos(), clonedInitStmt, declaration->Clone(), initializer->Clone(), stmt->Clone(), clonedAttributes,
+        forPos, lpPos, rpPos, colonPos);
+    return clone;
+}
+
 void RangeForStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -368,6 +500,17 @@ ForRangeDeclarationNode::ForRangeDeclarationNode(const soul::ast::SourcePos& sou
 {
 }
 
+Node* ForRangeDeclarationNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ForRangeDeclarationNode* clone = new ForRangeDeclarationNode(GetSourcePos(), Left()->Clone(), Right()->Clone(), clonedAttributes);
+    return clone;
+}
+
 void ForRangeDeclarationNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -389,11 +532,38 @@ StructuredBindingNode::StructuredBindingNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-StructuredBindingNode::StructuredBindingNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifierSeq_, Node* refQualifier_, Node* identifiers_, Node* initializer_, Node* attributes_, Node* semicolon_,
-    const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
+StructuredBindingNode::StructuredBindingNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifierSeq_, Node* refQualifier_, Node* identifiers_, Node* initializer_, 
+    Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
     CompoundNode(NodeKind::structuredBindingNode, sourcePos_), declSpecifiers(declSpecifierSeq_), refQualifier(refQualifier_), identifiers(identifiers_), initializer(initializer_),
     attributes(attributes_), semicolon(semicolon_), lbPos(lbPos_), rbPos(rbPos_)
 {
+}
+
+Node* StructuredBindingNode::Clone() const
+{
+    Node* clonedRefQualifier = nullptr;
+    if (refQualifier)
+    {
+        clonedRefQualifier = refQualifier->Clone();
+    }
+    Node* clonedInitializer = nullptr;
+    if (initializer)
+    {
+        clonedInitializer = initializer->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    Node* clonedSemicolon = nullptr;
+    if (semicolon)
+    {
+        clonedSemicolon = semicolon->Clone();
+    }
+    StructuredBindingNode* clone = new StructuredBindingNode(GetSourcePos(), declSpecifiers->Clone(), clonedRefQualifier, identifiers->Clone(), clonedInitializer,
+        clonedAttributes, clonedSemicolon, lbPos, rbPos);
+    return clone;
 }
 
 void StructuredBindingNode::Accept(Visitor& visitor)
@@ -438,6 +608,28 @@ ForStatementNode::ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node*
 {
 }
 
+Node* ForStatementNode::Clone() const
+{
+    Node* clonedCond = nullptr;
+    if (cond)
+    {
+        clonedCond = cond->Clone();
+    }
+    Node* clonedLoopExpr = nullptr;
+    if (loopExpr)
+    {
+        clonedLoopExpr = loopExpr->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ForStatementNode* clone = new ForStatementNode(GetSourcePos(), initStmt->Clone(), clonedCond, clonedLoopExpr, stmt->Clone(), clonedAttributes, semicolon->Clone(),
+        forPos, lpPos, rpPos);
+    return clone;
+}
+
 void ForStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -480,6 +672,17 @@ BreakStatementNode::BreakStatementNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
+Node* BreakStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    BreakStatementNode* clone = new BreakStatementNode(GetSourcePos(), clonedAttributes, semicolon->Clone(), breakPos);
+    return clone;
+}
+
 void BreakStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -510,6 +713,17 @@ ContinueStatementNode::ContinueStatementNode(const soul::ast::SourcePos& sourceP
 {
 }
 
+Node* ContinueStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ContinueStatementNode* clone = new ContinueStatementNode(GetSourcePos(), clonedAttributes, semicolon->Clone(), continuePos);
+    return clone;
+}
+
 void ContinueStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -538,6 +752,22 @@ ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_)
 ReturnStatementNode::ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* returnValue_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& returnPos_) :
     CompoundNode(NodeKind::returnStatementNode, sourcePos_), returnValue(returnValue_), attributes(attributes_), semicolon(semicolon_), returnPos(returnPos_)
 {
+}
+
+Node* ReturnStatementNode::Clone() const
+{
+    Node* clonedReturnValue = nullptr;
+    if (returnValue)
+    {
+        clonedReturnValue = returnValue->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ReturnStatementNode* clone = new ReturnStatementNode(GetSourcePos(), clonedReturnValue, clonedAttributes, semicolon->Clone(), returnPos);
+    return clone;
 }
 
 void ReturnStatementNode::Accept(Visitor& visitor)
@@ -572,6 +802,22 @@ CoReturnStatementNode::CoReturnStatementNode(const soul::ast::SourcePos& sourceP
 {
 }
 
+Node* CoReturnStatementNode::Clone() const
+{
+    Node* clonedReturnValue = nullptr;
+    if (returnValue)
+    {
+        clonedReturnValue = returnValue->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    CoReturnStatementNode* clone = new CoReturnStatementNode(GetSourcePos(), clonedReturnValue, clonedAttributes, semicolon->Clone(), coReturnPos);
+    return clone;
+}
+
 void CoReturnStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -602,6 +848,17 @@ GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_) : C
 GotoStatementNode::GotoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* target_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& gotoPos_) :
     CompoundNode(NodeKind::gotoStatementNode, sourcePos_), target(target_), attributes(attributes_), semicolon(semicolon_), gotoPos(gotoPos_)
 {
+}
+
+Node* GotoStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    GotoStatementNode* clone = new GotoStatementNode(GetSourcePos(), target->Clone(), clonedAttributes, semicolon->Clone(), gotoPos);
+    return clone;
 }
 
 void GotoStatementNode::Accept(Visitor& visitor)
@@ -636,6 +893,17 @@ TryStatementNode::TryStatementNode(const soul::ast::SourcePos& sourcePos_, Node*
 {
 }
 
+Node* TryStatementNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    TryStatementNode* clone = new TryStatementNode(GetSourcePos(), tryBlock->Clone(), handlers->Clone(), clonedAttributes, tryPos);
+    return clone;
+}
+
 void TryStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -663,6 +931,16 @@ HandlerSequenceNode::HandlerSequenceNode(const soul::ast::SourcePos& sourcePos_)
 {
 }
 
+Node* HandlerSequenceNode::Clone() const
+{
+    HandlerSequenceNode* clone = new HandlerSequenceNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void HandlerSequenceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -675,6 +953,12 @@ HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(
 HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_, Node* exception_, Node* catchBlock_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     CompoundNode(NodeKind::handlerNode, sourcePos_), exception(exception_), catchBlock(catchBlock_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* HandlerNode::Clone() const
+{
+    HandlerNode* clone = new HandlerNode(GetSourcePos(), exception->Clone(), catchBlock->Clone(), lpPos, rpPos);
+    return clone;
 }
 
 void HandlerNode::Accept(Visitor& visitor)
@@ -709,6 +993,32 @@ ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& s
 {
 }
 
+Node* ExceptionDeclarationNode::Clone() const
+{
+    Node* clonedTypeSpecifiers = nullptr;
+    if (typeSpecifiers)
+    {
+        clonedTypeSpecifiers = typeSpecifiers->Clone();
+    }
+    Node* clonedDeclarator = nullptr;
+    if (declarator)
+    {
+        clonedDeclarator = declarator->Clone();
+    }
+    Node* clonedEllipsis = nullptr;
+    if (ellipsis)
+    {
+        clonedEllipsis = ellipsis->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ExceptionDeclarationNode* clone = new ExceptionDeclarationNode(GetSourcePos(), clonedTypeSpecifiers, clonedDeclarator, clonedEllipsis, clonedAttributes);
+    return clone;
+}
+
 void ExceptionDeclarationNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -741,6 +1051,22 @@ ExpressionStatementNode::ExpressionStatementNode(const soul::ast::SourcePos& sou
 {
 }
 
+Node* ExpressionStatementNode::Clone() const
+{
+    Node* clonedExpr = nullptr;
+    if (expr)
+    {
+        clonedExpr = expr->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ExpressionStatementNode* clone = new ExpressionStatementNode(GetSourcePos(), clonedExpr, clonedAttributes, semicolon->Clone());
+    return clone;
+}
+
 void ExpressionStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -771,6 +1097,12 @@ DeclarationStatementNode::DeclarationStatementNode(const soul::ast::SourcePos& s
 {
 }
 
+Node* DeclarationStatementNode::Clone() const
+{
+    DeclarationStatementNode* clone = new DeclarationStatementNode(GetSourcePos(), declaration->Clone());
+    return clone;
+}
+
 void DeclarationStatementNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -795,6 +1127,17 @@ InitConditionNode::InitConditionNode(const soul::ast::SourcePos& sourcePos_) : C
 InitConditionNode::InitConditionNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* declarator_, Node* initializer_, Node* attributes_) :
     CompoundNode(NodeKind::initConditionNode, sourcePos_), declSpecifiers(declSpecifiers_), declarator(declarator_), initializer(initializer_), attributes(attributes_)
 {
+}
+
+Node* InitConditionNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    InitConditionNode* clone = new InitConditionNode(GetSourcePos(), declSpecifiers->Clone(), declarator->Clone(), initializer->Clone(), clonedAttributes);
+    return clone;
 }
 
 void InitConditionNode::Accept(Visitor& visitor)

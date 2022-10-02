@@ -15,6 +15,16 @@ TypeSpecifierSequenceNode::TypeSpecifierSequenceNode(const soul::ast::SourcePos&
 {
 }
 
+Node* TypeSpecifierSequenceNode::Clone() const
+{
+    TypeSpecifierSequenceNode* clone = new TypeSpecifierSequenceNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void TypeSpecifierSequenceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -27,6 +37,17 @@ TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourceP
 TypenameSpecifierNode::TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_) :
     CompoundNode(NodeKind::typenameSpecifierNode, sourcePos_), nns(nns_), id(id_), templateNode(templateNode_)
 {
+}
+
+Node* TypenameSpecifierNode::Clone() const
+{
+    Node* clonedTemplateNode = nullptr;
+    if (templateNode)
+    {
+        clonedTemplateNode = templateNode->Clone();
+    }
+    TypenameSpecifierNode* clone = new TypenameSpecifierNode(GetSourcePos(), nns->Clone(), id->Clone(), clonedTemplateNode);
+    return clone;
 }
 
 void TypenameSpecifierNode::Accept(Visitor& visitor)
@@ -59,6 +80,17 @@ TypeIdNode::TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifi
 {
 }
 
+Node* TypeIdNode::Clone() const
+{
+    Node* clonedDeclarator = nullptr;
+    if (declarator)
+    {
+        clonedDeclarator = declarator->Clone();
+    }
+    TypeIdNode* clone = new TypeIdNode(GetSourcePos(), typeSpecifiers->Clone(), clonedDeclarator);
+    return clone;
+}
+
 void TypeIdNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -87,6 +119,17 @@ DefiningTypeIdNode::DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
+Node* DefiningTypeIdNode::Clone() const
+{
+    Node* clonedDeclarator = nullptr;
+    if (abstractDeclarator)
+    {
+        clonedDeclarator = abstractDeclarator->Clone();
+    }
+    DefiningTypeIdNode* clone = new DefiningTypeIdNode(GetSourcePos(), definingTypeSpecifiers->Clone(), clonedDeclarator);
+    return clone;
+}
+
 void DefiningTypeIdNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -111,6 +154,16 @@ DefiningTypeSpecifierSequenceNode::DefiningTypeSpecifierSequenceNode(const soul:
 {
 }
 
+Node* DefiningTypeSpecifierSequenceNode::Clone() const
+{
+    DefiningTypeSpecifierSequenceNode* clone = new DefiningTypeSpecifierSequenceNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void DefiningTypeSpecifierSequenceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -122,6 +175,12 @@ TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourc
 
 TrailingReturnTypeNode::TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_) : UnaryNode(NodeKind::trailingReturnTypeNode, sourcePos_, typeId_)
 {
+}
+
+Node* TrailingReturnTypeNode::Clone() const
+{
+    TrailingReturnTypeNode* clone = new TrailingReturnTypeNode(GetSourcePos(), Child()->Clone());
+    return clone;
 }
 
 void TrailingReturnTypeNode::Accept(Visitor& visitor)
@@ -136,6 +195,17 @@ ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::Source
 ElaboratedTypeSpecifierNode::ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_) :
     CompoundNode(NodeKind::elaboratedTypeSpecifierNode, sourcePos_), classKey(classKey_), id(id_), attributes(attributes_)
 {
+}
+
+Node* ElaboratedTypeSpecifierNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ElaboratedTypeSpecifierNode* clone = new ElaboratedTypeSpecifierNode(GetSourcePos(), classKey->Clone(), id->Clone(), clonedAttributes);
+    return clone;
 }
 
 void ElaboratedTypeSpecifierNode::Accept(Visitor& visitor)
@@ -168,6 +238,12 @@ DeclTypeSpecifierNode::DeclTypeSpecifierNode(const soul::ast::SourcePos& sourceP
 {
 }
 
+Node* DeclTypeSpecifierNode::Clone() const
+{
+    DeclTypeSpecifierNode* clone = new DeclTypeSpecifierNode(GetSourcePos(), expr->Clone(), lpPos, rpPos);
+    return clone;
+}
+
 void DeclTypeSpecifierNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -197,6 +273,16 @@ PlaceholderTypeSpecifierNode::PlaceholderTypeSpecifierNode(const soul::ast::Sour
     const soul::ast::SourcePos& dtPos_, const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     CompoundNode(NodeKind::placeholderTypeSpecifierNode, sourcePos_), typeConstraint(typeConstraint_), dtPos(dtPos_), autoPos(autoPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* PlaceholderTypeSpecifierNode::Clone() const
+{
+    Node* clonedTypeConstraint = nullptr;
+    if (typeConstraint)
+    {
+        clonedTypeConstraint = typeConstraint->Clone();
+    }
+    return new PlaceholderTypeSpecifierNode(GetSourcePos(), clonedTypeConstraint, dtPos, autoPos, lpPos, rpPos);
 }
 
 void PlaceholderTypeSpecifierNode::Accept(Visitor& visitor)

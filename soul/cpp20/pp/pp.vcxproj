@@ -180,6 +180,7 @@
     <None Include="pp.keyword" />
     <None Include="pp.lexer" />
     <None Include="pp.parser" />
+    <None Include="pp.project" />
     <None Include="pp.slg" />
     <None Include="pp.spg" />
   </ItemGroup>

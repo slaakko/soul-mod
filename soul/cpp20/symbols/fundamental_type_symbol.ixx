@@ -28,6 +28,7 @@ public:
     FundamentalTypeSymbol(const std::u32string& name_);
     FundamentalTypeSymbol(FundamentalTypeKind kind_);
     FundamentalTypeKind GetFundamentalTypeKind() const { return kind; }
+    bool IsAutoTypeSymbol() const { return kind == FundamentalTypeKind::autoType; }
     std::string SymbolKindStr() const override { return "fundamental type symbol"; }
     std::string SymbolDocKindStr() const override { return "fundamental_type"; }
     void Write(Writer& writer) override;

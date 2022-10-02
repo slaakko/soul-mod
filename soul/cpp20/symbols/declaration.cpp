@@ -16,6 +16,8 @@ import soul.cpp20.symbols.type.resolver;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.writer;
+import soul.cpp20.symbols.bound.tree;
+import soul.cpp20.symbols.statement.binder;
 import soul.cpp20.ast.error;
 import util;
 
@@ -127,7 +129,7 @@ class DeclarationProcessor : public soul::cpp20::ast::DefaultVisitor
 {
 public:
     DeclarationProcessor(Context* context_);
-    std::vector<Declaration> GetDeclarations() { return std::move(declarations); }
+    std::unique_ptr<DeclarationList> GetDeclarations();
     void BeginProcessFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSeq, soul::cpp20::ast::Node* declarator);
     void Visit(soul::cpp20::ast::SimpleDeclarationNode& node) override;
     void Visit(soul::cpp20::ast::MemberDeclarationNode& node) override;
@@ -175,13 +177,19 @@ public:
 private:
     Context* context;
     DeclarationFlags flags;
-    std::vector<Declaration> declarations;
     bool isClassSpecifier;
     TypeSymbol* type;
+    std::unique_ptr<DeclarationList> declarationList;
 };
 
-DeclarationProcessor::DeclarationProcessor(Context* context_) : context(context_), flags(DeclarationFlags::none), isClassSpecifier(false), type(nullptr)
+DeclarationProcessor::DeclarationProcessor(Context* context_) : 
+    context(context_), flags(DeclarationFlags::none), isClassSpecifier(false), type(nullptr), declarationList(new DeclarationList())
 {
+}
+
+std::unique_ptr<DeclarationList> DeclarationProcessor::GetDeclarations()
+{ 
+    return std::move(declarationList);
 }
 
 void DeclarationProcessor::BeginProcessFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSeq, soul::cpp20::ast::Node* declarator)
@@ -192,7 +200,7 @@ void DeclarationProcessor::BeginProcessFunctionDefinition(soul::cpp20::ast::Node
     }
     TypeSymbol* baseType = ResolveBaseType(declSpecifierSeq);
     Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
-    declarations.push_back(std::move(declaration));
+    declarationList->declarations.push_back(std::move(declaration));
 }
 
 TypeSymbol* DeclarationProcessor::ResolveBaseType(soul::cpp20::ast::Node* node)
@@ -216,7 +224,7 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::SimpleDeclarationNode& node)
     if (node.InitDeclaratorList())
     {
         TypeSymbol* baseType = ResolveBaseType(&node);
-        declarations = ProcessInitDeclaratorList(baseType, node.InitDeclaratorList(), flags, context);
+        declarationList = ProcessInitDeclaratorList(baseType, node.InitDeclaratorList(), flags, context);
     }
 }
 
@@ -229,13 +237,13 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::MemberDeclarationNode& node)
     if (node.MemberDeclarators())
     {
         TypeSymbol* baseType = ResolveBaseType(&node);
-        declarations = ProcessMemberDeclaratorList(baseType, node.MemberDeclarators(), flags, context);
+        declarationList = ProcessMemberDeclaratorList(baseType, node.MemberDeclarators(), flags, context);
     }
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::NoDeclSpecFunctionDeclarationNode& node)
 {
-    declarations.push_back(ProcessDeclarator(nullptr, &node, flags, context));
+    declarationList->declarations.push_back(ProcessDeclarator(nullptr, &node, flags, context));
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::FunctionDefinitionNode& node)
@@ -267,7 +275,7 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::FunctionDefinitionNode& node)
             }
         }
     }
-    declarations.push_back(std::move(declaration));
+    declarationList->declarations.push_back(std::move(declaration));
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
@@ -279,7 +287,7 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::ParameterNode& node)
     {
         declaration.value = Evaluate(node.Initializer(), context);
     }
-    declarations.push_back(std::move(declaration));
+    declarationList->declarations.push_back(std::move(declaration));
 }
 
 void DeclarationProcessor::Visit(soul::cpp20::ast::ClassSpecifierNode& node)
@@ -483,9 +491,10 @@ void DeclarationProcessor::Visit(soul::cpp20::ast::TypenameSpecifierNode& node)
     type = ResolveType(&node, flags, context);
 }
 
-void ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context)
+VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context)
 {
-    context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, value, flags, context);
+    VariableSymbol* variable = context->GetSymbolTable()->AddVariable(simpleDeclarator->Name(), simpleDeclarator->Node(), type, nullptr, value, flags, context);
+    return variable;
 }
 
 void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbol* type, DeclarationFlags flags, Context* context)
@@ -522,8 +531,8 @@ void ProcessSimpleDeclaration(soul::cpp20::ast::Node* node, Context* context)
 {
     DeclarationProcessor processor(context);
     node->Accept(processor);
-    std::vector<Declaration> declarations = processor.GetDeclarations();
-    for (const auto& declaration : declarations)
+    std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
+    for (auto& declaration : declarationList->declarations)
     {
         Declarator* declarator = declaration.declarator.get();
         switch (declarator->Kind())
@@ -531,7 +540,8 @@ void ProcessSimpleDeclaration(soul::cpp20::ast::Node* node, Context* context)
             case DeclaratorKind::simpleDeclarator:
             {
                 SimpleDeclarator* simpleDeclarator = static_cast<SimpleDeclarator*>(declarator);
-                ProcessSimpleDeclarator(simpleDeclarator, declaration.type, declaration.value, declaration.flags, context);
+                VariableSymbol* variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, declaration.value, declaration.flags, context);
+                declaration.variable = variable;
                 break;
             }
             case DeclaratorKind::functionDeclarator:
@@ -542,16 +552,20 @@ void ProcessSimpleDeclaration(soul::cpp20::ast::Node* node, Context* context)
             }
         }
     }
+    if (context->GetFlag(ContextFlags::saveDeclarations))
+    {
+        context->SetDeclarationList(node, declarationList.release());
+    }
 }
 
 Declaration ProcessParameterDeclaration(soul::cpp20::ast::Node* node, Context* context)
 {
     DeclarationProcessor processor(context);
     node->Accept(processor);
-    std::vector<Declaration> declarations = processor.GetDeclarations();
-    if (declarations.size() == 1)
+    std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
+    if (declarationList->declarations.size() == 1)
     {
-        return std::move(declarations.front());
+        return std::move(declarationList->declarations.front());
     }
     else
     {
@@ -562,6 +576,10 @@ Declaration ProcessParameterDeclaration(soul::cpp20::ast::Node* node, Context* c
 
 void ProcessMemberDeclaration(soul::cpp20::ast::Node* node, Context* context)
 {
+    if (node->GetSourcePos().file == 16 && node->GetSourcePos().line == 128)
+    {
+        int x = 0;
+    }
     ProcessSimpleDeclaration(node, context);
 }
 
@@ -569,10 +587,10 @@ Declaration ProcessFunctionDeclaration(soul::cpp20::ast::Node* node, Context* co
 {
     DeclarationProcessor processor(context);
     node->Accept(processor);
-    std::vector<Declaration> declarations = processor.GetDeclarations();
-    if (declarations.size() == 1)
+    std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
+    if (declarationList->declarations.size() == 1)
     {
-        return std::move(declarations.front());
+        return std::move(declarationList->declarations.front());
     }
     else
     {
@@ -584,17 +602,13 @@ Declaration ProcessFunctionDeclaration(soul::cpp20::ast::Node* node, Context* co
 int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul::cpp20::ast::Node* declarator, Context* context)
 {
     int scopes = 0;
-    if (declarator->GetSourcePos().file == 11 && declarator->GetSourcePos().line == 113)
-    {
-        int x = 0;
-    }
     DeclarationProcessor processor(context);
     processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
     context->GetSymbolTable()->CurrentScope()->PopParentScope();
-    std::vector<Declaration> declarations = processor.GetDeclarations();
-    if (declarations.size() == 1)
+    std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
+    if (declarationList->declarations.size() == 1)
     {
-        Declaration declaration = std::move(declarations.front());
+        Declaration declaration = std::move(declarationList->declarations.front());
         if (declaration.declarator->Kind() == DeclaratorKind::functionDeclarator)
         {
             FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declaration.declarator.get());
@@ -611,8 +625,8 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
                         parameterTypes.push_back(parameterDeclaration.type);
                     }
                     FunctionSymbol* functionSymbol = functionGroup->ResolveFunction(parameterTypes, qualifiers);
-                    FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(
-                        util::ToUtf32(functionDeclarator->GetScope()->FullName()) + U"::" + functionDeclarator->Name(), parameterTypes, qualifiers, declarator, functionSymbol, context);
+                    FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
+                        parameterTypes, qualifiers, declarator, functionSymbol, context);
                     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
                     {
                         soul::ast::SourcePos sourcePos;
@@ -635,6 +649,9 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
                     context->GetSymbolTable()->BeginScope(definition->GetScope());
                     definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                     ++scopes;
+                    BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition);
+                    context->GetBoundCompileUnit()->AddBoundNode(boundFunctionNode);
+                    context->SetBoundFunction(boundFunctionNode);
                 }
             }
             else
@@ -644,8 +661,8 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
                 {
                     parameterTypes.push_back(parameterDeclaration.type);
                 }
-                FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(
-                    util::ToUtf32(functionDeclarator->GetScope()->FullName()) + U"::" + functionDeclarator->Name(), parameterTypes, qualifiers, declarator, nullptr, context);
+                FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
+                    parameterTypes, qualifiers, declarator, nullptr, context);
                 for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
                 {
                     soul::ast::SourcePos sourcePos;
@@ -668,6 +685,9 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
                 context->GetSymbolTable()->BeginScope(definition->GetScope());
                 definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                 ++scopes;
+                BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition);
+                context->GetBoundCompileUnit()->AddBoundNode(boundFunctionNode);
+                context->SetBoundFunction(boundFunctionNode);
             }
         }
     }
@@ -681,10 +701,17 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
 
 void EndFunctionDefinition(soul::cpp20::ast::Node* functionDefinitionNode, int scopes, Context* context)
 {
+    FunctionDefinitionSymbol* functionDefinitionSymbol = nullptr;
+    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
+    if (symbol && symbol->IsFunctionDefinitionSymbol())
+    {
+        functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+    }
     for (int i = 0; i < scopes; ++i)
     {
         context->GetSymbolTable()->EndScope(); 
     }
+    BindFunction(functionDefinitionNode, functionDefinitionSymbol, context);
 }
 
 void ProcessMemberFunctionDefinition(soul::cpp20::ast::Node* node, Context* context)

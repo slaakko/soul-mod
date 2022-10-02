@@ -20,6 +20,7 @@ import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.value;
 import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.evaluator;
+import soul.cpp20.symbols.fundamental.type.symbol;
 
 namespace soul::cpp20::symbols {
 
@@ -193,6 +194,16 @@ void EnumConstantSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+EnumeratedTypeSymbol* EnumConstantSymbol::GetType() const
+{
+    const Symbol* parent = Parent();
+    if (parent && parent->IsEnumeratedTypeSymbol())
+    {
+        return const_cast<EnumeratedTypeSymbol*>(static_cast<const EnumeratedTypeSymbol*>(parent));
+    }
+    return nullptr;
+}
+
 bool EnumTypeLess::operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const
 {
     return left->Name() < right->Name();
@@ -304,13 +315,15 @@ void EnumCreator::Visit(soul::cpp20::ast::EnumeratorDefinitionNode& node)
     {
         if (first)
         {
-            value = context->GetEvaluationContext()->GetIntegerValue(0, util::ToUtf32(std::to_string(0)));
+            value = context->GetEvaluationContext()->GetIntegerValue(0, util::ToUtf32(std::to_string(0)), 
+                context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
             prevValue = 0;
             first = false;
         }
         else
         {
-            value = context->GetEvaluationContext()->GetIntegerValue(prevValue + 1, util::ToUtf32(std::to_string(prevValue + 1)));
+            value = context->GetEvaluationContext()->GetIntegerValue(prevValue + 1, util::ToUtf32(std::to_string(prevValue + 1)),
+                context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
             ++prevValue;
         }
     }

@@ -49,7 +49,7 @@ lexer Cpp20Lexer
         "<" { return LANGLE; }
         ">" { return RANGLE; }
         "<<" { return SHIFT_LEFT; }
-        ">>" (1) { return SHIFT_RIGHT; }
+        ">>" $(1) { return SHIFT_RIGHT; }
         "\+" { return PLUS; }
         "-" { return MINUS; }
         "\*" { return STAR; }

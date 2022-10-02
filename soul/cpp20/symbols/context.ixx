@@ -13,6 +13,8 @@ export namespace soul::cpp20::symbols {
 
 using Lexer = soul::lexer::LexerBase<char32_t>;
 
+struct DeclarationList;
+
 enum class ContextFlags : int32_t
 {
     none = 0,
@@ -26,7 +28,8 @@ enum class ContextFlags : int32_t
     parsingTemplateDeclaration = 1 << 7,
     parseMemberFunction = 1 << 8,
     retMemberDeclSpecifiers = 1 << 9,
-    addClassScope = 1 << 10
+    addClassScope = 1 << 10,
+    saveDeclarations = 1 << 11
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -46,6 +49,10 @@ constexpr  ContextFlags operator~(ContextFlags flags)
 
 class SymbolTable;
 class EvaluationContext;
+class BoundCompileUnitNode;
+class BoundFunctionNode;
+class BoundCompoundStatementNode;
+class OperationRepository;
 
 class Context
 {
@@ -55,6 +62,14 @@ public:
     void SetLexer(Lexer* lexer_);
     SymbolTable* GetSymbolTable() { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_);
+    BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit; }
+    void SetBoundCompileUnit(BoundCompileUnitNode* boundCompileUnit_);
+    OperationRepository* GetOperationRepository() const;
+    BoundFunctionNode* GetBoundFunction() const { return boundFunction; }
+    void SetBoundFunction(BoundFunctionNode* boundFunction_);
+    BoundCompoundStatementNode* GetCurrentCompoundStatement() const { return currentCompoundStatement; }
+    void BeginCompoundStatement();
+    void EndCompoundStatement();
     EvaluationContext* GetEvaluationContext();
     std::string FileName() const;
     void PushFlags();
@@ -70,14 +85,20 @@ public:
     void PushNode(soul::cpp20::ast::Node* node_);
     void PopNode();
     soul::cpp20::ast::Node* GetNode() const { return node; }
+    void SetDeclarationList(soul::cpp20::ast::Node* node, DeclarationList* declarations);
+    std::unique_ptr<DeclarationList> ReleaseDeclarationList(soul::cpp20::ast::Node* node);
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
+    BoundCompileUnitNode* boundCompileUnit;
+    BoundFunctionNode* boundFunction;
+    BoundCompoundStatementNode* currentCompoundStatement;
+    std::stack<BoundCompoundStatementNode*> compoundStatementStack;
     ContextFlags flags;
     std::stack<ContextFlags> flagStack;
     std::stack<soul::cpp20::ast::Node*> nodeStack;
     soul::cpp20::ast::Node* node;
-
+    std::map<soul::cpp20::ast::Node*, std::unique_ptr<DeclarationList>> declarationMap;
 };
 
 } // namespace soul::cpp20::symbols

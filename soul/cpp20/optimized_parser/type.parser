@@ -144,14 +144,14 @@ parser TypeParser
                     SimpleTemplateId(context):simpleTemplateId
                     {
                         soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
-                            new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, new soul::cpp20::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)), nullptr);
+                            new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, new soul::cpp20::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)), attributes);
                         soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
                         return node;
                     }
                 |   SimpleTemplateId(context):simpleTemplateId2
                     {
                         soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
-                            new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, simpleTemplateId2), nullptr);
+                            new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns, simpleTemplateId2), attributes);
                         soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
                         return node;
                     }
@@ -165,7 +165,7 @@ parser TypeParser
                 )
             |   SimpleTemplateId(context):simpleTemplateId3
                 {
-                    soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, simpleTemplateId3, nullptr);
+                    soul::cpp20::ast::Node* node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, simpleTemplateId3, attributes);
                     soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
                     return node;
                 }

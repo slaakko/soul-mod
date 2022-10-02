@@ -708,6 +708,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementUnguarded(Lexer& le
     soul::lexer::RuleGuard ruleGuard(lexer, 4943488507084537859);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::CompoundStatementNode> compoundStatementNode = std::unique_ptr<soul::cpp20::ast::CompoundStatementNode>();
+    std::unique_ptr<soul::cpp20::ast::Node> statementNode = std::unique_ptr<soul::cpp20::ast::Node>();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
     bool nextIsRBrace = bool();
@@ -819,7 +820,8 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementUnguarded(Lexer& le
                                                             stmt.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
-                                                                compoundStatementNode->AddNode(stmt.release());
+                                                                statementNode.reset(stmt.release());
+                                                                compoundStatementNode->AddNode(statementNode.release());
                                                             }
                                                             *parentMatch15 = match;
                                                         }
@@ -1062,6 +1064,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementGuarded(Lexer& lexe
                             compoundStatementNode.reset(new soul::cpp20::ast::CompoundStatementNode(sourcePos));
                             compoundStatementNode->SetLexerPosPair(lexerPosPair);
                             compoundStatementNode->SetAttributes(attributes.release());
+                            compoundStatementNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
                         }
                         else
                         {
@@ -1095,6 +1098,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementGuarded(Lexer& lexe
                                 {
                                     compoundStatementNode.reset(new soul::cpp20::ast::CompoundStatementNode(sourcePos));
                                     compoundStatementNode->SetLexerPosPair(lexerPosPair);
+                                    compoundStatementNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
                                 }
                                 else
                                 {
@@ -1153,6 +1157,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementSaved(Lexer& lexer,
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 4943488507084537862);
     soul::cpp20::ast::CompoundStatementNode* compoundStatementNode = nullptr;
+    std::unique_ptr<soul::cpp20::ast::Node> statementNode = std::unique_ptr<soul::cpp20::ast::Node>();
     std::unique_ptr<soul::cpp20::ast::Node> stmt;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1175,6 +1180,8 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementSaved(Lexer& lexer,
                         pass = false;
                     }
                     lexer.BeginRecordedParse(compoundStatementNode->GetLexerPosPair());
+                    Scope *functionScope = static_cast<Scope*>(compoundStatementNode->FunctionScope());
+                    context->GetSymbolTable()->BeginScope(functionScope);
                 }
                 if (match.hit && !pass)
                 {
@@ -1241,7 +1248,8 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementSaved(Lexer& lexer,
                                                     stmt.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
-                                                        compoundStatementNode->AddNode(stmt.release());
+                                                        statementNode.reset(stmt.release());
+                                                        compoundStatementNode->AddNode(statementNode.release());
                                                     }
                                                     *parentMatch11 = match;
                                                 }
@@ -1286,6 +1294,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementSaved(Lexer& lexer,
                                     lexer.EndRecordedParse();
                                     soul::cpp20::symbols::MapNode(compoundStatementNode, context);
                                     soul::cpp20::symbols::EndBlock(context);
+                                    context->GetSymbolTable()->EndScope();
                                     {
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CompoundStatementSaved");
@@ -1321,6 +1330,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatementSaved(Lexer& lexer,
                     if (match.hit)
                     {
                         lexer.EndRecordedParse();
+                        context->GetSymbolTable()->EndScope();
                         pass = false;
                     }
                     if (match.hit && !pass)
@@ -1378,7 +1388,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatement(Lexer& lexer, soul
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    soul::parser::Match match = GuardParser<Lexer>::MemberFunctionTemplateGuard(lexer, context);
+                    soul::parser::Match match = GuardParser<Lexer>::MemberFunctionGuard(lexer, context);
                     *parentMatch3 = match;
                 }
                 if (match.hit)

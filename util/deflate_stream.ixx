@@ -11,6 +11,8 @@ import util.stream;
 
 export namespace util {
 
+#ifndef SOUL_CPP20
+
 const int defaultDeflateCompressionLevel = -1;
 const int noDeflateCompression = 0;
 const int fastestDeflateCompression = 1;
@@ -46,5 +48,7 @@ private:
     std::unique_ptr<uint8_t[]> out;
     void* handle;
 };
+
+#endif
 
 } // namespace util

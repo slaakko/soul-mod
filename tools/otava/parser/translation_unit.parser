@@ -1,0 +1,47 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.parser.translation.unit;
+
+[interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import otava.token;
+[implementation]import otava.lexer;
+[implementation]import otava.parser.declaration;
+[implementation]import otava.parser.modules;
+
+parser TranslationUnitParser 
+{
+    lexer otava::lexer::OtavaLexer<char32_t>;
+    main;
+
+    using ModuleParser.GlobalModuleFragment;
+    using ModuleParser.ModuleDeclaration;
+    using ModuleParser.PrivateModuleFragment;
+    using DeclarationParser.DeclarationSeq;
+    
+    TranslationUnit(otava::symbols::Context* context) : otava::ast::Node*
+        ::= 
+        (   ModuleUnit(context):moduleUnit{ return new otava::ast::TranslationUnitNode(lexer.GetSourcePos(pos), moduleUnit); }
+        |   DeclarationSeq(context):declarations{ return new otava::ast::TranslationUnitNode(lexer.GetSourcePos(pos), declarations); }
+        |   empty{ return new otava::ast::TranslationUnitNode(lexer.GetSourcePos(pos), nullptr); }
+        )
+        ;
+
+    ModuleUnit(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= 
+        (
+            (
+                GlobalModuleFragment(context):globalModuleFragment{ sourcePos = lexer.GetSourcePos(pos); }
+            )? 
+            ModuleDeclaration(context):moduleDeclaration{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); } 
+            DeclarationSeq(context):declarations? 
+            PrivateModuleFragment(context):privateModuleFragment?
+        )
+        {
+            return new otava::ast::ModuleUnitNode(sourcePos, globalModuleFragment, moduleDeclaration, declarations, privateModuleFragment);
+        }
+        ;
+}

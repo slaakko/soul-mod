@@ -147,7 +147,7 @@ void DefaultVisitor::Visit(TemplateDeclarationSymbol& symbol)
 void DefaultVisitor::Visit(VariableSymbol& symbol)
 {
     SetVisitContainer(false);
-    symbol.GetType()->Accept(*this);
+    symbol.GetDeclaredType()->Accept(*this);
     SetVisitContainer(true);
 }
 

@@ -20,6 +20,12 @@ BinaryExprNode::BinaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_
 {
 }
 
+Node* BinaryExprNode::Clone() const
+{
+    BinaryExprNode* clone = new BinaryExprNode(GetSourcePos(), op->Clone(), Left()->Clone(), Right()->Clone());
+    return clone;
+}
+
 void BinaryExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -45,6 +51,12 @@ UnaryExprNode::UnaryExprNode(const soul::ast::SourcePos& sourcePos_, Node* op_, 
 {
 }
 
+Node* UnaryExprNode::Clone() const
+{
+    UnaryExprNode* clone = new UnaryExprNode(GetSourcePos(), op->Clone(), Child()->Clone());
+    return clone;
+}
+
 void UnaryExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -64,6 +76,16 @@ void UnaryExprNode::Read(Reader& reader)
 
 ExpressionListNode::ExpressionListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::expressionListNode, sourcePos_)
 {
+}
+
+Node* ExpressionListNode::Clone() const
+{
+    ExpressionListNode* clone = new ExpressionListNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
 }
 
 void ExpressionListNode::Accept(Visitor& visitor)
@@ -93,6 +115,12 @@ AssignmentInitNode::AssignmentInitNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
+Node* AssignmentInitNode::Clone() const
+{
+    AssignmentInitNode* clone = new AssignmentInitNode(GetSourcePos(), Child()->Clone());
+    return clone;
+}
+
 void AssignmentInitNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -106,6 +134,12 @@ YieldExprNode::YieldExprNode(const soul::ast::SourcePos& sourcePos_, Node* child
 {
 }
 
+Node* YieldExprNode::Clone() const
+{
+    YieldExprNode* clone = new YieldExprNode(GetSourcePos(), Child()->Clone());
+    return clone;
+}
+
 void YieldExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -117,6 +151,17 @@ ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_) : CompoundN
 
 ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* exception_) : CompoundNode(NodeKind::throwExprNode, sourcePos_), exception(exception_)
 {
+}
+
+Node* ThrowExprNode::Clone() const
+{
+    Node* clonedException = nullptr;
+    if (exception)
+    {
+        clonedException = exception->Clone();
+    }
+    ThrowExprNode* clone = new ThrowExprNode(GetSourcePos(), clonedException);
+    return clone;
 }
 
 void ThrowExprNode::Accept(Visitor& visitor)
@@ -143,6 +188,12 @@ ConditionalExprNode::ConditionalExprNode(const soul::ast::SourcePos& sourcePos_)
 ConditionalExprNode::ConditionalExprNode(const soul::ast::SourcePos& sourcePos_, Node* condition_, Node* quest_, Node* thenExpr_, Node* colon_, Node* elseExpr_) :
     CompoundNode(NodeKind::conditionalExprNode, sourcePos_), condition(condition_), quest(quest_), thenExpr(thenExpr_), colon(colon_), elseExpr(elseExpr_)
 {
+}
+
+Node* ConditionalExprNode::Clone() const
+{
+    ConditionalExprNode* clone = new ConditionalExprNode(GetSourcePos(), condition->Clone(), quest->Clone(), thenExpr->Clone(), colon->Clone(), elseExpr->Clone());
+    return clone;
 }
 
 void ConditionalExprNode::Accept(Visitor& visitor)
@@ -174,6 +225,12 @@ AssignNode::AssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
+Node* AssignNode::Clone() const
+{
+    AssignNode* clone = new AssignNode(GetSourcePos());
+    return clone;
+}
+
 void AssignNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -181,6 +238,12 @@ void AssignNode::Accept(Visitor& visitor)
 
 PlusAssignNode::PlusAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::plusAssignNode, sourcePos_)
 {
+}
+
+Node* PlusAssignNode::Clone() const
+{
+    PlusAssignNode* clone = new PlusAssignNode(GetSourcePos());
+    return clone;
 }
 
 void PlusAssignNode::Accept(Visitor& visitor)
@@ -192,6 +255,12 @@ MinusAssignNode::MinusAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(
 {
 }
 
+Node* MinusAssignNode::Clone() const
+{
+    MinusAssignNode* clone = new MinusAssignNode(GetSourcePos());
+    return clone;
+}
+
 void MinusAssignNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -199,6 +268,12 @@ void MinusAssignNode::Accept(Visitor& visitor)
 
 MulAssignNode::MulAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::mulAssignNode, sourcePos_)
 {
+}
+
+Node* MulAssignNode::Clone() const
+{
+    MulAssignNode* clone = new MulAssignNode(GetSourcePos());
+    return clone;
 }
 
 void MulAssignNode::Accept(Visitor& visitor)
@@ -210,6 +285,12 @@ DivAssignNode::DivAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(Node
 {
 }
 
+Node* DivAssignNode::Clone() const
+{
+    DivAssignNode* clone = new DivAssignNode(GetSourcePos());
+    return clone;
+}
+
 void DivAssignNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -217,6 +298,12 @@ void DivAssignNode::Accept(Visitor& visitor)
 
 ModAssignNode::ModAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::modAssignNode, sourcePos_)
 {
+}
+
+Node* ModAssignNode::Clone() const
+{
+    ModAssignNode* clone = new ModAssignNode(GetSourcePos());
+    return clone;
 }
 
 void ModAssignNode::Accept(Visitor& visitor)
@@ -228,6 +315,12 @@ XorAssignNode::XorAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(Node
 {
 }
 
+Node* XorAssignNode::Clone() const
+{
+    XorAssignNode* clone = new XorAssignNode(GetSourcePos());
+    return clone;
+}
+
 void XorAssignNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -235,6 +328,12 @@ void XorAssignNode::Accept(Visitor& visitor)
 
 AndAssignNode::AndAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::andAssignNode, sourcePos_)
 {
+}
+
+Node* AndAssignNode::Clone() const
+{
+    AndAssignNode* clone = new AndAssignNode(GetSourcePos());
+    return clone;
 }
 
 void AndAssignNode::Accept(Visitor& visitor)
@@ -246,6 +345,12 @@ OrAssignNode::OrAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
+Node* OrAssignNode::Clone() const
+{
+    OrAssignNode* clone = new OrAssignNode(GetSourcePos());
+    return clone;
+}
+
 void OrAssignNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -253,6 +358,12 @@ void OrAssignNode::Accept(Visitor& visitor)
 
 ShiftLeftAssignNode::ShiftLeftAssignNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::shiftLeftAssignNode, sourcePos_)
 {
+}
+
+Node* ShiftLeftAssignNode::Clone() const
+{
+    ShiftLeftAssignNode* clone = new ShiftLeftAssignNode(GetSourcePos());
+    return clone;
 }
 
 void ShiftLeftAssignNode::Accept(Visitor& visitor)
@@ -264,6 +375,12 @@ ShiftRightAssignNode::ShiftRightAssignNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
+Node* ShiftRightAssignNode::Clone() const
+{
+    ShiftRightAssignNode* clone = new ShiftRightAssignNode(GetSourcePos());
+    return clone;
+}
+
 void ShiftRightAssignNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -271,6 +388,12 @@ void ShiftRightAssignNode::Accept(Visitor& visitor)
 
 DisjunctionNode::DisjunctionNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::disjunctionNode, sourcePos_)
 {
+}
+
+Node* DisjunctionNode::Clone() const
+{
+    DisjunctionNode* clone = new DisjunctionNode(GetSourcePos());
+    return clone;
 }
 
 void DisjunctionNode::Accept(Visitor& visitor)
@@ -282,6 +405,12 @@ ConjunctionNode::ConjunctionNode(const soul::ast::SourcePos& sourcePos_) : Node(
 {
 }
 
+Node* ConjunctionNode::Clone() const
+{
+    ConjunctionNode* clone = new ConjunctionNode(GetSourcePos());
+    return clone;
+}
+
 void ConjunctionNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -289,6 +418,12 @@ void ConjunctionNode::Accept(Visitor& visitor)
 
 InclusiveOrNode::InclusiveOrNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::inclusiveOrNode, sourcePos_)
 {
+}
+
+Node* InclusiveOrNode::Clone() const
+{
+    InclusiveOrNode* clone = new InclusiveOrNode(GetSourcePos());
+    return clone;
 }
 
 void InclusiveOrNode::Accept(Visitor& visitor)
@@ -300,6 +435,12 @@ ExclusiveOrNode::ExclusiveOrNode(const soul::ast::SourcePos& sourcePos_) : Node(
 {
 }
 
+Node* ExclusiveOrNode::Clone() const
+{
+    ExclusiveOrNode* clone = new ExclusiveOrNode(GetSourcePos());
+    return clone;
+}
+
 void ExclusiveOrNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -307,6 +448,12 @@ void ExclusiveOrNode::Accept(Visitor& visitor)
 
 AndNode::AndNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::andNode, sourcePos_)
 {
+}
+
+Node* AndNode::Clone() const
+{
+    AndNode* clone = new AndNode(GetSourcePos());
+    return clone;
 }
 
 void AndNode::Accept(Visitor& visitor)
@@ -318,6 +465,12 @@ EqualNode::EqualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::eq
 {
 }
 
+Node* EqualNode::Clone() const
+{
+    EqualNode* clone = new EqualNode(GetSourcePos());
+    return clone;
+}
+
 void EqualNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -325,6 +478,12 @@ void EqualNode::Accept(Visitor& visitor)
 
 NotEqualNode::NotEqualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::notEqualNode, sourcePos_)
 {
+}
+
+Node* NotEqualNode::Clone() const
+{
+    NotEqualNode* clone = new NotEqualNode(GetSourcePos());
+    return clone;
 }
 
 void NotEqualNode::Accept(Visitor& visitor)
@@ -336,6 +495,12 @@ LessNode::LessNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::less
 {
 }
 
+Node* LessNode::Clone() const
+{
+    LessNode* clone = new LessNode(GetSourcePos());
+    return clone;
+}
+
 void LessNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -343,6 +508,12 @@ void LessNode::Accept(Visitor& visitor)
 
 GreaterNode::GreaterNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::greaterNode, sourcePos_)
 {
+}
+
+Node* GreaterNode::Clone() const
+{
+    GreaterNode* clone = new GreaterNode(GetSourcePos());
+    return clone;
 }
 
 void GreaterNode::Accept(Visitor& visitor)
@@ -354,6 +525,12 @@ LessOrEqualNode::LessOrEqualNode(const soul::ast::SourcePos& sourcePos_) : Node(
 {
 }
 
+Node* LessOrEqualNode::Clone() const
+{
+    LessOrEqualNode* clone = new LessOrEqualNode(GetSourcePos());
+    return clone;
+}
+
 void LessOrEqualNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -361,6 +538,12 @@ void LessOrEqualNode::Accept(Visitor& visitor)
 
 GreaterOrEqualNode::GreaterOrEqualNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::greaterOrEqualNode, sourcePos_)
 {
+}
+
+Node* GreaterOrEqualNode::Clone() const
+{
+    GreaterOrEqualNode* clone = new GreaterOrEqualNode(GetSourcePos());
+    return clone;
 }
 
 void GreaterOrEqualNode::Accept(Visitor& visitor)
@@ -372,6 +555,12 @@ CompareNode::CompareNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind
 {
 }
 
+Node* CompareNode::Clone() const
+{
+    CompareNode* clone = new CompareNode(GetSourcePos());
+    return clone;
+}
+
 void CompareNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -379,6 +568,12 @@ void CompareNode::Accept(Visitor& visitor)
 
 ShiftLeftNode::ShiftLeftNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::shiftLeftNode, sourcePos_)
 {
+}
+
+Node* ShiftLeftNode::Clone() const
+{
+    ShiftLeftNode* clone = new ShiftLeftNode(GetSourcePos());
+    return clone;
 }
 
 void ShiftLeftNode::Accept(Visitor& visitor)
@@ -390,6 +585,12 @@ ShiftRightNode::ShiftRightNode(const soul::ast::SourcePos& sourcePos_) : Node(No
 {
 }
 
+Node* ShiftRightNode::Clone() const
+{
+    ShiftRightNode* clone = new ShiftRightNode(GetSourcePos());
+    return clone;
+}
+
 void ShiftRightNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -397,6 +598,12 @@ void ShiftRightNode::Accept(Visitor& visitor)
 
 PlusNode::PlusNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::plusNode, sourcePos_)
 {
+}
+
+Node* PlusNode::Clone() const
+{
+    PlusNode* clone = new PlusNode(GetSourcePos());
+    return clone;
 }
 
 void PlusNode::Accept(Visitor& visitor)
@@ -408,6 +615,12 @@ MinusNode::MinusNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::mi
 {
 }
 
+Node* MinusNode::Clone() const
+{
+    MinusNode* clone = new MinusNode(GetSourcePos());
+    return clone;
+}
+
 void MinusNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -415,6 +628,12 @@ void MinusNode::Accept(Visitor& visitor)
 
 MulNode::MulNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::mulNode, sourcePos_)
 {
+}
+
+Node* MulNode::Clone() const
+{
+    MulNode* clone = new MulNode(GetSourcePos());
+    return clone;
 }
 
 void MulNode::Accept(Visitor& visitor)
@@ -426,6 +645,12 @@ DivNode::DivNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::divNod
 {
 }
 
+Node* DivNode::Clone() const
+{
+    DivNode* clone = new DivNode(GetSourcePos());
+    return clone;
+}
+
 void DivNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -433,6 +658,12 @@ void DivNode::Accept(Visitor& visitor)
 
 ModNode::ModNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::modNode, sourcePos_)
 {
+}
+
+Node* ModNode::Clone() const
+{
+    ModNode* clone = new ModNode(GetSourcePos());
+    return clone;
 }
 
 void ModNode::Accept(Visitor& visitor)
@@ -444,6 +675,12 @@ DotStarNode::DotStarNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind
 {
 }
 
+Node* DotStarNode::Clone() const
+{
+    DotStarNode* clone = new DotStarNode(GetSourcePos());
+    return clone;
+}
+
 void DotStarNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -451,6 +688,12 @@ void DotStarNode::Accept(Visitor& visitor)
 
 ArrowStarNode::ArrowStarNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::arrowStarNode, sourcePos_)
 {
+}
+
+Node* ArrowStarNode::Clone() const
+{
+    ArrowStarNode* clone = new ArrowStarNode(GetSourcePos());
+    return clone;
 }
 
 void ArrowStarNode::Accept(Visitor& visitor)
@@ -465,6 +708,12 @@ CastExprNode::CastExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(N
 CastExprNode::CastExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     UnaryNode(NodeKind::castExprNode, sourcePos_, child_), typeId(typeId_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* CastExprNode::Clone() const
+{
+    CastExprNode* clone = new CastExprNode(GetSourcePos(), typeId->Clone(), Child()->Clone(), lpPos, rpPos);
+    return clone;
 }
 
 void CastExprNode::Accept(Visitor& visitor)
@@ -492,6 +741,12 @@ DerefNode::DerefNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::de
 {
 }
 
+Node* DerefNode::Clone() const
+{
+    DerefNode* clone = new DerefNode(GetSourcePos());
+    return clone;
+}
+
 void DerefNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -499,6 +754,12 @@ void DerefNode::Accept(Visitor& visitor)
 
 AddrOfNode::AddrOfNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::addrOfNode, sourcePos_)
 {
+}
+
+Node* AddrOfNode::Clone() const
+{
+    AddrOfNode* clone = new AddrOfNode(GetSourcePos());
+    return clone;
 }
 
 void AddrOfNode::Accept(Visitor& visitor)
@@ -510,6 +771,12 @@ NotNode::NotNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::notNod
 {
 }
 
+Node* NotNode::Clone() const
+{
+    NotNode* clone = new NotNode(GetSourcePos());
+    return clone;
+}
+
 void NotNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -517,6 +784,12 @@ void NotNode::Accept(Visitor& visitor)
 
 ComplementNode::ComplementNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::complementNode, sourcePos_)
 {
+}
+
+Node* ComplementNode::Clone() const
+{
+    ComplementNode* clone = new ComplementNode(GetSourcePos());
+    return clone;
 }
 
 void ComplementNode::Accept(Visitor& visitor)
@@ -528,6 +801,12 @@ PrefixIncNode::PrefixIncNode(const soul::ast::SourcePos& sourcePos_) : Node(Node
 {
 }
 
+Node* PrefixIncNode::Clone() const
+{
+    PrefixIncNode* clone = new PrefixIncNode(GetSourcePos());
+    return clone;
+}
+
 void PrefixIncNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -535,6 +814,12 @@ void PrefixIncNode::Accept(Visitor& visitor)
 
 PrefixDecNode::PrefixDecNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::prefixDecNode, sourcePos_)
 {
+}
+
+Node* PrefixDecNode::Clone() const
+{
+    PrefixDecNode* clone = new PrefixDecNode(GetSourcePos());
+    return clone;
 }
 
 void PrefixDecNode::Accept(Visitor& visitor)
@@ -550,6 +835,12 @@ AwaitExprNode::AwaitExprNode(const soul::ast::SourcePos& sourcePos_, Node* child
 {
 }
 
+Node* AwaitExprNode::Clone() const
+{
+    AwaitExprNode* clone = new AwaitExprNode(GetSourcePos(), Child()->Clone());
+    return clone;
+}
+
 void AwaitExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -562,6 +853,12 @@ SizeOfTypeExprNode::SizeOfTypeExprNode(const soul::ast::SourcePos& sourcePos_) :
 SizeOfTypeExprNode::SizeOfTypeExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     UnaryNode(NodeKind::sizeOfTypeExprNode, sourcePos_, typeId_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* SizeOfTypeExprNode::Clone() const
+{
+    SizeOfTypeExprNode* clone = new SizeOfTypeExprNode(GetSourcePos(), Child()->Clone(), lpPos, rpPos);
+    return clone;
 }
 
 void SizeOfTypeExprNode::Accept(Visitor& visitor)
@@ -591,6 +888,12 @@ SizeOfPackExprNode::SizeOfPackExprNode(const soul::ast::SourcePos& sourcePos_, N
     const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     UnaryNode(NodeKind::sizeOfPackExpNode, sourcePos_, idNode_), ellipsisPos(ellipsisPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* SizeOfPackExprNode::Clone() const
+{
+    SizeOfPackExprNode* clone = new SizeOfPackExprNode(GetSourcePos(), Child()->Clone(), ellipsisPos, lpPos, rpPos);
+    return clone;
 }
 
 void SizeOfPackExprNode::Accept(Visitor& visitor)
@@ -623,6 +926,12 @@ SizeOfUnaryExprNode::SizeOfUnaryExprNode(const soul::ast::SourcePos& sourcePos_,
 {
 }
 
+Node* SizeOfUnaryExprNode::Clone() const
+{
+    SizeOfUnaryExprNode* clone = new SizeOfUnaryExprNode(GetSourcePos(), Child()->Clone());
+    return clone;
+}
+
 void SizeOfUnaryExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -635,6 +944,12 @@ AlignOfExprNode::AlignOfExprNode(const soul::ast::SourcePos& sourcePos_) : Unary
 AlignOfExprNode::AlignOfExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     UnaryNode(NodeKind::alignOfExprNode, sourcePos_, child_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* AlignOfExprNode::Clone() const
+{
+    AlignOfExprNode* clone = new AlignOfExprNode(GetSourcePos(), Child()->Clone(), lpPos, rpPos);
+    return clone;
 }
 
 void AlignOfExprNode::Accept(Visitor& visitor)
@@ -665,6 +980,12 @@ NoexceptExprNode::NoexceptExprNode(const soul::ast::SourcePos& sourcePos_, Node*
 {
 }
 
+Node* NoexceptExprNode::Clone() const
+{
+    NoexceptExprNode* clone = new NoexceptExprNode(GetSourcePos(), Child()->Clone(), lpPos, rpPos);
+    return clone;
+}
+
 void NoexceptExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -693,6 +1014,27 @@ NewExprNode::NewExprNode(const soul::ast::SourcePos& sourcePos_, Node* placement
 {
 }
 
+Node* NewExprNode::Clone() const
+{
+    Node* clonedPlacement = nullptr;
+    if (placement)
+    {
+        clonedPlacement = placement->Clone();
+    }
+    Node* clonedInitializer = nullptr;
+    if (initializer)
+    {
+        clonedInitializer = initializer->Clone();
+    }
+    Node* clonedColonColonHead = nullptr;
+    if (colonColonHead)
+    {
+        clonedColonColonHead = colonColonHead->Clone();
+    }
+    NewExprNode* clone = new NewExprNode(GetSourcePos(), clonedPlacement, Child(), clonedInitializer, clonedColonColonHead, newPos);
+    return clone;
+}
+
 void NewExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -718,6 +1060,18 @@ void NewExprNode::Read(Reader& reader)
 
 NewPlacementNode::NewPlacementNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::newPlacementNode, sourcePos_)
 {
+}
+
+Node* NewPlacementNode::Clone() const
+{
+    NewPlacementNode* clone = new NewPlacementNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    clone->SetLParenPos(lpPos);
+    clone->SetRParenPos(rpPos);
+    return clone;
 }
 
 void NewPlacementNode::Accept(Visitor& visitor)
@@ -748,6 +1102,12 @@ ParenNewTypeIdNode::ParenNewTypeIdNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
+Node* ParenNewTypeIdNode::Clone() const
+{
+    ParenNewTypeIdNode* clone = new ParenNewTypeIdNode(GetSourcePos(), Child()->Clone(), lpPos, rpPos);
+    return clone;
+}
+
 void ParenNewTypeIdNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -774,6 +1134,17 @@ NewTypeIdNode::NewTypeIdNode(const soul::ast::SourcePos& sourcePos_) : CompoundN
 NewTypeIdNode::NewTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifierSeq_, Node* newDeclarator_) : 
     CompoundNode(NodeKind::newTypeIdNode, sourcePos_), typeSpecifierSeq(typeSpecifierSeq_), newDeclarator(newDeclarator_)
 {
+}
+
+Node* NewTypeIdNode::Clone() const
+{
+    Node* clonedNewDeclarator = nullptr;
+    if (newDeclarator)
+    {
+        clonedNewDeclarator = newDeclarator->Clone();
+    }
+    NewTypeIdNode* clone = new NewTypeIdNode(GetSourcePos(), typeSpecifierSeq->Clone(), clonedNewDeclarator);
+    return clone;
 }
 
 void NewTypeIdNode::Accept(Visitor& visitor)
@@ -803,6 +1174,17 @@ ArrayDeletePtrNode::ArrayDeletePtrNode(const soul::ast::SourcePos& sourcePos_, N
     const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
     UnaryNode(NodeKind::arrayDeletePtrNode, sourcePos_, ptr_), colonColonHead(colonColonHead_), deletePos(deletePos_), lbPos(lbPos_), rbPos(rbPos_)
 {
+}
+
+Node* ArrayDeletePtrNode::Clone() const
+{
+    Node* clonedColonColonHead = nullptr;
+    if (colonColonHead)
+    {
+        clonedColonColonHead = colonColonHead->Clone();
+    }
+    ArrayDeletePtrNode* clone = new ArrayDeletePtrNode(GetSourcePos(), Child()->Clone(), clonedColonColonHead, deletePos, lbPos, rbPos);
+    return clone;
 }
 
 void ArrayDeletePtrNode::Accept(Visitor& visitor)
@@ -837,6 +1219,17 @@ DeletePtrNode::DeletePtrNode(const soul::ast::SourcePos& sourcePos_, Node* ptr_,
 {
 }
 
+Node* DeletePtrNode::Clone() const
+{
+    Node* clonedColonColonHead = nullptr;
+    if (colonColonHead)
+    {
+        clonedColonColonHead = colonColonHead->Clone();
+    }
+    DeletePtrNode* clone = new DeletePtrNode(GetSourcePos(), Child()->Clone(), clonedColonColonHead, deletePos);
+    return clone;
+}
+
 void DeletePtrNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -863,6 +1256,12 @@ SubscriptExprNode::SubscriptExprNode(const soul::ast::SourcePos& sourcePos_) : U
 SubscriptExprNode::SubscriptExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_) :
     UnaryNode(NodeKind::subscriptExprNode, sourcePos_, child_), index(index_), lbPos(lbPos_), rbPos(rbPos_)
 {
+}
+
+Node* SubscriptExprNode::Clone() const
+{
+    SubscriptExprNode* clone = new SubscriptExprNode(GetSourcePos(), Child()->Clone(), index->Clone(), lbPos, rbPos);
+    return clone;
 }
 
 void SubscriptExprNode::Accept(Visitor& visitor)
@@ -894,6 +1293,21 @@ InvokeExprNode::InvokeExprNode(const soul::ast::SourcePos& sourcePos_, Node* sub
 {
 }
 
+Node* InvokeExprNode::Clone() const
+{
+    Node* clonedSubject = nullptr;
+    if (subject)
+    {
+        clonedSubject = subject->Clone();
+    }
+    InvokeExprNode* clone = new InvokeExprNode(GetSourcePos(), clonedSubject);
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void InvokeExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -923,6 +1337,12 @@ PairNode::PairNode(const soul::ast::SourcePos& sourcePos_, Node* left_, Node* ri
 {
 }
 
+Node* PairNode::Clone() const
+{
+    PairNode* clone = new PairNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    return clone;
+}
+
 void PairNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -932,6 +1352,12 @@ DotNode::DotNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::dotNod
 {
 }
 
+Node* DotNode::Clone() const
+{
+    DotNode* clone = new DotNode(GetSourcePos());
+    return clone;
+}
+
 void DotNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -939,6 +1365,12 @@ void DotNode::Accept(Visitor& visitor)
 
 ArrowNode::ArrowNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::arrowNode, sourcePos_)
 {
+}
+
+Node* ArrowNode::Clone() const
+{
+    ArrowNode* clone = new ArrowNode(GetSourcePos());
+    return clone;
 }
 
 void ArrowNode::Accept(Visitor& visitor)
@@ -952,6 +1384,12 @@ MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_) : UnaryNo
 
 MemberExprNode::MemberExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* op_, Node* id_) : UnaryNode(NodeKind::memberExprNode, sourcePos_, child_), op(op_), id(id_)
 {
+}
+
+Node* MemberExprNode::Clone() const
+{
+    MemberExprNode* clone = new MemberExprNode(GetSourcePos(), Child()->Clone(), op->Clone(), id->Clone());
+    return clone;
 }
 
 void MemberExprNode::Accept(Visitor& visitor)
@@ -982,6 +1420,12 @@ PostfixIncExprNode::PostfixIncExprNode(const soul::ast::SourcePos& sourcePos_, N
 {
 }
 
+Node* PostfixIncExprNode::Clone() const
+{
+    PostfixIncExprNode* clone = new PostfixIncExprNode(GetSourcePos(), Child()->Clone(), opPos);
+    return clone;
+}
+
 void PostfixIncExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1006,6 +1450,12 @@ PostfixDecExprNode::PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_) :
 PostfixDecExprNode::PostfixDecExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& opPos_) : 
     UnaryNode(NodeKind::postfixDecExprNode, sourcePos_, child_), opPos(opPos_)
 {
+}
+
+Node* PostfixDecExprNode::Clone() const
+{
+    PostfixDecExprNode* clone = new PostfixDecExprNode(GetSourcePos(), Child()->Clone(), opPos);
+    return clone;
 }
 
 void PostfixDecExprNode::Accept(Visitor& visitor)
@@ -1034,6 +1484,12 @@ TypeIdExprNode::TypeIdExprNode(const soul::ast::SourcePos& sourcePos_, Node* chi
 {
 }
 
+Node* TypeIdExprNode::Clone() const
+{
+    TypeIdExprNode* clone = new TypeIdExprNode(GetSourcePos(), Child()->Clone(), lpPos, rpPos);
+    return clone;
+}
+
 void TypeIdExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1057,6 +1513,12 @@ DynamicCastNode::DynamicCastNode(const soul::ast::SourcePos& sourcePos_) : Node(
 {
 }
 
+Node* DynamicCastNode::Clone() const
+{
+    DynamicCastNode* clone = new DynamicCastNode(GetSourcePos());
+    return clone;
+}
+
 void DynamicCastNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1064,6 +1526,12 @@ void DynamicCastNode::Accept(Visitor& visitor)
 
 StaticCastNode::StaticCastNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::staticCastNode, sourcePos_)
 {
+}
+
+Node* StaticCastNode::Clone() const
+{
+    StaticCastNode* clone = new StaticCastNode(GetSourcePos());
+    return clone;
 }
 
 void StaticCastNode::Accept(Visitor& visitor)
@@ -1075,6 +1543,12 @@ ReinterpretCastNode::ReinterpretCastNode(const soul::ast::SourcePos& sourcePos_)
 {
 }
 
+Node* ReinterpretCastNode::Clone() const
+{
+    ReinterpretCastNode* clone = new ReinterpretCastNode(GetSourcePos());
+    return clone;
+}
+
 void ReinterpretCastNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1082,6 +1556,12 @@ void ReinterpretCastNode::Accept(Visitor& visitor)
 
 ConstCastNode::ConstCastNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::constCastNode, sourcePos_)
 {
+}
+
+Node* ConstCastNode::Clone() const
+{
+    ConstCastNode* clone = new ConstCastNode(GetSourcePos());
+    return clone;
 }
 
 void ConstCastNode::Accept(Visitor& visitor)
@@ -1097,6 +1577,12 @@ CppCastExprNode::CppCastExprNode(const soul::ast::SourcePos& sourcePos_, Node* t
     const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     UnaryNode(NodeKind::cppCastExprNode, sourcePos_, child_), typeId(typeId_), op(op_), laPos(laPos_), raPos(raPos_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* CppCastExprNode::Clone() const
+{
+    CppCastExprNode* clone = new CppCastExprNode(GetSourcePos(), typeId->Clone(), Child()->Clone(), op->Clone(), laPos, raPos, lpPos, rpPos);
+    return clone;
 }
 
 void CppCastExprNode::Accept(Visitor& visitor)
@@ -1130,6 +1616,12 @@ ThisNode::ThisNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::this
 {
 }
 
+Node* ThisNode::Clone() const
+{
+    ThisNode* clone = new ThisNode(GetSourcePos());
+    return clone;
+}
+
 void ThisNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1142,6 +1634,12 @@ ParenthesizedExprNode::ParenthesizedExprNode(const soul::ast::SourcePos& sourceP
 ParenthesizedExprNode::ParenthesizedExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     UnaryNode(NodeKind::parenExprNode, sourcePos_, child_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* ParenthesizedExprNode::Clone() const
+{
+    ParenthesizedExprNode* clone = new ParenthesizedExprNode(GetSourcePos(), Child()->Clone(), lpPos, rpPos);
+    return clone;
 }
 
 void ParenthesizedExprNode::Accept(Visitor& visitor)
@@ -1167,6 +1665,18 @@ FoldExprNode::FoldExprNode(const soul::ast::SourcePos& sourcePos_) : SequenceNod
 {
 }
 
+Node* FoldExprNode::Clone() const
+{
+    FoldExprNode* clone = new FoldExprNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    clone->SetLParenPos(lpPos);
+    clone->SetRParenPos(rpPos);
+    return clone;
+}
+
 void FoldExprNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1190,6 +1700,16 @@ NewDeclaratorNode::NewDeclaratorNode(const soul::ast::SourcePos& sourcePos_) : S
 {
 }
 
+Node* NewDeclaratorNode::Clone() const
+{
+    NewDeclaratorNode* clone = new NewDeclaratorNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void NewDeclaratorNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1199,6 +1719,16 @@ ArrayNewDeclaratorNode::ArrayNewDeclaratorNode(const soul::ast::SourcePos& sourc
 {
 }
 
+Node* ArrayNewDeclaratorNode::Clone() const
+{
+    ArrayNewDeclaratorNode* clone = new ArrayNewDeclaratorNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void ArrayNewDeclaratorNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1206,6 +1736,16 @@ void ArrayNewDeclaratorNode::Accept(Visitor& visitor)
 
 NewInitializerNode::NewInitializerNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::newInitializerNode, sourcePos_)
 {
+}
+
+Node* NewInitializerNode::Clone() const
+{
+    NewInitializerNode* clone = new NewInitializerNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
 }
 
 void NewInitializerNode::Accept(Visitor& visitor)
@@ -1231,6 +1771,16 @@ BracedInitListNode::BracedInitListNode(const soul::ast::SourcePos& sourcePos_) :
 {
 }
 
+Node* BracedInitListNode::Clone() const
+{
+    BracedInitListNode* clone = new BracedInitListNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void BracedInitListNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1245,6 +1795,12 @@ DesignatedInitializerNode::DesignatedInitializerNode(const soul::ast::SourcePos&
 {
 }
 
+Node* DesignatedInitializerNode::Clone() const
+{
+    DesignatedInitializerNode* clone = new DesignatedInitializerNode(GetSourcePos(), Left()->Clone(), Right()->Clone());
+    return clone;
+}
+
 void DesignatedInitializerNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -1256,6 +1812,12 @@ DesignatorNode::DesignatorNode(const soul::ast::SourcePos& sourcePos_) : UnaryNo
 
 DesignatorNode::DesignatorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_) : UnaryNode(NodeKind::designatorNode, sourcePos_, identifier_)
 {
+}
+
+Node* DesignatorNode::Clone() const 
+{
+    DesignatorNode* clone = new DesignatorNode(GetSourcePos(), Child()->Clone());
+    return clone;
 }
 
 void DesignatorNode::Accept(Visitor& visitor)

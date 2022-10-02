@@ -15,6 +15,7 @@ class LambdaExpressionNode : public CompoundNode
 public:
     LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_);
     LambdaExpressionNode(const soul::ast::SourcePos& sourcePos_, Node* introducer_, Node* templateParams_, Node* declarator_, Node* body_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -34,6 +35,7 @@ class LambdaIntroducerNode : public CompoundNode
 public:
     LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_);
     LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos_, Node* capture_, const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -50,6 +52,7 @@ class LambdaCaptureNode : public ListNode
 {
 public:
     LambdaCaptureNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -57,6 +60,7 @@ class DefaultRefCaptureNode : public Node
 {
 public:
     DefaultRefCaptureNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -64,6 +68,7 @@ class DefaultCopyCaptureNode : public Node
 {
 public:
     DefaultCopyCaptureNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -71,6 +76,7 @@ class ByRefCaptureNode : public Node
 {
 public:
     ByRefCaptureNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -79,6 +85,7 @@ class SimpleCaptureNode : public CompoundNode
 public:
     SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_);
     SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -96,6 +103,7 @@ class CurrentObjectCopyCapture : public CompoundNode
 public:
     CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_);
     CurrentObjectCopyCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -109,6 +117,7 @@ class CurrentObjectByRefCapture : public CompoundNode
 public:
     CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_);
     CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -122,6 +131,7 @@ class InitCaptureNode : public CompoundNode
 public:
     InitCaptureNode(const soul::ast::SourcePos& sourcePos_);
     InitCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -141,6 +151,7 @@ class LambdaDeclaratorNode : public CompoundNode
 public:
     LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_);
     LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos_, Node* parameterList_, Node* specifiers_, Node* requiresClause_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -158,6 +169,7 @@ class LambdaSpecifiersNode : public CompoundNode
 public:
     LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_);
     LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_, Node* trailingReturnType_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -178,6 +190,7 @@ class LambdaTemplateParamsNode : public CompoundNode
 public:
     LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_);
     LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_, Node* templateParams_, Node* requiresClause_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

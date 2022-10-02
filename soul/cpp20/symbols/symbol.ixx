@@ -42,7 +42,7 @@ enum class SymbolKind : int32_t
 {
     null, 
     classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
-    boolValueSymbol, integerValueSymbol, floatingValueSymbol, genericTypeSymbol, nullPtrTypeSymbol,
+    boolValueSymbol, integerValueSymbol, floatingValueSymbol, stringValueSymbol, charValueSymbol, genericTypeSymbol, nullPtrTypeSymbol, 
     aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
     conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, functionDefinitionSymbol,
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
@@ -99,7 +99,6 @@ public:
     virtual Scope* GetGroupScope() { return nullptr; }
     virtual std::u32string FullName() const;
     virtual std::string SymbolKindStr() const = 0;
-    virtual const std::u32string& InstallationName() const { return name; }
     virtual bool IsValidDeclarationScope(ScopeKind scopeKind) const { return true; }
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
@@ -112,6 +111,7 @@ public:
     virtual SymbolTable* GetSymbolTable();
     Module* GetModule();
     Symbol* Parent() { return parent; }
+    const Symbol* Parent() const { return parent; }
     void SetParent(Symbol* parent_) { parent = parent_; }
     ClassTypeSymbol* ParentClass() const;
     NamespaceSymbol* ParentNamespace() const;
@@ -124,6 +124,8 @@ public:
     bool IsCompoundTypeSymbol() const { return kind == SymbolKind::compoundTypeSymbol; }
     bool IsIntegerValueSymbol() const { return kind == SymbolKind::integerValueSymbol; }
     bool IsFloatingValueSymbol() const { return kind == SymbolKind::floatingValueSymbol; }
+    bool IsStringValueSymbol() const { return kind == SymbolKind::stringValueSymbol; }
+    bool IsCharValueSymbol() const { return kind == SymbolKind::charValueSymbol; }
     bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol; }
     bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
@@ -150,6 +152,7 @@ public:
     bool IsErrorTypeSymbol() const { return kind == SymbolKind::errorSymbol; }
     bool IsConstraintExprSymbol() const { return kind == SymbolKind::constraintExprSymbol; }
     bool IsValueSymbol() const;
+    bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
     SymbolGroupKind GetSymbolGroupKind() const;
 private:
     SymbolKind kind;

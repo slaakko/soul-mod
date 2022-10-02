@@ -62,6 +62,7 @@ class IntegerLiteralNode : public LiteralNode
 public:
     IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_);
     IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -79,6 +80,7 @@ class FloatingLiteralNode : public LiteralNode
 public:
     FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_);
     FloatingLiteralNode(const soul::ast::SourcePos& sourcePos_, double value_, Suffix suffix_, Base base_, const std::u32string& rep_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -96,6 +98,7 @@ class CharacterLiteralNode : public LiteralNode
 public:
     CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_);
     CharacterLiteralNode(const soul::ast::SourcePos& sourcePos_, char32_t value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_, bool hasMultipleCharacters_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -115,6 +118,7 @@ public:
     StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     StringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
     StringLiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& rep_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -130,6 +134,7 @@ class RawStringLiteralNode : public StringLiteralNode
 public:
     RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_);
     RawStringLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& value_, EncodingPrefix encodingPrefix_, const std::u32string& delimSequence_, const std::u32string& rep_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -143,6 +148,7 @@ class BooleanLiteralNode : public LiteralNode
 public:
     BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_);
     BooleanLiteralNode(const soul::ast::SourcePos& sourcePos_, bool value_, const std::u32string& rep_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -156,6 +162,7 @@ class NullPtrLiteralNode : public LiteralNode
 public:
     NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_);
     NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -164,6 +171,7 @@ class UserDefinedLiteraNode : public BinaryNode
 public:
     UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_);
     UserDefinedLiteraNode(const soul::ast::SourcePos& sourcePos_, Node* literalNode_, Node* udSuffix_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -172,6 +180,7 @@ class LiteralOperatorIdNode : public UnaryNode
 public:
     LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_);
     LiteralOperatorIdNode(const soul::ast::SourcePos& sourcePos_, Node* id_, const soul::ast::SourcePos& stringLitPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

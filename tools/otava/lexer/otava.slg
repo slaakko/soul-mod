@@ -1,0 +1,6 @@
+project otava.lexer.slg;
+tokens <../token/otava.token>;
+keywords <../keyword/otava.keyword>;
+expressions <../expression/otava.expr>;
+lexer <otava.lexer>;
+lexer <otava.token.line.lexer>;

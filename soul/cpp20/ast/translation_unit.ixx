@@ -15,6 +15,7 @@ class TranslationUnitNode : public CompoundNode
 public:
     TranslationUnitNode(const soul::ast::SourcePos& sourcePos_);
     TranslationUnitNode(const soul::ast::SourcePos& sourcePos_, Node* unit_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -28,6 +29,7 @@ class ModuleUnitNode : public CompoundNode
 public:
     ModuleUnitNode(const soul::ast::SourcePos& sourcePos_);
     ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* globalModuleFragment_, Node* moduleDeclaration_, Node* declarations_, Node* privateModuleFragment_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

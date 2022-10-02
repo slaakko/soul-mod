@@ -129,7 +129,7 @@ parser LambdaParser
         ::=
         (
             (
-                LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; }
+                LPAREN{ sourcePos = lexer.GetSourcePos(pos); lpPos = sourcePos; parameterList.reset(new soul::cpp20::ast::ParameterListNode(sourcePos)); }
                 ParameterDeclarationClause(context, parameterList.get()):params 
                 RPAREN{ rpPos = lexer.GetSourcePos(pos); parameterList->SetLParenPos(lpPos); parameterList->SetRParenPos(rpPos); }
             )?

@@ -238,7 +238,11 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
             lexer.SetLog(log.get());
         }
         lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
+        soul::cpp20::symbols::BoundCompileUnitNode compileUnit;
+        soul::cpp20::symbols::OperationRepository operationRepository;
+        compileUnit.SetOperationRepository(&operationRepository);
         soul::cpp20::symbols::Context context;
+        context.SetBoundCompileUnit(&compileUnit);
         soul::cpp20::symbols::Module* module = project->GetModule(file);
         module->SetFilePath(filePath);
         soul::cpp20::symbols::SetCurrentModule(module);
@@ -246,6 +250,7 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<soul::cpp20::ast::Node> node = soul::cpp20::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        std::unique_ptr<soul::cpp20::ast::Node> clonedNode(node->Clone());
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
             std::string xmlFilePath = filePath + ".ast.xml";
@@ -266,10 +271,6 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
         std::string interfaceUnitName;
         ScanDependencies(project, file, true, interfaceUnitName);
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
-        if (filePath.find("path.cpp") != std::string::npos)
-        {
-            int x = 0;
-        }
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = soul::cpp20::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
         lexer.SetPPHook(soul::cpp20::pp::PreprocessPPLine);
@@ -280,7 +281,11 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
         }
         lexer.SetFile(file);
         lexer.SetRuleNameMapPtr(::cpp20::parser::spg::rules::GetRuleNameMapPtr());
+        soul::cpp20::symbols::BoundCompileUnitNode compileUnit;
+        soul::cpp20::symbols::OperationRepository operationRepository;
+        compileUnit.SetOperationRepository(&operationRepository);
         soul::cpp20::symbols::Context context;
+        context.SetBoundCompileUnit(&compileUnit);
         soul::cpp20::symbols::Module* module = project->GetModule(file);
         module->SetFilePath(filePath);
         soul::cpp20::symbols::SetCurrentModule(module);
@@ -288,6 +293,7 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<soul::cpp20::ast::Node> node = soul::cpp20::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        std::unique_ptr<soul::cpp20::ast::Node> clonedNode(node->Clone());
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
             std::string xmlFilePath = filePath + ".ast.xml";

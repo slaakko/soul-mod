@@ -126,7 +126,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
             {
                 for (int i = 0; i < function->Arity(); ++i)
                 {
-                    if (function->Parameters()[i]->Type() != parameterTypes[i])
+                    if (function->Parameters()[i]->GetType() != parameterTypes[i])
                     {
                         found = false;
                         break;
@@ -153,7 +153,7 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::
             {
                 for (int i = 0; i < functionDefinition->Arity(); ++i)
                 {
-                    if (functionDefinition->Parameters()[i]->Type() != parameterTypes[i])
+                    if (functionDefinition->Parameters()[i]->GetType() != parameterTypes[i])
                     {
                         found = false;
                         break;
@@ -172,6 +172,24 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::
 void FunctionGroupSymbol::AddFunctionDefinition(FunctionDefinitionSymbol* definition_)
 {
     definitions.push_back(definition_);
+}
+
+void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<FunctionSymbol*>& viableFunctions)
+{
+    for (const auto& function : functions)
+    {
+        if (function->Arity() == arity)
+        {
+            viableFunctions.push_back(function);
+        }
+    }
+    for (const auto& functionDefinition : definitions)
+    {
+        if (functionDefinition->Arity() == arity)
+        {
+            viableFunctions.push_back(functionDefinition);
+        }
+    }
 }
 
 } // namespace soul::cpp20::symbols

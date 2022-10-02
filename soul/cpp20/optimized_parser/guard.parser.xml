@@ -15,7 +15,7 @@
     <empty first="{#}"/>
    </action>
   </rule>
-  <rule first="{#}" name="MemberFunctionTemplateGuard">
+  <rule first="{#}" name="MemberFunctionGuard">
    <action first="{#}">
     <empty first="{#}"/>
    </action>

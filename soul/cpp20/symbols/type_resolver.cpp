@@ -11,6 +11,7 @@ import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.declaration;
 import soul.cpp20.symbols.declarator;
 import soul.cpp20.symbols.derivations;
+import soul.cpp20.symbols.enums;
 import soul.cpp20.symbols.evaluator;
 import soul.cpp20.symbols.fundamental.type.symbol;
 import soul.cpp20.symbols.compound.type.symbol;
@@ -332,7 +333,7 @@ void TypeResolver::Visit(soul::cpp20::ast::IdentifierNode& node)
             ContainerScope* containerScope = static_cast<ContainerScope*>(scope);
             std::vector<Symbol*> symbols;
             std::set<Scope*> visited;
-            containerScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, symbols, visited);
+            containerScope->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, LookupFlags::none, symbols, visited, context);
             if (!symbols.empty())
             {
                 Symbol* symbol = symbols.front();
@@ -421,6 +422,50 @@ TypeSymbol* ResolveType(soul::cpp20::ast::Node* node, DeclarationFlags flags, Co
     TypeResolver resolver(context, flags);
     node->Accept(resolver);
     return resolver.GetType();
+}
+
+TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (type->IsForwardClassDeclarationSymbol())
+    {
+        if (type->IsForwardClassDeclarationSymbol())
+        {
+            ForwardClassDeclarationSymbol* fwdClassDeclarationSymbol = static_cast<ForwardClassDeclarationSymbol*>(type);
+            if (fwdClassDeclarationSymbol->GetClassTypeSymbol())
+            {
+                return fwdClassDeclarationSymbol->GetClassTypeSymbol();
+            }
+            else
+            {
+                Symbol* type = context->GetSymbolTable()->Lookup(fwdClassDeclarationSymbol->Name(), SymbolGroupKind::typeSymbolGroup, sourcePos, context, 
+                    LookupFlags::noFwdDeclarationSymbol);
+                if (type && type->IsClassTypeSymbol())
+                {
+                    fwdClassDeclarationSymbol->SetClassTypeSymbol(static_cast<ClassTypeSymbol*>(type));
+                    return static_cast<TypeSymbol*>(type);
+                }
+            }
+        }
+        else if (type->IsForwardEnumDeclarationSymbol())
+        {
+            ForwardEnumDeclarationSymbol* fwdEnumDeclarationSymbol = static_cast<ForwardEnumDeclarationSymbol*>(type);
+            if (fwdEnumDeclarationSymbol->GetEnumeratedTypeSymbol())
+            {
+                return fwdEnumDeclarationSymbol->GetEnumeratedTypeSymbol();
+            }
+            else
+            {
+                Symbol* type = context->GetSymbolTable()->Lookup(fwdEnumDeclarationSymbol->Name(), SymbolGroupKind::typeSymbolGroup, sourcePos, context,
+                    LookupFlags::noFwdDeclarationSymbol);
+                if (type && type->IsEnumeratedTypeSymbol())
+                {
+                    fwdEnumDeclarationSymbol->SetEnumeratedTypeSymbol(static_cast<EnumeratedTypeSymbol*>(type));
+                    return static_cast<TypeSymbol*>(type);
+                }
+            }
+        }
+    }
+    return type;
 }
 
 } // namespace soul::cpp20::symbols

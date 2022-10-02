@@ -15,6 +15,7 @@ class TemplateDeclarationNode : public BinaryNode
 public:
     TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     TemplateDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* templateHead_, Node* declaration_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -22,6 +23,7 @@ class TemplateHeadNode : public CompoundNode
 {
 public:
     TemplateHeadNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -38,6 +40,7 @@ class TemplateParameterListNode : public ListNode
 {
 public:
     TemplateParameterListNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -55,6 +58,7 @@ class TypeParameterNode : public CompoundNode
 public:
     TypeParameterNode(const soul::ast::SourcePos& sourcePos_);
     TypeParameterNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, Node* identifier_, Node* assign_, Node* typeId_, Node* ellipsis_, Node* templateHead_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -78,6 +82,7 @@ class TemplateIdNode : public ListNode
 public:
     TemplateIdNode(const soul::ast::SourcePos& sourcePos_);
     TemplateIdNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -99,6 +104,7 @@ class TypenameNode : public Node
 {
 public:
     TypenameNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -108,6 +114,7 @@ public:
     DeductionGuideNode(const soul::ast::SourcePos& sourcePos_);
     DeductionGuideNode(const soul::ast::SourcePos& sourcePos_, Node* templateName_, Node* params_, Node* arrow_, Node* templateId_, Node* explicitSpecifier_, Node* semicolon_,
         const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -135,6 +142,7 @@ class ExplicitInstantiationNode : public CompoundNode
 public:
     ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_);
     ExplicitInstantiationNode(const soul::ast::SourcePos& sourcePos_, Node* extrn_, Node* tmp_, Node* declaration_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -151,6 +159,7 @@ class TemplateNode : public Node
 {
 public:
     TemplateNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -159,6 +168,7 @@ class ExplicitSpecializationNode : public CompoundNode
 public:
     ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_);
     ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* declaration_, const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

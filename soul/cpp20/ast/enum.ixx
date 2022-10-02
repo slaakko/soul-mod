@@ -15,6 +15,7 @@ class EnumSpecifierNode : public ListNode
 public:
     EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumHead_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -34,6 +35,7 @@ class EnumHeadNode : public CompoundNode
 public:
     EnumHeadNode(const soul::ast::SourcePos& sourcePos_);
     EnumHeadNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -53,6 +55,7 @@ class EnumBaseNode : public UnaryNode
 public:
     EnumBaseNode(const soul::ast::SourcePos& sourcePos_);
     EnumBaseNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -61,6 +64,7 @@ class EnumClassNode : public CompoundNode
 public:
     EnumClassNode(const soul::ast::SourcePos& sourcePos_);
     EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& classPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -74,6 +78,7 @@ class EnumStructNode : public CompoundNode
 public:
     EnumStructNode(const soul::ast::SourcePos& sourcePos_);
     EnumStructNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& structPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -86,6 +91,7 @@ class EnumNode : public Node
 {
 public:
     EnumNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -94,6 +100,7 @@ class EnumeratorDefinitionNode : public CompoundNode
 public:
     EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_);
     EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* enumerator_, Node* value_, const soul::ast::SourcePos& assignPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -111,6 +118,7 @@ class EnumeratorNode : public CompoundNode
 public:
     EnumeratorNode(const soul::ast::SourcePos& sourcePos_);
     EnumeratorNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* attributes_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -126,6 +134,7 @@ class ElaboratedEnumSpecifierNode : public UnaryNode
 public:
     ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     ElaboratedEnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* enumName_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -134,6 +143,7 @@ class OpaqueEnumDeclarationNode : public CompoundNode
 public:
     OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_, Node* semicolon_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

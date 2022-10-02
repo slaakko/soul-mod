@@ -94,7 +94,7 @@ void WriteUtf8(std::ostream& s, const std::string& str)
     }
 }
 
-#else // !_WIN32
+#elif defined(__linux) || defined(__unix) || defined(__posix)
 
 bool IsHandleRedirected(int handle)
 {
@@ -105,6 +105,10 @@ void WriteUtf8(std::ostream& s, const std::string& str)
 {
     s << str;
 }
+
+#else
+
+#error unknown platform
 
 #endif
 

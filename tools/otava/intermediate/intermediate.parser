@@ -1,0 +1,719 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.intermediate.code.parser;
+
+[interface]import otava.intermediate.context;
+[implementation]import otava.intermediate.lexer;
+[implementation]import otava.intermediate.token;
+[implementation]import otava.intermediate.type;
+[implementation]import otava.intermediate.function;
+[implementation]import otava.intermediate.basic.block;
+[implementation]import otava.intermediate.metadata;
+[implementation]import otava.intermediate.data;
+[implementation]import otava.intermediate.instruction;
+
+parser IntermediateCodeParser
+{
+    lexer otava::intermediate::lexer::IntermediateCodeLexer<char32_t>;
+
+    main;
+
+    IntermediateCodeFile(otava::intermediate::Context* context)
+        ::= empty{ context->SetFilePath(lexer.FileName()); }
+            CompileUnitHeader(context):header
+            TypeDeclarations(context):types?
+            DataDefinitions(context):data?
+            FunctionDefinitions(context):functions?
+            Metadata(context):metadata?
+        ;
+
+    CompileUnitHeader(otava::intermediate::Context* context)
+        ::= CU LPAREN CompileUnitId:cuid COMMA MetadataRef(context):mdref RPAREN
+        {
+            context->SetCompileUnitInfo(cuid, mdref);
+        }
+        ;
+
+    CompileUnitId : std::string
+        ::= HEXNUM{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+        |   NUMBER{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+        |   ID{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+        ;
+
+    TypeDeclarations(otava::intermediate::Context* context)
+        ::= TYPES LBRACE TypeDeclaration(context):typeDeclaration* RBRACE
+        {
+            context->ResolveTypes();
+        }
+        ;
+
+    TypeDeclaration(otava::intermediate::Context* context, var int32_t tid)
+        ::= TypeId:typeId{ tid = typeId;} ASSIGN TYPE
+        (   StructureType(context, tid):structureType
+        |   ArrayType(context, tid):arrayType
+        |   FunctionType(context, tid):functionType
+        )
+        ;
+
+    TypeId : int32_t
+        ::= 
+        (
+            TYPEID{ return otava::intermediate::MakeUserTypeId(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        )
+        ;
+
+    FundamentalTypeId : int32_t
+        ::= VOID{ return otava::intermediate::voidTypeId; }
+        |   BOOL{ return otava::intermediate::boolTypeId; }
+        |   SBYTE{ return otava::intermediate::sbyteTypeId; }
+        |   BYTE{ return otava::intermediate::byteTypeId; }
+        |   SHORT{ return otava::intermediate::shortTypeId; }
+        |   USHORT{ return otava::intermediate::ushortTypeId; }
+        |   INT{ return otava::intermediate::intTypeId; }
+        |   UINT{ return otava::intermediate::uintTypeId; }
+        |   LONG{ return otava::intermediate::longTypeId; }
+        |   ULONG{ return otava::intermediate::ulongTypeId; }
+        |   FLOAT{ return otava::intermediate::floatTypeId; }
+        |   DOUBLE{ return otava::intermediate::doubleTypeId; }
+        ;
+
+    TypeRef(var soul::ast::SourcePos sp, var int32_t baseTypeId, var int8_t pointerCount) : otava::intermediate::TypeRef
+        ::= 
+        (
+            (   TypeId:typeId{ sp = lexer.GetSourcePos(pos); baseTypeId = typeId; }
+            |   FundamentalTypeId:fundamentalTypeId{ sp = lexer.GetSourcePos(pos); baseTypeId = fundamentalTypeId; }
+            )   
+            (AST{ ++pointerCount; })*
+        )
+        {
+            return otava::intermediate::MakeTypeRef(sp, baseTypeId, pointerCount); 
+        }
+        ;
+
+    StructureType(otava::intermediate::Context* context, int32_t typeId, var soul::ast::SourcePos sp, var std::vector<otava::intermediate::TypeRef> fieldTypeRefs)
+        ::= LBRACE{ sp = lexer.GetSourcePos(pos); } 
+            (TypeRef:first{ fieldTypeRefs.push_back(first); } 
+            (COMMA TypeRef:next{ fieldTypeRefs.push_back(next); })*)? 
+            RBRACE
+        {
+            context->AddStructureType(sp, typeId, fieldTypeRefs);
+        }
+        ;
+
+    ArrayType(otava::intermediate::Context* context, int32_t typeId, var soul::ast::SourcePos sp, var int64_t size)
+        ::= LBRACKET { sp = lexer.GetSourcePos(pos); } 
+            NUMBER{ size = lexer.GetToken(pos).ToLong(); } 
+            ID{ pass = util::ToUtf8(lexer.GetToken(pos).ToString()) == "x"; } 
+            TypeRef:elementTypeRef
+            RBRACKET
+        {
+            context->AddArrayType(sp, typeId, size, elementTypeRef);
+        }
+        ;
+
+    FunctionType(otava::intermediate::Context* context, int32_t typeId, var soul::ast::SourcePos sp, var std::vector<otava::intermediate::TypeRef> paramTypeRefs)
+        ::= FUNCTION{ sp = lexer.GetSourcePos(pos); } 
+            TypeRef:returnTypeRef 
+            LPAREN 
+            (TypeRef:first{ paramTypeRefs.push_back(first); } 
+            (COMMA TypeRef:next{ paramTypeRefs.push_back(next); })*)? 
+            RPAREN
+        {
+            context->AddFunctionType(sp, typeId, returnTypeRef, paramTypeRefs);
+        }
+        ;
+
+    DataDefinitions(otava::intermediate::Context* context) 
+        ::= DATA LBRACE DataDefinition(context):dataDefinition* RBRACE{ context->ValidateData(); }
+        ;
+
+    DataDefinition(otava::intermediate::Context* context, 
+        var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp, var bool once, var std::string variableName) 
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } (ONCE{ once = true; })? ID{ sp = lexer.GetSourcePos(pos); variableName = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
+        (   SEMICOLON{ context->AddGlobalVariable(sp, tref.GetType(), variableName, nullptr, once); }
+        |   ASSIGN Constant(context):initializer{ context->AddGlobalVariable(sp, tref.GetType(), variableName, initializer, once); }
+        )
+        ;
+
+    Constant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= BoolConstant(context):boolConstant{ return boolConstant; }
+        |   SByteConstant(context):sbyteConstant{ return sbyteConstant; }
+        |   ByteConstant(context):byteConstant{ return byteConstant; }
+        |   ShortConstant(context):shortConstant{ return shortConstant; }
+        |   UShortConstant(context):ushortConstant{ return ushortConstant; }
+        |   IntConstant(context):intConstant{ return intConstant; }
+        |   UIntConstant(context):uintConstant{ return uintConstant; }
+        |   LongConstant(context):longConstant{ return longConstant; }
+        |   ULongConstant(context):ulongConstant{ return ulongConstant; }
+        |   FloatConstant(context):floatConstant{ return floatConstant; }
+        |   DoubleConstant(context):doubleConstant{ return doubleConstant; }
+        |   AddressConstant(context):addressConstant{ return addressConstant; }
+        |   ArrayConstant(context):arrayConstant{ return arrayConstant; }
+        |   StructureConstant(context):structureConstant{ return structureConstant; }
+        |   StringConstant(context):stringConstant{ return stringConstant; }
+        |   StringArrayConstant(context):stringArrayConstant{ return stringArrayConstant; }
+        |   ConversionConstant(context):conversionConstant{ return conversionConstant; }
+        |   ClsIdConstant(context):clsidConstant{ return clsidConstant; }
+        |   SymbolConstant(context):symbolConstant{ return symbolConstant; }
+        ;
+
+    BoolConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= BOOL
+        (   TRUE{ return context->GetTrueValue(); }
+        |   FALSE{ return context->GetFalseValue(); }
+        )
+        ;
+
+    SByteConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= SBYTE NUMBER{ return context->GetSByteValue(lexer.GetToken(pos).ToSByte()); }
+        ;
+
+    ByteConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= BYTE NUMBER{ return context->GetByteValue(lexer.GetToken(pos).ToByte()); }
+        ;
+
+    ShortConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= SHORT NUMBER{ return context->GetShortValue(lexer.GetToken(pos).ToShort()); }
+        ;
+
+    UShortConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= USHORT NUMBER{ return context->GetUShortValue(lexer.GetToken(pos).ToUShort()); }
+        ;
+
+    IntConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= INT NUMBER{ return context->GetIntValue(lexer.GetToken(pos).ToInt()); }
+        ;
+
+    UIntConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= UINT NUMBER{ return context->GetUIntValue(lexer.GetToken(pos).ToUInt()); }
+        ;
+
+    LongConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= LONG NUMBER{ return context->GetLongValue(lexer.GetToken(pos).ToLong()); }
+        ;
+
+    ULongConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= ULONG NUMBER{ return context->GetULongValue(lexer.GetToken(pos).ToULong()); }
+        ;
+
+    FloatConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= FLOAT NUMBER{ return context->GetFloatValue(lexer.GetToken(pos).ToFloat()); }
+        ;
+
+    DoubleConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+        ::= DOUBLE NUMBER{ return context->GetDoubleValue(lexer.GetToken(pos).ToDouble()); }
+        ;
+
+    AddressConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::ConstantValue*
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } 
+        (   NULL_TOKEN
+            {
+                return context->GetNullValue(lexer.GetSourcePos(pos), tref.GetType());
+            }
+        |   ID
+            { 
+                return context->MakeAddressLiteral(lexer.GetSourcePos(pos), tref.GetType(), util::ToUtf8(lexer.GetToken(pos).ToString())); 
+            }
+        )
+        ;
+
+    ArrayConstant(otava::intermediate::Context* context, 
+        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::ConstantValue*> elements) : otava::intermediate::ConstantValue*
+        ::= LBRACKET{ sp = lexer.GetSourcePos(pos); } 
+            (Constant(context):first{ elements.push_back(first); } 
+            (COMMA Constant(context):next{ elements.push_back(next); })*)? 
+            RBRACKET
+        {
+            return context->MakeArrayValue(sp, elements);
+        }
+        ;
+
+    StructureConstant(otava::intermediate::Context* context, 
+        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::ConstantValue*> fieldValues) : otava::intermediate::ConstantValue*
+        ::= LBRACE{ sp = lexer.GetSourcePos(pos); }
+            (Constant(context):first{ fieldValues.push_back(first); }
+            (COMMA Constant(context):next{ fieldValues.push_back(next); })*)?
+            RBRACE
+        {
+            return context->MakeStructureValue(sp, fieldValues);
+        }
+        ;
+
+    StringConstant(otava::intermediate::Context* context, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
+        ::= STRING{ return context->MakeStringValue(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        ;
+
+    StringArrayConstant(otava::intermediate::Context* context, 
+        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::ConstantValue*> strings) : otava::intermediate::ConstantValue*
+        ::= StringArrayPrefix:prefix{ sp = lexer.GetSourcePos(pos); } 
+            LBRACKET 
+            (Constant(context):first{ strings.push_back(first); } 
+            (COMMA Constant(context):next{ strings.push_back(next); })*)? 
+            RBRACKET
+        {
+            return context->MakeStringArrayValue(sp, prefix, strings);
+        }
+        ;
+
+    StringArrayPrefix : char
+        ::= ID{ std::string p = util::ToUtf8(lexer.GetToken(pos).ToString()); pass = p == "u" || p == "w" || p == "b"; if (pass) { return p[0]; } }
+        ;
+
+    ConversionConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); sp = lexer.GetSourcePos(pos); } CONV LPAREN Constant(context):from RPAREN
+        {
+            return context->MakeConversionValue(sp, tref.GetType(), from);
+        }
+        ;
+
+    ClsIdConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); sp = lexer.GetSourcePos(pos); } CLSID 
+        {
+            return context->MakeClsIdValue(sp, tref.GetType(), util::ToUtf8(lexer.GetToken(pos).ToString()));
+        }
+        ;
+
+    SymbolConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::ConstantValue*
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } SymbolValue(context, tref.GetType()):symbolValue
+        {
+            return symbolValue;
+        }
+        ;
+
+    Value(otava::intermediate::Context* context, otava::intermediate::Type* type) : otava::intermediate::Value*
+        ::= RegValue(context, type):regValue{ return regValue; }
+        |   SymbolValue(context, type):symbolValue{ return symbolValue; }
+        |   LiteralValue(context, type):literalValue{ return literalValue; }
+        ;
+
+    RegValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::Value*
+        ::= DOLLAR{ sp = lexer.GetSourcePos(pos); } NUMBER{ int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->GetRegRef(sp, type, reg, context); }
+        ;
+
+    ResultRegValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::RegValue*
+        ::= DOLLAR{ sp = lexer.GetSourcePos(pos); } NUMBER{ int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->MakeRegValue(sp, type, reg, context); }
+        ;
+
+    SymbolValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
+        ::= AT ID{ sp = lexer.GetSourcePos(pos); return context->MakeSymbolValue(sp, type, util::ToUtf8(lexer.GetToken(pos).ToString()));  }
+        ;
+
+    LiteralValue(otava::intermediate::Context* context, otava::intermediate::Type* type) : otava::intermediate::ConstantValue*
+        ::= TRUE{ return context->GetBooleanLiteral(lexer.GetSourcePos(pos), type, true); }
+        |   FALSE{ return context->GetBooleanLiteral(lexer.GetSourcePos(pos), type, false); }
+        |   NULL_TOKEN{ return context->GetNullValue(lexer.GetSourcePos(pos), type); }
+        |   NUMBER{ return context->MakeNumericLiteral(lexer.GetSourcePos(pos), type, util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        |   ID{ return context->MakeAddressLiteral(lexer.GetSourcePos(pos), type, util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        ;
+
+    FunctionDefinitions(otava::intermediate::Context* context)
+        ::= FunctionDefinition(context):function*
+        ;
+
+    FunctionDefinition(otava::intermediate::Context* context, var otava::intermediate::Function* function)
+        ::= FunctionHeader(context):header{ function = header; context->SetCurrentFunction(function); } LBRACE BasicBlock(context, function):basicBlock* RBRACE
+        ;
+
+    FunctionHeader(otava::intermediate::Context* context, 
+        var otava::intermediate::TypeRef functionTypeRef, var soul::ast::SourcePos sp, var bool once, var std::string functionId) : otava::intermediate::Function*
+        ::= 
+        (   
+            FUNCTION{ sp = lexer.GetSourcePos(pos); } 
+            TypeRef:typeRef{ functionTypeRef = typeRef; context->ResolveType(functionTypeRef); } 
+            (ONCE{ once = true; })? 
+            ID{ functionId = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
+            MetadataRef(context):mdRef?
+        )
+        {
+            return context->AddFunctionDefinition(sp, functionTypeRef.GetType(), functionId, once, mdRef);
+        }
+        ;
+
+    BasicBlock(otava::intermediate::Context* context, otava::intermediate::Function* function, var otava::intermediate::BasicBlock* basicBlock, var soul::ast::SourcePos sp)
+        ::= Label:id{ sp = lexer.GetSourcePos(pos); basicBlock = function->AddBasicBlock(sp, id, context); } Instructions(context, basicBlock):instructions
+        ;
+
+    Label : int32_t
+        ::= AT NUMBER{ return lexer.GetToken(pos).ToInt(); }
+        ;
+
+    Operand(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } Value(context, tref.GetType()):value
+        {
+            return value;
+        }
+        ;
+
+    Instructions(otava::intermediate::Context* context, otava::intermediate::BasicBlock* basicBlock)
+        ::= 
+        (
+            (Instruction(context):instruction MetadataRef(context):mdRef?){ basicBlock->AddInstruction(instruction, mdRef); }
+        )+
+        ;
+
+    Instruction(otava::intermediate::Context* context) : otava::intermediate::Instruction*
+        ::= StoreInstruction(context):store{ return store; }
+        |   ArgInstruction(context):arg{ return arg; }
+        |   JmpInstruction(context):jmp{ return jmp; }
+        |   BranchInstruction(context):branch{ return branch; }
+        |   ProcedureCallInstruction(context):procedureCall{ return procedureCall; }
+        |   RetInstruction(context):ret{ return ret; }
+        |   SwitchInstruction(context):switch_{ return switch_; }
+        |   ValueInstruction(context):valueInst{ return valueInst; }
+        |   NoOperationInstruction(context):nopInst{ return nopInst; }
+        ;
+
+    StoreInstruction(otava::intermediate::Context* context, 
+        var soul::ast::SourcePos sp, var otava::intermediate::TypeRef tref, var otava::intermediate::TypeRef ptref) : otava::intermediate::Instruction*
+        ::= STORE{ sp = lexer.GetSourcePos(pos); }
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } 
+            Value(context, tref.GetType()):value 
+            COMMA 
+            TypeRef:ptrTypeRef{ ptref = ptrTypeRef; context->ResolveType(ptref); }
+            Value(context, ptref.GetType()):ptr
+        {
+            return new otava::intermediate::StoreInstruction(sp, value, ptr);
+        }
+        ;
+
+    ArgInstruction(otava::intermediate::Context* context, var soul::ast::SourcePos sp, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
+        ::= ARG{ sp = lexer.GetSourcePos(pos); }
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } 
+            Value(context, tref.GetType()):arg
+        {
+            return new otava::intermediate::ArgInstruction(sp, arg);
+        }
+        ;
+
+    JmpInstruction(otava::intermediate::Context* context, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= JMP{ sp = lexer.GetSourcePos(pos); }
+            Label:target
+        {
+            return new otava::intermediate::JmpInstruction(sp, target);
+        }
+        ;
+
+    BranchInstruction(otava::intermediate::Context* context, var soul::ast::SourcePos sp, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
+        ::= BRANCH{ sp = lexer.GetSourcePos(pos); }
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }
+            Value(context, tref.GetType()):cond
+            COMMA
+            Label:trueTarget
+            COMMA
+            Label:falseTarget
+        {
+            return new otava::intermediate::BranchInstruction(sp, cond, trueTarget, falseTarget);
+        }
+        ;
+
+    ProcedureCallInstruction(otava::intermediate::Context* context, 
+        var soul::ast::SourcePos sp, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
+        ::= CALL{ sp = lexer.GetSourcePos(pos); }
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }
+            Value(context, tref.GetType()):callee
+        {
+            return new otava::intermediate::ProcedureCallInstruction(sp, callee);
+        }
+        ;
+
+    RetInstruction(otava::intermediate::Context* context, var soul::ast::SourcePos sp, var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
+        ::= RET{ sp = lexer.GetSourcePos(pos); }
+        (   (VOID - (VOID AST)){ return new otava::intermediate::RetInstruction(sp, nullptr); }
+        |   TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }  
+            Value(context, tref.GetType()):returnValue{ return new otava::intermediate::RetInstruction(sp, returnValue); }
+        )
+        ;
+
+    SwitchInstruction(otava::intermediate::Context* context, 
+        var soul::ast::SourcePos sp, var otava::intermediate::TypeRef tref, var otava::intermediate::TypeRef caseTref, var otava::intermediate::SwitchInstruction* inst) : 
+        otava::intermediate::Instruction*
+        ::= 
+        (
+            SWITCH{ sp = lexer.GetSourcePos(pos); }
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }  
+            Value(context, tref.GetType()):cond
+            Label:defaultTarget{ inst = new otava::intermediate::SwitchInstruction(sp, cond, defaultTarget); }
+            COMMA
+            LBRACKET
+            (
+                (   TypeRef:caseTypeRef{ caseTref = caseTypeRef; context->ResolveType(caseTref); }
+                    Value(context, caseTref.GetType()):caseValue
+                    COMMA
+                    Label:caseTarget{ inst->AddCaseTarget(otava::intermediate::CaseTarget(caseValue, caseTarget)); }
+                ) % COLON
+            )
+            RBRACKET
+        )
+        {
+            return inst;
+        }
+        ;
+
+    ValueInstruction(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var otava::intermediate::RegValue* rslt) : otava::intermediate::Instruction*
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } ResultRegValue(context, tref.GetType()):result{ rslt = result; } ASSIGN Operation(context, rslt):inst
+        {
+            return inst;
+        }
+        ;
+
+    Operation(otava::intermediate::Context* context, otava::intermediate::RegValue* result) : otava::intermediate::Instruction*
+        ::= UnaryInstruction(context, result):unaryInst{ return unaryInst; }
+        |   BinaryInstruction(context, result):binaryInst{ return binaryInst; }
+        |   ParamInstruction(context, result):paramInst{ return paramInst; }
+        |   LocalInstruction(context, result):localInst{ return localInst; }
+        |   LoadInstruction(context, result):loadInst{ return loadInst; }
+        |   ElemAddrInstruction(context, result):elemAddrInst{ return elemAddrInst; }
+        |   PtrOffsetInstruction(context, result):ptrOffsetInst{ return ptrOffsetInst; }
+        |   PtrDiffInstruction(context, result):ptrDiffInst{ return ptrDiffInst; }
+        |   FunctionCallInstruction(context, result):functionCallInst{ return functionCallInst; }
+        |   TrapInstruction(context, result):trapInst{ return trapInst; }
+        |   PhiInstruction(context, result):phiInst{ return phiInst; }
+        ;
+
+    UnaryInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= NOT{ sp = lexer.GetSourcePos(pos); } Operand(context):notOp{ return new otava::intermediate::NotInstruction(sp, result, notOp); }
+        |   NEG{ sp = lexer.GetSourcePos(pos); } Operand(context):negOp{ return new otava::intermediate::NegInstruction(sp, result, negOp); }
+        |   SIGNEXTEND{ sp = lexer.GetSourcePos(pos); } Operand(context):sextOp{ return new otava::intermediate::SignExtendInstruction(sp, result, sextOp); }
+        |   ZEROEXTEND{ sp = lexer.GetSourcePos(pos); } Operand(context):zextOp{ return new otava::intermediate::ZeroExtendInstruction(sp, result, zextOp); }
+        |   TRUNCATE{ sp = lexer.GetSourcePos(pos); } Operand(context):truncOp{ return new otava::intermediate::TruncateInstruction(sp, result, truncOp); }
+        |   BITCAST{ sp = lexer.GetSourcePos(pos); } Operand(context):bcOp{ return new otava::intermediate::BitcastInstruction(sp, result, bcOp); }
+        |   INTTOFLOAT{ sp = lexer.GetSourcePos(pos); } Operand(context):ifOp{ return new otava::intermediate::IntToFloatInstruction(sp, result, ifOp); }
+        |   FLOATTOINT{ sp = lexer.GetSourcePos(pos); } Operand(context):fiOp{ return new otava::intermediate::FloatToIntInstruction(sp, result, fiOp); }
+        |   INTTOPTR{ sp = lexer.GetSourcePos(pos); } Operand(context):ipOp{ return new otava::intermediate::IntToPtrInstruction(sp, result, ipOp); }
+        |   PTRTOINT{ sp = lexer.GetSourcePos(pos); } Operand(context):piOp{ return new otava::intermediate::PtrToIntInstruction(sp, result, piOp); }
+        ;
+
+    BinaryInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= 
+        (   ADD{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftAdd 
+            COMMA 
+            Operand(context):rightAdd
+        )
+        { 
+            return new otava::intermediate::AddInstruction(sp, result, leftAdd, rightAdd); 
+        }
+        |   
+        (   SUB{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftSub 
+            COMMA 
+            Operand(context):rightSub
+        )
+        { 
+            return new otava::intermediate::SubInstruction(sp, result, leftSub, rightSub); 
+        }
+        |   
+        (   MUL{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftMul 
+            COMMA 
+            Operand(context):rightMul
+        )
+        { 
+            return new otava::intermediate::MulInstruction(sp, result, leftMul, rightMul); 
+        }
+        |   
+        (   DIV{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftDiv 
+            COMMA 
+            Operand(context):rightDiv
+        )
+        { 
+            return new otava::intermediate::DivInstruction(sp, result, leftDiv, rightDiv); 
+        }
+        |   
+        (   MOD{ sp = lexer.GetSourcePos(pos); }
+            Operand(context):leftMod 
+            COMMA 
+            Operand(context):rightMod
+        )
+        { 
+            return new otava::intermediate::ModInstruction(sp, result, leftMod, rightMod); 
+        }
+        |
+        (   AND{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftAnd 
+            COMMA 
+            Operand(context):rightAnd
+        )
+        { 
+            return new otava::intermediate::AndInstruction(sp, result, leftAnd, rightAnd); 
+        }
+        |   
+        (   OR{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftOr 
+            COMMA 
+            Operand(context):rightOr
+        )
+        { 
+            return new otava::intermediate::OrInstruction(sp, result, leftOr, rightOr); 
+        }
+        |   
+        (   XOR{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftXor 
+            COMMA 
+            Operand(context):rightXor
+        )
+        { 
+            return new otava::intermediate::XorInstruction(sp, result, leftXor, rightXor); 
+        }
+        |   
+        (   SHL{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftShl 
+            COMMA 
+            Operand(context):rightShl
+        )
+        { 
+            return new otava::intermediate::ShlInstruction(sp, result, leftShl, rightShl); 
+        }
+        |   
+        (   SHR{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftShr 
+            COMMA 
+            Operand(context):rightShr
+        )
+        { 
+            return new otava::intermediate::ShrInstruction(sp, result, leftShr, rightShr); 
+        }
+        |   
+        (   EQUAL{ sp = lexer.GetSourcePos(pos); } 
+            Operand(context):leftEqual 
+            COMMA 
+            Operand(context):rightEqual
+        )
+        { 
+            return new otava::intermediate::EqualInstruction(sp, result, leftEqual, rightEqual); 
+        }
+        |   
+        (   LESS{ sp = lexer.GetSourcePos(pos); }
+            Operand(context):leftLess 
+            COMMA 
+            Operand(context):rightLess
+        )
+        { 
+            return new otava::intermediate::LessInstruction(sp, result, leftLess, rightLess); 
+        }
+        ;
+
+    ParamInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= PARAM{ sp = lexer.GetSourcePos(pos); return new otava::intermediate::ParamInstruction(sp, result); }
+        ;
+
+    LocalInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp, 
+        var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
+        ::= LOCAL{ sp = lexer.GetSourcePos(pos); } 
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); return new otava::intermediate::LocalInstruction(sp, result, tref.GetType()); }
+        ;
+
+    LoadInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= LOAD{ sp = lexer.GetSourcePos(pos); } Operand(context):ptr{ return new otava::intermediate::LoadInstruction(sp, result, ptr); }
+        ;
+
+    ElemAddrInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= ELEMADDR{ sp = lexer.GetSourcePos(pos); } Operand(context):ptr COMMA Operand(context):index
+        { 
+            return new otava::intermediate::ElemAddrInstruction(sp, result, ptr, index); 
+        }
+        ;
+
+    PtrOffsetInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= PTROFFSET{ sp = lexer.GetSourcePos(pos); } Operand(context):ptr COMMA Operand(context):offset
+        { 
+            return new otava::intermediate::PtrOffsetInstruction(sp, result, ptr, offset); 
+        }
+        ;
+
+    PtrDiffInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= PTRDIFF{ sp = lexer.GetSourcePos(pos); } Operand(context):leftPtr COMMA Operand(context):rightPtr
+        { 
+            return new otava::intermediate::PtrDiffInstruction(sp, result, leftPtr, rightPtr); 
+        }
+        ;
+
+    FunctionCallInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var otava::intermediate::TypeRef tref, 
+        var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= CALL{ sp = lexer.GetSourcePos(pos); } TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } Value(context, tref.GetType()):callee
+        { 
+            return new otava::intermediate::FunctionCallInstruction(sp, result, callee);
+        }
+        ;
+
+    TrapInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= TRAP{ sp = lexer.GetSourcePos(pos); } Operand(context):op1 COMMA Operand(context):op2 COMMA Operand(context):op3
+        { 
+            return new otava::intermediate::TrapInstruction(sp, result, op1, op2, op3); 
+        }
+        ;
+
+    PhiInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp, var otava::intermediate::PhiInstruction* inst) : 
+        otava::intermediate::Instruction*
+        ::= 
+        (
+            PHI{ sp = lexer.GetSourcePos(pos); inst = new otava::intermediate::PhiInstruction(sp, result); } 
+            (BlockValue(context):first{ inst->AddBlockValue(first); } (COMMA BlockValue(context):next{ inst->AddBlockValue(next); })*)?
+        )
+        {
+            return inst;
+        }
+        ;
+
+    BlockValue(otava::intermediate::Context* context) : otava::intermediate::BlockValue
+        ::= 
+        (
+            LBRACKET Operand(context):operand COMMA Label:blockId RBRACKET
+        )
+        {
+            return otava::intermediate::BlockValue(operand, blockId);
+        }
+        ;
+
+    NoOperationInstruction(otava::intermediate::Context* context, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*
+        ::= NOP{ sp = lexer.GetSourcePos(pos); return new otava::intermediate::NoOperationInstruction(sp); }
+        ;
+
+    Metadata(otava::intermediate::Context* context)
+        ::= METADATA LBRACE MetadataStruct(context):mds* RBRACE
+        {
+            context->ResolveMetadataReferences();
+        }
+        ;
+
+    MetadataStruct(otava::intermediate::Context* context, var otava::intermediate::MetadataStruct* value)
+        ::= EXCLAMATION NUMBER{ value = context->AddMetadataStruct(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToInt(), context); }
+            ASSIGN 
+            LBRACE
+            (MetadataField(context, value):first (COMMA MetadataField(context, value):next)*)?
+            RBRACE
+        ;
+
+    MetadataField(otava::intermediate::Context* context, otava::intermediate::MetadataStruct* parent, var std::string fieldName)
+        ::= ID{ fieldName = util::ToUtf8(lexer.GetToken(pos).ToString()); } COLON MetadataItem(context):item{ parent->AddItem(fieldName, item); }
+        ;
+
+    MetadataItem(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+        ::= MetadataBool(context):mdBool{ return mdBool; }
+        |   MetadataLong(context):mdLong{ return mdLong; }
+        |   MetadataString(context):mdString{ return mdString; }
+        |   MetadataRef(context):mdRef{ return mdRef; }
+        ;
+
+    MetadataBool(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+        ::= TRUE{ return context->CreateMetadataBool(true); }
+        |   FALSE{ return context->CreateMetadataBool(false); }
+        ;
+
+    MetadataLong(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+        ::= NUMBER{ return context->CreateMetadataLong(lexer.GetToken(pos).ToLong()); }
+        ;
+
+    MetadataString(otava::intermediate::Context* context) : otava::intermediate::MetadataItem*
+        ::= STRING{ return context->CreateMetadataString(util::ToUtf8(lexer.GetToken(pos).ToString())); }
+        ;
+
+    MetadataRef(otava::intermediate::Context* context) : otava::intermediate::MetadataRef*
+        ::= EXCLAMATION NUMBER{ return context->CreateMetadataRef(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToInt()); }
+        ;
+
+}

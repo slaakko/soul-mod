@@ -834,10 +834,6 @@ soul::cpp20::ast::IdentifierNode* ParseIdentifier(const soul::ast::SourcePos& so
         }
         s.append(1, value);
     }
-    if (s == U"rep")
-    {
-        int x = 0;
-    }
     if (p != e || !valid)
     {
         throw std::runtime_error("invalid identifier in '" + fileName + "' at line " + std::to_string(sourcePos.line) + ": " + util::ToUtf8(token.ToString()));

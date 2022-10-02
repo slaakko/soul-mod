@@ -17,6 +17,8 @@ class BoolValue;
 class IntegerValue;
 class FloatingValue;
 class NullPtrValue;
+class StringValue;
+class CharValue;
 class SymbolValue;
 class InvokeValue;
 class AliasGroupSymbol;
@@ -65,6 +67,8 @@ public:
     virtual void Visit(IntegerValue& value) {}
     virtual void Visit(FloatingValue& value) {}
     virtual void Visit(NullPtrValue& value) {}
+    virtual void Visit(StringValue& value) {}
+    virtual void Visit(CharValue& value) {}
     virtual void Visit(SymbolValue& value) {}
     virtual void Visit(InvokeValue& value) {}
     virtual void Visit(AliasGroupSymbol& symbol) {}

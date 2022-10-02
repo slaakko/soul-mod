@@ -16,6 +16,7 @@ class LabeledStatementNode : public CompoundNode
 public:
     LabeledStatementNode(const soul::ast::SourcePos& sourcePos_);
     LabeledStatementNode(const soul::ast::SourcePos& sourcePos_, Node* label_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& colonPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -35,6 +36,7 @@ class CaseStatementNode : public CompoundNode
 public:
     CaseStatementNode(const soul::ast::SourcePos& sourcePos_);
     CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& casePos_, const soul::ast::SourcePos& colonPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -56,6 +58,7 @@ class DefaultStatementNode : public CompoundNode
 public:
     DefaultStatementNode(const soul::ast::SourcePos& sourcePos_);
     DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& defaultPos_, const soul::ast::SourcePos& colonPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -74,6 +77,7 @@ class CompoundStatementNode : public SequenceNode
 {
 public:
     CompoundStatementNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -86,11 +90,14 @@ public:
     const soul::ast::SourcePos& LBracePos() const { return lbPos; }
     const soul::ast::SourcePos& RBracePos() const { return rbPos; }
     int Level() const;
+    void* FunctionScope() const { return functionScope; }
+    void SetFunctionScope(void* functionScope_) { functionScope = functionScope_; }
 private:
     std::unique_ptr<Node> attributes;
     soul::ast::SourcePos lbPos;
     soul::ast::SourcePos rbPos;
     soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair;
+    void* functionScope;
 };
 
 class IfStatementNode : public CompoundNode
@@ -98,7 +105,9 @@ class IfStatementNode : public CompoundNode
 public:
     IfStatementNode(const soul::ast::SourcePos& sourcePos_);
     IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* thenStmt_, Node* elseStmt_, Node* attributes_,
-        const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, const soul::ast::SourcePos& elsePos_);
+        const soul::ast::SourcePos& ifPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& constExprPos_, 
+        const soul::ast::SourcePos& elsePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -131,6 +140,7 @@ class SwitchStatementNode : public CompoundNode
 public:
     SwitchStatementNode(const soul::ast::SourcePos& sourcePos_);
     SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& switchPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -156,6 +166,7 @@ class WhileStatementNode : public CompoundNode
 public:
     WhileStatementNode(const soul::ast::SourcePos& sourcePos_);
     WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, Node* stmt_, Node* attributes_, const soul::ast::SourcePos& whilePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -180,6 +191,7 @@ public:
     DoStatementNode(const soul::ast::SourcePos& sourcePos_);
     DoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* stmt_, Node* expr_, Node* attributes_, Node* semicolon_,
         const soul::ast::SourcePos& doPos_, const soul::ast::SourcePos& whilePos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -208,6 +220,7 @@ public:
     RangeForStatementNode(const soul::ast::SourcePos& sourcePos_);
     RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* declaration_, Node* initializer_, Node* stmt_, Node* attributes_,
         const soul::ast::SourcePos& forPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_, const soul::ast::SourcePos& colonPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -237,6 +250,7 @@ class ForRangeDeclarationNode : public BinaryNode
 public:
     ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifierSeq_, Node* declarator_, Node* attributes_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -251,6 +265,7 @@ public:
     StructuredBindingNode(const soul::ast::SourcePos& sourcePos_);
     StructuredBindingNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifierSeq_, Node* refQualifier_, Node* identifiers_, Node* initializer_, Node* attributes_, Node* semicolon_,
         const soul::ast::SourcePos& lbPos_, const soul::ast::SourcePos& rbPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -279,6 +294,7 @@ public:
     ForStatementNode(const soul::ast::SourcePos& sourcePos_);
     ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* initStmt_, Node* cond_, Node* loopExpr_, Node* stmt_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& forPos_,
         const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -308,6 +324,7 @@ class BreakStatementNode : public CompoundNode
 public:
     BreakStatementNode(const soul::ast::SourcePos& sourcePos_);
     BreakStatementNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& breakPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -325,6 +342,7 @@ class ContinueStatementNode : public CompoundNode
 public:
     ContinueStatementNode(const soul::ast::SourcePos& sourcePos_);
     ContinueStatementNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& continuePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -342,6 +360,7 @@ class ReturnStatementNode : public CompoundNode
 public:
     ReturnStatementNode(const soul::ast::SourcePos& sourcePos_);
     ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* returnValue_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& returnPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -361,6 +380,7 @@ class CoReturnStatementNode : public CompoundNode
 public:
     CoReturnStatementNode(const soul::ast::SourcePos& sourcePos_);
     CoReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* returnValue_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& coReturnPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -380,6 +400,7 @@ class GotoStatementNode : public CompoundNode
 public:
     GotoStatementNode(const soul::ast::SourcePos& sourcePos_);
     GotoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* target_, Node* attributes_, Node* semicolon_, const soul::ast::SourcePos& gotoPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -399,6 +420,7 @@ class TryStatementNode : public CompoundNode
 public:
     TryStatementNode(const soul::ast::SourcePos& sourcePos_);
     TryStatementNode(const soul::ast::SourcePos& sourcePos_, Node* tryBlock_, Node* handlers_, Node* attributes_, const soul::ast::SourcePos& tryPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -417,6 +439,7 @@ class HandlerSequenceNode : public SequenceNode
 {
 public:
     HandlerSequenceNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -425,6 +448,7 @@ class HandlerNode : public CompoundNode
 public:
     HandlerNode(const soul::ast::SourcePos& sourcePos_);
     HandlerNode(const soul::ast::SourcePos& sourcePos_, Node* exception_, Node* catchBlock_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -444,6 +468,7 @@ class ExceptionDeclarationNode : public CompoundNode
 public:
     ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_, Node* ellipsis_, Node* attributes_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -463,6 +488,7 @@ class ExpressionStatementNode : public CompoundNode
 public:
     ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_);
     ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, Node* attributes_, Node* semicolon_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -480,6 +506,7 @@ class DeclarationStatementNode : public CompoundNode
 public:
     DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_);
     DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_, Node* declaration_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -493,6 +520,7 @@ class InitConditionNode : public CompoundNode
 public:
     InitConditionNode(const soul::ast::SourcePos& sourcePos_);
     InitConditionNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* declarator_, Node* initializer_, Node* attributes_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

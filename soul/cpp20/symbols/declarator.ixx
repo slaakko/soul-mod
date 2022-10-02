@@ -7,6 +7,7 @@ export module soul.cpp20.symbols.declarator;
 
 import std.core;
 import soul.cpp20.ast;
+import soul.cpp20.symbols.bound.tree;
 
 export namespace soul::cpp20::symbols {
 
@@ -54,6 +55,13 @@ struct Declaration
     TypeSymbol* type;
     std::unique_ptr<Declarator> declarator;
     Value* value;
+    soul::cpp20::ast::Node* initializer;
+    VariableSymbol* variable;
+};
+
+struct DeclarationList
+{
+    std::vector<Declaration> declarations;
 };
 
 class FunctionDeclarator : public Declarator
@@ -75,8 +83,8 @@ private:
 
 class Context;
 
-std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context);
-std::vector<Declaration> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context);
+std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context);
+std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context);
 Declaration ProcessDeclarator(TypeSymbol* baseType, soul::cpp20::ast::Node* declarator, DeclarationFlags flags, Context* context);
 
 } // namespace soul::cpp20::symbols

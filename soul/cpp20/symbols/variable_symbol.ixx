@@ -21,8 +21,11 @@ public:
     virtual int Arity() const { return 0; }
     std::string SymbolKindStr() const override { return "variable symbol"; }
     std::string SymbolDocKindStr() const override { return "variable"; }
-    TypeSymbol* GetType() const { return type; }
-    void SetType(TypeSymbol* type_);
+    TypeSymbol* GetDeclaredType() const { return declaredType; }
+    void SetDeclaredType(TypeSymbol* declaredType_) { declaredType = declaredType_; }
+    TypeSymbol* GetInitializerType() const { return initializerType; }
+    void SetInitializerType(TypeSymbol* initializerType_);
+    TypeSymbol* GetType() const;
     Value* GetValue() const { return value; }
     void SetValue(Value* value_) { value = value_; }
     void Write(Writer& writer) override;
@@ -30,8 +33,10 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
 private:
-    TypeSymbol* type;
-    util::uuid typeId;
+    TypeSymbol* declaredType;
+    util::uuid declaredTypeId;
+    TypeSymbol* initializerType;
+    util::uuid initializerTypeId;
     Value* value;
     util::uuid valueId;
 };

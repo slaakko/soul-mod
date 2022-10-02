@@ -20,6 +20,28 @@ ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourceP
 {
 }
 
+Node* ModuleDeclarationNode::Clone() const
+{
+    Node* clonedExport = nullptr;
+    if (exprt)
+    {
+        clonedExport = exprt->Clone();
+    }
+    Node* clonedModulePartition = nullptr;
+    if (modulePartition)
+    {
+        clonedModulePartition = modulePartition->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    ModuleDeclarationNode* clone = new ModuleDeclarationNode(GetSourcePos(), clonedExport, modle->Clone(), moduleName->Clone(), clonedModulePartition, clonedAttributes, 
+        semicolon->Clone());
+    return clone;
+}
+
 void ModuleDeclarationNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -56,6 +78,17 @@ ExportDeclarationNode::ExportDeclarationNode(const soul::ast::SourcePos& sourceP
 {
 }
 
+Node* ExportDeclarationNode::Clone() const
+{
+    Node* clonedSubject = nullptr;
+    if (subject)
+    {
+        clonedSubject = subject->Clone();
+    }
+    ExportDeclarationNode* clone = new ExportDeclarationNode(GetSourcePos(), exprt->Clone(), clonedSubject, lbPos, rbPos);
+    return clone;
+}
+
 void ExportDeclarationNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -83,6 +116,12 @@ ExportNode::ExportNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
+Node* ExportNode::Clone() const
+{
+    ExportNode* clone = new ExportNode(GetSourcePos());
+    return clone;
+}
+
 void ExportNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -90,6 +129,12 @@ void ExportNode::Accept(Visitor& visitor)
 
 ImportNode::ImportNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::importNode, sourcePos_)
 {
+}
+
+Node* ImportNode::Clone() const
+{
+    ImportNode* clone = new ImportNode(GetSourcePos());
+    return clone;
 }
 
 void ImportNode::Accept(Visitor& visitor)
@@ -104,6 +149,17 @@ ImportDeclarationNode::ImportDeclarationNode(const soul::ast::SourcePos& sourceP
 ImportDeclarationNode::ImportDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* imprt_, Node* subject_, Node* attributes_, Node* semicolon_) :
     CompoundNode(NodeKind::importDeclarationNode, sourcePos_), imprt(imprt_), subject(subject_), attributes(attributes_), semicolon(semicolon_)
 {
+}
+
+Node* ImportDeclarationNode::Clone() const
+{
+    Node* clonedAtributes = nullptr;
+    if (attributes)
+    {
+        clonedAtributes = attributes->Clone();
+    }
+    ImportDeclarationNode* clone = new ImportDeclarationNode(GetSourcePos(), imprt->Clone(), subject->Clone(), clonedAtributes, semicolon->Clone());
+    return clone;
 }
 
 void ImportDeclarationNode::Accept(Visitor& visitor)
@@ -137,6 +193,12 @@ ModulePartitionNode::ModulePartitionNode(const soul::ast::SourcePos& sourcePos_,
 {
 }
 
+Node* ModulePartitionNode::Clone() const
+{
+    ModulePartitionNode* clone = new ModulePartitionNode(GetSourcePos(), Child()->Clone());
+    return clone;
+}
+
 void ModulePartitionNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -144,6 +206,12 @@ void ModulePartitionNode::Accept(Visitor& visitor)
 
 ModuleNode::ModuleNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::moduleNode, sourcePos_)
 {
+}
+
+Node* ModuleNode::Clone() const
+{
+    ModuleNode* clone = new ModuleNode(GetSourcePos());
+    return clone;
 }
 
 void ModuleNode::Accept(Visitor& visitor)
@@ -158,6 +226,17 @@ GlobalModuleFragmentNode::GlobalModuleFragmentNode(const soul::ast::SourcePos& s
 GlobalModuleFragmentNode::GlobalModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* semicolon_, Node* declarations_) :
     CompoundNode(NodeKind::globalModuleFragmentNode, sourcePos_), modle(modle_), semicolon(semicolon_), declarations(declarations_)
 {
+}
+
+Node* GlobalModuleFragmentNode::Clone() const
+{
+    Node* clonedDeclarations = nullptr;
+    if (declarations)
+    {
+        clonedDeclarations = declarations->Clone();
+    }
+    GlobalModuleFragmentNode* clone = new GlobalModuleFragmentNode(GetSourcePos(), modle->Clone(), semicolon->Clone(), clonedDeclarations);
+    return clone;
 }
 
 void GlobalModuleFragmentNode::Accept(Visitor& visitor)
@@ -188,6 +267,17 @@ PrivateModuleFragmentNode::PrivateModuleFragmentNode(const soul::ast::SourcePos&
 PrivateModuleFragmentNode::PrivateModuleFragmentNode(const soul::ast::SourcePos& sourcePos_, Node* modle_, Node* colon_, Node* privat_, Node* semicolon_, Node* declarations_) :
     CompoundNode(NodeKind::privateModuleFragmentNode, sourcePos_), modle(modle_), colon(colon_), privat(privat_), semicolon(semicolon_), declarations(declarations_)
 {
+}
+
+Node* PrivateModuleFragmentNode::Clone() const
+{
+    Node* clonedDeclarations = nullptr;
+    if (declarations)
+    {
+        clonedDeclarations = declarations->Clone();
+    }
+    PrivateModuleFragmentNode* clone = new PrivateModuleFragmentNode(GetSourcePos(), modle->Clone(), colon->Clone(), privat->Clone(), semicolon->Clone(), clonedDeclarations);
+    return clone;
 }
 
 void PrivateModuleFragmentNode::Accept(Visitor& visitor)
@@ -223,6 +313,12 @@ AngleHeaderName::AngleHeaderName(const soul::ast::SourcePos& sourcePos_, const s
 {
 }
 
+Node* AngleHeaderName::Clone() const
+{
+    AngleHeaderName* clone = new AngleHeaderName(GetSourcePos(), rep);
+    return clone;
+}
+
 void AngleHeaderName::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -246,6 +342,12 @@ QuoteHeaderName::QuoteHeaderName(const soul::ast::SourcePos& sourcePos_) : Node(
 
 QuoteHeaderName::QuoteHeaderName(const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_) : Node(NodeKind::quoteHeaderNameNode, sourcePos_), rep(rep_)
 {
+}
+
+Node* QuoteHeaderName::Clone() const
+{
+    QuoteHeaderName* clone = new QuoteHeaderName(GetSourcePos(), rep);
+    return clone;
 }
 
 void QuoteHeaderName::Accept(Visitor& visitor)

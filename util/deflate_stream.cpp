@@ -11,10 +11,11 @@ module;
 #pragma comment(lib, "zlibstatd.lib")
 #endif
 
-
 module util.deflate.stream;
 
 namespace util {
+
+#ifndef SOUL_CPP20
 
 DeflateStream::DeflateStream(CompressionMode mode_, Stream& underlyingStream_) : DeflateStream(mode_, underlyingStream_, 16384)
 {
@@ -168,5 +169,7 @@ void DeflateStream::Finish()
         underlyingStream.Write(out.get(), static_cast<int64_t>(have));
     } while (outAvail == 0);
 }
+
+#endif
 
 } // namespace util

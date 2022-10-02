@@ -160,6 +160,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="align.ixx" />
     <ClCompile Include="ansi.cpp" />
     <ClCompile Include="ansi.ixx" />
     <ClCompile Include="binary_resource_ptr.cpp" />

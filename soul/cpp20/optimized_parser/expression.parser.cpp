@@ -241,6 +241,7 @@ soul::parser::Match ExpressionParser<Lexer>::AssignmentExpression(Lexer& lexer, 
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 7352148961735475203);
     std::unique_ptr<soul::cpp20::ast::Node> expr = std::unique_ptr<soul::cpp20::ast::Node>();
+    std::unique_ptr<soul::cpp20::ast::Node> leftExpr = std::unique_ptr<soul::cpp20::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<soul::cpp20::ast::Node> yieldExpr;
     std::unique_ptr<soul::cpp20::ast::Node> throwExpr;
@@ -332,11 +333,21 @@ soul::parser::Match ExpressionParser<Lexer>::AssignmentExpression(Lexer& lexer, 
                                             soul::parser::Match* parentMatch12 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
+                                                bool pass = true;
                                                 soul::parser::Match match = ExpressionParser<Lexer>::LogicalOrExpression(lexer, context);
                                                 left.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
                                                     sourcePos = lexer.GetSourcePos(pos);
+                                                    leftExpr.reset(left.release());
+                                                    if (leftExpr->IsBinaryExprNode())
+                                                    {
+                                                        pass = false;
+                                                    }
+                                                }
+                                                if (match.hit && !pass)
+                                                {
+                                                    match = soul::parser::Match(false);
                                                 }
                                                 *parentMatch12 = match;
                                             }
@@ -370,7 +381,7 @@ soul::parser::Match ExpressionParser<Lexer>::AssignmentExpression(Lexer& lexer, 
                                 }
                                 if (match.hit)
                                 {
-                                    expr.reset(new soul::cpp20::ast::BinaryExprNode(sourcePos, op.release(), left.release(), right.release()));
+                                    expr.reset(new soul::cpp20::ast::BinaryExprNode(sourcePos, op.release(), leftExpr.release(), right.release()));
                                 }
                                 *parentMatch8 = match;
                             }

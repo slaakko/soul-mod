@@ -141,7 +141,7 @@ soul::parser::Match GuardParser<Lexer>::AssumeTypeGuard(Lexer& lexer, soul::cpp2
 }
 
 template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::MemberFunctionTemplateGuard(Lexer& lexer, soul::cpp20::symbols::Context* context)
+soul::parser::Match GuardParser<Lexer>::MemberFunctionGuard(Lexer& lexer, soul::cpp20::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -149,7 +149,7 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionTemplateGuard(Lexer& lexer
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "MemberFunctionTemplateGuard");
+        soul::lexer::WriteBeginRuleToLog(lexer, "MemberFunctionGuard");
     }
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674564);
@@ -161,7 +161,7 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionTemplateGuard(Lexer& lexer
         soul::parser::Match match(true);
         if (match.hit)
         {
-            pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseMemberFunction) && !context->GetFlag(soul::cpp20::symbols::ContextFlags::parsingTemplateDeclaration);
+            pass = context->GetFlag(soul::cpp20::symbols::ContextFlags::parseMemberFunction);
         }
         if (match.hit && !pass)
         {
@@ -172,8 +172,8 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionTemplateGuard(Lexer& lexer
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)
     {
-        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberFunctionTemplateGuard");
-        else soul::lexer::WriteFailureToLog(lexer, "MemberFunctionTemplateGuard");
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberFunctionGuard");
+        else soul::lexer::WriteFailureToLog(lexer, "MemberFunctionGuard");
     }
     #endif
     if (!match.hit)

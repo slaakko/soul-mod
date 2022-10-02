@@ -273,6 +273,8 @@ bool Symbol::IsValueSymbol() const
         case SymbolKind::integerValueSymbol:
         case SymbolKind::floatingValueSymbol:
         case SymbolKind::nullPtrValueSymbol:
+        case SymbolKind::stringValueSymbol:
+        case SymbolKind::charValueSymbol:
         case SymbolKind::symbolValueSymbol:
         case SymbolKind::invokeValueSymbol:
         {
@@ -362,6 +364,18 @@ bool SymbolsEqual(Symbol* left, Symbol* right)
         IntegerValue* leftInteger = static_cast<IntegerValue*>(left);
         IntegerValue* rightInteger = static_cast<IntegerValue*>(right);
         return leftInteger->GetValue() == rightInteger->GetValue();
+    }
+    else if (left->Kind() == SymbolKind::stringValueSymbol && right->Kind() == SymbolKind::stringValueSymbol)
+    {
+        StringValue* leftString = static_cast<StringValue*>(left);
+        StringValue* rightString = static_cast<StringValue*>(right);
+        return leftString->GetValue() == rightString->GetValue();
+    }
+    else if (left->Kind() == SymbolKind::charValueSymbol && right->Kind() == SymbolKind::charValueSymbol)
+    {
+        CharValue* leftChar = static_cast<CharValue*>(left);
+        CharValue* rightChar = static_cast<CharValue*>(right);
+        return leftChar->GetValue() == rightChar->GetValue();
     }
     else
     {
@@ -454,19 +468,27 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         }
         case SymbolKind::boolValueSymbol:
         {
-            return new BoolValue(name);
+            return new BoolValue(name, nullptr);
         }
         case SymbolKind::integerValueSymbol:
         {
-            return new IntegerValue(name);
+            return new IntegerValue(name, nullptr);
         }
         case SymbolKind::floatingValueSymbol:
         {
-            return new FloatingValue(name);
+            return new FloatingValue(name, nullptr);
         }
         case SymbolKind::nullPtrValueSymbol:
         {
-            return new NullPtrValue();
+            return new NullPtrValue(nullptr);
+        }
+        case SymbolKind::stringValueSymbol:
+        {
+            return new StringValue(symbolTable->MakeConstCharPtrType());
+        }
+        case SymbolKind::charValueSymbol:
+        {
+            return new CharValue(symbolTable->GetFundamentalTypeSymbol(FundamentalTypeKind::char32Type));
         }
         case SymbolKind::genericTypeSymbol:
         {

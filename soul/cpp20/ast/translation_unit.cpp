@@ -19,6 +19,17 @@ TranslationUnitNode::TranslationUnitNode(const soul::ast::SourcePos& sourcePos_,
 {
 }
 
+Node* TranslationUnitNode::Clone() const
+{
+    Node* clonedUnit = nullptr;
+    if (unit)
+    {
+        clonedUnit = unit->Clone();
+    }
+    TranslationUnitNode* clone = new TranslationUnitNode(GetSourcePos(), clonedUnit);
+    return clone;
+}
+
 void TranslationUnitNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -44,6 +55,27 @@ ModuleUnitNode::ModuleUnitNode(const soul::ast::SourcePos& sourcePos_, Node* glo
     CompoundNode(NodeKind::moduleUnitNode, sourcePos_), globalModuleFragment(globalModuleFragment_), moduleDeclaration(moduleDeclaration_), declarations(declarations_),
     privateModuleFragment(privateModuleFragment_)
 {
+}
+
+Node* ModuleUnitNode::Clone() const
+{
+    Node* clonedGlobalModuleFragment = nullptr;
+    if (globalModuleFragment)
+    {
+        clonedGlobalModuleFragment = globalModuleFragment->Clone();
+    }
+    Node* clonedDeclarations = nullptr;
+    if (declarations)
+    {
+        clonedDeclarations = declarations->Clone();
+    }
+    Node* clonedPrivateModuleFragment = nullptr;
+    if (privateModuleFragment)
+    {
+        clonedPrivateModuleFragment = privateModuleFragment->Clone();
+    }
+    ModuleUnitNode* clone = new ModuleUnitNode(GetSourcePos(), clonedGlobalModuleFragment, moduleDeclaration->Clone(), clonedDeclarations, clonedPrivateModuleFragment);
+    return clone;
 }
 
 void ModuleUnitNode::Accept(Visitor& visitor)

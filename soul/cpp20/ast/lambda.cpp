@@ -20,6 +20,17 @@ LambdaExpressionNode::LambdaExpressionNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
+Node* LambdaExpressionNode::Clone() const
+{
+    Node* clonedTemplateParams = nullptr;
+    if (templateParams)
+    {
+        clonedTemplateParams = templateParams->Clone();
+    }
+    LambdaExpressionNode* clone = new LambdaExpressionNode(GetSourcePos(), introducer->Clone(), clonedTemplateParams, declarator->Clone(), body->Clone());
+    return clone;
+}
+
 void LambdaExpressionNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -52,6 +63,17 @@ LambdaIntroducerNode::LambdaIntroducerNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
+Node* LambdaIntroducerNode::Clone() const
+{
+    Node* clonedCapture = nullptr;
+    if (capture)
+    {
+        clonedCapture = capture->Clone();
+    }
+    LambdaIntroducerNode* clone = new LambdaIntroducerNode(GetSourcePos(), clonedCapture, lbPos, rbPos);
+    return clone;
+}
+
 void LambdaIntroducerNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -77,6 +99,16 @@ LambdaCaptureNode::LambdaCaptureNode(const soul::ast::SourcePos& sourcePos_) : L
 {
 }
 
+Node* LambdaCaptureNode::Clone() const
+{
+    LambdaCaptureNode* clone = new LambdaCaptureNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void LambdaCaptureNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -84,6 +116,12 @@ void LambdaCaptureNode::Accept(Visitor& visitor)
 
 DefaultRefCaptureNode::DefaultRefCaptureNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::defaultRefCaptureNode, sourcePos_)
 {
+}
+
+Node* DefaultRefCaptureNode::Clone() const
+{
+    DefaultRefCaptureNode* clone = new DefaultRefCaptureNode(GetSourcePos());
+    return clone;
 }
 
 void DefaultRefCaptureNode::Accept(Visitor& visitor)
@@ -95,6 +133,12 @@ DefaultCopyCaptureNode::DefaultCopyCaptureNode(const soul::ast::SourcePos& sourc
 {
 }
 
+Node* DefaultCopyCaptureNode::Clone() const
+{
+    DefaultCopyCaptureNode* clone = new DefaultCopyCaptureNode(GetSourcePos());
+    return clone;
+}
+
 void DefaultCopyCaptureNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -102,6 +146,12 @@ void DefaultCopyCaptureNode::Accept(Visitor& visitor)
 
 ByRefCaptureNode::ByRefCaptureNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::byRefCaptureNode, sourcePos_)
 {
+}
+
+Node* ByRefCaptureNode::Clone() const
+{
+    ByRefCaptureNode* clone = new ByRefCaptureNode(GetSourcePos());
+    return clone;
 }
 
 void ByRefCaptureNode::Accept(Visitor& visitor)
@@ -116,6 +166,22 @@ SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_) : C
 SimpleCaptureNode::SimpleCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* byRefCapture_, Node* ellipsis_) :
     CompoundNode(NodeKind::simpleCaptureNode, sourcePos_), identifier(identifier_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
 {
+}
+
+Node* SimpleCaptureNode::Clone() const
+{
+    Node* clonedByRefCapture = nullptr;
+    if (byRefCapture)
+    {
+        clonedByRefCapture = byRefCapture->Clone();
+    }
+    Node* clonedEllipsis = nullptr;
+    if (ellipsis)
+    {
+        clonedEllipsis = ellipsis->Clone();
+    }
+    SimpleCaptureNode* clone = new SimpleCaptureNode(GetSourcePos(), identifier->Clone(), clonedByRefCapture, clonedEllipsis);
+    return clone;
 }
 
 void SimpleCaptureNode::Accept(Visitor& visitor)
@@ -147,6 +213,12 @@ CurrentObjectCopyCapture::CurrentObjectCopyCapture(const soul::ast::SourcePos& s
 {
 }
 
+Node* CurrentObjectCopyCapture::Clone() const
+{
+    CurrentObjectCopyCapture* clone = new CurrentObjectCopyCapture(GetSourcePos(), thisPos);
+    return clone;
+}
+
 void CurrentObjectCopyCapture::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -170,6 +242,12 @@ CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos&
 
 CurrentObjectByRefCapture::CurrentObjectByRefCapture(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& thisPos_) : CompoundNode(NodeKind::currentObjectByRefCapture, sourcePos_), thisPos(thisPos_)
 {
+}
+
+Node* CurrentObjectByRefCapture::Clone() const
+{
+    CurrentObjectByRefCapture* clone = new CurrentObjectByRefCapture(GetSourcePos(), thisPos);
+    return clone;
 }
 
 void CurrentObjectByRefCapture::Accept(Visitor& visitor)
@@ -196,6 +274,22 @@ InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_) : Compo
 InitCaptureNode::InitCaptureNode(const soul::ast::SourcePos& sourcePos_, Node* identifier_, Node* initializer_, Node* byRefCapture_, Node* ellipsis_) :
     CompoundNode(NodeKind::initCaptureNode, sourcePos_), identifier(identifier_), initializer(initializer_), byRefCapture(byRefCapture_), ellipsis(ellipsis_)
 {
+}
+
+Node* InitCaptureNode::Clone() const
+{
+    Node* clonedByRefCapture = nullptr;
+    if (byRefCapture)
+    {
+        clonedByRefCapture = byRefCapture->Clone();
+    }
+    Node* clonedEllipsis = nullptr;
+    if (ellipsis)
+    {
+        clonedEllipsis = ellipsis->Clone();
+    }
+    InitCaptureNode* clone = new InitCaptureNode(GetSourcePos(), identifier->Clone(), initializer->Clone(), clonedByRefCapture, clonedEllipsis);
+    return clone;
 }
 
 void InitCaptureNode::Accept(Visitor& visitor)
@@ -230,6 +324,22 @@ LambdaDeclaratorNode::LambdaDeclaratorNode(const soul::ast::SourcePos& sourcePos
 {
 }
 
+Node* LambdaDeclaratorNode::Clone() const
+{
+    Node* clonedRequiresClause = nullptr;
+    if (requiresClause)
+    {
+        clonedRequiresClause = requiresClause->Clone();
+    }
+    Node* clonedParameterList = nullptr;
+    if (parameterList)
+    {
+        clonedParameterList = parameterList->Clone();
+    }
+    LambdaDeclaratorNode* clone = new LambdaDeclaratorNode(GetSourcePos(), clonedParameterList, specifiers->Clone(), clonedRequiresClause);
+    return clone;
+}
+
 void LambdaDeclaratorNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -258,6 +368,32 @@ LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos
 LambdaSpecifiersNode::LambdaSpecifiersNode(const soul::ast::SourcePos& sourcePos_, Node* declSpecifiers_, Node* noexceptSpecifier_, Node* attributes_, Node* trailingReturnType_) :
     CompoundNode(NodeKind::lambdaSpecifiersNode, sourcePos_), declSpecifiers(declSpecifiers_), noexceptSpecifier(noexceptSpecifier_), attributes(attributes_), trailingReturnType(trailingReturnType_)
 {
+}
+
+Node* LambdaSpecifiersNode::Clone() const
+{
+    Node* clonedDeclSpecifiers = nullptr;
+    if (declSpecifiers)
+    {
+        clonedDeclSpecifiers = declSpecifiers->Clone();
+    }
+    Node* clonedNoexceptSpecifier = nullptr;
+    if (noexceptSpecifier)
+    {
+        clonedNoexceptSpecifier = noexceptSpecifier->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    Node* clonedTrailingReturnType = nullptr;
+    if (trailingReturnType)
+    {
+        clonedTrailingReturnType = trailingReturnType->Clone();
+    }
+    LambdaSpecifiersNode* clone = new LambdaSpecifiersNode(GetSourcePos(), clonedDeclSpecifiers, clonedNoexceptSpecifier, clonedAttributes, clonedTrailingReturnType);
+    return clone;
 }
 
 void LambdaSpecifiersNode::Accept(Visitor& visitor)
@@ -295,6 +431,17 @@ LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& s
 LambdaTemplateParamsNode::LambdaTemplateParamsNode(const soul::ast::SourcePos& sourcePos_, Node* templateParams_, Node* requiresClause_) :
     CompoundNode(NodeKind::lambdaTemplateParamsNode, sourcePos_), templateParams(templateParams_), requiresClause(requiresClause_)
 {
+}
+
+Node* LambdaTemplateParamsNode::Clone() const
+{
+    Node* clonedRequiresClause = nullptr;
+    if (requiresClause)
+    {
+        clonedRequiresClause = requiresClause->Clone();
+    }
+    LambdaTemplateParamsNode* clone = new LambdaTemplateParamsNode(GetSourcePos(), templateParams->Clone(), clonedRequiresClause);
+    return clone;
 }
 
 void LambdaTemplateParamsNode::Accept(Visitor& visitor)

@@ -9,6 +9,8 @@ import std.core;
 
 export namespace util {
 
+#ifdef _WIN32
+
 class BinaryResourcePtr
 {
 public:
@@ -21,5 +23,7 @@ private:
     uint8_t* data;
     int64_t size;
 };
+
+#endif
 
 } // util

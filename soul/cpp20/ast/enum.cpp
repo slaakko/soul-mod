@@ -19,6 +19,16 @@ EnumSpecifierNode::EnumSpecifierNode(const soul::ast::SourcePos& sourcePos_, Nod
 {
 }
 
+Node* EnumSpecifierNode::Clone() const
+{
+    EnumSpecifierNode* clone = new EnumSpecifierNode(GetSourcePos(), enumHead->Clone());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void EnumSpecifierNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -47,6 +57,22 @@ EnumHeadNode::EnumHeadNode(const soul::ast::SourcePos& sourcePos_) : CompoundNod
 EnumHeadNode::EnumHeadNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_) :
     CompoundNode(NodeKind::enumHeadNode, sourcePos_), enumKey(enumKey_), enumHeadName(enumHeadName_), enumBase(enumBase_), attributes(attributes_)
 {
+}
+
+Node* EnumHeadNode::Clone() const
+{
+    Node* clonedEnumBase = nullptr;
+    if (enumBase)
+    {
+        clonedEnumBase = enumBase->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    EnumHeadNode* clone = new EnumHeadNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes);
+    return clone;
 }
 
 void EnumHeadNode::Accept(Visitor& visitor)
@@ -80,6 +106,12 @@ EnumBaseNode::EnumBaseNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpe
 {
 }
 
+Node* EnumBaseNode::Clone() const
+{
+    EnumBaseNode* clone = new EnumBaseNode(GetSourcePos(), Child()->Clone());
+    return clone;
+}
+
 void EnumBaseNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -91,6 +123,12 @@ EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_) : CompoundN
 
 EnumClassNode::EnumClassNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& classPos_) : CompoundNode(NodeKind::enumClassNode, sourcePos_), classPos(classPos_)
 {
+}
+
+Node* EnumClassNode::Clone() const
+{
+    EnumClassNode* clone = new EnumClassNode(GetSourcePos(), classPos);
+    return clone;
 }
 
 void EnumClassNode::Accept(Visitor& visitor)
@@ -119,6 +157,12 @@ EnumStructNode::EnumStructNode(const soul::ast::SourcePos& sourcePos_, const sou
 {
 }
 
+Node* EnumStructNode::Clone() const
+{
+    EnumStructNode* clone = new EnumStructNode(GetSourcePos(), structPos);
+    return clone;
+}
+
 void EnumStructNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -140,6 +184,12 @@ EnumNode::EnumNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::enum
 {
 }
 
+Node* EnumNode::Clone() const
+{
+    EnumNode* clone = new EnumNode(GetSourcePos());
+    return clone;
+}
+
 void EnumNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -152,6 +202,17 @@ EnumeratorDefinitionNode::EnumeratorDefinitionNode(const soul::ast::SourcePos& s
 EnumeratorDefinitionNode::EnumeratorDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* enumerator_, Node* value_, const soul::ast::SourcePos& assignPos_) :
     CompoundNode(NodeKind::enumeratorDefinitionNode, sourcePos_), enumerator(enumerator_), value(value_), assignPos(assignPos_)
 {
+}
+
+Node* EnumeratorDefinitionNode::Clone() const 
+{
+    Node* clonedValue = nullptr;
+    if (value)
+    {
+        clonedValue = value->Clone();
+    }
+    EnumeratorDefinitionNode* clone = new EnumeratorDefinitionNode(GetSourcePos(), enumerator->Clone(), clonedValue, assignPos);
+    return clone;
 }
 
 void EnumeratorDefinitionNode::Accept(Visitor& visitor)
@@ -184,6 +245,17 @@ EnumeratorNode::EnumeratorNode(const soul::ast::SourcePos& sourcePos_, Node* ide
 {
 }
 
+Node* EnumeratorNode::Clone() const
+{
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    EnumeratorNode* clone = new EnumeratorNode(GetSourcePos(), identifier->Clone(), clonedAttributes);
+    return clone;
+}
+
 void EnumeratorNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -212,6 +284,12 @@ ElaboratedEnumSpecifierNode::ElaboratedEnumSpecifierNode(const soul::ast::Source
 {
 }
 
+Node* ElaboratedEnumSpecifierNode::Clone() const
+{
+    ElaboratedEnumSpecifierNode* clone = new ElaboratedEnumSpecifierNode(GetSourcePos(), Child()->Clone());
+    return clone;
+}
+
 void ElaboratedEnumSpecifierNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -224,6 +302,22 @@ OpaqueEnumDeclarationNode::OpaqueEnumDeclarationNode(const soul::ast::SourcePos&
 OpaqueEnumDeclarationNode::OpaqueEnumDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* enumKey_, Node* enumHeadName_, Node* enumBase_, Node* attributes_, Node* semicolon_) :
     CompoundNode(NodeKind::opaqueEnumDeclarationNode, sourcePos_), enumKey(enumKey_), enumHeadName(enumHeadName_), enumBase(enumBase_), attributes(attributes_), semicolon(semicolon_)
 {
+}
+
+Node* OpaqueEnumDeclarationNode::Clone() const
+{
+    Node* clonedEnumBase = nullptr;
+    if (enumBase)
+    {
+        clonedEnumBase = enumBase->Clone();
+    }
+    Node* clonedAttributes = nullptr;
+    if (attributes)
+    {
+        clonedAttributes = attributes->Clone();
+    }
+    OpaqueEnumDeclarationNode* clone = new OpaqueEnumDeclarationNode(GetSourcePos(), enumKey->Clone(), enumHeadName->Clone(), clonedEnumBase, clonedAttributes, semicolon->Clone());
+    return clone;
 }
 
 void OpaqueEnumDeclarationNode::Accept(Visitor& visitor)

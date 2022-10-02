@@ -54,6 +54,9 @@ public:
     reference back();
     const_reference back() const;
 
+	void push_front(const T& x);
+	void push_front(T&& x);
+	void pop_front();
     void push_back(const T& x);
     void push_back(T&& x);
     void pop_back();

@@ -410,7 +410,7 @@ void ClassHtmlGenerator::GenerateFunctionSection()
                 soul::xml::Text* commaText = soul::xml::MakeText(", ");
                 spanElement->AppendChild(commaText);
             }
-            soul::cpp20::symbols::TypeSymbol* parameterType = parameter->Type();
+            soul::cpp20::symbols::TypeSymbol* parameterType = parameter->GetType();
             soul::xml::Element* typeElement = GenerateTypeXmlElement(module, currentClass, parameterType);
             spanElement->AppendChild(typeElement);
             if (!parameter->Name().empty())
@@ -501,7 +501,7 @@ void ClassHtmlGenerator::GenerateVariableSection()
         trElement->AppendChild(tdElement);
         soul::xml::Element* tdTypeElement = soul::xml::MakeElement("td");
         trElement->AppendChild(tdTypeElement);
-        soul::xml::Element* typeElement = GenerateTypeXmlElement(module, currentClass, variable->GetType());
+        soul::xml::Element* typeElement = GenerateTypeXmlElement(module, currentClass, variable->GetDeclaredType());
         tdTypeElement->AppendChild(typeElement);
         if (variable->GetValue())
         {

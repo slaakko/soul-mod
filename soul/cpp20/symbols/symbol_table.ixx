@@ -118,20 +118,27 @@ public:
     void AddTemplateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, 
         soul::cpp20::ast::Node* defaultTemplateArgNode, Context* context);
     FunctionSymbol* AddFunction(const std::u32string& name, soul::cpp20::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
-    FunctionDefinitionSymbol* AddFunctionDefinition(const std::u32string& name, const std::vector<TypeSymbol*>& paramterTypes, FunctionQualifiers qualifiers, soul::cpp20::ast::Node* node, 
-        FunctionSymbol* declaration, Context* context);
+    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& paramterTypes, 
+        FunctionQualifiers qualifiers, soul::cpp20::ast::Node* node, FunctionSymbol* declaration, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
-    void AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context);
+    VariableSymbol* AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type, 
+        Value* value, DeclarationFlags flags, Context* context);
     void AddAliasType(soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context);
     void AddUsingDeclaration(soul::cpp20::ast::Node* node, Symbol* symbol, Context* context);
     void AddUsingDirective(NamespaceSymbol* ns, soul::cpp20::ast::Node* node, Context* context);
     TypeSymbol* MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations);
+    TypeSymbol* MakeConstCharPtrType();
+    TypeSymbol* MakeConstChar8PtrType();
+    TypeSymbol* MakeConstChar16PtrType();
+    TypeSymbol* MakeConstChar32PtrType();
+    TypeSymbol* MakeConstWCharPtrType();
     ConceptSymbol* AddConcept(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context);
     SpecializationSymbol* MakeSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupSymbol(Symbol* symbol);
+    void CollectViableFunctions(Scope* scope, const std::u32string& groupName, int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     void MapNode(soul::cpp20::ast::Node* node);
     void MapNode(soul::cpp20::ast::Node* node, Symbol* symbol);
     void MapNode(soul::cpp20::ast::Node* node, Symbol* symbol, MapKind kind);

@@ -166,6 +166,8 @@
     <ClCompile Include="alias_type_symbol.ixx" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="block.ixx" />
+    <ClCompile Include="bound_tree.cpp" />
+    <ClCompile Include="bound_tree.ixx" />
     <ClCompile Include="classes.cpp" />
     <ClCompile Include="classes.ixx" />
     <ClCompile Include="class_group_symbol.cpp" />
@@ -194,6 +196,8 @@
     <ClCompile Include="evaluator.ixx" />
     <ClCompile Include="exception.cpp" />
     <ClCompile Include="exception.ixx" />
+    <ClCompile Include="expression_binder.cpp" />
+    <ClCompile Include="expression_binder.ixx" />
     <ClCompile Include="function_group_symbol.cpp" />
     <ClCompile Include="function_group_symbol.ixx" />
     <ClCompile Include="function_symbol.cpp" />
@@ -209,6 +213,10 @@
     <ClCompile Include="modules.ixx" />
     <ClCompile Include="namespace.cpp" />
     <ClCompile Include="namespace.ixx" />
+    <ClCompile Include="operation_repository.cpp" />
+    <ClCompile Include="operation_repository.ixx" />
+    <ClCompile Include="overload_resolution.cpp" />
+    <ClCompile Include="overload_resolution.ixx" />
     <ClCompile Include="reader.cpp" />
     <ClCompile Include="reader.ixx" />
     <ClCompile Include="scope.cpp" />
@@ -219,6 +227,8 @@
     <ClCompile Include="specialization.ixx" />
     <ClCompile Include="specialization.cpp" />
     <ClCompile Include="specialization_compare.cpp" />
+    <ClCompile Include="statement_binder.cpp" />
+    <ClCompile Include="statement_binder.ixx" />
     <ClCompile Include="symbol.cpp" />
     <ClCompile Include="symbol.ixx" />
     <ClCompile Include="symbols.ixx" />

@@ -5,6 +5,7 @@
 
 export module util;
 
+export import util.align;
 export import util.stream;
 export import util.file.stream;
 export import util.memory.stream;

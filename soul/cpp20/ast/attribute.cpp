@@ -15,6 +15,16 @@ AttributeSpecifierSequenceNode::AttributeSpecifierSequenceNode(const soul::ast::
 {
 }
 
+Node* AttributeSpecifierSequenceNode::Clone() const
+{
+    AttributeSpecifierSequenceNode* clone = new AttributeSpecifierSequenceNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void AttributeSpecifierSequenceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -22,6 +32,16 @@ void AttributeSpecifierSequenceNode::Accept(Visitor& visitor)
 
 AttributeSpecifierNode::AttributeSpecifierNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::attributeSpecifierNode, sourcePos_)
 {
+}
+
+Node* AttributeSpecifierNode::Clone() const
+{
+    AttributeSpecifierNode* clone = new AttributeSpecifierNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
 }
 
 void AttributeSpecifierNode::Accept(Visitor& visitor)
@@ -67,6 +87,12 @@ AttributeUsingPrefixNode::AttributeUsingPrefixNode(const soul::ast::SourcePos& s
 {
 }
 
+Node* AttributeUsingPrefixNode::Clone() const
+{
+    AttributeUsingPrefixNode* clone = new AttributeUsingPrefixNode(GetSourcePos(), Child()->Clone(), colonPos);
+    return clone;
+}
+
 void AttributeUsingPrefixNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -91,6 +117,12 @@ AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_) : CompoundN
 AttributeNode::AttributeNode(const soul::ast::SourcePos& sourcePos_, Node* attributeToken_, Node* attributeArgs_) :
     CompoundNode(NodeKind::attrbuteNode, sourcePos_), attributeToken(attributeToken_), attributeArgs(attributeArgs_)
 {
+}
+
+Node* AttributeNode::Clone() const
+{
+    AttributeNode* clone = new AttributeNode(GetSourcePos(), attributeToken->Clone(), attributeArgs->Clone());
+    return clone;
 }
 
 void AttributeNode::Accept(Visitor& visitor)
@@ -119,6 +151,12 @@ AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& s
 AttributeScopedTokenNode::AttributeScopedTokenNode(const soul::ast::SourcePos& sourcePos_, Node* ns_, Node* colonColon_, Node* identifier_) :
     CompoundNode(NodeKind::attributeScopedTokenNode, sourcePos_), ns(ns_), colonColon(colonColon_), identifier(identifier_)
 {
+}
+
+Node* AttributeScopedTokenNode::Clone() const
+{
+    AttributeScopedTokenNode* clone = new AttributeScopedTokenNode(GetSourcePos(), ns->Clone(), colonColon->Clone(), identifier->Clone());
+    return clone;
 }
 
 void AttributeScopedTokenNode::Accept(Visitor& visitor)
@@ -152,6 +190,12 @@ AttributeArgumentsNode::AttributeArgumentsNode(const soul::ast::SourcePos& sourc
 {
 }
 
+Node* AttributeArgumentsNode::Clone() const
+{
+    AttributeArgumentsNode* clone = new AttributeArgumentsNode(GetSourcePos(), balancedTokenSequence->Clone(), lpPos, rpPos);
+    return clone;
+}
+
 void AttributeArgumentsNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -177,6 +221,16 @@ BalancedTokenSequenceNode::BalancedTokenSequenceNode(const soul::ast::SourcePos&
 {
 }
 
+Node* BalancedTokenSequenceNode::Clone() const
+{
+    BalancedTokenSequenceNode* clone = new BalancedTokenSequenceNode(GetSourcePos());
+    for (const auto& node : Nodes())
+    {
+        clone->AddNode(node->Clone());
+    }
+    return clone;
+}
+
 void BalancedTokenSequenceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -188,6 +242,12 @@ TokenNode::TokenNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(Node
 
 TokenNode::TokenNode(const soul::ast::SourcePos& sourcePos_, const std::u32string& str_) : CompoundNode(NodeKind::tokenNode, sourcePos_), str(str_)
 {
+}
+
+Node* TokenNode::Clone() const
+{
+    TokenNode* clone = new TokenNode(GetSourcePos(), str);
+    return clone;
 }
 
 void TokenNode::Accept(Visitor& visitor)
@@ -215,6 +275,17 @@ AlignmentSpecifierNode::AlignmentSpecifierNode(const soul::ast::SourcePos& sourc
     const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_) :
     CompoundNode(NodeKind::alignmentSpecifierNode, sourcePos_), alignment(alignment_), ellipsis(ellipsis_), lpPos(lpPos_), rpPos(rpPos_)
 {
+}
+
+Node* AlignmentSpecifierNode::Clone() const
+{
+    Node* clonedEllipsis = nullptr;
+    if (ellipsis)
+    {
+        clonedEllipsis = ellipsis->Clone();
+    }
+    AlignmentSpecifierNode* clone = new AlignmentSpecifierNode(GetSourcePos(), alignment->Clone(), clonedEllipsis, lpPos, rpPos);
+    return clone;
 }
 
 void AlignmentSpecifierNode::Accept(Visitor& visitor)

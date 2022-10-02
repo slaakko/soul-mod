@@ -1,0 +1,70 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module otava.command.parser;
+
+[interface]import otava.command.ast;
+[implementation]import otava.command.token;
+[implementation]import otava.command.lexer;
+
+parser CommandParser
+{
+    lexer CommandLexer<char32_t>;
+
+    main;
+
+    Command : otava::command::ast::Command*
+        ::= BuildCommand:buildCommand{ return buildCommand; }
+        |   DumpCommand:dumpCommand{ return dumpCommand; }
+        |   AssembleCommand:assembleCommand{ return assembleCommand; }
+        |   IntermediateCompileCommand:icCommand{ return icCommand; }
+        ;
+
+    BuildCommand : otava::command::ast::Command*
+        ::= 
+        (
+            BUILD FilePath:filePath
+        )
+        {
+            return new otava::command::ast::BuildCommand(filePath);
+        }
+        ;
+
+    DumpCommand : otava::command::ast::Command*
+        ::= 
+        (
+            DUMP FilePath:filePath
+        )
+        {
+            return new otava::command::ast::DumpCommand(filePath);
+        }
+        ;
+
+    AssembleCommand : otava::command::ast::Command*
+        ::=
+        (
+            ASSEMBLE FilePath:filePath
+        )
+        {
+            return new otava::command::ast::AssembleCommand(filePath);
+        }
+        ;
+
+    IntermediateCompileCommand : otava::command::ast::Command*
+        ::= 
+        (
+            IC FilePath:filePath
+        )
+        {
+            return new otava::command::ast::IntermediateCompileCommand(filePath);
+        }
+        ;
+
+    FilePath : std::string
+        ::= ID{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+        |   FILEPATH{ return util::ToUtf8(lexer.GetToken(pos).ToString()); }
+        ;
+
+}

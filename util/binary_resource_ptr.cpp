@@ -15,6 +15,8 @@ import util.error;
 
 namespace util {
 
+#ifdef _WIN32
+
 BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::string& resourceName_) : resourceName(resourceName_), size(0)
 {
     std::u16string moduleNameStr = ToUtf16(moduleName);
@@ -45,5 +47,7 @@ BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::s
     data = static_cast<uint8_t*>(LockResource(handle));
     size = SizeofResource(nullptr, res);
 }
+
+#endif
 
 } // util

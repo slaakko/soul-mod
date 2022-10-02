@@ -24,6 +24,7 @@ import soul.cpp20.symbols.concepts;
 import soul.cpp20.symbols.concept_group.symbol;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.compound.type.symbol;
+import soul.cpp20.symbols.declarator;
 import soul.cpp20.symbols.enums;
 import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.namespaces;
@@ -133,6 +134,7 @@ void SymbolTable::Init()
     {
         CreateFundamentalTypes();
         CreateCoreSymbols();
+        module->GetEvaluationContext()->Init();
     }
 }
 
@@ -503,7 +505,7 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
         Symbol* lookupSymbol = components[i];
         std::vector<Symbol*> symbols;
         std::set<Scope*> visited;
-        scope->Lookup(lookupSymbol->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, symbols, visited);
+        scope->Lookup(lookupSymbol->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, LookupFlags::none, symbols, visited, nullptr);
         if (symbols.size() == 1)
         {
             Symbol* found = symbols.front();
@@ -515,6 +517,21 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
         }
     }
     return nullptr;
+}
+
+void SymbolTable::CollectViableFunctions(Scope* scope, const std::u32string& groupName, int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
+{
+    std::vector<Symbol*> symbols;
+    std::set<Scope*> visited;
+    scope->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, ScopeLookup::allScopes, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
+    for (Symbol* symbol : symbols)
+    {
+        if (symbol->IsFunctionGroupSymbol())
+        {
+            FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
+            functionGroup->CollectViableFunctions(arity, viableFunctions);
+        }
+    }
 }
 
 void SymbolTable::MapNode(soul::cpp20::ast::Node* node)
@@ -663,17 +680,20 @@ void SymbolTable::MapType(TypeSymbol* type)
     typeMap[type->Id()] = type;
 }
 
-void SymbolTable::AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* type, Value* value, DeclarationFlags flags, Context* context)
+VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, soul::cpp20::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* initializerType, 
+    Value* value, DeclarationFlags flags, Context* context)
 {
     VariableGroupSymbol* variableGroup = currentScope->GroupScope()->GetOrInsertVariableGroup(name, node->GetSourcePos(), context);
     VariableSymbol* variableSymbol = new VariableSymbol(name);
     variableSymbol->SetAccess(CurrentAccess());
-    variableSymbol->SetType(type);
+    variableSymbol->SetDeclaredType(declaredType);
+    variableSymbol->SetInitializerType(initializerType);
     variableSymbol->SetValue(value);
     variableSymbol->SetDeclarationFlags(flags);
     currentScope->SymbolScope()->AddSymbol(variableSymbol, node->GetSourcePos(), context);
     variableGroup->AddVariable(variableSymbol);
     MapNode(node, variableSymbol);
+    return variableSymbol;
 }
 
 void SymbolTable::AddAliasType(soul::cpp20::ast::Node* node, TypeSymbol* type, Context* context)
@@ -982,10 +1002,10 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, soul::cpp20
     return functionSymbol;
 }
 
-FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, soul::cpp20::ast::Node* node,
-    FunctionSymbol* declaration, Context* context)
+FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes, 
+    FunctionQualifiers qualifiers, soul::cpp20::ast::Node* node, FunctionSymbol* declaration, Context* context)
 {
-    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(name, node->GetSourcePos(), context);
+    FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(name, node->GetSourcePos(), context);
     FunctionDefinitionSymbol* prev = functionGroup->GetFunctionDefinition(parameterTypes, qualifiers);
     if (prev)
     {
@@ -1042,7 +1062,48 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, const Derivation
     {
         AddToRecomputeNameSet(compoundType);
     }
+    compoundType->SetSymbolTable(this);
     return compoundType;
+}
+
+TypeSymbol* SymbolTable::MakeConstCharPtrType()
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::constDerivation);
+    derivations.vec.push_back(Derivation::pointerDerivation);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::charType), derivations);
+}
+
+TypeSymbol* SymbolTable::MakeConstChar8PtrType()
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::constDerivation);
+    derivations.vec.push_back(Derivation::pointerDerivation);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char8Type), derivations);
+}
+
+TypeSymbol* SymbolTable::MakeConstChar16PtrType()
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::constDerivation);
+    derivations.vec.push_back(Derivation::pointerDerivation);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char16Type), derivations);
+}
+
+TypeSymbol* SymbolTable::MakeConstChar32PtrType()
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::constDerivation);
+    derivations.vec.push_back(Derivation::pointerDerivation);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::char32Type), derivations);
+}
+
+TypeSymbol* SymbolTable::MakeConstWCharPtrType()
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::constDerivation);
+    derivations.vec.push_back(Derivation::pointerDerivation);
+    return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::wcharType), derivations);
 }
 
 ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, soul::cpp20::ast::Node* node, Context* context)

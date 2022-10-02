@@ -78,6 +78,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    EnumeratedTypeSymbol* GetType() const;
 private:
     Value* value;
     util::uuid valueId;

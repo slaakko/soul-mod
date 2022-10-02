@@ -12,10 +12,11 @@ export namespace soul::cpp20::symbols {
 
 class BoolValue;
 class EvaluationContext;
+class TypeSymbol;
 
 enum class ValueKind : int32_t
 {
-    none, boolValue, integerValue, floatingValue, nullPtrValue, symbolValue, invokeValue
+    none, boolValue, integerValue, floatingValue, nullPtrValue, stringValue, charValue, symbolValue, invokeValue
 };
 
 ValueKind CommonValueKind(ValueKind left, ValueKind right);
@@ -23,10 +24,12 @@ ValueKind CommonValueKind(ValueKind left, ValueKind right);
 class Value : public Symbol
 {
 public:
-    Value(SymbolKind symbolKind_, const std::u32string& rep_);
+    Value(SymbolKind symbolKind_, const std::u32string& rep_, TypeSymbol* type_);
     bool IsBoolValue() const { return GetValueKind() == ValueKind::boolValue; }
     bool IsIntegerValue() const { return GetValueKind() == ValueKind::integerValue; }
     bool IsFloatingValue() const { return GetValueKind() == ValueKind::floatingValue; }
+    bool IsStringValue() const { return GetValueKind() == ValueKind::stringValue; }
+    bool IsCharValue() const { return GetValueKind() == ValueKind::charValue; }
     bool IsNullPtrValue() const { return GetValueKind() == ValueKind::nullPtrValue; }
     bool IsSymbolValue() const { return GetValueKind() == ValueKind::symbolValue; }
     bool IsInvokeValue() const { return GetValueKind() == ValueKind::invokeValue; }
@@ -35,14 +38,22 @@ public:
     ValueKind GetValueKind() const;
     const std::u32string& Rep() const { return Name(); }
     virtual std::u32string ToString() const { return Rep(); }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    TypeSymbol* GetType() const { return type; }
+    void SetType(TypeSymbol* type_) { type = type_; }
+private:
+    TypeSymbol* type;
+    util::uuid typeId;
 };
 
 class BoolValue : public Value
 {
 public:
-    BoolValue();
-    BoolValue(const std::u32string& rep_);
-    BoolValue(bool value_, const std::u32string& rep_);
+    BoolValue(TypeSymbol* type_);
+    BoolValue(const std::u32string& rep_, TypeSymbol* type_);
+    BoolValue(bool value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "bool value"; }
     std::string SymbolDocKindStr() const override { return "bool_value"; }
     bool GetValue() const { return value; }
@@ -58,9 +69,9 @@ private:
 class IntegerValue : public Value
 {
 public:
-    IntegerValue();
-    IntegerValue(const std::u32string& rep_);
-    IntegerValue(int64_t value_, const std::u32string& rep_);
+    IntegerValue(TypeSymbol* type_);
+    IntegerValue(const std::u32string& rep_, TypeSymbol* type_);
+    IntegerValue(int64_t value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "integer value"; }
     std::string SymbolDocKindStr() const override { return "integer_value"; }
     int64_t GetValue() const { return value; }
@@ -76,9 +87,9 @@ private:
 class FloatingValue : public Value
 {
 public:
-    FloatingValue();
-    FloatingValue(const std::u32string& rep_);
-    FloatingValue(double value_, const std::u32string& rep_);
+    FloatingValue(TypeSymbol* type_);
+    FloatingValue(const std::u32string& rep_, TypeSymbol* type_);
+    FloatingValue(double value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "floating value"; }
     std::string SymbolDocKindStr() const override { return "floating_value"; }
     double GetValue() const { return value; }
@@ -94,7 +105,7 @@ private:
 class NullPtrValue : public Value
 {
 public:
-    NullPtrValue();
+    NullPtrValue(TypeSymbol* type_);
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     std::string SymbolKindStr() const override { return "nullptr value"; }
@@ -102,6 +113,40 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
+};
+
+class StringValue : public Value
+{
+public:
+    StringValue(TypeSymbol* type_);
+    StringValue(const std::string& value_, TypeSymbol* type_);
+    const std::string & GetValue() const { return value; }
+    BoolValue* ToBoolValue(EvaluationContext& context) override;
+    Value* Convert(ValueKind kind, EvaluationContext& context) override;
+    std::string SymbolKindStr() const override { return "string value"; }
+    std::string SymbolDocKindStr() const override { return "string_value"; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
+private:
+    std::string value;
+};
+
+class CharValue : public Value
+{
+public:
+    CharValue(TypeSymbol* type_);
+    CharValue(char32_t value_, TypeSymbol* type_);
+    char32_t GetValue() const { return value; }
+    BoolValue* ToBoolValue(EvaluationContext& context) override;
+    Value* Convert(ValueKind kind, EvaluationContext& context) override;
+    std::string SymbolKindStr() const override { return "char value"; }
+    std::string SymbolDocKindStr() const override { return "char_value"; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
+private:
+    char32_t value;
 };
 
 class SymbolValue : public Value
@@ -147,24 +192,32 @@ private:
 class EvaluationContext
 {
 public:
-    EvaluationContext();
+    EvaluationContext(SymbolTable& symbolTable_);
+    void Init();
     void Write(Writer& writer);
     void Read(Reader& reader);
     BoolValue* GetBoolValue(bool value);
-    IntegerValue* GetIntegerValue(int64_t value, const std::u32string& rep);
-    FloatingValue* GetFloatingValue(double value, const std::u32string& rep);
+    IntegerValue* GetIntegerValue(int64_t value, const std::u32string& rep, TypeSymbol* type);
+    FloatingValue* GetFloatingValue(double value, const std::u32string& rep, TypeSymbol* type);
     NullPtrValue* GetNullPtrValue() { return &nullPtrValue; }
+    StringValue* GetStringValue(const std::string& value, TypeSymbol* type);
+    CharValue* GetCharValue(char32_t value, TypeSymbol* type);
     SymbolValue* GetSymbolValue(Symbol* symbol);
     InvokeValue* GetInvokeValue(Value* subject);
     Value* GetValue(const util::uuid& valueId) const;
     void Resolve(SymbolTable& symbolTable);
+    SymbolTable& GetSymbolTable() { return symbolTable; }
 private:
     void MapValue(Value* value);
+    bool initialized;
+    SymbolTable& symbolTable;
     BoolValue trueValue;
     BoolValue falseValue;
     NullPtrValue nullPtrValue;
-    std::map<std::pair<int64_t, std::u32string>, IntegerValue*> integerValueMap;
-    std::map<std::pair<double, std::u32string>, FloatingValue*> floatingValueMap;
+    std::map<std::pair<std::pair<int64_t, std::u32string>, TypeSymbol*>, IntegerValue*> integerValueMap;
+    std::map<std::pair<std::pair<double, std::u32string>, TypeSymbol*>, FloatingValue*> floatingValueMap;
+    std::map<std::pair<std::string, TypeSymbol*>, StringValue*> stringValueMap;
+    std::map<std::pair<char32_t, TypeSymbol*>, CharValue*> charValueMap;
     std::map<Symbol*, SymbolValue*> symbolValueMap;
     std::map<Value*, InvokeValue*> invokeMap;
     std::vector<std::unique_ptr<Value>> values;

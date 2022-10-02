@@ -1021,7 +1021,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, sou
                                                             simpleTemplateId.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
-                                                                soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns.release(), new soul::cpp20::ast::PrefixNode(tmpPos, tmp.release(), simpleTemplateId.release())), nullptr);
+                                                                soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns.release(), new soul::cpp20::ast::PrefixNode(tmpPos, tmp.release(), simpleTemplateId.release())), attributes.release());
                                                                 soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
                                                                 {
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -1051,7 +1051,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, sou
                                                             simpleTemplateId2.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
-                                                                soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns.release(), simpleTemplateId2.release()), nullptr);
+                                                                soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), new soul::cpp20::ast::QualifiedIdNode(nnsPos, nns.release(), simpleTemplateId2.release()), attributes.release());
                                                                 soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
                                                                 {
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -1119,7 +1119,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, sou
                                         simpleTemplateId3.reset(static_cast<soul::cpp20::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
-                                            soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), simpleTemplateId3.release(), nullptr);
+                                            soul::cpp20::ast::Node *node = new soul::cpp20::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), simpleTemplateId3.release(), attributes.release());
                                             soul::cpp20::symbols::AddForwardClassDeclaration(node, context);
                                             {
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT

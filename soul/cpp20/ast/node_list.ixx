@@ -29,6 +29,12 @@ public:
         return nodes[index].release();
     }
     std::vector<std::unique_ptr<T>>& Nodes() { return nodes; }
+    std::vector<std::unique_ptr<T>>::iterator begin() { return nodes.begin(); }
+    std::vector<std::unique_ptr<T>>::const_iterator begin() const { return nodes.begin(); }
+    std::vector<std::unique_ptr<T>>::const_iterator cbegin() const { return nodes.cbegin(); }
+    std::vector<std::unique_ptr<T>>::iterator end() { return nodes.end(); }
+    std::vector<std::unique_ptr<T>>::const_iterator end() const { return nodes.end(); }
+    std::vector<std::unique_ptr<T>>::const_iterator cehnd() const { return nodes.cend(); }
 private:
     std::vector<std::unique_ptr<T>> nodes;
 };

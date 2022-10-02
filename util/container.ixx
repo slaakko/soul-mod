@@ -15,7 +15,7 @@ class Container
 {
 public:
     Container(Component* parent_);
-    ~Container();
+    virtual ~Container();
     bool IsEmpty() const { return firstChild == nullptr; }
     Component* Parent() const { return parent; }
     Component* FirstChild() const { return firstChild; }

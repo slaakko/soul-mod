@@ -46,7 +46,7 @@ void UsingDeclarationProcessor::Visit(soul::cpp20::ast::IdentifierNode& node)
 {
     std::vector<Symbol*> symbols;
     std::set<Scope*> visited;
-    scope->Lookup(node.Str(), SymbolGroupKind::all, ScopeLookup::thisScope, symbols, visited);
+    scope->Lookup(node.Str(), SymbolGroupKind::all, ScopeLookup::thisScope, LookupFlags::none, symbols, visited, context);
     if (symbols.empty())
     {
         ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);

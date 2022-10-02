@@ -1,13 +1,8 @@
 export module bug;
 
-class Foo
+import std.core;
+
+void foo()
 {
-public:
-	Foo(): flags() {}
-	int get_flags() const { return static_cast<int>(flags); }
-	enum class Flags
-	{
-		none = 0, foo = 1 << 0
-	};
-	Flags flags;
-};
+	auto x = 1;
+}

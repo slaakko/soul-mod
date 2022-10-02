@@ -1,0 +1,2 @@
+project otava.pp.parser.spg;
+parser <pp.parser>;

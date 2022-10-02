@@ -13,6 +13,12 @@ SemicolonNode::SemicolonNode(const soul::ast::SourcePos& sourcePos_) : Node(Node
 {
 }
 
+Node* SemicolonNode::Clone() const
+{
+    SemicolonNode* clone = new SemicolonNode(GetSourcePos());
+    return clone;
+}
+
 void SemicolonNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -20,6 +26,12 @@ void SemicolonNode::Accept(Visitor& visitor)
 
 CommaNode::CommaNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::commaNode, sourcePos_)
 {
+}
+
+Node* CommaNode::Clone() const
+{
+    CommaNode* clone = new CommaNode(GetSourcePos());
+    return clone;
 }
 
 void CommaNode::Accept(Visitor& visitor)
@@ -31,6 +43,12 @@ QuestNode::QuestNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::qu
 {
 }
 
+Node* QuestNode::Clone() const
+{
+    QuestNode* clone = new QuestNode(GetSourcePos());
+    return clone;
+}
+
 void QuestNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -38,6 +56,12 @@ void QuestNode::Accept(Visitor& visitor)
 
 ColonNode::ColonNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::colonNode, sourcePos_)
 {
+}
+
+Node* ColonNode::Clone() const
+{
+    ColonNode* clone = new ColonNode(GetSourcePos());
+    return clone;
 }
 
 void ColonNode::Accept(Visitor& visitor)
@@ -49,6 +73,12 @@ EllipsisNode::EllipsisNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
+Node* EllipsisNode::Clone() const
+{
+    EllipsisNode* clone = new EllipsisNode(GetSourcePos());
+    return clone;
+}
+
 void EllipsisNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -56,6 +86,12 @@ void EllipsisNode::Accept(Visitor& visitor)
 
 LParenNode::LParenNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::lparenNode, sourcePos_)
 {
+}
+
+Node* LParenNode::Clone() const
+{
+    LParenNode* clone = new LParenNode(GetSourcePos());
+    return clone;
 }
 
 void LParenNode::Accept(Visitor& visitor)
@@ -67,6 +103,12 @@ RParenNode::RParenNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
+Node* RParenNode::Clone() const
+{
+    RParenNode* clone = new RParenNode(GetSourcePos());
+    return clone;
+}
+
 void RParenNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -74,6 +116,12 @@ void RParenNode::Accept(Visitor& visitor)
 
 LBracketNode::LBracketNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::lbracketNode, sourcePos_)
 {
+}
+
+Node* LBracketNode::Clone() const
+{
+    LBracketNode* clone = new LBracketNode(GetSourcePos());
+    return clone;
 }
 
 void LBracketNode::Accept(Visitor& visitor)
@@ -85,6 +133,12 @@ RBracketNode::RBracketNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKi
 {
 }
 
+Node* RBracketNode::Clone() const
+{
+    RBracketNode* clone = new RBracketNode(GetSourcePos());
+    return clone;
+}
+
 void RBracketNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -94,6 +148,12 @@ LBraceNode::LBraceNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::
 {
 }
 
+Node* LBraceNode::Clone() const
+{
+    LBraceNode* clone = new LBraceNode(GetSourcePos());
+    return clone;
+}
+
 void LBraceNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -101,6 +161,12 @@ void LBraceNode::Accept(Visitor& visitor)
 
 RBraceNode::RBraceNode(const soul::ast::SourcePos& sourcePos_) : Node(NodeKind::rbraceNode, sourcePos_)
 {
+}
+
+Node* RBraceNode::Clone() const
+{
+    RBraceNode* clone = new RBraceNode(GetSourcePos());
+    return clone;
 }
 
 void RBraceNode::Accept(Visitor& visitor)

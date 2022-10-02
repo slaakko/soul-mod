@@ -5,14 +5,23 @@
 
 module soul.cpp20.symbols.context;
 
+import soul.cpp20.symbols.declarator;
 import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.scope;
 import soul.cpp20.symbols.symbol;
+import soul.cpp20.symbols.bound.tree;
 
 namespace soul::cpp20::symbols {
 
-Context::Context() : symbolTable(nullptr), lexer(nullptr), flags(ContextFlags::none), node(nullptr)
+Context::Context() : 
+    symbolTable(nullptr), 
+    lexer(nullptr), 
+    flags(ContextFlags::none), 
+    node(nullptr), 
+    boundCompileUnit(nullptr), 
+    boundFunction(nullptr), 
+    currentCompoundStatement(nullptr)
 {
 }
 
@@ -24,6 +33,42 @@ void Context::SetLexer(Lexer* lexer_)
 void Context::SetSymbolTable(SymbolTable* symbolTable_)
 {
     symbolTable = symbolTable_;
+}
+
+OperationRepository* Context::GetOperationRepository() const
+{
+    return GetBoundCompileUnit()->GetOperationRepository();
+}
+
+void Context::SetBoundCompileUnit(BoundCompileUnitNode* boundCompileUnit_)
+{
+    boundCompileUnit = boundCompileUnit_;
+}
+
+void Context::SetBoundFunction(BoundFunctionNode* boundFunction_)
+{
+    boundFunction = boundFunction_;
+}
+
+void Context::BeginCompoundStatement()
+{
+    compoundStatementStack.push(currentCompoundStatement);
+    currentCompoundStatement = new BoundCompoundStatementNode();
+}
+
+void Context::EndCompoundStatement()
+{
+    if (!compoundStatementStack.top())
+    {
+        boundFunction->SetBody(currentCompoundStatement);
+        currentCompoundStatement = nullptr;
+    }
+    else
+    {
+        compoundStatementStack.top()->AddStatement(currentCompoundStatement);
+        currentCompoundStatement = compoundStatementStack.top();
+        compoundStatementStack.pop();
+    }
 }
 
 EvaluationContext* Context::GetEvaluationContext()
@@ -116,6 +161,23 @@ void Context::PopNode()
 {
     node = nodeStack.top();
     nodeStack.pop();
+}
+
+void Context::SetDeclarationList(soul::cpp20::ast::Node* node, DeclarationList* declarations)
+{
+    declarationMap[node] = std::unique_ptr<DeclarationList>(declarations);
+}
+
+std::unique_ptr<DeclarationList> Context::ReleaseDeclarationList(soul::cpp20::ast::Node* node)
+{
+    std::unique_ptr<DeclarationList> declarationList;
+    auto it = declarationMap.find(node);
+    if (it != declarationMap.cend())
+    {
+        declarationList = std::move(it->second);
+    }
+    declarationMap.erase(node);
+    return declarationList;
 }
 
 } // namespace soul::cpp20::symbols

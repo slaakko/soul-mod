@@ -68,6 +68,78 @@ int PointerCount(const Derivations& derivations)
     return static_cast<int>(std::count(derivations.vec.cbegin(), derivations.vec.cend(), Derivation::pointerDerivation));
 }
 
+Derivations RemoveConst(const Derivations& derivations)
+{
+    Derivations modifiedDerivations;
+    bool first = true;
+    for (const auto& derivation : derivations.vec)
+    {
+        if (first && derivation == Derivation::constDerivation)
+        {
+            first = false;
+        }
+        else
+        {
+            modifiedDerivations.vec.push_back(derivation);
+        }
+    }
+    return modifiedDerivations;
+}
+
+Derivations RemovePointer(const Derivations& derivations)
+{
+    Derivations modifiedDerivations;
+    bool first = true;
+    for (const auto& derivation : derivations.vec)
+    {
+        if (first && derivation == Derivation::pointerDerivation)
+        {
+            first = false;
+        }
+        else
+        {
+            modifiedDerivations.vec.push_back(derivation);
+        }
+    }
+    return modifiedDerivations;
+}
+
+Derivations RemoveLValueRef(const Derivations& derivations)
+{
+    Derivations modifiedDerivations;
+    bool first = true;
+    for (const auto& derivation : derivations.vec)
+    {
+        if (first && derivation == Derivation::lvalueRefDerivation)
+        {
+            first = false;
+        }
+        else
+        {
+            modifiedDerivations.vec.push_back(derivation);
+        }
+    }
+    return modifiedDerivations;
+}
+
+Derivations RemoveRValueRef(const Derivations& derivations)
+{
+    Derivations modifiedDerivations;
+    bool first = true;
+    for (const auto& derivation : derivations.vec)
+    {
+        if (first && derivation == Derivation::rvalueRefDerivation)
+        {
+            first = false;
+        }
+        else
+        {
+            modifiedDerivations.vec.push_back(derivation);
+        }
+    }
+    return modifiedDerivations;
+}
+
 void Write(Writer& writer, const Derivations& derivations)
 {
     uint8_t count = static_cast<uint8_t>(derivations.vec.size());

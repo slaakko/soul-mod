@@ -23,5 +23,6 @@ project <soul/cpp20/token/token.project>;
 project <soul/cpp20/lexer/lexer.project>;
 project <soul/cpp20/symbols/symbols.project>;
 project <soul/cpp20/parser/parser.project>;
+project <soul/cpp20/pp/pp.project>;
 project <soul/cpp20/project/project.project>;
 

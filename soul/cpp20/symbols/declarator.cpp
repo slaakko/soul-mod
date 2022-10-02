@@ -10,6 +10,7 @@ import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.context;
 import soul.cpp20.symbols.declaration;
 import soul.cpp20.symbols.evaluator;
+import soul.cpp20.symbols.expression.binder;
 import soul.cpp20.symbols.function.symbol;
 import soul.cpp20.symbols.scope;
 import soul.cpp20.symbols.scope.resolver;
@@ -46,11 +47,12 @@ void FunctionDeclarator::AddQualifier(FunctionQualifiers qualifier)
     qualifiers = qualifiers | qualifier;
 }
 
-Declaration::Declaration() : flags(DeclarationFlags::none), type(nullptr), declarator(nullptr), value(nullptr)
+Declaration::Declaration() : flags(DeclarationFlags::none), type(nullptr), declarator(nullptr), value(nullptr), initializer(nullptr), variable(nullptr)
 {
 }
 
-Declaration::Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator* declarator_) : flags(flags_), type(type_), declarator(declarator_), value(nullptr)
+Declaration::Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator* declarator_) : 
+    flags(flags_), type(type_), declarator(declarator_), value(nullptr), initializer(nullptr), variable(nullptr)
 {
 }
 
@@ -58,17 +60,18 @@ class DeclaratorListProcessor : public soul::cpp20::ast::DefaultVisitor
 {
 public:
     DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_);
-    std::vector<Declaration> GetDeclarations() { return std::move(declarations); }
+    std::unique_ptr<DeclarationList> GetDeclarations() { return std::move(declarationList); }
     void Visit(soul::cpp20::ast::InitDeclaratorListNode& node) override;
     void Visit(soul::cpp20::ast::MemberDeclaratorListNode& node) override;
 private:
     Context* context;
     TypeSymbol* baseType;
     DeclarationFlags flags;
-    std::vector<Declaration> declarations;
+    std::unique_ptr<DeclarationList> declarationList;
 };
 
-DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_) : context(context_), baseType(baseType_), flags(flags_)
+DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_) : 
+    context(context_), baseType(baseType_), flags(flags_), declarationList(new DeclarationList())
 {
 }
 
@@ -81,7 +84,7 @@ void DeclaratorListProcessor::Visit(soul::cpp20::ast::InitDeclaratorListNode& no
         Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
         if (declaration.declarator.get())
         {
-            declarations.push_back(std::move(declaration));
+            declarationList->declarations.push_back(std::move(declaration));
         }
     }
 }
@@ -95,7 +98,7 @@ void DeclaratorListProcessor::Visit(soul::cpp20::ast::MemberDeclaratorListNode& 
         Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
         if (declaration.declarator.get())
         {
-            declarations.push_back(std::move(declaration));
+            declarationList->declarations.push_back(std::move(declaration));
         }
     }
 }
@@ -257,6 +260,7 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::InitDeclaratorNode& node)
     {
         Value* value = Evaluate(node.Right(), context);
         declaration.value = value;
+        declaration.initializer = node.Right();
     }
 }
 
@@ -766,14 +770,14 @@ void DeclaratorProcessor::Visit(soul::cpp20::ast::AbstractDeclaratorNode& node)
     declaration = Declaration(flags, baseType, new SimpleDeclarator(std::u32string(), &node));
 }
 
-std::vector<Declaration> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)
+std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)
 {
     DeclaratorListProcessor processor(context, baseType, flags);
     initDeclaratorList->Accept(processor);
     return processor.GetDeclarations();
 }
 
-std::vector<Declaration> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
+std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, soul::cpp20::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
 {
     DeclaratorListProcessor processor(context, baseType, flags);
     memberDeclaratorList->Accept(processor);

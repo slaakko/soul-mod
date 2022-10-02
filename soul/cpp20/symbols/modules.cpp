@@ -26,7 +26,7 @@ std::string MakeModuleFilePath(const std::string& root, const std::string& modul
     return util::GetFullPath(util::Path::Combine(root, moduleName + ".module"));
 }
 
-Module::Module(const std::string& name_) : name(name_), symbolTable(), file(-1), reading(false)
+Module::Module(const std::string& name_) : name(name_), symbolTable(), evaluationContext(symbolTable), file(-1), reading(false)
 {
     symbolTable.SetModule(this);
 }
@@ -68,6 +68,7 @@ void Module::Import(Module* that, ModuleMapper& moduleMapper)
         importSet.insert(that);
         that->Import(moduleMapper);
         symbolTable.Import(that->symbolTable);
+        evaluationContext.Init();
     }
 }
 

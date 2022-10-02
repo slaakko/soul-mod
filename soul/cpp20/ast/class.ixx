@@ -15,6 +15,7 @@ class ClassSpecifierNode : public SequenceNode
 public:
     ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -37,6 +38,7 @@ class ClassHeadNode : public CompoundNode
 public:
     ClassHeadNode(const soul::ast::SourcePos& sourcePos_);
     ClassHeadNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* classHeadName_, Node* classVirtSpecifier_, Node* baseClause_, Node* attributes_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -58,6 +60,7 @@ class BaseClauseNode : public UnaryNode
 public:
     BaseClauseNode(const soul::ast::SourcePos& sourcePos_);
     BaseClauseNode(const soul::ast::SourcePos& sourcePos_, Node* baseSpecifierList_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -65,6 +68,7 @@ class BaseSpecifierListNode : public ListNode
 {
 public:
     BaseSpecifierListNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -73,6 +77,7 @@ class BaseSpecifierNode : public CompoundNode
 public:
     BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     BaseSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classOrDeclType_, Node* accessSpecifier_, Node* virtualSpecifier_, Node* attributes_, bool virtualFirst_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -94,6 +99,7 @@ class BeginAccessGroupNode : public UnaryNode
 public:
     BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_);
     BeginAccessGroupNode(const soul::ast::SourcePos& sourcePos_, Node* accessSpecifier_, const soul::ast::SourcePos& colonPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -107,6 +113,7 @@ class MemberDeclarationNode : public CompoundNode
 public:
     MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     MemberDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* memberDeclarators_, Node* semicolon_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -125,6 +132,7 @@ class MemberDeclaratorListNode : public ListNode
 {
 public:
     MemberDeclaratorListNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -133,6 +141,7 @@ class ConstructorNode : public BinaryNode
 public:
     ConstructorNode(const soul::ast::SourcePos& sourcePos_);
     ConstructorNode(const soul::ast::SourcePos& sourcePos_, Node* constructorInitializer_, Node* compoundStatement_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -141,6 +150,7 @@ class ConstructorInitializerNode : public UnaryNode
 public:
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_);
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -148,6 +158,7 @@ class MemberInitializerListNode : public ListNode
 {
 public:
     MemberInitializerListNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -156,6 +167,7 @@ class MemberInitializerNode : public BinaryNode
 public:
     MemberInitializerNode(const soul::ast::SourcePos& sourcePos_);
     MemberInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* initializer_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -163,6 +175,7 @@ class VirtSpecifierSequenceNode : public SequenceNode
 {
 public:
     VirtSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -170,6 +183,7 @@ class ClassNode : public Node
 {
 public:
     ClassNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -177,6 +191,7 @@ class StructNode : public Node
 {
 public:
     StructNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -184,6 +199,7 @@ class UnionNode : public Node
 {
 public:
     UnionNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -191,6 +207,7 @@ class PublicNode : public Node
 {
 public:
     PublicNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -198,6 +215,7 @@ class ProtectedNode : public Node
 {
 public:
     ProtectedNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -205,6 +223,7 @@ class PrivateNode : public Node
 {
 public:
     PrivateNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -212,6 +231,7 @@ class VirtualNode : public Node
 {
 public:
     VirtualNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -219,6 +239,7 @@ class OverrideNode : public Node
 {
 public:
     OverrideNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -226,6 +247,7 @@ class FinalNode : public Node
 {
 public:
     FinalNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -234,6 +256,7 @@ class PureSpecifierNode : public Node
 public:
     PureSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     PureSpecifierNode(const soul::ast::SourcePos& sourcePos_, const soul::ast::SourcePos& zeroPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

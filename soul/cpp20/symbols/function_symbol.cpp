@@ -9,6 +9,7 @@ module;
 module soul.cpp20.symbols.function.symbol;
 
 import soul.cpp20.symbols.modules;
+import soul.cpp20.symbols.classes;
 import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.reader;
@@ -127,8 +128,40 @@ void ParameterSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-FunctionSymbol::FunctionSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::functionSymbol, name_), returnType(nullptr), returnTypeId(util::nil_uuid())
+FunctionSymbol::FunctionSymbol(const std::u32string& name_) : 
+    ContainerSymbol(SymbolKind::functionSymbol, name_), returnType(nullptr), returnTypeId(util::nil_uuid()), memFunParamsConstructed(false)
 {
+}
+
+FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
+    ContainerSymbol(kind_, name_), returnType(nullptr), returnTypeId(util::nil_uuid()), memFunParamsConstructed(false)
+{
+}
+
+const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters() 
+{
+    if (memFunParamsConstructed) return memFunParameters;
+    memFunParamsConstructed = true;
+    Symbol* parent = Parent();
+    if (parent->IsClassTypeSymbol())
+    {
+        ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(Parent());
+        if ((Qualifiers() & FunctionQualifiers::isConst) != FunctionQualifiers::none)
+        {
+            thisParam.reset(new ParameterSymbol(U"this", classType->AddConst()->AddPointer()));
+            memFunParameters.push_back(thisParam.get());
+        }
+        else
+        {
+            thisParam.reset(new ParameterSymbol(U"this", classType->AddPointer()));
+            memFunParameters.push_back(thisParam.get());
+        }
+    }
+    for (const auto& parameter : parameters)
+    {
+        memFunParameters.push_back(parameter);
+    }
+    return memFunParameters;
 }
 
 TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration()
@@ -192,22 +225,13 @@ void FunctionSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : ContainerSymbol(SymbolKind::functionDefinitionSymbol, name_)
+FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_)
 {
 }
 
 void FunctionDefinitionSymbol::Write(Writer& writer)
 {
-    ContainerSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(qualifiers));
-    if (returnType)
-    {
-        writer.GetBinaryStreamWriter().Write(returnType->Id());
-    }
-    else
-    {
-        writer.GetBinaryStreamWriter().Write(util::nil_uuid());
-    }
+    FunctionSymbol::Write(writer);
     if (declaration)
     {
         writer.GetBinaryStreamWriter().Write(declaration->Id());
@@ -220,24 +244,8 @@ void FunctionDefinitionSymbol::Write(Writer& writer)
 
 void FunctionDefinitionSymbol::Read(Reader& reader)
 {
-    ContainerSymbol::Read(reader);
-    qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
-    reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
+    FunctionSymbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(declarationId);
-}
-
-void FunctionDefinitionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) 
-{
-    ContainerSymbol::AddSymbol(symbol, sourcePos, context);
-    if (symbol->IsParameterSymbol())
-    {
-        parameters.push_back(static_cast<ParameterSymbol*>(symbol));
-    }
-}
-
-void FunctionDefinitionSymbol::AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context)
-{
-    AddSymbol(parameter, sourcePos, context);
 }
 
 void FunctionDefinitionSymbol::Accept(Visitor& visitor) 
@@ -247,11 +255,7 @@ void FunctionDefinitionSymbol::Accept(Visitor& visitor)
 
 void FunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable)
 {
-    ContainerSymbol::Resolve(symbolTable);
-    if (returnTypeId != util::nil_uuid())
-    {
-        returnType = symbolTable.GetType(returnTypeId);
-    }
+    FunctionSymbol::Resolve(symbolTable);
     if (declarationId != util::nil_uuid())
     {
         declaration = symbolTable.GetFunction(declarationId);

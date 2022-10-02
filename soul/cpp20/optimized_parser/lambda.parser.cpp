@@ -1227,6 +1227,7 @@ soul::parser::Match LambdaParser<Lexer>::LambdaDeclarator(Lexer& lexer, soul::cp
                                         {
                                             sourcePos = lexer.GetSourcePos(pos);
                                             lpPos = sourcePos;
+                                            parameterList.reset(new soul::cpp20::ast::ParameterListNode(sourcePos));
                                         }
                                         *parentMatch8 = match;
                                     }

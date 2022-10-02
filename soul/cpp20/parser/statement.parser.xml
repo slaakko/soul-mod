@@ -198,7 +198,7 @@
     <choice first="{}">
      <choice first="{}">
       <sequence first="{}">
-       <nonterminal first="{}" ruleName="MemberFunctionTemplateGuard"/>
+       <nonterminal first="{}" ruleName="MemberFunctionGuard"/>
        <action first="{}">
         <nonterminal first="{}" ruleName="CompoundStatementGuarded"/>
        </action>

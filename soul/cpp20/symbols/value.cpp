@@ -9,9 +9,11 @@ module;
 module soul.cpp20.symbols.value;
 
 import util.unicode;
+import soul.cpp20.symbols.fundamental.type.symbol;
 import soul.cpp20.symbols.enums;
 import soul.cpp20.symbols.modules;
 import soul.cpp20.symbols.symbol.table;
+import soul.cpp20.symbols.type.symbol;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.visitor;
@@ -95,8 +97,36 @@ ValueKind CommonValueKind(ValueKind left, ValueKind right)
     return ValueKind::none;
 }
 
-Value::Value(SymbolKind symbolKind_, const std::u32string& rep_) : Symbol(symbolKind_, rep_)
+Value::Value(SymbolKind symbolKind_, const std::u32string& rep_, TypeSymbol* type_) : Symbol(symbolKind_, rep_), type(type_)
 {
+}
+
+void Value::Write(Writer& writer)
+{
+    Symbol::Write(writer);
+    if (type)
+    {
+        writer.GetBinaryStreamWriter().Write(type->Id());
+    }
+    else
+    {
+        writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+    }
+}
+
+void Value::Read(Reader& reader)
+{
+    Symbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(typeId);
+}
+
+void Value::Resolve(SymbolTable& symbolTable)
+{
+    Symbol::Resolve(symbolTable);
+    if (typeId != util::nil_uuid())
+    {
+        type = symbolTable.GetType(typeId);
+    }
 }
 
 ValueKind Value::GetValueKind() const
@@ -119,6 +149,14 @@ ValueKind Value::GetValueKind() const
         {
             return ValueKind::nullPtrValue;
         }
+        case SymbolKind::stringValueSymbol:
+        {
+            return ValueKind::stringValue;
+        }
+        case SymbolKind::charValueSymbol:
+        {
+            return ValueKind::charValue;
+        }
         case SymbolKind::symbolValueSymbol:
         {
             return ValueKind::symbolValue;
@@ -131,15 +169,15 @@ ValueKind Value::GetValueKind() const
     return ValueKind::none;
 }
 
-BoolValue::BoolValue() : Value(SymbolKind::boolValueSymbol, std::u32string(U"false")), value(false)
+BoolValue::BoolValue(TypeSymbol* type_) : Value(SymbolKind::boolValueSymbol, std::u32string(U"false"), type_), value(false)
 {
 }
 
-BoolValue::BoolValue(const std::u32string& rep_) : Value(SymbolKind::boolValueSymbol, rep_), value(false)
+BoolValue::BoolValue(const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::boolValueSymbol, rep_, type_), value(false)
 {
 }
 
-BoolValue::BoolValue(bool value_, const std::u32string& rep_) : Value(SymbolKind::boolValueSymbol, rep_), value(value_)
+BoolValue::BoolValue(bool value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::boolValueSymbol, rep_, type_), value(value_)
 {
 }
 
@@ -148,8 +186,16 @@ Value* BoolValue::Convert(ValueKind kind, EvaluationContext& context)
     switch (kind)
     {
         case ValueKind::boolValue: return this;
-        case ValueKind::integerValue: return context.GetIntegerValue(static_cast<int64_t>(value), util::ToUtf32(std::to_string(value)));
-        case ValueKind::floatingValue: return context.GetFloatingValue(static_cast<double>(value), util::ToUtf32(std::to_string(value)));
+        case ValueKind::integerValue: 
+        {
+            return context.GetIntegerValue(static_cast<int64_t>(value), util::ToUtf32(std::to_string(value)),
+                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
+        }
+        case ValueKind::floatingValue: 
+        {
+            return context.GetFloatingValue(static_cast<double>(value), util::ToUtf32(std::to_string(value)),
+                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::doubleType));
+        }
     }
     return this;
 }
@@ -171,15 +217,15 @@ void BoolValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-IntegerValue::IntegerValue() : Value(SymbolKind::integerValueSymbol, std::u32string(U"0")), value(0)
+IntegerValue::IntegerValue(TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, std::u32string(U"0"), type_), value(0)
 {
 }
 
-IntegerValue::IntegerValue(const std::u32string& rep_) : Value(SymbolKind::integerValueSymbol, rep_), value(0)
+IntegerValue::IntegerValue(const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(0)
 {
 }
 
-IntegerValue::IntegerValue(int64_t value_, const std::u32string& rep_) : Value(SymbolKind::integerValueSymbol, rep_), value(value_)
+IntegerValue::IntegerValue(int64_t value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(value_)
 {
 }
 
@@ -194,7 +240,11 @@ Value* IntegerValue::Convert(ValueKind kind, EvaluationContext& context)
     {
         case ValueKind::boolValue: return ToBoolValue(context);
         case ValueKind::integerValue: return this;
-        case ValueKind::floatingValue: return context.GetFloatingValue(static_cast<double>(value), util::ToUtf32(std::to_string(value)));
+        case ValueKind::floatingValue: 
+        {
+            return context.GetFloatingValue(static_cast<double>(value), util::ToUtf32(std::to_string(value)), 
+                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::doubleType));
+        }
     }
     return this;
 }
@@ -216,15 +266,15 @@ void IntegerValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-FloatingValue::FloatingValue() : Value(SymbolKind::floatingValueSymbol, std::u32string(U"0.0")), value(0.0)
+FloatingValue::FloatingValue(TypeSymbol* type_) : Value(SymbolKind::floatingValueSymbol, std::u32string(U"0.0"), type_), value(0.0)
 {
 }
 
-FloatingValue::FloatingValue(const std::u32string& rep_) : Value(SymbolKind::floatingValueSymbol, rep_), value(0.0)
+FloatingValue::FloatingValue(const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::floatingValueSymbol, rep_, type_), value(0.0)
 {
 }
 
-FloatingValue::FloatingValue(double value_, const std::u32string& rep_) : Value(SymbolKind::floatingValueSymbol, rep_), value(value_)
+FloatingValue::FloatingValue(double value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::floatingValueSymbol, rep_, type_), value(value_)
 {
 }
 
@@ -238,7 +288,11 @@ Value* FloatingValue::Convert(ValueKind kind, EvaluationContext& context)
     switch (kind)
     {
         case ValueKind::boolValue: return ToBoolValue(context);
-        case ValueKind::integerValue: return context.GetIntegerValue(static_cast<int64_t>(value), util::ToUtf32(std::to_string(value)));
+        case ValueKind::integerValue: 
+        {
+            return context.GetIntegerValue(static_cast<int64_t>(value), util::ToUtf32(std::to_string(value)), 
+                context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
+        }
         case ValueKind::floatingValue: return this;
     }
     return this;
@@ -261,7 +315,7 @@ void FloatingValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NullPtrValue::NullPtrValue() : Value(SymbolKind::nullPtrValueSymbol, U"nullptr")
+NullPtrValue::NullPtrValue(TypeSymbol* type_) : Value(SymbolKind::nullPtrValueSymbol, U"nullptr", type_)
 {
 }
 
@@ -294,11 +348,81 @@ void NullPtrValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-SymbolValue::SymbolValue() : Value(SymbolKind::symbolValueSymbol, std::u32string()), symbol(nullptr)
+StringValue::StringValue(TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, U"", type_), value()
 {
 }
 
-SymbolValue::SymbolValue(Symbol* symbol_) : Value(SymbolKind::symbolValueSymbol, std::u32string()), symbol(symbol_)
+StringValue::StringValue(const std::string& value_, TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, U"", type_), value(value_)
+{
+}
+
+BoolValue* StringValue::ToBoolValue(EvaluationContext& context)
+{
+    return context.GetBoolValue(false);
+}
+
+Value* StringValue::Convert(ValueKind kind, EvaluationContext& context)
+{
+    return this;
+}
+
+void StringValue::Write(Writer& writer)
+{
+    Value::Write(writer);
+    writer.GetBinaryStreamWriter().Write(value);
+}
+
+void StringValue::Read(Reader& reader)
+{
+    Value::Read(reader);
+    value = reader.GetBinaryStreamReader().ReadUtf8String();
+}
+
+void StringValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value()
+{
+}
+
+CharValue::CharValue(char32_t value_, TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value(value_)
+{
+}
+
+BoolValue* CharValue::ToBoolValue(EvaluationContext& context)
+{
+    return context.GetBoolValue(false);
+}
+
+Value* CharValue::Convert(ValueKind kind, EvaluationContext& context)
+{
+    return this;
+}
+
+void CharValue::Write(Writer& writer)
+{
+    Value::Write(writer);
+    writer.GetBinaryStreamWriter().Write(value);
+}
+
+void CharValue::Read(Reader& reader)
+{
+    Value::Read(reader);
+    value = reader.GetBinaryStreamReader().ReadUChar();
+}
+
+void CharValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+SymbolValue::SymbolValue() : Value(SymbolKind::symbolValueSymbol, std::u32string(), nullptr), symbol(nullptr)
+{
+}
+
+SymbolValue::SymbolValue(Symbol* symbol_) : Value(SymbolKind::symbolValueSymbol, std::u32string(), nullptr), symbol(symbol_)
 {
 }
 
@@ -319,12 +443,12 @@ Value* SymbolValue::Convert(ValueKind kind, EvaluationContext& context)
                         case ValueKind::integerValue:
                         {
                             IntegerValue* integerValue = static_cast<IntegerValue*>(value);
-                            return context.GetIntegerValue(integerValue->GetValue(), enumConstantSymbol->Name());
+                            return context.GetIntegerValue(integerValue->GetValue(), enumConstantSymbol->Name(), value->GetType());
                         }
                         case ValueKind::boolValue:
                         {
                             BoolValue* boolValue = static_cast<BoolValue*>(value);
-                            return context.GetIntegerValue(static_cast<int64_t>(boolValue->GetValue()), enumConstantSymbol->Name());
+                            return context.GetIntegerValue(static_cast<int64_t>(boolValue->GetValue()), enumConstantSymbol->Name(), value->GetType());
                         }
                     }
                     break;
@@ -369,11 +493,11 @@ std::u32string SymbolValue::ToString() const
     return symbol->Name();
 }
 
-InvokeValue::InvokeValue() : Value(SymbolKind::invokeValueSymbol, std::u32string()), subject(nullptr)
+InvokeValue::InvokeValue() : Value(SymbolKind::invokeValueSymbol, std::u32string(), nullptr), subject(nullptr)
 {
 }
 
-InvokeValue::InvokeValue(Value* subject_) : Value(SymbolKind::invokeValueSymbol, std::u32string()), subject(subject_)
+InvokeValue::InvokeValue(Value* subject_) : Value(SymbolKind::invokeValueSymbol, std::u32string(), nullptr), subject(subject_)
 {
 }
 
@@ -416,11 +540,25 @@ std::u32string InvokeValue::ToString() const
     return subject->ToString() + U"()";
 }
 
-EvaluationContext::EvaluationContext() : trueValue(true, U"true"), falseValue(false, U"false"), nullPtrValue()
+EvaluationContext::EvaluationContext(SymbolTable& symbolTable_) : 
+    initialized(false),
+    symbolTable(symbolTable_),
+    trueValue(true, U"true", nullptr), 
+    falseValue(false, U"false", nullptr),
+    nullPtrValue(nullptr)
 {
     MapValue(&nullPtrValue);
     MapValue(&trueValue);
     MapValue(&falseValue);
+}
+
+void EvaluationContext::Init()
+{
+    if (initialized) return;
+    initialized = true;
+    trueValue.SetType(symbolTable.GetFundamentalType(FundamentalTypeKind::boolType));
+    falseValue.SetType(symbolTable.GetFundamentalType(FundamentalTypeKind::boolType));
+    nullPtrValue.SetType(symbolTable.GetFundamentalType(FundamentalTypeKind::nullPtrType));
 }
 
 BoolValue* EvaluationContext::GetBoolValue(bool value)
@@ -428,37 +566,71 @@ BoolValue* EvaluationContext::GetBoolValue(bool value)
     if (value) return &trueValue; else return &falseValue;
 }
 
-IntegerValue* EvaluationContext::GetIntegerValue(int64_t value, const std::u32string& rep)
+IntegerValue* EvaluationContext::GetIntegerValue(int64_t value, const std::u32string& rep, TypeSymbol* type)
 {
-    auto it = integerValueMap.find(std::make_pair(value, rep));
+    auto it = integerValueMap.find(std::make_pair(std::make_pair(value, rep), type));
     if (it != integerValueMap.cend())
     {
         return it->second;
     }
     else
     {
-        IntegerValue* integerValue = new IntegerValue(value, rep);
-        integerValueMap[std::make_pair(value, rep)] = integerValue;
+        IntegerValue* integerValue = new IntegerValue(value, rep, type);
+        integerValueMap[std::make_pair(std::make_pair(value, rep), type)] = integerValue;
         values.push_back(std::unique_ptr<Value>(integerValue));
         MapValue(integerValue);
         return integerValue;
     }
 }
 
-FloatingValue* EvaluationContext::GetFloatingValue(double value, const std::u32string& rep)
+FloatingValue* EvaluationContext::GetFloatingValue(double value, const std::u32string& rep, TypeSymbol* type)
 {
-    auto it = floatingValueMap.find(std::make_pair(value, rep));
+    auto it = floatingValueMap.find(std::make_pair(std::make_pair(value, rep), type));
     if (it != floatingValueMap.cend())
     {
         return it->second;
     }
     else
     {
-        FloatingValue* floatingValue = new FloatingValue(value, rep);
-        floatingValueMap[std::make_pair(value, rep)] = floatingValue;
+        FloatingValue* floatingValue = new FloatingValue(value, rep, type);
+        floatingValueMap[std::make_pair(std::make_pair(value, rep), type)] = floatingValue;
         values.push_back(std::unique_ptr<Value>(floatingValue));
         MapValue(floatingValue);
         return floatingValue;
+    }
+}
+
+StringValue* EvaluationContext::GetStringValue(const std::string& value, TypeSymbol* type)
+{
+    auto it = stringValueMap.find(std::make_pair(value, type));
+    if (it != stringValueMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        StringValue* stringValue = new StringValue(value, type);
+        stringValueMap[std::make_pair(value, type)] = stringValue;
+        values.push_back(std::unique_ptr<Value>(stringValue));
+        MapValue(stringValue);
+        return stringValue;
+    }
+}
+
+CharValue* EvaluationContext::GetCharValue(char32_t value, TypeSymbol* type)
+{
+    auto it = charValueMap.find(std::make_pair(value, type));
+    if (it != charValueMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        CharValue* charValue = new CharValue(value, type);
+        charValueMap[std::make_pair(value, type)] = charValue;
+        values.push_back(std::unique_ptr<Value>(charValue));
+        MapValue(charValue);
+        return charValue;
     }
 }
 
@@ -530,12 +702,17 @@ void EvaluationContext::Read(Reader& reader)
             if (symbol->IsIntegerValueSymbol())
             {
                 IntegerValue* integerValue = static_cast<IntegerValue*>(symbol);
-                integerValueMap[std::make_pair(integerValue->GetValue(), integerValue->Rep())] = integerValue;
+                integerValueMap[std::make_pair(std::make_pair(integerValue->GetValue(), integerValue->Rep()), integerValue->GetType())] = integerValue;
             }
             else if (symbol->IsFloatingValueSymbol())
             {
                 FloatingValue* floatingValue = static_cast<FloatingValue*>(symbol);
-                floatingValueMap[std::make_pair(floatingValue->GetValue(), floatingValue->Rep())] = floatingValue;
+                floatingValueMap[std::make_pair(std::make_pair(floatingValue->GetValue(), floatingValue->Rep()), floatingValue->GetType())] = floatingValue;
+            }
+            else if (symbol->IsStringValueSymbol())
+            {
+                StringValue* stringValue = static_cast<StringValue*>(symbol);
+                stringValueMap[std::make_pair(stringValue->GetValue(), stringValue->GetType())] = stringValue;
             }
         }
         else

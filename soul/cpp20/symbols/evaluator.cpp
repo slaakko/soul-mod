@@ -10,14 +10,101 @@ import soul.cpp20.ast.identifier;
 import soul.cpp20.ast.visitor;
 import soul.cpp20.ast.expression;
 import soul.cpp20.symbols.context;
+import soul.cpp20.symbols.declaration;
 import soul.cpp20.symbols.exception;
 import soul.cpp20.symbols.scope.resolver;
 import soul.cpp20.symbols.symbol.table;
 import soul.cpp20.symbols.value;
+import soul.cpp20.symbols.fundamental.type.symbol;
 import util.unicode;
 
 namespace soul::cpp20::symbols {
 
+TypeSymbol* GetIntegerType(soul::cpp20::ast::Suffix suffix, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    DeclarationFlags flags = DeclarationFlags::intFlag;
+    if ((suffix & soul::cpp20::ast::Suffix::u) != soul::cpp20::ast::Suffix::none)
+    {
+        flags = flags | DeclarationFlags::unsignedFlag;
+    }
+    if ((suffix & soul::cpp20::ast::Suffix::l) != soul::cpp20::ast::Suffix::none)
+    {
+        flags = flags | DeclarationFlags::longFlag;
+    }
+    if ((suffix & soul::cpp20::ast::Suffix::ll) != soul::cpp20::ast::Suffix::none)
+    {
+        flags = flags | DeclarationFlags::longLongFlag;
+    }
+    return GetFundamentalType(flags, sourcePos, context);
+}
+
+TypeSymbol* GetFloatingPointType(soul::cpp20::ast::Suffix suffix, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    DeclarationFlags flags = DeclarationFlags::doubleFlag;
+    if ((suffix & soul::cpp20::ast::Suffix::l) != soul::cpp20::ast::Suffix::none)
+    {
+        flags = flags | DeclarationFlags::longFlag;
+    }
+    if ((suffix & soul::cpp20::ast::Suffix::f) != soul::cpp20::ast::Suffix::none)
+    {
+        flags = (flags & ~DeclarationFlags::doubleFlag) | DeclarationFlags::floatFlag;
+    }
+    return GetFundamentalType(flags, sourcePos, context);
+}
+
+TypeSymbol* GetStringType(soul::cpp20::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    switch (encodingPrefix)
+    {
+        case soul::cpp20::ast::EncodingPrefix::u8:
+        {
+            return context->GetSymbolTable()->MakeConstChar8PtrType();
+        }
+        case soul::cpp20::ast::EncodingPrefix::u:
+        {
+            return context->GetSymbolTable()->MakeConstChar16PtrType();
+        }
+        case soul::cpp20::ast::EncodingPrefix::U:
+        {
+            return context->GetSymbolTable()->MakeConstChar32PtrType();
+        }
+        case soul::cpp20::ast::EncodingPrefix::L:
+        {
+            return context->GetSymbolTable()->MakeConstWCharPtrType();
+        }
+        default:
+        {
+            return context->GetSymbolTable()->MakeConstCharPtrType();
+        }
+    }
+}
+
+TypeSymbol* GetCharacterType(soul::cpp20::ast::EncodingPrefix encodingPrefix, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    switch (encodingPrefix)
+    {
+        case soul::cpp20::ast::EncodingPrefix::u8:
+        {
+            return context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::char8Type);
+        }
+        case soul::cpp20::ast::EncodingPrefix::u:
+        {
+            return context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::char16Type);
+        }
+        case soul::cpp20::ast::EncodingPrefix::U:
+        {
+            return context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::char32Type);
+        }
+        case soul::cpp20::ast::EncodingPrefix::L:
+        {
+            return context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::wcharType);
+        }
+        default:
+        {
+            return context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::charType);
+        }
+    }
+}
 class Evaluator : public soul::cpp20::ast::DefaultVisitor
 {
 public:
@@ -47,22 +134,26 @@ Evaluator::Evaluator(Context* context_) : context(context_), value(nullptr), sco
 
 void Evaluator::Visit(soul::cpp20::ast::IntegerLiteralNode& node)
 {
-    value = context->GetEvaluationContext()->GetIntegerValue(node.Value(), node.Rep());
+    TypeSymbol* type = GetIntegerType(node.GetSuffix(), node.GetSourcePos(), context);
+    value = context->GetEvaluationContext()->GetIntegerValue(node.Value(), node.Rep(), type);
 }
 
 void Evaluator::Visit(soul::cpp20::ast::FloatingLiteralNode& node)
 {
-    value = context->GetEvaluationContext()->GetFloatingValue(node.Value(), node.Rep());
+    TypeSymbol* type = GetFloatingPointType(node.GetSuffix(), node.GetSourcePos(), context);
+    value = context->GetEvaluationContext()->GetFloatingValue(node.Value(), node.Rep(), type);
 }
 
 void Evaluator::Visit(soul::cpp20::ast::CharacterLiteralNode& node)
 {
-    // todo
+    TypeSymbol* type = GetCharacterType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
+    value = context->GetEvaluationContext()->GetCharValue(node.Value(), type);
 }
 
 void Evaluator::Visit(soul::cpp20::ast::StringLiteralNode& node)
 {
-    // todo
+    TypeSymbol* type = GetStringType(node.GetEncodingPrefix(), node.GetSourcePos(), context);
+    value = context->GetEvaluationContext()->GetStringValue(util::ToUtf8(node.Value()), type);
 }
 
 void Evaluator::Visit(soul::cpp20::ast::BooleanLiteralNode& node)
@@ -112,12 +203,12 @@ void Evaluator::Visit(soul::cpp20::ast::UnaryExprNode& node)
                 if (value->IsIntegerValue())
                 {
                     IntegerValue* integerValue = static_cast<IntegerValue*>(value);
-                    value = context->GetEvaluationContext()->GetIntegerValue(integerValue->GetValue(), U"+" + value->Rep());
+                    value = context->GetEvaluationContext()->GetIntegerValue(integerValue->GetValue(), U"+" + value->Rep(), integerValue->GetType());
                 }
                 else if (value->IsFloatingValue())
                 {
                     FloatingValue* floatingValue = static_cast<FloatingValue*>(value);
-                    value = context->GetEvaluationContext()->GetFloatingValue(floatingValue->GetValue(), U"+" + value->Rep());
+                    value = context->GetEvaluationContext()->GetFloatingValue(floatingValue->GetValue(), U"+" + value->Rep(), floatingValue->GetType());
                 }
                 break;
             }
@@ -126,12 +217,12 @@ void Evaluator::Visit(soul::cpp20::ast::UnaryExprNode& node)
                 if (value->IsIntegerValue())
                 {
                     IntegerValue* integerValue = static_cast<IntegerValue*>(value);
-                    value = context->GetEvaluationContext()->GetIntegerValue(-integerValue->GetValue(), U"-" + value->Rep());
+                    value = context->GetEvaluationContext()->GetIntegerValue(-integerValue->GetValue(), U"-" + value->Rep(), integerValue->GetType());
                 }
                 else if (value->IsFloatingValue())
                 {
                     FloatingValue* floatingValue = static_cast<FloatingValue*>(value);
-                    value = context->GetEvaluationContext()->GetFloatingValue(-floatingValue->GetValue(), U"-" + value->Rep());
+                    value = context->GetEvaluationContext()->GetFloatingValue(-floatingValue->GetValue(), U"-" + value->Rep(), floatingValue->GetType());
                 }
                 break;
             }
@@ -140,7 +231,7 @@ void Evaluator::Visit(soul::cpp20::ast::UnaryExprNode& node)
                 if (value->IsIntegerValue())
                 {
                     IntegerValue* integerValue = static_cast<IntegerValue*>(value);
-                    value = context->GetEvaluationContext()->GetIntegerValue(~integerValue->GetValue(), U"~" + value->Rep());
+                    value = context->GetEvaluationContext()->GetIntegerValue(~integerValue->GetValue(), U"~" + value->Rep(), integerValue->GetType());
                 }
             }
             case soul::cpp20::ast::NodeKind::notNode:
@@ -176,52 +267,62 @@ void Evaluator::Visit(soul::cpp20::ast::BinaryExprNode& node)
                 {
                     case soul::cpp20::ast::NodeKind::plusNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() + rightInt->GetValue(), leftInt->ToString() + U" + " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() + rightInt->GetValue(), leftInt->ToString() + U" + " + rightInt->ToString(), 
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::minusNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() - rightInt->GetValue(), leftInt->ToString() + U" - " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() - rightInt->GetValue(), leftInt->ToString() + U" - " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::mulNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() * rightInt->GetValue(), leftInt->ToString() + U" * " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() * rightInt->GetValue(), leftInt->ToString() + U" * " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::divNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() / rightInt->GetValue(), leftInt->ToString() + U" / " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() / rightInt->GetValue(), leftInt->ToString() + U" / " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::modNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() % rightInt->GetValue(), leftInt->ToString() + U" % " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() % rightInt->GetValue(), leftInt->ToString() + U" % " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::shiftLeftNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() << rightInt->GetValue(), leftInt->ToString() + U" << " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() << rightInt->GetValue(), leftInt->ToString() + U" << " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::shiftRightNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() >> rightInt->GetValue(), leftInt->ToString() + U" >> " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() >> rightInt->GetValue(), leftInt->ToString() + U" >> " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::inclusiveOrNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() | rightInt->GetValue(), leftInt->ToString() + U" | " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() | rightInt->GetValue(), leftInt->ToString() + U" | " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::exclusiveOrNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() ^ rightInt->GetValue(), leftInt->ToString() + U" ^ " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() ^ rightInt->GetValue(), leftInt->ToString() + U" ^ " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::andNode:
                     {
-                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() & rightInt->GetValue(), leftInt->ToString() + U" & " + rightInt->ToString());
+                        value = evaluationContext->GetIntegerValue(leftInt->GetValue() & rightInt->GetValue(), leftInt->ToString() + U" & " + rightInt->ToString(),
+                            leftInt->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::equalNode:
@@ -265,22 +366,26 @@ void Evaluator::Visit(soul::cpp20::ast::BinaryExprNode& node)
                 {
                     case soul::cpp20::ast::NodeKind::plusNode:
                     {
-                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() + rightFloat->GetValue(), leftFloat->ToString() + U" + " + rightFloat->ToString());
+                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() + rightFloat->GetValue(), leftFloat->ToString() + U" + " + rightFloat->ToString(),
+                            leftFloat->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::minusNode:
                     {
-                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() - rightFloat->GetValue(), leftFloat->ToString() + U" - " + rightFloat->ToString());
+                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() - rightFloat->GetValue(), leftFloat->ToString() + U" - " + rightFloat->ToString(),
+                            leftFloat->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::mulNode:
                     {
-                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() * rightFloat->GetValue(), leftFloat->ToString() + U" * " + rightFloat->ToString());
+                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() * rightFloat->GetValue(), leftFloat->ToString() + U" * " + rightFloat->ToString(),
+                            leftFloat->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::divNode:
                     {
-                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() / rightFloat->GetValue(), leftFloat->ToString() + U" / " + rightFloat->ToString());
+                        value = evaluationContext->GetFloatingValue(leftFloat->GetValue() / rightFloat->GetValue(), leftFloat->ToString() + U" / " + rightFloat->ToString(),
+                            leftFloat->GetType());
                         break;
                     }
                     case soul::cpp20::ast::NodeKind::equalNode:

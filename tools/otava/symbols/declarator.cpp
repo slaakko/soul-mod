@@ -1,0 +1,800 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+module otava.symbols.declarator;
+
+import otava.ast.visitor;
+import otava.symbols.classes;
+import otava.symbols.context;
+import otava.symbols.declaration;
+import otava.symbols.evaluator;
+import otava.symbols.expression.binder;
+import otava.symbols.function.symbol;
+import otava.symbols.scope;
+import otava.symbols.scope.resolver;
+import otava.symbols.symbol;
+import otava.symbols.symbol.table;
+import otava.symbols.value;
+
+namespace otava::symbols {
+
+Declarator::Declarator(DeclaratorKind kind_, const std::u32string& name_, otava::ast::Node* node_) : kind(kind_), name(name_), node(node_)
+{
+}
+    
+Declarator::~Declarator()
+{
+}
+
+SimpleDeclarator::SimpleDeclarator(const std::u32string& name_, otava::ast::Node* node_) : Declarator(DeclaratorKind::simpleDeclarator, name_, node_)
+{
+}
+
+FunctionDeclarator::FunctionDeclarator(const std::u32string& name_, otava::ast::Node* node_, FunctionKind kind_, FunctionQualifiers qualifiers_, Scope* scope_) :
+    Declarator(DeclaratorKind::functionDeclarator, name_, node_), scope(scope_), kind(kind_), qualifiers(qualifiers_)
+{
+}
+
+void FunctionDeclarator::AddParameterDeclaration(Declaration&& parameterDeclaration)
+{
+    parameterDeclarations.push_back(std::move(parameterDeclaration));
+}
+
+void FunctionDeclarator::AddQualifier(FunctionQualifiers qualifier)
+{
+    qualifiers = qualifiers | qualifier;
+}
+
+Declaration::Declaration() : flags(DeclarationFlags::none), type(nullptr), declarator(nullptr), value(nullptr), initializer(nullptr), variable(nullptr)
+{
+}
+
+Declaration::Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator* declarator_) : 
+    flags(flags_), type(type_), declarator(declarator_), value(nullptr), initializer(nullptr), variable(nullptr)
+{
+}
+
+class DeclaratorListProcessor : public otava::ast::DefaultVisitor
+{
+public:
+    DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_);
+    std::unique_ptr<DeclarationList> GetDeclarations() { return std::move(declarationList); }
+    void Visit(otava::ast::InitDeclaratorListNode& node) override;
+    void Visit(otava::ast::MemberDeclaratorListNode& node) override;
+private:
+    Context* context;
+    TypeSymbol* baseType;
+    DeclarationFlags flags;
+    std::unique_ptr<DeclarationList> declarationList;
+};
+
+DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_) : 
+    context(context_), baseType(baseType_), flags(flags_), declarationList(new DeclarationList())
+{
+}
+
+void DeclaratorListProcessor::Visit(otava::ast::InitDeclaratorListNode& node)
+{
+    int32_t n = node.Items().size();
+    for (int32_t i = 0; i < n; ++i)
+    {
+        otava::ast::Node* declarator = node.Items()[i];
+        Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
+        if (declaration.declarator.get())
+        {
+            declarationList->declarations.push_back(std::move(declaration));
+        }
+    }
+}
+
+void DeclaratorListProcessor::Visit(otava::ast::MemberDeclaratorListNode& node)
+{
+    int32_t n = node.Items().size();
+    for (int32_t i = 0; i < n; ++i)
+    {
+        otava::ast::Node* declarator = node.Items()[i];
+        Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
+        if (declaration.declarator.get())
+        {
+            declarationList->declarations.push_back(std::move(declaration));
+        }
+    }
+}
+
+class DeclaratorProcessor : public otava::ast::DefaultVisitor
+{
+public:
+    DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_);
+    void SetProcessTrailingQualifiers(bool processTrailingQualifiers_) { processTrailingQualifiers = processTrailingQualifiers_; }
+    Declaration GetDeclaration() { return std::move(declaration); }
+    void Visit(otava::ast::FunctionDeclaratorNode& node) override;
+    void Visit(otava::ast::ParenthesizedDeclaratorNode& node);
+    void Visit(otava::ast::TrailingQualifiersNode& node) override;
+    void Visit(otava::ast::InitDeclaratorNode& node) override;
+    void Visit(otava::ast::ParameterListNode& node) override;
+    void Visit(otava::ast::ParameterNode& node) override;
+    void Visit(otava::ast::DestructorIdNode& node) override;
+    void Visit(otava::ast::ConversionFunctionIdNode& node) override;
+    void Visit(otava::ast::OperatorFunctionIdNode& node) override;
+    void Visit(otava::ast::QualifiedIdNode& node) override;
+    void Visit(otava::ast::IdentifierNode& node) override;
+    void Visit(otava::ast::AbstractDeclaratorNode& node) override;
+    void Visit(otava::ast::ConstNode& node) override;
+    void Visit(otava::ast::VolatileNode& node) override;
+    void Visit(otava::ast::FinalNode& node) override;
+    void Visit(otava::ast::OverrideNode& node) override;
+    void Visit(otava::ast::LvalueRefNode& node) override;
+    void Visit(otava::ast::RvalueRefNode& node) override;
+    void Visit(otava::ast::PtrNode& node) override;
+    void Visit(otava::ast::NewArrayOpNode& node) override;
+    void Visit(otava::ast::NewOpNode& node) override;
+    void Visit(otava::ast::DeleteArrayOpNode& node) override;
+    void Visit(otava::ast::DeleteOpNode& node) override;
+    void Visit(otava::ast::CoAwaitOpNode& node) override;
+    void Visit(otava::ast::InvokeOpNode& node) override;
+    void Visit(otava::ast::SubscriptOpNode& node) override;
+    void Visit(otava::ast::ArrowNode& node) override;
+    void Visit(otava::ast::ArrowStarNode& node) override;
+    void Visit(otava::ast::ComplementNode& node) override;
+    void Visit(otava::ast::NotNode& node) override;
+    void Visit(otava::ast::PlusNode& node) override;
+    void Visit(otava::ast::MinusNode& node) override;
+    void Visit(otava::ast::MulNode& node) override;
+    void Visit(otava::ast::DivNode& node) override;
+    void Visit(otava::ast::ModNode& node) override;
+    void Visit(otava::ast::ExclusiveOrNode& node) override;
+    void Visit(otava::ast::AndNode& node) override;
+    void Visit(otava::ast::InclusiveOrNode& node) override;
+    void Visit(otava::ast::AssignNode& node) override;
+    void Visit(otava::ast::PlusAssignNode& node) override;
+    void Visit(otava::ast::MinusAssignNode& node) override;
+    void Visit(otava::ast::MulAssignNode& node) override;
+    void Visit(otava::ast::DivAssignNode& node) override;
+    void Visit(otava::ast::ModAssignNode& node) override;
+    void Visit(otava::ast::XorAssignNode& node) override;
+    void Visit(otava::ast::AndAssignNode& node) override;
+    void Visit(otava::ast::OrAssignNode& node) override;
+    void Visit(otava::ast::ShiftLeftAssignNode& node) override;
+    void Visit(otava::ast::ShiftRightAssignNode& node) override;
+    void Visit(otava::ast::EqualNode& node) override;
+    void Visit(otava::ast::NotEqualNode& node) override;
+    void Visit(otava::ast::LessOrEqualNode& node) override;
+    void Visit(otava::ast::GreaterOrEqualNode& node) override;
+    void Visit(otava::ast::CompareNode& node) override;
+    void Visit(otava::ast::LessNode& node) override;
+    void Visit(otava::ast::GreaterNode& node) override;
+    void Visit(otava::ast::ConjunctionNode& node) override;
+    void Visit(otava::ast::DisjunctionNode& node) override;
+    void Visit(otava::ast::ShiftLeftNode& node) override;
+    void Visit(otava::ast::ShiftRightNode& node) override;
+    void Visit(otava::ast::PrefixIncNode& node) override;
+    void Visit(otava::ast::PrefixDecNode& node) override;
+    void Visit(otava::ast::CommaNode& node) override;
+private:
+    Context* context;
+    DeclarationFlags flags;
+    TypeSymbol* baseType;
+    FunctionTypeSymbol* functionTypeSymbol;
+    Declaration declaration;
+    bool isFunctionDeclarator;
+    bool isDestructorDeclarator;
+    bool skipIdFunctionDeclarator;
+    bool operatorFunctionId;
+    bool trailingQualifiers;
+    bool processTrailingQualifiers;
+    FunctionQualifiers qualifiers;
+    FunctionDeclarator* functionDeclarator;
+    Scope* scope;
+};
+
+DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_) :
+    context(context_), 
+    flags(flags_),
+    baseType(baseType_), 
+    functionTypeSymbol(nullptr),
+    isFunctionDeclarator(false), 
+    isDestructorDeclarator(false), 
+    skipIdFunctionDeclarator(false), 
+    operatorFunctionId(false), 
+    trailingQualifiers(false),
+    processTrailingQualifiers(false),
+    scope(context->GetSymbolTable()->CurrentScope())
+{
+}
+
+void DeclaratorProcessor::Visit(otava::ast::FunctionDeclaratorNode& node)
+{
+    processTrailingQualifiers = true;
+    node.Params()->Accept(*this);
+    processTrailingQualifiers = false;
+    isFunctionDeclarator = true;
+    node.Child()->Accept(*this);
+    if (node.Params())
+    {
+        node.Params()->Accept(*this);
+    }
+    isFunctionDeclarator = false;
+    if (functionTypeSymbol)
+    {
+        functionTypeSymbol->MakeName();
+        if (context->GetSymbolTable()->AddToRecomputeNameSet())
+        {
+            context->GetSymbolTable()->RecomputeNames();
+            context->GetSymbolTable()->SetAddToRecomputeNameSet(false);
+        }
+        context->GetSymbolTable()->CurrentScope()->SymbolScope()->AddSymbol(functionTypeSymbol, node.GetSourcePos(), context);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ParenthesizedDeclaratorNode& node)
+{
+    if (isFunctionDeclarator)
+    {
+        isFunctionDeclarator = false;
+        functionTypeSymbol = new FunctionTypeSymbol();
+        functionTypeSymbol->SetReturnType(baseType);
+        baseType = functionTypeSymbol;
+        context->GetSymbolTable()->SetAddToRecomputeNameSet(true);
+    }
+    declaration = ProcessDeclarator(baseType, node.Declarator(), flags, context);
+}
+
+void DeclaratorProcessor::Visit(otava::ast::TrailingQualifiersNode& node)
+{
+    if (!processTrailingQualifiers)
+    {
+        node.Subject()->Accept(*this);
+        return;
+    }
+    trailingQualifiers = true;
+    VisitSequence(node);
+    trailingQualifiers = false;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::InitDeclaratorNode& node)
+{
+    node.Left()->Accept(*this);
+    if (node.Right())
+    {
+        Value* value = Evaluate(node.Right(), context);
+        declaration.value = value;
+        declaration.initializer = node.Right();
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ParameterListNode& node)
+{
+    if (processTrailingQualifiers) return;
+    int n = node.Items().size();
+    for (int i = 0; i < n; ++i)
+    {
+        otava::ast::Node* item = node.Items()[i];
+        item->Accept(*this);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ParameterNode& node)
+{
+    Declaration declaration = ProcessParameterDeclaration(&node, context);
+    if (functionDeclarator)
+    {
+        functionDeclarator->AddParameterDeclaration(std::move(declaration));
+    }
+    if (functionTypeSymbol)
+    {
+        functionTypeSymbol->AddParameterType(declaration.type);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ConstNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isConst;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::VolatileNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isVolatile;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::FinalNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isFinal;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::OverrideNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isOverride;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::LvalueRefNode& node)
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::lvalueRefDerivation);
+    if (baseType)
+    {
+        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::RvalueRefNode& node)
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::rvalueRefDerivation);
+    if (baseType)
+    {
+        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::PtrNode& node)
+{
+    Derivations derivations;
+    derivations.vec.push_back(Derivation::pointerDerivation);
+    if (baseType)
+    {
+        baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::DestructorIdNode& node)
+{
+    isDestructorDeclarator = true;
+    node.Child()->Accept(*this);
+    isDestructorDeclarator = false;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ConversionFunctionIdNode& node)
+{
+    skipIdFunctionDeclarator = true;
+    node.Right()->Accept(*this);
+    skipIdFunctionDeclarator = false;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::OperatorFunctionIdNode& node)
+{
+    operatorFunctionId = true;
+    skipIdFunctionDeclarator = true;
+    node.Right()->Accept(*this);
+    skipIdFunctionDeclarator = false;
+    operatorFunctionId = false;
+    if (functionDeclarator)
+    {
+        declaration = Declaration(flags, baseType, functionDeclarator);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::NewArrayOpNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator new[]", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::NewOpNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator new", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::DeleteArrayOpNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator delete[]", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::DeleteOpNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator delete", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::CoAwaitOpNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator co_await", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::InvokeOpNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator()", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::SubscriptOpNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator[]", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ArrowNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator->", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ArrowStarNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator->*", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ComplementNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator~", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::NotNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator!", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::PlusNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator+", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::MinusNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator-", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::MulNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator*", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::DivNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator/", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ModNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator%", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ExclusiveOrNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator^", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::AndNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator&", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::InclusiveOrNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator|", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::AssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator=", &node, FunctionKind::special, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::PlusAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator+=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::MinusAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator-=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::MulAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator*=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::DivAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator/=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ModAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator%=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::XorAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator^=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::AndAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator&=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::OrAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator|=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ShiftLeftAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator<<=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ShiftRightAssignNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator>>=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::EqualNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator==", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::NotEqualNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator!=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::LessOrEqualNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator<=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::GreaterOrEqualNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator>=", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::CompareNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator<=>", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::LessNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator<", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::GreaterNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator>", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ConjunctionNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator&&", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::DisjunctionNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator||", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ShiftLeftNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator<<", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ShiftRightNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator>>", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::PrefixIncNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator++", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::PrefixDecNode& node)
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator--", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::CommaNode& node) 
+{
+    if (operatorFunctionId)
+    {
+        functionDeclarator = new FunctionDeclarator(U"operator,", &node, FunctionKind::function, qualifiers, scope);
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::QualifiedIdNode& node)
+{
+    if (processTrailingQualifiers) return;
+    scope = ResolveScope(node.Left(), context);
+    node.Right()->Accept(*this);
+}
+
+void DeclaratorProcessor::Visit(otava::ast::IdentifierNode& node)
+{
+    if (processTrailingQualifiers) return;
+    if (!skipIdFunctionDeclarator)
+    {
+        if (isFunctionDeclarator)
+        {
+            if (isDestructorDeclarator)
+            {
+                functionDeclarator = new FunctionDeclarator(U"~" + node.Str(), &node, FunctionKind::destructor, qualifiers, scope);
+            }
+            else
+            {
+                FunctionKind kind = FunctionKind::function;
+                if (context->GetSymbolTable()->CurrentScope()->SymbolScope()->IsClassScope())
+                {
+                    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->SymbolScope()->GetSymbol();
+                    if (symbol->IsClassTypeSymbol())
+                    {
+                        ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
+                        if (node.Str() == classTypeSymbol->Name())
+                        {
+                            kind = FunctionKind::constructor;
+                        }
+                    }
+                }
+                functionDeclarator = new FunctionDeclarator(node.Str(), &node, kind, qualifiers, scope);
+            }
+            declaration = Declaration(flags, baseType, functionDeclarator);
+        }
+        else
+        {
+            declaration = Declaration(flags, baseType, new SimpleDeclarator(node.Str(), &node));
+        }
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::AbstractDeclaratorNode& node)
+{
+    declaration = Declaration(flags, baseType, new SimpleDeclarator(std::u32string(), &node));
+}
+
+std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)
+{
+    DeclaratorListProcessor processor(context, baseType, flags);
+    initDeclaratorList->Accept(processor);
+    return processor.GetDeclarations();
+}
+
+std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
+{
+    DeclaratorListProcessor processor(context, baseType, flags);
+    memberDeclaratorList->Accept(processor);
+    return processor.GetDeclarations();
+}
+
+Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, DeclarationFlags flags, Context* context)
+{
+    DeclaratorProcessor processor(context, flags, baseType);
+    if (declarator->Kind() == otava::ast::NodeKind::trailingQualifiersNode)
+    {
+        processor.SetProcessTrailingQualifiers(true);
+        declarator->Accept(processor);
+        processor.SetProcessTrailingQualifiers(false);
+    }
+    declarator->Accept(processor);
+    return processor.GetDeclaration();
+}
+
+} // namespace otava::symbols

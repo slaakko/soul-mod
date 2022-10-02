@@ -1,4 +1,4 @@
-project soul.cpp20.ppp;
+project soul.cpp20.pp;
 reference <../ast/ast.project>;
 reference <../lexer/lexer.project>;
 reference <../token/token.project>;

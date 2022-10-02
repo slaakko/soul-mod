@@ -93,6 +93,7 @@ class Node
 public:
     Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     virtual ~Node();
+    virtual Node* Clone() const = 0;
     NodeKind Kind() const { return kind; }
     void SetId(int32_t id_) { id = id_; }
     virtual std::u32string Str() const { return std::u32string(); }
@@ -117,6 +118,9 @@ public:
     bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
     bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
     bool IsQualifiedIdNode() const { return kind == NodeKind::qualifiedIdNode; }
+    bool IsArrowNode() const { return kind == NodeKind::arrowNode; }
+    bool IsDotNode() const { return kind == NodeKind::dotNode; }
+    bool IsBinaryExprNode() const { return kind == NodeKind::binaryExprNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;
@@ -174,6 +178,7 @@ public:
     void AddNode(Node* node) override;
     void Clear() override;
     NodeList<Node>& Nodes() { return nodes; }
+    const NodeList<Node>& Nodes() const { return nodes; }
 private:
     NodeList<Node> nodes;
 };
@@ -189,6 +194,7 @@ public:
     void AddNode(Node* node) override;
     void Clear() override;
     NodeList<Node>& Nodes() { return nodes; }
+    const NodeList<Node>& Nodes() const { return nodes; }
     const std::vector<Node*>& Items() const { return items; }
 private:
     NodeList<Node> nodes;

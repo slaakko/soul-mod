@@ -14,6 +14,7 @@ class TypeSpecifierSequenceNode : public SequenceNode
 {
 public:
     TypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -22,6 +23,7 @@ class TypenameSpecifierNode : public CompoundNode
 public:
     TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     TypenameSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* nns_, Node* id_, Node* templateNode_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -39,6 +41,7 @@ class TypeIdNode : public CompoundNode
 public:
     TypeIdNode(const soul::ast::SourcePos& sourcePos_);
     TypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* typeSpecifiers_, Node* declarator_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -54,6 +57,7 @@ class DefiningTypeIdNode : public CompoundNode
 public:
     DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_);
     DefiningTypeIdNode(const soul::ast::SourcePos& sourcePos_, Node* definingTypeSpecifiers_, Node* abstractDeclarator_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -68,6 +72,7 @@ class DefiningTypeSpecifierSequenceNode : public SequenceNode
 {
 public:
     DefiningTypeSpecifierSequenceNode(const soul::ast::SourcePos& sourcePos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -76,6 +81,7 @@ class TrailingReturnTypeNode : public UnaryNode
 public:
     TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_);
     TrailingReturnTypeNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
 };
 
@@ -84,6 +90,7 @@ class ElaboratedTypeSpecifierNode : public CompoundNode
 public:
     ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     ElaboratedTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classKey_, Node* id_, Node* attributes_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -101,6 +108,7 @@ class DeclTypeSpecifierNode : public CompoundNode
 public:
     DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     DeclTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* expr_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -118,6 +126,7 @@ class PlaceholderTypeSpecifierNode : public CompoundNode
 public:
     PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_);
     PlaceholderTypeSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* typeConstraint_, const soul::ast::SourcePos& dtPos_, const soul::ast::SourcePos& autoPos_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
+    Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

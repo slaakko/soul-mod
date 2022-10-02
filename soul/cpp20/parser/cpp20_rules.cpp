@@ -213,7 +213,7 @@ std::map<int64_t, std::string>* GetRuleNameMapPtr()
         { 6068940122420674561, "GuardParser.ConceptGuard" },
         { 6068940122420674562, "GuardParser.NotDefiningTypeSpecifierGuard" },
         { 6068940122420674563, "GuardParser.AssumeTypeGuard" },
-        { 6068940122420674564, "GuardParser.MemberFunctionTemplateGuard" },
+        { 6068940122420674564, "GuardParser.MemberFunctionGuard" },
         { 6068940122420674565, "GuardParser.SavedMemberFunctionBodyGuard" },
         { 6068940122420674566, "GuardParser.NoDeclSpecFunctionDeclarationGuard" },
         { 6068940122420674567, "GuardParser.NoDeclSpecFunctionDefinitionGuard" },

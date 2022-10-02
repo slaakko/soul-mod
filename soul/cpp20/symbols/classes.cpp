@@ -18,6 +18,7 @@ import soul.cpp20.symbols.visitor;
 import soul.cpp20.symbols.writer;
 import soul.cpp20.symbols.reader;
 import soul.cpp20.symbols.type.resolver;
+import soul.cpp20.symbols.statement.binder;
 
 namespace soul::cpp20::symbols {
 
@@ -108,6 +109,7 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
         Symbol* baseClassSymbol = GetSymbol(baseClassId);
         if (baseClassSymbol->IsClassTypeSymbol())
         {
+            GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
             baseClasses.push_back(static_cast<ClassTypeSymbol*>(baseClassSymbol));
         }
     }
@@ -393,6 +395,7 @@ void InlineMemberFunctionParserVisitor::Visit(soul::cpp20::ast::FunctionDefiniti
     {
         if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration))
         {
+            Symbol* symbol = context->GetSymbolTable()->GetSymbolNothrow(&node);
             soul::cpp20::ast::Node* fnBody = node.FunctionBody();
             soul::cpp20::ast::CompoundStatementNode* compoundStatementNode = nullptr;
             if (fnBody->IsConstructorNode())
@@ -412,6 +415,7 @@ void InlineMemberFunctionParserVisitor::Visit(soul::cpp20::ast::FunctionDefiniti
                     RecordedParse(compoundStatementNode, context);
                 }
             }
+            BindFunction(&node, nullptr, context);
         }
     }
     catch (const std::exception& ex)

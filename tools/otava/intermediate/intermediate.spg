@@ -1,0 +1,2 @@
+project otava.intermediate.spg;
+parser <intermediate.parser>;
