@@ -20,10 +20,12 @@ import otava.symbols.declarator;
 import otava.symbols.namespaces;
 import otava.pp;
 import otava.pp.state;
+import otava.codegen;
 import soul.lexer.xml.parsing.log;
 import util.path;
 import util.unicode;
 import util.file.stream;
+import util.sha1;
 
 namespace otava::build {
 
@@ -287,6 +289,8 @@ void BuildSequentally(otava::symbols::ModuleMapper& moduleMapper, Project* proje
         lexer.SetFile(file);
         lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
         otava::symbols::Context context;
+        std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
+        context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
         module->GetNodeIdFactory()->SetModuleId(module->Id());
         module->SetFilePath(filePath);
@@ -311,6 +315,7 @@ void BuildSequentally(otava::symbols::ModuleMapper& moduleMapper, Project* proje
         {
             std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
         }
+        otava::codegen::GenerateCode(context, (flags & BuildFlags::verbose) != BuildFlags::none);
     }
     projectModule.ResolveForwardDeclarations();
     projectModule.AddDerivedClasses();

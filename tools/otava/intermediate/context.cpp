@@ -51,9 +51,18 @@ std::string Context::ErrorLines(const SourcePos& sourcePos)
     return lines;
 }
 
-void Context::SetCompileUnitInfo(const std::string& compileUnitId_, MetadataRef* metadataRef)
+void Context::SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef)
 {
-    compileUnit->SetInfo(compileUnitId_, metadataRef);
+    compileUnit->SetInfo(compileUnitId, mdRef);
+}
+
+void Context::SetCompileUnitInfo(const std::string& compileUnitId_, const std::string& sourceFilePath)
+{
+    MetadataStruct* sourceFileStruct = metadata->CreateMetadataStruct(this);
+    sourceFileStruct->AddItem("nodeType", metadata->CreateMetadataLong(fileInfoNodeType));
+    sourceFileStruct->AddItem("sourceFileName", metadata->CreateMetadataString(sourceFilePath));
+    MetadataRef* sourceFileNameRef = metadata->CreateMetadataRef(SourcePos(), sourceFileStruct->Id());
+    compileUnit->SetInfo(compileUnitId_, sourceFileNameRef);
 }
 
 Type* Context::GetVoidType()
@@ -131,9 +140,9 @@ void Context::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t s
     types->AddArrayType(sourcePos, typeId, size, elementTypeRef);
 }
 
-void Context::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+FunctionType* Context::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
-    types->AddFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
+    return types->AddFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
 }
 
 void Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, ConstantValue* initializer, bool once)
@@ -292,6 +301,11 @@ ConstantValue* Context::MakeAddressLiteral(const SourcePos& sourcePos, Type* typ
 Function* Context::CurrentFunction() const
 {
     return code->CurrentFunction();
+}
+
+int32_t Context::NextTypeId()
+{
+    return types->NextTypeId();
 }
 
 void Context::ValidateData()

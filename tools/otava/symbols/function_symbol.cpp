@@ -17,9 +17,10 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.templates;
 import otava.symbols.value;
+import util.sha1;
+import util.unicode;
 
 namespace otava::symbols {
-
 
 std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers)
 {
@@ -228,6 +229,34 @@ void FunctionSymbol::Accept(Visitor& visitor)
 void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     // TODO
+}
+
+otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    otava::intermediate::Type* type = emitter.GetType(Id());
+    if (!type)
+    {
+        otava::intermediate::Type* returnIrType = nullptr;
+        if (returnType)
+        {
+            returnIrType = returnType->IrType(emitter, sourcePos, context);
+        }
+        std::vector<otava::intermediate::Type*> paramIrTypes;
+        for (const auto& param : MemFunParameters())
+        {
+            paramIrTypes.push_back(param->GetType()->IrType(emitter, sourcePos, context));
+        }
+        type = emitter.MakeFunctionType(returnIrType, paramIrTypes);
+        emitter.SetType(Id(), type);
+    }
+    return type;
+}
+
+std::string FunctionSymbol::IrName() const
+{
+    std::string fullName = util::ToUtf8(FullName());
+    std::string irName = "function_" + util::ToUtf8(Name()) + "_" + util::GetSha1MessageDigest(fullName);
+    return irName;
 }
 
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_)

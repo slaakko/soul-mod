@@ -3,9 +3,18 @@
 // Distributed under the MIT license
 // =================================
 
-module otava.codegen.codegen;
+module otava.codegen;
 
 import otava.symbols.emitter;
+import otava.symbols.function.symbol;
+import otava.intermediate.code;
+import otava.intermediate.compile.unit;
+import otava.intermediate.context;
+import otava.intermediate.metadata;
+import otava.intermediate.parser;
+import otava.intermediate.register_allocator;
+import otava.intermediate.verify;
+import otava.intermediate.code.generator;
 import otava.symbols.bound.tree;
 import std.core;
 import std.filesystem;
@@ -16,7 +25,7 @@ namespace otava::codegen {
 class CodeGenerator : public otava::symbols::DefaultBoundTreeVisitor
 {
 public:
-    CodeGenerator(otava::symbols::Context& context_);
+    CodeGenerator(otava::symbols::Context& context_, bool verbose_);
     void Visit(otava::symbols::BoundCompileUnitNode& node) override;
     void Visit(otava::symbols::BoundFunctionNode& node) override;
     void Visit(otava::symbols::BoundCompoundStatementNode& node) override;
@@ -33,28 +42,43 @@ public:
     void Visit(otava::symbols::BoundMemberExprNode& node) override;
 private:
     otava::symbols::Context& context;
+    bool verbose;
     otava::symbols::Emitter emitter;
 };
 
-CodeGenerator::CodeGenerator(otava::symbols::Context& context_) : context(context_)
+CodeGenerator::CodeGenerator(otava::symbols::Context& context_, bool verbose_) : context(context_), verbose(verbose_)
 {
     std::string config = "debug";
     std::string intermediateCodeFilePath = util::GetFullPath(
         util::Path::Combine(
             util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
-            util::Path::GetFileNameWithoutExtension(context.FileName()) + ".i"));
-    emitter.SetFilePath(context.FileName());
+            util::Path::GetFileName(context.FileName()) + ".i"));
+    emitter.SetFilePath(intermediateCodeFilePath);
     std::filesystem::create_directories(util::Path::GetDirectoryName(intermediateCodeFilePath));
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 {
-
+    emitter.SetCompileUnitInfo(node.Id(), context.FileName());
+    int n = node.BoundNodes().size();
+    for (int i = 0; i < n; ++i)
+    {
+        otava::symbols::BoundNode* boundNode = node.BoundNodes()[i].get();
+        boundNode->Accept(*this);
+    }
+    emitter.Emit();
+    otava::intermediate::Context intermediateContext;
+    otava::intermediate::ParseIntermediateCodeFile(emitter.FilePath(), intermediateContext);
+    otava::intermediate::Verify(intermediateContext);
+    otava::intermediate::GenerateCode(intermediateContext, verbose);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
 {
-
+    otava::symbols::FunctionDefinitionSymbol* functionDefinition = node.GetFunctionDefinitionSymbol();
+    otava::intermediate::Type* functionType = functionDefinition->IrType(emitter, node.GetSourcePos(), &context);
+    bool once = false;
+    emitter.CreateFunction(functionDefinition->IrName(), functionType, once);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
@@ -117,9 +141,9 @@ void CodeGenerator::Visit(otava::symbols::BoundMemberExprNode& node)
 
 }
 
-void GenerateCode(otava::symbols::Context& context)
+void GenerateCode(otava::symbols::Context& context, bool verbose)
 {
-    CodeGenerator codeGenerator(context);
+    CodeGenerator codeGenerator(context, verbose);
     context.GetBoundCompileUnit()->Accept(codeGenerator);
 }
 

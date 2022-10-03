@@ -153,6 +153,19 @@ void Type::Resolve(Types* types, Context* context)
 {
 }
 
+TypeRef Type::GetTypeRef() 
+{
+    TypeRef typeRef = MakeTypeRef(SourcePos(), id, GetPointerCount(id));
+    typeRef.SetType(this);
+    return typeRef;
+}
+
+void Type::WriteDeclaration(util::CodeFormatter& formatter)
+{
+    formatter.Write(Name());
+    formatter.Write(" = type ");
+}
+
 VoidType::VoidType() : Type(SourcePos(), TypeKind::fundamentalType, voidTypeId)
 {
 }
@@ -207,6 +220,11 @@ TypeRef::TypeRef() : sourcePos(), id(-1), type(nullptr)
 
 TypeRef::TypeRef(const SourcePos& sourcePos_, int32_t id_) : sourcePos(sourcePos_), id(id_), type(nullptr)
 {
+}
+
+void TypeRef::Write(util::CodeFormatter& formatter)
+{
+    formatter.Write(type->Name());
 }
 
 StructureType::StructureType(const SourcePos& sourcePos_, int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
@@ -295,6 +313,26 @@ int64_t StructureType::GetFieldOffset(int64_t index) const
     return fieldOffsets[index];
 }
 
+void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
+{
+    Type::WriteDeclaration(formatter);
+    formatter.Write("{ ");
+    bool first = true;
+    for (auto& fieldTypeRef : fieldTypeRefs)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            formatter.Write(", ");
+        }
+        fieldTypeRef.Write(formatter);
+    }
+    formatter.Write(" }");
+}
+
 ArrayType::ArrayType(const SourcePos& sourcePos_, int32_t typeId_, int64_t elementCount_, const TypeRef& elementTypeRef_) :
     Type(sourcePos_, TypeKind::arrayType, typeId_), elementCount(elementCount_), elementTypeRef(elementTypeRef_)
 {
@@ -328,6 +366,16 @@ bool ArrayType::IsWeakType() const
         return false;
     }
     return true;
+}
+
+void ArrayType::WriteDeclaration(util::CodeFormatter& formatter)
+{
+    Type::WriteDeclaration(formatter);
+    formatter.Write("[");
+    formatter.Write(std::to_string(elementCount));
+    formatter.Write(" x ");
+    elementTypeRef.Write(formatter);
+    formatter.Write("]");
 }
 
 FunctionType::FunctionType(const SourcePos& sourcePos_, int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_) :
@@ -373,6 +421,28 @@ bool FunctionType::IsWeakType() const
     return true;
 }
 
+void FunctionType::WriteDeclaration(util::CodeFormatter& formatter)
+{
+    Type::WriteDeclaration(formatter);
+    formatter.Write("function ");
+    returnTypeRef.Write(formatter);
+    formatter.Write("(");
+    bool first = true;
+    for (auto& paramTypeRef : paramTypeRefs)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            formatter.Write(", ");
+        }
+        paramTypeRef.Write(formatter);
+    }
+    formatter.Write(")");
+}
+
 PointerType::PointerType(const SourcePos& sourcePos_, int32_t typeId_, int8_t pointerCount_, int32_t baseTypeId_) :
     Type(sourcePos_, TypeKind::pointerType, typeId_), pointerCount(pointerCount_), baseTypeRef(sourcePos_, baseTypeId_)
 {
@@ -389,7 +459,18 @@ Types::Types() : context(nullptr), nextTypeId(0)
 
 void Types::Write(util::CodeFormatter& formatter)
 {
-    // todo
+    if (types.empty()) return;
+    formatter.WriteLine("types");
+    formatter.WriteLine("{");
+    formatter.IncIndent();
+    for (const auto& type : types)
+    {
+        type->WriteDeclaration(formatter);
+        formatter.WriteLine();
+    }
+    formatter.DecIndent();
+    formatter.WriteLine("}");
+    formatter.WriteLine();
 }
 
 void Types::AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
@@ -402,9 +483,11 @@ void Types::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t siz
     types.push_back(std::unique_ptr<Type>(new ArrayType(sourcePos, typeId, size, elementTypeRef)));
 }
 
-void Types::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+FunctionType* Types::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
-    types.push_back(std::unique_ptr<Type>(new FunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs)));
+    FunctionType* functionType = new FunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
+    types.push_back(std::unique_ptr<Type>(functionType));
+    return functionType;
 }
 
 void Types::Add(Type* type, Context* context)

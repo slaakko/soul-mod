@@ -183,6 +183,9 @@
     <ProjectReference Include="..\..\..\soul\parser\parser.vcxproj">
       <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\codegen\codegen.vcxproj">
+      <Project>{ecef31bb-d328-430f-a32e-e0815e6d7f2d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\lexer\lexer.vcxproj">
       <Project>{7d0afedf-e9e8-425a-a9db-d5ab1ceb543a}</Project>
     </ProjectReference>

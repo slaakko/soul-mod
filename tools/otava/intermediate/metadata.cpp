@@ -196,17 +196,16 @@ MetadataLong* Metadata::CreateMetadataLong(int64_t value)
 
 MetadataString* Metadata::CreateMetadataString(const std::string& value)
 {
-    std::string val = value.substr(1, value.length() - 2);
-    auto it = stringItemMap.find(val);
+    auto it = stringItemMap.find(value);
     if (it != stringItemMap.cend())
     {
         return it->second;
     }
     else
     {
-        MetadataString* metadataString = new MetadataString(val);
+        MetadataString* metadataString = new MetadataString(value);
         metadataItems.push_back(std::unique_ptr<MetadataItem>(metadataString));
-        stringItemMap[val] = metadataString;
+        stringItemMap[value] = metadataString;
         return metadataString;
     }
 }

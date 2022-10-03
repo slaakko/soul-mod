@@ -21,7 +21,11 @@ public:
     Emitter();
     ~Emitter();
     void SetFilePath(const std::string& filePath);
+    const std::string& FilePath() const { return context->FilePath(); }
+    void SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath);
     void Emit();
+    void CreateFunction(const std::string& name, otava::intermediate::Type* type, bool once);
+    otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
     otava::intermediate::Type* GetVoidType();
     otava::intermediate::Type* GetBoolType();
     otava::intermediate::Type* GetSByteType();

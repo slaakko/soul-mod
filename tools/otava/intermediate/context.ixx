@@ -24,6 +24,7 @@ class Type;
 class TypeRef;
 class ConstantValue;
 class Function;
+class FunctionType;
 class MetadataStruct;
 class MetadataBool;
 class MetadataLong;
@@ -50,7 +51,8 @@ public:
     void SetFilePath(const std::string& filePath_);
     const std::string& FilePath() const;
     std::string ErrorLines(const SourcePos& sourcePos);
-    void SetCompileUnitInfo(const std::string& compileUnitId_, MetadataRef* metadataRef);
+    void SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef);
+    void SetCompileUnitInfo(const std::string& compileUnitId_, const std::string& sourceFilePath);
     Type* GetVoidType();
     Type* GetBoolType();
     Type* GetSByteType();
@@ -66,7 +68,7 @@ public:
     Type* MakePtrType(Type* baseType);
     void AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     void AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
-    void AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    FunctionType* AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     void AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, ConstantValue* initializer, bool once);
     void ResolveTypes();
     void ValidateData();
@@ -148,6 +150,7 @@ public:
     Instruction* CreateTrap(const std::vector<Value*>& args);
     Instruction* CreateNop();
     soul::lexer::FileMap& GetFileMap() { return fileMap; }
+    int32_t NextTypeId();
 private:
     void AddLineInfo(Instruction* inst);
     RegValue* MakeRegValue(Type* type);

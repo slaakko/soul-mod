@@ -149,6 +149,8 @@
     <ClCompile Include="basic_block.ixx" />
     <ClCompile Include="code.cpp" />
     <ClCompile Include="code.ixx" />
+    <ClCompile Include="code_generator.cpp" />
+    <ClCompile Include="code_generator.ixx" />
     <ClCompile Include="compile_unit.cpp" />
     <ClCompile Include="compile_unit.ixx" />
     <ClCompile Include="context.cpp" />

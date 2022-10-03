@@ -36,6 +36,28 @@ void Emitter::Emit()
     context->WriteFile();
 }
 
+void Emitter::SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath)
+{
+    context->SetCompileUnitInfo(compileUnitId, sourceFilePath);
+}
+
+void Emitter::CreateFunction(const std::string& name, otava::intermediate::Type* type, bool once)
+{
+    otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::SourcePos(), type, name, once, nullptr);
+    context->SetCurrentFunction(function);
+}
+
+otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
+{
+    otava::intermediate::TypeRef returnTypeRef = returnType->GetTypeRef();
+    std::vector<otava::intermediate::TypeRef> paramTypeRefs;
+    for (const auto& paramType : paramTypes)
+    {
+        paramTypeRefs.push_back(paramType->GetTypeRef());
+    }
+    return context->AddFunctionType(soul::ast::SourcePos(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
+}
+
 otava::intermediate::Type* Emitter::GetVoidType()
 {
     return context->GetVoidType();

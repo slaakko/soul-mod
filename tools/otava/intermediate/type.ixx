@@ -20,6 +20,7 @@ class Types;
 class Visitor;
 class ArrayType;
 class StructureType;
+class TypeRef;
 
 const int32_t voidTypeId = 0;
 const int32_t boolTypeId = 1;
@@ -114,6 +115,8 @@ public:
     virtual void Resolve(Types* types, Context* context);
     const SourcePos& GetSourcePos() const { return sourcePos; }
     int32_t Id() const { return id; }
+    TypeRef GetTypeRef();
+    virtual void WriteDeclaration(util::CodeFormatter& formatter);
 private:
     SourcePos sourcePos;
     TypeKind kind;
@@ -236,6 +239,7 @@ public:
     int32_t Id() const { return id; }
     void SetType(Type* type_) { type = type_; }
     Type* GetType() const { return type; }
+    void Write(util::CodeFormatter& formatter);
 private:
     SourcePos sourcePos;
     int32_t id;
@@ -256,12 +260,13 @@ public:
     void Resolve(Types* types, Context* context) override;
     int64_t Size() const override;
     int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "struct " + std::to_string(Id()); }
+    std::string Name() const override { return "$T" + std::to_string(Id()); }
     bool IsWeakType() const override;
     int FieldCount() const { return fieldTypeRefs.size(); }
     const std::vector<TypeRef>& FieldTypeRefs() const { return fieldTypeRefs; }
     Type* FieldType(int i) const { return fieldTypeRefs[i].GetType(); }
     int64_t GetFieldOffset(int64_t index) const;
+    void WriteDeclaration(util::CodeFormatter& formatter) override;
 private:
     void ComputeSizeAndOffsets() const;
     std::vector<TypeRef> fieldTypeRefs;
@@ -279,11 +284,12 @@ public:
     void Resolve(Types* types, Context* context) override;
     int64_t Size() const override;
     int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "array " + std::to_string(Id()); }
+    std::string Name() const override { return "$T" + std::to_string(Id()); }
     bool IsWeakType() const override;
     int64_t ElementCount() const { return elementCount; }
     const TypeRef& ElementTypeRef() const { return elementTypeRef; }
     Type* ElementType() const { return elementTypeRef.GetType(); }
+    void WriteDeclaration(util::CodeFormatter& formatter) override;
 private:
     int64_t elementCount;
     TypeRef elementTypeRef;
@@ -300,11 +306,12 @@ public:
     int Arity() const { return paramTypeRefs.size(); }
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "function " + std::to_string(Id()); }
+    std::string Name() const override { return "$T" + std::to_string(Id()); }
     const TypeRef& ReturnTypeRef() const { return returnTypeRef; }
     Type* ReturnType() const { return returnTypeRef.GetType(); }
     const std::vector<TypeRef>& ParamTypeRefs() const { return paramTypeRefs; }
     Type* ParamType(int index) const { return paramTypeRefs[index].GetType(); }
+    void WriteDeclaration(util::CodeFormatter& formatter) override;
 private:
     TypeRef returnTypeRef;
     std::vector<TypeRef> paramTypeRefs;
@@ -335,7 +342,7 @@ public:
     void SetContext(Context* context_) { context = context_; }
     void AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     void AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
-    void AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    FunctionType* AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     void Resolve(Context* context);
     void ResolveType(TypeRef& typeRef, Context* context);
     void Add(Type* type, Context* context);

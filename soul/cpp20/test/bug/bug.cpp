@@ -1,10 +1,11 @@
 module bug;
 
-void fuzzy()
+void fuzzy(int x, int y)
 {
-	int foo = 1;
-	int bar = 10;
-	if (foo > 0 || bar < 10)
-	{
-	}
+	int z = x + y;
+}
+
+double foo(double d)
+{
+	return d;
 }

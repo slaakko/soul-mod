@@ -156,7 +156,13 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
 
 otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return nullptr; // TODO
+    otava::intermediate::Type* irType = emitter.GetType(Id());
+    if (!irType)
+    {
+        // todo
+        emitter.SetType(Id(), irType);
+    }
+    return irType;
 }
 
 ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32string& name_) : 

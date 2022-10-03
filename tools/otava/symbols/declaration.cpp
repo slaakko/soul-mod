@@ -649,7 +649,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     context->GetSymbolTable()->BeginScope(definition->GetScope());
                     definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                     ++scopes;
-                    BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition);
+                    BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
                     context->GetBoundCompileUnit()->AddBoundNode(boundFunctionNode);
                     context->SetBoundFunction(boundFunctionNode);
                 }
@@ -685,7 +685,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 context->GetSymbolTable()->BeginScope(definition->GetScope());
                 definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                 ++scopes;
-                BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition);
+                BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
                 context->GetBoundCompileUnit()->AddBoundNode(boundFunctionNode);
                 context->SetBoundFunction(boundFunctionNode);
             }

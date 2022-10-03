@@ -62,7 +62,10 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(BoundNode* node);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
+    void SetId(const std::string& id_) { id = id_; }
+    const std::string& Id() const { return id; }
 private:
+    std::string id;
     std::vector<std::unique_ptr<BoundNode>> boundNodes;
     std::unique_ptr<OperationRepository> operationRepository;
 };
@@ -72,14 +75,17 @@ class BoundCompoundStatementNode;
 class BoundFunctionNode : public BoundNode
 {
 public:
-    BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_);
+    BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos_);
+    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
     void Accept(BoundTreeVisitor& visitor) override;
     void SetBody(BoundCompoundStatementNode* body_);
     const BoundCompoundStatementNode* Body() const { return body.get(); }
     BoundCompoundStatementNode* Body() { return body.get(); }
+    FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCompoundStatementNode> body;
+    soul::ast::SourcePos sourcePos;
 };
 
 class BoundStatementNode : public BoundNode

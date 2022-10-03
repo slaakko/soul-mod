@@ -26,7 +26,7 @@ BoundNode::~BoundNode()
 {
 }
 
-BoundCompileUnitNode::BoundCompileUnitNode() : BoundNode(BoundNodeKind::boundCompileUnitNode), operationRepository(new OperationRepository())
+BoundCompileUnitNode::BoundCompileUnitNode() : BoundNode(BoundNodeKind::boundCompileUnitNode), operationRepository(new OperationRepository()), id()
 {
 }
 
@@ -40,10 +40,11 @@ void BoundCompileUnitNode::AddBoundNode(BoundNode* node)
     boundNodes.push_back(std::unique_ptr<BoundNode>(node));
 }
 
-BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_) : 
+BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos_) :
     BoundNode(BoundNodeKind::boundFunctionNode), 
     functionDefinitionSymbol(functionDefinitionSymbol_), 
-    body()
+    body(),
+    sourcePos(sourcePos_)
 {
 }
 
