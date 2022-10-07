@@ -8,6 +8,7 @@ module otava.symbols.reader;
 import otava.symbols.modules;
 import otava.symbols.symbol;
 import otava.symbols.symbol.table;
+import otava.symbols.symbol.factory;
 
 namespace otava::symbols {
 

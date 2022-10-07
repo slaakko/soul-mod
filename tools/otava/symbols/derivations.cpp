@@ -68,6 +68,19 @@ int PointerCount(const Derivations& derivations)
     return static_cast<int>(std::count(derivations.vec.cbegin(), derivations.vec.cend(), Derivation::pointerDerivation));
 }
 
+Derivations Plain(const Derivations& derivations)
+{
+    Derivations modifiedDerivations;
+    for (const auto& derivation : derivations.vec)
+    {
+        if (derivation == Derivation::pointerDerivation)
+        {
+            modifiedDerivations.vec.push_back(derivation);
+        }
+    }
+    return modifiedDerivations;
+}
+
 Derivations RemoveConst(const Derivations& derivations)
 {
     Derivations modifiedDerivations;

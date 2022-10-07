@@ -25,7 +25,7 @@ namespace otava::symbols {
 class StatementBinder : public otava::ast::DefaultVisitor
 {
 public:
-    StatementBinder(Context* context_);
+    StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
     BoundStatementNode* GetBoundStatement() const { return boundStatement; }
     void Visit(otava::ast::FunctionDefinitionNode& node) override;
     void Visit(otava::ast::FunctionBodyNode& node) override;
@@ -46,9 +46,13 @@ public:
 private:
     Context* context;
     BoundStatementNode* boundStatement;
+    FunctionDefinitionSymbol* functionDefinitionSymbol;
 };
 
-StatementBinder::StatementBinder(Context* context_) : context(context_), boundStatement()
+StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) : 
+    context(context_), 
+    functionDefinitionSymbol(functionDefinitionSymbol_), 
+    boundStatement()
 {
 }
 
@@ -72,7 +76,7 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
     for (int i = 0; i < n; ++i)
     {
         otava::ast::Node* statementNode = node.Nodes()[i];
-        BoundStatementNode* boundStatement = BindStatement(statementNode, context);
+        BoundStatementNode* boundStatement = BindStatement(statementNode, functionDefinitionSymbol, context);
         context->GetCurrentCompoundStatement()->AddStatement(boundStatement);
     }
     context->GetSymbolTable()->EndScope();
@@ -88,7 +92,7 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
     boundStatement = boundIfStatement;
     if (node.InitStatement())
     {
-        BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), context);
+        BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), functionDefinitionSymbol, context);
         if (boundInitStatement)
         {
             boundIfStatement->SetInitStatement(boundInitStatement);
@@ -96,14 +100,14 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
     }
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     boundIfStatement->SetCondition(condition);
-    BoundStatementNode* boundThenStatement = BindStatement(node.ThenStatement(), context);
+    BoundStatementNode* boundThenStatement = BindStatement(node.ThenStatement(), functionDefinitionSymbol, context);
     if (boundThenStatement)
     {
         boundIfStatement->SetThenStatement(boundThenStatement);
     }
     if (node.ElseStatement())
     {
-        BoundStatementNode* boundElseStatement = BindStatement(node.ElseStatement(), context);
+        BoundStatementNode* boundElseStatement = BindStatement(node.ElseStatement(), functionDefinitionSymbol, context);
         if (boundElseStatement)
         {
             boundIfStatement->SetElseStatement(boundElseStatement);
@@ -121,7 +125,7 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     boundStatement = boundSwitchStatement;
     if (node.InitStatement())
     {
-        BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), context);
+        BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), functionDefinitionSymbol, context);
         if (boundInitStatement)
         {
             boundSwitchStatement->SetInitStatement(boundInitStatement);
@@ -129,7 +133,7 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     }
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     boundSwitchStatement->SetCondition(condition);
-    BoundStatementNode* boundStmt = BindStatement(node.Statement(), context);
+    BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundSwitchStatement->SetStatement(boundStmt);
@@ -143,7 +147,7 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
     boundStatement = boundCaseStatement;
     BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context);
     boundCaseStatement->SetCaseExpr(caseExpr);
-    BoundStatementNode* boundStmt = BindStatement(node.Statement(), context);
+    BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundCaseStatement->SetStatement(boundStmt);
@@ -154,7 +158,7 @@ void StatementBinder::Visit(otava::ast::DefaultStatementNode& node)
 {
     BoundDefaultStatementNode* boundDefaultStatement = new BoundDefaultStatementNode();
     boundStatement = boundDefaultStatement;
-    BoundStatementNode* boundStmt = BindStatement(node.Statement(), context);
+    BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundDefaultStatement->SetStatement(boundStmt);
@@ -170,7 +174,7 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     boundStatement = boundWhileStatement;
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     boundWhileStatement->SetCondition(condition);
-    BoundStatementNode* boundStmt = BindStatement(node.Statement(), context);
+    BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundWhileStatement->SetStatement(boundStmt);
@@ -184,7 +188,7 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     boundStatement = boundDoStatement;
     BoundExpressionNode* expr = BindExpression(node.Expression(), context);
     boundDoStatement->SetExpr(expr);
-    BoundStatementNode* boundStmt = BindStatement(node.Statement(), context);
+    BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundDoStatement->SetStatement(boundStmt);
@@ -220,7 +224,7 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     boundStatement = boundForStatement;
     if (node.InitStatement())
     {
-        BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), context);
+        BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), functionDefinitionSymbol, context);
         if (boundInitStatement)
         {
             boundForStatement->SetInitStatement(boundInitStatement);
@@ -236,7 +240,7 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
         BoundExpressionNode* loopExpr = BindExpression(node.LoopExpr(), context);
         boundForStatement->SetLoopExpr(loopExpr);
     }
-    BoundStatementNode* boundStmt = BindStatement(node.Statement(), context);
+    BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundForStatement->SetStatement(boundStmt);
@@ -296,6 +300,7 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
             }
             BoundConstructionStatementNode * boundConstructionStatement = new BoundConstructionStatementNode(variable, initializer);
             boundCompoundStatement->AddStatement(boundConstructionStatement);
+            functionDefinitionSymbol->AddLocalVariable(variable, node.GetSourcePos(), context);
         }
     }
     else
@@ -304,9 +309,9 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
     }
 }
 
-BoundStatementNode* BindStatement(otava::ast::Node* statementNode, Context* context)
+BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    StatementBinder binder(context);
+    StatementBinder binder(context, functionDefinitionSymbol);
     statementNode->Accept(binder);
     BoundStatementNode* boundStatement = binder.GetBoundStatement();
     return boundStatement;
@@ -314,12 +319,7 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, Context* cont
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    if (functionDefinitionSymbol && functionDefinitionSymbol->Parent()->IsTemplateDeclarationSymbol())
-    {
-        int x = 0;
-        return;
-    }
-    StatementBinder binder(context);
+    StatementBinder binder(context, functionDefinitionSymbol);
     functionDefinitionNode->Accept(binder);
 }
 

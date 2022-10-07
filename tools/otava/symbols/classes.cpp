@@ -422,7 +422,7 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
     {
         if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration))
         {
-            Symbol* symbol = context->GetSymbolTable()->GetSymbolNothrow(&node);
+            Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
             otava::ast::Node* fnBody = node.FunctionBody();
             otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
             if (fnBody->IsConstructorNode())
@@ -442,7 +442,16 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
                     RecordedParse(compoundStatementNode, context);
                 }
             }
-            BindFunction(&node, nullptr, context);
+            FunctionDefinitionSymbol* functionDefinitionSymbol = nullptr;
+            if (symbol->IsFunctionDefinitionSymbol())
+            {
+                functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+            }
+            else
+            {
+                ThrowException("function definition symbol expected", node.GetSourcePos(), context);
+            }
+            BindFunction(&node, functionDefinitionSymbol, context);
         }
     }
     catch (const std::exception& ex)

@@ -706,6 +706,7 @@ void EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes,
     if (symbol && symbol->IsFunctionDefinitionSymbol())
     {
         functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+        context->GetSymbolTable()->MapNode(functionDefinitionNode, symbol, MapKind::nodeToSymbol);
     }
     for (int i = 0; i < scopes; ++i)
     {

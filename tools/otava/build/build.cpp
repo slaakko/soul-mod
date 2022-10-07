@@ -18,6 +18,7 @@ import otava.symbols.bound.tree;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.declarator;
 import otava.symbols.namespaces;
+import otava.symbols.conversion.table;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;

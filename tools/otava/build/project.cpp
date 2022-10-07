@@ -5,6 +5,7 @@
 
 module otava.build_project;
 
+import otava.symbols.conversion.table;
 import otava.ast.node;
 import otava.ast.error;
 import std.filesystem;

@@ -13,6 +13,7 @@ import otava.solution_parser;
 import otava.solution_spg.rules;
 import otava.symbols.namespaces;
 import otava.symbols.compound.type.symbol;
+import otava.symbols.conversion.table;
 import util.path;
 import util.file.stream;
 import util.unicode;

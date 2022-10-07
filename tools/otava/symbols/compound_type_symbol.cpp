@@ -22,6 +22,12 @@ CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations&
     symbolTable(nullptr)
 {
 }
+
+TypeSymbol* CompoundTypeSymbol::PlainType()
+{
+    Derivations plainDerivations = Plain(derivations);
+    return symbolTable->MakeCompoundType(BaseType(), plainDerivations);
+}
     
 void CompoundTypeSymbol::Write(Writer& writer)
 {

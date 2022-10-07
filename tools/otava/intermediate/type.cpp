@@ -12,7 +12,7 @@ import util;
 
 namespace otava::intermediate {
 
-Type::Type(const SourcePos& sourcePos_, TypeKind kind_, int32_t id_) : sourcePos(sourcePos_), kind(kind_), id(id_)
+Type::Type(const SourcePos& sourcePos_, TypeKind kind_, int32_t id_) : sourcePos(sourcePos_), kind(kind_), id(id_), defaultValue(nullptr)
 {
 }
 
@@ -164,6 +164,11 @@ void Type::WriteDeclaration(util::CodeFormatter& formatter)
 {
     formatter.Write(Name());
     formatter.Write(" = type ");
+}
+
+void Type::SetDefaultValue(ConstantValue* defaultValue_)
+{
+    defaultValue = defaultValue_;
 }
 
 VoidType::VoidType() : Type(SourcePos(), TypeKind::fundamentalType, voidTypeId)
@@ -457,6 +462,21 @@ Types::Types() : context(nullptr), nextTypeId(0)
 {
 }
 
+void Types::Init()
+{
+    boolType.SetDefaultValue(context->GetFalseValue());
+    sbyteType.SetDefaultValue(context->GetSByteValue(0));
+    byteType.SetDefaultValue(context->GetByteValue(0));
+    shortType.SetDefaultValue(context->GetShortValue(0));
+    ushortType.SetDefaultValue(context->GetUShortValue(0));
+    intType.SetDefaultValue(context->GetIntValue(0));
+    uintType.SetDefaultValue(context->GetUIntValue(0));
+    longType.SetDefaultValue(context->GetLongValue(0));
+    ulongType.SetDefaultValue(context->GetULongValue(0));
+    floatType.SetDefaultValue(context->GetFloatValue(0.0f));
+    doubleType.SetDefaultValue(context->GetDoubleValue(0.0));
+}
+
 void Types::Write(util::CodeFormatter& formatter)
 {
     if (types.empty()) return;
@@ -473,14 +493,18 @@ void Types::Write(util::CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
-void Types::AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+StructureType* Types::AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
-    types.push_back(std::unique_ptr<Type>(new StructureType(sourcePos, typeId, fieldTypeRefs)));
+    StructureType* structureType = new StructureType(sourcePos, typeId, fieldTypeRefs);
+    types.push_back(std::unique_ptr<Type>(structureType));
+    return structureType;
 }
 
-void Types::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
+ArrayType* Types::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
 {
-    types.push_back(std::unique_ptr<Type>(new ArrayType(sourcePos, typeId, size, elementTypeRef)));
+    ArrayType* arrayType = new ArrayType(sourcePos, typeId, size, elementTypeRef);
+    types.push_back(std::unique_ptr<Type>(arrayType));
+    return arrayType;
 }
 
 FunctionType* Types::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
@@ -562,10 +586,12 @@ PointerType* Types::MakePointerType(const SourcePos& sourcePos, int32_t baseType
     if (pointerCount > 1)
     {
         type = new PointerType(sourcePos, MakePointerTypeId(baseTypeId, pointerCount), pointerCount, MakePointerTypeId(baseTypeId, pointerCount - 1));
+        type->SetDefaultValue(context->GetNullValue(sourcePos, type));
     }
     else if (pointerCount == 1)
     {
         type = new PointerType(sourcePos, MakePointerTypeId(baseTypeId, pointerCount), pointerCount, baseTypeId);
+        type->SetDefaultValue(context->GetNullValue(sourcePos, type));
     }
     else
     {

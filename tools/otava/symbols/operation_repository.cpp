@@ -5,7 +5,9 @@
 
 module otava.symbols.operation.repository;
 
+import otava.symbols.type.symbol;
 import otava.symbols.bound.tree;
+import otava.symbols.bound.tree.visitor;
 import otava.symbols.function.symbol;
 
 namespace otava::symbols {

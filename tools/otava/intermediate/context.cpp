@@ -25,6 +25,7 @@ Context::Context() :
 {
     compileUnit->SetContext(this);
     types->SetContext(this);
+    types->Init();
     data->SetContext(this);
     code->SetContext(this);
     metadata->SetContext(this);
@@ -130,14 +131,14 @@ Type* Context::MakePtrType(Type* baseType)
     return baseType->AddPointer(this);
 }
 
-void Context::AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+StructureType* Context::AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
-    types->AddStructureType(sourcePos, typeId, fieldTypeRefs);
+    return types->AddStructureType(sourcePos, typeId, fieldTypeRefs);
 }
 
-void Context::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
+ArrayType* Context::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
 {
-    types->AddArrayType(sourcePos, typeId, size, elementTypeRef);
+    return types->AddArrayType(sourcePos, typeId, size, elementTypeRef);
 }
 
 FunctionType* Context::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)

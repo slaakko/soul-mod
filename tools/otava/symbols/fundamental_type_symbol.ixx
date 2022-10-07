@@ -17,8 +17,9 @@ class Context;
 
 enum class FundamentalTypeKind : int32_t
 {
-    none, charType, char8Type, char16Type, char32Type, wcharType, boolType, shortIntType, intType, longIntType, longLongIntType, floatType, doubleType, voidType,
-    signedCharType, unsignedCharType, unsignedShortIntType, unsignedIntType, unsignedLongIntType, unsignedLongLongIntType, longDoubleType, autoType, nullPtrType, 
+    none, boolType, charType, signedCharType, unsignedCharType, char8Type, char16Type, 
+    shortIntType, unsignedShortIntType, char32Type, wcharType, intType, unsignedIntType, longIntType, unsignedLongIntType, 
+    longLongIntType, unsignedLongLongIntType, floatType, doubleType, longDoubleType, voidType, autoType, nullPtrType, 
     max
 };
 
@@ -35,6 +36,7 @@ public:
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    int32_t Score() const { return static_cast<int32_t>(kind); }
 private:
     FundamentalTypeKind kind;
 };

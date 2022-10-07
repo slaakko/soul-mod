@@ -7,6 +7,7 @@ export module otava.symbols.bound.tree;
 
 import std.core;
 import otava.ast.node;
+import otava.symbols.bound.node;
 
 export namespace otava::symbols {
 
@@ -23,33 +24,7 @@ class FunctionDefinitionSymbol;
 class Context;
 class Emitter;
 
-enum class OperationFlags
-{
-    none = 0
-};
-
-enum class BoundNodeKind
-{
-    boundCompileUnitNode, boundFunctionNode, boundCompoundStatementNode, boundIfStatementNode, boundSwitchStatementNode, boundCaseStatementNode, boundDefaultStatementNode,
-    boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
-    boundConstructionStatementNode, boundExpressionStatementNode,
-    boundLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, 
-    boundErrorNode
-};
-
 class BoundTreeVisitor;
-
-class BoundNode
-{
-public:
-    BoundNode(BoundNodeKind kind_);
-    virtual ~BoundNode();
-    virtual void Accept(BoundTreeVisitor& visitor) = 0;
-    BoundNodeKind Kind() const { return kind; }
-    virtual Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const { return nullptr; }
-private:
-    BoundNodeKind kind;
-};
 
 class BoundExpressionNode;
 class OperationRepository;
@@ -270,18 +245,6 @@ private:
     std::unique_ptr<BoundExpressionNode> expr;
 };
 
-class BoundExpressionNode : public BoundNode
-{
-public:
-    BoundExpressionNode(BoundNodeKind kind_, TypeSymbol* type_);
-    TypeSymbol* GetType() const { return type; }
-    Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const override;
-    virtual void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
-    virtual void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
-private:
-    TypeSymbol* type;
-};
-
 class BoundLiteralNode : public BoundExpressionNode
 {
 public:
@@ -370,56 +333,6 @@ class BoundErrorNode : public BoundExpressionNode
 public:
     BoundErrorNode();
     void Accept(BoundTreeVisitor& visitor) override;
-};
-
-class BoundTreeVisitor
-{
-public:
-    virtual ~BoundTreeVisitor();
-    virtual void Visit(BoundCompileUnitNode& node) {}
-    virtual void Visit(BoundFunctionNode& node) {}
-    virtual void Visit(BoundCompoundStatementNode& node) {}
-    virtual void Visit(BoundIfStatementNode& node) {}
-    virtual void Visit(BoundSwitchStatementNode& node) {}
-    virtual void Visit(BoundCaseStatementNode& node) {}
-    virtual void Visit(BoundDefaultStatementNode& node) {}
-    virtual void Visit(BoundWhileStatementNode& node) {}
-    virtual void Visit(BoundDoStatementNode& node) {}
-    virtual void Visit(BoundForStatementNode& node) {}
-    virtual void Visit(BoundBreakStatementNode& node) {}
-    virtual void Visit(BoundContinueStatementNode& node) {}
-    virtual void Visit(BoundReturnStatementNode& node) {}
-    virtual void Visit(BoundGotoStatementNode& node) {}
-    virtual void Visit(BoundConstructionStatementNode& node) {}
-    virtual void Visit(BoundExpressionStatementNode& node) {}
-    virtual void Visit(BoundLiteralNode& node) {}
-    virtual void Visit(BoundVariableNode& node) {}
-    virtual void Visit(BoundParameterNode& node) {}
-    virtual void Visit(BoundEnumConstant& node) {}
-    virtual void Visit(BoundFunctionGroupNode& node) {}
-    virtual void Visit(BoundTypeNode& node) {}
-    virtual void Visit(BoundMemberExprNode& node) {}
-    virtual void Visit(BoundFunctionCallNode& node) {}
-    virtual void Visit(BoundErrorNode& node) {}
-};
-
-class DefaultBoundTreeVisitor : public BoundTreeVisitor
-{
-public:
-    void Visit(BoundCompileUnitNode& node) override;
-    void Visit(BoundFunctionNode& node) override;
-    void Visit(BoundCompoundStatementNode& node) override;
-    void Visit(BoundIfStatementNode& node) override;
-    void Visit(BoundSwitchStatementNode& node) override;
-    void Visit(BoundCaseStatementNode& node) override;
-    void Visit(BoundDefaultStatementNode& node) override;
-    void Visit(BoundWhileStatementNode& node) override;
-    void Visit(BoundDoStatementNode& node) override;
-    void Visit(BoundForStatementNode& node) override;
-    void Visit(BoundReturnStatementNode& node) override;
-    void Visit(BoundConstructionStatementNode& node) override;
-    void Visit(BoundExpressionStatementNode& node) override;
-    void Visit(BoundMemberExprNode& node) override;
 };
 
 } // namespace otava::symbols

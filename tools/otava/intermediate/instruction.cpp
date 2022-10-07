@@ -8,6 +8,7 @@ module otava.intermediate.instruction;
 import otava.intermediate.basic.block;
 import otava.intermediate.error;
 import otava.intermediate.metadata;
+import otava.intermediate.type;
 import otava.intermediate.util;
 import otava.intermediate.visitor;
 import util.text.util;

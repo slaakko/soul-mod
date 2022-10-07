@@ -30,11 +30,30 @@ import otava.symbols.variable.group.symbol;
 import otava.symbols.enum_group.symbol;
 import otava.symbols.specialization;
 import otava.symbols.symbol.table;
-import otava.symbols.fundamental.type.operation;
 import util.unicode;
 import util.sha1;
 
 namespace otava::symbols {
+
+std::string AccessStr(Access access)
+{
+    switch (access)
+    {
+    case Access::private_:
+    {
+        return "private";
+    }
+    case Access::protected_:
+    {
+        return "protected";
+    }
+    case Access::public_:
+    {
+        return "public";
+    }
+    }
+    return std::string();
+}
 
 std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds)
 {
@@ -64,26 +83,6 @@ std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKin
         symbolGroupKindVec.push_back(SymbolGroupKind::blockSymbolGroup);
     }
     return symbolGroupKindVec;
-}
-
-std::string AccessStr(Access access)
-{
-    switch (access)
-    {
-        case Access::private_:
-        {
-            return "private";
-        }
-        case Access::protected_:
-        {
-            return "protected";
-        }
-        case Access::public_:
-        {
-            return "public";
-        }
-    }
-    return std::string();
 }
 
 Symbol::Symbol(SymbolKind kind_, const std::u32string& name_) : kind(kind_), id(util::random_uuid()), name(name_), parent(nullptr), access(Access::none)
@@ -217,6 +216,29 @@ bool Symbol::CanInstall() const
         case SymbolKind::conceptSymbol:
         case SymbolKind::functionSymbol:
         case SymbolKind::functionDefinitionSymbol:
+        case SymbolKind::fundamentalTypeUnaryPlus:
+        case SymbolKind::fundamentalTypeUnaryMinus:
+        case SymbolKind::fundamentalTypeComplement:
+        case SymbolKind::fundamentalTypeNot:
+        case SymbolKind::fundamentalTypeAdd:
+        case SymbolKind::fundamentalTypeSub:
+        case SymbolKind::fundamentalTypeMul:
+        case SymbolKind::fundamentalTypeDiv:
+        case SymbolKind::fundamentalTypeMod:
+        case SymbolKind::fundamentalTypeAnd:
+        case SymbolKind::fundamentalTypeOr:
+        case SymbolKind::fundamentalTypeXor:
+        case SymbolKind::fundamentalTypeShl:
+        case SymbolKind::fundamentalTypeShr:
+        case SymbolKind::fundamentalTypeEqual:
+        case SymbolKind::fundamentalTypeLess:
+        case SymbolKind::fundamentalTypeSignExtension:
+        case SymbolKind::fundamentalTypeZeroExtension:
+        case SymbolKind::fundamentalTypeTruncate:
+        case SymbolKind::fundamentalTypeBitcast:
+        case SymbolKind::fundamentalTypeIntToFloat:
+        case SymbolKind::fundamentalTypeFloatToInt:
+        case SymbolKind::fundamentalTypeBoolean:
         case SymbolKind::variableSymbol:
         case SymbolKind::templateDeclarationSymbol:
         case SymbolKind::typenameConstraintSymbol:
@@ -259,6 +281,41 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::templateParameterSymbol:
         case SymbolKind::boundTemplateParameterSymbol:
         case SymbolKind::varArgTypeSymbol:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Symbol::IsFunctionSymbol() const
+{
+    switch (kind)
+    {
+        case SymbolKind::functionSymbol:
+        case SymbolKind::fundamentalTypeNot:
+        case SymbolKind::fundamentalTypeUnaryPlus:
+        case SymbolKind::fundamentalTypeUnaryMinus:
+        case SymbolKind::fundamentalTypeComplement:
+        case SymbolKind::fundamentalTypeAdd:
+        case SymbolKind::fundamentalTypeSub:
+        case SymbolKind::fundamentalTypeMul:
+        case SymbolKind::fundamentalTypeDiv:
+        case SymbolKind::fundamentalTypeMod:
+        case SymbolKind::fundamentalTypeAnd:
+        case SymbolKind::fundamentalTypeOr:
+        case SymbolKind::fundamentalTypeXor:
+        case SymbolKind::fundamentalTypeShl:
+        case SymbolKind::fundamentalTypeShr:
+        case SymbolKind::fundamentalTypeEqual:
+        case SymbolKind::fundamentalTypeLess:
+        case SymbolKind::fundamentalTypeSignExtension:
+        case SymbolKind::fundamentalTypeZeroExtension:
+        case SymbolKind::fundamentalTypeTruncate:
+        case SymbolKind::fundamentalTypeBitcast:
+        case SymbolKind::fundamentalTypeIntToFloat:
+        case SymbolKind::fundamentalTypeFloatToInt:
+        case SymbolKind::fundamentalTypeBoolean:
         {
             return true;
         }
@@ -314,6 +371,23 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::functionGroupSymbol:
         case SymbolKind::functionSymbol:
         case SymbolKind::functionDefinitionSymbol:
+        case SymbolKind::fundamentalTypeNot:
+        case SymbolKind::fundamentalTypeUnaryPlus:
+        case SymbolKind::fundamentalTypeUnaryMinus:
+        case SymbolKind::fundamentalTypeComplement:
+        case SymbolKind::fundamentalTypeAdd:
+        case SymbolKind::fundamentalTypeSub:
+        case SymbolKind::fundamentalTypeMul:
+        case SymbolKind::fundamentalTypeDiv:
+        case SymbolKind::fundamentalTypeMod:
+        case SymbolKind::fundamentalTypeAnd:
+        case SymbolKind::fundamentalTypeOr:
+        case SymbolKind::fundamentalTypeXor:
+        case SymbolKind::fundamentalTypeShl:
+        case SymbolKind::fundamentalTypeShr:
+        case SymbolKind::fundamentalTypeEqual:
+        case SymbolKind::fundamentalTypeLess:
+        case SymbolKind::fundamentalTypeBoolean:
         {
             return SymbolGroupKind::functionSymbolGroup;
         }
@@ -332,338 +406,6 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         }
     }
     return SymbolGroupKind::none;
-}
-
-bool SymbolsEqual(Symbol* left, Symbol* right)
-{
-    if (left->IsTypeSymbol() && right->IsTypeSymbol())
-    {
-        if (left->Kind() == SymbolKind::errorSymbol && right->Kind() == SymbolKind::errorSymbol) return true;
-        if (left->Kind() == SymbolKind::templateParameterSymbol && right->Kind() == SymbolKind::templateParameterSymbol)
-        {
-            TemplateParameterSymbol* leftTemplateParam = static_cast<TemplateParameterSymbol*>(left);
-            TemplateParameterSymbol* rightTemplateParam = static_cast<TemplateParameterSymbol*>(right);
-            return leftTemplateParam->Index() == rightTemplateParam->Index();
-        }
-        if (left->IsCompoundTypeSymbol() && right->IsCompoundTypeSymbol())
-        {
-            if (left->Kind() != right->Kind()) return false;
-            CompoundTypeSymbol* leftCompound = static_cast<CompoundTypeSymbol*>(left);
-            CompoundTypeSymbol* rightCompound = static_cast<CompoundTypeSymbol*>(right);
-            return SymbolsEqual(leftCompound->BaseType(), rightCompound->BaseType());
-        }
-        return left == right;
-    }
-    else if (left->Kind() == SymbolKind::boolValueSymbol && right->Kind() == SymbolKind::boolValueSymbol)
-    {
-        BoolValue* leftValue = static_cast<BoolValue*>(left);
-        BoolValue* rightValue = static_cast<BoolValue*>(right);
-        return leftValue->GetValue() == rightValue->GetValue();
-    }
-    else if (left->Kind() == SymbolKind::integerValueSymbol && right->Kind() == SymbolKind::integerValueSymbol)
-    {
-        IntegerValue* leftInteger = static_cast<IntegerValue*>(left);
-        IntegerValue* rightInteger = static_cast<IntegerValue*>(right);
-        return leftInteger->GetValue() == rightInteger->GetValue();
-    }
-    else if (left->Kind() == SymbolKind::stringValueSymbol && right->Kind() == SymbolKind::stringValueSymbol)
-    {
-        StringValue* leftString = static_cast<StringValue*>(left);
-        StringValue* rightString = static_cast<StringValue*>(right);
-        return leftString->GetValue() == rightString->GetValue();
-    }
-    else if (left->Kind() == SymbolKind::charValueSymbol && right->Kind() == SymbolKind::charValueSymbol)
-    {
-        CharValue* leftChar = static_cast<CharValue*>(left);
-        CharValue* rightChar = static_cast<CharValue*>(right);
-        return leftChar->GetValue() == rightChar->GetValue();
-    }
-    else
-    {
-        return left == right;
-    }
-}
-
-bool SymbolsEqual(const std::vector<Symbol*>& left, const std::vector<Symbol*>& right)
-{
-    if (left.size() != right.size()) return false;
-    int n = left.size();
-    for (int i = 0; i < n; ++i)
-    {
-        if (!SymbolsEqual(left[i], right[i])) return false;
-    }
-    return true;
-}
-
-int Match(const std::vector<Symbol*>& left, const std::vector<Symbol*>& right)
-{
-    if (left.size() != right.size()) return -1;
-    int totalScore = 0;
-    int n = left.size();
-    for (int i = 0; i < n; ++i)
-    {
-        int score = Match(left[i], right[i]);
-        if (score == -1) return -1;
-        totalScore += score;
-    }
-    return totalScore;
-}
-
-int Match(Symbol* left, Symbol* right)
-{
-    if (SymbolsEqual(left, right)) return 0;
-    if (left->IsCompoundTypeSymbol())
-    {
-        if (right->IsCompoundTypeSymbol())
-        {
-            if (left->Kind() == right->Kind())
-            {
-                CompoundTypeSymbol* leftCompound = static_cast<CompoundTypeSymbol*>(left);
-                CompoundTypeSymbol* rightCompound = static_cast<CompoundTypeSymbol*>(right);
-                return Match(leftCompound->BaseType(), rightCompound->BaseType());
-            }
-            else
-            {
-                return -1;
-            }
-        }
-        else if (right->Kind() == SymbolKind::templateParameterSymbol)
-        {
-            return 2;
-        }
-    }
-    else if (right->Kind() == SymbolKind::templateParameterSymbol)
-    {
-        return 1;
-    }
-    return -1;
-}
-
-Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTable* symbolTable)
-{
-    switch (symbolKind)
-    {
-        case SymbolKind::classGroupSymbol:
-        {
-            return new ClassGroupSymbol(name);
-        }
-        case SymbolKind::conceptGroupSymbol:
-        {
-            return new ConceptGroupSymbol(name);
-        }
-        case SymbolKind::functionGroupSymbol:
-        {
-            return new FunctionGroupSymbol(name);
-        }
-        case SymbolKind::variableGroupSymbol:
-        {
-            return new VariableGroupSymbol(name);
-        }
-        case SymbolKind::aliasGroupSymbol:
-        {
-            return new AliasGroupSymbol(name);
-        }
-        case SymbolKind::enumGroupSymbol:
-        {
-            return new EnumGroupSymbol(name);
-        }
-        case SymbolKind::boolValueSymbol:
-        {
-            return new BoolValue(name, nullptr);
-        }
-        case SymbolKind::integerValueSymbol:
-        {
-            return new IntegerValue(name, nullptr);
-        }
-        case SymbolKind::floatingValueSymbol:
-        {
-            return new FloatingValue(name, nullptr);
-        }
-        case SymbolKind::nullPtrValueSymbol:
-        {
-            return new NullPtrValue(nullptr);
-        }
-        case SymbolKind::stringValueSymbol:
-        {
-            return new StringValue(symbolTable->MakeConstCharPtrType());
-        }
-        case SymbolKind::charValueSymbol:
-        {
-            return new CharValue(symbolTable->GetFundamentalTypeSymbol(FundamentalTypeKind::char32Type));
-        }
-        case SymbolKind::genericTypeSymbol:
-        {
-            otava::ast::SetExceptionThrown();
-            throw std::runtime_error("not implemented");
-        }
-        case SymbolKind::nullPtrTypeSymbol:
-        {
-            otava::ast::SetExceptionThrown();
-            throw std::runtime_error("not implemented");
-        }
-        case SymbolKind::aliasTypeSymbol:
-        {
-            return new AliasTypeSymbol(name);
-        }
-        case SymbolKind::arrayTypeSymbol:
-        {
-            otava::ast::SetExceptionThrown();
-            throw std::runtime_error("not implemented");
-        }
-        case SymbolKind::blockSymbol:
-        {
-            return new BlockSymbol();
-        }
-        case SymbolKind::classTypeSymbol:
-        {
-            return new ClassTypeSymbol(name);
-        }
-        case SymbolKind::forwardClassDeclarationSymbol:
-        {
-            return new ForwardClassDeclarationSymbol(name);
-        }
-        case SymbolKind::compoundTypeSymbol:
-        {
-            return new CompoundTypeSymbol(name);
-        }
-        case SymbolKind::conceptSymbol:
-        {
-            return new ConceptSymbol(name);
-        }
-        case SymbolKind::enumTypeSymbol:
-        {
-            return new EnumeratedTypeSymbol(name);
-        }
-        case SymbolKind::forwardEnumDeclarationSymbol:
-        {
-            return new ForwardEnumDeclarationSymbol(name);
-        }
-        case SymbolKind::enumConstantSymbol:
-        {
-            return new EnumConstantSymbol(name);
-        }
-        case SymbolKind::functionSymbol:
-        {
-            return new FunctionSymbol(name);
-        }
-        case SymbolKind::functionDefinitionSymbol:
-        {
-            return new FunctionDefinitionSymbol(name);
-        }
-        case SymbolKind::functionTypeSymbol:
-        {
-            return new FunctionTypeSymbol(name);
-        }
-        case SymbolKind::fundamentalTypeSymbol:
-        {
-            return new FundamentalTypeSymbol(name);
-        }
-        case SymbolKind::namespaceSymbol:
-        {
-            return new NamespaceSymbol(name);
-        }
-        case SymbolKind::templateDeclarationSymbol:
-        {
-            return new TemplateDeclarationSymbol();
-        }
-        case SymbolKind::typenameConstraintSymbol:
-        {
-            return new TypenameConstraintSymbol();
-        }
-        case SymbolKind::templateParameterSymbol:
-        {
-            return new TemplateParameterSymbol(name);
-        }
-        case SymbolKind::varArgTypeSymbol:
-        {
-            otava::ast::SetExceptionThrown();
-            throw std::runtime_error("not implemented");
-        }
-        case SymbolKind::variableSymbol:
-        {
-            return new VariableSymbol(name);
-        }
-        case SymbolKind::parameterSymbol:
-        {
-            return new ParameterSymbol(name);
-        }
-        case SymbolKind::specializationSymbol:
-        {
-            SpecializationSymbol* specialization = new SpecializationSymbol(name);
-            specialization->SetSymbolTable(symbolTable);
-            return specialization;
-        }
-        case SymbolKind::nestedTypeSymbol:
-        {
-            return new NestedTypeSymbol(name);
-        }
-        case SymbolKind::errorSymbol:
-        {
-            return new ErrorTypeSymbol();
-        }
-        case SymbolKind::symbolValueSymbol:
-        {
-            return new SymbolValue();
-        }
-        case SymbolKind::invokeValueSymbol:
-        {
-            return new InvokeValue();
-        }
-        case SymbolKind::constraintExprSymbol:
-        {
-            return new ConstraintExprSymbol();
-        }
-        case SymbolKind::fundamentalTypeAdd:
-        {
-            return new FundamentalTypeAddOperation();
-        }
-        case SymbolKind::fundamentalTypeSub:
-        {
-            return new FundamentalTypeSubOperation();
-        }
-        case SymbolKind::fundamentalTypeMul:
-        {
-            return new FundamentalTypeMulOperation();
-        }
-        case SymbolKind::fundamentalTypeDiv:
-        {
-            return new FundamentalTypeDivOperation();
-        }
-        case SymbolKind::fundamentalTypeMod:
-        {
-            return new FundamentalTypeModOperation();
-        }
-        case SymbolKind::fundamentalTypeAnd:
-        {
-            return new FundamentalTypeAndOperation();
-        }
-        case SymbolKind::fundamentalTypeOr:
-        {
-            return new FundamentalTypeOrOperation();
-        }
-        case SymbolKind::fundamentalTypeXor:
-        {
-            return new FundamentalTypeXorOperation();
-        }
-        case SymbolKind::fundamentalTypeShl:
-        {
-            return new FundamentalTypeShlOperation();
-        }
-        case SymbolKind::fundamentalTypeShr:
-        {
-            return new FundamentalTypeShrOperation();
-        }
-        case SymbolKind::fundamentalTypeEqual:
-        {
-            return new FundamentalTypeEqualOperation();
-        }
-        case SymbolKind::fundamentalTypeLess:
-        {
-            return new FundamentalTypeLessOperation();
-        }
-    }
-    otava::ast::SetExceptionThrown();
-    throw std::runtime_error("not implemented");
 }
 
 } // namespace otava::symbols

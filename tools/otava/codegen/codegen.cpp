@@ -16,6 +16,7 @@ import otava.intermediate.register_allocator;
 import otava.intermediate.verify;
 import otava.intermediate.code.generator;
 import otava.symbols.bound.tree;
+import otava.symbols.bound.tree.visitor;
 import std.core;
 import std.filesystem;
 import util;
@@ -79,6 +80,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     otava::intermediate::Type* functionType = functionDefinition->IrType(emitter, node.GetSourcePos(), &context);
     bool once = false;
     emitter.CreateFunction(functionDefinition->IrName(), functionType, once);
+    node.Body()->Accept(*this);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)

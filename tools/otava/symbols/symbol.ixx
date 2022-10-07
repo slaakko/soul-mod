@@ -38,26 +38,6 @@ enum class Access : int32_t
 
 std::string AccessStr(Access access);
 
-enum class SymbolKind : int32_t
-{
-    null, 
-    classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
-    boolValueSymbol, integerValueSymbol, floatingValueSymbol, stringValueSymbol, charValueSymbol, genericTypeSymbol, nullPtrTypeSymbol, 
-    aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
-    conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, functionDefinitionSymbol,
-    fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
-    templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol,
-    specializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
-    forwardClassDeclarationSymbol, forwardEnumDeclarationSymbol, boundTemplateParameterSymbol, constraintExprSymbol,
-    fundamentalTypeUnaryPlus, fundamentalTypeUnaryMinus, fundamentalTypeComplement, fundamentalTypeNot,
-    fundamentalTypeAdd, fundamentalTypeSub, fundamentalTypeMul, fundamentalTypeDiv, fundamentalTypeMod,
-    fundamentalTypeAnd, fundamentalTypeOr, fundamentalTypeXor, fundamentalTypeShl, fundamentalTypeShr,
-    fundamentalTypeEqual, fundamentalTypeLess,
-    defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
-    defaultChar, defaultChar16, defaultChar32,
-    max
-};
-
 enum class SymbolGroupKind : int32_t
 {
     none = 0,
@@ -84,6 +64,30 @@ constexpr SymbolGroupKind operator~(SymbolGroupKind kind)
 {
     return SymbolGroupKind(~int32_t(kind));
 }
+
+enum class SymbolKind : int32_t
+{
+    null, 
+    classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
+    boolValueSymbol, integerValueSymbol, floatingValueSymbol, stringValueSymbol, charValueSymbol, genericTypeSymbol, nullPtrTypeSymbol, 
+    aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
+    conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, functionDefinitionSymbol,
+    fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
+    templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol,
+    specializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
+    forwardClassDeclarationSymbol, forwardEnumDeclarationSymbol, boundTemplateParameterSymbol, constraintExprSymbol,
+    fundamentalTypeNot, fundamentalTypeUnaryPlus, fundamentalTypeUnaryMinus, fundamentalTypeComplement,
+    fundamentalTypeAdd, fundamentalTypeSub, fundamentalTypeMul, fundamentalTypeDiv, fundamentalTypeMod,
+    fundamentalTypeAnd, fundamentalTypeOr, fundamentalTypeXor, fundamentalTypeShl, fundamentalTypeShr,
+    fundamentalTypeEqual, fundamentalTypeLess, fundamentalTypeBoolean,
+    fundamentalTypeSignExtension, fundamentalTypeZeroExtension, fundamentalTypeTruncate, fundamentalTypeBitcast, fundamentalTypeIntToFloat, fundamentalTypeFloatToInt,
+
+    defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
+    defaultChar, defaultChar16, defaultChar32,
+    max
+};
+
+enum class SymbolGroupKind : int32_t;
 
 std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds);
 
@@ -143,7 +147,7 @@ public:
     bool IsForwardEnumDeclarationSymbol() const { return kind == SymbolKind::forwardEnumDeclarationSymbol; }
     bool IsEnumConstantSymbol() const { return kind == SymbolKind::enumConstantSymbol; }
     bool IsFunctionGroupSymbol() const { return kind == SymbolKind::functionGroupSymbol; }
-    bool IsFunctionSymbol() const { return  kind == SymbolKind::functionSymbol; }
+    bool IsFunctionSymbol() const;
     bool IsFunctionTypeSymbol() const { return kind == SymbolKind::functionTypeSymbol; }
     bool IsFunctionDefinitionSymbol() const { return kind == SymbolKind::functionDefinitionSymbol; }
     bool IsBlockSymbol() const { return kind == SymbolKind::blockSymbol; }
@@ -168,12 +172,5 @@ private:
     DeclarationFlags declarationFlags;
     Access access;
 };
-
-bool SymbolsEqual(const std::vector<Symbol*>& left, const std::vector<Symbol*>& right);
-bool SymbolsEqual(Symbol* left, Symbol* right);
-int Match(const std::vector<Symbol*>& left, const std::vector<Symbol*>& right);
-int Match(Symbol* left, Symbol* right);
-
-Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTable* symbolTable);
 
 } // namespace otava::symbols

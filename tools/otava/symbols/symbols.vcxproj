@@ -157,8 +157,14 @@
     <ClCompile Include="alias_type_symbol.ixx" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="block.ixx" />
+    <ClCompile Include="bound_node.cpp" />
+    <ClCompile Include="bound_node.ixx" />
     <ClCompile Include="bound_tree.cpp" />
     <ClCompile Include="bound_tree.ixx" />
+    <ClCompile Include="bound_tree_util.cpp" />
+    <ClCompile Include="bound_tree_util.ixx" />
+    <ClCompile Include="bound_tree_visitor.cpp" />
+    <ClCompile Include="bound_tree_visitor.ixx" />
     <ClCompile Include="classes.cpp" />
     <ClCompile Include="classes.ixx" />
     <ClCompile Include="class_group_symbol.cpp" />
@@ -173,6 +179,8 @@
     <ClCompile Include="container_symbol.ixx" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="context.ixx" />
+    <ClCompile Include="conversion_table.cpp" />
+    <ClCompile Include="conversion_table.ixx" />
     <ClCompile Include="declaration.cpp" />
     <ClCompile Include="declaration.ixx" />
     <ClCompile Include="declarator.cpp" />
@@ -195,6 +203,10 @@
     <ClCompile Include="function_group_symbol.ixx" />
     <ClCompile Include="function_symbol.cpp" />
     <ClCompile Include="function_symbol.ixx" />
+    <ClCompile Include="fundamental_type_conversion_init.ixx" />
+    <ClCompile Include="fundamental_type_conversion.cpp" />
+    <ClCompile Include="fundamental_type_conversion.ixx" />
+    <ClCompile Include="fundamental_type_conversion_init.cpp" />
     <ClCompile Include="fundamental_type_operation.cpp" />
     <ClCompile Include="fundamental_type_operation.ixx" />
     <ClCompile Include="fundamental_type_symbol.cpp" />
@@ -229,6 +241,8 @@
     <ClCompile Include="symbol.cpp" />
     <ClCompile Include="symbol.ixx" />
     <ClCompile Include="symbols.ixx" />
+    <ClCompile Include="symbol_factory.cpp" />
+    <ClCompile Include="symbol_factory.ixx" />
     <ClCompile Include="symbol_map.cpp" />
     <ClCompile Include="symbol_map.ixx" />
     <ClCompile Include="symbol_table.cpp" />

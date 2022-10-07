@@ -66,6 +66,7 @@ class VariableSymbol;
 class Reader;
 class Writer;
 class Visitor;
+class ConversionTable;
 
 enum class SymbolGroupKind : int32_t;
 
@@ -118,6 +119,7 @@ public:
     void AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, 
         otava::ast::Node* defaultTemplateArgNode, Context* context);
     FunctionSymbol* AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
+    void AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
     FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& paramterTypes, 
         FunctionQualifiers qualifiers, otava::ast::Node* node, FunctionSymbol* declaration, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
@@ -180,6 +182,8 @@ public:
     otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
     void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
     SymbolMap* GetSymbolMap() { return symbolMap; }
+    ConversionTable& GetConversionTable() { return *conversionTable; }
+    const ConversionTable& GetConversionTable() const { return *conversionTable; }
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -233,6 +237,7 @@ private:
     std::set<ClassTypeSymbol*> classes;
     std::set<ClassTypeSymbol*> allClasses;
     int classLevel;
+    std::unique_ptr<ConversionTable> conversionTable;
 };
 
 } // namespace otava::symbols

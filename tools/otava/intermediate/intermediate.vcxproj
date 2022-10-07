@@ -179,6 +179,8 @@
     <ClCompile Include="type.cpp" />
     <ClCompile Include="type.ixx" />
     <ClCompile Include="util.ixx" />
+    <ClCompile Include="value.cpp" />
+    <ClCompile Include="value.ixx" />
     <ClCompile Include="verify.cpp" />
     <ClCompile Include="verify.ixx" />
     <ClCompile Include="visitor.cpp" />

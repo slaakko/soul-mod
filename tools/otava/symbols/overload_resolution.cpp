@@ -6,12 +6,15 @@
 module otava.symbols.overload.resolution;
 
 import otava.symbols.bound.tree;
+import otava.symbols.bound.tree.visitor;
 import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.symbol;
+import otava.symbols.match;
 import otava.symbols.operation.repository;
 import otava.symbols.symbol.table;
+import otava.symbols.conversion.table;
 import util.unicode;
 
 namespace otava::symbols {
@@ -42,51 +45,83 @@ std::u32string GetGroupName(BoundExpressionNode* node)
     node->Accept(resolver);
     return resolver.GetGroupName();
 }
+bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, ArgumentMatch& argumentMatch)
+{
+    return false;
+}
+
+bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, Context* context)
+{
+    int arity = args.size();
+    int n = std::min(arity, functionMatch.function->Arity());
+    for (int i = 0; i < n; ++i)
+    {
+        BoundExpressionNode* arg = args[i].get();
+        TypeSymbol* argType = arg->GetType();
+        ParameterSymbol* parameter = functionMatch.function->Parameters()[i];
+        TypeSymbol* paramType = parameter->GetType();
+        if (argType == paramType)
+        {
+            functionMatch.argumentMatches.push_back(ArgumentMatch());
+        }
+        else
+        {
+            bool qualificationConversionMatch = false;
+            ArgumentMatch argumentMatch;
+            if (argType->PlainType() == paramType->PlainType())
+            {
+                qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
+                if (qualificationConversionMatch)
+                {
+                    functionMatch.argumentMatches.push_back(argumentMatch);
+                }
+            }
+            if (!qualificationConversionMatch)
+            {
+                FunctionSymbol* conversionFun = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType);
+                if (conversionFun)
+                {
+                    argumentMatch.conversionFun = conversionFun;
+                    ++functionMatch.numConversions;
+                    continue;
+                }
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 FunctionSymbol* SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    std::vector<FunctionSymbol*> matchingFunctions;
+    std::vector<FunctionMatch> functionMatches;
     for (FunctionSymbol* viableFunction : viableFunctions)
     {
-        int n = viableFunction->Arity();
-        if (n != args.size())
+        FunctionMatch functionMatch(viableFunction);
+        if (FindConversions(functionMatch, args, context))
         {
-            ThrowException("wrong arity", sourcePos, context);
-        }
-        bool match = true;
-        for (int i = 0; i < n; ++i)
-        {
-            TypeSymbol* type = viableFunction->MemFunParameters()[i]->GetType();
-            BoundExpressionNode* arg = args[i].get();
-            if (!arg)
-            {
-                return nullptr; // TODO
-                ThrowException("no matching function found for function call", sourcePos, context);
-            }
-            if (arg->GetType() != type)
-            {
-                match = false;
-                break;
-            }
-        }
-        if (match)
-        {
-            matchingFunctions.push_back(viableFunction);
+            functionMatches.push_back(functionMatch);
         }
     }
-    if (matchingFunctions.size() == 1)
+    if (functionMatches.size() == 1)
     {
-        return matchingFunctions.front();
+        return functionMatches.front().function;
     }
-    else if (matchingFunctions.size() > 1)
+    else if (functionMatches.size() > 1)
     {
-        // todo SORT
-        return matchingFunctions.front();
+        std::sort(functionMatches.begin(), functionMatches.end(), BetterFunctionMatch());
+        if (BetterFunctionMatch()(functionMatches[0], functionMatches[1]))
+        {
+            return functionMatches.front().function;
+        }
+        else
+        {
+            ThrowException("ambiguous function call", sourcePos, context);
+        }
     }
     else
     {
-        return nullptr; // TODO
         ThrowException("no matching function found for function call", sourcePos, context);
     }
 }

@@ -15,6 +15,6 @@ class Context;
 class FunctionDefinitionSymbol;
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
-BoundStatementNode* BindStatement(otava::ast::Node* statementNode, Context* context);
+BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);
 
 } // namespace otava::symbols

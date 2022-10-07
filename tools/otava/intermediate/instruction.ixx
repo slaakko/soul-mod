@@ -9,6 +9,7 @@ import std.core;
 import soul.ast.source.pos;
 import util.code.formatter;
 import otava.intermediate.data;
+import otava.intermediate.value;
 
 export namespace otava::intermediate::instruction {}
 
@@ -17,6 +18,7 @@ export namespace otava::intermediate {
 class Instruction;
 class MetadataRef;
 class BasicBlock;
+class Context;
 
 using SourcePos = soul::ast::SourcePos;
 

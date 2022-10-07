@@ -18,6 +18,7 @@ import otava.symbols.enum_group.symbol;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
+import otava.symbols.conversion.table;
 import otava.ast.reader;
 import otava.ast.writer;
 import otava.ast.error;

@@ -22,6 +22,7 @@ public:
     bool IsConstType() const;
     bool IsLValueRefType() const;
     bool IsRValueRefType() const;
+    virtual TypeSymbol* PlainType() { return this; }
     TypeSymbol* AddConst();
     TypeSymbol* RemoveConst();
     TypeSymbol* AddPointer();

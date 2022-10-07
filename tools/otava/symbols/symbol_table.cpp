@@ -41,6 +41,7 @@ import otava.symbols.visitor;
 import otava.symbols.bound.tree;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.symbol_map;
+import otava.symbols.conversion.table;
 
 namespace otava::symbols {
 
@@ -55,7 +56,8 @@ SymbolTable::SymbolTable() :
     currentAccess(Access::none),
     nodeMap(nullptr),
     symbolMap(nullptr),
-    classLevel(0)
+    classLevel(0),
+    conversionTable(new ConversionTable())
 {
     globalNs->SetSymbolTable(this);
 }
@@ -161,6 +163,7 @@ void SymbolTable::Import(const SymbolTable& that)
     ImportForwardDeclarations(that);
     ImportSpecifierMap(that);
     ImportClasses(that);
+    conversionTable->Import(that.GetConversionTable());
     typenameConstraintSymbol = that.typenameConstraintSymbol;
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
@@ -1021,6 +1024,13 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast:
     return functionSymbol;
 }
 
+void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context)
+{
+    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(functionSymbol->Name(), soul::ast::SourcePos(), context);
+    scope->SymbolScope()->AddSymbol(functionSymbol, soul::ast::SourcePos(), context);
+    functionGroup->AddFunction(functionSymbol);
+}
+
 FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes, 
     FunctionQualifiers qualifiers, otava::ast::Node* node, FunctionSymbol* declaration, Context* context)
 {
@@ -1193,7 +1203,9 @@ void SymbolTable::AddFundamentalType(FundamentalTypeKind kind)
 
 void SymbolTable::AddFundamentalTypeOperations()
 {
-    AddFundamentalTypeOperationsToSymbolTable(*this);
+    Context context;
+    context.SetSymbolTable(this);
+    AddFundamentalTypeOperationsToSymbolTable(&context);
 }
 
 void SymbolTable::MapFundamentalType(FundamentalTypeSymbol* fundamentalTypeSymbol)

@@ -8,6 +8,7 @@ module otava.build_solution;
 import otava.build_project;
 import otava.symbols.namespaces;
 import otava.symbols.compound.type.symbol;
+import otava.symbols.conversion.table;
 
 namespace otava::build {
 

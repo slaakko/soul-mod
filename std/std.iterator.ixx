@@ -9,6 +9,7 @@ import std.container.vector;
 
 export namespace std {
 
+/*
 template<typename T>
 inline typename std::list<T>::iterator begin(std::list<T>& x)
 {
@@ -128,5 +129,6 @@ inline typename std::vector<T>::const_iterator cend(const std::vector<T>& x)
 {
 	return x.cend();
 }
+*/
 
 } // namespace std

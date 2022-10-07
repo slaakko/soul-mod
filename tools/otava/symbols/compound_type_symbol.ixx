@@ -19,6 +19,7 @@ public:
     TypeSymbol* GetBaseType() override { return baseType; }
     std::string SymbolKindStr() const override { return "compound type symbol"; }
     std::string SymbolDocKindStr() const override { return "compound_type"; }
+    TypeSymbol* PlainType() override;
     TypeSymbol* BaseType() const { return baseType; }
     const Derivations& GetDerivations() const { return derivations; }
     void Write(Writer& writer) override;

@@ -17,6 +17,8 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.templates;
 import otava.symbols.value;
+import otava.symbols.variable.symbol;
+import otava.symbols.fundamental.type.conversion;
 import util.sha1;
 import util.unicode;
 
@@ -72,7 +74,7 @@ std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers)
     return s;
 }
 
-ParameterSymbol::ParameterSymbol(const std::u32string& name_) : 
+ParameterSymbol::ParameterSymbol(const std::u32string& name_) :
     Symbol(SymbolKind::parameterSymbol, name_), 
     type(nullptr), 
     typeId(util::nil_uuid()), 
@@ -137,6 +139,11 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
 FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     ContainerSymbol(kind_, name_), returnType(nullptr), returnTypeId(util::nil_uuid()), memFunParamsConstructed(false)
 {
+}
+
+ConversionKind FunctionSymbol::GetConversionKind() const
+{
+    return ConversionKind::implicitConversion;
 }
 
 const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters() 
@@ -206,6 +213,10 @@ void FunctionSymbol::Write(Writer& writer)
 
 void FunctionSymbol::Read(Reader& reader)
 {
+    if (Name() == U"operator+")
+    {
+        int x = 0;
+    }
     ContainerSymbol::Read(reader);
     kind = static_cast<FunctionKind>(reader.GetBinaryStreamReader().ReadByte());
     qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
@@ -257,6 +268,11 @@ std::string FunctionSymbol::IrName() const
     std::string fullName = util::ToUtf8(FullName());
     std::string irName = "function_" + util::ToUtf8(Name()) + "_" + util::GetSha1MessageDigest(fullName);
     return irName;
+}
+
+void FunctionSymbol::AddLocalVariable(VariableSymbol* localVariable, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    localVariables.push_back(localVariable);
 }
 
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_)

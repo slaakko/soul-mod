@@ -15,16 +15,9 @@ import otava.symbols.classes;
 import otava.symbols.symbol.table;
 import otava.symbols.type.resolver;
 import otava.symbols.operation.repository;
+import otava.symbols.bound.tree.visitor;
 
 namespace otava::symbols {
-
-BoundNode::BoundNode(BoundNodeKind kind_) : kind(kind_)
-{
-}
-
-BoundNode::~BoundNode()
-{
-}
 
 BoundCompileUnitNode::BoundCompileUnitNode() : BoundNode(BoundNodeKind::boundCompileUnitNode), operationRepository(new OperationRepository()), id()
 {
@@ -294,38 +287,6 @@ void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_)
     expr.reset(expr_);
 }
 
-BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, TypeSymbol* type_) : BoundNode(kind_), type(type_)
-{
-}
-
-void BoundExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
-{
-    ThrowException("LOAD not implemented", sourcePos, context);
-}
-
-void BoundExpressionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
-{
-    ThrowException("STORE not implemented", sourcePos, context);
-}
-
-Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const
-{
-    if (type)
-    {
-        if (op->IsDotNode())
-        {
-            TypeSymbol* baseType = ResolveFwdDeclaredType(type->DirectType()->GetBaseType(), sourcePos, context);
-            return baseType->GetScope();
-        }
-        else if (op->IsArrowNode() && type->IsPointerType())
-        {
-            TypeSymbol* baseType = ResolveFwdDeclaredType(type->DirectType()->RemovePointer()->GetBaseType(), sourcePos, context);
-            return baseType->GetScope();
-        }
-    }
-    return nullptr;
-}
-
 BoundLiteralNode::BoundLiteralNode(Value* value_) : BoundExpressionNode(BoundNodeKind::boundLiteralNode, value_->GetType()), value(value_)
 {
 }
@@ -419,125 +380,6 @@ BoundErrorNode::BoundErrorNode() : BoundExpressionNode(BoundNodeKind::boundError
 void BoundErrorNode::Accept(BoundTreeVisitor& visitor)
 {
     visitor.Visit(*this);
-}
-
-BoundTreeVisitor::~BoundTreeVisitor()
-{
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundCompileUnitNode& node)
-{
-    for (const auto& node : node.BoundNodes())
-    {
-        node->Accept(*this);
-    }
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundFunctionNode& node)
-{
-    node.Body()->Accept(*this);
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundCompoundStatementNode& node)
-{
-    for (const auto& stmt : node.Statements())
-    {
-        stmt->Accept(*this);
-    }
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundIfStatementNode& node)
-{
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
-    node.GetCondition()->Accept(*this);
-    node.ThenStatement()->Accept(*this);
-    if (node.ElseStatement())
-    {
-        node.ElseStatement()->Accept(*this);
-    }
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundSwitchStatementNode& node)
-{
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
-    node.GetCondition()->Accept(*this);
-    node.Statement()->Accept(*this);
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundCaseStatementNode& node)
-{
-    node.CaseExpr()->Accept(*this);
-    node.Statement()->Accept(*this);
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundDefaultStatementNode& node)
-{
-    node.Statement()->Accept(*this);
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundWhileStatementNode& node)
-{
-    node.GetCondition()->Accept(*this);
-    node.Statement()->Accept(*this);
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundDoStatementNode& node)
-{
-    node.GetExpr()->Accept(*this);
-    node.Statement()->Accept(*this);
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundForStatementNode& node)
-{
-    if (node.InitStatement())
-    {
-        node.InitStatement()->Accept(*this);
-    }
-    if (node.GetCondition())
-    {
-        node.GetCondition()->Accept(*this);
-    }
-    if (node.GetLoopExpr())
-    {
-        node.GetLoopExpr()->Accept(*this);
-    }
-    node.Statement()->Accept(*this);
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundReturnStatementNode& node)
-{
-    if (node.GetExpr())
-    {
-        node.GetExpr()->Accept(*this);
-    }
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundConstructionStatementNode& node)
-{
-    if (node.Initializer())
-    {
-        node.Initializer()->Accept(*this);
-    }
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundExpressionStatementNode& node)
-{
-    if (node.GetExpr())
-    {
-        node.GetExpr()->Accept(*this);
-    }
-}
-
-void DefaultBoundTreeVisitor::Visit(BoundMemberExprNode& node)
-{
-    node.Subject()->Accept(*this);
-    node.Member()->Accept(*this);
 }
 
 } // namespace otava::symbols

@@ -18,13 +18,15 @@ class BoundExpressionNode;
 
 enum class FunctionKind
 {
-    constructor, destructor, special, function
+    constructor, destructor, special, function, conversion
 };
 
 enum class FunctionQualifiers : int32_t
 {
     none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isDefault = 1 << 4, isDeleted = 1 << 5
 };
+
+enum class ConversionKind : int32_t;
 
 constexpr FunctionQualifiers operator|(FunctionQualifiers left, FunctionQualifiers right)
 {
@@ -79,9 +81,15 @@ public:
     void SetFunctionKind(FunctionKind kind_) { kind = kind_; }
     FunctionQualifiers Qualifiers() const { return qualifiers; }
     void SetFunctionQualifiers(FunctionQualifiers qualifiers_) { qualifiers = qualifiers_; }
+    bool IsConversion() const { return kind == FunctionKind::conversion; }
+    void SetConversion() { kind = FunctionKind::conversion; }
     TemplateDeclarationSymbol* ParentTemplateDeclaration();
     void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
     TypeSymbol* ReturnType() const { return returnType; }
+    virtual TypeSymbol* ConversionParamType() const { return nullptr; }
+    virtual TypeSymbol* ConversionArgType() const { return nullptr; }
+    virtual ConversionKind GetConversionKind() const;
+    virtual int32_t ConversionDistance() const { return 0; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
     const std::vector<ParameterSymbol*>& MemFunParameters();
@@ -93,6 +101,8 @@ public:
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     std::string IrName() const;
+    void AddLocalVariable(VariableSymbol* localVariable, const soul::ast::SourcePos& sourcePos, Context* context);
+    const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
 private:
     bool memFunParamsConstructed;
     FunctionKind kind;
@@ -102,6 +112,7 @@ private:
     std::vector<ParameterSymbol*> parameters;
     std::unique_ptr<ParameterSymbol> thisParam;
     std::vector<ParameterSymbol*> memFunParameters;
+    std::vector<VariableSymbol*> localVariables;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol

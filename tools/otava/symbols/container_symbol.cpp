@@ -13,6 +13,7 @@ import otava.symbols.type.symbol;
 import otava.symbols.context;
 import otava.symbols.symbol.table;
 import otava.symbols.variable.symbol;
+import otava.symbols.conversion.table;
 
 namespace otava::symbols {
 
@@ -48,11 +49,19 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     {
         FunctionSymbol* function = static_cast<FunctionSymbol*>(symbol);
         context->GetSymbolTable()->MapFunction(function);
+        if (function->IsConversion())
+        {
+            context->GetSymbolTable()->GetConversionTable().AddConversion(function);
+        }
     }
     if (symbol->IsFunctionDefinitionSymbol())
     {
         FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(symbol);
         context->GetSymbolTable()->MapFunctionDefinition(functionDefinition);
+        if (functionDefinition->IsConversion())
+        {
+            context->GetSymbolTable()->GetConversionTable().AddConversion(functionDefinition);
+        }
     }
     if (symbol->IsVariableSymbol())
     {

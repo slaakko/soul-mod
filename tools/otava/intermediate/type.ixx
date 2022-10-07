@@ -21,6 +21,7 @@ class Visitor;
 class ArrayType;
 class StructureType;
 class TypeRef;
+class ConstantValue;
 
 const int32_t voidTypeId = 0;
 const int32_t boolTypeId = 1;
@@ -117,7 +118,10 @@ public:
     int32_t Id() const { return id; }
     TypeRef GetTypeRef();
     virtual void WriteDeclaration(util::CodeFormatter& formatter);
+    ConstantValue* DefaultValue() { return defaultValue; }
+    void SetDefaultValue(ConstantValue* defaultValue_);
 private:
+    ConstantValue* defaultValue;
     SourcePos sourcePos;
     TypeKind kind;
     int32_t id;
@@ -337,11 +341,12 @@ class Types
 {
 public:
     Types();
+    void Init();
     void Write(util::CodeFormatter& formatter);
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
-    void AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
-    void AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
+    StructureType* AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    ArrayType* AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
     FunctionType* AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     void Resolve(Context* context);
     void ResolveType(TypeRef& typeRef, Context* context);

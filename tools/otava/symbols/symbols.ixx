@@ -9,6 +9,7 @@ export import otava.symbols.alias.type.symbol;
 export import otava.symbols.block;
 export import otava.symbols.bound.tree;
 export import otava.symbols.compound.type.symbol;
+export import otava.symbols.conversion.table;
 export import otava.symbols.classes;
 export import otava.symbols.class_group.symbol;
 export import otava.symbols.concepts;
