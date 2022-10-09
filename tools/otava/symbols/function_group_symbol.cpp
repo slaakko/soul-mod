@@ -67,10 +67,6 @@ void FunctionGroupSymbol::Write(Writer& writer)
 
 void FunctionGroupSymbol::Read(Reader& reader)
 {
-    if (Name() == U"operator+")
-    {
-        int x = 0;
-    }
     Symbol::Read(reader);
     uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < count; ++i)

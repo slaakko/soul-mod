@@ -19,6 +19,7 @@ class BoundDefaultStatementNode;
 class BoundWhileStatementNode;
 class BoundDoStatementNode;
 class BoundForStatementNode;
+class BoundSequenceStatementNode;
 class BoundBreakStatementNode;
 class BoundContinueStatementNode;
 class BoundReturnStatementNode;
@@ -33,6 +34,7 @@ class BoundFunctionGroupNode;
 class BoundTypeNode;
 class BoundMemberExprNode;
 class BoundFunctionCallNode;
+class BoundConversionNode;
 class BoundErrorNode;
 
 class BoundTreeVisitor
@@ -49,6 +51,7 @@ public:
     virtual void Visit(BoundWhileStatementNode& node) {}
     virtual void Visit(BoundDoStatementNode& node) {}
     virtual void Visit(BoundForStatementNode& node) {}
+    virtual void Visit(BoundSequenceStatementNode& node) {}
     virtual void Visit(BoundBreakStatementNode& node) {}
     virtual void Visit(BoundContinueStatementNode& node) {}
     virtual void Visit(BoundReturnStatementNode& node) {}
@@ -63,6 +66,7 @@ public:
     virtual void Visit(BoundTypeNode& node) {}
     virtual void Visit(BoundMemberExprNode& node) {}
     virtual void Visit(BoundFunctionCallNode& node) {}
+    virtual void Visit(BoundConversionNode& node) {}
     virtual void Visit(BoundErrorNode& node) {}
 };
 
@@ -79,6 +83,7 @@ public:
     void Visit(BoundWhileStatementNode& node) override;
     void Visit(BoundDoStatementNode& node) override;
     void Visit(BoundForStatementNode& node) override;
+    void Visit(BoundSequenceStatementNode& node) override;
     void Visit(BoundReturnStatementNode& node) override;
     void Visit(BoundConstructionStatementNode& node) override;
     void Visit(BoundExpressionStatementNode& node) override;

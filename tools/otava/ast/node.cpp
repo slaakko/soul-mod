@@ -133,10 +133,6 @@ Node::Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_)
 
 Node::~Node()
 {
-    if (kind == NodeKind::identifierNode)
-    {
-        int x = 0;
-    }
     if (nodeDestroyedFunc)
     {
         nodeDestroyedFunc(this);

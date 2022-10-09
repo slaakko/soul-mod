@@ -9,7 +9,9 @@ module;
 module otava.symbols.value;
 
 import util.unicode;
+import otava.symbols.exception;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.emitter;
 import otava.symbols.enums;
 import otava.symbols.modules;
 import otava.symbols.symbol.table;
@@ -169,6 +171,11 @@ ValueKind Value::GetValueKind() const
     return ValueKind::none;
 }
 
+otava::intermediate::Value* Value::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    ThrowException("cannot evaluate statically", sourcePos, context);
+}
+
 BoolValue::BoolValue(TypeSymbol* type_) : Value(SymbolKind::boolValueSymbol, std::u32string(U"false"), type_), value(false)
 {
 }
@@ -215,6 +222,11 @@ void BoolValue::Read(Reader& reader)
 void BoolValue::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+otava::intermediate::Value* BoolValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return emitter.EmitBool(value);
 }
 
 IntegerValue::IntegerValue(TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, std::u32string(U"0"), type_), value(0)
@@ -264,6 +276,11 @@ void IntegerValue::Read(Reader& reader)
 void IntegerValue::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+otava::intermediate::Value* IntegerValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return emitter.EmitLong(value);
 }
 
 FloatingValue::FloatingValue(TypeSymbol* type_) : Value(SymbolKind::floatingValueSymbol, std::u32string(U"0.0"), type_), value(0.0)
@@ -416,6 +433,11 @@ void CharValue::Read(Reader& reader)
 void CharValue::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+otava::intermediate::Value* CharValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return emitter.EmitInt(static_cast<int32_t>(value));
 }
 
 SymbolValue::SymbolValue() : Value(SymbolKind::symbolValueSymbol, std::u32string(), nullptr), symbol(nullptr)

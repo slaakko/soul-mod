@@ -11,6 +11,7 @@ import otava.symbols.block;
 import otava.symbols.classes;
 import otava.symbols.concepts;
 import otava.symbols.declaration;
+import otava.symbols.emitter;
 import otava.symbols.enums;
 import otava.symbols.exception;
 import otava.symbols.function.symbol;
@@ -406,6 +407,11 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         }
     }
     return SymbolGroupKind::none;
+}
+
+void* Symbol::IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return emitter.GetIrObject(this);
 }
 
 } // namespace otava::symbols

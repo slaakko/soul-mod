@@ -35,7 +35,9 @@ public:
     void Import(const ConversionTable& that);
     void AddConversion(FunctionSymbol* conversion);
     FunctionSymbol* GetConversion(TypeSymbol* paramType, TypeSymbol* argType) const;
+    void Make();
 private:
+    std::vector<FunctionSymbol*> conversionFunctions;
     std::map<ConversionTableEntry, FunctionSymbol*, ConversionTableEntryLess> conversionMap;
 };
 

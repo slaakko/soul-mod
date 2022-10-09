@@ -51,7 +51,6 @@ class BoundFunctionNode : public BoundNode
 {
 public:
     BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos_);
-    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
     void Accept(BoundTreeVisitor& visitor) override;
     void SetBody(BoundCompoundStatementNode* body_);
     const BoundCompoundStatementNode* Body() const { return body.get(); }
@@ -60,22 +59,28 @@ public:
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCompoundStatementNode> body;
-    soul::ast::SourcePos sourcePos;
 };
 
 class BoundStatementNode : public BoundNode
 {
 public:
-    BoundStatementNode(BoundNodeKind kind_);
+    BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_);
+    virtual bool EndsWithTerminator() const { return IsTerminator(); }
+    virtual bool IsTerminator() const { return false; }
+    bool Generated() const { return generated; }
+    void SetGenerated() { generated = true; }
+private:
+    bool generated;
 };
 
 class BoundCompoundStatementNode : public BoundStatementNode
 {
 public:
-    BoundCompoundStatementNode();
+    BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void AddStatement(BoundStatementNode* statement);
     const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
+    bool EndsWithTerminator() const override;
 private:
     std::vector<std::unique_ptr<BoundStatementNode>> statements;
 };
@@ -83,7 +88,7 @@ private:
 class BoundIfStatementNode : public BoundStatementNode
 {
 public:
-    BoundIfStatementNode();
+    BoundIfStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetInitStatement(BoundStatementNode* initStatement_);
     BoundStatementNode* InitStatement() const { return initStatement.get(); }
@@ -103,7 +108,7 @@ private:
 class BoundSwitchStatementNode : public BoundStatementNode
 {
 public:
-    BoundSwitchStatementNode();
+    BoundSwitchStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetInitStatement(BoundStatementNode* initStatement_);
     BoundStatementNode* InitStatement() const { return initStatement.get(); }
@@ -120,7 +125,7 @@ private:
 class BoundCaseStatementNode : public BoundStatementNode
 {
 public:
-    BoundCaseStatementNode();
+    BoundCaseStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* CaseExpr() const { return caseExpr.get(); }
     void SetCaseExpr(BoundExpressionNode* caseExpr_);
@@ -134,7 +139,7 @@ private:
 class BoundDefaultStatementNode : public BoundStatementNode
 {
 public:
-    BoundDefaultStatementNode();
+    BoundDefaultStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     BoundStatementNode* Statement() const { return stmt.get(); }
     void SetStatement(BoundStatementNode* stmt_);
@@ -145,7 +150,7 @@ private:
 class BoundWhileStatementNode : public BoundStatementNode
 {
 public:
-    BoundWhileStatementNode();
+    BoundWhileStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetCondition(BoundExpressionNode* condition_);
     BoundExpressionNode* GetCondition() const { return condition.get(); }
@@ -159,7 +164,7 @@ private:
 class BoundDoStatementNode : public BoundStatementNode
 {
 public:
-    BoundDoStatementNode();
+    BoundDoStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetExpr(BoundExpressionNode* condition_);
     BoundExpressionNode* GetExpr() const { return expr.get(); }
@@ -173,7 +178,7 @@ private:
 class BoundForStatementNode : public BoundStatementNode
 {
 public:
-    BoundForStatementNode();
+    BoundForStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetInitStatement(BoundStatementNode* initStatement_);
     BoundStatementNode* InitStatement() const { return initStatement.get(); }
@@ -190,42 +195,58 @@ private:
     std::unique_ptr<BoundStatementNode> statement;
 };
 
-class BoundBreakStatementNode : public BoundStatementNode
+class BoundSequenceStatementNode : public BoundStatementNode
 {
 public:
-    BoundBreakStatementNode();
+    BoundSequenceStatementNode(const soul::ast::SourcePos& sourcePos_, BoundStatementNode* first_, BoundStatementNode* second_);
     void Accept(BoundTreeVisitor& visitor) override;
-};
-
-class BoundContinueStatementNode : public BoundStatementNode
-{
-public:
-    BoundContinueStatementNode();
-    void Accept(BoundTreeVisitor& visitor) override;
+    BoundStatementNode* First() const { return first.get(); }
+    BoundStatementNode* Second() const { return second.get(); }
+private:
+    std::unique_ptr<BoundStatementNode> first;
+    std::unique_ptr<BoundStatementNode> second;
 };
 
 class BoundReturnStatementNode : public BoundStatementNode
 {
 public:
-    BoundReturnStatementNode();
+    BoundReturnStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetExpr(BoundExpressionNode* expr_);
     BoundExpressionNode* GetExpr() const { return expr.get(); }
+    bool IsTerminator() const override { return true; }
 private:
     std::unique_ptr<BoundExpressionNode> expr;
+};
+
+class BoundBreakStatementNode : public BoundStatementNode
+{
+public:
+    BoundBreakStatementNode(const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    bool IsTerminator() const override { return true; }
+};
+
+class BoundContinueStatementNode : public BoundStatementNode
+{
+public:
+    BoundContinueStatementNode(const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    bool IsTerminator() const override { return true; }
 };
 
 class BoundGotoStatementNode : public BoundStatementNode
 {
 public:
-    BoundGotoStatementNode();
+    BoundGotoStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    bool IsTerminator() const override { return true; }
 };
 
 class BoundConstructionStatementNode : public BoundStatementNode
 {
 public:
-    BoundConstructionStatementNode(VariableSymbol* variable_, BoundExpressionNode* initializer_);
+    BoundConstructionStatementNode(const soul::ast::SourcePos& sourcePos_, VariableSymbol* variable_, BoundExpressionNode* initializer_);
     void Accept(BoundTreeVisitor& visitor) override;
     VariableSymbol* Variable() const { return variable; }
     BoundExpressionNode* Initializer() const { return initializer.get(); }
@@ -237,7 +258,7 @@ private:
 class BoundExpressionStatementNode : public BoundStatementNode
 {
 public:
-    BoundExpressionStatementNode();
+    BoundExpressionStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetExpr(BoundExpressionNode* expr_);
     BoundExpressionNode* GetExpr() const { return expr.get(); }
@@ -248,8 +269,9 @@ private:
 class BoundLiteralNode : public BoundExpressionNode
 {
 public:
-    BoundLiteralNode(Value* value_);
+    BoundLiteralNode(Value* value_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return true; }
     Value* GetValue() const { return value; }
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
@@ -259,9 +281,11 @@ private:
 class BoundVariableNode : public BoundExpressionNode
 {
 public:
-    BoundVariableNode(VariableSymbol* variable_);
+    BoundVariableNode(VariableSymbol* variable_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return true; }
     VariableSymbol* GetVariable() const { return variable; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     VariableSymbol* variable;
 };
@@ -269,9 +293,11 @@ private:
 class BoundParameterNode : public BoundExpressionNode
 {
 public:
-    BoundParameterNode(ParameterSymbol* parameter_);
+    BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return true; }
     ParameterSymbol* GetParameter() const { return parameter; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     ParameterSymbol* parameter;
 };
@@ -279,9 +305,11 @@ private:
 class BoundEnumConstant : public BoundExpressionNode
 {
 public:
-    BoundEnumConstant(EnumConstantSymbol* enumConstant_);
+    BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return true; }
     EnumConstantSymbol* EnumConstant() const { return enumConstant; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     EnumConstantSymbol* enumConstant;
 };
@@ -289,7 +317,7 @@ private:
 class BoundFunctionGroupNode : public BoundExpressionNode
 {
 public:
-    BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_);
+    BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     FunctionGroupSymbol* GetFunctionGroupSymbol() const { return functionGroupSymbol; }
 private:
@@ -299,14 +327,14 @@ private:
 class BoundTypeNode : public BoundExpressionNode
 {
 public:
-    BoundTypeNode(TypeSymbol* type_);
+    BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
 };
 
 class BoundMemberExprNode : public BoundExpressionNode
 {
 public:
-    BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_);
+    BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* Subject() const { return subject.get(); }
     BoundExpressionNode* Member() const { return member.get(); }
@@ -318,20 +346,33 @@ private:
 class BoundFunctionCallNode : public BoundExpressionNode
 {
 public:
-    BoundFunctionCallNode(FunctionSymbol* functionSymbol_);
+    BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override;
     FunctionSymbol* GetFunctionSymbol() const { return functionSymbol; }
     void AddArgument(BoundExpressionNode* arg);
     const std::vector<std::unique_ptr<BoundExpressionNode>>& Args() const { return args; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     FunctionSymbol* functionSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
 };
 
+class BoundConversionNode : public BoundExpressionNode
+{
+public:
+    BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    std::unique_ptr<BoundExpressionNode> subject;
+    FunctionSymbol* conversionFunction;
+};
+
 class BoundErrorNode : public BoundExpressionNode
 {
 public:
-    BoundErrorNode();
+    BoundErrorNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
 };
 

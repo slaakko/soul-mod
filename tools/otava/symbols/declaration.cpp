@@ -576,10 +576,6 @@ Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context
 
 void ProcessMemberDeclaration(otava::ast::Node* node, Context* context)
 {
-    if (node->GetSourcePos().file == 16 && node->GetSourcePos().line == 128)
-    {
-        int x = 0;
-    }
     ProcessSimpleDeclaration(node, context);
 }
 

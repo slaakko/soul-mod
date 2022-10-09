@@ -16,33 +16,6 @@ import util.unicode;
 
 namespace soul::cpp20::symbols {
 
-class GroupNameResolver : public DefaultBoundTreeVisitor
-{
-public:
-    void Visit(BoundFunctionGroupNode& node) override;
-    void Visit(BoundTypeNode& node) override;
-    const std::u32string& GetGroupName() const { return groupName; }
-private:
-    std::u32string groupName;
-};
-
-void GroupNameResolver::Visit(BoundFunctionGroupNode& node)
-{
-    groupName = node.GetFunctionGroupSymbol()->Name();
-}
-
-void GroupNameResolver::Visit(BoundTypeNode& node)
-{
-    groupName = U"@conversion";
-}
-
-std::u32string GetGroupName(BoundExpressionNode* node)
-{
-    GroupNameResolver resolver;
-    node->Accept(resolver);
-    return resolver.GetGroupName();
-}
-
 FunctionSymbol* SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context)
 {

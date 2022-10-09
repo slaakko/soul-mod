@@ -22,60 +22,45 @@ enum class ConversionKind : int32_t
 
 struct FundamentalTypeSignExtension
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-    {
-        return emitter.EmitSignExtend(value, destType);
-    }
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
 };
 
 struct FundamentalTypeZeroExtension
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-    {
-        return emitter.EmitZeroExtend(value, destType);
-    }
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
 };
 
 struct FundamentalTypeTruncate
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-    {
-        return emitter.EmitTruncate(value, destType);
-    }
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
 };
 
 struct FundamentalTypeBitcast
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-    {
-        return emitter.EmitBitcast(value, destType);
-    }
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
 };
 
 struct FundamentalTypeIntToFloat
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-    {
-        return emitter.EmitIntToFloat(value, destType);
-    }
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
 };
 
 struct FundamentalTypeFloatToInt
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-    {
-        return emitter.EmitFloatToInt(value, destType);
-    }
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
 };
 
 template<class Op>
 struct FundamentalTypeConversion : public FunctionSymbol
 {
-    FundamentalTypeConversion(SymbolKind kind_) : FunctionSymbol(kind_, U"@conversion")
+    FundamentalTypeConversion(SymbolKind kind_) : 
+        FunctionSymbol(kind_, U"@conversion"), distance(0), conversionKind(ConversionKind::implicitConversion), paramType(nullptr), argType(nullptr), 
+        paramTypeId(util::nil_uuid()), argTypeId(util::nil_uuid())
     {
     }
     FundamentalTypeConversion(SymbolKind kind_, int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) :
-        FunctionSymbol(kind_, U"@conversion"), distance(distance_), conversionKind(conversionKind_), paramType(paramType_), argType(argType_)
+        FunctionSymbol(kind_, U"@conversion"), distance(distance_), conversionKind(conversionKind_), paramType(paramType_), argType(argType_),
+        paramTypeId(util::nil_uuid()), argTypeId(util::nil_uuid())
     {
         SetConversion();
         SetAccess(Access::public_);
@@ -124,7 +109,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        emitter.Stack().Push(Op::Generate(emitter, value, paramType->IrType(emitter, sourcePos, context)));
+        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(paramType->IrType(emitter, sourcePos, context))));
     }
     int32_t distance;
     ConversionKind conversionKind;

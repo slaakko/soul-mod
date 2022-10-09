@@ -17,16 +17,31 @@ void ConversionTable::Import(const ConversionTable& that)
 {
     for (const auto& p : that.conversionMap)
     {
-        const ConversionTableEntry& entry = p.first;
+        ConversionTableEntry entry = p.first;
         conversionMap[entry] = p.second;
     }
 }
 
 void ConversionTable::AddConversion(FunctionSymbol* conversion)
 {
-    ConversionTableEntry entry(conversion->ConversionParamType(), conversion->ConversionArgType());
-    conversionMap.erase(entry);
-    conversionMap.insert(std::make_pair(entry, conversion));
+    if (conversion->ConversionParamType() && conversion->ConversionArgType())
+    {
+        ConversionTableEntry entry(conversion->ConversionParamType(), conversion->ConversionArgType());
+        conversionMap[entry] = conversion;
+    }
+    else
+    {
+        conversionFunctions.push_back(conversion);
+    }
+}
+
+void ConversionTable::Make()
+{
+    for (const auto& conversion : conversionFunctions)
+    {
+        ConversionTableEntry entry(conversion->ConversionParamType(), conversion->ConversionArgType());
+        conversionMap[entry] = conversion;
+    }
 }
 
 FunctionSymbol* ConversionTable::GetConversion(TypeSymbol* paramType, TypeSymbol* argType) const

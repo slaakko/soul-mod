@@ -6,7 +6,6 @@
 export module otava.symbols.function.symbol;
 
 import std.core;
-import otava.symbols.emitter;
 import otava.symbols.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.container.symbol;

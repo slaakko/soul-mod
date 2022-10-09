@@ -99,6 +99,12 @@ void DefaultBoundTreeVisitor::Visit(BoundForStatementNode& node)
     node.Statement()->Accept(*this);
 }
 
+void DefaultBoundTreeVisitor::Visit(BoundSequenceStatementNode& node)
+{
+    node.First()->Accept(*this);
+    node.Second()->Accept(*this);
+}
+
 void DefaultBoundTreeVisitor::Visit(BoundReturnStatementNode& node)
 {
     if (node.GetExpr())

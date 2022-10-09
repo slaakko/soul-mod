@@ -36,6 +36,10 @@ public:
         std::swap(s[s.size() - 3], s[s.size() - 2]);
         std::swap(s.back(), s[s.size() - 2]);
     }
+    bool IsEmpty() const
+    {
+        return s.empty();
+    }
 private:
     std::vector<otava::intermediate::Value*> s;
 };

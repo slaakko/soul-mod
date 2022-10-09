@@ -6,7 +6,7 @@
 module otava.symbols.overload.resolution;
 
 import otava.symbols.bound.tree;
-import otava.symbols.bound.tree.visitor;
+import otava.symbols.bound.node;
 import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
@@ -19,32 +19,24 @@ import util.unicode;
 
 namespace otava::symbols {
 
-class GroupNameResolver : public DefaultBoundTreeVisitor
+std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMatch& functionMatch, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
+    const soul::ast::SourcePos& sourcePos)
 {
-public:
-    void Visit(BoundFunctionGroupNode& node) override;
-    void Visit(BoundTypeNode& node) override;
-    const std::u32string& GetGroupName() const { return groupName; }
-private:
-    std::u32string groupName;
-};
-
-void GroupNameResolver::Visit(BoundFunctionGroupNode& node)
-{
-    groupName = node.GetFunctionGroupSymbol()->Name();
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall(new BoundFunctionCallNode(functionMatch.function, sourcePos));
+    int n = args.size();
+    for (int i = 0; i < n; ++i)
+    {
+        BoundExpressionNode* arg = args[i].release();
+        const ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
+        if (argumentMatch.conversionFun)
+        {
+            arg = new BoundConversionNode(arg, argumentMatch.conversionFun, sourcePos);
+        }
+        boundFunctionCall->AddArgument(arg);
+    }
+    return boundFunctionCall;
 }
 
-void GroupNameResolver::Visit(BoundTypeNode& node)
-{
-    groupName = U"@conversion";
-}
-
-std::u32string GetGroupName(BoundExpressionNode* node)
-{
-    GroupNameResolver resolver;
-    node->Accept(resolver);
-    return resolver.GetGroupName();
-}
 bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, ArgumentMatch& argumentMatch)
 {
     return false;
@@ -92,7 +84,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
     return true;
 }
 
-FunctionSymbol* SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
+FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::vector<FunctionMatch> functionMatches;
@@ -106,14 +98,14 @@ FunctionSymbol* SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& v
     }
     if (functionMatches.size() == 1)
     {
-        return functionMatches.front().function;
+        return functionMatches.front();
     }
     else if (functionMatches.size() > 1)
     {
         std::sort(functionMatches.begin(), functionMatches.end(), BetterFunctionMatch());
         if (BetterFunctionMatch()(functionMatches[0], functionMatches[1]))
         {
-            return functionMatches.front().function;
+            return functionMatches.front();
         }
         else
         {
@@ -136,20 +128,9 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         return operationFunctionCall;
     }
     context->GetSymbolTable()->CollectViableFunctions(scope, groupName, args.size(), viableFunctions, context);
-    FunctionSymbol* bestMatch = SelectBestMatchingFunction(viableFunctions, args, sourcePos, context);
-    if (bestMatch)
-    {
-        std::unique_ptr<BoundFunctionCallNode> boundFunctionCall(new BoundFunctionCallNode(bestMatch));
-        for (auto& arg : args)
-        {
-            boundFunctionCall->AddArgument(arg.release());
-        }
-        return boundFunctionCall;
-    }
-    else
-    {
-        return std::unique_ptr<BoundFunctionCallNode>(); // TODO
-    }
+    FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, sourcePos, context);
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(bestMatch, args, sourcePos);
+    return boundFunctionCall;
 }
 
 } // namespace otava::symbols

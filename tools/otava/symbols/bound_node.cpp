@@ -12,7 +12,7 @@ import otava.symbols.type.resolver;
 
 namespace otava::symbols {
 
-BoundNode::BoundNode(BoundNodeKind kind_) : kind(kind_)
+BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_)
 {
 }
 
@@ -20,7 +20,7 @@ BoundNode::~BoundNode()
 {
 }
 
-BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, TypeSymbol* type_) : BoundNode(kind_), type(type_)
+BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) : BoundNode(kind_, sourcePos_), type(type_)
 {
 }
 

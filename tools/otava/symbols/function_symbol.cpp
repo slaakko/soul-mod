@@ -10,6 +10,7 @@ module otava.symbols.function.symbol;
 
 import otava.symbols.modules;
 import otava.symbols.classes;
+import otava.symbols.emitter;
 import otava.symbols.type.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.reader;
@@ -213,10 +214,6 @@ void FunctionSymbol::Write(Writer& writer)
 
 void FunctionSymbol::Read(Reader& reader)
 {
-    if (Name() == U"operator+")
-    {
-        int x = 0;
-    }
     ContainerSymbol::Read(reader);
     kind = static_cast<FunctionKind>(reader.GetBinaryStreamReader().ReadByte());
     qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());

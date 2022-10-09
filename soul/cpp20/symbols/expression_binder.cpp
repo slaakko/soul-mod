@@ -256,10 +256,6 @@ void ExpressionBinder::Visit(soul::cpp20::ast::UnaryExprNode& node)
 
 BoundExpressionNode* BindExpression(soul::cpp20::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope)
 {
-    if (node->GetSourcePos().file == 41 && node->GetSourcePos().line == 61)
-    {
-        int x = 0;
-    }
     ExpressionBinder binder(context, symbolGroups);
     node->Accept(binder);
     scope = binder.GetScope();

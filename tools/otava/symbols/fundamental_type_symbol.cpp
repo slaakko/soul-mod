@@ -7,11 +7,13 @@ module otava.symbols.fundamental.type.symbol;
 
 import util.unicode;
 import otava.symbols.context;
+import otava.symbols.emitter;
 import otava.symbols.exception;
 import otava.symbols.symbol.table;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
+import otava.intermediate.type;
 
 namespace otava::symbols {
 

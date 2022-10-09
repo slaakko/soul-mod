@@ -6,11 +6,8 @@
 export module otava.symbols.emitter;
 
 import std.core;
-import otava.intermediate.context;
-import otava.intermediate.data;
-import otava.intermediate.type;
-import otava.intermediate.function;
 import otava.symbols.ir_value_stack;
+import otava.intermediate.context;
 import util.uuid;
 
 export namespace otava::symbols {
@@ -21,10 +18,12 @@ public:
     Emitter();
     ~Emitter();
     void SetFilePath(const std::string& filePath);
-    const std::string& FilePath() const { return context->FilePath(); }
+    const std::string& FilePath() const;
     void SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath);
     void Emit();
     void CreateFunction(const std::string& name, otava::intermediate::Type* type, bool once);
+    otava::intermediate::BasicBlock* CreateBasicBlock();
+    void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
     otava::intermediate::Type* GetVoidType();
     otava::intermediate::Type* GetBoolType();
@@ -83,6 +82,7 @@ public:
     otava::intermediate::Value* EmitPtrDiff(otava::intermediate::Value* leftPtr, otava::intermediate::Value* rightPtr);
     otava::intermediate::Value* EmitCall(otava::intermediate::Value* function);
     otava::intermediate::Value* EmitRet(otava::intermediate::Value* value);
+    otava::intermediate::Value* EmitRetVoid();
     void EmitJump(otava::intermediate::BasicBlock* dest);
     void EmitBranch(otava::intermediate::Value* cond, otava::intermediate::BasicBlock* trueDest, otava::intermediate::BasicBlock* falseDest);
     otava::intermediate::SwitchInstruction* EmitSwitch(otava::intermediate::Value* cond, otava::intermediate::BasicBlock* defaultDest);
@@ -90,11 +90,14 @@ public:
     void EmitNop();
     otava::intermediate::Type* GetType(const util::uuid& id);
     void SetType(const util::uuid& id, otava::intermediate::Type* type);
+    otava::intermediate::Value* GetIrObject(void* symbol) const;
+    void SetIrObject(void* symbol, otava::intermediate::Value* irObject);
     IrValueStack& Stack() { return *stack; }
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;
     std::map<util::uuid, otava::intermediate::Type*> typeMap;
+    std::map<void*, otava::intermediate::Value*> irObjectMap;
 };
 
 } // namespace otava::symbols

@@ -45,10 +45,10 @@ void Context::SetBoundFunction(BoundFunctionNode* boundFunction_)
     boundFunction = boundFunction_;
 }
 
-void Context::BeginCompoundStatement()
+void Context::BeginCompoundStatement(const soul::ast::SourcePos& sourcePos)
 {
     compoundStatementStack.push(currentCompoundStatement);
-    currentCompoundStatement = new BoundCompoundStatementNode();
+    currentCompoundStatement = new BoundCompoundStatementNode(sourcePos);
 }
 
 void Context::EndCompoundStatement()

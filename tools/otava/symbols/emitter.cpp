@@ -13,6 +13,8 @@ import otava.intermediate.metadata;
 import otava.intermediate.code;
 import otava.intermediate.compile.unit;
 import otava.intermediate.instruction;
+import otava.intermediate.function;
+import otava.intermediate.type;
 
 namespace otava::symbols {
 
@@ -31,6 +33,11 @@ void Emitter::SetFilePath(const std::string& filePath)
     context->SetFilePath(filePath);
 }
 
+const std::string& Emitter::FilePath() const
+{
+    return context->FilePath();
+}
+
 void Emitter::Emit()
 {
     context->WriteFile();
@@ -45,6 +52,16 @@ void Emitter::CreateFunction(const std::string& name, otava::intermediate::Type*
 {
     otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::SourcePos(), type, name, once, nullptr);
     context->SetCurrentFunction(function);
+}
+
+otava::intermediate::BasicBlock* Emitter::CreateBasicBlock()
+{
+    return context->CurrentFunction()->CreateBasicBlock();
+}
+
+void Emitter::SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb)
+{
+    context->SetCurrentBasicBlock(bb);
 }
 
 otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
@@ -350,6 +367,11 @@ otava::intermediate::Value* Emitter::EmitRet(otava::intermediate::Value* value)
     return context->CreateRet(value);
 }
 
+otava::intermediate::Value* Emitter::EmitRetVoid()
+{
+    return context->CreateRet(nullptr);
+}
+
 void Emitter::EmitJump(otava::intermediate::BasicBlock* dest)
 {
     context->CreateJump(dest);
@@ -391,6 +413,24 @@ otava::intermediate::Type* Emitter::GetType(const util::uuid& id)
 void Emitter::SetType(const util::uuid& id, otava::intermediate::Type* type)
 {
     typeMap[id] = type;
+}
+
+otava::intermediate::Value* Emitter::GetIrObject(void* symbol) const
+{
+    auto it = irObjectMap.find(symbol);
+    if (it != irObjectMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+void Emitter::SetIrObject(void* symbol, otava::intermediate::Value* irObject)
+{
+    irObjectMap[symbol] = irObject;
 }
 
 } // namespace otava::symbols

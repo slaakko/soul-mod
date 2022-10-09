@@ -7,6 +7,7 @@ export module otava.symbols.context;
 
 import std.core;
 import soul.lexer.base;
+import soul.ast.source.pos;
 import otava.ast.node;
 
 export namespace otava::symbols {
@@ -67,7 +68,7 @@ public:
     BoundFunctionNode* GetBoundFunction() const { return boundFunction; }
     void SetBoundFunction(BoundFunctionNode* boundFunction_);
     BoundCompoundStatementNode* GetCurrentCompoundStatement() const { return currentCompoundStatement; }
-    void BeginCompoundStatement();
+    void BeginCompoundStatement(const soul::ast::SourcePos& sourcePos);
     void EndCompoundStatement();
     EvaluationContext* GetEvaluationContext();
     std::string FileName() const;

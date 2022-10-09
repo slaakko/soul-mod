@@ -8,6 +8,7 @@ module otava.symbols.expression.binder;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.bound.tree;
+import otava.symbols.bound.tree.visitor;
 import otava.symbols.class_group.symbol;
 import otava.symbols.classes;
 import otava.symbols.context;
@@ -45,7 +46,6 @@ private:
     std::map<otava::ast::NodeKind, std::u32string> operatorGroupNameMap;
 };
 
-
 OperatorGroupNameMap& OperatorGroupNameMap::Instance()
 {
     static OperatorGroupNameMap instance;
@@ -81,6 +81,32 @@ const std::u32string& OperatorGroupNameMap::GetGroupName(otava::ast::NodeKind no
     {
         ThrowException("group name for node kind '" + otava::ast::NodeKindStr(nodeKind) + "' not found", sourcePos, context);
     }
+}
+
+class GroupNameResolver : public DefaultBoundTreeVisitor
+{
+public:
+    GroupNameResolver();
+    const std::u32string& GetGroupName() const { return groupName; }
+    void Visit(BoundFunctionGroupNode& node) override;
+private:
+    std::u32string groupName;
+};
+
+GroupNameResolver::GroupNameResolver()
+{
+}
+
+void GroupNameResolver::Visit(BoundFunctionGroupNode& node)
+{
+    groupName = node.GetFunctionGroupSymbol()->Name();
+}
+
+std::u32string GetGroupName(BoundNode* node)
+{
+    GroupNameResolver groupNameResolver;
+    node->Accept(groupNameResolver);
+    return groupNameResolver.GetGroupName();
 }
 
 class ExpressionBinder : public otava::ast::DefaultVisitor
@@ -120,37 +146,37 @@ ExpressionBinder::ExpressionBinder(Context* context_, SymbolGroupKind symbolGrou
 
 void ExpressionBinder::Visit(otava::ast::IntegerLiteralNode& node) 
 {
-    boundExpression = new BoundLiteralNode(Evaluate(&node, context));
+    boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::FloatingLiteralNode& node)
 {
-    boundExpression = new BoundLiteralNode(Evaluate(&node, context));
+    boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::CharacterLiteralNode& node)
 {
-    boundExpression = new BoundLiteralNode(Evaluate(&node, context));
+    boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::StringLiteralNode& node)
 {
-    boundExpression = new BoundLiteralNode(Evaluate(&node, context));
+    boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::RawStringLiteralNode& node)
 {
-    boundExpression = new BoundLiteralNode(Evaluate(&node, context));
+    boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::BooleanLiteralNode& node)
 {
-    boundExpression = new BoundLiteralNode(Evaluate(&node, context));
+    boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::NullPtrLiteralNode& node)
 {
-    boundExpression = new BoundLiteralNode(Evaluate(&node, context));
+    boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
@@ -167,7 +193,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 if (sym->IsVariableSymbol())
                 {
                     VariableSymbol* variable = static_cast<VariableSymbol*>(sym);
-                    boundExpression = new BoundVariableNode(variable);
+                    boundExpression = new BoundVariableNode(variable, node.GetSourcePos());
                 }
                 break;
             }
@@ -178,14 +204,14 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 if (sym->IsClassTypeSymbol())
                 {
                     ClassTypeSymbol* cls = static_cast<ClassTypeSymbol*>(sym);
-                    boundExpression = new BoundTypeNode(cls);
+                    boundExpression = new BoundTypeNode(cls, node.GetSourcePos());
                 }
                 break;
             }
             case SymbolKind::templateParameterSymbol:
             {
                 TypeSymbol* type = static_cast<TypeSymbol*>(symbol);
-                boundExpression = new BoundTypeNode(type);
+                boundExpression = new BoundTypeNode(type, node.GetSourcePos());
                 break;
             }
             case SymbolKind::aliasGroupSymbol:
@@ -201,32 +227,32 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                         aliasType = static_cast<AliasTypeSymbol*>(referredType);
                         referredType = aliasType->ReferredType();
                     }
-                    boundExpression = new BoundTypeNode(referredType);
+                    boundExpression = new BoundTypeNode(referredType, node.GetSourcePos());
                 }
                 break;
             }
             case SymbolKind::enumTypeSymbol:
             {
                 EnumeratedTypeSymbol* enm = static_cast<EnumeratedTypeSymbol*>(symbol);
-                boundExpression = new BoundTypeNode(enm);
+                boundExpression = new BoundTypeNode(enm, node.GetSourcePos());
                 break;
             }
             case SymbolKind::enumConstantSymbol:
             {
                 EnumConstantSymbol* enumConstant = static_cast<EnumConstantSymbol*>(symbol);
-                boundExpression = new BoundEnumConstant(enumConstant);
+                boundExpression = new BoundEnumConstant(enumConstant, node.GetSourcePos());
                 break;
             }
             case SymbolKind::parameterSymbol:
             {
                 ParameterSymbol* parameter = static_cast<ParameterSymbol*>(symbol);
-                boundExpression = new BoundParameterNode(parameter);
+                boundExpression = new BoundParameterNode(parameter, node.GetSourcePos());
                 break;
             }
             case SymbolKind::functionGroupSymbol:
             {
                 FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
-                boundExpression = new BoundFunctionGroupNode(functionGroupSymbol);
+                boundExpression = new BoundFunctionGroupNode(functionGroupSymbol, node.GetSourcePos());
                 break;
             }
             default:
@@ -251,7 +277,7 @@ void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
 {
     context->GetSymbolTable()->BeginScope(scope);
     TypeSymbol* type = ResolveType(&node, DeclarationFlags::none, context);
-    boundExpression = new BoundTypeNode(type);
+    boundExpression = new BoundTypeNode(type, node.GetSourcePos());
     context->GetSymbolTable()->EndScope();
 }
 
@@ -264,7 +290,7 @@ void ExpressionBinder::Visit(otava::ast::MemberExprNode& node)
         scope = memberScope;
     }
     node.Id()->Accept(*this);
-    boundExpression = new BoundMemberExprNode(subject.release(), boundExpression);
+    boundExpression = new BoundMemberExprNode(subject.release(), boundExpression, node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
@@ -281,13 +307,13 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             std::unique_ptr<BoundExpressionNode> arg(BindExpression(item, context));
             args.push_back(std::move(arg));
         }
-        std::u32string groupName = U"not implemented";
+        std::u32string groupName = GetGroupName(subject.get());
         std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, args, node.GetSourcePos(), context);
         boundExpression = functionCall.release();
     }
     else
     {
-        boundExpression = new BoundErrorNode();
+        boundExpression = new BoundErrorNode(node.GetSourcePos());
     }
 }
 
@@ -310,10 +336,6 @@ void ExpressionBinder::Visit(otava::ast::UnaryExprNode& node)
 
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope)
 {
-    if (node->GetSourcePos().file == 41 && node->GetSourcePos().line == 61)
-    {
-        int x = 0;
-    }
     ExpressionBinder binder(context, symbolGroups);
     node->Accept(binder);
     scope = binder.GetScope();

@@ -10,6 +10,7 @@ module otava.symbols.enums;
 import util;
 import otava.ast;
 import otava.symbols.context;
+import otava.symbols.emitter;
 import otava.symbols.exception;
 import otava.symbols.modules;
 import otava.symbols.symbol.table;

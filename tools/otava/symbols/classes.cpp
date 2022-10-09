@@ -11,6 +11,7 @@ module otava.symbols.classes;
 import otava.ast;
 import otava.symbols.class_group.symbol;
 import otava.symbols.context;
+import otava.symbols.emitter;
 import otava.symbols.exception;
 import otava.symbols.modules;
 import otava.symbols.symbol.table;

@@ -7,10 +7,11 @@ export module otava.symbols.type.symbol;
 
 import std.core;
 import otava.symbols.container.symbol;
-import otava.symbols.emitter;
 import otava.intermediate.type;
 
 export namespace otava::symbols {
+
+class Emitter;
 
 class TypeSymbol : public ContainerSymbol
 {
@@ -23,6 +24,7 @@ public:
     bool IsLValueRefType() const;
     bool IsRValueRefType() const;
     virtual TypeSymbol* PlainType() { return this; }
+    virtual bool IsVoidType() const { return false; }
     TypeSymbol* AddConst();
     TypeSymbol* RemoveConst();
     TypeSymbol* AddPointer();

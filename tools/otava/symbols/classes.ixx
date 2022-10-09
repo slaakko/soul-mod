@@ -59,7 +59,7 @@ private:
     int level;
     std::vector<VariableSymbol*> memberVariables;
     std::vector<FunctionSymbol*> memberFunctions;
-    otava::intermediate::Type* irType;
+    void* irType;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

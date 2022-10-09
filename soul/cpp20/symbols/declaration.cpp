@@ -576,10 +576,6 @@ Declaration ProcessParameterDeclaration(soul::cpp20::ast::Node* node, Context* c
 
 void ProcessMemberDeclaration(soul::cpp20::ast::Node* node, Context* context)
 {
-    if (node->GetSourcePos().file == 16 && node->GetSourcePos().line == 128)
-    {
-        int x = 0;
-    }
     ProcessSimpleDeclaration(node, context);
 }
 

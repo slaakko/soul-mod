@@ -13,6 +13,7 @@ import otava.symbols.scope;
 export namespace otava::symbols {
 
 class Context;
+class Emitter;
 class Reader;
 class Writer;
 class Visitor;
@@ -164,6 +165,7 @@ public:
     bool IsValueSymbol() const;
     bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
     SymbolGroupKind GetSymbolGroupKind() const;
+    void* IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
 private:
     SymbolKind kind;
     util::uuid id;

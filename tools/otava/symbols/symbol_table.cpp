@@ -163,10 +163,10 @@ void SymbolTable::Import(const SymbolTable& that)
     ImportForwardDeclarations(that);
     ImportSpecifierMap(that);
     ImportClasses(that);
-    conversionTable->Import(that.GetConversionTable());
     typenameConstraintSymbol = that.typenameConstraintSymbol;
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
+    conversionTable->Import(that.GetConversionTable());
 }
 
 void SymbolTable::ImportSpecializations()
@@ -473,6 +473,7 @@ void SymbolTable::Resolve()
         SpecializationSymbol* s = static_cast<SpecializationSymbol*>(specialization.get());
         s->Resolve(*this);
     }
+    conversionTable->Make();
 }
 
 Symbol* SymbolTable::Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context) 

@@ -9,6 +9,36 @@ import otava.symbols.bound.tree.util;
 
 namespace otava::symbols {
 
+otava::intermediate::Value* FundamentalTypeSignExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
+{
+    return emitter.EmitSignExtend(value, destType);
+}
+
+otava::intermediate::Value* FundamentalTypeZeroExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
+{
+    return emitter.EmitZeroExtend(value, destType);
+}
+
+otava::intermediate::Value* FundamentalTypeTruncate::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
+{
+    return emitter.EmitTruncate(value, destType);
+}
+
+otava::intermediate::Value* FundamentalTypeBitcast::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
+{
+    return emitter.EmitBitcast(value, destType);
+}
+
+otava::intermediate::Value* FundamentalTypeIntToFloat::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
+{
+    return emitter.EmitIntToFloat(value, destType);
+}
+
+otava::intermediate::Value* FundamentalTypeFloatToInt::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
+{
+    return emitter.EmitFloatToInt(value, destType);
+}
+
 FundamentalTypeSignExtendConversion::FundamentalTypeSignExtendConversion() : FundamentalTypeConversion<FundamentalTypeSignExtension>(SymbolKind::fundamentalTypeSignExtension)
 {
 }

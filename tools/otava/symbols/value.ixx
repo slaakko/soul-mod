@@ -6,11 +6,13 @@
 export module otava.symbols.value;
 
 import std.core;
+import otava.intermediate.value;
 import otava.symbols.symbol;
 
 export namespace otava::symbols {
 
 class BoolValue;
+class Emitter;
 class EvaluationContext;
 class TypeSymbol;
 
@@ -35,6 +37,7 @@ public:
     bool IsInvokeValue() const { return GetValueKind() == ValueKind::invokeValue; }
     virtual BoolValue* ToBoolValue(EvaluationContext& context) = 0;
     virtual Value* Convert(ValueKind kind, EvaluationContext& context) = 0;
+    virtual otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
     ValueKind GetValueKind() const;
     const std::u32string& Rep() const { return Name(); }
     virtual std::u32string ToString() const { return Rep(); }
@@ -62,6 +65,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     bool value;
 };
@@ -80,6 +84,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     int64_t value;
 };
@@ -145,6 +150,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     char32_t value;
 };
