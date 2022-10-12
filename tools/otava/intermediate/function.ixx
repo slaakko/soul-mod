@@ -8,6 +8,7 @@ export module otava.intermediate.function;
 import std.core;
 import util.code.formatter;
 import soul.ast.source.pos;
+import otava.intermediate.value;
 
 export namespace otava::intermediate::function {}
 
@@ -45,7 +46,7 @@ constexpr FunctionFlags operator~(FunctionFlags flags)
     return FunctionFlags(~static_cast<int>(flags));
 }
 
-class Function
+class Function : public Value
 {
 public:
     Function(const SourcePos& sourcePos_, FunctionType* functionType_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_);
@@ -79,6 +80,7 @@ public:
     const SourcePos& GetSourcePos() const { return sourcePos; }
     FunctionType* GetType() const { return type; }
     const std::string& Name() const { return name; }
+    std::string ToString() const override { return name; }
     MetadataRef* GetMetadataRef() const { return metadataRef; }
     RegValue* GetRegValue(int32_t reg) const;
     RegValue* GetRegRef(const SourcePos& sourcePos, Type* type, int32_t reg, Context* context) const;
@@ -123,6 +125,7 @@ public:
             next->prev = prev;
         }
     }
+    Value* GetParam(int index) const;
 private:
     void AddBasicBlock(BasicBlock* bb);
     void InsertBefore(BasicBlock* bb, BasicBlock* before);
@@ -130,6 +133,8 @@ private:
     SourcePos sourcePos;
     FunctionType* type;
     std::string name;
+    std::vector<Instruction*> params;
+    std::unique_ptr<BasicBlock> entryBlock;
     MetadataRef* metadataRef;
     std::map<int32_t, BasicBlock*> basicBlockMap;
     std::map<int32_t, RegValue*> regValueMap;

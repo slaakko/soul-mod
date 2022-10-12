@@ -35,6 +35,8 @@ class BoundTypeNode;
 class BoundMemberExprNode;
 class BoundFunctionCallNode;
 class BoundConversionNode;
+class BoundAddressOfNode;
+class BoundDereferenceNode;
 class BoundErrorNode;
 
 class BoundTreeVisitor
@@ -67,6 +69,8 @@ public:
     virtual void Visit(BoundMemberExprNode& node) {}
     virtual void Visit(BoundFunctionCallNode& node) {}
     virtual void Visit(BoundConversionNode& node) {}
+    virtual void Visit(BoundAddressOfNode& node) {}
+    virtual void Visit(BoundDereferenceNode& node) {}
     virtual void Visit(BoundErrorNode& node) {}
 };
 

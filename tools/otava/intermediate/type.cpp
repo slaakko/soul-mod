@@ -76,6 +76,20 @@ bool Type::IsFloatingPointType() const
     }
 }
 
+bool Type::IsAggregateType() const
+{
+    switch (kind)
+    {
+        case TypeKind::structureType:
+        case TypeKind::arrayType:
+        case TypeKind::functionType:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 Type* Type::AddPointer(Context* context) const
 {
     if (IsPointerType())
@@ -485,8 +499,11 @@ void Types::Write(util::CodeFormatter& formatter)
     formatter.IncIndent();
     for (const auto& type : types)
     {
-        type->WriteDeclaration(formatter);
-        formatter.WriteLine();
+        if (type->IsAggregateType())
+        {
+            type->WriteDeclaration(formatter);
+            formatter.WriteLine();
+        }
     }
     formatter.DecIndent();
     formatter.WriteLine("}");

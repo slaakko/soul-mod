@@ -240,6 +240,13 @@ bool Symbol::CanInstall() const
         case SymbolKind::fundamentalTypeIntToFloat:
         case SymbolKind::fundamentalTypeFloatToInt:
         case SymbolKind::fundamentalTypeBoolean:
+        case SymbolKind::fundamentalTypeDefaultCtor:
+        case SymbolKind::fundamentalTypeCopyCtor:
+        case SymbolKind::fundamentalTypeCopyCtorLiteral:
+        case SymbolKind::fundamentalTypeMoveCtor:
+        case SymbolKind::fundamentalTypeCopyAssignment:
+        case SymbolKind::fundamentalTypeMoveAssignment:
+
         case SymbolKind::variableSymbol:
         case SymbolKind::templateDeclarationSymbol:
         case SymbolKind::typenameConstraintSymbol:
@@ -317,6 +324,12 @@ bool Symbol::IsFunctionSymbol() const
         case SymbolKind::fundamentalTypeIntToFloat:
         case SymbolKind::fundamentalTypeFloatToInt:
         case SymbolKind::fundamentalTypeBoolean:
+        case SymbolKind::fundamentalTypeDefaultCtor:
+        case SymbolKind::fundamentalTypeCopyCtor:
+        case SymbolKind::fundamentalTypeCopyCtorLiteral:
+        case SymbolKind::fundamentalTypeMoveCtor:
+        case SymbolKind::fundamentalTypeCopyAssignment:
+        case SymbolKind::fundamentalTypeMoveAssignment:
         {
             return true;
         }
@@ -407,6 +420,73 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         }
     }
     return SymbolGroupKind::none;
+}
+
+bool Symbol::IsDefaultCtor() const
+{
+    switch (kind)
+    {
+        case SymbolKind::fundamentalTypeDefaultCtor:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Symbol::IsCopyCtor() const
+{
+    switch (kind)
+    {
+        case SymbolKind::fundamentalTypeCopyCtor:
+        case SymbolKind::fundamentalTypeCopyCtorLiteral:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Symbol::IsMoveCtor() const
+{
+    switch (kind)
+    {
+        case SymbolKind::fundamentalTypeMoveCtor:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Symbol::IsCopyAssignment() const
+{
+    switch (kind)
+    {
+        case SymbolKind::fundamentalTypeCopyAssignment:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Symbol::IsMoveAssignment() const
+{
+    switch (kind)
+    {
+        case SymbolKind::fundamentalTypeMoveAssignment:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Symbol::IsDtor() const
+{
+    // todo
+    return false;
 }
 
 void* Symbol::IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)

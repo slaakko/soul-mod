@@ -127,10 +127,11 @@ int32_t FundamentalTypeBooleanConversion::ConversionDistance() const
     return 1;
 }
 
-void FundamentalTypeBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+void FundamentalTypeBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    otava::intermediate::Type* irType = argType->IrType(emitter, sourcePos, context);
+    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(GetIrType(emitter, argType, sourcePos, context));
     otava::intermediate::ConstantValue* defaultValue = irType->DefaultValue();
     otava::intermediate::Value* equal = emitter.EmitEqual(value, defaultValue);
     otava::intermediate::Value* notEqual = emitter.EmitNot(equal);

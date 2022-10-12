@@ -10,7 +10,9 @@ module otava.symbols.function.symbol;
 
 import otava.symbols.modules;
 import otava.symbols.classes;
+import otava.symbols.declaration;
 import otava.symbols.emitter;
+import otava.symbols.exception;
 import otava.symbols.type.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.reader;
@@ -20,6 +22,8 @@ import otava.symbols.templates;
 import otava.symbols.value;
 import otava.symbols.variable.symbol;
 import otava.symbols.fundamental.type.conversion;
+import otava.symbols.bound.node;
+import otava.intermediate.function;
 import util.sha1;
 import util.unicode;
 
@@ -147,6 +151,14 @@ ConversionKind FunctionSymbol::GetConversionKind() const
     return ConversionKind::implicitConversion;
 }
 
+bool FunctionSymbol::IsVirtual() const
+{
+    if ((GetDeclarationFlags() & DeclarationFlags::virtualFlag) != DeclarationFlags::none) return true;
+    if ((qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none) return true;
+    if ((qualifiers & FunctionQualifiers::isFinal) != FunctionQualifiers::none) return true;
+    return false;
+}
+
 const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters() 
 {
     if (memFunParamsConstructed) return memFunParameters;
@@ -171,6 +183,11 @@ const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters()
         memFunParameters.push_back(parameter);
     }
     return memFunParameters;
+}
+
+bool FunctionSymbol::IsMemberFunction() const
+{
+    return Parent()->IsClassTypeSymbol();
 }
 
 TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration()
@@ -234,9 +251,39 @@ void FunctionSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    // TODO
+    int n = args.size();
+    for (int i = 0; i < n; ++i)
+    {
+        args[i]->Load(emitter, OperationFlags::none, sourcePos, context);
+    }
+    std::vector<otava::intermediate::Value*> arguments;
+    arguments.resize(n);
+    for (int i = 0; i < n; ++i)
+    {
+        otava::intermediate::Value* arg = emitter.Stack().Pop();
+        arguments[n - i - 1] = arg;
+    }
+    otava::intermediate::Type* type = IrType(emitter, sourcePos, context);
+    if (type->IsFunctionType())
+    {
+        otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(type);
+        otava::intermediate::Function* function = emitter.GetOrInsertFunction(IrName(), functionType);
+        if (!functionType->ReturnType() || functionType->ReturnType()->IsVoidType())
+        {
+            emitter.EmitCall(function, arguments);
+        }
+        else
+        {
+            emitter.Stack().Push(emitter.EmitCall(function, arguments));
+        }
+    }
+    else
+    {
+        ThrowException("function type expected", sourcePos, context);
+    }
 }
 
 otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
@@ -314,83 +361,6 @@ bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const
     if (int(left->GetFunctionKind()) < int(right->GetFunctionKind())) return true;
     if (int(left->GetFunctionKind()) > int(right->GetFunctionKind())) return false;
     return left->Name() < right->Name();
-}
-
-FunctionTypeSymbol::FunctionTypeSymbol() : TypeSymbol(SymbolKind::functionTypeSymbol, std::u32string()), ptrIndex(-1)
-{
-}
-
-FunctionTypeSymbol::FunctionTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::functionTypeSymbol, name_), ptrIndex(-1)
-{
-}
-
-void FunctionTypeSymbol::MakeName()
-{
-    std::u32string name = returnType->Name();
-    name.append(U" (");
-    ptrIndex = name.length();
-    name.append(U")(");
-    bool first = true;
-    for (const auto& parameterType : parameterTypes)
-    {
-        if (first)
-        {
-            first = false;
-        }
-        else
-        {
-            name.append(U", ");
-        }
-        name.append(parameterType->Name());
-    }
-    name.append(U")");
-    SetName(name);
-}
-
-void FunctionTypeSymbol::AddParameterType(TypeSymbol* parameterType)
-{
-    parameterTypes.push_back(parameterType);
-}
-
-void FunctionTypeSymbol::Write(Writer& writer)
-{
-    TypeSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(returnType->Id());
-    uint32_t paramTypeCount = parameterTypes.size();
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(paramTypeCount);
-    for (const auto& paramType : parameterTypes)
-    {
-        writer.GetBinaryStreamWriter().Write(paramType->Id());
-    }
-}
-
-void FunctionTypeSymbol::Read(Reader& reader)
-{
-    TypeSymbol::Read(reader);
-    reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
-    uint32_t paramTypeCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < paramTypeCount; ++i)
-    {
-        util::uuid paramTypeId;
-        reader.GetBinaryStreamReader().ReadUuid(paramTypeId);
-        parameterTypeIds.push_back(paramTypeId);
-    }
-}
-
-void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable)
-{
-    TypeSymbol::Resolve(symbolTable);
-    returnType = symbolTable.GetType(returnTypeId);
-    for (const auto& parameterTypeId : parameterTypeIds)
-    {
-        TypeSymbol* parameterType = symbolTable.GetType(parameterTypeId);
-        parameterTypes.push_back(parameterType);
-    }
-}
-
-void FunctionTypeSymbol::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
 }
 
 } // namespace otava::symbols

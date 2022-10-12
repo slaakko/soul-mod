@@ -280,7 +280,8 @@ void IntegerValue::Accept(Visitor& visitor)
 
 otava::intermediate::Value* IntegerValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return emitter.EmitLong(value);
+    otava::intermediate::Type* irType = GetType()->IrType(emitter, sourcePos, context);
+    return emitter.EmitIntegerValue(irType, value);
 }
 
 FloatingValue::FloatingValue(TypeSymbol* type_) : Value(SymbolKind::floatingValueSymbol, std::u32string(U"0.0"), type_), value(0.0)
@@ -330,6 +331,12 @@ void FloatingValue::Read(Reader& reader)
 void FloatingValue::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+otava::intermediate::Value* FloatingValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    otava::intermediate::Type* irType = GetType()->IrType(emitter, sourcePos, context);
+    return emitter.EmitFloatingValue(irType, value);
 }
 
 NullPtrValue::NullPtrValue(TypeSymbol* type_) : Value(SymbolKind::nullPtrValueSymbol, U"nullptr", type_)
@@ -437,7 +444,8 @@ void CharValue::Accept(Visitor& visitor)
 
 otava::intermediate::Value* CharValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return emitter.EmitInt(static_cast<int32_t>(value));
+    otava::intermediate::Type* irType = GetType()->IrType(emitter, sourcePos, context);
+    return emitter.EmitIntegerValue(irType, value);
 }
 
 SymbolValue::SymbolValue() : Value(SymbolKind::symbolValueSymbol, std::u32string(), nullptr), symbol(nullptr)

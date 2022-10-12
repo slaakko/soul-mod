@@ -11,11 +11,13 @@ import otava.symbols.alias.type.symbol;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.derivations;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.function.symbol;
 import otava.symbols.exception;
 
 namespace otava::symbols {
 
-TypeSymbol::TypeSymbol(SymbolKind kind_, const std::u32string& name_) : ContainerSymbol(kind_, name_)
+TypeSymbol::TypeSymbol(SymbolKind kind_, const std::u32string& name_) : 
+    ContainerSymbol(kind_, name_), defaultCtor(nullptr), copyCtor(nullptr), moveCtor(nullptr), copyAssignment(nullptr), moveAssignment(nullptr), dtor(nullptr)
 {
 }
 
@@ -173,6 +175,38 @@ TypeSymbol* TypeSymbol::DirectType()
 otava::intermediate::Type* TypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("IRTYPE not implemented", sourcePos, context);
+}
+
+void TypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    ContainerSymbol::AddSymbol(symbol, sourcePos, context);
+    if (symbol->IsFunctionSymbol())
+    {
+        if (symbol->IsDefaultCtor())
+        {
+            defaultCtor = static_cast<FunctionSymbol*>(symbol);
+        }
+        else if (symbol->IsCopyCtor())
+        {
+            copyCtor = static_cast<FunctionSymbol*>(symbol);
+        }
+        else if (symbol->IsMoveCtor())
+        {
+            moveCtor = static_cast<FunctionSymbol*>(symbol);
+        }
+        else if (symbol->IsCopyAssignment())
+        {
+            copyAssignment = static_cast<FunctionSymbol*>(symbol);
+        }
+        else if (symbol->IsMoveAssignment())
+        {
+            moveAssignment = static_cast<FunctionSymbol*>(symbol);
+        }
+        else if (symbol->IsDtor())
+        {
+            dtor = static_cast<FunctionSymbol*>(symbol);
+        }
+    }
 }
 
 NestedTypeSymbol::NestedTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::nestedTypeSymbol, name_)

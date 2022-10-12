@@ -83,6 +83,8 @@ enum class SymbolKind : int32_t
     fundamentalTypeEqual, fundamentalTypeLess, fundamentalTypeBoolean,
     fundamentalTypeSignExtension, fundamentalTypeZeroExtension, fundamentalTypeTruncate, fundamentalTypeBitcast, fundamentalTypeIntToFloat, fundamentalTypeFloatToInt,
 
+    fundamentalTypeDefaultCtor, fundamentalTypeCopyCtor, fundamentalTypeCopyCtorLiteral, fundamentalTypeMoveCtor, fundamentalTypeCopyAssignment, fundamentalTypeMoveAssignment,
+
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
     max
@@ -164,6 +166,12 @@ public:
     bool IsConstraintExprSymbol() const { return kind == SymbolKind::constraintExprSymbol; }
     bool IsValueSymbol() const;
     bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
+    bool IsDefaultCtor() const;
+    bool IsCopyCtor() const;
+    bool IsMoveCtor() const;
+    bool IsCopyAssignment() const;
+    bool IsMoveAssignment() const;
+    bool IsDtor() const;
     SymbolGroupKind GetSymbolGroupKind() const;
     void* IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
 private:

@@ -6,6 +6,7 @@
 module otava.symbols.conversion.table;
 
 import otava.symbols.function.symbol;
+import otava.symbols.type.symbol;
 
 namespace otava::symbols {
 

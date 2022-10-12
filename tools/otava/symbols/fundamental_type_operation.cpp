@@ -7,9 +7,13 @@ module otava.symbols.fundamental.type.operation;
 
 import otava.symbols.fundamental.type.conversion.init;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.bound.node;
 import otava.symbols.symbol.table;
 import otava.symbols.context;
 import otava.symbols.namespaces;
+import otava.symbols.reader;
+import otava.symbols.writer;
+import otava.symbols.type.symbol;
 
 namespace otava::symbols {
 
@@ -309,9 +313,273 @@ FundamentalTypeLessOperation::FundamentalTypeLessOperation(TypeSymbol* type_, Ty
 {
 }
 
+FundamentalTypeDefaultCtor::FundamentalTypeDefaultCtor() : FunctionSymbol(SymbolKind::fundamentalTypeDefaultCtor, U"@constructor"), type(nullptr)
+{
+}
+
+FundamentalTypeDefaultCtor::FundamentalTypeDefaultCtor(TypeSymbol* type_, Context* context) : 
+    FunctionSymbol(SymbolKind::fundamentalTypeDefaultCtor, U"@constructor"), type(type_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    type->SetDefaultCtor(this);
+}
+
+void FundamentalTypeDefaultCtor::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(type->Id());
+}
+
+void FundamentalTypeDefaultCtor::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(typeId);
+}
+
+void FundamentalTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
+{
+    FunctionSymbol::Resolve(symbolTable);
+    type = symbolTable.GetType(typeId);
+    type->SetDefaultCtor(this);
+}
+
+void FundamentalTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    if ((flags & OperationFlags::defaultInit) != OperationFlags::none)
+    {
+        emitter.Stack().Push(type->IrType(emitter, sourcePos, context)->DefaultValue());
+        args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    }
+}
+
+FundamentalTypeCopyCtor::FundamentalTypeCopyCtor() : FunctionSymbol(SymbolKind::fundamentalTypeCopyCtor, U"@constructor"), type(nullptr)
+{
+}
+
+FundamentalTypeCopyCtor::FundamentalTypeCopyCtor(TypeSymbol* type_, Context* context) : 
+    FunctionSymbol(SymbolKind::fundamentalTypeCopyCtor, U"@constructor"), type(type_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddConst()->AddLValueRef());
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    type->SetCopyCtor(this);
+}
+
+void FundamentalTypeCopyCtor::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(type->Id());
+}
+
+void FundamentalTypeCopyCtor::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(typeId);
+}
+
+void FundamentalTypeCopyCtor::Resolve(SymbolTable& symbolTable)
+{
+    FunctionSymbol::Resolve(symbolTable);
+    type = symbolTable.GetType(typeId);
+    type->SetCopyCtor(this);
+}
+
+void FundamentalTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* lvalueRefValue = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitLoad(lvalueRefValue));
+    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+}
+
+FundamentalTypeCopyCtorLiteral::FundamentalTypeCopyCtorLiteral() : FunctionSymbol(SymbolKind::fundamentalTypeCopyCtorLiteral, U"@constructor"), type(nullptr)
+{
+}
+
+FundamentalTypeCopyCtorLiteral::FundamentalTypeCopyCtorLiteral(TypeSymbol* type_, Context* context) :
+    FunctionSymbol(SymbolKind::fundamentalTypeCopyCtorLiteral, U"@constructor"), type(type_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+}
+
+void FundamentalTypeCopyCtorLiteral::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(type->Id());
+}
+
+void FundamentalTypeCopyCtorLiteral::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(typeId);
+}
+
+void FundamentalTypeCopyCtorLiteral::Resolve(SymbolTable& symbolTable)
+{
+    FunctionSymbol::Resolve(symbolTable);
+    type = symbolTable.GetType(typeId);
+}
+
+void FundamentalTypeCopyCtorLiteral::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+}
+
+FundamentalTypeMoveCtor::FundamentalTypeMoveCtor() : FunctionSymbol(SymbolKind::fundamentalTypeMoveCtor, U"@constructor"), type(nullptr)
+{
+}
+
+FundamentalTypeMoveCtor::FundamentalTypeMoveCtor(TypeSymbol* type_, Context* context) : 
+    FunctionSymbol(SymbolKind::fundamentalTypeMoveCtor, U"@constructor"), type(type_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef());
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    type->SetMoveCtor(this);
+}
+
+void FundamentalTypeMoveCtor::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(type->Id());
+}
+
+void FundamentalTypeMoveCtor::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(typeId);
+}
+
+void FundamentalTypeMoveCtor::Resolve(SymbolTable& symbolTable)
+{
+    FunctionSymbol::Resolve(symbolTable);
+    type = symbolTable.GetType(typeId);
+    type->SetMoveCtor(this);
+}
+
+void FundamentalTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* rvalueRefValue = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitLoad(rvalueRefValue));
+    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+}
+
+FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment() : FunctionSymbol(SymbolKind::fundamentalTypeCopyAssignment, U"operator="), type(nullptr)
+{
+}
+
+FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment(TypeSymbol* type_, Context* context) 
+    : FunctionSymbol(SymbolKind::fundamentalTypeCopyAssignment, U"operator="), type(type_)
+{
+    SetFunctionKind(FunctionKind::special);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddConst()->AddLValueRef());
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetReturnType(type->AddLValueRef());
+    type->SetCopyAssignment(this);
+}
+
+void FundamentalTypeCopyAssignment::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(type->Id());
+}
+
+void FundamentalTypeCopyAssignment::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(typeId);
+}
+
+void FundamentalTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
+{
+    FunctionSymbol::Resolve(symbolTable);
+    type = symbolTable.GetType(typeId);
+    type->SetCopyAssignment(this);
+}
+
+void FundamentalTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* refValue = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitLoad(refValue));
+    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
+}
+
+FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment() : FunctionSymbol(SymbolKind::fundamentalTypeMoveAssignment, U"operator="), type(nullptr)
+{
+}
+
+FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment(TypeSymbol* type_, Context* context) :
+    FunctionSymbol(SymbolKind::fundamentalTypeMoveAssignment, U"operator="), type(type_)
+{
+    SetFunctionKind(FunctionKind::special);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef());
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+    SetReturnType(type->AddLValueRef());
+    type->SetMoveAssignment(this);
+}
+
+void FundamentalTypeMoveAssignment::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(type->Id());
+}
+
+void FundamentalTypeMoveAssignment::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(typeId);
+}
+
+void FundamentalTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
+{
+    FunctionSymbol::Resolve(symbolTable);
+    type = symbolTable.GetType(typeId);
+    type->SetMoveAssignment(this);
+}
+
+void FundamentalTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* refValue = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitLoad(refValue));
+    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
+}
+
 void AddFundamentalIntegerOperationsToSymbolTable(TypeSymbol* type, Context* context)
 {
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
+
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryPlusOperation(type), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryMinusOperation(type), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeComplementOperation(type), context);
@@ -327,6 +595,13 @@ void AddFundamentalIntegerOperationsToSymbolTable(TypeSymbol* type, Context* con
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeShrOperation(type), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeEqualOperation(type, boolType), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeLessOperation(type, boolType), context);
+
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDefaultCtor(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtor(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtorLiteral(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveCtor(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyAssignment(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveAssignment(type, context), context);
 }
 
 void AddFundamentalFloatingPointOperationsToSymbolTable(TypeSymbol* type, Context* context)
@@ -338,11 +613,24 @@ void AddFundamentalFloatingPointOperationsToSymbolTable(TypeSymbol* type, Contex
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDivOperation(type), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeEqualOperation(type, boolType), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeLessOperation(type, boolType), context);
+
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDefaultCtor(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtor(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtorLiteral(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveCtor(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyAssignment(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveAssignment(type, context), context);
 }
 
 void AddFundamentalTypeOperationsToSymbolTable(Context* context)
 {
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDefaultCtor(boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtor(boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtorLiteral(boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveCtor(boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyAssignment(boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveAssignment(boolType, context), context);
     TypeSymbol* charType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::charType);
     TypeSymbol* signedCharType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::signedCharType);
     TypeSymbol* unsignedCharType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedCharType);

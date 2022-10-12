@@ -1,0 +1,3 @@
+project construction_statement;
+interface <construction_statement.ixx>;
+source <construction_statement.cpp>;

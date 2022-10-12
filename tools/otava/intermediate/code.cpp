@@ -102,6 +102,27 @@ Function* Code::GetFunction(const std::string& functionId) const
     }
 }
 
+Function* Code::GetOrInsertFunction(const std::string& functionId, FunctionType* functionType)
+{
+    Function* function = GetFunction(functionId);
+    if (function)
+    {
+        if (function->GetType() != functionType)
+        {
+            Error("function type conflicts with earlier declaration", SourcePos(), context);
+            return nullptr;
+        }
+        else
+        {
+            return function;
+        }
+    }
+    else
+    {
+        return AddFunctionDeclaration(SourcePos(), functionType, functionId);
+    }
+}
+
 Function* Code::AddFunctionDefinition(const SourcePos& sourcePos, FunctionType* functionType, const std::string& functionId, bool once, MetadataRef* metadataRef, Context* context)
 {
     Function* prev = GetFunction(functionId);

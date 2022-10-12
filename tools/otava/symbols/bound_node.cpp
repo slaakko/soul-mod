@@ -12,6 +12,126 @@ import otava.symbols.type.resolver;
 
 namespace otava::symbols {
 
+std::string BoundNodeKindStr(BoundNodeKind nodeKind)
+{
+    switch (nodeKind)
+    {
+        case BoundNodeKind::boundCompileUnitNode:
+        {
+            return "boundCompileUnitNode";
+        }
+        case BoundNodeKind::boundFunctionNode:
+        {
+            return "boundFunctionNode";
+        }
+        case BoundNodeKind::boundCompoundStatementNode:
+        {
+            return "boundCompoundStatementNode";
+        }
+        case BoundNodeKind::boundIfStatementNode:
+        {
+            return "boundIfStatementNode";
+        }
+        case BoundNodeKind::boundSwitchStatementNode:
+        {
+            return "boundSwitchStatementNode";
+        }
+        case BoundNodeKind::boundCaseStatementNode:
+        {
+            return "boundCaseStatementNode";
+        }
+        case BoundNodeKind::boundDefaultStatementNode:
+        {
+            return "boundDefaultStatementNode";
+        }
+        case BoundNodeKind::boundWhileStatementNode:
+        {
+            return "boundWhileStatementNode";
+        }
+        case BoundNodeKind::boundDoStatementNode:
+        {
+            return "boundDoStatementNode";
+        }
+        case BoundNodeKind::boundForStatementNode:
+        {
+            return "boundForStatementNode";
+        }
+        case BoundNodeKind::boundBreakStatementNode:
+        {
+            return "boundBreakStatementNode";
+        }
+        case BoundNodeKind::boundContinueStatementNode:
+        {
+            return "boundContinueStatementNode";
+        }
+        case BoundNodeKind::boundReturnStatementNode:
+        {
+            return "boundReturnStatementNode";
+        }
+        case BoundNodeKind::boundGotoStatementNode:
+        {
+            return "boundGotoStatementNode";
+        }
+        case BoundNodeKind::boundConstructionStatementNode:
+        {
+            return "boundConstructionStatementNode";
+        }
+        case BoundNodeKind::boundExpressionStatementNode:
+        {
+            return "boundExpressionStatementNode";
+        }
+        case BoundNodeKind::boundSequenceStatementNode:
+        {
+            return "boundSequenceStatementNode";
+        }
+        case BoundNodeKind::boundLiteralNode:
+        {
+            return "boundLiteralNode";
+        }
+        case BoundNodeKind::boundVariableNode:
+        {
+            return "boundVariableNode";
+        }
+        case BoundNodeKind::boundParameterNode:
+        {
+            return "boundParameterNode";
+        }
+        case BoundNodeKind::boundEnumConstantNode:
+        {
+            return "boundEnumConstantNode";
+        }
+        case BoundNodeKind::boundFunctionGroupNode:
+        {
+            return "boundFunctionGroupNode";
+        }
+        case BoundNodeKind::boundTypeNode:
+        {
+            return "boundTypeNode";
+        }
+        case BoundNodeKind::boundMemberExprNode:
+        {
+            return "boundMemberExprNode";
+        }
+        case BoundNodeKind::boundFunctionCallNode:
+        {
+            return "boundFunctionCallNode";
+        }
+        case BoundNodeKind::boundConversionNode:
+        {
+            return "boundConversionNode";
+        }
+        case BoundNodeKind::boundAddressOfNode:
+        {
+            return "boundAddressOfNode";
+        }
+        case BoundNodeKind::boundDereferenceNode:
+        {
+            return "boundDereferenceNode";
+        }
+    }
+    return "<unknown bound node>";
+}
+
 BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_)
 {
 }
@@ -26,12 +146,12 @@ BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::S
 
 void BoundExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    ThrowException("LOAD not implemented", sourcePos, context);
+    ThrowException("LOAD not implemented for " + BoundNodeKindStr(Kind()), sourcePos, context);
 }
 
 void BoundExpressionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    ThrowException("STORE not implemented", sourcePos, context);
+    ThrowException("STORE not implemented for " + BoundNodeKindStr(Kind()), sourcePos, context);
 }
 
 Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const

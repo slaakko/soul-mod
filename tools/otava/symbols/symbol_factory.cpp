@@ -16,6 +16,7 @@ import otava.symbols.concepts;
 import otava.symbols.value;
 import otava.symbols.symbol.table;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.function.type.symbol;
 import otava.symbols.exception;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.block;
@@ -300,6 +301,30 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::fundamentalTypeFloatToInt:
         {
             return new FundamentalTypeFloatToIntConversion();
+        }
+        case SymbolKind::fundamentalTypeDefaultCtor:
+        {
+            return new FundamentalTypeDefaultCtor();
+        }
+        case SymbolKind::fundamentalTypeCopyCtor:
+        {
+            return new FundamentalTypeCopyCtor();
+        }
+        case SymbolKind::fundamentalTypeCopyCtorLiteral:
+        {
+            return new FundamentalTypeCopyCtorLiteral();
+        }
+        case SymbolKind::fundamentalTypeMoveCtor:
+        {
+            return new FundamentalTypeMoveCtor();
+        }
+        case SymbolKind::fundamentalTypeCopyAssignment:
+        {
+            return new FundamentalTypeCopyAssignment();
+        }
+        case SymbolKind::fundamentalTypeMoveAssignment:
+        {
+            return new FundamentalTypeMoveAssignment();
         }
     }
     otava::ast::SetExceptionThrown();

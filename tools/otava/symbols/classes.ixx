@@ -48,18 +48,26 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     int Level() const { return level; }
     void SetLevel(int level_) { level = level_; }
+    bool IsPolymorphic() const override;
     const std::vector<VariableSymbol*>& MemberVariables() const { return memberVariables; }
+    const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
+    void MakeObjectLayout(Context* context);
 private:
     std::vector<TypeSymbol*> baseClasses;
     std::vector<util::uuid> baseClassIds;
     ClassKind classKind;
     std::vector<TypeSymbol*> derivedClasses;
-    int level;
+    int32_t level;
     std::vector<VariableSymbol*> memberVariables;
     std::vector<FunctionSymbol*> memberFunctions;
-    void* irType;
+    bool objectLayoutComputed;
+    std::vector<TypeSymbol*> objectLayout;
+    std::vector<util::uuid> objectLayoutIds;
+    int32_t vptrIndex;
+    otava::intermediate::Type* irType;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

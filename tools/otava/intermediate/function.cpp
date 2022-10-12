@@ -7,6 +7,7 @@ module otava.intermediate.function;
 
 import otava.intermediate.basic.block;
 import otava.intermediate.code;
+import otava.intermediate.context;
 import otava.intermediate.error;
 import otava.intermediate.instruction;
 import otava.intermediate.metadata;
@@ -17,9 +18,21 @@ import otava.intermediate.visitor;
 namespace otava::intermediate {
 
 Function::Function(const SourcePos& sourcePos_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_) :
+    Value(sourcePos_, ValueKind::function, type_),
     flags(FunctionFlags::none), sourcePos(sourcePos_), type(type_), name(name_), metadataRef(metadataRef_), nextRegNumber(0),
     parent(nullptr), next(nullptr), prev(nullptr), first(nullptr), last(nullptr), nextBasicBlockId(0)
 {
+    entryBlock.reset(new BasicBlock(sourcePos_, nextBasicBlockId++));
+    for (TypeRef paramTypeRef : type->ParamTypeRefs())
+    {
+        RegValue* regValue = new RegValue(sourcePos_, paramTypeRef.GetType(), nextRegNumber++);
+        Instruction* paramInst = new ParamInstruction(sourcePos_, regValue);
+        Code* code = Parent();
+        Context* context = code->GetContext();
+        context->AddLineInfo(paramInst);
+        entryBlock->AddInstruction(paramInst);
+        params.push_back(paramInst);
+    }
     if (once_)
     {
         SetFlag(FunctionFlags::once);
@@ -58,7 +71,6 @@ void Function::Finalize()
 
 void Function::Write(util::CodeFormatter& formatter)
 {
-    if (IsEmpty()) return;
     if (!IsDefined()) return;
     Finalize();
     std::string once;
@@ -375,6 +387,19 @@ void Function::RemoveEntryAndExitBlocks()
     }
     RemoveBasicBlock(exitBlock);
     basicBlockMap.erase(exitBlockId);
+}
+
+Value* Function::GetParam(int index) const
+{
+    if (index >= 0 && index < params.size())
+    {
+        return params[index];
+    }
+    else
+    {
+        Error("invalid param index", GetSourcePos(), Parent()->GetContext());
+        return nullptr;
+    }
 }
 
 /*

@@ -54,6 +54,11 @@ void Emitter::CreateFunction(const std::string& name, otava::intermediate::Type*
     context->SetCurrentFunction(function);
 }
 
+otava::intermediate::Function* Emitter::GetOrInsertFunction(const std::string& name, otava::intermediate::FunctionType* functionType)
+{
+    return context->GetOrInsertFunction(name, functionType);
+}
+
 otava::intermediate::BasicBlock* Emitter::CreateBasicBlock()
 {
     return context->CurrentFunction()->CreateBasicBlock();
@@ -62,6 +67,16 @@ otava::intermediate::BasicBlock* Emitter::CreateBasicBlock()
 void Emitter::SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb)
 {
     context->SetCurrentBasicBlock(bb);
+}
+
+otava::intermediate::Type* Emitter::MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes)
+{
+    std::vector< otava::intermediate::TypeRef> fieldTypeRefs;
+    for (const auto& elementType : elementTypes)
+    {
+        fieldTypeRefs.push_back(elementType->GetTypeRef());
+    }
+    return context->AddStructureType(soul::ast::SourcePos(), context->NextTypeId(), fieldTypeRefs);
 }
 
 otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
@@ -192,6 +207,11 @@ otava::intermediate::Value* Emitter::EmitULong(uint64_t value)
     return context->GetULongValue(value);
 }
 
+otava::intermediate::Value* Emitter::EmitIntegerValue(otava::intermediate::Type* type, int64_t value)
+{
+    return context->GetIntegerValue(type, value);
+}
+
 otava::intermediate::Value* Emitter::EmitFloat(float value)
 {
     return context->GetFloatValue(value);
@@ -200,6 +220,11 @@ otava::intermediate::Value* Emitter::EmitFloat(float value)
 otava::intermediate::Value* Emitter::EmitDouble(double value)
 {
     return context->GetDoubleValue(value);
+}
+
+otava::intermediate::Value* Emitter::EmitFloatingValue(otava::intermediate::Type* type, double value)
+{
+    return context->GetFloatingValue(type, value);
 }
 
 otava::intermediate::Value* Emitter::EmitNull(otava::intermediate::Type* type)
@@ -342,9 +367,9 @@ otava::intermediate::Value* Emitter::EmitArg(otava::intermediate::Value* value)
     return context->CreateArg(value);
 }
 
-otava::intermediate::Value* Emitter::EmitElemAddr(otava::intermediate::Value* ptr, otava::intermediate::Value* value)
+otava::intermediate::Value* Emitter::EmitElemAddr(otava::intermediate::Value* ptr, otava::intermediate::Value* index)
 {
-    return context->CreateElemAddr(ptr, value);
+    return context->CreateElemAddr(ptr, index);
 }
 
 otava::intermediate::Value* Emitter::EmitPtrOffset(otava::intermediate::Value* ptr, otava::intermediate::Value* offset)
@@ -357,8 +382,12 @@ otava::intermediate::Value* Emitter::EmitPtrDiff(otava::intermediate::Value* lef
     return context->CreatePtrDiff(leftPtr, rightPtr);
 }
 
-otava::intermediate::Value* Emitter::EmitCall(otava::intermediate::Value* function)
+otava::intermediate::Value* Emitter::EmitCall(otava::intermediate::Value* function, const std::vector<otava::intermediate::Value*>& args)
 {
+    for (const auto& arg : args)
+    {
+        context->CreateArg(arg);
+    }
     return context->CreateCall(function);
 }
 
@@ -370,6 +399,11 @@ otava::intermediate::Value* Emitter::EmitRet(otava::intermediate::Value* value)
 otava::intermediate::Value* Emitter::EmitRetVoid()
 {
     return context->CreateRet(nullptr);
+}
+
+otava::intermediate::Value* Emitter::GetParam(int index) const
+{
+    return context->CurrentFunction()->GetParam(index);
 }
 
 void Emitter::EmitJump(otava::intermediate::BasicBlock* dest)
@@ -397,7 +431,7 @@ void Emitter::EmitNop()
     context->CreateNop();
 }
 
-otava::intermediate::Type* Emitter::GetType(const util::uuid& id)
+otava::intermediate::Type* Emitter::GetType(const util::uuid& id) const
 {
     auto it = typeMap.find(id);
     if (it != typeMap.cend())

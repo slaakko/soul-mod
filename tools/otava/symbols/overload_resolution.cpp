@@ -11,6 +11,7 @@ import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.symbol;
+import otava.symbols.type.symbol;
 import otava.symbols.match;
 import otava.symbols.operation.repository;
 import otava.symbols.symbol.table;
@@ -27,6 +28,17 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
     for (int i = 0; i < n; ++i)
     {
         BoundExpressionNode* arg = args[i].release();
+        if (i == 0 && !functionMatch.function->IsMemberFunction() && 
+            (functionMatch.function->Name() == U"@constructor" || functionMatch.function->Name() == U"operator=" || functionMatch.function->Name() == U"operator->"))
+        {
+            if (arg->IsBoundAddressOfNode())
+            {
+                BoundAddressOfNode* addrOfNode = static_cast<BoundAddressOfNode*>(arg);
+                BoundExpressionNode* subject = addrOfNode->ReleaseSubject();
+                args[i].reset(subject);
+                arg = args[i].release();
+            }
+        }
         const ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
         if (argumentMatch.conversionFun)
         {

@@ -86,8 +86,10 @@ public:
     ConstantValue* GetUIntValue(uint32_t value);
     ConstantValue* GetLongValue(int64_t value);
     ConstantValue* GetULongValue(uint64_t value);
+    ConstantValue* GetIntegerValue(Type* type, int64_t value);
     ConstantValue* GetFloatValue(float value);
     ConstantValue* GetDoubleValue(double value);
+    ConstantValue* GetFloatingValue(Type* type, double value);
     ConstantValue* GetNullValue(const SourcePos& sourcePos, Type* type);
     ConstantValue* MakeArrayValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& elements);
     ConstantValue* MakeStructureValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& fieldValues);
@@ -100,6 +102,7 @@ public:
     ConstantValue* MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id);
     Function* CurrentFunction() const;
     void SetCurrentFunction(Function* function);
+    Function* GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
     Function* AddFunctionDefinition(const SourcePos& sourcePos, Type* type, const std::string& functionId, bool once, MetadataRef* metadataRef);
     Function* AddFunctionDeclaration(const SourcePos& sourcePos, Type* type, const std::string& functionId);
     MetadataStruct* AddMetadataStruct(const SourcePos& sourcePos, int32_t id, Context* context);
@@ -153,8 +156,8 @@ public:
     Instruction* CreateNop();
     soul::lexer::FileMap& GetFileMap() { return fileMap; }
     int32_t NextTypeId();
-private:
     void AddLineInfo(Instruction* inst);
+private:
     RegValue* MakeRegValue(Type* type);
     std::unique_ptr<CompileUnit> compileUnit;
     std::unique_ptr<Types> types;

@@ -12,6 +12,7 @@ import otava.symbols.declaration;
 import otava.symbols.evaluator;
 import otava.symbols.expression.binder;
 import otava.symbols.function.symbol;
+import otava.symbols.function.type.symbol;
 import otava.symbols.scope;
 import otava.symbols.scope.resolver;
 import otava.symbols.symbol;

@@ -127,7 +127,8 @@ public:
         AddParameter(param, soul::ast::SourcePos(), nullptr);
         SetReturnType(type_);
     }
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
         Load(emitter, args[0], OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* value = emitter.Stack().Pop();
@@ -152,7 +153,8 @@ public:
         AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
         SetReturnType(type_);
     }
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
         Load(emitter, args[0], OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* left = emitter.Stack().Pop();
@@ -179,7 +181,8 @@ public:
         AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
         SetReturnType(boolType);
     }
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
         Load(emitter, args[0], OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* left = emitter.Stack().Pop();
@@ -299,6 +302,96 @@ class FundamentalTypeLessOperation : public FundamentalTypeComparisonOperation<F
 public:
     FundamentalTypeLessOperation();
     FundamentalTypeLessOperation(TypeSymbol* type_, TypeSymbol* boolType_);
+};
+
+class FundamentalTypeDefaultCtor : public FunctionSymbol
+{
+public:
+    FundamentalTypeDefaultCtor();
+    FundamentalTypeDefaultCtor(TypeSymbol* type_, Context* context);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* type;
+    util::uuid typeId;
+};
+
+class FundamentalTypeCopyCtor : public FunctionSymbol
+{
+public:
+    FundamentalTypeCopyCtor();
+    FundamentalTypeCopyCtor(TypeSymbol* type_, Context* context);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* type;
+    util::uuid typeId;
+};
+
+class FundamentalTypeCopyCtorLiteral : public FunctionSymbol
+{
+public:
+    FundamentalTypeCopyCtorLiteral();
+    FundamentalTypeCopyCtorLiteral(TypeSymbol* type_, Context* context);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* type;
+    util::uuid typeId;
+};
+
+class FundamentalTypeMoveCtor : public FunctionSymbol
+{
+public:
+    FundamentalTypeMoveCtor();
+    FundamentalTypeMoveCtor(TypeSymbol* type_, Context* context);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* type;
+    util::uuid typeId;
+};
+
+class FundamentalTypeCopyAssignment : public FunctionSymbol
+{
+public:
+    FundamentalTypeCopyAssignment();
+    FundamentalTypeCopyAssignment(TypeSymbol* type_, Context* context);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* type;
+    util::uuid typeId;
+};
+
+class FundamentalTypeMoveAssignment : public FunctionSymbol
+{
+public:
+    FundamentalTypeMoveAssignment();
+    FundamentalTypeMoveAssignment(TypeSymbol* type_, Context* context);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* type;
+    util::uuid typeId;
 };
 
 void AddFundamentalTypeOperationsToSymbolTable(Context* context);

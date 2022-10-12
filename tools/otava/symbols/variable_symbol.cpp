@@ -25,7 +25,8 @@ VariableSymbol::VariableSymbol(const std::u32string& name_) :
     initializerType(nullptr), 
     initializerTypeId(util::nil_uuid()), 
     value(nullptr), 
-    valueId(util::nil_uuid())
+    valueId(util::nil_uuid()),
+    layoutIndex(-1)
 {
 }
 
@@ -47,6 +48,7 @@ void VariableSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(value->Id());
     }
+    writer.GetBinaryStreamWriter().Write(layoutIndex);
 }
 
 void VariableSymbol::Read(Reader& reader)
@@ -59,6 +61,7 @@ void VariableSymbol::Read(Reader& reader)
     {
         reader.GetBinaryStreamReader().ReadUuid(valueId);
     }
+    layoutIndex = reader.GetBinaryStreamReader().ReadInt();
 }
 
 void VariableSymbol::Resolve(SymbolTable& symbolTable)
@@ -79,6 +82,21 @@ void VariableSymbol::Resolve(SymbolTable& symbolTable)
 void VariableSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+bool VariableSymbol::IsLocalVariable() const
+{
+    return Parent()->IsFunctionSymbol() || Parent()->IsBlockSymbol();
+}
+
+bool VariableSymbol::IsMemberVariable() const
+{
+    return Parent()->IsClassTypeSymbol();
+}
+
+bool VariableSymbol::IsGlobalVariable() const
+{
+    return Parent()->IsNamespaceSymbol();
 }
 
 void VariableSymbol::SetInitializerType(TypeSymbol* initializerType_) 

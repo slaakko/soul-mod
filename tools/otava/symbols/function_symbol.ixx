@@ -7,9 +7,10 @@ export module otava.symbols.function.symbol;
 
 import std.core;
 import otava.symbols.symbol;
-import otava.symbols.type.symbol;
 import otava.symbols.container.symbol;
+import otava.symbols.bound.tree.util;
 import otava.ast.node;
+import otava.intermediate.type;
 
 export namespace otava::symbols {
 
@@ -97,11 +98,15 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
-    virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     std::string IrName() const;
     void AddLocalVariable(VariableSymbol* localVariable, const soul::ast::SourcePos& sourcePos, Context* context);
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
+    bool IsVirtual() const;
+    ParameterSymbol* ThisParam() const { return thisParam.get(); }
+    bool IsMemberFunction() const;
 private:
     bool memFunParamsConstructed;
     FunctionKind kind;
@@ -129,31 +134,6 @@ public:
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
-};
-
-class FunctionTypeSymbol : public TypeSymbol
-{
-public:
-    FunctionTypeSymbol();
-    FunctionTypeSymbol(const std::u32string& name_);
-    void MakeName();
-    std::string SymbolKindStr() const override { return "function type symbol"; }
-    std::string SymbolDocKindStr() const override { return "function_type"; }
-    TypeSymbol* ReturnType() const { return returnType; }
-    void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
-    const std::vector<TypeSymbol*>& ParameterTypes() const { return parameterTypes; }
-    void AddParameterType(TypeSymbol* parameterType);
-    int PtrIndex() const override { return ptrIndex; }
-    void Write(Writer& writer) override;
-    void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
-    void Accept(Visitor& visitor) override;
-private:
-    TypeSymbol* returnType;
-    util::uuid returnTypeId;
-    std::vector<TypeSymbol*> parameterTypes;
-    std::vector<util::uuid> parameterTypeIds;
-    int ptrIndex;
 };
 
 struct FunctionLess

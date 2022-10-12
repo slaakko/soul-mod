@@ -21,7 +21,8 @@ enum class ValueKind
     arrayValue, structureValue, stringValue, stringArrayValue, conversionValue, clsIdValue, symbolValue,
     globalVariable,
     regValue,
-    instruction
+    instruction,
+    function
 };
 
 class Value

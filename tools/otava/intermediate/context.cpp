@@ -231,6 +231,11 @@ ConstantValue* Context::GetULongValue(uint64_t value)
     return data->GetULongValue(value, *types);
 }
 
+ConstantValue* Context::GetIntegerValue(Type* type, int64_t value)
+{
+    return data->GetIntegerValue(type, value, *types);
+}
+
 ConstantValue* Context::GetFloatValue(float value)
 {
     return data->GetFloatValue(value, *types);
@@ -239,6 +244,11 @@ ConstantValue* Context::GetFloatValue(float value)
 ConstantValue* Context::GetDoubleValue(double value)
 {
     return data->GetDoubleValue(value, *types);
+}
+
+ConstantValue* Context::GetFloatingValue(Type* type, double value)
+{
+    return data->GetFloatingValue(type, value, *types);
 }
 
 ConstantValue* Context::GetNullValue(const SourcePos& sourcePos, Type* type)
@@ -385,6 +395,11 @@ void Context::ResetRegisterPool()
 void Context::SetCurrentFunction(Function* fn)
 {
     code->SetCurrentFunction(fn);
+}
+
+Function* Context::GetOrInsertFunction(const std::string& functionId, FunctionType* functionType)
+{
+    return code->GetOrInsertFunction(functionId, functionType);
 }
 
 void Context::SetCurrentBasicBlock(BasicBlock* bb)

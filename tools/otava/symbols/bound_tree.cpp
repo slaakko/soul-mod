@@ -278,8 +278,8 @@ void BoundGotoStatementNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-BoundConstructionStatementNode::BoundConstructionStatementNode(const soul::ast::SourcePos& sourcePos_, VariableSymbol* variable_, BoundExpressionNode* initializer_) :
-    BoundStatementNode(BoundNodeKind::boundConstructionStatementNode, sourcePos_), variable(variable_), initializer(initializer_)
+BoundConstructionStatementNode::BoundConstructionStatementNode(const soul::ast::SourcePos& sourcePos_, BoundFunctionCallNode* constructorCall_) :
+    BoundStatementNode(BoundNodeKind::boundConstructionStatementNode, sourcePos_), constructorCall(constructorCall_)
 {
 }
 
@@ -327,19 +327,156 @@ void BoundVariableNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
+void BoundVariableNode::SetThisPtr(BoundExpressionNode* thisPtr_)
+{
+    thisPtr.reset(thisPtr_);
+}
+
 void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (variable->IsLocalVariable())
+    {
+        if ((flags & OperationFlags::addr) != OperationFlags::none)
+        {
+            emitter.Stack().Push(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
+        }
+        else if ((flags & OperationFlags::deref) != OperationFlags::none)
+        {
+            otava::intermediate::Value* value = emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
+            uint8_t derefCount = GetDerefCount(flags);
+            for (uint8_t i = 0; i < derefCount; ++i)
+            {
+                value = emitter.EmitLoad(value);
+            }
+            emitter.Stack().Push(value);
+        }
+        else
+        {
+            emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context))));
+        }
+    }
+    else if (variable->IsMemberVariable())
+    {
+        if (!thisPtr)
+        {
+            ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+        }
+        thisPtr->Load(emitter, flags, sourcePos, context);
+        otava::intermediate::Value* ptr = emitter.Stack().Pop();
+        int32_t layoutIndex = variable->LayoutIndex();
+        otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
+        if ((flags & OperationFlags::addr) != OperationFlags::none)
+        {
+            emitter.Stack().Push(elementPtr);
+        }
+        else if ((flags & OperationFlags::deref) != OperationFlags::none)
+        {
+            otava::intermediate::Value* value = emitter.EmitLoad(elementPtr);
+            uint8_t n = GetDerefCount(flags);
+            for (uint8_t i = 0; i < n; ++i)
+            {
+                value = emitter.EmitLoad(value);
+            }
+            emitter.Stack().Push(value);
+        }
+        else
+        {
+            emitter.Stack().Push(emitter.EmitLoad(elementPtr));
+        }
+    }
+    else if (variable->IsGlobalVariable())
+    {
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        if ((flags & OperationFlags::addr) != OperationFlags::none)
+        {
+            emitter.Stack().Push(ptr);
+        }
+        else if ((flags & OperationFlags::deref) != OperationFlags::none)
+        {
+            otava::intermediate::Value* value = emitter.EmitLoad(ptr);
+            uint8_t n = GetDerefCount(flags);
+            for (uint8_t i = 0; i < n; ++i)
+            {
+                value = emitter.EmitLoad(value);
+            }
+            emitter.Stack().Push(value);
+        }
+        else
+        {
+            emitter.Stack().Push(emitter.EmitLoad(ptr));
+        }
+    }
+}
+
+void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if ((flags & OperationFlags::addr) != OperationFlags::none)
     {
-        emitter.Stack().Push(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
+        ThrowException("invalid operation flag 'addr' for variable store operation", sourcePos, context);
     }
-    else if ((flags & OperationFlags::deref) != OperationFlags::none)
+    if (variable->IsLocalVariable())
     {
-        // TODO deref
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* value = emitter.Stack().Pop();
+        if ((flags & OperationFlags::deref) != OperationFlags::none)
+        {
+            ptr = emitter.EmitLoad(ptr);
+            uint8_t n = GetDerefCount(flags);
+            for (uint8_t i = 1; i < n; ++i)
+            {
+                ptr = emitter.EmitLoad(ptr);
+            }
+            emitter.EmitStore(value, ptr);
+        }
+        else
+        {
+            emitter.EmitStore(value, ptr);
+        }
     }
-    else 
+    else if (variable->IsMemberVariable())
     {
-        emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context))));
+        otava::intermediate::Value* value = emitter.Stack().Pop();
+        if (!thisPtr)
+        {
+            ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+        }
+        thisPtr->Load(emitter, flags, sourcePos, context);
+        otava::intermediate::Value* ptr = emitter.Stack().Pop();
+        int32_t layoutIndex = variable->LayoutIndex();
+        otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
+        if ((flags & OperationFlags::deref) != OperationFlags::none)
+        {
+            ptr = emitter.EmitLoad(ptr);
+            uint8_t n = GetDerefCount(flags);
+            for (uint8_t i = 1; i < n; ++i)
+            {
+                ptr = emitter.EmitLoad(ptr);
+            }
+            emitter.EmitStore(value, ptr);
+        }
+        else
+        {
+            emitter.EmitStore(value, ptr);
+        }
+    }
+    else if (variable->IsGlobalVariable())
+    {
+        otava::intermediate::Value* value = emitter.Stack().Pop();
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        if ((flags & OperationFlags::deref) != OperationFlags::none)
+        {
+            ptr = emitter.EmitLoad(ptr);
+            uint8_t n = GetDerefCount(flags);
+            for (uint8_t i = 1; i < n; ++i)
+            {
+                ptr = emitter.EmitLoad(ptr);
+            }
+            emitter.EmitStore(value, ptr);
+        }
+        else
+        {
+            emitter.EmitStore(value, ptr);
+        }
     }
 }
 
@@ -361,11 +498,42 @@ void BoundParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul
     }
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
-        // TODO deref
+        otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context));
+        otava::intermediate::Value* value = emitter.EmitLoad(ptr);
+        uint8_t n = GetDerefCount(flags);
+        for (uint8_t i = 0; i < n; ++i)
+        {
+            value = emitter.EmitLoad(value);
+        }
+        emitter.Stack().Push(value);
     }
     else
     {
         emitter.Stack().Push(emitter.EmitLoad(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context))));
+    }
+}
+
+void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context));
+    otava::intermediate::Value* value = emitter.Stack().Pop();
+    if ((flags & OperationFlags::addr) != OperationFlags::none)
+    {
+        ThrowException("invalid operation flag 'addr' for parameter store operation", sourcePos, context);
+    }
+    else if ((flags & OperationFlags::deref) != OperationFlags::none)
+    {
+        ptr = emitter.EmitLoad(ptr);
+        uint8_t n = GetDerefCount(flags);
+        for (uint8_t i = 1; i < n; ++i)
+        {
+            ptr = emitter.EmitLoad(ptr);
+        }
+        emitter.EmitStore(value, ptr);
+    }
+    else
+    {
+        emitter.EmitStore(value, ptr);
     }
 }
 
@@ -403,6 +571,11 @@ BoundFunctionGroupNode::BoundFunctionGroupNode(FunctionGroupSymbol* functionGrou
 void BoundFunctionGroupNode::Accept(BoundTreeVisitor& visitor) 
 {
     visitor.Visit(*this);
+}
+
+void BoundFunctionGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+
 }
 
 BoundTypeNode::BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_) : 
@@ -452,7 +625,7 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
     {
         arguments.push_back(arg.get());
     }
-    functionSymbol->GenerateCode(emitter, arguments, sourcePos, context);
+    functionSymbol->GenerateCode(emitter, arguments, flags, sourcePos, context);
 }
 
 BoundConversionNode::BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_) :
@@ -469,7 +642,73 @@ void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const sou
 {
     subject->Load(emitter, flags, sourcePos, context);
     std::vector<BoundExpressionNode*> args;
-    conversionFunction->GenerateCode(emitter, args, sourcePos, context);
+    conversionFunction->GenerateCode(emitter, args, flags, sourcePos, context);
+}
+
+BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
+    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, sourcePos_, subject_->GetType()->AddPointer()), subject(subject_)
+{
+}
+
+void BoundAddressOfNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void BoundAddressOfNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!subject->IsBoundDereferenceNode())
+    {
+        subject->Load(emitter, OperationFlags::addr, sourcePos, context);
+    }
+    else
+    {
+        BoundDereferenceNode* derefExpr = static_cast<BoundDereferenceNode*>(subject.get());
+        derefExpr->Subject()->Load(emitter, flags, sourcePos, context);
+    }
+}
+
+void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) 
+{
+    if (!subject->IsBoundDereferenceNode())
+    {
+        subject->Store(emitter, OperationFlags::addr, sourcePos, context);
+    }
+    else
+    {
+        BoundDereferenceNode* derefExpr = static_cast<BoundDereferenceNode*>(subject.get());
+        derefExpr->Subject()->Store(emitter, flags, sourcePos, context);
+    }
+}
+
+BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, subject_->GetType()->RemovePointer()), subject(subject_)
+{
+}
+
+void BoundDereferenceNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void BoundDereferenceNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!subject->IsBoundAddressOfNode())
+    {
+        if (GetDerefCount(flags) == 0 && (flags & OperationFlags::addr) != OperationFlags::none)
+        {
+            subject->Load(emitter, OperationFlags::none, sourcePos, context);
+        }
+        else
+        {
+            subject->Load(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), sourcePos, context);
+        }
+    }
+    else
+    {
+        BoundAddressOfNode* addressOfExpr = static_cast<BoundAddressOfNode*>(subject.get());
+        addressOfExpr->Subject()->Load(emitter, flags, sourcePos, context);
+    }
 }
 
 BoundErrorNode::BoundErrorNode(const soul::ast::SourcePos& sourcePos_) : BoundExpressionNode(BoundNodeKind::boundErrorNode, sourcePos_, nullptr)

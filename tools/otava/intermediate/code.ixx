@@ -28,6 +28,7 @@ public:
     Function* CurrentFunction() const { return currentFunction; }
     void SetCurrentFunction(Function* function);
     Function* GetFunction(const std::string& functionId) const;
+    Function* GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
     Function* AddFunctionDefinition(const SourcePos& sourcePos, FunctionType* functionType, const std::string& functionId, bool once, MetadataRef* metadataRef, Context* context);
     Function* AddFunctionDeclaration(const SourcePos& sourcePos, FunctionType* functionType, const std::string& functionId);
     Function* FirstFunction() { return first; }

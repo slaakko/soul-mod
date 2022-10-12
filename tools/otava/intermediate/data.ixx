@@ -291,8 +291,10 @@ public:
     ConstantValue* GetUIntValue(uint32_t value, const Types& types);
     ConstantValue* GetLongValue(int64_t value, const Types& types);
     ConstantValue* GetULongValue(uint64_t value, const Types& types);
+    ConstantValue* GetIntegerValue(Type* type, int64_t value, const Types& types);
     ConstantValue* GetFloatValue(float value, const Types& types);
     ConstantValue* GetDoubleValue(double value, const Types& types);
+    ConstantValue* GetFloatingValue(Type* type, double value, const Types& types);
     ConstantValue* GetNullValue(Type* type);
     ConstantValue* MakeValue(int8_t value, const Types& types);
     ConstantValue* MakeValue(uint8_t value, const Types& types);

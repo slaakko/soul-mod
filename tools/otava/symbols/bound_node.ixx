@@ -24,9 +24,11 @@ enum class BoundNodeKind
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
     boundLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode,
-    boundConversionNode,
+    boundConversionNode, boundAddressOfNode, boundDereferenceNode,
     boundErrorNode
 };
+
+std::string BoundNodeKindStr(BoundNodeKind nodeKind);
 
 class BoundNode
 {
@@ -37,6 +39,9 @@ public:
     BoundNodeKind Kind() const { return kind; }
     virtual Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const { return nullptr; }
     const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
+    bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
+    bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
 private:
     BoundNodeKind kind;
     soul::ast::SourcePos sourcePos;

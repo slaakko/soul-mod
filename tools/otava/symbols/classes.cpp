@@ -13,6 +13,7 @@ import otava.symbols.class_group.symbol;
 import otava.symbols.context;
 import otava.symbols.emitter;
 import otava.symbols.exception;
+import otava.symbols.fundamental.type.symbol;
 import otava.symbols.modules;
 import otava.symbols.symbol.table;
 import otava.symbols.templates;
@@ -41,7 +42,13 @@ void RecordedParse(otava::ast::CompoundStatementNode* compoundStatementNode, Con
     }
 }
 
-ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::classTypeSymbol, name_), classKind(ClassKind::class_), level(0), irType(nullptr)
+ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) : 
+    TypeSymbol(SymbolKind::classTypeSymbol, name_), 
+    classKind(ClassKind::class_), 
+    level(0), 
+    irType(nullptr),
+    objectLayoutComputed(false),
+    vptrIndex(-1)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -90,6 +97,13 @@ void ClassTypeSymbol::Write(Writer& writer)
         writer.GetBinaryStreamWriter().Write(baseClass->Id());
     }
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(classKind));
+    writer.GetBinaryStreamWriter().Write(level);
+    writer.GetBinaryStreamWriter().Write(objectLayoutComputed);
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(objectLayout.size());
+    for (const auto& type : objectLayout)
+    {
+        writer.GetBinaryStreamWriter().Write(type->Id());
+    }
 }
 
 void ClassTypeSymbol::Read(Reader& reader)
@@ -103,6 +117,15 @@ void ClassTypeSymbol::Read(Reader& reader)
         baseClassIds.push_back(baseClassId);
     }
     classKind = static_cast<ClassKind>(reader.GetBinaryStreamReader().ReadByte());
+    level = reader.GetBinaryStreamReader().ReadInt();
+    objectLayoutComputed = reader.GetBinaryStreamReader().ReadBool();
+    uint32_t nol = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < nol; ++i)
+    {
+        util::uuid tid;
+        reader.GetBinaryStreamReader().ReadUuid(tid);
+        objectLayoutIds.push_back(tid);
+    }
 }
 
 void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
@@ -116,6 +139,52 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
             GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
             baseClasses.push_back(static_cast<ClassTypeSymbol*>(baseClassSymbol));
         }
+    }
+    for (const auto& tid : objectLayoutIds)
+    {
+        TypeSymbol* type = symbolTable.GetType(tid);
+        objectLayout.push_back(type);
+    }
+}
+
+bool ClassTypeSymbol::IsPolymorphic() const
+{
+    for (const auto& baseClass : baseClasses)
+    {
+        if (baseClass->IsPolymorphic()) return true;
+    }
+    for (const auto& memberFunction : memberFunctions)
+    {
+        if (memberFunction->IsVirtual()) return true;
+    }
+    return false;
+}
+
+void ClassTypeSymbol::MakeObjectLayout(Context* context)
+{
+    if (objectLayoutComputed) return;
+    objectLayoutComputed = true;
+    for (const auto& baseClass : baseClasses)
+    {
+        objectLayout.push_back(baseClass);
+    }
+    if (baseClasses.empty())
+    {
+        if (IsPolymorphic())
+        {
+            vptrIndex = objectLayout.size();
+            objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer());
+        }
+        else if (memberVariables.empty())
+        {
+            objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedCharType));
+        }
+    }
+    for (const auto& memberVar : memberVariables)
+    {
+        int32_t layoutIndex = objectLayout.size();
+        memberVar->SetLayoutIndex(layoutIndex);
+        objectLayout.push_back(memberVar->GetType());
     }
 }
 
@@ -160,7 +229,15 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
     otava::intermediate::Type* irType = emitter.GetType(Id());
     if (!irType)
     {
-        // todo
+        MakeObjectLayout(context);
+        std::vector<otava::intermediate::Type*> elementTypes;
+        int n = objectLayout.size();
+        for (int i = 0; i < n; ++i)
+        {
+            TypeSymbol* type = objectLayout[i];
+            elementTypes.push_back(type->IrType(emitter, sourcePos, context));
+        }
+        irType = emitter.MakeStructureType(elementTypes);
         emitter.SetType(Id(), irType);
     }
     return irType;

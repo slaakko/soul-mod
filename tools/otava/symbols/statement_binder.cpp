@@ -16,6 +16,7 @@ import otava.symbols.declarator;
 import otava.symbols.exception;
 import otava.symbols.expression.binder;
 import otava.symbols.function.symbol;
+import otava.symbols.overload.resolution;
 import otava.symbols.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.variable.symbol;
@@ -298,7 +299,16 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
             {
                 variable->SetInitializerType(initializer->GetType());
             }
-            BoundConstructionStatementNode * boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), variable, initializer);
+            BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
+            std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
+            arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, node.GetSourcePos())));
+            if (initializer)
+            {
+                arguments.push_back(std::unique_ptr<BoundExpressionNode>(initializer));
+            }
+            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverload(context->GetSymbolTable()->CurrentScope(), U"@constructor", arguments, 
+                node.GetSourcePos(), context);
+            BoundConstructionStatementNode * boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
             boundCompoundStatement->AddStatement(boundConstructionStatement);
             functionDefinitionSymbol->AddLocalVariable(variable, node.GetSourcePos(), context);
         }

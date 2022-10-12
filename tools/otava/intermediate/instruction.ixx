@@ -268,6 +268,7 @@ public:
     ValueInstruction(const SourcePos& sourcePos_, RegValue* result_, OpCode opCode_);
     RegValue* Result() const { return result; }
     void WriteResult(util::CodeFormatter& formatter);
+    std::string ToString() const override { return "$" + std::to_string(result->Reg()); }
 private:
     RegValue* result;
 };

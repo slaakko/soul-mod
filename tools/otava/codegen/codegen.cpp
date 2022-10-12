@@ -20,7 +20,9 @@ import otava.intermediate.basic.block;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.exception;
+import otava.symbols.type.symbol;
 import otava.symbols.value;
+import otava.symbols.variable.symbol;
 import std.core;
 import std.filesystem;
 import util;
@@ -168,6 +170,7 @@ private:
     otava::symbols::Context& context;
     bool verbose;
     otava::symbols::Emitter emitter;
+    otava::intermediate::BasicBlock* entryBlock;
     otava::intermediate::BasicBlock* trueBlock;
     otava::intermediate::BasicBlock* falseBlock;
     otava::intermediate::BasicBlock* nextBlock;
@@ -177,11 +180,13 @@ private:
     bool genJumpingBoolCode;
     bool prevWasTerminator;
     otava::symbols::BoundStatementNode* sequenceSecond;
+    otava::intermediate::Value* lastLocal;
 };
 
 CodeGenerator::CodeGenerator(otava::symbols::Context& context_, bool verbose_) : 
-    context(context_), verbose(verbose_), trueBlock(nullptr), falseBlock(nullptr), nextBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr), continueBlock(nullptr), 
-    genJumpingBoolCode(false), prevWasTerminator(false), sequenceSecond(nullptr)
+    context(context_), verbose(verbose_), 
+    entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), nextBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr), continueBlock(nullptr), 
+    genJumpingBoolCode(false), prevWasTerminator(false), sequenceSecond(nullptr), lastLocal(nullptr)
 {
     std::string config = "debug";
     std::string intermediateCodeFilePath = util::GetFullPath(
@@ -244,7 +249,48 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     otava::intermediate::Type* functionType = functionDefinition->IrType(emitter, node.GetSourcePos(), &context);
     bool once = false;
     emitter.CreateFunction(functionDefinition->IrName(), functionType, once);
+    entryBlock = emitter.CreateBasicBlock();
+    emitter.SetCurrentBasicBlock(entryBlock);
+    int np = functionDefinition->Parameters().size();
+    for (int i = 0; i < np; ++i)
+    {
+        otava::symbols::ParameterSymbol* parameter = functionDefinition->Parameters()[i];
+        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetType()->IrType(emitter, node.GetSourcePos(), &context));
+        emitter.SetIrObject(parameter, local);
+        lastLocal = local;
+    }
+    int nlv = functionDefinition->LocalVariables().size();
+    for (int i = 0; i < nlv; ++i)
+    {
+        otava::symbols::VariableSymbol* localVariable = functionDefinition->LocalVariables()[i];
+        otava::intermediate::Value* local = emitter.EmitLocal(localVariable->GetType()->IrType(emitter, node.GetSourcePos(), &context));
+        emitter.SetIrObject(localVariable, local);
+        lastLocal = local;
+    }
+    for (int i = 0; i < np; ++i)
+    {
+        otava::intermediate::Value* param = emitter.GetParam(i);
+        otava::symbols::ParameterSymbol* parameter = functionDefinition->Parameters()[i];
+        emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
+    }
     node.Body()->Accept(*this);
+    otava::symbols::BoundStatementNode* lastStatement = nullptr;
+    if (!node.Body()->Statements().empty())
+    {
+        lastStatement = node.Body()->Statements().back().get();
+    }
+    if (!lastStatement || !lastStatement->IsReturnStatementNode())
+    {
+        if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType())
+        {
+            otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->IrType(emitter, node.GetSourcePos(), &context)->DefaultValue();
+            emitter.EmitRet(returnValue);
+        }
+        else
+        {
+            emitter.EmitRetVoid();
+        }
+    }
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
@@ -513,7 +559,7 @@ void CodeGenerator::Visit(otava::symbols::BoundContinueStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundConstructionStatementNode& node)
 {
     StatementPrefix();
-    // todo
+    node.ConstructorCall()->Accept(*this);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundExpressionStatementNode& node)

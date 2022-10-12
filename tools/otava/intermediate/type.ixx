@@ -103,6 +103,7 @@ public:
     bool IsFloatType() const { return id == floatTypeId; }
     bool IsDoubleType() const { return id == doubleTypeId; }
     bool IsPointerType() const { return kind == TypeKind::pointerType; }
+    bool IsAggregateType() const;
     Type* AddPointer(Context* context) const;
     Type* RemovePointer(const SourcePos& sourcePos, Context* context) const;
     virtual std::string Name() const = 0;

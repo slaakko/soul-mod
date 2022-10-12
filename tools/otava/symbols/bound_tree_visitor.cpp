@@ -115,10 +115,7 @@ void DefaultBoundTreeVisitor::Visit(BoundReturnStatementNode& node)
 
 void DefaultBoundTreeVisitor::Visit(BoundConstructionStatementNode& node)
 {
-    if (node.Initializer())
-    {
-        node.Initializer()->Accept(*this);
-    }
+    node.ConstructorCall()->Accept(*this);
 }
 
 void DefaultBoundTreeVisitor::Visit(BoundExpressionStatementNode& node)

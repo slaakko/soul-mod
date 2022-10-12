@@ -659,6 +659,64 @@ ConstantValue* Data::MakeValue(double value, const Types& types)
     return constantValue;
 }
 
+ConstantValue* Data::GetIntegerValue(Type* type, int64_t value, const Types& types)
+{
+    switch (type->Id())
+    {
+        case sbyteTypeId:
+        {
+            return GetSByteValue(static_cast<int8_t>(value), types);
+        }
+        case byteTypeId:
+        {
+            return GetByteValue(static_cast<uint8_t>(value), types);
+        }
+        case shortTypeId:
+        {
+            return GetShortValue(static_cast<int16_t>(value), types);
+        }
+        case ushortTypeId:
+        {
+            return GetUShortValue(static_cast<uint16_t>(value), types);
+        }
+        case intTypeId:
+        {
+            return GetIntValue(static_cast<int32_t>(value), types);
+        }
+        case uintTypeId:
+        {
+            return GetUIntValue(static_cast<uint32_t>(value), types);
+        }
+        case longTypeId:
+        {
+            return GetLongValue(static_cast<int64_t>(value), types);
+        }
+        case ulongTypeId:
+        {
+            return GetULongValue(static_cast<uint64_t>(value), types);
+        }
+    }
+    Error("integer type expected", SourcePos(), context);
+    return nullptr;
+}
+
+ConstantValue* Data::GetFloatingValue(Type* type, double value, const Types& types)
+{
+    switch (type->Id())
+    {
+        case floatTypeId:
+        {
+            return GetFloatValue(static_cast<float>(value), types);
+        }
+        case doubleTypeId:
+        {
+            return GetDoubleValue(static_cast<double>(value), types);
+        }
+    }
+    Error("floating point type expected", SourcePos(), context);
+    return nullptr;
+}
+
 ConstantValue* Data::MakeArrayValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& elements)
 {
     ArrayValue* arrayValue = new ArrayValue(sourcePos, elements);
