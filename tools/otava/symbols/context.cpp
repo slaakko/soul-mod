@@ -20,8 +20,7 @@ Context::Context() :
     flags(ContextFlags::none), 
     node(nullptr), 
     boundCompileUnit(new BoundCompileUnitNode()),
-    boundFunction(nullptr), 
-    currentCompoundStatement(nullptr)
+    boundFunction(nullptr)
 {
 }
 
@@ -43,27 +42,6 @@ OperationRepository* Context::GetOperationRepository() const
 void Context::SetBoundFunction(BoundFunctionNode* boundFunction_)
 {
     boundFunction = boundFunction_;
-}
-
-void Context::BeginCompoundStatement(const soul::ast::SourcePos& sourcePos)
-{
-    compoundStatementStack.push(currentCompoundStatement);
-    currentCompoundStatement = new BoundCompoundStatementNode(sourcePos);
-}
-
-void Context::EndCompoundStatement()
-{
-    if (!compoundStatementStack.top())
-    {
-        boundFunction->SetBody(currentCompoundStatement);
-        currentCompoundStatement = nullptr;
-    }
-    else
-    {
-        compoundStatementStack.top()->AddStatement(currentCompoundStatement);
-        currentCompoundStatement = compoundStatementStack.top();
-        compoundStatementStack.pop();
-    }
 }
 
 EvaluationContext* Context::GetEvaluationContext()

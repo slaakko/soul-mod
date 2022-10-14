@@ -1503,7 +1503,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StructureType(Lexer& lexer, o
                 }
                 if (match.hit)
                 {
-                    context->AddStructureType(sp, typeId, fieldTypeRefs);
+                    context->GetStructureType(sp, typeId, fieldTypeRefs);
                 }
                 *parentMatch15 = match;
             }
@@ -1660,7 +1660,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ArrayType(Lexer& lexer, otava
                 }
                 if (match.hit)
                 {
-                    context->AddArrayType(sp, typeId, size, elementTypeRef->value);
+                    context->GetArrayType(sp, typeId, size, elementTypeRef->value);
                 }
                 *parentMatch11 = match;
             }
@@ -1888,7 +1888,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::FunctionType(Lexer& lexer, ot
                 }
                 if (match.hit)
                 {
-                    context->AddFunctionType(sp, typeId, returnTypeRef->value, paramTypeRefs);
+                    context->GetFunctionType(sp, typeId, returnTypeRef->value, paramTypeRefs);
                 }
                 *parentMatch19 = match;
             }

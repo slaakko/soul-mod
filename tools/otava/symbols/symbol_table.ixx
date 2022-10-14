@@ -50,6 +50,7 @@ class Module;
 class Symbol;
 class Scope;
 class AliasTypeSymbol;
+class BoundExpressionNode;
 class ClassTypeSymbol;
 class ConceptSymbol;
 class EnumeratedTypeSymbol;
@@ -184,6 +185,7 @@ public:
     SymbolMap* GetSymbolMap() { return symbolMap; }
     ConversionTable& GetConversionTable() { return *conversionTable; }
     const ConversionTable& GetConversionTable() const { return *conversionTable; }
+    BoundExpressionNode* MakeBooleanConversion(BoundExpressionNode* subject, Context* context);
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);

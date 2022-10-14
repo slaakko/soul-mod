@@ -246,6 +246,11 @@ void TypeRef::Write(util::CodeFormatter& formatter)
     formatter.Write(type->Name());
 }
 
+bool operator<(const TypeRef& left, const TypeRef& right)
+{
+    return left.GetType() < right.GetType();
+}
+
 StructureType::StructureType(const SourcePos& sourcePos_, int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
     Type(sourcePos_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false)
 {
@@ -510,24 +515,44 @@ void Types::Write(util::CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
-StructureType* Types::AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+StructureType* Types::GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
+    auto it = structureTypeMap.find(fieldTypeRefs);
+    if (it != structureTypeMap.cend())
+    {
+        return it->second;
+    }
     StructureType* structureType = new StructureType(sourcePos, typeId, fieldTypeRefs);
     types.push_back(std::unique_ptr<Type>(structureType));
+    structureTypeMap[fieldTypeRefs] = structureType;
     return structureType;
 }
 
-ArrayType* Types::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
+ArrayType* Types::GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
 {
+    auto key = std::make_pair(size, elementTypeRef);
+    auto it = arrayTypeMap.find(key);
+    if (it != arrayTypeMap.cend())
+    {
+        return it->second;
+    }
     ArrayType* arrayType = new ArrayType(sourcePos, typeId, size, elementTypeRef);
     types.push_back(std::unique_ptr<Type>(arrayType));
+    arrayTypeMap[key] = arrayType;
     return arrayType;
 }
 
-FunctionType* Types::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
+    auto key = std::make_pair(returnTypeRef, paramTypeRefs);
+    auto it = functionTypeMap.find(key);
+    if (it != functionTypeMap.cend())
+    {
+        return it->second;
+    }
     FunctionType* functionType = new FunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
     types.push_back(std::unique_ptr<Type>(functionType));
+    functionTypeMap[key] = functionType;
     return functionType;
 }
 

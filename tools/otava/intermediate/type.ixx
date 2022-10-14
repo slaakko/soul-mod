@@ -251,6 +251,8 @@ private:
     Type* type;
 };
 
+bool operator<(const TypeRef& left, const TypeRef& right);
+
 inline TypeRef MakeTypeRef(const SourcePos& sourcePos, int32_t baseTypeId, int32_t pointerCount)
 {
     return TypeRef(sourcePos, MakeTypeId(baseTypeId, pointerCount));
@@ -346,9 +348,9 @@ public:
     void Write(util::CodeFormatter& formatter);
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
-    StructureType* AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
-    ArrayType* AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
-    FunctionType* AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    StructureType* GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    ArrayType* GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
+    FunctionType* GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     void Resolve(Context* context);
     void ResolveType(TypeRef& typeRef, Context* context);
     void Add(Type* type, Context* context);
@@ -376,6 +378,9 @@ private:
     std::vector<Type*> declaredTypes;
     std::map<int32_t, Type*> typeMap;
     std::map<std::pair<int32_t, int8_t>, PointerType*> pointerTypeMap;
+    std::map<std::vector<TypeRef>, StructureType*> structureTypeMap;
+    std::map<std::pair<int64_t, TypeRef>, ArrayType*> arrayTypeMap;
+    std::map<std::pair<TypeRef, std::vector<TypeRef>>, FunctionType*> functionTypeMap;
     VoidType voidType;
     BoolType boolType;
     SByteType sbyteType;

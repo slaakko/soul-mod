@@ -15,6 +15,7 @@ import otava.intermediate.compile.unit;
 import otava.intermediate.instruction;
 import otava.intermediate.function;
 import otava.intermediate.type;
+import otava.intermediate.reference_resolver;
 
 namespace otava::symbols {
 
@@ -48,6 +49,16 @@ void Emitter::SetCompileUnitInfo(const std::string& compileUnitId, const std::st
     context->SetCompileUnitInfo(compileUnitId, sourceFilePath);
 }
 
+otava::intermediate::Context* Emitter::GetIntermediateContext()
+{
+    return context;
+}
+
+void Emitter::ResolveReferences()
+{
+    otava::intermediate::ResolveReferences(*context);
+}
+
 void Emitter::CreateFunction(const std::string& name, otava::intermediate::Type* type, bool once)
 {
     otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::SourcePos(), type, name, once, nullptr);
@@ -76,7 +87,7 @@ otava::intermediate::Type* Emitter::MakeStructureType(const std::vector<otava::i
     {
         fieldTypeRefs.push_back(elementType->GetTypeRef());
     }
-    return context->AddStructureType(soul::ast::SourcePos(), context->NextTypeId(), fieldTypeRefs);
+    return context->GetStructureType(soul::ast::SourcePos(), context->NextTypeId(), fieldTypeRefs);
 }
 
 otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
@@ -87,7 +98,13 @@ otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* 
     {
         paramTypeRefs.push_back(paramType->GetTypeRef());
     }
-    return context->AddFunctionType(soul::ast::SourcePos(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
+    return context->GetFunctionType(soul::ast::SourcePos(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
+}
+
+otava::intermediate::Type* Emitter::MakeArrayType(int64_t size, otava::intermediate::Type* elementType)
+{
+    otava::intermediate::TypeRef elementTypeRef = elementType->GetTypeRef();
+    return context->GetArrayType(soul::ast::SourcePos(), context->NextTypeId(), size, elementTypeRef);
 }
 
 otava::intermediate::Type* Emitter::GetVoidType()

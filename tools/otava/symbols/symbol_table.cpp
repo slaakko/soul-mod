@@ -14,6 +14,7 @@ import soul.lexer;
 import otava.ast.error;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.alias.group.symbol;
+import otava.symbols.bound.node;
 import otava.symbols.class_group.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.variable.group.symbol;
@@ -132,6 +133,17 @@ void SymbolTable::AddClass(ClassTypeSymbol* cls)
 {
     classes.insert(cls);
     allClasses.insert(cls);
+}
+
+BoundExpressionNode* SymbolTable::MakeBooleanConversion(BoundExpressionNode* subject, Context* context)
+{
+    FunctionSymbol* conversionFunction = conversionTable->GetConversion(GetFundamentalType(FundamentalTypeKind::boolType), subject->GetType());
+    if (!conversionFunction)
+    {
+        ThrowException("condition must be convertible to Boolean type value", subject->GetSourcePos(), context);
+        return nullptr;
+    }
+    return new BoundConversionNode(subject, conversionFunction, subject->GetSourcePos());
 }
 
 void SymbolTable::Init()

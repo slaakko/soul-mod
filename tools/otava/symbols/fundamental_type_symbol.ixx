@@ -36,6 +36,7 @@ public:
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     bool IsVoidType() const override { return kind == FundamentalTypeKind::voidType; }
+    bool IsBoolType() const override { return kind == FundamentalTypeKind::boolType; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     int32_t Score() const { return static_cast<int32_t>(kind); }
 private:

@@ -19,6 +19,7 @@ import otava.symbols.function.symbol;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol;
 import otava.symbols.symbol.table;
+import otava.symbols.type.symbol;
 import otava.symbols.variable.symbol;
 
 namespace otava::symbols {
@@ -65,23 +66,24 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 void StatementBinder::Visit(otava::ast::FunctionBodyNode& node)
 {
     node.Child()->Accept(*this);
+    context->GetBoundFunction()->SetBody(static_cast<BoundCompoundStatementNode*>(boundStatement));
 }
 
 void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->BeginCompoundStatement(node.GetSourcePos());
+    BoundCompoundStatementNode* currentCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
     context->GetSymbolTable()->BeginScope(block->GetScope());
     int n = node.Count();
     for (int i = 0; i < n; ++i)
     {
         otava::ast::Node* statementNode = node.Nodes()[i];
         BoundStatementNode* boundStatement = BindStatement(statementNode, functionDefinitionSymbol, context);
-        context->GetCurrentCompoundStatement()->AddStatement(boundStatement);
+        currentCompoundStatement->AddStatement(boundStatement);
     }
     context->GetSymbolTable()->EndScope();
-    context->EndCompoundStatement();
+    boundStatement = currentCompoundStatement;
 }
 
 void StatementBinder::Visit(otava::ast::IfStatementNode& node)
@@ -90,7 +92,6 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
     if (!block) return;
     context->GetSymbolTable()->BeginScope(block->GetScope());
     BoundIfStatementNode* boundIfStatement = new BoundIfStatementNode(node.GetSourcePos());
-    boundStatement = boundIfStatement;
     if (node.InitStatement())
     {
         BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), functionDefinitionSymbol, context);
@@ -100,6 +101,10 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
         }
     }
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    if (!condition->GetType()->IsBoolType())
+    {
+        condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+    }
     boundIfStatement->SetCondition(condition);
     BoundStatementNode* boundThenStatement = BindStatement(node.ThenStatement(), functionDefinitionSymbol, context);
     if (boundThenStatement)
@@ -114,6 +119,7 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
             boundIfStatement->SetElseStatement(boundElseStatement);
         }
     }
+    boundStatement = boundIfStatement;
     context->GetSymbolTable()->EndScope();
 }
 
@@ -174,6 +180,10 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
     boundStatement = boundWhileStatement;
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    if (!condition->GetType()->IsBoolType())
+    {
+        condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+    }
     boundWhileStatement->SetCondition(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
@@ -187,8 +197,12 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
 {
     BoundDoStatementNode* boundDoStatement = new BoundDoStatementNode(node.GetSourcePos());
     boundStatement = boundDoStatement;
-    BoundExpressionNode* expr = BindExpression(node.Expression(), context);
-    boundDoStatement->SetExpr(expr);
+    BoundExpressionNode* condition = BindExpression(node.Expression(), context);
+    if (!condition->GetType()->IsBoolType())
+    {
+        condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+    }
+    boundDoStatement->SetExpr(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
@@ -234,6 +248,10 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     if (node.Condition())
     {
         BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+        if (!condition->GetType()->IsBoolType())
+        {
+            condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+        }
         boundForStatement->SetCondition(condition);
     }
     if (node.LoopExpr())

@@ -22,6 +22,7 @@ class Code
 public:
     Code();
     ~Code();
+    void Finalize();
     void Write(util::CodeFormatter& formatter);
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }

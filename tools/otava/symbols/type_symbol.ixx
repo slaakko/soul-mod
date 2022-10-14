@@ -25,6 +25,7 @@ public:
     bool IsRValueRefType() const;
     virtual TypeSymbol* PlainType() { return this; }
     virtual bool IsVoidType() const { return false; }
+    virtual bool IsBoolType() const { return false; }
     virtual bool IsPolymorphic() const { return false; }
     TypeSymbol* AddConst();
     TypeSymbol* RemoveConst();

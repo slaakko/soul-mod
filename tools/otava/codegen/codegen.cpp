@@ -236,6 +236,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
         otava::symbols::BoundNode* boundNode = node.BoundNodes()[i].get();
         boundNode->Accept(*this);
     }
+    emitter.ResolveReferences();
     emitter.Emit();
     otava::intermediate::Context intermediateContext;
     otava::intermediate::ParseIntermediateCodeFile(emitter.FilePath(), intermediateContext);
@@ -274,6 +275,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
     }
     node.Body()->Accept(*this);
+    StatementPrefix();
     otava::symbols::BoundStatementNode* lastStatement = nullptr;
     if (!node.Body()->Statements().empty())
     {
@@ -320,18 +322,27 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
     {
         falseBlock = nextBlock;
     }
-    node.InitStatement()->Accept(*this);
+    if (node.InitStatement())
+    {
+        node.InitStatement()->Accept(*this);
+    }
     bool prevGenJumpingBoolCode = genJumpingBoolCode;
     genJumpingBoolCode = true;
     node.GetCondition()->Accept(*this);
     genJumpingBoolCode = prevGenJumpingBoolCode;
     emitter.SetCurrentBasicBlock(trueBlock);
+    otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
+    nextBlock = nullptr;
     node.ThenStatement()->Accept(*this);
+    nextBlock = prevNextBlock;
     emitter.EmitJump(nextBlock);
     if (node.ElseStatement())
     {
         emitter.SetCurrentBasicBlock(falseBlock);
+        otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
+        nextBlock = nullptr;
         node.ElseStatement()->Accept(*this);
+        nextBlock = prevNextBlock;
         emitter.EmitJump(nextBlock);
     }
     trueBlock = prevTrueBlock;

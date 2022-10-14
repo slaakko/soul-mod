@@ -67,9 +67,6 @@ public:
     OperationRepository* GetOperationRepository() const;
     BoundFunctionNode* GetBoundFunction() const { return boundFunction; }
     void SetBoundFunction(BoundFunctionNode* boundFunction_);
-    BoundCompoundStatementNode* GetCurrentCompoundStatement() const { return currentCompoundStatement; }
-    void BeginCompoundStatement(const soul::ast::SourcePos& sourcePos);
-    void EndCompoundStatement();
     EvaluationContext* GetEvaluationContext();
     std::string FileName() const;
     void PushFlags();
@@ -92,8 +89,6 @@ private:
     SymbolTable* symbolTable;
     std::unique_ptr<BoundCompileUnitNode> boundCompileUnit;
     BoundFunctionNode* boundFunction;
-    BoundCompoundStatementNode* currentCompoundStatement;
-    std::stack<BoundCompoundStatementNode*> compoundStatementStack;
     ContextFlags flags;
     std::stack<ContextFlags> flagStack;
     std::stack<otava::ast::Node*> nodeStack;

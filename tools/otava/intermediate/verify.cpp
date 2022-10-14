@@ -838,5 +838,4 @@ void Verify(Context& context)
     context.GetCode().VisitFunctions(visitor);
 }
 
-
 } // otava::intermediate

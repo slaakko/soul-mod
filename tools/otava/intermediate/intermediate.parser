@@ -99,7 +99,7 @@ parser IntermediateCodeParser
             (COMMA TypeRef:next{ fieldTypeRefs.push_back(next); })*)? 
             RBRACE
         {
-            context->AddStructureType(sp, typeId, fieldTypeRefs);
+            context->GetStructureType(sp, typeId, fieldTypeRefs);
         }
         ;
 
@@ -110,7 +110,7 @@ parser IntermediateCodeParser
             TypeRef:elementTypeRef
             RBRACKET
         {
-            context->AddArrayType(sp, typeId, size, elementTypeRef);
+            context->GetArrayType(sp, typeId, size, elementTypeRef);
         }
         ;
 
@@ -122,7 +122,7 @@ parser IntermediateCodeParser
             (COMMA TypeRef:next{ paramTypeRefs.push_back(next); })*)? 
             RPAREN
         {
-            context->AddFunctionType(sp, typeId, returnTypeRef, paramTypeRefs);
+            context->GetFunctionType(sp, typeId, returnTypeRef, paramTypeRefs);
         }
         ;
 

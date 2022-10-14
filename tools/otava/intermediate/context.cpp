@@ -48,8 +48,12 @@ const std::string& Context::FilePath() const
 
 std::string Context::ErrorLines(const SourcePos& sourcePos)
 {
-    std::string lines = util::ToUtf8(fileMap.GetFileLine(sourcePos.file, sourcePos.line)).append("\n").append(sourcePos.col - 1, ' ').append(1, '^');
-    return lines;
+    if (fileMap.HasFileContent(sourcePos.file))
+    {
+        std::string lines = util::ToUtf8(fileMap.GetFileLine(sourcePos.file, sourcePos.line)).append("\n").append(sourcePos.col - 1, ' ').append(1, '^');
+        return lines;
+    }
+    return std::string();
 }
 
 void Context::SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef)
@@ -131,19 +135,19 @@ Type* Context::MakePtrType(Type* baseType)
     return baseType->AddPointer(this);
 }
 
-StructureType* Context::AddStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+StructureType* Context::GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
-    return types->AddStructureType(sourcePos, typeId, fieldTypeRefs);
+    return types->GetStructureType(sourcePos, typeId, fieldTypeRefs);
 }
 
-ArrayType* Context::AddArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
+ArrayType* Context::GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
 {
-    return types->AddArrayType(sourcePos, typeId, size, elementTypeRef);
+    return types->GetArrayType(sourcePos, typeId, size, elementTypeRef);
 }
 
-FunctionType* Context::AddFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+FunctionType* Context::GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
-    return types->AddFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
+    return types->GetFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
 }
 
 void Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, ConstantValue* initializer, bool once)

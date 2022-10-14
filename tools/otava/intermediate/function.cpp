@@ -62,6 +62,7 @@ void Function::Finalize()
     {
         if (bb->IsEmpty())
         {
+            bb = bb->Next();
             continue;
         }
         bb->SetId(nextBBNumber++);
@@ -134,6 +135,7 @@ BasicBlock* Function::CreateBasicBlock()
 {
     BasicBlock* bb = new BasicBlock(SourcePos(), nextBasicBlockId++);
     AddBasicBlock(bb);
+    basicBlockMap[bb->Id()] = bb;
     return bb;
 }
 

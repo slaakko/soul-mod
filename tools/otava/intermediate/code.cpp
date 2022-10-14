@@ -28,6 +28,16 @@ Code::~Code()
     }
 }
 
+void Code::Finalize()
+{
+    Function* f = FirstFunction();
+    while (f)
+    {
+        f->Finalize();
+        f = f->Next();
+    }
+}
+
 void Code::Write(util::CodeFormatter& formatter)
 {
     bool first = true;

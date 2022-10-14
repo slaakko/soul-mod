@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{633d5849-cd60-4c05-805c-d6b7e5fef3a7}</ProjectGuid>
-    <RootNamespace>build</RootNamespace>
+    <ProjectGuid>{86c6dbf9-631b-42e0-81f0-b14d48e5f2e8}</ProjectGuid>
+    <RootNamespace>assembly</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -59,26 +59,22 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\config\build.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>otava.buildd</TargetName>
+    <TargetName>otava.assemblyd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>otava.build</TargetName>
+    <TargetName>otava.assembly</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -149,76 +145,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="build.cpp" />
-    <ClCompile Include="build.ixx" />
-    <ClCompile Include="parser.cpp" />
-    <ClCompile Include="parser.ixx" />
-    <ClCompile Include="project.cpp" />
-    <ClCompile Include="project.ixx" />
-    <ClCompile Include="project.lexer.cpp" />
-    <ClCompile Include="project.lexer.ixx" />
-    <ClCompile Include="project.parser.cpp" />
-    <ClCompile Include="project.parser.ixx" />
-    <ClCompile Include="project.token.ixx" />
-    <ClCompile Include="project_file.cpp" />
-    <ClCompile Include="project_file.ixx" />
-    <ClCompile Include="project_rules.cpp" />
-    <ClCompile Include="project_rules.ixx" />
-    <ClCompile Include="solution.cpp" />
-    <ClCompile Include="solution.ixx" />
-    <ClCompile Include="solution.lexer.cpp" />
-    <ClCompile Include="solution.lexer.ixx" />
-    <ClCompile Include="solution.parser.cpp" />
-    <ClCompile Include="solution.parser.ixx" />
-    <ClCompile Include="solution.token.ixx" />
-    <ClCompile Include="solution_rules.cpp" />
-    <ClCompile Include="solution_rules.ixx" />
-    <ClCompile Include="token_parser.ixx" />
+    <ClCompile Include="assembly.ixx" />
+    <ClCompile Include="context.cpp" />
+    <ClCompile Include="context.ixx" />
+    <ClCompile Include="expr.cpp" />
+    <ClCompile Include="expr.ixx" />
+    <ClCompile Include="function.cpp" />
+    <ClCompile Include="function.ixx" />
+    <ClCompile Include="instruction.cpp" />
+    <ClCompile Include="instruction.ixx" />
+    <ClCompile Include="literal.cpp" />
+    <ClCompile Include="literal.ixx" />
+    <ClCompile Include="register.ixx" />
+    <ClCompile Include="register.cpp" />
+    <ClCompile Include="symbol.cpp" />
+    <ClCompile Include="symbol.ixx" />
+    <ClCompile Include="value.cpp" />
+    <ClCompile Include="value.ixx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\soul\ast\ast.vcxproj">
-      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
+      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\soul\lexer\lexer.vcxproj">
-      <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\soul\parser\parser.vcxproj">
-      <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\soul\xml\dom\dom.vcxproj">
-      <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\codegen\codegen.vcxproj">
-      <Project>{ecef31bb-d328-430f-a32e-e0815e6d7f2d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\lexer\lexer.vcxproj">
-      <Project>{7d0afedf-e9e8-425a-a9db-d5ab1ceb543a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\parser\parser.vcxproj">
-      <Project>{213b329d-1699-400f-9d94-90af03657db4}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\pp\pp.vcxproj">
-      <Project>{9d2b17b0-97f0-4c3c-94da-d9ea9ca8262a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\symbols\symbols.vcxproj">
-      <Project>{4d558c80-ab5b-4c16-bd9c-7e2911c6af7a}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.expr" />
-    <None Include="project.keyword" />
-    <None Include="project.lexer" />
-    <None Include="project.parser" />
-    <None Include="project.slg" />
-    <None Include="project.spg" />
-    <None Include="project.token" />
-    <None Include="solution.expr" />
-    <None Include="solution.keyword" />
-    <None Include="solution.lexer" />
-    <None Include="solution.parser" />
-    <None Include="solution.slg" />
-    <None Include="solution.spg" />
-    <None Include="solution.token" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

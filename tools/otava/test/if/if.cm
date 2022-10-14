@@ -1,0 +1,20 @@
+void bar()
+{
+}
+
+void bazz()
+{
+}
+
+void foo()
+{
+	bool x = true;
+	if (x)
+	{
+		bar();
+	}
+	else
+	{
+		bazz();
+	}
+}

@@ -20,6 +20,8 @@ public:
     void SetFilePath(const std::string& filePath);
     const std::string& FilePath() const;
     void SetCompileUnitInfo(const std::string& compileUnitId, const std::string& sourceFilePath);
+    otava::intermediate::Context* GetIntermediateContext();
+    void ResolveReferences();
     void Emit();
     void CreateFunction(const std::string& name, otava::intermediate::Type* type, bool once);
     otava::intermediate::Function* GetOrInsertFunction(const std::string& name, otava::intermediate::FunctionType* functionType);
@@ -27,6 +29,7 @@ public:
     void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb);
     otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
+    otava::intermediate::Type* MakeArrayType(int64_t size, otava::intermediate::Type* elementType);
     otava::intermediate::Type* GetVoidType();
     otava::intermediate::Type* GetBoolType();
     otava::intermediate::Type* GetSByteType();

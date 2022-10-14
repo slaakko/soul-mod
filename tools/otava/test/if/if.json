@@ -1,0 +1,24 @@
+{
+    "dependsOnProjects" : 
+    [
+    ]
+    , 
+    "error" : "", 
+    "fileInfos" : 
+    [
+        {
+            "content" : "", 
+            "fileHash" : "FB7DFF81DB0B4E90DBDD2729C8E0BC2A2AF9A7F3", 
+            "fileId" : "if_7B1821C0A6751DEBD7CBCD195FE8CCE8AD21E889", 
+            "filePath" : "C:\/work\/soul-mod\/tools\/otava\/test\/if\/if.cm", 
+            "info" : ""
+        }
+    ]
+    , 
+    "info" : "", 
+    "projectFilePath" : "C:\/work\/soul-mod\/tools\/otava\/test\/if\/if.cmp", 
+    "projectHash" : "AB187B517C0B40486307518F26139DF552D6A6F5", 
+    "projectId" : "project_if_8EADAA153918DD84F338BB63F39FFC0A0E07C65A", 
+    "projectName" : "if", 
+    "target" : "library"
+}
