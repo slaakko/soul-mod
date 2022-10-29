@@ -1,5 +1,0 @@
-project otava.command.lexer.slg;
-tokens <command.token>;
-keywords <command.keyword>;
-expressions <command.expr>;
-lexer <command.lexer>;

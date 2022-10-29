@@ -150,6 +150,8 @@
     <ClCompile Include="context.ixx" />
     <ClCompile Include="expr.cpp" />
     <ClCompile Include="expr.ixx" />
+    <ClCompile Include="file.cpp" />
+    <ClCompile Include="file.ixx" />
     <ClCompile Include="function.cpp" />
     <ClCompile Include="function.ixx" />
     <ClCompile Include="instruction.cpp" />

@@ -17,18 +17,18 @@ import otava.intermediate.visitor;
 
 namespace otava::intermediate {
 
-Function::Function(const SourcePos& sourcePos_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_) :
+Function::Function(const SourcePos& sourcePos_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_, Context* context) :
     Value(sourcePos_, ValueKind::function, type_),
     flags(FunctionFlags::none), sourcePos(sourcePos_), type(type_), name(name_), metadataRef(metadataRef_), nextRegNumber(0),
     parent(nullptr), next(nullptr), prev(nullptr), first(nullptr), last(nullptr), nextBasicBlockId(0)
 {
     entryBlock.reset(new BasicBlock(sourcePos_, nextBasicBlockId++));
-    for (TypeRef paramTypeRef : type->ParamTypeRefs())
+    int32_t n = type->ParamTypeRefs().size();
+    for (int32_t index = 0; index < n; ++index)
     {
+        const TypeRef& paramTypeRef = type->ParamTypeRefs()[index];
         RegValue* regValue = new RegValue(sourcePos_, paramTypeRef.GetType(), nextRegNumber++);
         Instruction* paramInst = new ParamInstruction(sourcePos_, regValue);
-        Code* code = Parent();
-        Context* context = code->GetContext();
         context->AddLineInfo(paramInst);
         entryBlock->AddInstruction(paramInst);
         params.push_back(paramInst);
@@ -133,6 +133,12 @@ Code* Function::Parent() const
 
 BasicBlock* Function::CreateBasicBlock()
 {
+    if (!first)
+    {
+        BasicBlock* eb = entryBlock.release();
+        AddBasicBlock(eb);
+        return eb;
+    }
     BasicBlock* bb = new BasicBlock(SourcePos(), nextBasicBlockId++);
     AddBasicBlock(bb);
     basicBlockMap[bb->Id()] = bb;

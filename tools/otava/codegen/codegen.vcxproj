@@ -149,6 +149,9 @@
     <ClCompile Include="codegen.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\assembly\assembly.vcxproj">
+      <Project>{86c6dbf9-631b-42e0-81f0-b14d48e5f2e8}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\intermediate\intermediate.vcxproj">
       <Project>{7c7341ee-deca-40a1-a050-e731482f91af}</Project>
     </ProjectReference>

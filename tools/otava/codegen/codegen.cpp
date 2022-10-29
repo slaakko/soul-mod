@@ -17,6 +17,8 @@ import otava.intermediate.verify;
 import otava.intermediate.code.generator;
 import otava.intermediate.instruction;
 import otava.intermediate.basic.block;
+import otava.intermediate.simple.assembly.code.generator;
+import otava.assembly;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.exception;
@@ -140,7 +142,9 @@ void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::Sou
 class CodeGenerator : public otava::symbols::DefaultBoundTreeVisitor
 {
 public:
-    CodeGenerator(otava::symbols::Context& context_, bool verbose_);
+    CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_);
+    void Reset();
+    const std::string& GetAsmFileName() const { return asmFileName; }
     void Visit(otava::symbols::BoundCompileUnitNode& node) override;
     void Visit(otava::symbols::BoundFunctionNode& node) override;
     void Visit(otava::symbols::BoundCompoundStatementNode& node) override;
@@ -168,7 +172,10 @@ private:
     void StatementPrefix();
     void GenJumpingBoolCode();
     otava::symbols::Context& context;
+    std::string config;
     bool verbose;
+    std::string& mainIrName;
+    int& mainFunctionParams;
     otava::symbols::Emitter emitter;
     otava::intermediate::BasicBlock* entryBlock;
     otava::intermediate::BasicBlock* trueBlock;
@@ -181,20 +188,35 @@ private:
     bool prevWasTerminator;
     otava::symbols::BoundStatementNode* sequenceSecond;
     otava::intermediate::Value* lastLocal;
+    std::string asmFileName;
 };
 
-CodeGenerator::CodeGenerator(otava::symbols::Context& context_, bool verbose_) : 
-    context(context_), verbose(verbose_), 
+CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_) :
+    context(context_), config(config_), verbose(verbose_), mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
     entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), nextBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr), continueBlock(nullptr), 
     genJumpingBoolCode(false), prevWasTerminator(false), sequenceSecond(nullptr), lastLocal(nullptr)
 {
-    std::string config = "debug";
     std::string intermediateCodeFilePath = util::GetFullPath(
         util::Path::Combine(
             util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
             util::Path::GetFileName(context.FileName()) + ".i"));
     emitter.SetFilePath(intermediateCodeFilePath);
     std::filesystem::create_directories(util::Path::GetDirectoryName(intermediateCodeFilePath));
+}
+
+void CodeGenerator::Reset()
+{
+    entryBlock = nullptr;
+    trueBlock = nullptr;
+    falseBlock = nullptr;
+    nextBlock = nullptr;
+    defaultBlock = nullptr;
+    breakBlock = nullptr;
+    continueBlock = nullptr;
+    genJumpingBoolCode = false;
+    prevWasTerminator = false;
+    sequenceSecond = nullptr;
+    lastLocal = nullptr;
 }
 
 void CodeGenerator::StatementPrefix()
@@ -234,6 +256,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     for (int i = 0; i < n; ++i)
     {
         otava::symbols::BoundNode* boundNode = node.BoundNodes()[i].get();
+        Reset();
         boundNode->Accept(*this);
     }
     emitter.ResolveReferences();
@@ -241,22 +264,37 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     otava::intermediate::Context intermediateContext;
     otava::intermediate::ParseIntermediateCodeFile(emitter.FilePath(), intermediateContext);
     otava::intermediate::Verify(intermediateContext);
-    otava::intermediate::GenerateCode(intermediateContext, verbose);
+    std::string assemblyFilePath = util::GetFullPath(
+        util::Path::Combine(
+            util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
+            util::Path::GetFileName(context.FileName()) + ".asm"));
+    otava::intermediate::SimpleAssemblyCodeGenerator assemblyCodeGenerator(&intermediateContext, assemblyFilePath);
+    otava::intermediate::GenerateCode(intermediateContext, assemblyCodeGenerator, verbose);
+    asmFileName = util::Path::GetFileName(context.FileName()) + ".asm";
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
 {
     otava::symbols::FunctionDefinitionSymbol* functionDefinition = node.GetFunctionDefinitionSymbol();
+    if ((functionDefinition->Qualifiers() & otava::symbols::FunctionQualifiers::isDeleted) != otava::symbols::FunctionQualifiers::none)
+    {
+        return;
+    }
+    if (functionDefinition->Name() == U"main")
+    {
+        mainIrName = functionDefinition->IrName();
+        mainFunctionParams = functionDefinition->Arity();
+    }
     otava::intermediate::Type* functionType = functionDefinition->IrType(emitter, node.GetSourcePos(), &context);
     bool once = false;
     emitter.CreateFunction(functionDefinition->IrName(), functionType, once);
     entryBlock = emitter.CreateBasicBlock();
     emitter.SetCurrentBasicBlock(entryBlock);
-    int np = functionDefinition->Parameters().size();
+    int np = functionDefinition->MemFunParameters().size();
     for (int i = 0; i < np; ++i)
     {
-        otava::symbols::ParameterSymbol* parameter = functionDefinition->Parameters()[i];
-        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetType()->IrType(emitter, node.GetSourcePos(), &context));
+        otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters()[i];
+        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType()->IrType(emitter, node.GetSourcePos(), &context));
         emitter.SetIrObject(parameter, local);
         lastLocal = local;
     }
@@ -264,14 +302,14 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     for (int i = 0; i < nlv; ++i)
     {
         otava::symbols::VariableSymbol* localVariable = functionDefinition->LocalVariables()[i];
-        otava::intermediate::Value* local = emitter.EmitLocal(localVariable->GetType()->IrType(emitter, node.GetSourcePos(), &context));
+        otava::intermediate::Value* local = emitter.EmitLocal(localVariable->GetReferredType()->IrType(emitter, node.GetSourcePos(), &context));
         emitter.SetIrObject(localVariable, local);
         lastLocal = local;
     }
     for (int i = 0; i < np; ++i)
     {
         otava::intermediate::Value* param = emitter.GetParam(i);
-        otava::symbols::ParameterSymbol* parameter = functionDefinition->Parameters()[i];
+        otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters()[i];
         emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
     }
     node.Body()->Accept(*this);
@@ -625,10 +663,11 @@ void CodeGenerator::Visit(otava::symbols::BoundConversionNode& node)
     GenJumpingBoolCode();
 }
 
-void GenerateCode(otava::symbols::Context& context, bool verbose)
+std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams)
 {
-    CodeGenerator codeGenerator(context, verbose);
+    CodeGenerator codeGenerator(context, config, verbose, mainIrName, mainFunctionParams);
     context.GetBoundCompileUnit()->Accept(codeGenerator);
+    return codeGenerator.GetAsmFileName();
 }
 
 } // namespace otava::ast

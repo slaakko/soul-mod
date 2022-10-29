@@ -20,6 +20,11 @@ struct Define
     int64_t value;
 };
 
+enum class Target
+{
+    program, library
+};
+
 class Project
 {
 public:
@@ -54,10 +59,13 @@ public:
     const std::vector<Define>& Defines() const { return defines; }
     void AddDefine(const std::string& symbol, int64_t value);
     void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper);
+    void SetTarget(Target target_) { target = target_; }
+    Target GetTarget() const { return target; }
 private:
     std::string filePath;
     std::string root;
     std::string name;
+    Target target;
     std::vector<std::string> interfaceFilePaths;
     std::vector<std::string> sourceFilePaths;
     std::vector<std::string> referenceFilePaths;

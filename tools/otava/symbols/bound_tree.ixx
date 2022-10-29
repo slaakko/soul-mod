@@ -29,12 +29,14 @@ class BoundTreeVisitor;
 class BoundExpressionNode;
 class BoundFunctionCallNode;
 class OperationRepository;
+class ArgumentConversionTable;
 
 class BoundCompileUnitNode : public BoundNode
 {
 public:
     BoundCompileUnitNode();
     OperationRepository* GetOperationRepository() const { return operationRepository.get(); }
+    ArgumentConversionTable* GetArgumentConversionTable() const { return argumentConversionTable.get(); }
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(BoundNode* node);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
@@ -44,6 +46,7 @@ private:
     std::string id;
     std::vector<std::unique_ptr<BoundNode>> boundNodes;
     std::unique_ptr<OperationRepository> operationRepository;
+    std::unique_ptr<ArgumentConversionTable> argumentConversionTable;
 };
 
 class BoundCompoundStatementNode;
@@ -287,6 +290,8 @@ public:
     void SetThisPtr(BoundExpressionNode* thisPtr_);
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    bool IsBoundLocalVariable() const override;
+    bool IsBoundMemberVariable() const override;
 private:
     VariableSymbol* variable;
     std::unique_ptr<BoundExpressionNode> thisPtr;
@@ -392,7 +397,19 @@ public:
     BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Subject() { return subject.get(); }
+private:
+    std::unique_ptr<BoundExpressionNode> subject;
+};
+
+class BoundRefToPtrNode : public BoundExpressionNode
+{
+public:
+    BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };

@@ -1,0 +1,4 @@
+project truncate;
+target=program;
+interface <truncate.ixx>;
+source <truncate.cpp>;

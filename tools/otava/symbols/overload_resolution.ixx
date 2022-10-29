@@ -14,8 +14,12 @@ class BoundFunctionCallNode;
 class BoundExpressionNode;
 class Context;
 class Scope;
+class Exception;
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex);
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

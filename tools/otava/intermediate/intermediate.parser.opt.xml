@@ -1551,14 +1551,18 @@
    </action>
   </rule>
   <rule first="{LOCAL}" name="LocalInstruction">
-   <sequence first="{LOCAL}">
-    <action first="{LOCAL}">
-     <token first="{LOCAL}" name="LOCAL"/>
-    </action>
-    <action first="{BOOL, BYTE, DOUBLE, FLOAT, INT, LONG, SBYTE, SHORT, TYPEID, UINT, ULONG, USHORT, VOID}">
-     <nonterminal first="{BOOL, BYTE, DOUBLE, FLOAT, INT, LONG, SBYTE, SHORT, TYPEID, UINT, ULONG, USHORT, VOID}" ruleName="TypeRef"/>
-    </action>
-   </sequence>
+   <action first="{LOCAL}">
+    <group first="{LOCAL}">
+     <sequence first="{LOCAL}">
+      <action first="{LOCAL}">
+       <token first="{LOCAL}" name="LOCAL"/>
+      </action>
+      <action first="{BOOL, BYTE, DOUBLE, FLOAT, INT, LONG, SBYTE, SHORT, TYPEID, UINT, ULONG, USHORT, VOID}">
+       <nonterminal first="{BOOL, BYTE, DOUBLE, FLOAT, INT, LONG, SBYTE, SHORT, TYPEID, UINT, ULONG, USHORT, VOID}" ruleName="TypeRef"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
   </rule>
   <rule first="{LOAD}" name="LoadInstruction">
    <sequence first="{LOAD}">

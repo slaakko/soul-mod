@@ -1,0 +1,4 @@
+project ptr;
+target=program;
+interface <ptr.ixx>;
+source <ptr.cpp>;

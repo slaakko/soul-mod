@@ -11,7 +11,8 @@ import util.uuid;
 
 namespace otava::build {
 
-void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles)
+void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles, 
+    bool verbose)
 {
     util::uuid projectUuid = util::random_uuid();
 
@@ -43,7 +44,7 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     projectReleaseConfig->AppendChild(releaseConfig);
     soul::xml::Element* releasePlatform = soul::xml::MakeElement("Platform");
     soul::xml::Text* releasePlatformText = soul::xml::MakeText("x64");
-    releasePlatform->AppendChild(debugPlatformText);
+    releasePlatform->AppendChild(releasePlatformText);
     projectReleaseConfig->AppendChild(releasePlatform);
     configurationItemGroup->AppendChild(projectReleaseConfig);
 
@@ -270,14 +271,19 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     soul::xml::Element* extensionTargets = soul::xml::MakeElement("ImportGroup");
     extensionTargets->SetAttribute("Label", "ExtensionTargets");
     soul::xml::Element* importMasm = soul::xml::MakeElement("Import");
-    importMasm->SetAttribute("Project", "(VCTargetsPath)\\BuildCustomizations\\masm.targets");
+    importMasm->SetAttribute("Project", "$(VCTargetsPath)\\BuildCustomizations\\masm.targets");
     extensionTargets->AppendChild(importMasm);
     rootElement->AppendChild(extensionTargets);
 
-    std::ofstream projectFile;
+    std::ofstream projectFile(projectFilePath);
     util::CodeFormatter formatter(projectFile);
     formatter.SetIndentSize(1);
     projectDoc.Write(formatter);
+
+    if (verbose)
+    {
+        std::cout << "==> " << projectFilePath << std::endl;
+    }
 }
 
 } // namespace otava::build

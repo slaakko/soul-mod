@@ -11,36 +11,59 @@ import otava.assembly.symbol;
 
 namespace otava::assembly {
 
-Context::Context() : registers(), registerPool(registers)
+void CheckSize(int64_t size, const std::string& message)
+{
+    if (size < 1 || size > 8)
+    {
+        throw std::runtime_error(message);
+    }
+}
+
+Context::Context() : registers(), registerPool(new RegisterPool(registers))
 {
 }
 
-Register* Context::GetLocalReg(int size)
+void Context::ResetRegisterPool()
 {
-    RegisterGroup* regGroup = registerPool.GetLocalRegisterGroup();
-    return regGroup->GetReg(size);
+    registerPool.reset(new RegisterPool(registers));
 }
 
-Register* Context::GetGlobalReg(int size, RegisterGroupKind regGroupKind)
+Register* Context::GetLocalReg(int64_t size)
 {
-    RegisterGroup* regGroup = registerPool.GetGlobalRegisterGroup(regGroupKind);
-    return regGroup->GetReg(size);
+    CheckSize(size, "otava.assembly.GetLocalReg: invalid size");
+    RegisterGroup* regGroup = registerPool->GetLocalRegisterGroup();
+    return regGroup->GetReg(static_cast<int>(size));
 }
 
-Value* Context::MakeLiteral(int64_t value)
+Register* Context::GetGlobalReg(int64_t size, RegisterGroupKind regGroupKind)
 {
-    auto it = literalValueMap.find(value);
+    CheckSize(size, "otava.assembly.GetGlobalReg: invalid size");
+    RegisterGroup* regGroup = registerPool->GetGlobalRegisterGroup(regGroupKind);
+    return regGroup->GetReg(static_cast<int>(size));
+}
+
+Value* Context::MakeLiteral(int64_t value, int64_t size)
+{
+    auto key = std::make_pair(value, static_cast<int>(size));
+    auto it = literalValueMap.find(key);
     if (it != literalValueMap.cend())
     {
         return it->second;
     }
     else
     {
-        Value* literal = new Literal(value);
+        Value* literal = new Literal(value, static_cast<int>(size));
         values.push_back(std::unique_ptr<Value>(literal));
-        literalValueMap[value] = literal;
+        literalValueMap[key] = literal;
         return literal;
     }
+}
+
+UniqueLiteral* Context::MakeUniqueLiteral(int64_t value, int64_t size)
+{
+    UniqueLiteral* literal = new UniqueLiteral(value, static_cast<int>(size));
+    values.push_back(std::unique_ptr<Value>(literal));
+    return literal;
 }
 
 Value* Context::MakeContent(Value* value)
@@ -59,9 +82,10 @@ Value* Context::MakeContent(Value* value)
     }
 }
 
-Value* Context::MakeSizePrefix(int size, Value* value)
+Value* Context::MakeSizePrefix(int64_t size, Value* value)
 {
-    auto key = std::make_pair(size, value);
+    CheckSize(size, "otava.assembly.MakeSizePrefix: invalid size");
+    auto key = std::make_pair(static_cast<int>(size), value);
     auto it = sizePrefixValueMap.find(key);
     if (it != sizePrefixValueMap.cend())
     {
@@ -69,7 +93,7 @@ Value* Context::MakeSizePrefix(int size, Value* value)
     }
     else
     {
-        Value* sizePrefix = new SizePrefix(size, value);
+        Value* sizePrefix = new SizePrefix(static_cast<int>(size), value);
         values.push_back(std::unique_ptr<Value>(sizePrefix));
         sizePrefixValueMap[key] = sizePrefix;
         return sizePrefix;

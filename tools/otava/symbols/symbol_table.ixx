@@ -71,6 +71,8 @@ class ConversionTable;
 
 enum class SymbolGroupKind : int32_t;
 
+void SetProjectReady(bool projectReady_);
+
 class SymbolTable
 {
 public:

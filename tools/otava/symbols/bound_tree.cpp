@@ -16,11 +16,16 @@ import otava.symbols.classes;
 import otava.symbols.symbol.table;
 import otava.symbols.type.resolver;
 import otava.symbols.operation.repository;
+import otava.symbols.argument.conversion.table;
 import otava.symbols.bound.tree.visitor;
 
 namespace otava::symbols {
 
-BoundCompileUnitNode::BoundCompileUnitNode() : BoundNode(BoundNodeKind::boundCompileUnitNode, soul::ast::SourcePos()), operationRepository(new OperationRepository()), id()
+BoundCompileUnitNode::BoundCompileUnitNode() :
+    BoundNode(BoundNodeKind::boundCompileUnitNode, soul::ast::SourcePos()),
+    operationRepository(new OperationRepository()),
+    argumentConversionTable(new ArgumentConversionTable()),
+    id()
 {
 }
 
@@ -318,7 +323,7 @@ void BoundLiteralNode::Load(Emitter& emitter, OperationFlags flags, const soul::
 }
 
 BoundVariableNode::BoundVariableNode(VariableSymbol* variable_, const soul::ast::SourcePos& sourcePos_) : 
-    BoundExpressionNode(BoundNodeKind::boundVariableNode, sourcePos_, variable_->GetType()), variable(variable_)
+    BoundExpressionNode(BoundNodeKind::boundVariableNode, sourcePos_, variable_->GetReferredType()), variable(variable_)
 {
 }
 
@@ -446,17 +451,17 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
         otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
-            ptr = emitter.EmitLoad(ptr);
+            elementPtr = emitter.EmitLoad(elementPtr);
             uint8_t n = GetDerefCount(flags);
             for (uint8_t i = 1; i < n; ++i)
             {
-                ptr = emitter.EmitLoad(ptr);
+                elementPtr = emitter.EmitLoad(elementPtr);
             }
-            emitter.EmitStore(value, ptr);
+            emitter.EmitStore(value, elementPtr);
         }
         else
         {
-            emitter.EmitStore(value, ptr);
+            emitter.EmitStore(value, elementPtr);
         }
     }
     else if (variable->IsGlobalVariable())
@@ -480,8 +485,18 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
     }
 }
 
+bool BoundVariableNode::IsBoundLocalVariable() const 
+{ 
+    return variable->IsLocalVariable(); 
+}
+
+bool BoundVariableNode::IsBoundMemberVariable() const 
+{
+    return variable->IsMemberVariable(); 
+}
+
 BoundParameterNode::BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_) : 
-    BoundExpressionNode(BoundNodeKind::boundParameterNode, sourcePos_, parameter_->GetType()), parameter(parameter_)
+    BoundExpressionNode(BoundNodeKind::boundParameterNode, sourcePos_, parameter_->GetReferredType()), parameter(parameter_)
 {
 }
 
@@ -682,7 +697,7 @@ void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const sou
 }
 
 BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, subject_->GetType()->RemovePointer()), subject(subject_)
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, subject_->GetType()->RemoveRefOrPtr()), subject(subject_)
 {
 }
 
@@ -709,6 +724,39 @@ void BoundDereferenceNode::Load(Emitter& emitter, OperationFlags flags, const so
         BoundAddressOfNode* addressOfExpr = static_cast<BoundAddressOfNode*>(subject.get());
         addressOfExpr->Subject()->Load(emitter, flags, sourcePos, context);
     }
+}
+
+void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!subject->IsBoundAddressOfNode())
+    {
+        subject->Store(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), sourcePos, context);
+    }
+    else
+    {
+        BoundAddressOfNode* addressOfExpr = static_cast<BoundAddressOfNode*>(subject.get());
+        addressOfExpr->Subject()->Store(emitter, flags, sourcePos, context);
+    }
+}
+
+BoundRefToPtrNode::BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) : 
+    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, sourcePos_, subject_->GetType()->RemoveReference()->AddPointer()), subject(subject_)
+{
+}
+
+void BoundRefToPtrNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void BoundRefToPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    subject->Load(emitter, flags, sourcePos, context);
+}
+
+void BoundRefToPtrNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    subject->Store(emitter, flags, sourcePos, context);
 }
 
 BoundErrorNode::BoundErrorNode(const soul::ast::SourcePos& sourcePos_) : BoundExpressionNode(BoundNodeKind::boundErrorNode, sourcePos_, nullptr)

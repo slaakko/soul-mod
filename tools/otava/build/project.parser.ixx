@@ -19,6 +19,8 @@ struct ProjectParser
     static soul::parser::Match ProjectFile(Lexer& lexer);
     static soul::parser::Match ProjectDeclaration(Lexer& lexer);
     static soul::parser::Match Define(Lexer& lexer, otava::build::Project* projectFile);
+    static soul::parser::Match TargetDeclaration(Lexer& lexer, otava::build::Project* projectFile);
+    static soul::parser::Match Target(Lexer& lexer);
     static soul::parser::Match FilePath(Lexer& lexer, otava::build::Project* projectFile);
     static soul::parser::Match InterfaceFilePath(Lexer& lexer);
     static soul::parser::Match SourceFilePath(Lexer& lexer);

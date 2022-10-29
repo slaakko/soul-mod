@@ -178,14 +178,14 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<Function
 {
     for (const auto& function : functions)
     {
-        if (function->Arity() == arity)
+        if (function->MemFunArity() == arity)
         {
             viableFunctions.push_back(function);
         }
     }
     for (const auto& functionDefinition : definitions)
     {
-        if (functionDefinition->Arity() == arity)
+        if (functionDefinition->MemFunArity() == arity)
         {
             viableFunctions.push_back(functionDefinition);
         }

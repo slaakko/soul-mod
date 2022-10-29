@@ -1,0 +1,4 @@
+project arg;
+target=program;
+interface <arg.ixx>;
+source <arg.cpp>;

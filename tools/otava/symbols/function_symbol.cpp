@@ -13,6 +13,7 @@ import otava.symbols.classes;
 import otava.symbols.declaration;
 import otava.symbols.emitter;
 import otava.symbols.exception;
+import otava.symbols.alias.type.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.reader;
@@ -136,6 +137,17 @@ void ParameterSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+TypeSymbol* ParameterSymbol::GetReferredType() const
+{
+    TypeSymbol* referredType = type;
+    while (referredType->IsAliasTypeSymbol())
+    {
+        AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);
+        referredType = aliasType->ReferredType();
+    }
+    return referredType;
+}
+
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : 
     ContainerSymbol(SymbolKind::functionSymbol, name_), returnType(nullptr), returnTypeId(util::nil_uuid()), memFunParamsConstructed(false)
 {
@@ -144,6 +156,24 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
 FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     ContainerSymbol(kind_, name_), returnType(nullptr), returnTypeId(util::nil_uuid()), memFunParamsConstructed(false)
 {
+}
+
+int FunctionSymbol::Arity() const
+{
+    return parameters.size();
+}
+
+int FunctionSymbol::MemFunArity() const
+{
+    const Symbol* parent = Parent();
+    if (parent && parent->IsClassTypeSymbol())
+    {
+        return parameters.size() + 1;
+    }
+    else
+    {
+        return parameters.size();
+    }
 }
 
 ConversionKind FunctionSymbol::GetConversionKind() const
@@ -159,24 +189,39 @@ bool FunctionSymbol::IsVirtual() const
     return false;
 }
 
+ParameterSymbol* FunctionSymbol::ThisParam()
+{
+    Symbol* parent = Parent();
+    if (parent && parent->IsClassTypeSymbol())
+    {
+        if (!thisParam)
+        {
+            ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(parent);
+            if ((Qualifiers() & FunctionQualifiers::isConst) != FunctionQualifiers::none)
+            {
+                thisParam.reset(new ParameterSymbol(U"this", classType->AddConst()->AddPointer()));
+            }
+            else
+            {
+                thisParam.reset(new ParameterSymbol(U"this", classType->AddPointer()));
+            }
+        }
+        return thisParam.get();
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters() 
 {
     if (memFunParamsConstructed) return memFunParameters;
     memFunParamsConstructed = true;
     Symbol* parent = Parent();
-    if (parent->IsClassTypeSymbol())
+    if (parent && parent->IsClassTypeSymbol())
     {
-        ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(Parent());
-        if ((Qualifiers() & FunctionQualifiers::isConst) != FunctionQualifiers::none)
-        {
-            thisParam.reset(new ParameterSymbol(U"this", classType->AddConst()->AddPointer()));
-            memFunParameters.push_back(thisParam.get());
-        }
-        else
-        {
-            thisParam.reset(new ParameterSymbol(U"this", classType->AddPointer()));
-            memFunParameters.push_back(thisParam.get());
-        }
+        memFunParameters.push_back(ThisParam());
     }
     for (const auto& parameter : parameters)
     {
@@ -187,7 +232,8 @@ const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters()
 
 bool FunctionSymbol::IsMemberFunction() const
 {
-    return Parent()->IsClassTypeSymbol();
+    const Symbol* parent = Parent();
+    return parent && parent->IsClassTypeSymbol();
 }
 
 TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration()
@@ -198,6 +244,26 @@ TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration()
         return static_cast<TemplateDeclarationSymbol*>(parentSymbol);
     }
     return nullptr;
+}
+
+std::u32string FunctionSymbol::FullName() const
+{
+    std::u32string fullName = Parent()->FullName() + U"(";
+    bool first = true;
+    for (const auto& parameter : parameters)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            fullName.append(U", ");
+        }
+        fullName.append(parameter->GetType()->FullName());
+    }
+    fullName.append(U")");
+    return fullName;
 }
 
 void FunctionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -299,7 +365,7 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
         std::vector<otava::intermediate::Type*> paramIrTypes;
         for (const auto& param : MemFunParameters())
         {
-            paramIrTypes.push_back(param->GetType()->IrType(emitter, sourcePos, context));
+            paramIrTypes.push_back(param->GetReferredType()->IrType(emitter, sourcePos, context));
         }
         type = emitter.MakeFunctionType(returnIrType, paramIrTypes);
         emitter.SetType(Id(), type);

@@ -334,21 +334,6 @@ private:
     util::uuid typeId;
 };
 
-class FundamentalTypeCopyCtorLiteral : public FunctionSymbol
-{
-public:
-    FundamentalTypeCopyCtorLiteral();
-    FundamentalTypeCopyCtorLiteral(TypeSymbol* type_, Context* context);
-    void Write(Writer& writer) override;
-    void Read(Reader& reader) override;
-    void Resolve(SymbolTable& symbolTable) override;
-    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
-        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
-private:
-    TypeSymbol* type;
-    util::uuid typeId;
-};
-
 class FundamentalTypeMoveCtor : public FunctionSymbol
 {
 public:

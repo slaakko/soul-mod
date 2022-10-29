@@ -22,6 +22,7 @@ class ArrayType;
 class StructureType;
 class TypeRef;
 class ConstantValue;
+class Value;
 
 const int32_t voidTypeId = 0;
 const int32_t boolTypeId = 1;
@@ -267,7 +268,7 @@ public:
     void Resolve(Types* types, Context* context) override;
     int64_t Size() const override;
     int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "$T" + std::to_string(Id()); }
+    std::string Name() const override { return "$T" + std::to_string(MakeUserTypeId(Id())); }
     bool IsWeakType() const override;
     int FieldCount() const { return fieldTypeRefs.size(); }
     const std::vector<TypeRef>& FieldTypeRefs() const { return fieldTypeRefs; }
@@ -291,7 +292,7 @@ public:
     void Resolve(Types* types, Context* context) override;
     int64_t Size() const override;
     int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "$T" + std::to_string(Id()); }
+    std::string Name() const override { return "$T" + std::to_string(MakeUserTypeId(Id())); }
     bool IsWeakType() const override;
     int64_t ElementCount() const { return elementCount; }
     const TypeRef& ElementTypeRef() const { return elementTypeRef; }
@@ -313,7 +314,7 @@ public:
     int Arity() const { return paramTypeRefs.size(); }
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "$T" + std::to_string(Id()); }
+    std::string Name() const override { return "$T" + std::to_string(MakeUserTypeId(Id())); }
     const TypeRef& ReturnTypeRef() const { return returnTypeRef; }
     Type* ReturnType() const { return returnTypeRef.GetType(); }
     const std::vector<TypeRef>& ParamTypeRefs() const { return paramTypeRefs; }
@@ -339,6 +340,8 @@ private:
     int8_t pointerCount;
     TypeRef baseTypeRef;
 };
+
+Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context* context);
 
 class Types
 {
@@ -378,9 +381,9 @@ private:
     std::vector<Type*> declaredTypes;
     std::map<int32_t, Type*> typeMap;
     std::map<std::pair<int32_t, int8_t>, PointerType*> pointerTypeMap;
-    std::map<std::vector<TypeRef>, StructureType*> structureTypeMap;
-    std::map<std::pair<int64_t, TypeRef>, ArrayType*> arrayTypeMap;
-    std::map<std::pair<TypeRef, std::vector<TypeRef>>, FunctionType*> functionTypeMap;
+    std::map<std::vector<int32_t>, StructureType*> structureTypeMap;
+    std::map<std::pair<int64_t, int32_t>, ArrayType*> arrayTypeMap;
+    std::map<std::pair<int32_t, std::vector<int32_t>>, FunctionType*> functionTypeMap;
     VoidType voidType;
     BoolType boolType;
     SByteType sbyteType;

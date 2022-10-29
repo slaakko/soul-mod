@@ -5,10 +5,11 @@
 
 export module otava.codegen;
 
+import std.core;
 import otava.symbols.context;
 
 export namespace otava::codegen {
 
-void GenerateCode(otava::symbols::Context& context, bool verbose);
+std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams);
 
 } // namespace otava::ast

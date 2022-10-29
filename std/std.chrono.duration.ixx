@@ -14,8 +14,8 @@ public:
     
     duration();
     ~duration();
-    duration(const duration&) = default;
-    duration& operator=(const duration&) = default;
+    duration(const duration&);
+    duration& operator=(const duration&);
     constexpr rep count() const;
     duration operator+() const;
     duration operator-() const;

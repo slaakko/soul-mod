@@ -38,6 +38,7 @@ public:
     bool IsIntegerValue() const;
     bool IsAggregateValue() const { return kind == ValueKind::arrayValue || kind == ValueKind::structureValue; }
     bool IsStringValue() const { return kind == ValueKind::stringValue; }
+    bool IsLongValue() const { return kind == ValueKind::longValue; }
     int64_t GetIntegerValue() const;
     const SourcePos& GetSourcePos() const { return sourcePos; }
     ValueKind Kind() const { return kind; }

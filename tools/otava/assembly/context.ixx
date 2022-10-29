@@ -17,19 +17,21 @@ class Context
 {
 public:
     Context();
-    RegisterPool& GetRegisterPool() { return registerPool; }
-    Register* GetLocalReg(int size);
-    Register* GetGlobalReg(int size, RegisterGroupKind regGroupKind);
-    Value* MakeLiteral(int64_t value);
+    RegisterPool& GetRegisterPool() { return *registerPool; }
+    void ResetRegisterPool();
+    Register* GetLocalReg(int64_t size);
+    Register* GetGlobalReg(int64_t size, RegisterGroupKind regGroupKind);
+    Value* MakeLiteral(int64_t value, int64_t size);
+    UniqueLiteral* MakeUniqueLiteral(int64_t value, int64_t size);
     Value* MakeContent(Value* value);
-    Value* MakeSizePrefix(int size, Value* value);
+    Value* MakeSizePrefix(int64_t size, Value* value);
     Value* MakeBinaryExpr(Value* left, Value* right, Operator op);
     Value* MakeSymbol(const std::string& name);
 private:
     Registers registers;
-    RegisterPool registerPool;
+    std::unique_ptr<RegisterPool> registerPool;
     std::vector<std::unique_ptr<Value>> values;
-    std::map<int64_t, Value*> literalValueMap;
+    std::map<std::pair<int64_t, int>, Value*> literalValueMap;
     std::map<Value*, Value*> contentValueMap;
     std::map<std::pair<int, Value*>, Value*> sizePrefixValueMap;
     std::map<std::pair<std::pair<Value*, Value*>, Operator>, Value*> binaryExprValueMap;

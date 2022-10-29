@@ -19,12 +19,16 @@ void SetExceptionThrown();
 class Exception : public std::runtime_error
 {
 public:
+    Exception();
     Exception(const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     Exception(const std::string& title, const std::string& message_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 };
 
 [[noreturn]]
 void ThrowException(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+
+[[noreturn]]
+void ThrowException(const Exception& ex);
 
 void PrintWarning(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 

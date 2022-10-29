@@ -20,8 +20,7 @@ import util;
 namespace otava::intermediate {
 
 Context::Context() : 
-    compileUnit(new CompileUnit()), types(new Types()), data(new Data()), code(new Code()), metadata(new Metadata()), registerPool(new RegisterPool()),
-    currentBasicBlock(nullptr), currentLineNumber(0)
+    compileUnit(new CompileUnit()), types(new Types()), data(new Data()), code(new Code()), metadata(new Metadata()), currentBasicBlock(nullptr), currentLineNumber(0)
 {
     compileUnit->SetContext(this);
     types->SetContext(this);
@@ -391,11 +390,6 @@ void Context::ResolveMetadataReferences()
     metadata->ResolveMetadataReferences(this);
 }
 
-void Context::ResetRegisterPool()
-{
-    registerPool.reset(new RegisterPool());
-}
-
 void Context::SetCurrentFunction(Function* fn)
 {
     code->SetCurrentFunction(fn);
@@ -673,7 +667,7 @@ Instruction* Context::CreateArg(Value* arg)
 
 Instruction* Context::CreateElemAddr(Value* ptr, Value* index) 
 {
-    Instruction* inst = new ElemAddrInstruction(SourcePos(), MakeRegValue(ptr->GetType()), ptr, index);
+    Instruction* inst = new ElemAddrInstruction(SourcePos(), MakeRegValue(GetElemType(ptr, index, SourcePos(), this)), ptr, index);
     AddLineInfo(inst);
     currentBasicBlock->AddInstruction(inst);
     return inst;
@@ -695,22 +689,31 @@ Instruction* Context::CreatePtrDiff(Value* leftPtr, Value* rightPtr)
     return inst;
 }
 
-Instruction* Context::CreateCall(Value* function)
+Instruction* Context::CreateCall(Value* callee)
 {
-    Type* type = function->GetType();
-    if (type->IsVoidType())
+    Type* type = callee->GetType();
+    if (type->IsFunctionType())
     {
-        Instruction* inst = new ProcedureCallInstruction(SourcePos(), function);
-        AddLineInfo(inst);
-        currentBasicBlock->AddInstruction(inst);
-        return inst;
+        FunctionType* functionType = static_cast<FunctionType*>(type);
+        Type* returnType = functionType->ReturnType();
+        if (returnType->IsVoidType())
+        {
+            Instruction* inst = new ProcedureCallInstruction(SourcePos(), callee);
+            AddLineInfo(inst);
+            currentBasicBlock->AddInstruction(inst);
+            return inst;
+        }
+        else
+        {
+            Instruction* inst = new FunctionCallInstruction(SourcePos(), MakeRegValue(returnType), callee);
+            AddLineInfo(inst);
+            currentBasicBlock->AddInstruction(inst);
+            return inst;
+        }
     }
     else
     {
-        Instruction* inst = new FunctionCallInstruction(SourcePos(), MakeRegValue(type), function);
-        AddLineInfo(inst);
-        currentBasicBlock->AddInstruction(inst);
-        return inst;
+        throw std::runtime_error("invalid call");
     }
 }
 

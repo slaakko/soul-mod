@@ -9870,49 +9870,63 @@ soul::parser::Match IntermediateCodeParser<Lexer>::LocalInstruction(Lexer& lexer
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
+        int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            int64_t pos = lexer.GetPos();
             soul::parser::Match match(false);
-            if (*lexer == LOCAL)
+            soul::parser::Match* parentMatch2 = &match;
             {
-                ++lexer;
-                match.hit = true;
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match(false);
+                    if (*lexer == LOCAL)
+                    {
+                        ++lexer;
+                        match.hit = true;
+                    }
+                    if (match.hit)
+                    {
+                        sp = lexer.GetSourcePos(pos);
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
             }
             if (match.hit)
             {
-                sp = lexer.GetSourcePos(pos);
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch4 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch5 = &match;
+                    {
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match = IntermediateCodeParser<Lexer>::TypeRef(lexer);
+                        typeRef.reset(static_cast<soul::parser::Value<otava::intermediate::TypeRef>*>(match.value));
+                        if (match.hit)
+                        {
+                            tref = typeRef->value;
+                            context->ResolveType(tref);
+                        }
+                        *parentMatch5 = match;
+                    }
+                    *parentMatch4 = match;
+                }
+                *parentMatch2 = match;
             }
             *parentMatch1 = match;
         }
-        *parentMatch0 = match;
-    }
-    if (match.hit)
-    {
-        soul::parser::Match match(false);
-        soul::parser::Match* parentMatch2 = &match;
+        if (match.hit)
         {
-            soul::parser::Match match(false);
-            soul::parser::Match* parentMatch3 = &match;
             {
-                int64_t pos = lexer.GetPos();
-                soul::parser::Match match = IntermediateCodeParser<Lexer>::TypeRef(lexer);
-                typeRef.reset(static_cast<soul::parser::Value<otava::intermediate::TypeRef>*>(match.value));
-                if (match.hit)
-                {
-                    tref = typeRef->value;
-                    context->ResolveType(tref);
-                    {
-                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LocalInstruction");
-                        #endif
-                        return soul::parser::Match(true, new otava::intermediate::LocalInstruction(sp, result, tref.GetType()));
-                    }
-                }
-                *parentMatch3 = match;
+                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LocalInstruction");
+                #endif
+                return soul::parser::Match(true, new otava::intermediate::LocalInstruction(sp, result, tref.GetType()));
             }
-            *parentMatch2 = match;
         }
         *parentMatch0 = match;
     }

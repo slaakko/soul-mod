@@ -9,6 +9,7 @@ import std.core;
 import soul.ast.source.pos;
 import soul.lexer.base;
 import soul.lexer.file.map;
+import otava.assembly.context;
 
 export namespace otava::intermediate::context {}
 
@@ -31,7 +32,6 @@ class MetadataStruct;
 class MetadataBool;
 class MetadataLong;
 class MetadataString;
-class RegisterPool;
 class BasicBlock;
 class Instruction;
 class SwitchInstruction;
@@ -112,8 +112,6 @@ public:
     MetadataRef* CreateMetadataRef(const SourcePos& sourcePos, int32_t nodeId);
     MetadataStruct* CreateMetadataStruct();
     void ResolveMetadataReferences();
-    RegisterPool& GetRegisterPool() { return *registerPool; }
-    void ResetRegisterPool();
     void SetCurrentBasicBlock(BasicBlock* bb);
     BasicBlock* CreateBasicBlock();
     void SetCurrentLineNumber(int lineNumber);
@@ -157,6 +155,7 @@ public:
     soul::lexer::FileMap& GetFileMap() { return fileMap; }
     int32_t NextTypeId();
     void AddLineInfo(Instruction* inst);
+    otava::assembly::Context& AssemblyContext() { return assemblyContext; }
 private:
     RegValue* MakeRegValue(Type* type);
     std::unique_ptr<CompileUnit> compileUnit;
@@ -164,11 +163,11 @@ private:
     std::unique_ptr<Data> data;
     std::unique_ptr<Code> code;
     std::unique_ptr<Metadata> metadata;
-    std::unique_ptr<RegisterPool> registerPool;
     BasicBlock* currentBasicBlock;
     int currentLineNumber;
     std::map<int, MetadataRef*> lineNumberInfoMap;
     soul::lexer::FileMap fileMap;
+    otava::assembly::Context assemblyContext;
 };
 
 } // otava::intermediate

@@ -1,0 +1,3 @@
+project ptr;
+target=program;
+source <ptr.cm>;

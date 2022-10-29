@@ -116,6 +116,7 @@ public:
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     std::string SymbolKindStr() const override { return "nullptr value"; }
     std::string SymbolDocKindStr() const override { return "nullptr_value"; }
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;

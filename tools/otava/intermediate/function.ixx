@@ -49,7 +49,7 @@ constexpr FunctionFlags operator~(FunctionFlags flags)
 class Function : public Value
 {
 public:
-    Function(const SourcePos& sourcePos_, FunctionType* functionType_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_);
+    Function(const SourcePos& sourcePos_, FunctionType* functionType_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_, Context* context);
     ~Function();
     void Finalize();
     void Write(util::CodeFormatter& formatter);

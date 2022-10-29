@@ -26,6 +26,7 @@ public:
     TypeSymbol* GetInitializerType() const { return initializerType; }
     void SetInitializerType(TypeSymbol* initializerType_);
     TypeSymbol* GetType() const;
+    TypeSymbol* GetReferredType() const;
     Value* GetValue() const { return value; }
     void SetValue(Value* value_) { value = value_; }
     void Write(Writer& writer) override;

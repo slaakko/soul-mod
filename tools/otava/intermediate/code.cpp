@@ -152,7 +152,7 @@ Function* Code::AddFunctionDefinition(const SourcePos& sourcePos, FunctionType* 
             return prev;
         }
     }
-    Function* function = new Function(sourcePos, functionType, functionId, once, true, metadataRef);
+    Function* function = new Function(sourcePos, functionType, functionId, once, true, metadataRef, context);
     AddFunction(function);
     functionMap[function->Name()] = function;
     return function;
@@ -169,7 +169,7 @@ Function* Code::AddFunctionDeclaration(const SourcePos& sourcePos, FunctionType*
         }
         return prev;
     }
-    Function* function = new Function(sourcePos, functionType, functionId, false, false, nullptr);
+    Function* function = new Function(sourcePos, functionType, functionId, false, false, nullptr, context);
     AddFunction(function);
     functionMap[function->Name()] = function;
     return function;

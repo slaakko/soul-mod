@@ -20,6 +20,7 @@ public:
     std::string SymbolKindStr() const override { return "compound type symbol"; }
     std::string SymbolDocKindStr() const override { return "compound_type"; }
     TypeSymbol* PlainType() override;
+    int PointerCount() const override;
     TypeSymbol* BaseType() const { return baseType; }
     const Derivations& GetDerivations() const { return derivations; }
     void Write(Writer& writer) override;
@@ -28,6 +29,7 @@ public:
     void Accept(Visitor& visitor) override;
     SymbolTable* GetSymbolTable() override { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     TypeSymbol* baseType;
     Derivations derivations;

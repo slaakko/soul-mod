@@ -6,6 +6,8 @@
 export module otava.intermediate.register_allocator;
 
 import std.core;
+import otava.assembly.literal;
+import otava.assembly.reg;
 
 export namespace otava::intermediate {
 
@@ -37,35 +39,28 @@ struct FrameLocation
     FrameLocation() : index(-1), offset(0), size(0) {}
     FrameLocation(int index_, int64_t offset_, int64_t size_) : index(index_), offset(offset_), size(size_) {}
     bool Valid() const { return index != -1; }
-    bool IsWithinImmediateRange() const { return offset >= 0 && offset < 256; }
     int index;
     int64_t offset;
     int64_t size;
 };
 
-class ArgLocation
+struct ArgLocation
 {
-public:
-    ArgLocation(int index_);
-private:
-    friend class CallFrame;
-    //void SetConstant(cmsx::assembler::HexadecimalConstant* constant_);
-    //void SetValue(uint64_t start);
+    ArgLocation(int index_, int64_t offset_, int64_t size_);
     int index;
-    //cmsx::assembler::HexadecimalConstant* constant;
+    int64_t offset;
+    int64_t size;
 };
 
 class CallFrame
 {
 public:
     CallFrame();
-    //void NextArgLocation(cmsx::assembler::HexadecimalConstant* constant);
-    int SaveNumLocals() const { return saveNumLocals; }
-    void SetSaveNumLocals(int saveNumLocals_) { saveNumLocals = saveNumLocals_; }
-    void Resolve(int64_t frameSize);
+    void AllocateArgLocation(int64_t size);
+    ArgLocation GetArgLocation(int index);
+    std::vector<ArgLocation> argLocations;
 private:
-    int saveNumLocals;
-    std::vector<std::unique_ptr<ArgLocation>> argLocations;
+    int64_t top;
 };
 
 class Frame
@@ -74,58 +69,14 @@ public:
     Frame();
     FrameLocation GetFrameLocation(int64_t size);
     int64_t Size() const;
-    bool IsWithinWydeRange() const { return Size() < 65536; }
-    CallFrame* CurrentCallFrame() { return currentCallFrame.get(); }
-    void ResetCallFrame();
-    void AddCallFrame();
-    void ResolveCallFrames();
 private:
+    int64_t top;
     std::vector<FrameLocation> frameLocations;
-    std::unique_ptr<CallFrame> currentCallFrame;
-    std::vector<std::unique_ptr<CallFrame>> callFrames;
-};
-
-enum class RegisterKind : int
-{
-    none, local, global
-};
-
-struct Register
-{
-    Register() : kind(RegisterKind::none), number(0) {}
-    Register(RegisterKind kind_, uint8_t number_) : kind(kind_), number(number_) {}
-    bool Valid() const { return kind != RegisterKind::none; }
-    bool IsLocal() const { return kind == RegisterKind::local; }
-    bool IsGlobal() const { return kind == RegisterKind::global; }
-    RegisterKind kind;
-    uint8_t number;
-};
-
-inline bool operator<(const Register& left, const Register& right)
-{
-    if (left.kind == RegisterKind::local && right.kind == RegisterKind::global) return true;
-    if (left.kind == RegisterKind::global && right.kind == RegisterKind::local) return false;
-    return left.number < right.number;
-}
-
-class RegisterPool
-{
-public:
-    RegisterPool();
-    void AddLocalRegister(const Register& reg);
-    Register GetLocalRegister();
-    Register GetGlobalRegister(uint8_t number);
-    int LocalRegisterCount() const { return localRegisterCount; }
-    int NumFreeLocalRegisters() const { return localRegisterPool.size(); }
-private:
-    int localRegisterCount;
-    std::set<Register> localRegisterPool;
-    std::map<uint8_t, Register> globalRegisterMap;
 };
 
 struct SpillData
 {
-    Register registerToSpill;;
+    otava::assembly::RegisterGroup* registerGroupToSpill;
     FrameLocation spillToFrameLocation;
 };
 
@@ -141,14 +92,11 @@ public:
     virtual RegisterAllocationAction Run(Instruction* inst) = 0;
     virtual const std::vector<SpillData>& GetSpillData() const = 0;
     virtual Locations GetLocations(Instruction* inst) const = 0;
-    virtual Register GetRegister(Instruction* inst) const = 0;
-    virtual void AddRegisterLocation(Instruction* inst, const Register& reg) = 0;
+    virtual otava::assembly::RegisterGroup* GetRegisterGroup(Instruction* inst) const = 0;
+    virtual void AddRegisterLocation(Instruction* inst, otava::assembly::RegisterGroup* regGroup) = 0;
     virtual Frame& GetFrame() = 0;
     virtual FrameLocation GetFrameLocation(Instruction* inst) const = 0;
-    virtual int LastActiveLocalReg() const = 0;
+    virtual int LastActiveLocalRegGroup() const = 0;
 };
-
-Register GetGlobalRegister(Context* context, uint8_t registerNumber);
-Register GetLocalRegister(Context* context);
 
 } // otava::intermediate

@@ -428,40 +428,37 @@ TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos&
 {
     if (type->IsForwardClassDeclarationSymbol())
     {
-        if (type->IsForwardClassDeclarationSymbol())
+        ForwardClassDeclarationSymbol* fwdClassDeclarationSymbol = static_cast<ForwardClassDeclarationSymbol*>(type);
+        if (fwdClassDeclarationSymbol->GetClassTypeSymbol())
         {
-            ForwardClassDeclarationSymbol* fwdClassDeclarationSymbol = static_cast<ForwardClassDeclarationSymbol*>(type);
-            if (fwdClassDeclarationSymbol->GetClassTypeSymbol())
+            return fwdClassDeclarationSymbol->GetClassTypeSymbol();
+        }
+        else
+        {
+            Symbol* type = context->GetSymbolTable()->Lookup(fwdClassDeclarationSymbol->Name(), SymbolGroupKind::typeSymbolGroup, sourcePos, context, 
+                LookupFlags::noFwdDeclarationSymbol);
+            if (type && type->IsClassTypeSymbol())
             {
-                return fwdClassDeclarationSymbol->GetClassTypeSymbol();
-            }
-            else
-            {
-                Symbol* type = context->GetSymbolTable()->Lookup(fwdClassDeclarationSymbol->Name(), SymbolGroupKind::typeSymbolGroup, sourcePos, context, 
-                    LookupFlags::noFwdDeclarationSymbol);
-                if (type && type->IsClassTypeSymbol())
-                {
-                    fwdClassDeclarationSymbol->SetClassTypeSymbol(static_cast<ClassTypeSymbol*>(type));
-                    return static_cast<TypeSymbol*>(type);
-                }
+                fwdClassDeclarationSymbol->SetClassTypeSymbol(static_cast<ClassTypeSymbol*>(type));
+                return static_cast<TypeSymbol*>(type);
             }
         }
-        else if (type->IsForwardEnumDeclarationSymbol())
+    }
+    else if (type->IsForwardEnumDeclarationSymbol())
+    {
+        ForwardEnumDeclarationSymbol* fwdEnumDeclarationSymbol = static_cast<ForwardEnumDeclarationSymbol*>(type);
+        if (fwdEnumDeclarationSymbol->GetEnumeratedTypeSymbol())
         {
-            ForwardEnumDeclarationSymbol* fwdEnumDeclarationSymbol = static_cast<ForwardEnumDeclarationSymbol*>(type);
-            if (fwdEnumDeclarationSymbol->GetEnumeratedTypeSymbol())
+            return fwdEnumDeclarationSymbol->GetEnumeratedTypeSymbol();
+        }
+        else
+        {
+            Symbol* type = context->GetSymbolTable()->Lookup(fwdEnumDeclarationSymbol->Name(), SymbolGroupKind::typeSymbolGroup, sourcePos, context,
+                LookupFlags::noFwdDeclarationSymbol);
+            if (type && type->IsEnumeratedTypeSymbol())
             {
-                return fwdEnumDeclarationSymbol->GetEnumeratedTypeSymbol();
-            }
-            else
-            {
-                Symbol* type = context->GetSymbolTable()->Lookup(fwdEnumDeclarationSymbol->Name(), SymbolGroupKind::typeSymbolGroup, sourcePos, context,
-                    LookupFlags::noFwdDeclarationSymbol);
-                if (type && type->IsEnumeratedTypeSymbol())
-                {
-                    fwdEnumDeclarationSymbol->SetEnumeratedTypeSymbol(static_cast<EnumeratedTypeSymbol*>(type));
-                    return static_cast<TypeSymbol*>(type);
-                }
+                fwdEnumDeclarationSymbol->SetEnumeratedTypeSymbol(static_cast<EnumeratedTypeSymbol*>(type));
+                return static_cast<TypeSymbol*>(type);
             }
         }
     }

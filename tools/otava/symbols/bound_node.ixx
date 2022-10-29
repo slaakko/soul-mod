@@ -24,7 +24,7 @@ enum class BoundNodeKind
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
     boundLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode,
-    boundConversionNode, boundAddressOfNode, boundDereferenceNode,
+    boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode,
     boundErrorNode
 };
 
@@ -42,10 +42,31 @@ public:
     bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
     bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
     bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
+    bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
 private:
     BoundNodeKind kind;
     soul::ast::SourcePos sourcePos;
 };
+
+enum class BoundExpressionFlags
+{
+    none = 0, bindToRvalueRef = 1 << 0
+};
+
+constexpr BoundExpressionFlags operator|(BoundExpressionFlags left, BoundExpressionFlags right)
+{
+    return BoundExpressionFlags(int(left) | int(right));
+}
+
+constexpr BoundExpressionFlags operator&(BoundExpressionFlags left, BoundExpressionFlags right)
+{
+    return BoundExpressionFlags(int(left) & int(right));
+}
+
+constexpr BoundExpressionFlags operator~(BoundExpressionFlags flag)
+{
+    return BoundExpressionFlags(~int(flag));
+}
 
 class BoundExpressionNode : public BoundNode
 {
@@ -56,7 +77,12 @@ public:
     virtual bool HasValue() const { return false; }
     virtual void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
+    bool GetFlag(BoundExpressionFlags flag) const;
+    void SetFlag(BoundExpressionFlags flag);
+    virtual bool IsBoundLocalVariable() const { return false; }
+    virtual bool IsBoundMemberVariable() const { return false; }
 private:
+    BoundExpressionFlags flags;
     TypeSymbol* type;
 };
 

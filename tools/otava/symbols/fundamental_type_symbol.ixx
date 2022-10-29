@@ -30,6 +30,7 @@ public:
     FundamentalTypeSymbol(FundamentalTypeKind kind_);
     FundamentalTypeKind GetFundamentalTypeKind() const { return kind; }
     bool IsAutoTypeSymbol() const { return kind == FundamentalTypeKind::autoType; }
+    bool IsIntegralType() const override;
     std::string SymbolKindStr() const override { return "fundamental type symbol"; }
     std::string SymbolDocKindStr() const override { return "fundamental_type"; }
     void Write(Writer& writer) override;
@@ -37,6 +38,7 @@ public:
     void Accept(Visitor& visitor) override;
     bool IsVoidType() const override { return kind == FundamentalTypeKind::voidType; }
     bool IsBoolType() const override { return kind == FundamentalTypeKind::boolType; }
+    bool IsNullPtrType() const override { return kind == FundamentalTypeKind::nullPtrType; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     int32_t Score() const { return static_cast<int32_t>(kind); }
 private:

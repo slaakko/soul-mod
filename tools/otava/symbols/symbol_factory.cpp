@@ -310,10 +310,6 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new FundamentalTypeCopyCtor();
         }
-        case SymbolKind::fundamentalTypeCopyCtorLiteral:
-        {
-            return new FundamentalTypeCopyCtorLiteral();
-        }
         case SymbolKind::fundamentalTypeMoveCtor:
         {
             return new FundamentalTypeMoveCtor();

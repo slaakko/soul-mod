@@ -39,7 +39,7 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
     }
 }
 
-Project::Project(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_), initialized(false), scanned(false), loaded(false)
+Project::Project(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_), initialized(false), scanned(false), loaded(false), target(Target::program)
 {
     root = util::Path::GetDirectoryName(filePath);
 }

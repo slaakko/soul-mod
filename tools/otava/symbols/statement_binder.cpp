@@ -60,6 +60,24 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
 
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 {
+    if (node.FunctionBody()->IsDefaultedOrDeletedFunctionNode())
+    {
+        Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
+        if (symbol->IsFunctionDefinitionSymbol())
+        {
+            FunctionDefinitionSymbol* definition = static_cast<FunctionDefinitionSymbol*>(symbol);
+            otava::ast::DefaultedOrDeletedFunctionNode* bodyNode = static_cast<otava::ast::DefaultedOrDeletedFunctionNode*>(node.FunctionBody());
+            if (bodyNode->DefaultOrDelete()->Kind() == otava::ast::NodeKind::defaultNode)
+            {
+                definition->SetFunctionQualifiers(definition->Qualifiers() | FunctionQualifiers::isDefault);
+            }
+            else if (bodyNode->DefaultOrDelete()->Kind() == otava::ast::NodeKind::deleteNode)
+            {
+                definition->SetFunctionQualifiers(definition->Qualifiers() | FunctionQualifiers::isDeleted);
+            }
+        }
+        return;
+    }
     node.FunctionBody()->Accept(*this);
 }
 
@@ -324,7 +342,7 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
             {
                 arguments.push_back(std::unique_ptr<BoundExpressionNode>(initializer));
             }
-            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverload(context->GetSymbolTable()->CurrentScope(), U"@constructor", arguments, 
+            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", arguments, 
                 node.GetSourcePos(), context);
             BoundConstructionStatementNode * boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
             boundCompoundStatement->AddStatement(boundConstructionStatement);

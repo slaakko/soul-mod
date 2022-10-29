@@ -372,6 +372,11 @@ void NullPtrValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+otava::intermediate::Value* NullPtrValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return GetType()->IrType(emitter, sourcePos, context)->DefaultValue();
+}
+
 StringValue::StringValue(TypeSymbol* type_) : Value(SymbolKind::stringValueSymbol, U"", type_), value()
 {
 }

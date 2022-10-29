@@ -12,6 +12,7 @@ import util.unicode;
 import util.uuid;
 import soul.lexer;
 import otava.ast.error;
+import otava.intermediate.error;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.bound.node;
@@ -45,6 +46,18 @@ import otava.symbols.symbol_map;
 import otava.symbols.conversion.table;
 
 namespace otava::symbols {
+
+bool projectReady = false;
+
+bool ProjectReady()
+{
+    return projectReady;
+}
+
+void SetProjectReady(bool projectReady_)
+{
+    projectReady = projectReady_;
+}
 
 SymbolTable::SymbolTable() : 
     module(nullptr), 
@@ -623,7 +636,7 @@ otava::ast::Node* SymbolTable::GetNode(Symbol* symbol) const
 
 void SymbolTable::RemoveNode(otava::ast::Node* node)
 {
-    if (soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown()) return;
+    if (ProjectReady() || soul::lexer::parsing_error_thrown || ExceptionThrown() || otava::ast::ExceptionThrown() || otava::intermediate::ExceptionThrown()) return;
     Symbol* symbol = nullptr;
     auto it = nodeSymbolMap.find(node);
     if (it != nodeSymbolMap.cend())
@@ -1054,6 +1067,7 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
     }
     FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
+    MapNode(node, functionDefinition, MapKind::nodeToSymbol);
     functionDefinition->SetFunctionQualifiers(qualifiers);
     functionDefinition->SetDeclaration(declaration);
     if (declaration)

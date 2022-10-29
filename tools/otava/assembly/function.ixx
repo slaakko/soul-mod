@@ -12,17 +12,25 @@ export namespace otava::assembly {
 
 class Instruction;
 
+enum class FunctionPart
+{
+    prologue, body, epilogue
+};
+
 class Function
 {
 public:
     Function(const std::string& name_);
     const std::string& Name() const { return name; }
+    void SetActiveFunctionPart(FunctionPart activeFunctionPart_);
     void AddInstruction(Instruction* inst);
-    const std::vector<std::unique_ptr<Instruction>>& Instructions() const { return instructions; }
     void Write(util::CodeFormatter& formatter);
 private:
     std::string name;
-    std::vector<std::unique_ptr<Instruction>> instructions;
+    FunctionPart activeFunctionPart;
+    std::vector<std::unique_ptr<Instruction>> prologue;
+    std::vector<std::unique_ptr<Instruction>> body;
+    std::vector<std::unique_ptr<Instruction>> epilogue;
 };
 
 } // namespace otava::assembly

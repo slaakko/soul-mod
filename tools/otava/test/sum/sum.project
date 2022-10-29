@@ -1,0 +1,4 @@
+project sum;
+target=program;
+interface <sum.ixx>;
+source <sum.cpp>;

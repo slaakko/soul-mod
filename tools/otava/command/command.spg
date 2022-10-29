@@ -1,2 +1,0 @@
-project otava.command.spg;
-parser <command.parser>;

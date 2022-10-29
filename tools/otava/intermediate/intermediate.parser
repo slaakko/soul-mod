@@ -603,8 +603,14 @@ parser IntermediateCodeParser
 
     LocalInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp, 
         var otava::intermediate::TypeRef tref) : otava::intermediate::Instruction*
-        ::= LOCAL{ sp = lexer.GetSourcePos(pos); } 
-            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); return new otava::intermediate::LocalInstruction(sp, result, tref.GetType()); }
+        ::= 
+        (
+            LOCAL{ sp = lexer.GetSourcePos(pos); } 
+            TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); }
+        )
+        { 
+            return new otava::intermediate::LocalInstruction(sp, result, tref.GetType()); 
+        }
         ;
 
     LoadInstruction(otava::intermediate::Context* context, otava::intermediate::RegValue* result, var soul::ast::SourcePos sp) : otava::intermediate::Instruction*

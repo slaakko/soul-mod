@@ -9,6 +9,7 @@ import std.core;
 
 export namespace otava::build {
 
-void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles);
+void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles,
+    bool verbose);
 
 } // namespace otava::build

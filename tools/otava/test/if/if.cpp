@@ -20,3 +20,9 @@ void foo()
 		bazz();
 	}
 }
+
+int main()
+{
+	foo();
+	return 0;
+}

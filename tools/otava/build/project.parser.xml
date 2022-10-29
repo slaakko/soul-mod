@@ -7,11 +7,14 @@
       <action first="{PROJECT}">
        <nonterminal first="{PROJECT}" ruleName="ProjectDeclaration"/>
       </action>
-      <kleene first="{#, DEFINE, INTERFACE, REFERENCE, SOURCE}">
-       <group first="{DEFINE, INTERFACE, REFERENCE, SOURCE}">
-        <choice first="{DEFINE, INTERFACE, REFERENCE, SOURCE}">
-         <nonterminal first="{INTERFACE, REFERENCE, SOURCE}" ruleName="FilePath"/>
-         <nonterminal first="{DEFINE}" ruleName="Define"/>
+      <kleene first="{#, DEFINE, INTERFACE, REFERENCE, SOURCE, TARGET}">
+       <group first="{DEFINE, INTERFACE, REFERENCE, SOURCE, TARGET}">
+        <choice first="{DEFINE, INTERFACE, REFERENCE, SOURCE, TARGET}">
+         <choice first="{DEFINE, INTERFACE, REFERENCE, SOURCE}">
+          <nonterminal first="{INTERFACE, REFERENCE, SOURCE}" ruleName="FilePath"/>
+          <nonterminal first="{DEFINE}" ruleName="Define"/>
+         </choice>
+         <nonterminal first="{TARGET}" ruleName="TargetDeclaration"/>
         </choice>
        </group>
       </kleene>
@@ -59,6 +62,32 @@
      <token first="{SEMICOLON}" name="SEMICOLON"/>
     </action>
    </sequence>
+  </rule>
+  <rule first="{TARGET}" name="TargetDeclaration">
+   <action first="{TARGET}">
+    <group first="{TARGET}">
+     <sequence first="{TARGET}">
+      <sequence first="{TARGET}">
+       <sequence first="{TARGET}">
+        <token first="{TARGET}" name="TARGET"/>
+        <token first="{ASSIGN}" name="ASSIGN"/>
+       </sequence>
+       <nonterminal first="{LIBRARY, PROGRAM}" ruleName="Target"/>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{LIBRARY, PROGRAM}" name="Target">
+   <choice first="{LIBRARY, PROGRAM}">
+    <action first="{PROGRAM}">
+     <token first="{PROGRAM}" name="PROGRAM"/>
+    </action>
+    <action first="{LIBRARY}">
+     <token first="{LIBRARY}" name="LIBRARY"/>
+    </action>
+   </choice>
   </rule>
   <rule first="{INTERFACE, REFERENCE, SOURCE}" name="FilePath">
    <group first="{INTERFACE, REFERENCE, SOURCE}">

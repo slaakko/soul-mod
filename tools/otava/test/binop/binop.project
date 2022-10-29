@@ -1,0 +1,4 @@
+project binop;
+target=program;
+interface <binop.ixx>;
+source <binop.cpp>;

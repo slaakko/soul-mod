@@ -12,13 +12,121 @@ import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;
-import otava.symbols.match;
 import otava.symbols.operation.repository;
 import otava.symbols.symbol.table;
 import otava.symbols.conversion.table;
+import otava.symbols.fundamental.type.conversion;
+import otava.symbols.argument.conversion.table;
 import util.unicode;
 
 namespace otava::symbols {
+
+struct ArgumentMatch
+{
+    ArgumentMatch();
+    FunctionSymbol* conversionFun;
+    ConversionKind conversionKind;
+    int32_t distance;
+    OperationFlags preConversionFlags;
+    OperationFlags postConversionFlags;
+};
+
+struct FunctionMatch
+{
+    FunctionMatch(FunctionSymbol* function_);
+    FunctionSymbol* function;
+    std::vector<ArgumentMatch> argumentMatches;
+    int numConversions;
+    int numQualifyingConversions;
+};
+
+ArgumentMatch::ArgumentMatch() : 
+    conversionFun(nullptr), 
+    conversionKind(ConversionKind::implicitConversion), 
+    distance(0), 
+    preConversionFlags(OperationFlags::none),
+    postConversionFlags(OperationFlags::none)
+{
+}
+
+struct BetterArgumentMatch
+{
+    bool operator()(const ArgumentMatch& left, const ArgumentMatch& right) const;
+};
+
+bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMatch& right) const
+{
+    if (left.conversionFun == nullptr && right.conversionFun != nullptr) return true;
+    if (right.conversionFun == nullptr && left.conversionFun != nullptr) return false;
+    if (left.conversionKind == ConversionKind::implicitConversion && right.conversionKind == ConversionKind::narrowingConversion) return true;
+    if (left.conversionKind == ConversionKind::narrowingConversion && right.conversionKind == ConversionKind::implicitConversion) return false;
+    if (left.distance < right.distance) return true;
+    if (left.distance > right.distance) return false;
+    return false;
+}
+
+FunctionMatch::FunctionMatch(FunctionSymbol* function_) : function(function_), numConversions(0), numQualifyingConversions(0)
+{
+}
+
+struct BetterFunctionMatch
+{
+    bool operator()(const FunctionMatch& left, const FunctionMatch& right) const;
+};
+
+bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMatch& right) const
+{
+    BetterArgumentMatch betterArgumentMatch;
+    int leftBetterArgumentMatches = 0;
+    int rightBetterArgumentMatches = 0;
+    int n = std::max(int(left.argumentMatches.size()), int(right.argumentMatches.size()));
+    for (int i = 0; i < n; ++i)
+    {
+        ArgumentMatch leftMatch;
+        if (i < int(left.argumentMatches.size()))
+        {
+            leftMatch = left.argumentMatches[i];
+        }
+        ArgumentMatch rightMatch;
+        if (i < int(right.argumentMatches.size()))
+        {
+            rightMatch = right.argumentMatches[i];
+        }
+        if (betterArgumentMatch(leftMatch, rightMatch))
+        {
+            ++leftBetterArgumentMatches;
+        }
+        else if (betterArgumentMatch(rightMatch, leftMatch))
+        {
+            ++rightBetterArgumentMatches;
+        }
+    }
+    if (leftBetterArgumentMatches > rightBetterArgumentMatches)
+    {
+        return true;
+    }
+    if (rightBetterArgumentMatches > leftBetterArgumentMatches)
+    {
+        return false;
+    }
+    if (left.numConversions < right.numConversions)
+    {
+        return true;
+    }
+    if (left.numConversions > right.numConversions)
+    {
+        return false;
+    }
+    if (left.numQualifyingConversions < right.numQualifyingConversions)
+    {
+        return true;
+    }
+    if (left.numQualifyingConversions > right.numQualifyingConversions)
+    {
+        return false;
+    }
+    return false;
+}
 
 std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMatch& functionMatch, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos)
@@ -40,9 +148,25 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
             }
         }
         const ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
+        if (argumentMatch.preConversionFlags == OperationFlags::addr)
+        {
+            arg = new BoundAddressOfNode(arg, sourcePos);
+        }
+        else if (argumentMatch.preConversionFlags == OperationFlags::deref)
+        {
+            arg = new BoundDereferenceNode(arg, sourcePos);
+        }
         if (argumentMatch.conversionFun)
         {
             arg = new BoundConversionNode(arg, argumentMatch.conversionFun, sourcePos);
+        }
+        if (argumentMatch.postConversionFlags == OperationFlags::addr)
+        {
+            arg = new BoundAddressOfNode(arg, sourcePos);
+        }
+        else if (argumentMatch.postConversionFlags == OperationFlags::deref)
+        {
+            arg = new BoundDereferenceNode(arg, sourcePos);
         }
         boundFunctionCall->AddArgument(arg);
     }
@@ -51,19 +175,107 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
 
 bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, ArgumentMatch& argumentMatch)
 {
+    int distance = 0;
+    if (argumentMatch.conversionFun)
+    {
+        distance = argumentMatch.conversionFun->ConversionDistance();
+    }
+    if (paramType->IsRValueRefType() && !argType->IsRValueRefType())
+    {
+        ++functionMatch.numQualifyingConversions;
+    }
+    if (argType->IsConstType())
+    {
+        if (paramType->IsConstType() || !paramType->IsReferenceType())
+        {
+            ++distance;
+        }
+        else
+        {
+            distance = 255;
+        }
+    }
+    else
+    {
+        if (paramType->IsConstType())
+        {
+            distance += 2;
+        }
+        else
+        {
+            distance += 3;
+        }
+    }
+    if (argType->IsReferenceType() && !paramType->IsReferenceType())
+    {
+        argumentMatch.postConversionFlags = OperationFlags::deref;
+        argumentMatch.distance = distance;
+        ++functionMatch.numQualifyingConversions;
+        return true;
+    }
+    else if (!argType->IsReferenceType() && paramType->IsReferenceType())
+    {
+        argumentMatch.postConversionFlags = OperationFlags::addr;
+        argumentMatch.distance = distance;
+        ++functionMatch.numQualifyingConversions;
+        return true;
+    }
+    else if (argType->IsConstType() && !paramType->IsConstType())
+    {
+        ++functionMatch.numQualifyingConversions;
+        ++distance;
+        if (argType->IsLValueRefType() && paramType->IsRValueRefType())
+        {
+            ++distance;
+            ++functionMatch.numQualifyingConversions;
+        }
+        argumentMatch.distance = distance;
+        return true;
+    }
+    else if (!argType->IsConstType() && paramType->IsConstType())
+    {
+        ++functionMatch.numQualifyingConversions;
+        ++distance;
+        if (argType->IsLValueRefType() && paramType->IsRValueRefType())
+        {
+            ++distance;
+            ++functionMatch.numQualifyingConversions;
+        }
+        argumentMatch.distance = distance;
+        return true;
+    }
+    else if (argType->IsLValueRefType() && paramType->IsRValueRefType())
+    {
+        ++distance;
+        ++functionMatch.numQualifyingConversions;
+        argumentMatch.distance = distance;
+        return true;
+    }
+    else if (argType->IsRValueRefType() && paramType->IsLValueRefType())
+    {
+        ++distance;
+        ++functionMatch.numQualifyingConversions;
+        argumentMatch.distance = distance;
+        return true;
+    }
+    else if (argumentMatch.conversionFun)
+    {
+        argumentMatch.distance = distance;
+        return true;
+    }
     return false;
 }
 
 bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, Context* context)
 {
     int arity = args.size();
-    int n = std::min(arity, functionMatch.function->Arity());
+    int n = std::min(arity, functionMatch.function->MemFunArity());
     for (int i = 0; i < n; ++i)
     {
         BoundExpressionNode* arg = args[i].get();
         TypeSymbol* argType = arg->GetType();
-        ParameterSymbol* parameter = functionMatch.function->Parameters()[i];
-        TypeSymbol* paramType = parameter->GetType();
+        ParameterSymbol* parameter = functionMatch.function->MemFunParameters()[i];
+        TypeSymbol* paramType = parameter->GetReferredType();
         if (argType == paramType)
         {
             functionMatch.argumentMatches.push_back(ArgumentMatch());
@@ -82,12 +294,21 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             }
             if (!qualificationConversionMatch)
             {
-                FunctionSymbol* conversionFun = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType);
+                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
                 if (conversionFun)
                 {
                     argumentMatch.conversionFun = conversionFun;
+                    functionMatch.argumentMatches.push_back(argumentMatch);
                     ++functionMatch.numConversions;
-                    continue;
+                    if (FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch))
+                    {
+                        functionMatch.argumentMatches.push_back(argumentMatch);
+                        continue;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 return false;
             }
@@ -97,7 +318,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
 }
 
 FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
     std::vector<FunctionMatch> functionMatches;
     for (FunctionSymbol* viableFunction : viableFunctions)
@@ -121,27 +342,50 @@ FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& via
         }
         else
         {
-            ThrowException("ambiguous function call", sourcePos, context);
+            ex = Exception("ambiguous function call", sourcePos, context);
+            return FunctionMatch(nullptr);
         }
     }
     else
     {
-        ThrowException("no matching function found for function call", sourcePos, context);
+        ex = Exception("no matching function found for function call", sourcePos, context);
+        return FunctionMatch(nullptr);
     }
 }
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
     std::vector<FunctionSymbol*> viableFunctions;
-    std::unique_ptr<BoundFunctionCallNode> operationFunctionCall = context->GetOperationRepository()->GetOperation(groupName, args);
-    if (operationFunctionCall)
+    FunctionSymbol* operation = context->GetOperationRepository()->GetOperation(groupName, args, sourcePos, context);
+    if (operation)
     {
-        return operationFunctionCall;
+        viableFunctions.push_back(operation);
     }
-    context->GetSymbolTable()->CollectViableFunctions(scope, groupName, args.size(), viableFunctions, context);
-    FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, sourcePos, context);
+    else
+    {
+        context->GetSymbolTable()->CollectViableFunctions(scope, groupName, args.size(), viableFunctions, context);
+    }
+    FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, sourcePos, context, ex);
+    if (!bestMatch.function) return std::unique_ptr<BoundFunctionCallNode>();
+    if ((bestMatch.function->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
+    {
+        ex = Exception("attempt to call a deleted function", sourcePos, context);
+        return std::unique_ptr<BoundFunctionCallNode>();
+    }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(bestMatch, args, sourcePos);
+    return boundFunctionCall;
+}
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    Exception ex;
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex);
+    if (!boundFunctionCall)
+    {
+        ThrowException(ex);
+    }
     return boundFunctionCall;
 }
 

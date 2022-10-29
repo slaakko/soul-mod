@@ -7,6 +7,7 @@ export module otava.symbols.context;
 
 import std.core;
 import soul.lexer.base;
+import soul.lexer.file.map;
 import soul.ast.source.pos;
 import otava.ast.node;
 
@@ -84,6 +85,8 @@ public:
     otava::ast::Node* GetNode() const { return node; }
     void SetDeclarationList(otava::ast::Node* node, DeclarationList* declarations);
     std::unique_ptr<DeclarationList> ReleaseDeclarationList(otava::ast::Node* node);
+    soul::lexer::FileMap* GetFileMap() const { return fileMap; }
+    void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -94,6 +97,7 @@ private:
     std::stack<otava::ast::Node*> nodeStack;
     otava::ast::Node* node;
     std::map<otava::ast::Node*, std::unique_ptr<DeclarationList>> declarationMap;
+    soul::lexer::FileMap* fileMap;
 };
 
 } // namespace otava::symbols

@@ -8,6 +8,7 @@ module otava.symbols.expression.binder;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.bound.tree;
+import otava.symbols.bound.node;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.class_group.symbol;
 import otava.symbols.classes;
@@ -23,6 +24,7 @@ import otava.symbols.scope;
 import otava.symbols.scope.resolver;
 import otava.symbols.symbol.table;
 import otava.symbols.type.resolver;
+import otava.symbols.type.symbol;
 import otava.symbols.variable.group.symbol;
 import otava.symbols.variable.symbol;
 import otava.ast.identifier;
@@ -34,6 +36,18 @@ import util.unicode;
 import std.core;
 
 namespace otava::symbols {
+
+BoundExpressionNode* MakeAddressArg(BoundExpressionNode* node)
+{
+    if (node->GetType()->IsReferenceType())
+    {
+        return new BoundRefToPtrNode(node, node->GetSourcePos());
+    }
+    else
+    {
+        return new BoundAddressOfNode(node, node->GetSourcePos());
+    }
+}
 
 class OperatorGroupNameMap
 {
@@ -68,6 +82,17 @@ OperatorGroupNameMap::OperatorGroupNameMap()
     operatorGroupNameMap[otava::ast::NodeKind::exclusiveOrNode] = U"operator^";
     operatorGroupNameMap[otava::ast::NodeKind::shiftLeftNode] = U"operator<<";
     operatorGroupNameMap[otava::ast::NodeKind::shiftRightNode] = U"operator>>";
+    operatorGroupNameMap[otava::ast::NodeKind::assignNode] = U"operator=";
+    operatorGroupNameMap[otava::ast::NodeKind::plusAssignNode] = U"operator+=";
+    operatorGroupNameMap[otava::ast::NodeKind::minusAssignNode] = U"operator-=";
+    operatorGroupNameMap[otava::ast::NodeKind::mulAssignNode] = U"operator*=";
+    operatorGroupNameMap[otava::ast::NodeKind::divAssignNode] = U"operator/=";
+    operatorGroupNameMap[otava::ast::NodeKind::modAssignNode] = U"operator%=";
+    operatorGroupNameMap[otava::ast::NodeKind::xorAssignNode] = U"operator^=";
+    operatorGroupNameMap[otava::ast::NodeKind::andAssignNode] = U"operator&=";
+    operatorGroupNameMap[otava::ast::NodeKind::orAssignNode] = U"operator|=";
+    operatorGroupNameMap[otava::ast::NodeKind::shiftLeftAssignNode] = U"operator<<=";
+    operatorGroupNameMap[otava::ast::NodeKind::shiftRightAssignNode] = U"operator>>=";
 }
 
 const std::u32string& OperatorGroupNameMap::GetGroupName(otava::ast::NodeKind nodeKind, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -290,7 +315,18 @@ void ExpressionBinder::Visit(otava::ast::MemberExprNode& node)
         scope = memberScope;
     }
     node.Id()->Accept(*this);
-    boundExpression = new BoundMemberExprNode(subject.release(), boundExpression, node.GetSourcePos());
+    std::unique_ptr<BoundExpressionNode> member(boundExpression);
+    if (subject->IsBoundLocalVariable() && member->IsBoundMemberVariable())
+    {
+        BoundVariableNode* localVar = static_cast<BoundVariableNode*>(subject.release());
+        BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+        memberVar->SetThisPtr(new BoundAddressOfNode(localVar, node.GetSourcePos()));
+        boundExpression = memberVar;
+    }
+    else
+    {
+        boundExpression = new BoundMemberExprNode(subject.release(), member.release(), node.GetSourcePos());
+    }
 }
 
 void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
@@ -308,7 +344,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             args.push_back(std::move(arg));
         }
         std::u32string groupName = GetGroupName(subject.get());
-        std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(subjectScope, groupName, args, node.GetSourcePos(), context);
+        std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverloadThrow(subjectScope, groupName, args, node.GetSourcePos(), context);
         boundExpression = functionCall.release();
     }
     else
@@ -325,7 +361,17 @@ void ExpressionBinder::Visit(otava::ast::BinaryExprNode& node)
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     args.push_back(std::unique_ptr<BoundExpressionNode>(left.release()));
     args.push_back(std::unique_ptr<BoundExpressionNode>(right.release()));
-    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(scope, groupName, args, node.GetSourcePos(), context);
+    Exception ex;
+    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(scope, groupName, args, node.GetSourcePos(), context, ex);
+    if (!functionCall)
+    {
+        args[0].reset(new BoundAddressOfNode(args[0].release(), node.GetSourcePos()));
+        functionCall = ResolveOverload(scope, groupName, args, node.GetSourcePos(), context, ex);
+    }
+    if (!functionCall)
+    {
+        ThrowException(ex);
+    }
     boundExpression = functionCall.release();
 }
 

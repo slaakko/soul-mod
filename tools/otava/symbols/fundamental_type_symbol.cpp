@@ -19,8 +19,10 @@ namespace otava::symbols {
 
 constexpr const char* fundamentalTypeNames[] =
 {
-    "none", "char", "char8_t", "char16_t", "char32_t", "wchar_t", "bool", "short int", "int", "long int", "long long int", "float", "double", "void",
-    "signed char", "unsigned char", "unsigned short int", "unsigned int", "unsigned long int", "unsigned long long int", "long double", "auto", "nullptr_t"
+    "none", "bool", "char", "signed char", "unsigned char", "char8_t", "char16_t", 
+    "short int", "unsigned short int", "char32_t", "wchar_t",
+    "int", "unsigned int", "long int", "unsigned long int", "long long int", "unsigned long long int",
+    "float", "double", "long double", "void", "auto", "nullptr_t"
 };
 
 class FundamentalTypeFlagMapper
@@ -105,6 +107,32 @@ FundamentalTypeSymbol::FundamentalTypeSymbol(FundamentalTypeKind kind_) : TypeSy
 {
 }
 
+bool FundamentalTypeSymbol::IsIntegralType() const
+{
+    switch (kind)
+    {
+        case FundamentalTypeKind::charType:
+        case FundamentalTypeKind::signedCharType:
+        case FundamentalTypeKind::unsignedCharType:
+        case FundamentalTypeKind::char8Type:
+        case FundamentalTypeKind::char16Type:
+        case FundamentalTypeKind::shortIntType:
+        case FundamentalTypeKind::unsignedShortIntType:
+        case FundamentalTypeKind::char32Type:
+        case FundamentalTypeKind::wcharType:
+        case FundamentalTypeKind::intType:
+        case FundamentalTypeKind::unsignedIntType:
+        case FundamentalTypeKind::longIntType:
+        case FundamentalTypeKind::unsignedLongIntType:
+        case FundamentalTypeKind::longLongIntType:
+        case FundamentalTypeKind::unsignedLongLongIntType:
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void FundamentalTypeSymbol::Write(Writer& writer)
 {
     static_assert(static_cast<int32_t>(FundamentalTypeKind::max) < 256);
@@ -184,7 +212,7 @@ otava::intermediate::Type* FundamentalTypeSymbol::IrType(Emitter& emitter, const
         }
         case FundamentalTypeKind::nullPtrType:
         {
-            return emitter.GetLongType();
+            return emitter.MakePtrType(emitter.GetVoidType());
         }
         default:
         {
@@ -208,3 +236,4 @@ TypeSymbol* GetFundamentalType(DeclarationFlags fundamentalTypeFlags, const soul
 }
 
 } // namespace otava::symbols
+

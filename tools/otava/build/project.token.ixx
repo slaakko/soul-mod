@@ -20,5 +20,8 @@ constexpr int64_t FILEPATH = (static_cast<int64_t>(tokenSetID) << 32) | 8;
 constexpr int64_t REFERENCE = (static_cast<int64_t>(tokenSetID) << 32) | 9;
 constexpr int64_t DEFINE = (static_cast<int64_t>(tokenSetID) << 32) | 10;
 constexpr int64_t VALUE = (static_cast<int64_t>(tokenSetID) << 32) | 11;
+constexpr int64_t TARGET = (static_cast<int64_t>(tokenSetID) << 32) | 12;
+constexpr int64_t PROGRAM = (static_cast<int64_t>(tokenSetID) << 32) | 13;
+constexpr int64_t LIBRARY = (static_cast<int64_t>(tokenSetID) << 32) | 14;
 
 } // otava::project_token

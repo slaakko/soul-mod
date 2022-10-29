@@ -11,8 +11,8 @@ struct pair
     using second_type = U;
     T first;
     U second;
-    pair(const pair&) = default;
-    pair(pair&&) = default;
+    pair(const pair&);
+    pair(pair&&);
     pair& operator=(const pair& p);
     pair& operator=(pair&& p);
     void swap(pair& p);

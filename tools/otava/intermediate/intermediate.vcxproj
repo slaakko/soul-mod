@@ -170,14 +170,18 @@
     <ClCompile Include="intermediate.token.ixx" />
     <ClCompile Include="intermediate_rules.cpp" />
     <ClCompile Include="intermediate_rules.ixx" />
+    <ClCompile Include="linear_scan_register_allocator.cpp" />
+    <ClCompile Include="linear_scan_register_allocator.ixx" />
     <ClCompile Include="metadata.cpp" />
     <ClCompile Include="metadata.ixx" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="parser.ixx" />
     <ClCompile Include="reference_resolver.ixx" />
-    <ClCompile Include="refernce_resolver.cpp" />
+    <ClCompile Include="reference_resolver.cpp" />
     <ClCompile Include="register_allocator.cpp" />
     <ClCompile Include="register_allocator.ixx" />
+    <ClCompile Include="simple_assembly_code_generator.cpp" />
+    <ClCompile Include="simple_assembly_code_generator.ixx" />
     <ClCompile Include="type.cpp" />
     <ClCompile Include="type.ixx" />
     <ClCompile Include="util.ixx" />
@@ -200,6 +204,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
       <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\assembly\assembly.vcxproj">
+      <Project>{86c6dbf9-631b-42e0-81f0-b14d48e5f2e8}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -203,7 +203,8 @@ NamespaceSymbol* Symbol::ParentNamespace() const
 std::string Symbol::DocName() const
 {
     std::string docName = SymbolDocKindStr();
-    docName.append("_").append(util::ToUtf8(Name())).append("_").append(util::GetSha1MessageDigest(util::ToUtf8(FullName())));
+    std::string fullName = util::ToUtf8(FullName());
+    docName.append("_").append(util::ToUtf8(Name())).append("_").append(util::GetSha1MessageDigest(fullName));
     return docName;
 }
 
@@ -242,7 +243,6 @@ bool Symbol::CanInstall() const
         case SymbolKind::fundamentalTypeBoolean:
         case SymbolKind::fundamentalTypeDefaultCtor:
         case SymbolKind::fundamentalTypeCopyCtor:
-        case SymbolKind::fundamentalTypeCopyCtorLiteral:
         case SymbolKind::fundamentalTypeMoveCtor:
         case SymbolKind::fundamentalTypeCopyAssignment:
         case SymbolKind::fundamentalTypeMoveAssignment:
@@ -326,7 +326,6 @@ bool Symbol::IsFunctionSymbol() const
         case SymbolKind::fundamentalTypeBoolean:
         case SymbolKind::fundamentalTypeDefaultCtor:
         case SymbolKind::fundamentalTypeCopyCtor:
-        case SymbolKind::fundamentalTypeCopyCtorLiteral:
         case SymbolKind::fundamentalTypeMoveCtor:
         case SymbolKind::fundamentalTypeCopyAssignment:
         case SymbolKind::fundamentalTypeMoveAssignment:
@@ -439,7 +438,6 @@ bool Symbol::IsCopyCtor() const
     switch (kind)
     {
         case SymbolKind::fundamentalTypeCopyCtor:
-        case SymbolKind::fundamentalTypeCopyCtorLiteral:
         {
             return true;
         }

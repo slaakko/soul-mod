@@ -401,8 +401,10 @@ otava::intermediate::Value* Emitter::EmitPtrDiff(otava::intermediate::Value* lef
 
 otava::intermediate::Value* Emitter::EmitCall(otava::intermediate::Value* function, const std::vector<otava::intermediate::Value*>& args)
 {
-    for (const auto& arg : args)
+    int32_t n = args.size();
+    for (int32_t i = 0; i < n; ++i)
     {
+        otava::intermediate::Value* arg = args[i];
         context->CreateArg(arg);
     }
     return context->CreateCall(function);

@@ -1,0 +1,3 @@
+project struct;
+target=program;
+source <struct.cpp>;

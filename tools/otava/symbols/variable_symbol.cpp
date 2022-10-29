@@ -10,6 +10,7 @@ module otava.symbols.variable.symbol;
 
 import otava.symbols.modules;
 import otava.symbols.symbol.table;
+import otava.symbols.alias.type.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.reader;
 import otava.symbols.writer;
@@ -22,9 +23,9 @@ VariableSymbol::VariableSymbol(const std::u32string& name_) :
     Symbol(SymbolKind::variableSymbol, name_), 
     declaredType(nullptr),
     declaredTypeId(util::nil_uuid()),
-    initializerType(nullptr), 
-    initializerTypeId(util::nil_uuid()), 
-    value(nullptr), 
+    initializerType(nullptr),
+    initializerTypeId(util::nil_uuid()),
+    value(nullptr),
     valueId(util::nil_uuid()),
     layoutIndex(-1)
 {
@@ -99,9 +100,9 @@ bool VariableSymbol::IsGlobalVariable() const
     return Parent()->IsNamespaceSymbol();
 }
 
-void VariableSymbol::SetInitializerType(TypeSymbol* initializerType_) 
-{ 
-    initializerType = initializerType_; 
+void VariableSymbol::SetInitializerType(TypeSymbol* initializerType_)
+{
+    initializerType = initializerType_;
 }
 
 TypeSymbol* VariableSymbol::GetType() const
@@ -114,6 +115,17 @@ TypeSymbol* VariableSymbol::GetType() const
     {
         return declaredType;
     }
+}
+
+TypeSymbol* VariableSymbol::GetReferredType() const
+{
+    TypeSymbol* referredType = GetType();
+    while (referredType->IsAliasTypeSymbol())
+    {
+        AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);
+        referredType = aliasType->ReferredType();
+    }
+    return referredType;
 }
 
 bool VariableLess::operator()(VariableSymbol* left, VariableSymbol* right) const

@@ -8,6 +8,8 @@ module otava.intermediate.type;
 import otava.intermediate.context;
 import otava.intermediate.error;
 import otava.intermediate.visitor;
+import otava.intermediate.value;
+import otava.intermediate.data;
 import util;
 
 namespace otava::intermediate {
@@ -477,7 +479,44 @@ std::string PointerType::Name() const
     return baseTypeRef.GetType()->Name() + "*";
 }
 
-Types::Types() : context(nullptr), nextTypeId(0)
+Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context* context)
+{
+    Type* type = ptr->GetType();
+    if (type->IsPointerType())
+    {
+        PointerType* ptrType = static_cast<PointerType*>(type);
+        Type* aggregateType = ptrType->BaseType();
+        if (aggregateType->IsStructureType())
+        {
+            if (index->IsLongValue())
+            {
+                int64_t idx = static_cast<LongValue*>(index)->GetValue();
+                StructureType* structureType = static_cast<StructureType*>(aggregateType);
+                return context->MakePtrType(structureType->FieldType(static_cast<int>(idx)));
+            }
+            else
+            {
+                Error("long valued index expected", sourcePos, context);
+            }
+        }
+        else if (aggregateType->IsArrayType())
+        {
+            ArrayType* arrayType = static_cast<ArrayType*>(aggregateType);
+            return context->MakePtrType(arrayType->ElementType());
+        }
+        else
+        {
+            Error("structure or array type expected", sourcePos, context);
+        }
+    }
+    else
+    {
+        Error("pointer type expected", sourcePos, context);
+    }
+    return nullptr;
+}
+
+Types::Types() : context(nullptr), nextTypeId(userTypeId)
 {
 }
 
@@ -517,52 +556,67 @@ void Types::Write(util::CodeFormatter& formatter)
 
 StructureType* Types::GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
-    auto it = structureTypeMap.find(fieldTypeRefs);
+    std::vector<int32_t> fieldTypeIds;
+    for (const auto& fieldTypeRef : fieldTypeRefs)
+    {
+        fieldTypeIds.push_back(fieldTypeRef.Id());
+    }
+    auto it = structureTypeMap.find(fieldTypeIds);
     if (it != structureTypeMap.cend())
     {
-        return it->second;
+        StructureType* structureType = it->second;
+        typeMap[typeId] = structureType;
+        return structureType;
     }
     StructureType* structureType = new StructureType(sourcePos, typeId, fieldTypeRefs);
     types.push_back(std::unique_ptr<Type>(structureType));
-    structureTypeMap[fieldTypeRefs] = structureType;
+    structureTypeMap[fieldTypeIds] = structureType;
+    Map(structureType);
     return structureType;
 }
 
 ArrayType* Types::GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
 {
-    auto key = std::make_pair(size, elementTypeRef);
+    auto key = std::make_pair(size, elementTypeRef.Id());
     auto it = arrayTypeMap.find(key);
     if (it != arrayTypeMap.cend())
     {
-        return it->second;
+        ArrayType* arrayType = it->second;
+        typeMap[typeId] = arrayType;
+        return arrayType;
     }
     ArrayType* arrayType = new ArrayType(sourcePos, typeId, size, elementTypeRef);
     types.push_back(std::unique_ptr<Type>(arrayType));
     arrayTypeMap[key] = arrayType;
+    Map(arrayType);
     return arrayType;
 }
 
 FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
-    auto key = std::make_pair(returnTypeRef, paramTypeRefs);
+    int32_t returnTypeId = returnTypeRef.Id();
+    std::vector<int32_t> paramTypeIds;
+    for (const auto& paramTypeRef : paramTypeRefs)
+    {
+        paramTypeIds.push_back(paramTypeRef.Id());
+    }
+    auto key = std::make_pair(returnTypeId, paramTypeIds);
     auto it = functionTypeMap.find(key);
     if (it != functionTypeMap.cend())
     {
-        return it->second;
+        FunctionType* functionType = it->second;
+        typeMap[typeId] = functionType;
+        return functionType;
     }
     FunctionType* functionType = new FunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
     types.push_back(std::unique_ptr<Type>(functionType));
     functionTypeMap[key] = functionType;
+    Map(functionType);
     return functionType;
 }
 
 void Types::Add(Type* type, Context* context)
 {
-    Type* prev = Get(type->Id());
-    if (prev)
-    {
-        Error("error adding type id " + std::to_string(type->Id()) + ": type id not unique", type->GetSourcePos(), context, prev->GetSourcePos());
-    }
     Map(type);
     declaredTypes.push_back(type);
 }

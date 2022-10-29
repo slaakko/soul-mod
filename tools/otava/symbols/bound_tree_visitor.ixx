@@ -37,6 +37,7 @@ class BoundFunctionCallNode;
 class BoundConversionNode;
 class BoundAddressOfNode;
 class BoundDereferenceNode;
+class BoundRefToPtrNode;
 class BoundErrorNode;
 
 class BoundTreeVisitor
@@ -71,6 +72,7 @@ public:
     virtual void Visit(BoundConversionNode& node) {}
     virtual void Visit(BoundAddressOfNode& node) {}
     virtual void Visit(BoundDereferenceNode& node) {}
+    virtual void Visit(BoundRefToPtrNode& node) {}
     virtual void Visit(BoundErrorNode& node) {}
 };
 

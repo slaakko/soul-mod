@@ -10,41 +10,28 @@ namespace otava::assembly {
 std::string regName[] = 
 {
     "al", "bl", "cl", "dl", "sil", "dil", "bpl", "spl", "r8b", "r9b", "r10b", "r11b", "r12b", "r13b", "r14b", "r15b",
-    "ax", "bx", "cx", "dx", "di", "si", "bp", "sp", "r8w", "r9w", "r10w", "r11w", "r12w", "r13w", "r14w", "r15w",
-    "eax", "ebx", "ecx", "edx", "edi", "esi", "ebp", "esp", "r8d", "r9d", "r10d", "r11d", "r12d", "r13d", "r14d", "r15d",
-    "rax", "rbx", "rcx", "rdx", "rbp", "rsi", "rdi", "rsp", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", ""
+    "ax", "bx", "cx", "dx", "si", "di", "bp", "sp", "r8w", "r9w", "r10w", "r11w", "r12w", "r13w", "r14w", "r15w",
+    "eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp", "r8d", "r9d", "r10d", "r11d", "r12d", "r13d", "r14d", "r15d",
+    "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "rbp", "rsp", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15", ""
 };
 
-
-Register::Register() : Value(std::string())
+Register::Register() : Value(std::string()), kind(), group()
 {
 }
 
-Register::Register(RegisterKind kind_) : Value(regName[int(kind_)]), kind(kind_)
+Register::Register(RegisterKind kind_, RegisterGroupKind group_, int size_) : Value(regName[int(kind_)]), kind(kind_), group(group_), size(size_)
 {
 }
 
-RegisterGroup::RegisterGroup() : kind(RegisterGroupKind::max)
+RegisterGroup::RegisterGroup() : kind(RegisterGroupKind::max), nonvolatile(false)
 {
 }
 
-RegisterGroup::RegisterGroup(RegisterGroupKind kind_) : kind(kind_)
+RegisterGroup::RegisterGroup(RegisterGroupKind kind_) : kind(kind_), nonvolatile(false)
 {
 }
 
-const Register* RegisterGroup::GetReg(int size) const
-{
-    if (size >= 1 && size <= 8)
-    {
-        return &regs[size - 1];
-    }
-    else
-    {
-        throw std::runtime_error("invalid size");
-    }
-}
-
-Register* RegisterGroup::GetReg(int size)
+const Register* RegisterGroup::GetReg(int64_t size) const
 {
     if (size >= 1 && size <= 8)
     {
@@ -52,11 +39,23 @@ Register* RegisterGroup::GetReg(int size)
     }
     else
     {
-        throw std::runtime_error("invalid size");
+        throw std::runtime_error("otava.assembly.RegisterGroup::GetReg: invalid size");
     }
 }
 
-void RegisterGroup::SetReg(int size, const Register& reg)
+Register* RegisterGroup::GetReg(int64_t size)
+{
+    if (size >= 1 && size <= 8)
+    {
+        return &regs[size - 1];
+    }
+    else
+    {
+        throw std::runtime_error("otava.assembly.RegisterGroup::GetReg: invalid size");
+    }
+}
+
+void RegisterGroup::SetReg(int64_t size, const Register& reg)
 {
     if (size >= 1 && size <= 8)
     {
@@ -64,113 +63,154 @@ void RegisterGroup::SetReg(int size, const Register& reg)
     }
     else
     {
-        throw std::runtime_error("invalid size");
+        throw std::runtime_error("otava.assembly.RegisterGroup::GetReg: invalid size");
     }
+}
+
+bool RegisterGroup::IsLocal() const
+{
+    if (kind >= RegisterGroupKind::r8 && kind <= RegisterGroupKind::r15)
+    {
+        return true;
+    }
+    return false;
 }
 
 Registers::Registers()
 {
-    RegisterGroup& rax = regGroups[int(RegisterGroupKind::rax)];
-    rax.SetReg(1, Register(RegisterKind::al));
-    rax.SetReg(2, Register(RegisterKind::ax));
-    rax.SetReg(4, Register(RegisterKind::eax));
-    rax.SetReg(8, Register(RegisterKind::rax));
+    RegisterGroup* rax = new RegisterGroup(RegisterGroupKind::rax);
+    rax->SetNonvolatile(false);
+    rax->SetReg(1, Register(RegisterKind::al, RegisterGroupKind::rax, 1));
+    rax->SetReg(2, Register(RegisterKind::ax, RegisterGroupKind::rax, 2));
+    rax->SetReg(4, Register(RegisterKind::eax, RegisterGroupKind::rax, 4));
+    rax->SetReg(8, Register(RegisterKind::rax, RegisterGroupKind::rax, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rax));
 
-    RegisterGroup& rbx = regGroups[int(RegisterGroupKind::rbx)];
-    rbx.SetReg(1, Register(RegisterKind::bl));
-    rbx.SetReg(2, Register(RegisterKind::bx));
-    rbx.SetReg(4, Register(RegisterKind::ebx));
-    rbx.SetReg(8, Register(RegisterKind::rbx));
+    RegisterGroup* rbx = new RegisterGroup(RegisterGroupKind::rbx);
+    rbx->SetNonvolatile(true);
+    rbx->SetReg(1, Register(RegisterKind::bl, RegisterGroupKind::rbx, 1));
+    rbx->SetReg(2, Register(RegisterKind::bx, RegisterGroupKind::rbx, 2));
+    rbx->SetReg(4, Register(RegisterKind::ebx, RegisterGroupKind::rbx, 4));
+    rbx->SetReg(8, Register(RegisterKind::rbx, RegisterGroupKind::rbx, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rbx));
 
-    RegisterGroup& rcx = regGroups[int(RegisterGroupKind::rcx)];
-    rcx.SetReg(1, Register(RegisterKind::cl));
-    rcx.SetReg(2, Register(RegisterKind::cx));
-    rcx.SetReg(4, Register(RegisterKind::ecx));
-    rcx.SetReg(8, Register(RegisterKind::rcx));
+    RegisterGroup* rcx = new RegisterGroup(RegisterGroupKind::rcx);
+    rcx->SetNonvolatile(false);
+    rcx->SetReg(1, Register(RegisterKind::cl, RegisterGroupKind::rcx, 1));
+    rcx->SetReg(2, Register(RegisterKind::cx, RegisterGroupKind::rcx, 2));
+    rcx->SetReg(4, Register(RegisterKind::ecx, RegisterGroupKind::rcx, 4));
+    rcx->SetReg(8, Register(RegisterKind::rcx, RegisterGroupKind::rcx, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rcx));
 
-    RegisterGroup& rdx = regGroups[int(RegisterGroupKind::rdx)];
-    rdx.SetReg(1, Register(RegisterKind::dl));
-    rdx.SetReg(2, Register(RegisterKind::dx));
-    rdx.SetReg(4, Register(RegisterKind::edx));
-    rdx.SetReg(8, Register(RegisterKind::rdx));
+    RegisterGroup* rdx = new RegisterGroup(RegisterGroupKind::rdx);
+    rdx->SetNonvolatile(false);
+    rdx->SetReg(1, Register(RegisterKind::dl, RegisterGroupKind::rdx, 1));
+    rdx->SetReg(2, Register(RegisterKind::dx, RegisterGroupKind::rdx, 2));
+    rdx->SetReg(4, Register(RegisterKind::edx, RegisterGroupKind::rdx, 4));
+    rdx->SetReg(8, Register(RegisterKind::rdx, RegisterGroupKind::rdx, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rdx));
 
-    RegisterGroup& rsi = regGroups[int(RegisterGroupKind::rsi)];
-    rsi.SetReg(1, Register(RegisterKind::sil));
-    rsi.SetReg(2, Register(RegisterKind::si));
-    rsi.SetReg(4, Register(RegisterKind::esi));
-    rsi.SetReg(8, Register(RegisterKind::rsi));
+    RegisterGroup* rsi = new RegisterGroup(RegisterGroupKind::rsi);
+    rsi->SetNonvolatile(true);
+    rsi->SetReg(1, Register(RegisterKind::sil, RegisterGroupKind::rsi, 1));
+    rsi->SetReg(2, Register(RegisterKind::si, RegisterGroupKind::rsi, 2));
+    rsi->SetReg(4, Register(RegisterKind::esi, RegisterGroupKind::rsi, 4));
+    rsi->SetReg(8, Register(RegisterKind::rsi, RegisterGroupKind::rsi, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rsi));
 
-    RegisterGroup& rdi = regGroups[int(RegisterGroupKind::rdi)];
-    rdi.SetReg(1, Register(RegisterKind::dil));
-    rdi.SetReg(2, Register(RegisterKind::di));
-    rdi.SetReg(4, Register(RegisterKind::edi));
-    rdi.SetReg(8, Register(RegisterKind::rdi));
+    RegisterGroup* rdi = new RegisterGroup(RegisterGroupKind::rdi);
+    rdi->SetNonvolatile(true);
+    rdi->SetReg(1, Register(RegisterKind::dil, RegisterGroupKind::rdi, 1));
+    rdi->SetReg(2, Register(RegisterKind::di, RegisterGroupKind::rdi, 2));
+    rdi->SetReg(4, Register(RegisterKind::edi, RegisterGroupKind::rdi, 4));
+    rdi->SetReg(8, Register(RegisterKind::rdi, RegisterGroupKind::rdi, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rdi));
 
-    RegisterGroup& rbp = regGroups[int(RegisterGroupKind::rbp)];
-    rbp.SetReg(1, Register(RegisterKind::bpl));
-    rbp.SetReg(2, Register(RegisterKind::bp));
-    rbp.SetReg(4, Register(RegisterKind::ebp));
-    rbp.SetReg(8, Register(RegisterKind::rbp));
+    RegisterGroup* rbp = new RegisterGroup(RegisterGroupKind::rbp);
+    rbp->SetNonvolatile(false);
+    rbp->SetReg(1, Register(RegisterKind::bpl, RegisterGroupKind::rbp, 1));
+    rbp->SetReg(2, Register(RegisterKind::bp, RegisterGroupKind::rbp, 2));
+    rbp->SetReg(4, Register(RegisterKind::ebp, RegisterGroupKind::rbp, 4));
+    rbp->SetReg(8, Register(RegisterKind::rbp, RegisterGroupKind::rbp, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rbp));
 
-    RegisterGroup& rsp = regGroups[int(RegisterGroupKind::rsp)];
-    rsp.SetReg(1, Register(RegisterKind::spl));
-    rsp.SetReg(2, Register(RegisterKind::sp));
-    rsp.SetReg(4, Register(RegisterKind::esp));
-    rsp.SetReg(8, Register(RegisterKind::rsp));
+    RegisterGroup* rsp = new RegisterGroup(RegisterGroupKind::rsp);
+    rsp->SetNonvolatile(false);
+    rsp->SetReg(1, Register(RegisterKind::spl, RegisterGroupKind::rsp, 1));
+    rsp->SetReg(2, Register(RegisterKind::sp, RegisterGroupKind::rsp, 2));
+    rsp->SetReg(4, Register(RegisterKind::esp, RegisterGroupKind::rsp, 4));
+    rsp->SetReg(8, Register(RegisterKind::rsp, RegisterGroupKind::rsp, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(rsp));
 
-    RegisterGroup& r8 = regGroups[int(RegisterGroupKind::r8)];
-    r8.SetReg(1, Register(RegisterKind::r8b));
-    r8.SetReg(2, Register(RegisterKind::r8w));
-    r8.SetReg(4, Register(RegisterKind::r8d));
-    r8.SetReg(8, Register(RegisterKind::r8));
+    RegisterGroup* r8 = new RegisterGroup(RegisterGroupKind::r8);
+    r8->SetNonvolatile(false);
+    r8->SetReg(1, Register(RegisterKind::r8b, RegisterGroupKind::r8, 1));
+    r8->SetReg(2, Register(RegisterKind::r8w, RegisterGroupKind::r8, 2));
+    r8->SetReg(4, Register(RegisterKind::r8d, RegisterGroupKind::r8, 4));
+    r8->SetReg(8, Register(RegisterKind::r8, RegisterGroupKind::r8, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r8));
 
-    RegisterGroup& r9 = regGroups[int(RegisterGroupKind::r9)];
-    r9.SetReg(1, Register(RegisterKind::r9b));
-    r9.SetReg(2, Register(RegisterKind::r9w));
-    r9.SetReg(4, Register(RegisterKind::r9d));
-    r9.SetReg(8, Register(RegisterKind::r9));
+    RegisterGroup* r9 = new RegisterGroup(RegisterGroupKind::r9);
+    r9->SetNonvolatile(false);
+    r9->SetReg(1, Register(RegisterKind::r9b, RegisterGroupKind::r9, 1));
+    r9->SetReg(2, Register(RegisterKind::r9w, RegisterGroupKind::r9, 2));
+    r9->SetReg(4, Register(RegisterKind::r9d, RegisterGroupKind::r9, 4));
+    r9->SetReg(8, Register(RegisterKind::r9, RegisterGroupKind::r9, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r9));
 
-    RegisterGroup& r10 = regGroups[int(RegisterGroupKind::r10)];
-    r10.SetReg(1, Register(RegisterKind::r10b));
-    r10.SetReg(2, Register(RegisterKind::r10w));
-    r10.SetReg(4, Register(RegisterKind::r10d));
-    r10.SetReg(8, Register(RegisterKind::r10));
+    RegisterGroup* r10 = new RegisterGroup(RegisterGroupKind::r10);
+    r10->SetNonvolatile(false);
+    r10->SetReg(1, Register(RegisterKind::r10b, RegisterGroupKind::r10, 1));
+    r10->SetReg(2, Register(RegisterKind::r10w, RegisterGroupKind::r10, 2));
+    r10->SetReg(4, Register(RegisterKind::r10d, RegisterGroupKind::r10, 4));
+    r10->SetReg(8, Register(RegisterKind::r10, RegisterGroupKind::r10, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r10));
 
-    RegisterGroup& r11 = regGroups[int(RegisterGroupKind::r11)];
-    r11.SetReg(1, Register(RegisterKind::r11b));
-    r11.SetReg(2, Register(RegisterKind::r11w));
-    r11.SetReg(4, Register(RegisterKind::r11d));
-    r11.SetReg(8, Register(RegisterKind::r11));
+    RegisterGroup* r11 = new RegisterGroup(RegisterGroupKind::r11);
+    r11->SetNonvolatile(false);
+    r11->SetReg(1, Register(RegisterKind::r11b, RegisterGroupKind::r11, 1));
+    r11->SetReg(2, Register(RegisterKind::r11w, RegisterGroupKind::r11, 2));
+    r11->SetReg(4, Register(RegisterKind::r11d, RegisterGroupKind::r11, 4));
+    r11->SetReg(8, Register(RegisterKind::r11, RegisterGroupKind::r11, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r11));
 
-    RegisterGroup& r12 = regGroups[int(RegisterGroupKind::r12)];
-    r12.SetReg(1, Register(RegisterKind::r12b));
-    r12.SetReg(2, Register(RegisterKind::r12w));
-    r12.SetReg(4, Register(RegisterKind::r12d));
-    r12.SetReg(8, Register(RegisterKind::r12));
+    RegisterGroup* r12 = new RegisterGroup(RegisterGroupKind::r12);
+    r12->SetNonvolatile(true);
+    r12->SetReg(1, Register(RegisterKind::r12b, RegisterGroupKind::r12, 1));
+    r12->SetReg(2, Register(RegisterKind::r12w, RegisterGroupKind::r12, 2));
+    r12->SetReg(4, Register(RegisterKind::r12d, RegisterGroupKind::r12, 4));
+    r12->SetReg(8, Register(RegisterKind::r12, RegisterGroupKind::r12, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r12));
 
-    RegisterGroup& r13 = regGroups[int(RegisterGroupKind::r13)];
-    r13.SetReg(1, Register(RegisterKind::r13b));
-    r13.SetReg(2, Register(RegisterKind::r13w));
-    r13.SetReg(4, Register(RegisterKind::r13d));
-    r13.SetReg(8, Register(RegisterKind::r13));
+    RegisterGroup* r13 = new RegisterGroup(RegisterGroupKind::r13);
+    r13->SetNonvolatile(true);
+    r13->SetReg(1, Register(RegisterKind::r13b, RegisterGroupKind::r13, 1));
+    r13->SetReg(2, Register(RegisterKind::r13w, RegisterGroupKind::r13, 2));
+    r13->SetReg(4, Register(RegisterKind::r13d, RegisterGroupKind::r13, 4));
+    r13->SetReg(8, Register(RegisterKind::r13, RegisterGroupKind::r13, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r13));
 
-    RegisterGroup& r14 = regGroups[int(RegisterGroupKind::r14)];
-    r14.SetReg(1, Register(RegisterKind::r14b));
-    r14.SetReg(2, Register(RegisterKind::r14w));
-    r14.SetReg(4, Register(RegisterKind::r14d));
-    r14.SetReg(8, Register(RegisterKind::r14));
+    RegisterGroup* r14 = new RegisterGroup(RegisterGroupKind::r14);
+    r14->SetNonvolatile(true);
+    r14->SetReg(1, Register(RegisterKind::r14b, RegisterGroupKind::r14, 1));
+    r14->SetReg(2, Register(RegisterKind::r14w, RegisterGroupKind::r14, 2));
+    r14->SetReg(4, Register(RegisterKind::r14d, RegisterGroupKind::r14, 4));
+    r14->SetReg(8, Register(RegisterKind::r14, RegisterGroupKind::r14, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r14));
 
-    RegisterGroup& r15 = regGroups[int(RegisterGroupKind::r15)];
-    r15.SetReg(1, Register(RegisterKind::r15b));
-    r15.SetReg(2, Register(RegisterKind::r15w));
-    r15.SetReg(4, Register(RegisterKind::r15d));
-    r15.SetReg(8, Register(RegisterKind::r15));
+    RegisterGroup* r15 = new RegisterGroup(RegisterGroupKind::r15);
+    r15->SetNonvolatile(true);
+    r15->SetReg(1, Register(RegisterKind::r15b, RegisterGroupKind::r15, 1));
+    r15->SetReg(2, Register(RegisterKind::r15w, RegisterGroupKind::r15, 2));
+    r15->SetReg(4, Register(RegisterKind::r15d, RegisterGroupKind::r15, 4));
+    r15->SetReg(8, Register(RegisterKind::r15, RegisterGroupKind::r15, 8));
+    regGroups.push_back(std::unique_ptr<RegisterGroup>(r15));
 }
 
 RegisterPool::RegisterPool(Registers& registers)
 {
-    AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::r8));
-    AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::r9));
+    AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::rsi));
+    AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::rdi));
     AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::r10));
     AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::r11));
     AddLocalRegisterGroup(registers.GetRegisterGroup(RegisterGroupKind::r12));
@@ -182,8 +222,8 @@ RegisterPool::RegisterPool(Registers& registers)
     globalRegisterMap[RegisterGroupKind::rbx] = registers.GetRegisterGroup(RegisterGroupKind::rbx);
     globalRegisterMap[RegisterGroupKind::rcx] = registers.GetRegisterGroup(RegisterGroupKind::rcx);
     globalRegisterMap[RegisterGroupKind::rdx] = registers.GetRegisterGroup(RegisterGroupKind::rdx);
-    globalRegisterMap[RegisterGroupKind::rsi] = registers.GetRegisterGroup(RegisterGroupKind::rsi);
-    globalRegisterMap[RegisterGroupKind::rdi] = registers.GetRegisterGroup(RegisterGroupKind::rdi);
+    globalRegisterMap[RegisterGroupKind::r8] = registers.GetRegisterGroup(RegisterGroupKind::r8);
+    globalRegisterMap[RegisterGroupKind::r9] = registers.GetRegisterGroup(RegisterGroupKind::r9);
     globalRegisterMap[RegisterGroupKind::rbp] = registers.GetRegisterGroup(RegisterGroupKind::rbp);
     globalRegisterMap[RegisterGroupKind::rsp] = registers.GetRegisterGroup(RegisterGroupKind::rsp);
 }
@@ -201,6 +241,7 @@ RegisterGroup* RegisterPool::GetLocalRegisterGroup()
     }
     RegisterGroup* regGroup = *localRegisterPool.begin();
     localRegisterPool.erase(regGroup);
+    usedLocalRegs.insert(regGroup);
     return regGroup;
 }
 
@@ -209,7 +250,12 @@ RegisterGroup* RegisterPool::GetGlobalRegisterGroup(RegisterGroupKind regGroupKi
     auto it = globalRegisterMap.find(regGroupKind);
     if (it != globalRegisterMap.cend())
     {
-        return it->second;
+        RegisterGroup* regGroup = it->second;
+        if (regGroup->IsNonvolatile())
+        {
+            usedNonvolatileRegs.insert(regGroup);
+        }
+        return regGroup;
     }
     else
     {

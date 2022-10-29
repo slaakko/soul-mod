@@ -151,6 +151,8 @@
   <ItemGroup>
     <ClCompile Include="build.cpp" />
     <ClCompile Include="build.ixx" />
+    <ClCompile Include="gen_main_unit.cpp" />
+    <ClCompile Include="gen_main_unit.ixx" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="parser.ixx" />
     <ClCompile Include="project.cpp" />

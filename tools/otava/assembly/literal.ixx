@@ -10,13 +10,24 @@ import otava.assembly.value;
 
 export namespace otava::assembly {
 
+class UniqueLiteral;
+
 class Literal : public Value
 {
 public:
-    Literal(int64_t value_);
+    Literal(int64_t value_, int size_);
     int64_t GetValue() const { return value; }
+    friend class UniqueLiteral;
 private:
     int64_t value;
+    int size;
+};
+
+class UniqueLiteral : public Literal
+{
+public:
+    UniqueLiteral(int64_t value_, int size_);
+    void SetValue(int64_t value_);
 };
 
 } // namespace otava::assembly

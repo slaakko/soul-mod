@@ -16,8 +16,7 @@ import otava.symbols.exception;
 
 namespace otava::symbols {
 
-TypeSymbol::TypeSymbol(SymbolKind kind_, const std::u32string& name_) : 
-    ContainerSymbol(kind_, name_), defaultCtor(nullptr), copyCtor(nullptr), moveCtor(nullptr), copyAssignment(nullptr), moveAssignment(nullptr), dtor(nullptr)
+TypeSymbol::TypeSymbol(SymbolKind kind_, const std::u32string& name_) : ContainerSymbol(kind_, name_)
 {
 }
 
@@ -69,6 +68,11 @@ bool TypeSymbol::IsRValueRefType() const
         return HasDerivation(compoundTypeSymbol->GetDerivations(), Derivation::rvalueRefDerivation);
     }
     return false;
+}
+
+bool TypeSymbol::IsReferenceType() const
+{
+    return IsLValueRefType() || IsRValueRefType();
 }
 
 TypeSymbol* TypeSymbol::AddConst() 
@@ -147,6 +151,35 @@ TypeSymbol* TypeSymbol::RemoveRValueRef()
     return this;
 }
 
+TypeSymbol* TypeSymbol::RemoveReference()
+{
+    if (IsLValueRefType())
+    {
+        return RemoveLValueRef();
+    }
+    else if (IsRValueRefType())
+    {
+        return RemoveRValueRef();
+    }
+    else
+    {
+        return this;
+    }
+}
+
+TypeSymbol* TypeSymbol::RemoveRefOrPtr()
+{
+    if (IsReferenceType())
+    {
+        return PlainType();
+    }
+    else if (IsPointerType())
+    {
+        return RemovePointer();
+    }
+    return this;
+}
+
 TypeSymbol* TypeSymbol::DirectType()
 {
     if (IsCompoundTypeSymbol())
@@ -180,33 +213,6 @@ otava::intermediate::Type* TypeSymbol::IrType(Emitter& emitter, const soul::ast:
 void TypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ContainerSymbol::AddSymbol(symbol, sourcePos, context);
-    if (symbol->IsFunctionSymbol())
-    {
-        if (symbol->IsDefaultCtor())
-        {
-            defaultCtor = static_cast<FunctionSymbol*>(symbol);
-        }
-        else if (symbol->IsCopyCtor())
-        {
-            copyCtor = static_cast<FunctionSymbol*>(symbol);
-        }
-        else if (symbol->IsMoveCtor())
-        {
-            moveCtor = static_cast<FunctionSymbol*>(symbol);
-        }
-        else if (symbol->IsCopyAssignment())
-        {
-            copyAssignment = static_cast<FunctionSymbol*>(symbol);
-        }
-        else if (symbol->IsMoveAssignment())
-        {
-            moveAssignment = static_cast<FunctionSymbol*>(symbol);
-        }
-        else if (symbol->IsDtor())
-        {
-            dtor = static_cast<FunctionSymbol*>(symbol);
-        }
-    }
 }
 
 NestedTypeSymbol::NestedTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::nestedTypeSymbol, name_)

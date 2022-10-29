@@ -5,5 +5,5 @@
 
 keywords otava.project_keyword
 {
-    ("project", PROJECT), ("interface", INTERFACE), ("source", SOURCE), ("reference", REFERENCE), ("define", DEFINE)
+    ("project", PROJECT), ("interface", INTERFACE), ("source", SOURCE), ("reference", REFERENCE), ("define", DEFINE), ("target", TARGET), ("program", PROGRAM), ("library", LIBRARY)
 }

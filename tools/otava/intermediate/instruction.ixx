@@ -76,6 +76,9 @@ public:
     bool IsSwitchInstruction() const { return opCode == OpCode::switch_; }
     bool IsParamInstruction() const { return opCode == OpCode::param; }
     bool IsLocalInstruction() const { return opCode == OpCode::local; }
+    bool IsArgInstruction() const { return opCode == OpCode::arg; }
+    bool IsProcedureCallInstruction() const { return opCode == OpCode::procedure_call; }
+    bool IsFunctionCallInstruction() const { return opCode == OpCode::function_call; }
     bool IsLoadInstruction() const { return opCode == OpCode::load; }
     bool IsStoreInstruction() const { return opCode == OpCode::store; }
     bool IsElemAddrInstruction() const { return opCode == OpCode::elemaddr; }

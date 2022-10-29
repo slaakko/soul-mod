@@ -13,6 +13,7 @@ export namespace otava::intermediate {
 class Context;
 using SourcePos = soul::ast::SourcePos;
 
+bool ExceptionThrown();
 void Error(const std::string& message, const SourcePos& sourcePos, Context* context);
 void Error(const std::string& message, const SourcePos& sourcePos, Context* context, const SourcePos& refSourcePos);
 

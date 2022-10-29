@@ -1213,7 +1213,8 @@ void ParamInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LocalInstruction::LocalInstruction(const SourcePos& sourcePos_, RegValue* result_, Type* localType_) : ValueInstruction(sourcePos_, result_, OpCode::local), localType(localType_)
+LocalInstruction::LocalInstruction(const SourcePos& sourcePos_, RegValue* result_, Type* localType_) : 
+    ValueInstruction(sourcePos_, result_, OpCode::local), localType(localType_)
 {
 }
 

@@ -1,3 +1,4 @@
 project construction_statement;
+target=program;
 interface <construction_statement.ixx>;
 source <construction_statement.cpp>;

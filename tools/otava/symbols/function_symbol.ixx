@@ -18,7 +18,7 @@ class BoundExpressionNode;
 
 enum class FunctionKind
 {
-    constructor, destructor, special, function, conversion
+    function, constructor, destructor, special, conversion
 };
 
 enum class FunctionQualifiers : int32_t
@@ -56,6 +56,7 @@ public:
     std::string SymbolKindStr() const override { return "parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "paremeter"; }
     TypeSymbol* GetType() const { return type; }
+    TypeSymbol* GetReferredType() const;
     Value* DefaultValue() const { return defaultValue; }
     void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
     void Write(Writer& writer) override;
@@ -74,7 +75,8 @@ class FunctionSymbol : public ContainerSymbol
 public:
     FunctionSymbol(const std::u32string& name_);
     FunctionSymbol(SymbolKind kind_, const std::u32string& name_);
-    int Arity() const { return parameters.size(); }
+    int Arity() const;
+    int MemFunArity() const;
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
     FunctionKind GetFunctionKind() const { return kind; }
@@ -86,6 +88,7 @@ public:
     TemplateDeclarationSymbol* ParentTemplateDeclaration();
     void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
     TypeSymbol* ReturnType() const { return returnType; }
+    std::u32string FullName() const override;
     virtual TypeSymbol* ConversionParamType() const { return nullptr; }
     virtual TypeSymbol* ConversionArgType() const { return nullptr; }
     virtual ConversionKind GetConversionKind() const;
@@ -101,11 +104,11 @@ public:
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    std::string IrName() const;
+    virtual std::string IrName() const;
     void AddLocalVariable(VariableSymbol* localVariable, const soul::ast::SourcePos& sourcePos, Context* context);
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     bool IsVirtual() const;
-    ParameterSymbol* ThisParam() const { return thisParam.get(); }
+    ParameterSymbol* ThisParam();
     bool IsMemberFunction() const;
 private:
     bool memFunParamsConstructed;

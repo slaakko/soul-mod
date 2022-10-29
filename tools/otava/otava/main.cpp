@@ -17,6 +17,7 @@ import otava.parser.recorded.parse;
 import util.init.done;
 import util.unicode;
 import util.path;
+import util.text.util;
 
 void PrintHelp()
 {
@@ -26,6 +27,9 @@ void PrintHelp()
     std::cout << "  Print help and exit." << std::endl;
     std::cout << "--verbose | -v" << std::endl;
     std::cout << "  Be verbose." << std::endl;
+    std::cout << "--config=(debug|release) | -c=(debug|release)" << std::endl;
+    std::cout << "  Set configuration to build to 'debug' or 'release'." << std::endl;
+    std::cout << "  Default configuration is 'debug'." << std::endl;
     std::cout << "--multithreaded | -m" << std::endl;
     std::cout << "  Build using all cores." << std::endl;
     std::cout << "--debug-parse | -d" << std::endl;
@@ -44,6 +48,7 @@ int main(int argc, const char** argv)
         otava::symbols::ModuleMapper moduleMapper;
         std::vector<std::string> files;
         bool verbose = false;
+        std::string config = "debug";
         bool multithreaded = false;
         bool debugParse = false;
         bool xml = false;
@@ -52,67 +57,111 @@ int main(int argc, const char** argv)
             std::string arg = argv[i];
             if (arg.starts_with("--"))
             {
-                if (arg == "--help")
+                if (arg.find('=') != std::string::npos)
                 {
-                    PrintHelp();
-                    return 1;
-                }
-                else if (arg == "--verbose")
-                {
-                    verbose = true;
-                }
-                else if (arg == "--multithreaded")
-                {
-                    multithreaded = true;
-                }
-                else if (arg == "--debug-parse")
-                {
-                    debugParse = true;
-                }
-                else if (arg == "--xml")
-                {
-                    xml = true;
+                    std::vector<std::string> components = util::Split(arg, '=');
+                    if (components.size() == 2)
+                    {
+                        if (components[0] == "--config")
+                        {
+                            config = components[1];
+                        }
+                        else
+                        {
+                            throw std::runtime_error("unknown option '" + arg + "'");
+                        }
+                    }
+                    else
+                    {
+                        throw std::runtime_error("unknown option '" + arg + "'");
+                    }
                 }
                 else
                 {
-                    throw std::runtime_error("unknown option '" + arg + "'");
+                    if (arg == "--help")
+                    {
+                        PrintHelp();
+                        return 1;
+                    }
+                    else if (arg == "--verbose")
+                    {
+                        verbose = true;
+                    }
+                    else if (arg == "--multithreaded")
+                    {
+                        multithreaded = true;
+                    }
+                    else if (arg == "--debug-parse")
+                    {
+                        debugParse = true;
+                    }
+                    else if (arg == "--xml")
+                    {
+                        xml = true;
+                    }
+                    else
+                    {
+                        throw std::runtime_error("unknown option '" + arg + "'");
+                    }
                 }
             }
             else if (arg.starts_with("-"))
             {
-                std::string options = arg.substr(1);
-                for (char o : options)
+                if (arg.find('=') != std::string::npos)
                 {
-                    switch (o)
+                    std::vector<std::string> components = util::Split(arg, '=');
+                    if (components.size() == 2)
                     {
-                        case 'h':
+                        if (components[0] == "-c")
                         {
-                            PrintHelp();
-                            return 1;
+                            config = components[1];
                         }
-                        case 'v':
+                        else
                         {
-                            verbose = true;
-                            break;
+                            throw std::runtime_error("unknown option '" + arg + "'");
                         }
-                        case 'm':
+                    }
+                    else
+                    {
+                        throw std::runtime_error("unknown option '" + arg + "'");
+                    }
+                }
+                else
+                {
+                    std::string options = arg.substr(1);
+                    for (char o : options)
+                    {
+                        switch (o)
                         {
-                            multithreaded = true;
-                            break;
-                        }
-                        case 'd':
-                        {
-                            debugParse = true;
-                            break;
-                        }
-                        case 'x':
-                        {
-                            xml = true;
-                            break;
-                        }
-                        default:
-                        {
-                            throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
+                            case 'h':
+                            {
+                                PrintHelp();
+                                return 1;
+                            }
+                            case 'v':
+                            {
+                                verbose = true;
+                                break;
+                            }
+                            case 'm':
+                            {
+                                multithreaded = true;
+                                break;
+                            }
+                            case 'd':
+                            {
+                                debugParse = true;
+                                break;
+                            }
+                            case 'x':
+                            {
+                                xml = true;
+                                break;
+                            }
+                            default:
+                            {
+                                throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
+                            }
                         }
                     }
                 }
@@ -125,6 +174,10 @@ int main(int argc, const char** argv)
         if (files.empty())
         {
             throw std::runtime_error("no files given");
+        }
+        if (config != "debug" && config != "release")
+        {
+            throw std::runtime_error("unknown configuration (" + config + "): not 'debug' or 'release'");
         }
         for (const auto& file : files)
         {
@@ -152,7 +205,7 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::xml;
                 }
-                otava::build::Build(moduleMapper, project.get(), buildFlags);
+                otava::build::Build(moduleMapper, project.get(), config, buildFlags);
             }
             else if (file.ends_with(".solution"))
             {
@@ -170,7 +223,7 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::xml;
                 }
-                otava::build::Build(moduleMapper, solution.get(), buildFlags);
+                otava::build::Build(moduleMapper, solution.get(), config, buildFlags);
             }
             else
             {

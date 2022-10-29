@@ -140,7 +140,8 @@ BoundNode::~BoundNode()
 {
 }
 
-BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) : BoundNode(kind_, sourcePos_), type(type_)
+BoundExpressionNode::BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) : 
+    BoundNode(kind_, sourcePos_), flags(BoundExpressionFlags::none), type(type_)
 {
 }
 
@@ -170,6 +171,16 @@ Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast
         }
     }
     return nullptr;
+}
+
+bool BoundExpressionNode::GetFlag(BoundExpressionFlags flag) const
+{
+    return (flags & flag) != BoundExpressionFlags::none;
+}
+
+void BoundExpressionNode::SetFlag(BoundExpressionFlags flag)
+{
+    flags = flags | flag;
 }
 
 } // namespace otava::symbols

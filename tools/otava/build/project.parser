@@ -22,6 +22,7 @@ parser ProjectParser
             ProjectDeclaration:projectDeclaration{ projectFile.reset(projectDeclaration); }
             (   FilePath(projectFile.get()):filePath
             |   Define(projectFile.get()):define
+            |   TargetDeclaration(projectFile.get()):target
             )*
         )
         {
@@ -48,6 +49,15 @@ parser ProjectParser
         {
             projectFile->AddDefine(symbol, value);
         }
+        ;
+
+    TargetDeclaration(otava::build::Project* projectFile)
+        ::= (TARGET ASSIGN Target:target SEMICOLON){ projectFile->SetTarget(target); }
+        ;
+
+    Target : otava::build::Target
+        ::= PROGRAM{ return otava::build::Target::program; }
+        |   LIBRARY{ return otava::build::Target::library; }
         ;
 
     FilePath(otava::build::Project* projectFile)

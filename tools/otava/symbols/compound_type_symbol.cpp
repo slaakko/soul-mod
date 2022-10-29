@@ -5,6 +5,7 @@
 
 module otava.symbols.compound.type.symbol;
 
+import otava.symbols.emitter;
 import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.visitor;
@@ -53,6 +54,35 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable)
 void CompoundTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+int CompoundTypeSymbol::PointerCount() const
+{
+    return otava::symbols::PointerCount(GetDerivations());
+}
+
+otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    otava::intermediate::Type* type = emitter.GetType(Id());
+    if (!type)
+    {
+        type = baseType->IrType(emitter, sourcePos, context);
+        for (const auto& derivation : derivations.vec)
+        {
+            switch (derivation)
+            {
+                case Derivation::pointerDerivation:
+                case Derivation::lvalueRefDerivation:
+                case Derivation::rvalueRefDerivation:
+                {
+                    type = emitter.MakePtrType(type);
+                    break;
+                }
+            }
+        }
+        emitter.SetType(Id(), type);
+    }
+    return type;
 }
 
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations)

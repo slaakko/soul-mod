@@ -121,6 +121,7 @@ public:
     bool IsArrowNode() const { return kind == NodeKind::arrowNode; }
     bool IsDotNode() const { return kind == NodeKind::dotNode; }
     bool IsBinaryExprNode() const { return kind == NodeKind::binaryExprNode; }
+    bool IsDefaultedOrDeletedFunctionNode() const { return kind == NodeKind::defaultedOrDeletedFunctionNode; } 
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;
