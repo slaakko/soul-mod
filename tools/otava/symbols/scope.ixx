@@ -149,8 +149,12 @@ public:
     Scope* SymbolScope() override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
+    void PushParentScope(Scope* parentScope_) override;
+    void PopParentScope() override;
+    void SetParentScope(Scope* parentScope_);
 private:
     Scope* parentScope;
+    std::vector<Scope*> parentScopes;
 };
 
 } // namespace otava::symbols

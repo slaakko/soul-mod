@@ -207,26 +207,28 @@ parser DeclarationParser
         ::= ASM{ return new otava::ast::AsmNode(lexer.GetSourcePos(pos)); }
         ;
 
-    LinkageSpecification(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
+    LinkageSpecification(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node, var std::unique_ptr<otava::ast::Node> linkageNode, 
+        var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lbPos, var soul::ast::SourcePos rbPos) : otava::ast::Node*
         ::=
         (
             Extern:extrn{ sourcePos = lexer.GetSourcePos(pos); } 
-            StringLiteral(context):linkage 
+            StringLiteral(context):linkage{ linkageNode.reset(linkage); context->PushSetFlag(ContextFlags::linkageDeclaration); } 
             (
                 LBRACE{ lbPos = lexer.GetSourcePos(pos); } 
                 DeclarationSeq(context):declarations? 
                 (RBRACE{ rbPos = lexer.GetSourcePos(pos); })
                 {
-                    node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkage, declarations, lbPos, rbPos)); 
+                    node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkageNode.release(), declarations, lbPos, rbPos)); 
                 }
             |   Declaration(context):declaration
                 {
-                    node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkage, declaration, soul::ast::SourcePos(), soul::ast::SourcePos())); 
+                    node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn, linkageNode.release(), declaration, soul::ast::SourcePos(), soul::ast::SourcePos())); 
                 }
             )
         )
         {
+            context->PopFlags();
+            otava::symbols::ProcessLinkageSpecification(node.get(), context);
             return node.release();
         }
         ;

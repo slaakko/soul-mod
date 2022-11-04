@@ -120,6 +120,8 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -139,6 +141,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(BOOST_INCLUDE_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -151,8 +154,12 @@
   <ItemGroup>
     <ClCompile Include="build.cpp" />
     <ClCompile Include="build.ixx" />
+    <ClCompile Include="config.cpp" />
+    <ClCompile Include="config.ixx" />
     <ClCompile Include="gen_main_unit.cpp" />
     <ClCompile Include="gen_main_unit.ixx" />
+    <ClCompile Include="msbuild.cpp" />
+    <ClCompile Include="msbuild.ixx" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="parser.ixx" />
     <ClCompile Include="project.cpp" />
@@ -189,6 +196,12 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\soul\xml\dom\dom.vcxproj">
       <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\soul\xml\dom_parser\dom_parser.vcxproj">
+      <Project>{3908ecf0-3a6b-4a1a-9a0e-5f872c88260f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\soul\xml\xpath\xpath.vcxproj">
+      <Project>{ada5d2e5-5404-4c0b-a9ca-2acc7aa07ca4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\codegen\codegen.vcxproj">
       <Project>{ecef31bb-d328-430f-a32e-e0815e6d7f2d}</Project>

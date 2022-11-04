@@ -10,19 +10,28 @@ import otava.assembly.instruction;
 
 namespace otava::assembly {
 
-File::File(const std::string& filePath_) : filePath(filePath_), file(filePath), formatter(file)
+void DeclarationSection::AddFunctionDeclaration(FunctionDeclaration* declaration)
 {
-    formatter.SetIndentSize(8);
+    declarations.push_back(std::unique_ptr<FunctionDeclaration>(declaration));
 }
 
-Function* File::CreateFunction(const std::string& name)
+void DeclarationSection::Write(util::CodeFormatter& formatter)
+{
+    for (const auto& functionDeclaration : declarations)
+    {
+        functionDeclaration->Write(formatter);
+    }
+    formatter.WriteLine();
+}
+
+Function* CodeSection::CreateFunction(const std::string& name)
 {
     Function* function = new Function(name);
     functions.push_back(std::unique_ptr<Function>(function));
     return function;
 }
 
-void File::Write()
+void CodeSection::Write(util::CodeFormatter& formatter)
 {
     formatter.WriteLine(".CODE");
     formatter.WriteLine();
@@ -31,6 +40,17 @@ void File::Write()
         function->Write(formatter);
         formatter.WriteLine();
     }
+}
+
+File::File(const std::string& filePath_) : filePath(filePath_), file(filePath), formatter(file)
+{
+    formatter.SetIndentSize(8);
+}
+
+void File::Write()
+{
+    declarationSection.Write(formatter);
+    codeSection.Write(formatter);
     formatter.WriteLine("END");
 }
 

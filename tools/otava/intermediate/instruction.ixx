@@ -578,6 +578,12 @@ private:
     std::vector<Value*> args;
 };
 
+class NopInstruction : public Instruction
+{
+public:
+    NopInstruction(const SourcePos& sourcePos_);
+};
+
 class TrapInstruction : public ValueInstruction
 {
 public:

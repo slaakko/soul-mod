@@ -20,6 +20,7 @@ enum class FunctionKind;
 enum class FunctionQualifiers;
 enum class EnumTypeKind;
 enum class DeclarationFlags : int32_t;
+enum class Linkage : int32_t;
 
 enum class MapKind : int32_t
 {
@@ -99,6 +100,8 @@ public:
     void PopScope();
     void BeginScope(Scope* scope);
     void EndScope();
+    void BeginScopeGeneric(Scope* scope, Context* context);
+    void EndScopeGeneric(Context* context);
     void PushTopScopeIndex();
     void PopTopScopeIndex();
     void BeginNamespace(const std::u32string& name, otava::ast::Node* node, Context* context);
@@ -188,6 +191,9 @@ public:
     ConversionTable& GetConversionTable() { return *conversionTable; }
     const ConversionTable& GetConversionTable() const { return *conversionTable; }
     BoundExpressionNode* MakeBooleanConversion(BoundExpressionNode* subject, Context* context);
+    Linkage CurrentLinkage() const { return currentLinkage; }
+    void PushLinkage(Linkage linkage_);
+    void PopLinkage();
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -242,6 +248,8 @@ private:
     std::set<ClassTypeSymbol*> allClasses;
     int classLevel;
     std::unique_ptr<ConversionTable> conversionTable;
+    Linkage currentLinkage;
+    std::stack<Linkage> linkageStack;
 };
 
 } // namespace otava::symbols

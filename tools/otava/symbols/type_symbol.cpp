@@ -3,6 +3,9 @@
 // Distributed under the MIT license
 // =================================
 
+module;
+#include <boost/uuid/uuid.hpp>
+
 module otava.symbols.type.symbol;
 
 import otava.symbols.symbol.table;
@@ -205,6 +208,23 @@ TypeSymbol* TypeSymbol::DirectType()
     }
 }
 
+const Derivations& TypeSymbol::GetDerivations() const
+{
+    static Derivations emptyDerivations;
+    return emptyDerivations;
+}
+
+TypeSymbol* TypeSymbol::RemoveDerivations(const Derivations& derivations, Context* context) 
+{
+    if (IsPointerType()) return nullptr;
+    return this;
+}
+
+TypeSymbol* TypeSymbol::Unify(TypeSymbol* argType, Context* context)
+{
+    return nullptr;
+}
+
 otava::intermediate::Type* TypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("IRTYPE not implemented", sourcePos, context);
@@ -231,6 +251,19 @@ ErrorTypeSymbol::ErrorTypeSymbol() : TypeSymbol(SymbolKind::errorSymbol, U"<erro
 void ErrorTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
+{
+    if (left == right) return true;
+    if (left->Id() == right->Id()) return true;
+    if (left->IsCompoundTypeSymbol() && right->IsCompoundTypeSymbol())
+    {
+        CompoundTypeSymbol* leftCompound = static_cast<CompoundTypeSymbol*>(left);
+        CompoundTypeSymbol* rightCompound = static_cast<CompoundTypeSymbol*>(right);
+        if (TypesEqual(leftCompound->BaseType(), rightCompound->BaseType()) && leftCompound->GetDerivations() == rightCompound->GetDerivations()) return true;
+    }
+    return false;
 }
 
 } // namespace otava::symbols

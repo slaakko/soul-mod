@@ -1,7 +1,9 @@
 project std;
+target=library;
 interface <std.ixx>;
 interface <std.algorithm.ixx>;
 interface <std.c.ixx>;
+interface <std.crt.ixx>;
 interface <std.chrono.ixx>;
 interface <std.chrono.duration.ixx>;
 interface <std.chrono.clock.ixx>;
@@ -25,6 +27,8 @@ interface <std.iterator.set.ixx>;
 interface <std.iterator.unordered_map.ixx>;
 interface <std.iterator.ixx>;
 interface <std.stream.ixx>;
+interface <std.str.ixx>;
+source <std.str.cpp>;
 interface <std.string.ixx>;
 interface <std.thread.ixx>;
 interface <std.thread.condition_variable.ixx>;

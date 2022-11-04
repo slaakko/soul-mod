@@ -15,8 +15,10 @@ import otava.symbols.type.symbol;
 import otava.symbols.operation.repository;
 import otava.symbols.symbol.table;
 import otava.symbols.conversion.table;
+import otava.symbols.templates;
 import otava.symbols.fundamental.type.conversion;
 import otava.symbols.argument.conversion.table;
+import otava.symbols.function.templates;
 import util.unicode;
 
 namespace otava::symbols {
@@ -38,6 +40,7 @@ struct FunctionMatch
     std::vector<ArgumentMatch> argumentMatches;
     int numConversions;
     int numQualifyingConversions;
+    std::map<TemplateParameterSymbol*, TypeSymbol*> templateParameterMap;
 };
 
 ArgumentMatch::ArgumentMatch() : 
@@ -128,8 +131,19 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
     return false;
 }
 
+BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (arg->IsLvalueExpression()) return arg;
+    BoundVariableNode* backingStore = nullptr;
+    if (context->GetBoundFunction())
+    {
+        backingStore = new BoundVariableNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(arg->GetType()), sourcePos);
+    }
+    return new BoundTemporaryNode(arg, backingStore, sourcePos);
+}
+
 std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMatch& functionMatch, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
-    const soul::ast::SourcePos& sourcePos)
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall(new BoundFunctionCallNode(functionMatch.function, sourcePos));
     int n = args.size();
@@ -150,7 +164,7 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
         const ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
         if (argumentMatch.preConversionFlags == OperationFlags::addr)
         {
-            arg = new BoundAddressOfNode(arg, sourcePos);
+            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos);
         }
         else if (argumentMatch.preConversionFlags == OperationFlags::deref)
         {
@@ -162,7 +176,7 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
         }
         if (argumentMatch.postConversionFlags == OperationFlags::addr)
         {
-            arg = new BoundAddressOfNode(arg, sourcePos);
+            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos);
         }
         else if (argumentMatch.postConversionFlags == OperationFlags::deref)
         {
@@ -266,6 +280,88 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
     return false;
 }
 
+bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, Context* context)
+{
+    if (!paramType->GetBaseType()->IsTemplateParameterSymbol()) return false;
+    TemplateParameterSymbol* templateParameter = static_cast<TemplateParameterSymbol*>(paramType->GetBaseType());
+    TypeSymbol* templateArgumentType = nullptr;
+    auto it = functionMatch.templateParameterMap.find(templateParameter);
+    if (it == functionMatch.templateParameterMap.cend())
+    {
+        templateArgumentType = argType->RemoveDerivations(paramType->GetDerivations(), context);
+        if (templateArgumentType)
+        {
+            functionMatch.templateParameterMap[templateParameter] = templateArgumentType;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        templateArgumentType = it->second;
+    }
+    paramType = paramType->Unify(templateArgumentType, context);
+    if (!paramType)
+    {
+        return false;
+    }
+    if (TypesEqual(argType, paramType))
+    {
+        functionMatch.argumentMatches.push_back(ArgumentMatch());
+        return true;
+    }
+    else
+    {
+        bool qualificationConversionMatch = false;
+        ArgumentMatch argumentMatch;
+        if (TypesEqual(argType->PlainType(), paramType->PlainType()))
+        {
+            qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
+            if (qualificationConversionMatch)
+            {
+                functionMatch.argumentMatches.push_back(argumentMatch);
+                return true;
+            }
+            else
+            {
+                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
+                if (conversionFun)
+                {
+                    ++functionMatch.numConversions;
+                    argumentMatch.conversionFun = conversionFun;
+                    if (argumentMatch.preConversionFlags == OperationFlags::none)
+                    {
+                        if (FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch))
+                        {
+                            functionMatch.argumentMatches.push_back(argumentMatch);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
+                        {
+                            functionMatch.argumentMatches.push_back(argumentMatch);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, Context* context)
 {
     int arity = args.size();
@@ -276,7 +372,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         TypeSymbol* argType = arg->GetType();
         ParameterSymbol* parameter = functionMatch.function->MemFunParameters()[i];
         TypeSymbol* paramType = parameter->GetReferredType();
-        if (argType == paramType)
+        if (TypesEqual(argType, paramType))
         {
             functionMatch.argumentMatches.push_back(ArgumentMatch());
         }
@@ -284,7 +380,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         {
             bool qualificationConversionMatch = false;
             ArgumentMatch argumentMatch;
-            if (argType->PlainType() == paramType->PlainType())
+            if (TypesEqual(argType->PlainType(), paramType->PlainType()))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
                 if (qualificationConversionMatch)
@@ -298,16 +394,40 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
                 if (conversionFun)
                 {
                     argumentMatch.conversionFun = conversionFun;
-                    functionMatch.argumentMatches.push_back(argumentMatch);
                     ++functionMatch.numConversions;
-                    if (FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch))
+                    if (argumentMatch.preConversionFlags == OperationFlags::none)
                     {
-                        functionMatch.argumentMatches.push_back(argumentMatch);
-                        continue;
+                        if (FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch))
+                        {
+                            functionMatch.argumentMatches.push_back(argumentMatch);
+                            continue;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     else
                     {
-                        return false;
+                        if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
+                        {
+                            functionMatch.argumentMatches.push_back(argumentMatch);
+                            continue;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    if (functionMatch.function->IsTemplate())
+                    {
+                        if (FindTemplateParameterMatch(argType, paramType, arg, functionMatch, context))
+                        {
+                            continue;
+                        }
                     }
                 }
                 return false;
@@ -354,7 +474,7 @@ FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& via
 }
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
 {
     std::vector<FunctionSymbol*> viableFunctions;
     FunctionSymbol* operation = context->GetOperationRepository()->GetOperation(groupName, args, sourcePos, context);
@@ -373,8 +493,19 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         ex = Exception("attempt to call a deleted function", sourcePos, context);
         return std::unique_ptr<BoundFunctionCallNode>();
     }
-    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(bestMatch, args, sourcePos);
+    bool instantiate = (flags & OverloadResolutionFlags::dontInstantiate) == OverloadResolutionFlags::none;
+    if (instantiate && bestMatch.function->IsTemplate())
+    {
+        bestMatch.function = InstantiateFunctionTemplate(bestMatch.function, bestMatch.templateParameterMap, sourcePos, context);
+    }
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(bestMatch, args, sourcePos, context);
     return boundFunctionCall;
+}
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
+{
+    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, OverloadResolutionFlags::none);
 }
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,

@@ -68,7 +68,7 @@ soul::parser::Match TranslationUnitParser<Lexer>::TranslationUnit(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "TranslationUnit");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7135412954790363137);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5945151541383004161);
     std::unique_ptr<otava::ast::Node> moduleUnit;
     std::unique_ptr<otava::ast::Node> declarations;
     soul::parser::Match match(false);
@@ -184,7 +184,7 @@ soul::parser::Match TranslationUnitParser<Lexer>::ModuleUnit(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleUnit");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7135412954790363138);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5945151541383004162);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> globalModuleFragment;
     std::unique_ptr<otava::ast::Node> moduleDeclaration;

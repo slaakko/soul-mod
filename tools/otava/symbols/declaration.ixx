@@ -91,4 +91,6 @@ void Read(Reader& reader, DeclarationFlags& flags);
 
 void ThrowDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context);
 
+void ProcessLinkageSpecification(otava::ast::Node* node, Context* context);
+
 } // namespace otava::symbols

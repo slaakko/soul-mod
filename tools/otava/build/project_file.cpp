@@ -12,7 +12,7 @@ import util.uuid;
 namespace otava::build {
 
 void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles, 
-    bool verbose)
+    const std::string& libraryDirs, ProjectTarget target, bool verbose)
 {
     util::uuid projectUuid = util::random_uuid();
 
@@ -83,9 +83,18 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     debugPropertyGroup->SetAttribute("Condition", "'$(Configuration)|$(Platform)'=='Debug|x64'");
     debugPropertyGroup->SetAttribute("Label", "Configuration");
     soul::xml::Element* debugConfigurationType = soul::xml::MakeElement("ConfigurationType");
-    soul::xml::Text* debugConfigurationTypeText = soul::xml::MakeText("Application");
-    debugConfigurationType->AppendChild(debugConfigurationTypeText);
-    debugPropertyGroup->AppendChild(debugConfigurationType);
+    if (target == ProjectTarget::program)
+    {
+        soul::xml::Text* debugConfigurationTypeText = soul::xml::MakeText("Application");
+        debugConfigurationType->AppendChild(debugConfigurationTypeText);
+        debugPropertyGroup->AppendChild(debugConfigurationType);
+    }
+    else if (target == ProjectTarget::library)
+    {
+        soul::xml::Text* debugConfigurationTypeText = soul::xml::MakeText("StaticLibrary");
+        debugConfigurationType->AppendChild(debugConfigurationTypeText);
+        debugPropertyGroup->AppendChild(debugConfigurationType);
+    }
     soul::xml::Element* debugUseDebugLibraries = soul::xml::MakeElement("UseDebugLibraries");
     soul::xml::Text* debugUseDebugLibrariesText = soul::xml::MakeText("true");
     debugUseDebugLibraries->AppendChild(debugUseDebugLibrariesText);
@@ -104,9 +113,18 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     releasePropertyGroup->SetAttribute("Condition", "'$(Configuration)|$(Platform)'=='Release|x64'");
     releasePropertyGroup->SetAttribute("Label", "Configuration");
     soul::xml::Element* releaseConfigurationType = soul::xml::MakeElement("ConfigurationType");
-    soul::xml::Text* releaseConfigurationTypeText = soul::xml::MakeText("Application");
-    releaseConfigurationType->AppendChild(releaseConfigurationTypeText);
-    releasePropertyGroup->AppendChild(releaseConfigurationType);
+    if (target == ProjectTarget::program)
+    {
+        soul::xml::Text* releaseConfigurationTypeText = soul::xml::MakeText("Application");
+        releaseConfigurationType->AppendChild(releaseConfigurationTypeText);
+        releasePropertyGroup->AppendChild(releaseConfigurationType);
+    }
+    else if (target == ProjectTarget::library)
+    {
+        soul::xml::Text* releaseConfigurationTypeText = soul::xml::MakeText("StaticLibrary");
+        releaseConfigurationType->AppendChild(releaseConfigurationTypeText);
+        releasePropertyGroup->AppendChild(releaseConfigurationType);
+    }
     soul::xml::Element* releaseUseDebugLibraries = soul::xml::MakeElement("UseDebugLibraries");
     soul::xml::Text* releaseUseDebugLibrariesText = soul::xml::MakeText("false");
     releaseUseDebugLibraries->AppendChild(releaseUseDebugLibrariesText);
@@ -164,6 +182,22 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     userMacros->SetAttribute("Label", "UserMacros");
     rootElement->AppendChild(userMacros);
 
+    soul::xml::Element* debugOutDirPropertyGroup = soul::xml::MakeElement("PropertyGroup");
+    debugOutDirPropertyGroup->SetAttribute("Condition", "'$(Configuration)|$(Platform)' == 'Debug|x64'");
+    soul::xml::Element* debugOutDir = soul::xml::MakeElement("OutDir");
+    soul::xml::Text* debugOutDirText = soul::xml::MakeText("./");
+    debugOutDir->AppendChild(debugOutDirText);
+    debugOutDirPropertyGroup->AppendChild(debugOutDir);
+    rootElement->AppendChild(debugOutDirPropertyGroup);
+
+    soul::xml::Element* releaseOutDirPropertyGroup = soul::xml::MakeElement("PropertyGroup");
+    releaseOutDirPropertyGroup->SetAttribute("Condition", "'$(Configuration)|$(Platform)'=='Release|x64'");
+    soul::xml::Element* releaseOutDir = soul::xml::MakeElement("OutDir");
+    soul::xml::Text* releaseOutDirText = soul::xml::MakeText("./");
+    releaseOutDir->AppendChild(releaseOutDirText);
+    releaseOutDirPropertyGroup->AppendChild(releaseOutDir);
+    rootElement->AppendChild(releaseOutDirPropertyGroup);
+
     soul::xml::Element* debugItemDefinitionGroup = soul::xml::MakeElement("ItemDefinitionGroup");
     debugItemDefinitionGroup->SetAttribute("Condition", "'$(Configuration)|$(Platform)'=='Debug|x64'");
     soul::xml::Element* debugClCompile = soul::xml::MakeElement("ClCompile");
@@ -186,13 +220,27 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     debugItemDefinitionGroup->AppendChild(debugClCompile);
     soul::xml::Element* debugLink = soul::xml::MakeElement("Link");
     soul::xml::Element* debugSubSystem = soul::xml::MakeElement("SubSystem");
-    soul::xml::Text* debugSubSystemText = soul::xml::MakeText("Console");
-    debugSubSystem->AppendChild(debugSubSystemText);
+    if (target == ProjectTarget::program)
+    {
+        soul::xml::Text* debugSubSystemText = soul::xml::MakeText("Console");
+        debugSubSystem->AppendChild(debugSubSystemText);
+    }
     debugLink->AppendChild(debugSubSystem);
     soul::xml::Element* debugGenDebugInfo = soul::xml::MakeElement("GenerateDebugInformation");
     soul::xml::Text* debugGenDebugInfoText = soul::xml::MakeText("true");
     debugGenDebugInfo->AppendChild(debugGenDebugInfoText);
     debugLink->AppendChild(debugGenDebugInfo);
+    if (target == ProjectTarget::program)
+    {
+        soul::xml::Element* debugLibraryDirs = soul::xml::MakeElement("AdditionalLibraryDirectories");
+        soul::xml::Text* debugLibraryDirsText = soul::xml::MakeText(libraryDirs);
+        debugLibraryDirs->AppendChild(debugLibraryDirsText);
+        debugLink->AppendChild(debugLibraryDirs);
+        soul::xml::Element* debugDependencies = soul::xml::MakeElement("AdditionalDependencies");
+        soul::xml::Text* debugDependenciesText = soul::xml::MakeText("std.lib");
+        debugDependencies->AppendChild(debugDependenciesText);
+        debugLink->AppendChild(debugDependencies);
+    }
     debugItemDefinitionGroup->AppendChild(debugLink);
 
     rootElement->AppendChild(debugItemDefinitionGroup);
@@ -227,8 +275,11 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     releaseItemDefinitionGroup->AppendChild(releaseClCompile);
     soul::xml::Element* releaseLink = soul::xml::MakeElement("Link");
     soul::xml::Element* releaseSubSystem = soul::xml::MakeElement("SubSystem");
-    soul::xml::Text* releaseSubSystemText = soul::xml::MakeText("Console");
-    releaseSubSystem->AppendChild(releaseSubSystemText);
+    if (target == ProjectTarget::program)
+    {
+        soul::xml::Text* releaseSubSystemText = soul::xml::MakeText("Console");
+        releaseSubSystem->AppendChild(releaseSubSystemText);
+    }
     releaseLink->AppendChild(releaseSubSystem);
     soul::xml::Element* releaseComdatFolding = soul::xml::MakeElement("EnableCOMDATFolding");
     soul::xml::Text* releaseComdatFoldingText = soul::xml::MakeText("true");
@@ -242,6 +293,17 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
     soul::xml::Text* releaseGenDebugInfoText = soul::xml::MakeText("true");
     releaseGenDebugInfo->AppendChild(releaseGenDebugInfoText);
     releaseLink->AppendChild(releaseGenDebugInfo);
+    if (target == ProjectTarget::program)
+    {
+        soul::xml::Element* releaseLibraryDirs = soul::xml::MakeElement("AdditionalLibraryDirectories");
+        soul::xml::Text* releaseLibraryDirsText = soul::xml::MakeText(libraryDirs);
+        releaseLibraryDirs->AppendChild(releaseLibraryDirsText);
+        releaseLink->AppendChild(releaseLibraryDirs);
+        soul::xml::Element* releaseDependencies = soul::xml::MakeElement("AdditionalDependencies");
+        soul::xml::Text* releaseDepenciesText = soul::xml::MakeText("std.lib");
+        releaseDependencies->AppendChild(releaseDepenciesText);
+        releaseLink->AppendChild(releaseDependencies);
+    }
     releaseItemDefinitionGroup->AppendChild(releaseLink);
 
     rootElement->AppendChild(releaseItemDefinitionGroup);

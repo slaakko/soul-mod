@@ -59,6 +59,7 @@ public:
     void Visit(FunctionCallInstruction& inst) override;
     void Visit(NotInstruction& inst) override;
     void Visit(NegInstruction& inst) override;
+    void Visit(NoOperationInstruction& inst) override;
 private:
     Context* context;
     otava::assembly::File file;

@@ -41,7 +41,7 @@ soul::parser::Match IdentifierParser<Lexer>::Identifier(Lexer& lexer, otava::sym
         soul::lexer::WriteBeginRuleToLog(lexer, "Identifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622401);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076097);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -89,7 +89,7 @@ soul::parser::Match IdentifierParser<Lexer>::UnqualifiedId(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "UnqualifiedId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622402);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076098);
     std::unique_ptr<otava::ast::Node> templateId;
     std::unique_ptr<otava::ast::Node> identifier;
     std::unique_ptr<otava::ast::Node> operatorFnId;
@@ -310,7 +310,7 @@ soul::parser::Match IdentifierParser<Lexer>::QualifiedId(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622403);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076099);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos templatePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> nns;
@@ -461,7 +461,7 @@ soul::parser::Match IdentifierParser<Lexer>::Template(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Template");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622404);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076100);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -509,7 +509,7 @@ soul::parser::Match IdentifierParser<Lexer>::NestedNameSpecifier(Lexer& lexer, o
         soul::lexer::WriteBeginRuleToLog(lexer, "NestedNameSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622405);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076101);
     std::unique_ptr<otava::ast::NestedNameSpecifierNode> nnsNode = std::unique_ptr<otava::ast::NestedNameSpecifierNode>();
     std::unique_ptr<otava::ast::Node> idNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> simpleTemplateId;
@@ -823,7 +823,7 @@ soul::parser::Match IdentifierParser<Lexer>::IdentifierList(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "IdentifierList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622406);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076102);
     std::unique_ptr<otava::ast::Node> identifierListNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
@@ -963,7 +963,7 @@ soul::parser::Match IdentifierParser<Lexer>::TypeIdentifier(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622407);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076103);
     std::unique_ptr<otava::ast::Node> typeName;
     std::unique_ptr<otava::ast::Node> typeIdentifier;
     soul::parser::Match match(false);
@@ -1057,7 +1057,7 @@ soul::parser::Match IdentifierParser<Lexer>::TypeIdentifierUnchecked(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifierUnchecked");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622408);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076104);
     std::unique_ptr<Node> identifier = std::unique_ptr<Node>();
     std::unique_ptr<otava::ast::Node> id;
     soul::parser::Match match(false);
@@ -1104,7 +1104,7 @@ soul::parser::Match IdentifierParser<Lexer>::TypeIdentifierChecked(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifierChecked");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622409);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076105);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1167,7 +1167,7 @@ soul::parser::Match IdentifierParser<Lexer>::Unnamed(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Unnamed");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7037905317291622410);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1087988986435076106);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

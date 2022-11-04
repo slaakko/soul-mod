@@ -34,10 +34,13 @@ class BoundFunctionGroupNode;
 class BoundTypeNode;
 class BoundMemberExprNode;
 class BoundFunctionCallNode;
+class BoundConjunctionNode;
+class BoundDisjunctionNode;
 class BoundConversionNode;
 class BoundAddressOfNode;
 class BoundDereferenceNode;
 class BoundRefToPtrNode;
+class BoundTemporaryNode;
 class BoundErrorNode;
 
 class BoundTreeVisitor
@@ -69,10 +72,13 @@ public:
     virtual void Visit(BoundTypeNode& node) {}
     virtual void Visit(BoundMemberExprNode& node) {}
     virtual void Visit(BoundFunctionCallNode& node) {}
+    virtual void Visit(BoundConjunctionNode& node) {}
+    virtual void Visit(BoundDisjunctionNode& node) {}
     virtual void Visit(BoundConversionNode& node) {}
     virtual void Visit(BoundAddressOfNode& node) {}
     virtual void Visit(BoundDereferenceNode& node) {}
     virtual void Visit(BoundRefToPtrNode& node) {}
+    virtual void Visit(BoundTemporaryNode& node) {}
     virtual void Visit(BoundErrorNode& node) {}
 };
 

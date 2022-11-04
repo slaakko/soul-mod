@@ -80,6 +80,107 @@ std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers)
     return s;
 }
 
+std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind)
+{
+    switch (specialFunctionKind)
+    {
+        case SpecialFunctionKind::defaultCtor: return "ctor";
+        case SpecialFunctionKind::copyCtor: return "copy_ctor";
+        case SpecialFunctionKind::moveCtor: return "move_ctor";
+        case SpecialFunctionKind::copyAssignment: return "copy_assignment";
+        case SpecialFunctionKind::moveAssignment: return "move_assignment";
+        case SpecialFunctionKind::dtor: return "dtor";
+    }
+    return std::string();
+}
+
+class OperatorFunctionMap
+{
+public:
+    OperatorFunctionMap();
+    static OperatorFunctionMap& Instance();
+    void Init();
+    std::string GetPrefix(const std::u32string& name) const;
+private:
+    std::map<std::u32string, std::string> map;
+};
+
+OperatorFunctionMap::OperatorFunctionMap()
+{
+    map[U"operator new[]"] = "op_new_array";
+    map[U"operator new"] = "op_new";
+    map[U"operator delete[]"] = "op_delete_array";
+    map[U"operator delete"] = "op_delete";
+    map[U"operator co_await"] = "op_co_await";
+    map[U"operator()"] = "op_apply";
+    map[U"operator[]"] = "op_subscript";
+    map[U"operator->"] = "op_arrow";
+    map[U"operator->*"] = "op_arrow_star";
+    map[U"operator~"] = "op_cpl";
+    map[U"operator!"] = "op_not";
+    map[U"operator+"] = "op_plus";
+    map[U"operator-"] = "op_minus";
+    map[U"operator*"] = "op_star";
+    map[U"operator/"] = "op_div";
+    map[U"operator%"] = "op_mod";
+    map[U"operator^"] = "op_xor";
+    map[U"operator&"] = "op_and";
+    map[U"operator|"] = "op_or";
+    map[U"operator="] = "op_assign";
+    map[U"operator+="] = "op_plus_assign";
+    map[U"operator-="] = "op_minus_assign";
+    map[U"operator*="] = "op_mul_assign";
+    map[U"operator/="] = "op_div_assign";
+    map[U"operator%="] = "op_mod_assign"; 
+    map[U"operator^="] = "op_xor_assign";
+    map[U"operator&="] = "op_and_assign";
+    map[U"operator|="] = "op_or_assign";
+    map[U"operator<<="] = "op_shift_left_assign";
+    map[U"operator>>="] = "op_shift_right_assign";
+    map[U"operator=="] = "op_eq";
+    map[U"operator!="] = "op_neq";
+    map[U"operator<="] = "op_leq";
+    map[U"operator>="] = "op_geq";
+    map[U"operator<=>"] = "op_compare";
+    map[U"operator<"] = "op_less";
+    map[U"operator>"] = "op_greater";
+    map[U"operator&&"] = "op_conjuction";
+    map[U"operator||"] = "op_disjuction";
+    map[U"operator<<"] = "op_shift_left";
+    map[U"operator>>"] = "op_shift_right";
+    map[U"operator++"] = "op_plus_plus";
+    map[U"operator--"] = "op_minus_minus";
+    map[U"operator,"] = "op_comma";
+}
+
+OperatorFunctionMap& OperatorFunctionMap::Instance()
+{
+    static OperatorFunctionMap instance;
+    return instance;
+}
+
+void OperatorFunctionMap::Init()
+{
+}
+
+std::string OperatorFunctionMap::GetPrefix(const std::u32string& name) const
+{
+    auto it = map.find(name);
+    if (it != map.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return std::string();
+    }
+}
+
+std::string GetOperatorFunctionPrefix(const std::u32string& functionName)
+{
+    return OperatorFunctionMap::Instance().GetPrefix(functionName);
+}
+
 ParameterSymbol::ParameterSymbol(const std::u32string& name_) :
     Symbol(SymbolKind::parameterSymbol, name_), 
     type(nullptr), 
@@ -149,12 +250,26 @@ TypeSymbol* ParameterSymbol::GetReferredType() const
 }
 
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : 
-    ContainerSymbol(SymbolKind::functionSymbol, name_), returnType(nullptr), returnTypeId(util::nil_uuid()), memFunParamsConstructed(false)
+    ContainerSymbol(SymbolKind::functionSymbol, name_), 
+    returnType(nullptr), 
+    returnTypeId(util::nil_uuid()), 
+    memFunParamsConstructed(false), 
+    linkage(Linkage::cpp_linkage), 
+    index(0),
+    flags(FunctionSymbolFlags::none),
+    nextTemporaryId(0)
 {
 }
 
 FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
-    ContainerSymbol(kind_, name_), returnType(nullptr), returnTypeId(util::nil_uuid()), memFunParamsConstructed(false)
+    ContainerSymbol(kind_, name_), 
+    returnType(nullptr), 
+    returnTypeId(util::nil_uuid()), 
+    memFunParamsConstructed(false), 
+    linkage(Linkage::cpp_linkage),
+    index(0),
+    flags(FunctionSymbolFlags::none),
+    nextTemporaryId(0)
 {
 }
 
@@ -165,15 +280,7 @@ int FunctionSymbol::Arity() const
 
 int FunctionSymbol::MemFunArity() const
 {
-    const Symbol* parent = Parent();
-    if (parent && parent->IsClassTypeSymbol())
-    {
-        return parameters.size() + 1;
-    }
-    else
-    {
-        return parameters.size();
-    }
+    return MemFunParameters().size();
 }
 
 ConversionKind FunctionSymbol::GetConversionKind() const
@@ -189,14 +296,36 @@ bool FunctionSymbol::IsVirtual() const
     return false;
 }
 
-ParameterSymbol* FunctionSymbol::ThisParam()
+ClassTypeSymbol* FunctionSymbol::ParentClassType() const
 {
-    Symbol* parent = Parent();
+    Symbol* parent = const_cast<FunctionSymbol*>(this)->Parent();
     if (parent && parent->IsClassTypeSymbol())
     {
-        if (!thisParam)
+        return static_cast<ClassTypeSymbol*>(parent);
+    }
+    else
+    {
+        Scope* scope = const_cast<FunctionSymbol*>(this)->GetScope();
+        Scope* classScope = scope->GetClassScope();
+        if (classScope)
         {
-            ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(parent);
+            Symbol* symbol = classScope->GetSymbol();
+            if (symbol && symbol->IsClassTypeSymbol())
+            {
+                return static_cast<ClassTypeSymbol*>(symbol);
+            }
+        }
+    }
+    return nullptr;
+}
+
+ParameterSymbol* FunctionSymbol::ThisParam() const
+{
+    if (!thisParam)
+    {
+        ClassTypeSymbol* classType = ParentClassType();
+        if (classType)
+        {
             if ((Qualifiers() & FunctionQualifiers::isConst) != FunctionQualifiers::none)
             {
                 thisParam.reset(new ParameterSymbol(U"this", classType->AddConst()->AddPointer()));
@@ -206,22 +335,18 @@ ParameterSymbol* FunctionSymbol::ThisParam()
                 thisParam.reset(new ParameterSymbol(U"this", classType->AddPointer()));
             }
         }
-        return thisParam.get();
     }
-    else
-    {
-        return nullptr;
-    }
+    return thisParam.get();
 }
 
-const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters() 
+const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters() const
 {
     if (memFunParamsConstructed) return memFunParameters;
     memFunParamsConstructed = true;
-    Symbol* parent = Parent();
-    if (parent && parent->IsClassTypeSymbol())
+    ParameterSymbol* thisParam = ThisParam();
+    if (thisParam)
     {
-        memFunParameters.push_back(ThisParam());
+        memFunParameters.push_back(thisParam);
     }
     for (const auto& parameter : parameters)
     {
@@ -232,18 +357,53 @@ const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters()
 
 bool FunctionSymbol::IsMemberFunction() const
 {
-    const Symbol* parent = Parent();
-    return parent && parent->IsClassTypeSymbol();
+    ClassTypeSymbol* classType = ParentClassType();
+    if (classType)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
-TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration()
+SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind() const
 {
-    Symbol* parentSymbol = Parent();
+    ClassTypeSymbol* classType = ParentClassType();
+    if (classType)
+    {
+        const std::vector<ParameterSymbol*>& memFunParams = MemFunParameters();
+        TypeSymbol* pointerType = classType->AddPointer();
+        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name()) return SpecialFunctionKind::defaultCtor;
+        if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + classType->Name()) return SpecialFunctionKind::dtor;
+        TypeSymbol* constRefType = classType->AddConst()->AddLValueRef();
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name() &&
+            TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyCtor;
+        TypeSymbol* rvalueRefType = classType->AddRValueRef();
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name() &&
+            TypesEqual(memFunParams[1]->GetType(), rvalueRefType)) return SpecialFunctionKind::moveCtor;
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"operator=" &&
+            TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyAssignment;
+        if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"operator=" &&
+            TypesEqual(memFunParams[1]->GetType(), rvalueRefType)) return SpecialFunctionKind::moveAssignment;
+    }
+    return SpecialFunctionKind::none;
+}
+
+TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration() const
+{
+    Symbol* parentSymbol = const_cast<FunctionSymbol*>(this)->Parent();
     if (parentSymbol->IsTemplateDeclarationSymbol())
     {
         return static_cast<TemplateDeclarationSymbol*>(parentSymbol);
     }
     return nullptr;
+}
+
+bool FunctionSymbol::IsTemplate() const
+{
+    return ParentTemplateDeclaration() != nullptr && !IsSpecialization();
 }
 
 std::u32string FunctionSymbol::FullName() const
@@ -263,6 +423,11 @@ std::u32string FunctionSymbol::FullName() const
         fullName.append(parameter->GetType()->FullName());
     }
     fullName.append(U")");
+    std::string qualifierStr = MakeFunctionQualifierStr(Qualifiers());
+    if (!qualifierStr.empty())
+    {
+        fullName.append(U" ").append(util::ToUtf32(qualifierStr));
+    }
     return fullName;
 }
 
@@ -285,6 +450,7 @@ void FunctionSymbol::Write(Writer& writer)
     ContainerSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(kind));
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(qualifiers));
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(linkage));
     if (returnType)
     {
         writer.GetBinaryStreamWriter().Write(returnType->Id());
@@ -300,6 +466,7 @@ void FunctionSymbol::Read(Reader& reader)
     ContainerSymbol::Read(reader);
     kind = static_cast<FunctionKind>(reader.GetBinaryStreamReader().ReadByte());
     qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
+    linkage = static_cast<Linkage>(reader.GetBinaryStreamReader().ReadByte());
     reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
 }
 
@@ -362,6 +529,10 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
         {
             returnIrType = returnType->IrType(emitter, sourcePos, context);
         }
+        else
+        {
+            returnIrType = emitter.GetVoidType();
+        }
         std::vector<otava::intermediate::Type*> paramIrTypes;
         for (const auto& param : MemFunParameters())
         {
@@ -375,14 +546,56 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
 
 std::string FunctionSymbol::IrName() const
 {
-    std::string fullName = util::ToUtf8(FullName());
-    std::string irName = "function_" + util::ToUtf8(Name()) + "_" + util::GetSha1MessageDigest(fullName);
-    return irName;
+    if (linkage == Linkage::cpp_linkage)
+    {
+        std::string irName;
+        SpecialFunctionKind specialFunctionKind = GetSpecialFunctionKind();
+        if (specialFunctionKind != SpecialFunctionKind::none)
+        {
+            irName.append(SpecialFunctionKindPrefix(specialFunctionKind));
+            ClassTypeSymbol* classType = ParentClassType();
+            irName.append("_").append(util::ToUtf8(classType->Name()));
+        }
+        else
+        {
+            std::string operatorFunctionPrefix = GetOperatorFunctionPrefix(Name());
+            if (!operatorFunctionPrefix.empty())
+            {
+                irName.append(operatorFunctionPrefix);
+                ClassTypeSymbol* classType = ParentClassType();
+                irName.append("_").append(util::ToUtf8(classType->Name()));
+            }
+            else
+            {
+                irName.append("function_" + util::ToUtf8(Name()));
+            }
+        }
+        std::string fullName = util::ToUtf8(FullName());
+        irName.append("_").append(util::GetSha1MessageDigest(fullName));
+        return irName;
+    }
+    else if (linkage == Linkage::c_linkage)
+    {
+        return util::ToUtf8(Name());
+    }
+    else
+    {
+        return util::ToUtf8(Name());
+    }
 }
 
-void FunctionSymbol::AddLocalVariable(VariableSymbol* localVariable, const soul::ast::SourcePos& sourcePos, Context* context)
+void FunctionSymbol::AddLocalVariable(VariableSymbol* localVariable)
 {
+    localVariable->SetParent(this);
     localVariables.push_back(localVariable);
+}
+
+VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
+{
+    VariableSymbol* temporary = new VariableSymbol(U"@t" + util::ToUtf32(std::to_string(nextTemporaryId++)));
+    temporary->SetDeclaredType(type);
+    AddLocalVariable(temporary);
+    return temporary;
 }
 
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_)
@@ -422,11 +635,28 @@ void FunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable)
     }
 }
 
+std::string FunctionDefinitionSymbol::IrName() const
+{
+    if (declaration)
+    {
+        return declaration->IrName();
+    }
+    else
+    {
+        return FunctionSymbol::IrName();
+    }
+}
+
 bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const
 {
     if (int(left->GetFunctionKind()) < int(right->GetFunctionKind())) return true;
     if (int(left->GetFunctionKind()) > int(right->GetFunctionKind())) return false;
     return left->Name() < right->Name();
+}
+
+void InitFunction()
+{
+    OperatorFunctionMap::Instance().Init();
 }
 
 } // namespace otava::symbols

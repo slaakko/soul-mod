@@ -39,6 +39,7 @@ Derivations RemoveConst(const Derivations& derivations);
 Derivations RemovePointer(const Derivations& derivations);
 Derivations RemoveLValueRef(const Derivations& derivations);
 Derivations RemoveRValueRef(const Derivations& derivations);
+Derivations UnifyDerivations(const Derivations& left, const Derivations& right);
 
 class Writer;
 class Reader;

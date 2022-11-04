@@ -67,6 +67,7 @@ void EmitIntegerBinOpInst(BinaryInstruction& inst, CodeGenerator& codeGen);
 void EmitFloatingPointBinOpInst(BinaryInstruction& inst, CodeGenerator& codeGen);
 void EmitNot(NotInstruction& inst, CodeGenerator& codeGen);
 void EmitNeg(NegInstruction& inst, CodeGenerator& codeGen);
+void EmitNop(NoOperationInstruction& inst, CodeGenerator& codeGen);
 void EmitPrologue(CodeGenerator& codeGen);
 void EmitEpilogue(CodeGenerator& codeGen);
 

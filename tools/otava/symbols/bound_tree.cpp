@@ -18,6 +18,7 @@ import otava.symbols.type.resolver;
 import otava.symbols.operation.repository;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.bound.tree.visitor;
+import otava.symbols.function.templates;
 
 namespace otava::symbols {
 
@@ -25,6 +26,7 @@ BoundCompileUnitNode::BoundCompileUnitNode() :
     BoundNode(BoundNodeKind::boundCompileUnitNode, soul::ast::SourcePos()),
     operationRepository(new OperationRepository()),
     argumentConversionTable(new ArgumentConversionTable()),
+    functionTemplateRepository(new FunctionTemplateRepository()),
     id()
 {
 }
@@ -366,7 +368,7 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         {
             ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
         }
-        thisPtr->Load(emitter, flags, sourcePos, context);
+        thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         int32_t layoutIndex = variable->LayoutIndex();
         otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
@@ -445,7 +447,7 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
         {
             ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
         }
-        thisPtr->Load(emitter, flags, sourcePos, context);
+        thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         int32_t layoutIndex = variable->LayoutIndex();
         otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
@@ -588,11 +590,6 @@ void BoundFunctionGroupNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundFunctionGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
-{
-
-}
-
 BoundTypeNode::BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_) : 
     BoundExpressionNode(BoundNodeKind::boundTypeNode, sourcePos_, type_)
 {
@@ -641,6 +638,119 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
         arguments.push_back(arg.get());
     }
     functionSymbol->GenerateCode(emitter, arguments, flags, sourcePos, context);
+    if ((flags & OperationFlags::deref) != OperationFlags::none)
+    {
+        otava::intermediate::Value* value = emitter.Stack().Pop();
+        uint8_t n = GetDerefCount(flags);
+        for (uint8_t i = 0; i < n; ++i)
+        {
+            value = emitter.EmitLoad(value);
+        }
+        emitter.Stack().Push(value);
+    }
+}
+
+bool BoundFunctionCallNode::IsLvalueExpression() const
+{
+    if (functionSymbol->IsArrayElementAccess()) return true;
+    TypeSymbol* returnType = functionSymbol->ReturnType();
+    if (returnType && !returnType->IsVoidType())
+    {
+        return !returnType->IsConstType() && returnType->IsLValueRefType();
+    }
+    return false;
+}
+
+BoundConjunctionNode::BoundConjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) :
+    BoundExpressionNode(BoundNodeKind::boundConjunctionNode, sourcePos_, boolType), left(left_), right(right_)
+{
+}
+
+void BoundConjunctionNode::SetTemporary(BoundVariableNode* temporary_)
+{
+    temporary.reset(temporary_);
+}
+
+void BoundConjunctionNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+bool BoundConjunctionNode::HasValue() const
+{
+    return true;
+}
+
+void BoundConjunctionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    temporary->Load(emitter, OperationFlags::addr, sourcePos, context);
+    otava::intermediate::Value* temp = emitter.Stack().Pop();
+    left->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* leftValue = emitter.Stack().Pop();
+    otava::intermediate::BasicBlock* trueBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* rightBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* falseBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* nextBlock = emitter.CreateBasicBlock();
+    emitter.EmitBranch(leftValue, rightBlock, falseBlock);
+    emitter.SetCurrentBasicBlock(rightBlock);
+    right->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* rightValue = emitter.Stack().Pop();
+    emitter.EmitBranch(rightValue, trueBlock, falseBlock);
+    emitter.SetCurrentBasicBlock(trueBlock);
+    emitter.EmitStore(emitter.EmitBool(true), temp);
+    emitter.EmitJump(nextBlock);
+    emitter.SetCurrentBasicBlock(falseBlock);
+    emitter.EmitStore(emitter.EmitBool(false), temp);
+    emitter.EmitJump(nextBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
+    otava::intermediate::Value* value = emitter.EmitLoad(temp);
+    emitter.Stack().Push(value);
+}
+
+BoundDisjunctionNode::BoundDisjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) :
+    BoundExpressionNode(BoundNodeKind::boundDisjunctionNode, sourcePos_, boolType), left(left_), right(right_)
+{
+}
+
+void BoundDisjunctionNode::SetTemporary(BoundVariableNode* temporary_)
+{
+    temporary.reset(temporary_);
+}
+
+void BoundDisjunctionNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+bool BoundDisjunctionNode::HasValue() const
+{
+    return true;
+}
+
+void BoundDisjunctionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) 
+{
+    temporary->Load(emitter, OperationFlags::addr, sourcePos, context);
+    otava::intermediate::Value* temp = emitter.Stack().Pop();
+    left->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* leftValue = emitter.Stack().Pop();
+    otava::intermediate::BasicBlock* trueBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* rightBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* falseBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* nextBlock = emitter.CreateBasicBlock();
+    emitter.EmitBranch(leftValue, trueBlock, rightBlock);
+    emitter.SetCurrentBasicBlock(rightBlock);
+    right->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* rightValue = emitter.Stack().Pop();
+    emitter.EmitBranch(rightValue, trueBlock, falseBlock);
+    emitter.SetCurrentBasicBlock(trueBlock);
+    emitter.EmitStore(emitter.EmitBool(true), temp);
+    emitter.EmitJump(nextBlock);
+    emitter.SetCurrentBasicBlock(falseBlock);
+    emitter.EmitStore(emitter.EmitBool(false), temp);
+    emitter.EmitJump(nextBlock);
+    emitter.SetCurrentBasicBlock(nextBlock);
+    otava::intermediate::Value* value = emitter.EmitLoad(temp);
+    emitter.Stack().Push(value);
 }
 
 BoundConversionNode::BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_) :
@@ -658,6 +768,11 @@ void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const sou
     subject->Load(emitter, flags, sourcePos, context);
     std::vector<BoundExpressionNode*> args;
     conversionFunction->GenerateCode(emitter, args, flags, sourcePos, context);
+}
+
+bool BoundConversionNode::IsLvalueExpression() const
+{
+    return false; // todo???
 }
 
 BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
@@ -757,6 +872,38 @@ void BoundRefToPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul:
 void BoundRefToPtrNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Store(emitter, flags, sourcePos, context);
+}
+
+BoundTemporaryNode::BoundTemporaryNode(BoundExpressionNode* rvalueExpr_, BoundVariableNode* backingStore_, const soul::ast::SourcePos& sourcePos_) : 
+    BoundExpressionNode(BoundNodeKind::boundTemporaryNode, sourcePos_, rvalueExpr_->GetType()), rvalueExpr(rvalueExpr_), backingStore(backingStore_)
+{
+}
+
+void BoundTemporaryNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!backingStore)
+    {
+        ThrowException("backing store of temporary not set", sourcePos, context);
+    }    
+    rvalueExpr->Load(emitter, OperationFlags::none, sourcePos, context);
+    backingStore->Store(emitter, OperationFlags::none, sourcePos, context);
+    if ((flags & OperationFlags::addr) != OperationFlags::none)
+    {
+        backingStore->Load(emitter, OperationFlags::addr, sourcePos, context);
+    }
+    else if ((flags & OperationFlags::deref) != OperationFlags::none)
+    {
+        backingStore->Load(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), sourcePos, context);
+    }
+    else
+    {
+        backingStore->Load(emitter, OperationFlags::none, sourcePos, context);
+    }
+}
+
+void BoundTemporaryNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 BoundErrorNode::BoundErrorNode(const soul::ast::SourcePos& sourcePos_) : BoundExpressionNode(BoundNodeKind::boundErrorNode, sourcePos_, nullptr)

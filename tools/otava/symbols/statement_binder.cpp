@@ -92,7 +92,7 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
     BoundCompoundStatementNode* currentCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
-    context->GetSymbolTable()->BeginScope(block->GetScope());
+    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     int n = node.Count();
     for (int i = 0; i < n; ++i)
     {
@@ -100,7 +100,7 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
         BoundStatementNode* boundStatement = BindStatement(statementNode, functionDefinitionSymbol, context);
         currentCompoundStatement->AddStatement(boundStatement);
     }
-    context->GetSymbolTable()->EndScope();
+    context->GetSymbolTable()->EndScopeGeneric(context);
     boundStatement = currentCompoundStatement;
 }
 
@@ -108,7 +108,7 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScope(block->GetScope());
+    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundIfStatementNode* boundIfStatement = new BoundIfStatementNode(node.GetSourcePos());
     if (node.InitStatement())
     {
@@ -138,14 +138,14 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
         }
     }
     boundStatement = boundIfStatement;
-    context->GetSymbolTable()->EndScope();
+    context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
 void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScope(block->GetScope());
+    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundSwitchStatementNode* boundSwitchStatement = new BoundSwitchStatementNode(node.GetSourcePos());
     boundStatement = boundSwitchStatement;
     if (node.InitStatement())
@@ -163,7 +163,7 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     {
         boundSwitchStatement->SetStatement(boundStmt);
     }
-    context->GetSymbolTable()->EndScope();
+    context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
 void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
@@ -194,7 +194,7 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScope(block->GetScope());
+    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
     boundStatement = boundWhileStatement;
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
@@ -208,7 +208,7 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     {
         boundWhileStatement->SetStatement(boundStmt);
     }
-    context->GetSymbolTable()->EndScope();
+    context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
 void StatementBinder::Visit(otava::ast::DoStatementNode& node)
@@ -252,7 +252,7 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
 {
     Symbol* block = context->GetSymbolTable()->GetSymbolNothrow(&node);
     if (!block) return;
-    context->GetSymbolTable()->BeginScope(block->GetScope());
+    context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundForStatementNode* boundForStatement = new BoundForStatementNode(node.GetSourcePos());
     boundStatement = boundForStatement;
     if (node.InitStatement())
@@ -282,7 +282,7 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     {
         boundForStatement->SetStatement(boundStmt);
     }
-    context->GetSymbolTable()->EndScope();
+    context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
 void StatementBinder::Visit(otava::ast::BreakStatementNode& node)
@@ -346,7 +346,7 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
                 node.GetSourcePos(), context);
             BoundConstructionStatementNode * boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
             boundCompoundStatement->AddStatement(boundConstructionStatement);
-            functionDefinitionSymbol->AddLocalVariable(variable, node.GetSourcePos(), context);
+            functionDefinitionSymbol->AddLocalVariable(variable);
         }
     }
     else
@@ -365,6 +365,9 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (functionDefinitionSymbol->IsBound()) return;
+    if (functionDefinitionSymbol->IsTemplate()) return;
+    functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     functionDefinitionNode->Accept(binder);
 }

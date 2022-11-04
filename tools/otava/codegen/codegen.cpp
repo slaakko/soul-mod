@@ -168,6 +168,8 @@ public:
     void Visit(otava::symbols::BoundMemberExprNode& node) override;
     void Visit(otava::symbols::BoundFunctionCallNode& node) override;
     void Visit(otava::symbols::BoundConversionNode& node) override;
+    void Visit(otava::symbols::BoundConjunctionNode& boundConjunction) override;
+    void Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction) override;
 private:
     void StatementPrefix();
     void GenJumpingBoolCode();
@@ -373,7 +375,10 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
     nextBlock = nullptr;
     node.ThenStatement()->Accept(*this);
     nextBlock = prevNextBlock;
-    emitter.EmitJump(nextBlock);
+    if (!node.ThenStatement()->EndsWithTerminator())
+    {
+        emitter.EmitJump(nextBlock);
+    }
     if (node.ElseStatement())
     {
         emitter.SetCurrentBasicBlock(falseBlock);
@@ -381,7 +386,10 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
         nextBlock = nullptr;
         node.ElseStatement()->Accept(*this);
         nextBlock = prevNextBlock;
-        emitter.EmitJump(nextBlock);
+        if (!node.ElseStatement()->EndsWithTerminator())
+        {
+            emitter.EmitJump(nextBlock);
+        }
     }
     trueBlock = prevTrueBlock;
     falseBlock = prevFalseBlock;
@@ -661,6 +669,34 @@ void CodeGenerator::Visit(otava::symbols::BoundConversionNode& node)
 {
     node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
     GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundConjunctionNode& boundConjunction)
+{
+    if (genJumpingBoolCode)
+    {
+        otava::intermediate::BasicBlock* rightBlock = emitter.CreateBasicBlock();
+        otava::intermediate::BasicBlock* prevTrueBlock = trueBlock;
+        trueBlock = rightBlock;
+        boundConjunction.Left()->Accept(*this);
+        trueBlock = prevTrueBlock;
+        emitter.SetCurrentBasicBlock(rightBlock);
+        boundConjunction.Right()->Accept(*this);
+    }
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction)
+{
+    if (genJumpingBoolCode)
+    {
+        otava::intermediate::BasicBlock* rightBlock = emitter.CreateBasicBlock();
+        otava::intermediate::BasicBlock* prevFalseBlock = falseBlock;
+        falseBlock = rightBlock;
+        boundDisjunction.Left()->Accept(*this);
+        emitter.SetCurrentBasicBlock(rightBlock);
+        falseBlock = prevFalseBlock;
+        boundDisjunction.Right()->Accept(*this);
+    }
 }
 
 std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams)

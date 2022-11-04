@@ -153,6 +153,37 @@ Derivations RemoveRValueRef(const Derivations& derivations)
     return modifiedDerivations;
 }
 
+Derivations UnifyDerivations(const Derivations& left, const Derivations& right)
+{
+    Derivations result;
+    if (HasDerivation(left, Derivation::constDerivation) || HasDerivation(right, Derivation::constDerivation))
+    {
+        result.vec.push_back(Derivation::constDerivation);
+    }
+    int pointerCount = PointerCount(left) + PointerCount(right);
+    for (int i = 0; i < pointerCount; ++i)
+    {
+        result.vec.push_back(Derivation::pointerDerivation);
+    }
+    if (HasDerivation(left, Derivation::lvalueRefDerivation))
+    {
+        result.vec.push_back(Derivation::lvalueRefDerivation);
+    }
+    else if (HasDerivation(left, Derivation::rvalueRefDerivation))
+    {
+        result.vec.push_back(Derivation::rvalueRefDerivation);
+    }
+    else if (HasDerivation(right, Derivation::lvalueRefDerivation))
+    {
+        result.vec.push_back(Derivation::lvalueRefDerivation);
+    }
+    else if (HasDerivation(right, Derivation::rvalueRefDerivation))
+    {
+        result.vec.push_back(Derivation::rvalueRefDerivation);
+    }
+    return result;
+}
+
 void Write(Writer& writer, const Derivations& derivations)
 {
     uint8_t count = static_cast<uint8_t>(derivations.vec.size());

@@ -23,7 +23,7 @@ soul::parser::Match GuardParser<Lexer>::ConceptGuard(Lexer& lexer, otava::symbol
         soul::lexer::WriteBeginRuleToLog(lexer, "ConceptGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674561);
+    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366465);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -66,7 +66,7 @@ soul::parser::Match GuardParser<Lexer>::NotDefiningTypeSpecifierGuard(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "NotDefiningTypeSpecifierGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674562);
+    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366466);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -109,7 +109,7 @@ soul::parser::Match GuardParser<Lexer>::AssumeTypeGuard(Lexer& lexer, otava::sym
         soul::lexer::WriteBeginRuleToLog(lexer, "AssumeTypeGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674563);
+    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366467);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -152,7 +152,7 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionGuard(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "MemberFunctionGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674564);
+    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366468);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -195,7 +195,7 @@ soul::parser::Match GuardParser<Lexer>::SavedMemberFunctionBodyGuard(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "SavedMemberFunctionBodyGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674565);
+    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366469);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -238,7 +238,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDeclarationGuard(Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDeclarationGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674566);
+    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366470);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -281,7 +281,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDefinitionGuard(Lexer&
         soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDefinitionGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6068940122420674567);
+    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366471);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

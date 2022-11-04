@@ -301,6 +301,7 @@ bool Symbol::IsFunctionSymbol() const
     switch (kind)
     {
         case SymbolKind::functionSymbol:
+        case SymbolKind::functionDefinitionSymbol:
         case SymbolKind::fundamentalTypeNot:
         case SymbolKind::fundamentalTypeUnaryPlus:
         case SymbolKind::fundamentalTypeUnaryMinus:

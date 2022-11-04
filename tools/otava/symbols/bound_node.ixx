@@ -24,7 +24,9 @@ enum class BoundNodeKind
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
     boundLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode,
+    boundConjunctionNode, boundDisjunctionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode,
+    boundTemporaryNode,
     boundErrorNode
 };
 
@@ -74,6 +76,7 @@ public:
     BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
     TypeSymbol* GetType() const { return type; }
     Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const override;
+    bool BindToRvalueRef() const { return GetFlag(BoundExpressionFlags::bindToRvalueRef); }
     virtual bool HasValue() const { return false; }
     virtual void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -81,6 +84,7 @@ public:
     void SetFlag(BoundExpressionFlags flag);
     virtual bool IsBoundLocalVariable() const { return false; }
     virtual bool IsBoundMemberVariable() const { return false; }
+    virtual bool IsLvalueExpression() const { return false; }
 private:
     BoundExpressionFlags flags;
     TypeSymbol* type;

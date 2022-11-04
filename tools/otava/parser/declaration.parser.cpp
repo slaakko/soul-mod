@@ -55,7 +55,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclarationSeq(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclarationSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933121);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330753);
     std::unique_ptr<otava::ast::Node> sequence = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> next;
@@ -168,7 +168,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceDeclarationSeq(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceDeclarationSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933122);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330754);
     std::unique_ptr<otava::ast::Node> sequence = std::unique_ptr<otava::ast::Node>();
     bool nextIsRBrace = bool();
     std::unique_ptr<otava::ast::Node> first;
@@ -354,7 +354,7 @@ soul::parser::Match DeclarationParser<Lexer>::RBraceNext(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RBraceNext");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933123);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330755);
     soul::parser::Match match(true);
     int64_t save = lexer.GetPos();
     soul::parser::Match* parentMatch0 = &match;
@@ -407,7 +407,7 @@ soul::parser::Match DeclarationParser<Lexer>::Declaration(Lexer& lexer, otava::s
         soul::lexer::WriteBeginRuleToLog(lexer, "Declaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933124);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330756);
     std::unique_ptr<otava::ast::Node> moduleImportDeclaration;
     std::unique_ptr<otava::ast::Node> exportDeclaration;
     std::unique_ptr<otava::ast::Node> blockDeclaration;
@@ -894,7 +894,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "BlockDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933125);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330757);
     std::unique_ptr<otava::ast::Node> opaqueEnumDeclaration;
     std::unique_ptr<otava::ast::Node> simpleDeclaration;
     std::unique_ptr<otava::ast::Node> asmDeclaration;
@@ -1211,7 +1211,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoDeclSpecFunctionDeclaration(Lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933126);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330758);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> declarator;
@@ -1351,7 +1351,7 @@ soul::parser::Match DeclarationParser<Lexer>::EmptyDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EmptyDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933127);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330759);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1399,7 +1399,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933128);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330760);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -1791,7 +1791,7 @@ soul::parser::Match DeclarationParser<Lexer>::AsmDeclaration(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "AsmDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933129);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330761);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -1993,7 +1993,7 @@ soul::parser::Match DeclarationParser<Lexer>::Asm(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Asm");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933130);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330762);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2041,8 +2041,9 @@ soul::parser::Match DeclarationParser<Lexer>::LinkageSpecification(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "LinkageSpecification");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933131);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330763);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
+    std::unique_ptr<otava::ast::Node> linkageNode = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -2082,8 +2083,19 @@ soul::parser::Match DeclarationParser<Lexer>::LinkageSpecification(Lexer& lexer,
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch5 = &match;
                     {
-                        soul::parser::Match match = LiteralParser<Lexer>::StringLiteral(lexer, context);
-                        linkage.reset(static_cast<otava::ast::Node*>(match.value));
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch6 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = LiteralParser<Lexer>::StringLiteral(lexer, context);
+                            linkage.reset(static_cast<otava::ast::Node*>(match.value));
+                            if (match.hit)
+                            {
+                                linkageNode.reset(linkage.release());
+                                context->PushSetFlag(ContextFlags::linkageDeclaration);
+                            }
+                            *parentMatch6 = match;
+                        }
                         *parentMatch5 = match;
                     }
                     *parentMatch3 = match;
@@ -2093,23 +2105,23 @@ soul::parser::Match DeclarationParser<Lexer>::LinkageSpecification(Lexer& lexer,
             if (match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch6 = &match;
+                soul::parser::Match* parentMatch7 = &match;
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch7 = &match;
+                    soul::parser::Match* parentMatch8 = &match;
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch8 = &match;
+                        soul::parser::Match* parentMatch9 = &match;
                         {
                             int64_t save = lexer.GetPos();
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch9 = &match;
+                            soul::parser::Match* parentMatch10 = &match;
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch10 = &match;
+                                soul::parser::Match* parentMatch11 = &match;
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch11 = &match;
+                                    soul::parser::Match* parentMatch12 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
@@ -2122,50 +2134,50 @@ soul::parser::Match DeclarationParser<Lexer>::LinkageSpecification(Lexer& lexer,
                                         {
                                             lbPos = lexer.GetSourcePos(pos);
                                         }
-                                        *parentMatch11 = match;
+                                        *parentMatch12 = match;
                                     }
-                                    *parentMatch10 = match;
+                                    *parentMatch11 = match;
                                 }
                                 if (match.hit)
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch12 = &match;
+                                    soul::parser::Match* parentMatch13 = &match;
                                     {
                                         soul::parser::Match match(true);
                                         int64_t save = lexer.GetPos();
-                                        soul::parser::Match* parentMatch13 = &match;
+                                        soul::parser::Match* parentMatch14 = &match;
                                         {
                                             soul::parser::Match match = DeclarationParser<Lexer>::DeclarationSeq(lexer, context);
                                             declarations.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
-                                                *parentMatch13 = match;
+                                                *parentMatch14 = match;
                                             }
                                             else
                                             {
                                                 lexer.SetPos(save);
                                             }
                                         }
-                                        *parentMatch12 = match;
+                                        *parentMatch13 = match;
                                     }
-                                    *parentMatch10 = match;
+                                    *parentMatch11 = match;
                                 }
-                                *parentMatch9 = match;
+                                *parentMatch10 = match;
                             }
                             if (match.hit)
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch14 = &match;
+                                soul::parser::Match* parentMatch15 = &match;
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch15 = &match;
+                                    soul::parser::Match* parentMatch16 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch16 = &match;
+                                        soul::parser::Match* parentMatch17 = &match;
                                         {
                                             soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch17 = &match;
+                                            soul::parser::Match* parentMatch18 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
@@ -2178,47 +2190,47 @@ soul::parser::Match DeclarationParser<Lexer>::LinkageSpecification(Lexer& lexer,
                                                 {
                                                     rbPos = lexer.GetSourcePos(pos);
                                                 }
-                                                *parentMatch17 = match;
+                                                *parentMatch18 = match;
                                             }
-                                            *parentMatch16 = match;
+                                            *parentMatch17 = match;
                                         }
                                         if (match.hit)
                                         {
-                                            node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn.release(), linkage.release(), declarations.release(), lbPos, rbPos));
+                                            node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn.release(), linkageNode.release(), declarations.release(), lbPos, rbPos));
                                         }
-                                        *parentMatch15 = match;
+                                        *parentMatch16 = match;
                                     }
-                                    *parentMatch14 = match;
+                                    *parentMatch15 = match;
                                 }
-                                *parentMatch9 = match;
+                                *parentMatch10 = match;
                             }
-                            *parentMatch8 = match;
+                            *parentMatch9 = match;
                             if (!match.hit)
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch18 = &match;
+                                soul::parser::Match* parentMatch19 = &match;
                                 lexer.SetPos(save);
                                 {
                                     soul::parser::Match match(false);
-                                    soul::parser::Match* parentMatch19 = &match;
+                                    soul::parser::Match* parentMatch20 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = DeclarationParser<Lexer>::Declaration(lexer, context);
                                         declaration.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
-                                            node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn.release(), linkage.release(), declaration.release(), soul::ast::SourcePos(), soul::ast::SourcePos()));
+                                            node.reset(new otava::ast::LinkageSpecificationNode(sourcePos, extrn.release(), linkageNode.release(), declaration.release(), soul::ast::SourcePos(), soul::ast::SourcePos()));
                                         }
-                                        *parentMatch19 = match;
+                                        *parentMatch20 = match;
                                     }
-                                    *parentMatch18 = match;
+                                    *parentMatch19 = match;
                                 }
-                                *parentMatch8 = match;
+                                *parentMatch9 = match;
                             }
                         }
-                        *parentMatch7 = match;
+                        *parentMatch8 = match;
                     }
-                    *parentMatch6 = match;
+                    *parentMatch7 = match;
                 }
                 *parentMatch2 = match;
             }
@@ -2226,6 +2238,8 @@ soul::parser::Match DeclarationParser<Lexer>::LinkageSpecification(Lexer& lexer,
         }
         if (match.hit)
         {
+            context->PopFlags();
+            otava::symbols::ProcessLinkageSpecification(node.get(), context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LinkageSpecification");
@@ -2261,7 +2275,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceDefinition(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933132);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330764);
     std::unique_ptr<otava::ast::Node> nestedNamespaceDefinition;
     std::unique_ptr<otava::ast::Node> namedNamespaceDefinition;
     std::unique_ptr<otava::ast::Node> unnamedNamespaceDefinition;
@@ -2374,7 +2388,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamedNamespaceDefinition(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NamedNamespaceDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933133);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330765);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -2619,7 +2633,7 @@ soul::parser::Match DeclarationParser<Lexer>::UnnamedNamespaceDefinition(Lexer& 
         soul::lexer::WriteBeginRuleToLog(lexer, "UnnamedNamespaceDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933134);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330766);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -2834,7 +2848,7 @@ soul::parser::Match DeclarationParser<Lexer>::NestedNamespaceDefinition(Lexer& l
         soul::lexer::WriteBeginRuleToLog(lexer, "NestedNamespaceDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933135);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330767);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::NestedNameSpecifierNode> nns = std::unique_ptr<otava::ast::NestedNameSpecifierNode>();
     std::unique_ptr<otava::ast::Node> qualifiedNsName = std::unique_ptr<otava::ast::Node>();
@@ -3040,7 +3054,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceAliasDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933136);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330768);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> ns;
     std::unique_ptr<otava::ast::Node> id;
@@ -3169,7 +3183,7 @@ soul::parser::Match DeclarationParser<Lexer>::QualifiedNamespaceSpecifier(Lexer&
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedNamespaceSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933137);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330769);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> nns;
     std::unique_ptr<otava::ast::Node> nsName;
@@ -3281,7 +3295,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceBody(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceBody");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933138);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330770);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> declarations;
     soul::parser::Match match(false);
@@ -3360,7 +3374,7 @@ soul::parser::Match DeclarationParser<Lexer>::NestedNamespaceSpecifier(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NestedNamespaceSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933139);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330771);
     int level = int();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> colonColon;
@@ -3640,7 +3654,7 @@ soul::parser::Match DeclarationParser<Lexer>::Namespace(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Namespace");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933140);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330772);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3688,7 +3702,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceName(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933141);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330773);
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3733,7 +3747,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933142);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330774);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> usng;
     std::unique_ptr<otava::ast::Node> usingDeclarators;
@@ -3830,7 +3844,7 @@ soul::parser::Match DeclarationParser<Lexer>::Using(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Using");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933143);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330775);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3878,7 +3892,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaratorList(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclaratorList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933144);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330776);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
@@ -4063,7 +4077,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclarator(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933145);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330777);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> typename_;
@@ -4230,7 +4244,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingEnumDeclaration(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingEnumDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933146);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330778);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> usng;
     std::unique_ptr<otava::ast::Node> ees;
@@ -4326,7 +4340,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDirective");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933147);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330779);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> attributes;
@@ -4571,7 +4585,7 @@ soul::parser::Match DeclarationParser<Lexer>::StaticAssertDeclaration(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "StaticAssertDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933148);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330780);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -4836,7 +4850,7 @@ soul::parser::Match DeclarationParser<Lexer>::StaticAssert(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "StaticAssert");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933149);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330781);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4884,7 +4898,7 @@ soul::parser::Match DeclarationParser<Lexer>::AliasDeclaration(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "AliasDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933150);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330782);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> usng;
     std::unique_ptr<otava::ast::Node> identifier;
@@ -5045,7 +5059,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifierSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933151);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330783);
     std::unique_ptr<otava::ast::Node> sequence = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> next;
@@ -5233,7 +5247,7 @@ soul::parser::Match DeclarationParser<Lexer>::Inline(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Inline");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933152);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330784);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -5281,7 +5295,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933153);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330785);
     std::unique_ptr<otava::ast::Node> storageClassSpecifier;
     std::unique_ptr<otava::ast::Node> definingTypeSpecifier;
     std::unique_ptr<otava::ast::Node> functionSpecifier;
@@ -5614,7 +5628,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "StorageClassSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933154);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330786);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
@@ -5762,7 +5776,7 @@ soul::parser::Match DeclarationParser<Lexer>::FunctionSpecifier(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933155);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330787);
     std::unique_ptr<otava::ast::Node> explicitSpecifier;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -5849,7 +5863,7 @@ soul::parser::Match DeclarationParser<Lexer>::ExplicitSpecifier(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "ExplicitSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933156);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330788);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -6020,7 +6034,7 @@ soul::parser::Match DeclarationParser<Lexer>::InitDeclaratorList(Lexer& lexer, o
         soul::lexer::WriteBeginRuleToLog(lexer, "InitDeclaratorList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933157);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330789);
     std::unique_ptr<otava::ast::Node> list = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
@@ -6160,7 +6174,7 @@ soul::parser::Match DeclarationParser<Lexer>::InitDeclarator(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "InitDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933158);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330790);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> declarator;
     std::unique_ptr<otava::ast::Node> requiresClause;
@@ -6316,7 +6330,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclaratorPushClassScope(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclaratorPushClassScope");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933159);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330791);
     std::unique_ptr<otava::ast::Node> declarator;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -6396,7 +6410,7 @@ soul::parser::Match DeclarationParser<Lexer>::Declarator(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "Declarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933160);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330792);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> declarator;
     std::unique_ptr<otava::ast::Node> paramsAndQualifiers;
@@ -6535,7 +6549,7 @@ soul::parser::Match DeclarationParser<Lexer>::PtrDeclarator(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933161);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330793);
     std::unique_ptr<otava::ast::Node> ptrDeclarator = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> next;
@@ -6700,7 +6714,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoPtrDeclarator(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "NoPtrDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933162);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330794);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
@@ -7119,7 +7133,7 @@ soul::parser::Match DeclarationParser<Lexer>::ParametersAndQualifiers(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "ParametersAndQualifiers");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933163);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330795);
     std::unique_ptr<otava::ast::ParameterListNode> parameterListNode = std::unique_ptr<otava::ast::ParameterListNode>();
     std::unique_ptr<otava::ast::TrailingQualifiersNode> trailingQualifiersNode = std::unique_ptr<otava::ast::TrailingQualifiersNode>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
@@ -7474,7 +7488,7 @@ soul::parser::Match DeclarationParser<Lexer>::TrailingReturnType(Lexer& lexer, o
         soul::lexer::WriteBeginRuleToLog(lexer, "TrailingReturnType");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933164);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330796);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> typeId;
     soul::parser::Match match(false);
@@ -7555,7 +7569,7 @@ soul::parser::Match DeclarationParser<Lexer>::PtrOperator(Lexer& lexer, otava::s
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrOperator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933165);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330797);
     std::unique_ptr<otava::ast::TrailingQualifiersNode> trailingQualifiersNode = std::unique_ptr<otava::ast::TrailingQualifiersNode>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> nns;
@@ -8021,7 +8035,7 @@ soul::parser::Match DeclarationParser<Lexer>::AbstractDeclarator(Lexer& lexer, o
         soul::lexer::WriteBeginRuleToLog(lexer, "AbstractDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933166);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330798);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> declarator;
     std::unique_ptr<otava::ast::Node> params;
@@ -8184,7 +8198,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoPtrAbstractDeclarator(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "NoPtrAbstractDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933167);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330799);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
@@ -8545,7 +8559,7 @@ soul::parser::Match DeclarationParser<Lexer>::PtrAbstractDeclarator(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrAbstractDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933168);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330800);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> next;
@@ -8736,7 +8750,7 @@ soul::parser::Match DeclarationParser<Lexer>::AbstractPackDeclarator(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "AbstractPackDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933169);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330801);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> noPtrAbstractPackDeclarator;
     std::unique_ptr<otava::ast::Node> first;
@@ -8901,7 +8915,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoPtrAbstractPackDeclarator(Lexer&
         soul::lexer::WriteBeginRuleToLog(lexer, "NoPtrAbstractPackDeclarator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933170);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330802);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
@@ -9115,7 +9129,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclaratorId(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclaratorId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933171);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330803);
     std::unique_ptr<otava::ast::Node> idExprNode = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> ellipsis;
@@ -9230,7 +9244,7 @@ soul::parser::Match DeclarationParser<Lexer>::Ptr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Ptr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933172);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330804);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -9278,7 +9292,7 @@ soul::parser::Match DeclarationParser<Lexer>::LvalueRef(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LvalueRef");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933173);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330805);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -9326,7 +9340,7 @@ soul::parser::Match DeclarationParser<Lexer>::RvalueRef(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RvalueRef");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933174);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330806);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -9374,7 +9388,7 @@ soul::parser::Match DeclarationParser<Lexer>::RefQualifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RefQualifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933175);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330807);
     std::unique_ptr<otava::ast::Node> rvalueRef;
     std::unique_ptr<otava::ast::Node> lvalueRef;
     soul::parser::Match match(false);
@@ -9458,7 +9472,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifierSeq(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CVQualifierSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933176);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330808);
     std::unique_ptr<otava::ast::Node> sequence = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> next;
@@ -9571,7 +9585,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CVQualifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933177);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330809);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
@@ -9661,7 +9675,7 @@ soul::parser::Match DeclarationParser<Lexer>::NoexceptSpecifier(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "NoexceptSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933178);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330810);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -9836,7 +9850,7 @@ soul::parser::Match DeclarationParser<Lexer>::ThrowSpecifier(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "ThrowSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933179);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330811);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -9962,7 +9976,7 @@ soul::parser::Match DeclarationParser<Lexer>::AttributeDeclaration(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "AttributeDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5276324781484933180);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8966079074640330812);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> attributes;
     std::unique_ptr<otava::ast::Node> semicolon;

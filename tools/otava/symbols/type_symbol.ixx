@@ -7,6 +7,7 @@ export module otava.symbols.type.symbol;
 
 import std.core;
 import otava.symbols.container.symbol;
+import otava.symbols.derivations;
 import otava.intermediate.type;
 
 export namespace otava::symbols {
@@ -31,6 +32,9 @@ public:
     virtual bool IsIntegralType() const { return false; }
     virtual bool IsPolymorphic() const { return false; }
     virtual int PointerCount() const { return 0; }
+    virtual const Derivations& GetDerivations() const;
+    virtual TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context);
+    virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
     TypeSymbol* AddConst();
     TypeSymbol* RemoveConst();
     TypeSymbol* AddPointer();
@@ -63,5 +67,7 @@ public:
     std::string SymbolDocKindStr() const override { return "error_type"; }
     void Accept(Visitor& visitor) override;
 };
+
+bool TypesEqual(TypeSymbol* left, TypeSymbol* right);
 
 } // namespace otava::symbols

@@ -27,6 +27,39 @@ import otava.symbols.function.symbol;
 
 namespace otava::symbols {
 
+int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
+{
+    switch (specialFunctionKind)
+    {
+        case SpecialFunctionKind::defaultCtor:
+        {
+            return defaultCtorIndex;
+        }
+        case SpecialFunctionKind::copyCtor:
+        {
+            return copyCtorIndex;
+        }
+        case SpecialFunctionKind::moveCtor:
+        {
+            return moveCtorIndex;
+        }
+        case SpecialFunctionKind::copyAssignment:
+        {
+            return copyAssignmentIndex;
+        }
+        case SpecialFunctionKind::moveAssignment:
+        {
+            return moveAssignmentIndex;
+        }
+        case SpecialFunctionKind::dtor:
+        {
+            return destructorIndex;
+        }
+    }
+    return 0;
+}
+
+
 RecordedParseFn recordedParseFn = nullptr;
 
 void SetRecordedParseFn(RecordedParseFn fn)
@@ -48,7 +81,8 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     level(0), 
     irType(nullptr),
     objectLayoutComputed(false),
-    vptrIndex(-1)
+    vptrIndex(-1),
+    currentFunctionIndex(1)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -104,6 +138,13 @@ void ClassTypeSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(type->Id());
     }
+    uint32_t nfm = functionMap.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(nfm);
+    for (const auto& fn : functionMap)
+    {
+        writer.GetBinaryStreamWriter().Write(fn.first);
+        writer.GetBinaryStreamWriter().Write(fn.second->Id());
+    }
 }
 
 void ClassTypeSymbol::Read(Reader& reader)
@@ -126,6 +167,14 @@ void ClassTypeSymbol::Read(Reader& reader)
         reader.GetBinaryStreamReader().ReadUuid(tid);
         objectLayoutIds.push_back(tid);
     }
+    uint32_t nfm = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < nfm; ++i)
+    {
+        int32_t fnIndex = reader.GetBinaryStreamReader().ReadInt();
+        util::uuid fnId;
+        reader.GetBinaryStreamReader().ReadUuid(fnId);
+        functionIdMap[fnIndex] = fnId;
+    }
 }
 
 void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
@@ -144,6 +193,15 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
     {
         TypeSymbol* type = symbolTable.GetType(tid);
         objectLayout.push_back(type);
+    }
+    for (const auto& fnIndexId : functionIdMap)
+    {
+        FunctionSymbol* function = symbolTable.GetFunction(fnIndexId.second);
+        if (!function)
+        {
+            function = symbolTable.GetFunctionDefinition(fnIndexId.second);
+        }
+        functionMap[fnIndexId.first] = function;
     }
 }
 
@@ -241,6 +299,29 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
         emitter.SetType(Id(), irType);
     }
     return irType;
+}
+
+int32_t ClassTypeSymbol::NextFunctionIndex()
+{
+    return currentFunctionIndex++;
+}
+
+void ClassTypeSymbol::MapFunction(FunctionSymbol* function)
+{
+    functionMap[function->Index()] = function;
+}
+
+FunctionSymbol* ClassTypeSymbol::GetFunction(int32_t functionIndex) const
+{
+    auto it = functionMap.find(functionIndex);
+    if (it != functionMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32string& name_) : 

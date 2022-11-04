@@ -205,6 +205,8 @@
     <ClCompile Include="function_group_symbol.ixx" />
     <ClCompile Include="function_symbol.cpp" />
     <ClCompile Include="function_symbol.ixx" />
+    <ClCompile Include="function_templates.cpp" />
+    <ClCompile Include="function_templates.ixx" />
     <ClCompile Include="function_type_symbol.cpp" />
     <ClCompile Include="function_type_symbol.ixx" />
     <ClCompile Include="fundamental_type_conversion_init.ixx" />

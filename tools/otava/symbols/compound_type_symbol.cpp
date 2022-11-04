@@ -10,6 +10,7 @@ import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
+import otava.symbols.context;
 
 namespace otava::symbols {
 
@@ -59,6 +60,38 @@ void CompoundTypeSymbol::Accept(Visitor& visitor)
 int CompoundTypeSymbol::PointerCount() const
 {
     return otava::symbols::PointerCount(GetDerivations());
+}
+
+TypeSymbol* CompoundTypeSymbol::RemoveDerivations(const Derivations& sourceDerivations, Context* context) 
+{
+    Derivations resultDerivations;
+    if (!HasDerivation(sourceDerivations, Derivation::constDerivation) && HasDerivation(derivations, Derivation::constDerivation))
+    {
+        resultDerivations.vec.push_back(Derivation::constDerivation);
+    }
+    int pointerDiff = otava::symbols::PointerCount(derivations) - otava::symbols::PointerCount(sourceDerivations);
+    if (pointerDiff != 0)
+    {
+        for (int i = 0; i < pointerDiff; ++i)
+        {
+            resultDerivations.vec.push_back(Derivation::pointerDerivation);
+        }
+    }
+    if (!HasDerivation(sourceDerivations, Derivation::lvalueRefDerivation) && HasDerivation(derivations, Derivation::lvalueRefDerivation))
+    {
+        resultDerivations.vec.push_back(Derivation::lvalueRefDerivation);
+    }
+    else if (!HasDerivation(sourceDerivations, Derivation::rvalueRefDerivation) && HasDerivation(derivations, Derivation::rvalueRefDerivation))
+    {
+        resultDerivations.vec.push_back(Derivation::rvalueRefDerivation);
+    }
+    return context->GetSymbolTable()->MakeCompoundType(baseType, resultDerivations);
+}
+
+TypeSymbol* CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context)
+{
+    TypeSymbol* newBaseType = baseType->Unify(argType->GetBaseType(), context);
+    return context->GetSymbolTable()->MakeCompoundType(newBaseType, UnifyDerivations(derivations, argType->GetDerivations()));
 }
 
 otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)

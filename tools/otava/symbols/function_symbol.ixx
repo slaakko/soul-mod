@@ -21,6 +21,18 @@ enum class FunctionKind
     function, constructor, destructor, special, conversion
 };
 
+enum class SpecialFunctionKind
+{
+    none, defaultCtor, copyCtor, moveCtor, copyAssignment, moveAssignment, dtor
+};
+
+std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind);
+
+enum class Linkage : int32_t
+{
+    c_linkage, cpp_linkage
+};
+
 enum class FunctionQualifiers : int32_t
 {
     none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isDefault = 1 << 4, isDeleted = 1 << 5
@@ -44,6 +56,26 @@ constexpr FunctionQualifiers operator~(FunctionQualifiers qualifiers)
 }
 
 std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
+
+enum class FunctionSymbolFlags : int32_t
+{
+    none = 0, bound = 1 << 0, specialization = 1 << 1
+};
+
+constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
+{
+    return FunctionSymbolFlags(int32_t(left) | int32_t(right));
+}
+
+constexpr FunctionSymbolFlags operator&(FunctionSymbolFlags left, FunctionSymbolFlags right)
+{
+    return FunctionSymbolFlags(int32_t(left) & int32_t(right));
+}
+
+constexpr FunctionSymbolFlags operator~(FunctionSymbolFlags flags)
+{
+    return FunctionSymbolFlags(~int32_t(flags));
+}
 
 class TypeSymbol;
 class Value;
@@ -85,17 +117,19 @@ public:
     void SetFunctionQualifiers(FunctionQualifiers qualifiers_) { qualifiers = qualifiers_; }
     bool IsConversion() const { return kind == FunctionKind::conversion; }
     void SetConversion() { kind = FunctionKind::conversion; }
-    TemplateDeclarationSymbol* ParentTemplateDeclaration();
+    virtual bool IsArrayElementAccess() const { return false; }
+    TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
     void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
     TypeSymbol* ReturnType() const { return returnType; }
     std::u32string FullName() const override;
+    bool IsTemplate() const;
     virtual TypeSymbol* ConversionParamType() const { return nullptr; }
     virtual TypeSymbol* ConversionArgType() const { return nullptr; }
     virtual ConversionKind GetConversionKind() const;
     virtual int32_t ConversionDistance() const { return 0; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
-    const std::vector<ParameterSymbol*>& MemFunParameters();
+    const std::vector<ParameterSymbol*>& MemFunParameters() const;
     void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -105,21 +139,38 @@ public:
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     virtual std::string IrName() const;
-    void AddLocalVariable(VariableSymbol* localVariable, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddLocalVariable(VariableSymbol* localVariable);
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
+    VariableSymbol* CreateTemporary(TypeSymbol* type);
     bool IsVirtual() const;
-    ParameterSymbol* ThisParam();
+    ClassTypeSymbol* ParentClassType() const;
+    ParameterSymbol* ThisParam() const;
     bool IsMemberFunction() const;
+    SpecialFunctionKind GetSpecialFunctionKind() const;
+    Linkage GetLinkage() const { return linkage; }
+    void SetLinkage(Linkage linkage_) { linkage = linkage_; }
+    int32_t Index() const { return index; }
+    void SetIndex(int32_t index_) { index = index_; }
+    bool GetFlag(FunctionSymbolFlags flag) const { return (flags & flag) != FunctionSymbolFlags::none; }
+    void SetFlag(FunctionSymbolFlags flag) { flags = flags | flag; }
+    bool IsBound() const { return GetFlag(FunctionSymbolFlags::bound); }
+    void SetBound() { SetFlag(FunctionSymbolFlags::bound); }
+    bool IsSpecialization() const { return GetFlag(FunctionSymbolFlags::specialization); }
+    void SetSpecialization() { SetFlag(FunctionSymbolFlags::specialization); }
 private:
-    bool memFunParamsConstructed;
+    mutable bool memFunParamsConstructed;
     FunctionKind kind;
     FunctionQualifiers qualifiers;
+    Linkage linkage;
+    int32_t index;
+    FunctionSymbolFlags flags;
     TypeSymbol* returnType;
     util::uuid returnTypeId;
     std::vector<ParameterSymbol*> parameters;
-    std::unique_ptr<ParameterSymbol> thisParam;
-    std::vector<ParameterSymbol*> memFunParameters;
+    mutable std::unique_ptr<ParameterSymbol> thisParam;
+    mutable std::vector<ParameterSymbol*> memFunParameters;
     std::vector<VariableSymbol*> localVariables;
+    int32_t nextTemporaryId;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol
@@ -130,6 +181,7 @@ public:
     std::string SymbolDocKindStr() const override { return "function_definition"; }
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
     FunctionSymbol* Declaration() const { return declaration; }
+    std::string IrName() const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -143,5 +195,7 @@ struct FunctionLess
 {
     bool operator()(FunctionSymbol* left, FunctionSymbol* right) const;
 };
+
+void InitFunction();
 
 } // namespace otava::symbols

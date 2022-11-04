@@ -27,7 +27,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleType");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3815342804792508417);
+    soul::lexer::RuleGuard ruleGuard(lexer, 695727793635328001);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)

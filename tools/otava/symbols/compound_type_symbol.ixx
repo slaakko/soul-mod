@@ -22,7 +22,9 @@ public:
     TypeSymbol* PlainType() override;
     int PointerCount() const override;
     TypeSymbol* BaseType() const { return baseType; }
-    const Derivations& GetDerivations() const { return derivations; }
+    const Derivations& GetDerivations() const override { return derivations; }
+    TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context) override;
+    TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

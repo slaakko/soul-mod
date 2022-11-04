@@ -14,6 +14,22 @@ ConversionTableEntry::ConversionTableEntry(TypeSymbol* paramType_, TypeSymbol* a
 {
 }
 
+bool ConversionTableEntryEqual::operator()(const ConversionTableEntry& left, const ConversionTableEntry& right) const
+{
+    return TypesEqual(left.paramType, right.paramType) && TypesEqual(left.argType, right.argType);
+}
+
+size_t ConversionTableEntryHash::operator()(const ConversionTableEntry& entry) const
+{
+    uint64_t xp;
+    uint64_t yp;
+    util::UuidToInts(entry.paramType->Id(), xp, yp);
+    uint64_t xa;
+    uint64_t ya;
+    util::UuidToInts(entry.argType->Id(), xa, ya);
+    return xp ^ yp ^ xa ^ ya;
+}
+
 void ConversionTable::Import(const ConversionTable& that)
 {
     for (const auto& p : that.conversionMap)

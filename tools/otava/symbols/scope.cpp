@@ -333,7 +333,11 @@ Scope* ContainerScope::GetClassScope() const
     }
     for (Scope* parentScope : ParentScopes())
     {
-        return parentScope->GetClassScope();
+        Scope* classScope = parentScope->GetClassScope();
+        if (classScope)
+        {
+            return classScope;
+        }
     }
     return nullptr;
 }
@@ -607,7 +611,22 @@ Scope* InstantiationScope::SymbolScope()
     return parentScope->SymbolScope();
 }
 
-void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
+void InstantiationScope::PushParentScope(Scope* parentScope_)
+{
+    parentScopes.insert(parentScopes.begin(), parentScope_);
+}
+
+void InstantiationScope::PopParentScope()
+{
+    parentScopes.erase(parentScopes.begin());
+}
+
+void InstantiationScope::SetParentScope(Scope* parentScope_)
+{
+    parentScope = parentScope_;
+}
+
+void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags,
     std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
 {
     std::vector<Symbol*> foundSymbols;
@@ -631,6 +650,13 @@ void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbol
             if (parentScope)
             {
                 parentScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
+            }
+            if (symbols.empty())
+            {
+                for (Scope* parentScope : parentScopes)
+                {
+                    parentScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
+                }
             }
         }
     }

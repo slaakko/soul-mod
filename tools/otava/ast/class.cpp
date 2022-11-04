@@ -8,14 +8,17 @@ module otava.ast.classes;
 import otava.ast.visitor;
 import otava.ast.reader;
 import otava.ast.writer;
+import otava.ast.function;
 
 namespace otava::ast {
 
-ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_) : SequenceNode(NodeKind::classSpecifierNode, sourcePos_), complete(false)
+ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_) : 
+    SequenceNode(NodeKind::classSpecifierNode, sourcePos_), complete(false)
 {
 }
 
-ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_) : SequenceNode(NodeKind::classSpecifierNode, sourcePos_), classHead(classHead_), complete(false)
+ClassSpecifierNode::ClassSpecifierNode(const soul::ast::SourcePos& sourcePos_, Node* classHead_) : 
+    SequenceNode(NodeKind::classSpecifierNode, sourcePos_), classHead(classHead_), complete(false)
 {
 }
 
@@ -364,11 +367,13 @@ void MemberInitializerListNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_) : BinaryNode(NodeKind::memberInitializerNode, sourcePos_, nullptr, nullptr)
+MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_) : 
+    BinaryNode(NodeKind::memberInitializerNode, sourcePos_, nullptr, nullptr)
 {
 }
 
-MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* initializer_) : BinaryNode(NodeKind::memberInitializerNode, sourcePos_, id_, initializer_)
+MemberInitializerNode::MemberInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* id_, Node* initializer_) : 
+    BinaryNode(NodeKind::memberInitializerNode, sourcePos_, id_, initializer_)
 {
 }
 

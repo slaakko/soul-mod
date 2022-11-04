@@ -29,7 +29,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer, otava::symbols::
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136641);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2723703907904651265);
     std::unique_ptr<otava::ast::Node> udLiteral;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -372,7 +372,7 @@ soul::parser::Match LiteralParser<Lexer>::UserDefinedLiteral(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "UserDefinedLiteral");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136642);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2723703907904651266);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     int64_t p = int64_t();
     std::unique_ptr<otava::ast::Node> udLiteralNode = std::unique_ptr<otava::ast::Node>();
@@ -632,7 +632,7 @@ soul::parser::Match LiteralParser<Lexer>::UdSuffix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UdSuffix");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136643);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2723703907904651267);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -680,7 +680,7 @@ soul::parser::Match LiteralParser<Lexer>::LiteralOperatorId(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "LiteralOperatorId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136644);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2723703907904651268);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos stringLitPos = soul::ast::SourcePos();
     soul::ast::SourcePos idPos = soul::ast::SourcePos();
@@ -814,7 +814,7 @@ soul::parser::Match LiteralParser<Lexer>::StringLiteral(Lexer& lexer, otava::sym
         soul::lexer::WriteBeginRuleToLog(lexer, "StringLiteral");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7147880918433136645);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2723703907904651269);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

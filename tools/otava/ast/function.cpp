@@ -11,12 +11,20 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-FunctionDefinitionNode::FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::functionDefinitionNode, sourcePos_)
+FunctionDefinitionNode::FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_) : 
+    CompoundNode(NodeKind::functionDefinitionNode, sourcePos_), index(0)
 {
 }
 
-FunctionDefinitionNode::FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_, Node* attributes_, Node* declSpecifiers_, Node* declarator_, Node* specifiers_, Node* functionBody_) :
-    CompoundNode(NodeKind::functionDefinitionNode, sourcePos_), attributes(attributes_), declSpecifiers(declSpecifiers_), declarator(declarator_), specifiers(specifiers_), functionBody(functionBody_)
+FunctionDefinitionNode::FunctionDefinitionNode(const soul::ast::SourcePos& sourcePos_, 
+    Node* attributes_, Node* declSpecifiers_, Node* declarator_, Node* specifiers_, Node* functionBody_) :
+    CompoundNode(NodeKind::functionDefinitionNode, sourcePos_), 
+    attributes(attributes_), 
+    declSpecifiers(declSpecifiers_), 
+    declarator(declarator_), 
+    specifiers(specifiers_), 
+    functionBody(functionBody_), 
+    index(0)
 {
 }
 

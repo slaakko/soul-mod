@@ -39,7 +39,7 @@ soul::parser::Match EnumParser<Lexer>::EnumName(Lexer& lexer, otava::symbols::Co
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932673);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993025);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -85,7 +85,7 @@ soul::parser::Match EnumParser<Lexer>::EnumSpecifier(Lexer& lexer, otava::symbol
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932674);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993026);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -302,7 +302,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHead(Lexer& lexer, otava::symbols::Co
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumHead");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932675);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993027);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> name = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> enumKey;
@@ -485,7 +485,7 @@ soul::parser::Match EnumParser<Lexer>::EnumKey(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumKey");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932676);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993028);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -669,7 +669,7 @@ soul::parser::Match EnumParser<Lexer>::EnumHeadName(Lexer& lexer, otava::symbols
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumHeadName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932677);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993029);
     std::unique_ptr<otava::ast::Node> nns;
     std::unique_ptr<otava::ast::Node> identifier;
     std::unique_ptr<otava::ast::Node> identifier2;
@@ -765,7 +765,7 @@ soul::parser::Match EnumParser<Lexer>::EnumBase(Lexer& lexer, otava::symbols::Co
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumBase");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932678);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993030);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<Node> typeSpecifiers;
     soul::parser::Match match(false);
@@ -846,7 +846,7 @@ soul::parser::Match EnumParser<Lexer>::EnumeratorList(Lexer& lexer, otava::symbo
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932679);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993031);
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
     std::unique_ptr<otava::ast::Node> next;
@@ -964,7 +964,7 @@ soul::parser::Match EnumParser<Lexer>::EnumeratorDefinition(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumeratorDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932680);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993032);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos assignPos = soul::ast::SourcePos();
     std::unique_ptr<Node> value = std::unique_ptr<Node>();
@@ -1102,7 +1102,7 @@ soul::parser::Match EnumParser<Lexer>::Enumerator(Lexer& lexer, otava::symbols::
         soul::lexer::WriteBeginRuleToLog(lexer, "Enumerator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932681);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993033);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> identifier;
     std::unique_ptr<otava::ast::Node> attributes;
@@ -1193,7 +1193,7 @@ soul::parser::Match EnumParser<Lexer>::OpaqueEnumDeclaration(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "OpaqueEnumDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932682);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993034);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> enumKey;
     std::unique_ptr<otava::ast::Node> attributes;
@@ -1350,7 +1350,7 @@ soul::parser::Match EnumParser<Lexer>::ElaboratedEnumSpecifier(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "ElaboratedEnumSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3876992812603932683);
+    soul::lexer::RuleGuard ruleGuard(lexer, 5996424684868993035);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> nns;

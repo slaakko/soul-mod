@@ -31,7 +31,7 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "Initializer");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607169);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744129);
     std::unique_ptr<otava::ast::Node> initializer = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::ExpressionListNode> exprListNode = std::unique_ptr<otava::ast::ExpressionListNode>();
     std::unique_ptr<otava::ast::Node> braceOrEqualInit;
@@ -178,7 +178,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "InitializerClause");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607170);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744130);
     std::unique_ptr<otava::ast::Node> bracedInitList;
     std::unique_ptr<otava::ast::Node> assignmentExpr;
     soul::parser::Match match(false);
@@ -257,7 +257,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, o
         soul::lexer::WriteBeginRuleToLog(lexer, "InitializerList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607171);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744131);
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
     std::unique_ptr<otava::ast::Node> next;
@@ -425,7 +425,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607172);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744132);
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
     std::unique_ptr<otava::ast::Node> next;
@@ -548,7 +548,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
         soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerClause");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607173);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744133);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> designator;
     std::unique_ptr<otava::ast::Node> initializer;
@@ -626,7 +626,7 @@ soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "Designator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607174);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744134);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -707,7 +707,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "ExprOrBracedInitList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607175);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744135);
     std::unique_ptr<otava::ast::Node> bracedInitList;
     std::unique_ptr<otava::ast::Node> expr;
     soul::parser::Match match(false);
@@ -786,7 +786,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
         soul::lexer::WriteBeginRuleToLog(lexer, "BraceOrEqualInitializer");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607176);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744136);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> initializer;
     std::unique_ptr<otava::ast::Node> bracedInitList;
@@ -901,7 +901,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "BracedInitList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5255170298025607177);
+    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744137);
     std::unique_ptr<otava::ast::Node> initList = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> lbrace;
     std::unique_ptr<otava::ast::Node> comma;

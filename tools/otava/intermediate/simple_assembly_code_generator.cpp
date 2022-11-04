@@ -53,17 +53,23 @@ void SimpleAssemblyCodeGenerator::Write()
 
 void SimpleAssemblyCodeGenerator::Visit(Function& function)
 {
-    if (!function.IsDefined()) return;
-    currentFunction = &function;
-    Ctx()->AssemblyContext().ResetRegisterPool();
-    std::unique_ptr<RegisterAllocator> linearScanRregisterAllocator = LinearScanRegisterAllocation(function, Ctx());
-    registerAllocator = linearScanRregisterAllocator.get();
-    assemblyFunction = file.CreateFunction(function.Name());
-    function.VisitBasicBlocks(*this);
-    assemblyFunction->SetActiveFunctionPart(otava::assembly::FunctionPart::prologue);
-    EmitPrologue(*this);
-    assemblyFunction->SetActiveFunctionPart(otava::assembly::FunctionPart::epilogue);
-    EmitEpilogue(*this);
+    if (!function.IsDefined())
+    {
+        file.GetDeclarationSection().AddFunctionDeclaration(new otava::assembly::FunctionDeclaration(function.Name()));
+    }
+    else
+    {
+        currentFunction = &function;
+        Ctx()->AssemblyContext().ResetRegisterPool();
+        std::unique_ptr<RegisterAllocator> linearScanRregisterAllocator = LinearScanRegisterAllocation(function, Ctx());
+        registerAllocator = linearScanRregisterAllocator.get();
+        assemblyFunction = file.GetCodeSection().CreateFunction(function.Name());
+        function.VisitBasicBlocks(*this);
+        assemblyFunction->SetActiveFunctionPart(otava::assembly::FunctionPart::prologue);
+        EmitPrologue(*this);
+        assemblyFunction->SetActiveFunctionPart(otava::assembly::FunctionPart::epilogue);
+        EmitEpilogue(*this);
+    }
 }
 
 void SimpleAssemblyCodeGenerator::Visit(BasicBlock& basicBlock)
@@ -291,6 +297,11 @@ void SimpleAssemblyCodeGenerator::Visit(NotInstruction& inst)
 void SimpleAssemblyCodeGenerator::Visit(NegInstruction& inst)
 {
     EmitNeg(inst, *this);
+}
+
+void SimpleAssemblyCodeGenerator::Visit(NoOperationInstruction& inst)
+{
+    EmitNop(inst, *this);
 }
 
 } // otava::intermediate

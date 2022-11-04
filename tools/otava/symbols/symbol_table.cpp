@@ -71,7 +71,8 @@ SymbolTable::SymbolTable() :
     nodeMap(nullptr),
     symbolMap(nullptr),
     classLevel(0),
-    conversionTable(new ConversionTable())
+    conversionTable(new ConversionTable()),
+    currentLinkage(Linkage::cpp_linkage)
 {
     globalNs->SetSymbolTable(this);
 }
@@ -111,6 +112,30 @@ void SymbolTable::BeginScope(Scope* scope)
 void SymbolTable::EndScope()
 {
     PopScope();
+}
+
+void SymbolTable::BeginScopeGeneric(Scope* scope, Context* context)
+{
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    {
+        CurrentScope()->PushParentScope(scope);
+    }
+    else
+    {
+        BeginScope(scope);
+    }
+}
+
+void SymbolTable::EndScopeGeneric(Context* context)
+{
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    {
+        CurrentScope()->PopParentScope();
+    }
+    else
+    {
+        EndScope();
+    }
 }
 
 void SymbolTable::PushTopScopeIndex()
@@ -1043,6 +1068,7 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast:
     functionSymbol->SetAccess(CurrentAccess());
     functionSymbol->SetFunctionKind(kind);
     functionSymbol->SetFunctionQualifiers(qualifiers);
+    functionSymbol->SetLinkage(currentLinkage);
     functionSymbol->SetDeclarationFlags(flags);
     currentScope->SymbolScope()->AddSymbol(functionSymbol, node->GetSourcePos(), context);
     functionGroup->AddFunction(functionSymbol);
@@ -1053,6 +1079,7 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast:
 void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context)
 {
     FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(functionSymbol->Name(), soul::ast::SourcePos(), context);
+    functionSymbol->SetLinkage(currentLinkage);
     scope->SymbolScope()->AddSymbol(functionSymbol, soul::ast::SourcePos(), context);
     functionGroup->AddFunction(functionSymbol);
 }
@@ -1067,6 +1094,7 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
     }
     FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
+    functionDefinition->SetLinkage(currentLinkage);
     MapNode(node, functionDefinition, MapKind::nodeToSymbol);
     functionDefinition->SetFunctionQualifiers(qualifiers);
     functionDefinition->SetDeclaration(declaration);
@@ -1395,6 +1423,18 @@ TypeSymbol* SymbolTable::GetFundamentalType(FundamentalTypeKind kind) const
     {
         return nullptr;
     }
+}
+
+void SymbolTable::PushLinkage(Linkage linkage_)
+{
+    linkageStack.push(currentLinkage);
+    currentLinkage = linkage_;
+}
+
+void SymbolTable::PopLinkage()
+{
+    currentLinkage = linkageStack.top();
+    linkageStack.pop();
 }
 
 } // namespace otava::symbols

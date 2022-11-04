@@ -43,7 +43,7 @@ soul::parser::Match ConceptParser<Lexer>::ConceptDefinition(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "ConceptDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171457);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661825);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> conceptName;
     std::unique_ptr<otava::ast::Node> assign;
@@ -201,7 +201,7 @@ soul::parser::Match ConceptParser<Lexer>::ConceptName(Lexer& lexer, otava::symbo
         soul::lexer::WriteBeginRuleToLog(lexer, "ConceptName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171458);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661826);
     std::unique_ptr<otava::ast::Node> identifierNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -247,7 +247,7 @@ soul::parser::Match ConceptParser<Lexer>::ConceptNameChecked(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "ConceptNameChecked");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171459);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661827);
     std::unique_ptr<otava::ast::Node> identifierNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -303,7 +303,7 @@ soul::parser::Match ConceptParser<Lexer>::ConstraintExpression(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171460);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661828);
     std::unique_ptr<otava::ast::Node> logicalOrExpr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -348,7 +348,7 @@ soul::parser::Match ConceptParser<Lexer>::RequiresClause(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "RequiresClause");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171461);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661829);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> orExpr;
     soul::parser::Match match(false);
@@ -429,7 +429,7 @@ soul::parser::Match ConceptParser<Lexer>::ConstraintLogicalOrExpression(Lexer& l
         soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintLogicalOrExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171462);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661830);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos opPos = soul::ast::SourcePos();
@@ -574,7 +574,7 @@ soul::parser::Match ConceptParser<Lexer>::ConstraintLogicalAndExpression(Lexer& 
         soul::lexer::WriteBeginRuleToLog(lexer, "ConstraintLogicalAndExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171463);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661831);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos opPos = soul::ast::SourcePos();
@@ -718,7 +718,7 @@ soul::parser::Match ConceptParser<Lexer>::RequiresExpression(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "RequiresExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171464);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661832);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> params;
     std::unique_ptr<otava::ast::Node> body;
@@ -829,7 +829,7 @@ soul::parser::Match ConceptParser<Lexer>::RequirementParameterList(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "RequirementParameterList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171465);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661833);
     std::unique_ptr<otava::ast::ParameterListNode> node = std::unique_ptr<otava::ast::ParameterListNode>();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -943,7 +943,7 @@ soul::parser::Match ConceptParser<Lexer>::RequirementBody(Lexer& lexer, otava::s
         soul::lexer::WriteBeginRuleToLog(lexer, "RequirementBody");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171466);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661834);
     std::unique_ptr<otava::ast::RequirementBodyNode> node = std::unique_ptr<otava::ast::RequirementBodyNode>();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
@@ -1057,7 +1057,7 @@ soul::parser::Match ConceptParser<Lexer>::RequirementSeq(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "RequirementSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171467);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661835);
     std::unique_ptr<otava::ast::Node> requirement;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1144,7 +1144,7 @@ soul::parser::Match ConceptParser<Lexer>::Requirement(Lexer& lexer, otava::symbo
         soul::lexer::WriteBeginRuleToLog(lexer, "Requirement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171468);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661836);
     std::unique_ptr<otava::ast::Node> nestedRequirement;
     std::unique_ptr<otava::ast::Node> typeRequirement;
     std::unique_ptr<otava::ast::Node> compoundRequirement;
@@ -1288,7 +1288,7 @@ soul::parser::Match ConceptParser<Lexer>::SimpleRequirement(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleRequirement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171469);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661837);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> expr;
     std::unique_ptr<otava::ast::Node> semicolon;
@@ -1361,7 +1361,7 @@ soul::parser::Match ConceptParser<Lexer>::TypeRequirement(Lexer& lexer, otava::s
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeRequirement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171470);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661838);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> nns;
     std::unique_ptr<otava::ast::Node> typeName;
@@ -1523,7 +1523,7 @@ soul::parser::Match ConceptParser<Lexer>::CompoundRequirement(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "CompoundRequirement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171471);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661839);
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
     soul::ast::SourcePos rbPos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> expr;
@@ -1712,7 +1712,7 @@ soul::parser::Match ConceptParser<Lexer>::ReturnTypeRequirement(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "ReturnTypeRequirement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171472);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661840);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> typeConstraint;
     soul::parser::Match match(false);
@@ -1793,7 +1793,7 @@ soul::parser::Match ConceptParser<Lexer>::NestedRequirement(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "NestedRequirement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171473);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661841);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> constraintExpr;
     std::unique_ptr<otava::ast::Node> semicolon;
@@ -1891,7 +1891,7 @@ soul::parser::Match ConceptParser<Lexer>::TypeConstraint(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeConstraint");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7901898380417171474);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2039843044483661842);
     std::unique_ptr<otava::ast::TypeConstraintNode> node = std::unique_ptr<otava::ast::TypeConstraintNode>();
     std::unique_ptr<otava::ast::Node> conceptName = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();

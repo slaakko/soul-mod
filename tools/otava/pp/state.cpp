@@ -19,7 +19,7 @@ Section::Section(Section* parent_) : parent(parent_), skip(false), processed(fal
 State::State(Lexer* lexer_) : lexer(lexer_)
 {
     currentSection.reset(new Section(nullptr));
-    Define("SOUL_CPP20", 1);
+    Define("OTAVA", 1);
 }
 
 void State::If(bool value)

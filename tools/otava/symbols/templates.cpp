@@ -116,6 +116,11 @@ void TemplateParameterSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+TypeSymbol* TemplateParameterSymbol::Unify(TypeSymbol* argType, Context* context)
+{
+    return argType;
+}
+
 BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string & name_) : 
     TypeSymbol(SymbolKind::boundTemplateParameterSymbol, name_), 
     templateParameterSymbol(nullptr), 

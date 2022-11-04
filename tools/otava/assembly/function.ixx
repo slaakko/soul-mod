@@ -10,6 +10,15 @@ import util.code.formatter;
 
 export namespace otava::assembly {
 
+class FunctionDeclaration
+{
+public:
+    FunctionDeclaration(const std::string& name_);
+    void Write(util::CodeFormatter& formatter);
+private:
+    std::string name;
+};
+
 class Instruction;
 
 enum class FunctionPart

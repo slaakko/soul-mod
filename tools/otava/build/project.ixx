@@ -20,7 +20,7 @@ struct Define
     int64_t value;
 };
 
-enum class Target
+enum class Target : int32_t
 {
     program, library
 };

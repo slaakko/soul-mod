@@ -9,7 +9,12 @@ import std.core;
 
 export namespace otava::build {
 
+enum class ProjectTarget
+{
+    program, library
+};
+
 void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles,
-    bool verbose);
+    const std::string& libraryDirs, ProjectTarget target, bool verbose);
 
 } // namespace otava::build

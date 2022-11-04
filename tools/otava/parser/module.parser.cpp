@@ -39,7 +39,7 @@ soul::parser::Match ModuleParser<Lexer>::ModuleDeclaration(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029185);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364481);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> exportKw;
     std::unique_ptr<otava::ast::Node> moduleKw;
@@ -239,7 +239,7 @@ soul::parser::Match ModuleParser<Lexer>::ModuleName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029186);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364482);
     std::u32string moduleNameStr = std::u32string();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::parser::Match match(false);
@@ -379,7 +379,7 @@ soul::parser::Match ModuleParser<Lexer>::ExportDeclaration(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029187);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364483);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lbPos = soul::ast::SourcePos();
@@ -616,7 +616,7 @@ soul::parser::Match ModuleParser<Lexer>::ImportDeclaration(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029188);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364484);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> subject = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> imprt;
@@ -813,7 +813,7 @@ soul::parser::Match ModuleParser<Lexer>::ModulePartition(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "ModulePartition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029189);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364485);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> colon;
     std::unique_ptr<otava::ast::Node> moduleName;
@@ -891,7 +891,7 @@ soul::parser::Match ModuleParser<Lexer>::ExportKeyword(Lexer& lexer, otava::symb
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029190);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364486);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -958,7 +958,7 @@ soul::parser::Match ModuleParser<Lexer>::ImportKeyword(Lexer& lexer, otava::symb
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029191);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364487);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -1025,7 +1025,7 @@ soul::parser::Match ModuleParser<Lexer>::ModuleKeyword(Lexer& lexer, otava::symb
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029192);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364488);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -1092,7 +1092,7 @@ soul::parser::Match ModuleParser<Lexer>::GlobalModuleFragment(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "GlobalModuleFragment");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029193);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364489);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> moduleKw;
     std::unique_ptr<otava::ast::Node> semicolon;
@@ -1200,7 +1200,7 @@ soul::parser::Match ModuleParser<Lexer>::PrivateModuleFragment(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "PrivateModuleFragment");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029194);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364490);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> moduleKw;
     std::unique_ptr<otava::ast::Node> colon;
@@ -1342,7 +1342,7 @@ soul::parser::Match ModuleParser<Lexer>::HeaderName(Lexer& lexer, otava::symbols
         soul::lexer::WriteBeginRuleToLog(lexer, "HeaderName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6653537866360029195);
+    soul::lexer::RuleGuard ruleGuard(lexer, 2774545673465364491);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)

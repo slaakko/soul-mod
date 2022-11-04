@@ -6,6 +6,11 @@ struct Foo
     int y;
 };
 
+void f()
+{
+	std::str s;
+}
+
 int main()
 {
     Foo foo;
@@ -13,6 +18,7 @@ int main()
 	foo.y = 2;
 	
 	Foo bar = foo;
+	f();
 	
     return 0;
 }

@@ -13,6 +13,18 @@ import otava.ast.statement;
 
 export namespace otava::symbols {
 
+const int32_t undefinedIndex = 0;
+const int32_t defaultCtorIndex = -1;
+const int32_t copyCtorIndex = -2;
+const int32_t moveCtorIndex = -3;
+const int32_t copyAssignmentIndex = -4;
+const int32_t moveAssignmentIndex = -5;
+const int32_t destructorIndex = -6;
+
+enum class SpecialFunctionKind : int32_t;
+
+int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
+
 class Context;
 
 using RecordedParseFn = void (*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
@@ -55,6 +67,9 @@ public:
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
     void MakeObjectLayout(Context* context);
+    void MapFunction(FunctionSymbol* function);
+    FunctionSymbol* GetFunction(int32_t functionIndex) const;
+    int32_t NextFunctionIndex();
 private:
     std::vector<TypeSymbol*> baseClasses;
     std::vector<util::uuid> baseClassIds;
@@ -68,6 +83,9 @@ private:
     std::vector<util::uuid> objectLayoutIds;
     int32_t vptrIndex;
     otava::intermediate::Type* irType;
+    std::map<int32_t, FunctionSymbol*> functionMap;
+    std::map<int32_t, util::uuid> functionIdMap;
+    int32_t currentFunctionIndex;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

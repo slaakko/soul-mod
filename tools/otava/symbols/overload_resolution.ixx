@@ -16,6 +16,29 @@ class Context;
 class Scope;
 class Exception;
 
+enum class OverloadResolutionFlags : int32_t
+{
+    none = 0, dontInstantiate = 1 << 0
+};
+
+constexpr OverloadResolutionFlags operator|(OverloadResolutionFlags left, OverloadResolutionFlags right)
+{
+    return OverloadResolutionFlags(int32_t(left) | int32_t(right));
+}
+
+constexpr OverloadResolutionFlags operator&(OverloadResolutionFlags left, OverloadResolutionFlags right)
+{
+    return OverloadResolutionFlags(int32_t(left) & int32_t(right));
+}
+
+constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
+{
+    return OverloadResolutionFlags(~int32_t(flags));
+}
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags);
+
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex);
 

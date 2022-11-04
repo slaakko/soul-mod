@@ -116,6 +116,14 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         {
             return "boundFunctionCallNode";
         }
+        case BoundNodeKind::boundDisjunctionNode:
+        {
+            return "boundDisjunctionNode";
+        }
+        case BoundNodeKind::boundConjunctionNode:
+        {
+            return "boundConjunctionNode";
+        }
         case BoundNodeKind::boundConversionNode:
         {
             return "boundConversionNode";

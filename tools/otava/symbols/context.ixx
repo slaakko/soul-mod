@@ -10,6 +10,7 @@ import soul.lexer.base;
 import soul.lexer.file.map;
 import soul.ast.source.pos;
 import otava.ast.node;
+import otava.ast.function;
 
 export namespace otava::symbols {
 
@@ -31,7 +32,9 @@ enum class ContextFlags : int32_t
     parseMemberFunction = 1 << 8,
     retMemberDeclSpecifiers = 1 << 9,
     addClassScope = 1 << 10,
-    saveDeclarations = 1 << 11
+    saveDeclarations = 1 << 11,
+    linkageDeclaration = 1 << 12,
+    instantiateFunctionTemplate = 1 << 13
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -53,8 +56,10 @@ class SymbolTable;
 class EvaluationContext;
 class BoundCompileUnitNode;
 class BoundFunctionNode;
+class BoundExpressionNode;
 class BoundCompoundStatementNode;
 class OperationRepository;
+class FunctionDefinitionSymbol;
 
 class Context
 {
@@ -66,8 +71,11 @@ public:
     void SetSymbolTable(SymbolTable* symbolTable_);
     BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit.get(); }
     OperationRepository* GetOperationRepository() const;
-    BoundFunctionNode* GetBoundFunction() const { return boundFunction; }
-    void SetBoundFunction(BoundFunctionNode* boundFunction_);
+    BoundFunctionNode* GetBoundFunction() const { return boundFunction.get(); }
+    BoundFunctionNode* ReleaseBoundFunction() { return boundFunction.release(); }
+    void PushBoundFunction(BoundFunctionNode* boundFunction_);
+    void PopBoundFunction();
+    BoundExpressionNode* GetThisPtr(const soul::ast::SourcePos& sourcePos);
     EvaluationContext* GetEvaluationContext();
     std::string FileName() const;
     void PushFlags();
@@ -87,17 +95,24 @@ public:
     std::unique_ptr<DeclarationList> ReleaseDeclarationList(otava::ast::Node* node);
     soul::lexer::FileMap* GetFileMap() const { return fileMap; }
     void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
+    void SetFunctionTemplateSpecialization(FunctionDefinitionSymbol* specialization_) { specialization = specialization_; }
+    FunctionDefinitionSymbol* GetFunctionTemplateSpecialization() const { return specialization; }
+    void SetFunctionDefinitionNode(otava::ast::FunctionDefinitionNode* functionDefinitionNode_) { functionDefinitionNode = functionDefinitionNode_; }
+    otava::ast::Node* GetFunctionDefinitionNode() const { return functionDefinitionNode; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
     std::unique_ptr<BoundCompileUnitNode> boundCompileUnit;
-    BoundFunctionNode* boundFunction;
+    std::unique_ptr<BoundFunctionNode> boundFunction;
+    std::stack<std::unique_ptr<BoundFunctionNode>> boundFunctionStack;
     ContextFlags flags;
     std::stack<ContextFlags> flagStack;
     std::stack<otava::ast::Node*> nodeStack;
     otava::ast::Node* node;
     std::map<otava::ast::Node*, std::unique_ptr<DeclarationList>> declarationMap;
     soul::lexer::FileMap* fileMap;
+    FunctionDefinitionSymbol* specialization;
+    otava::ast::FunctionDefinitionNode* functionDefinitionNode;
 };
 
 } // namespace otava::symbols

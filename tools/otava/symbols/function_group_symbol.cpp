@@ -10,6 +10,7 @@ import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
+import otava.symbols.type.symbol;
 
 namespace otava::symbols {
 
@@ -126,7 +127,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
             {
                 for (int i = 0; i < function->Arity(); ++i)
                 {
-                    if (function->Parameters()[i]->GetType() != parameterTypes[i])
+                    if (!TypesEqual(function->Parameters()[i]->GetType(), parameterTypes[i]))
                     {
                         found = false;
                         break;
@@ -153,7 +154,7 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::
             {
                 for (int i = 0; i < functionDefinition->Arity(); ++i)
                 {
-                    if (functionDefinition->Parameters()[i]->GetType() != parameterTypes[i])
+                    if (!TypesEqual(functionDefinition->Parameters()[i]->GetType(), parameterTypes[i]))
                     {
                         found = false;
                         break;

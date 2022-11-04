@@ -105,7 +105,14 @@ void Instantiator::Visit(otava::ast::UsingDirectiveNode& node)
 
 void Instantiator::Visit(otava::ast::FunctionDefinitionNode& node)
 {
-    ProcessMemberFunctionDefinition(&node, context);
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    {
+        ProcessSimpleDeclaration(&node, context);
+    }
+    else
+    {
+        ProcessMemberFunctionDefinition(&node, context);
+    }
 }
 
 void Instantiator::Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node)

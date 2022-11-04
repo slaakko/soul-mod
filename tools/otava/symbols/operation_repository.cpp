@@ -137,7 +137,7 @@ FunctionSymbol* PointerCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundE
     if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer();
     TypeSymbol* rvalueRefType = pointerType->AddRValueRef();
-    if (args[1]->GetType() == rvalueRefType) return nullptr;
+    if (TypesEqual(args[1]->GetType(), rvalueRefType)) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -204,7 +204,7 @@ FunctionSymbol* PointerMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundE
     if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer();
     TypeSymbol* rvalueRefType = pointerType->AddRValueRef();
-    if (args[1]->GetType() != rvalueRefType) return nullptr;
+    if (!TypesEqual(args[1]->GetType(), rvalueRefType) && !args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -269,7 +269,7 @@ FunctionSymbol* PointerCopyAssignmentOperation::Get(std::vector<std::unique_ptr<
     if (type->PointerCount() <= 1) return nullptr;
     if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer();
-    if (args[1]->GetType() == pointerType->AddRValueRef()) return nullptr;
+    if (TypesEqual(args[1]->GetType(), pointerType->AddRValueRef()) || args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -336,7 +336,7 @@ FunctionSymbol* PointerMoveAssignmentOperation::Get(std::vector<std::unique_ptr<
     if (type->PointerCount() <= 1) return nullptr;
     if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer();
-    if (args[1]->GetType() != pointerType->AddRValueRef()) return nullptr;
+    if (!TypesEqual(args[1]->GetType(), pointerType->AddRValueRef()) && !args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
     if (it != functionMap.cend())
     {
@@ -856,6 +856,11 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
     TypeSymbol* type = args[0]->GetType();
     if (type->PointerCount() != 1 || !type->RemovePointer()->PlainType()->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
+    FunctionSymbol* defaultCtor = classType->GetFunction(defaultCtorIndex);
+    if (defaultCtor)
+    {
+        return defaultCtor;
+    }
     auto it = functionMap.find(classType);
     if (it != functionMap.cend())
     {
@@ -934,7 +939,12 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     TypeSymbol* type = args[0]->GetType();
     if (type->PointerCount() != 1 || !type->RemovePointer()->PlainType()->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
-    if (args[1]->GetType() == classType->AddRValueRef() || args[1]->GetFlag(BoundExpressionFlags::bindToRvalueRef)) return nullptr;
+    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef()) || args[1]->BindToRvalueRef()) return nullptr;
+    FunctionSymbol* copyCtor = classType->GetFunction(copyCtorIndex);
+    if (copyCtor)
+    {
+        return copyCtor;
+    }
     auto it = functionMap.find(classType);
     if (it != functionMap.cend())
     {

@@ -27,7 +27,7 @@ soul::parser::Match PunctuationParser<Lexer>::Semicolon(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Semicolon");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627329);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921281);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -75,7 +75,7 @@ soul::parser::Match PunctuationParser<Lexer>::Comma(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Comma");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627330);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921282);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -123,7 +123,7 @@ soul::parser::Match PunctuationParser<Lexer>::Quest(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Quest");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627331);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921283);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -171,7 +171,7 @@ soul::parser::Match PunctuationParser<Lexer>::Colon(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Colon");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627332);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921284);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -219,7 +219,7 @@ soul::parser::Match PunctuationParser<Lexer>::ColonColon(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ColonColon");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627333);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921285);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -267,7 +267,7 @@ soul::parser::Match PunctuationParser<Lexer>::Ellipsis(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Ellipsis");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627334);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921286);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -315,7 +315,7 @@ soul::parser::Match PunctuationParser<Lexer>::LParen(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LParen");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627335);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921287);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -363,7 +363,7 @@ soul::parser::Match PunctuationParser<Lexer>::RParen(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RParen");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627336);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921288);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -411,7 +411,7 @@ soul::parser::Match PunctuationParser<Lexer>::LBracket(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LBracket");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627337);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921289);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -459,7 +459,7 @@ soul::parser::Match PunctuationParser<Lexer>::RBracket(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RBracket");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627338);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921290);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -507,7 +507,7 @@ soul::parser::Match PunctuationParser<Lexer>::LBrace(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LBrace");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627339);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921291);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -555,7 +555,7 @@ soul::parser::Match PunctuationParser<Lexer>::RBrace(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RBrace");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627340);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921292);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -603,7 +603,7 @@ soul::parser::Match PunctuationParser<Lexer>::Assign(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Assign");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7326029410182627341);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921293);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

@@ -11,6 +11,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.scope;
 import otava.symbols.symbol;
 import otava.symbols.bound.tree;
+import otava.symbols.function.symbol;
 
 namespace otava::symbols {
 
@@ -20,7 +21,10 @@ Context::Context() :
     flags(ContextFlags::none), 
     node(nullptr), 
     boundCompileUnit(new BoundCompileUnitNode()),
-    boundFunction(nullptr)
+    boundFunction(nullptr),
+    fileMap(nullptr),
+    specialization(nullptr),
+    functionDefinitionNode(nullptr)
 {
 }
 
@@ -39,14 +43,23 @@ OperationRepository* Context::GetOperationRepository() const
     return GetBoundCompileUnit()->GetOperationRepository();
 }
 
-void Context::SetBoundFunction(BoundFunctionNode* boundFunction_)
-{
-    boundFunction = boundFunction_;
-}
-
 EvaluationContext* Context::GetEvaluationContext()
 {
     return symbolTable->GetModule()->GetEvaluationContext();
+}
+
+BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
+{
+    FunctionDefinitionSymbol* function = boundFunction->GetFunctionDefinitionSymbol();
+    ParameterSymbol* thisParam = function->ThisParam();
+    if (thisParam)
+    {
+        return new BoundParameterNode(thisParam, sourcePos);
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 std::string Context::FileName() const
@@ -151,6 +164,18 @@ std::unique_ptr<DeclarationList> Context::ReleaseDeclarationList(otava::ast::Nod
     }
     declarationMap.erase(node);
     return declarationList;
+}
+
+void Context::PushBoundFunction(BoundFunctionNode* boundFunction_)
+{
+    boundFunctionStack.push(std::unique_ptr<BoundFunctionNode>(boundFunction.release()));
+    boundFunction.reset(boundFunction_);
+}
+
+void Context::PopBoundFunction()
+{
+    boundFunction.reset(boundFunctionStack.top().release());
+    boundFunctionStack.pop();
 }
 
 } // namespace otava::symbols

@@ -17,6 +17,7 @@ import otava.symbols.declaration;
 import otava.symbols.enums;
 import otava.symbols.evaluator;
 import otava.symbols.exception;
+import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.overload.resolution;
@@ -93,6 +94,15 @@ OperatorGroupNameMap::OperatorGroupNameMap()
     operatorGroupNameMap[otava::ast::NodeKind::orAssignNode] = U"operator|=";
     operatorGroupNameMap[otava::ast::NodeKind::shiftLeftAssignNode] = U"operator<<=";
     operatorGroupNameMap[otava::ast::NodeKind::shiftRightAssignNode] = U"operator>>=";
+    operatorGroupNameMap[otava::ast::NodeKind::equalNode] = U"operator==";
+    operatorGroupNameMap[otava::ast::NodeKind::lessNode] = U"operator<";
+    operatorGroupNameMap[otava::ast::NodeKind::derefNode] = U"operator*";
+    operatorGroupNameMap[otava::ast::NodeKind::addrOfNode] = U"operator&";
+    operatorGroupNameMap[otava::ast::NodeKind::notNode] = U"operator!";
+    operatorGroupNameMap[otava::ast::NodeKind::complementNode] = U"operator~";
+    operatorGroupNameMap[otava::ast::NodeKind::prefixIncNode] = U"operator++";
+    operatorGroupNameMap[otava::ast::NodeKind::prefixDecNode] = U"operator--";
+    operatorGroupNameMap[otava::ast::NodeKind::arrowNode] = U"operator->";
 }
 
 const std::u32string& OperatorGroupNameMap::GetGroupName(otava::ast::NodeKind nodeKind, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -155,6 +165,13 @@ public:
     void Visit(otava::ast::BinaryExprNode& node) override;
     void Visit(otava::ast::UnaryExprNode& node) override;
 private:
+    void BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right);
+    void BindUnaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
+    void BindArrow(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
+    void BindDeref(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
+    void BindAddrOf(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
+    void BindPrefixInc(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
+    void BindPrefixDec(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
     Context *context;
     BoundExpressionNode* boundExpression;
     Scope* scope;
@@ -167,6 +184,70 @@ ExpressionBinder::ExpressionBinder(Context* context_, SymbolGroupKind symbolGrou
     scope(context->GetSymbolTable()->CurrentScope()),
     symbolGroups(symbolGroups_)
 {
+}
+
+void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right)
+{
+    std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(op, sourcePos, context);
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    args.push_back(std::unique_ptr<BoundExpressionNode>(left));
+    args.push_back(std::unique_ptr<BoundExpressionNode>(right));
+    Exception ex;
+    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex);
+    if (!functionCall)
+    {
+        args[0].reset(new BoundAddressOfNode(args[0].release(), sourcePos));
+        functionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex);
+    }
+    if (!functionCall)
+    {
+        ThrowException(ex);
+    }
+    boundExpression = functionCall.release();
+}
+
+void ExpressionBinder::BindUnaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand)
+{
+    std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(op, sourcePos, context);
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    args.push_back(std::unique_ptr<BoundExpressionNode>(operand));
+    Exception ex;
+    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex);
+    if (!functionCall)
+    {
+        args[0].reset(new BoundAddressOfNode(args[0].release(), sourcePos));
+        functionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex);
+    }
+    if (!functionCall)
+    {
+        ThrowException(ex);
+    }
+    boundExpression = functionCall.release();
+}
+
+void ExpressionBinder::BindArrow(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand)
+{
+    // todo
+}
+
+void ExpressionBinder::BindDeref(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand)
+{
+    // todo
+}
+
+void ExpressionBinder::BindAddrOf(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand)
+{
+    // todo
+}
+
+void ExpressionBinder::BindPrefixInc(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand)
+{
+    // todo
+}
+
+void ExpressionBinder::BindPrefixDec(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand)
+{
+    // todo
 }
 
 void ExpressionBinder::Visit(otava::ast::IntegerLiteralNode& node) 
@@ -218,7 +299,12 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 if (sym->IsVariableSymbol())
                 {
                     VariableSymbol* variable = static_cast<VariableSymbol*>(sym);
-                    boundExpression = new BoundVariableNode(variable, node.GetSourcePos());
+                    BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
+                    if (variable->IsMemberVariable())
+                    {
+                        boundVariable->SetThisPtr(context->GetThisPtr(node.GetSourcePos()));
+                    }
+                    boundExpression = boundVariable;
                 }
                 break;
             }
@@ -357,27 +443,121 @@ void ExpressionBinder::Visit(otava::ast::BinaryExprNode& node)
 {
     std::unique_ptr<BoundExpressionNode> left(BindExpression(node.Left(), context));
     std::unique_ptr<BoundExpressionNode> right(BindExpression(node.Right(), context));
-    std::u32string groupName = OperatorGroupNameMap::Instance().GetGroupName(node.Op()->Kind(), node.GetSourcePos(), context);
-    std::vector<std::unique_ptr<BoundExpressionNode>> args;
-    args.push_back(std::unique_ptr<BoundExpressionNode>(left.release()));
-    args.push_back(std::unique_ptr<BoundExpressionNode>(right.release()));
-    Exception ex;
-    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverload(scope, groupName, args, node.GetSourcePos(), context, ex);
-    if (!functionCall)
+    otava::ast::NodeKind op = node.Op()->Kind();
+    switch (op)
     {
-        args[0].reset(new BoundAddressOfNode(args[0].release(), node.GetSourcePos()));
-        functionCall = ResolveOverload(scope, groupName, args, node.GetSourcePos(), context, ex);
+        case otava::ast::NodeKind::assignNode:
+        case otava::ast::NodeKind::plusAssignNode:
+        case otava::ast::NodeKind::minusAssignNode:
+        case otava::ast::NodeKind::mulAssignNode:
+        case otava::ast::NodeKind::divAssignNode:
+        case otava::ast::NodeKind::modAssignNode:
+        case otava::ast::NodeKind::xorAssignNode:
+        case otava::ast::NodeKind::andAssignNode:
+        case otava::ast::NodeKind::orAssignNode:
+        case otava::ast::NodeKind::shiftLeftAssignNode:
+        case otava::ast::NodeKind::shiftRightAssignNode:
+        case otava::ast::NodeKind::inclusiveOrNode:
+        case otava::ast::NodeKind::exclusiveOrNode:
+        case otava::ast::NodeKind::andNode:
+        case otava::ast::NodeKind::equalNode:
+        case otava::ast::NodeKind::lessNode:
+        case otava::ast::NodeKind::compareNode:
+        case otava::ast::NodeKind::shiftLeftNode:
+        case otava::ast::NodeKind::shiftRightNode:
+        case otava::ast::NodeKind::plusNode:
+        case otava::ast::NodeKind::minusNode:
+        case otava::ast::NodeKind::mulNode:
+        case otava::ast::NodeKind::divNode:
+        case otava::ast::NodeKind::modNode:
+        {
+            BindBinaryOp(op, node.GetSourcePos(), left.release(), right.release());
+            break;
+        }
+        case otava::ast::NodeKind::notEqualNode:
+        {
+            BindBinaryOp(otava::ast::NodeKind::equalNode, node.GetSourcePos(), left.release(), right.release());
+            BindUnaryOp(otava::ast::NodeKind::notNode, node.GetSourcePos(), boundExpression);
+            break;
+        }
+        case otava::ast::NodeKind::greaterNode:
+        {
+            BindBinaryOp(otava::ast::NodeKind::lessNode, node.GetSourcePos(), right.release(), left.release());
+            break;
+        }
+        case otava::ast::NodeKind::lessOrEqualNode:
+        {
+            BindBinaryOp(otava::ast::NodeKind::lessNode, node.GetSourcePos(), right.release(), left.release());
+            BindUnaryOp(otava::ast::NodeKind::notNode, node.GetSourcePos(), boundExpression);
+            break;
+        }
+        case otava::ast::NodeKind::greaterOrEqualNode:
+        {
+            BindBinaryOp(otava::ast::NodeKind::lessNode, node.GetSourcePos(), left.release(), right.release());
+            BindUnaryOp(otava::ast::NodeKind::notNode, node.GetSourcePos(), boundExpression);
+            break;
+        }
+        case otava::ast::NodeKind::disjunctionNode:
+        {
+            TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
+            BoundDisjunctionNode* boundDisjunction = new BoundDisjunctionNode(left.release(), right.release(), node.GetSourcePos(), boolType);
+            VariableSymbol* temporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(boolType);
+            boundDisjunction->SetTemporary(new BoundVariableNode(temporary, node.GetSourcePos()));
+            boundExpression = boundDisjunction;
+            break;
+        }
+        case otava::ast::NodeKind::conjunctionNode:
+        {
+            TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
+            BoundConjunctionNode* boundConjunction = new BoundConjunctionNode(left.release(), right.release(), node.GetSourcePos(), boolType);
+            VariableSymbol* temporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(boolType);
+            boundConjunction->SetTemporary(new BoundVariableNode(temporary, node.GetSourcePos()));
+            boundExpression = boundConjunction;
+            break;
+        }
     }
-    if (!functionCall)
-    {
-        ThrowException(ex);
-    }
-    boundExpression = functionCall.release();
 }
 
 void ExpressionBinder::Visit(otava::ast::UnaryExprNode& node)
 {
     std::unique_ptr<BoundExpressionNode> child(BindExpression(node.Child(), context));
+    otava::ast::NodeKind op = node.Op()->Kind();
+    switch (op)
+    {
+        case otava::ast::NodeKind::notNode:
+        case otava::ast::NodeKind::plusNode:
+        case otava::ast::NodeKind::minusNode:
+        case otava::ast::NodeKind::complementNode:
+        {
+            BindUnaryOp(op, node.GetSourcePos(), child.release());
+            break;
+        }
+        case otava::ast::NodeKind::arrowNode:
+        {
+            BindArrow(node.GetSourcePos(), child.release());
+            break;
+        }
+        case otava::ast::NodeKind::derefNode:
+        {
+            BindDeref(node.GetSourcePos(), child.release());
+            break;
+        }
+        case otava::ast::NodeKind::addrOfNode:
+        {
+            BindAddrOf(node.GetSourcePos(), child.release());
+            break;
+        }
+        case otava::ast::NodeKind::prefixIncNode:
+        {
+            BindPrefixInc(node.GetSourcePos(), child.release());
+            break;
+        }
+        case otava::ast::NodeKind::prefixDecNode:
+        {
+            BindPrefixDec(node.GetSourcePos(), child.release());
+            break;
+        }
+    }
 }
 
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope)
@@ -400,3 +580,4 @@ void InitExpressionBinder()
 }
 
 } // namespace otava::symbols
+

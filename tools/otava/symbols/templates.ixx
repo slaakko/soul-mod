@@ -40,6 +40,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
 private:
     Symbol* constraint;
     util::uuid constraintId;

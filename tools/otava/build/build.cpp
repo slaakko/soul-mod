@@ -10,6 +10,7 @@ import otava.build_solution;
 import otava.build.parser;
 import otava.build.project_file;
 import otava.build.gen_main_unit;
+import otava.build.msbuild;
 import otava.ast;
 import otava.lexer;
 import otava.parser.translation.unit;
@@ -22,6 +23,7 @@ import otava.symbols.declarator;
 import otava.symbols.namespaces;
 import otava.symbols.conversion.table;
 import otava.symbols.symbol.table;
+import otava.symbols.exception;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
@@ -200,7 +202,7 @@ void ScanDependencies(Project* project, int32_t file, bool implementationUnit, s
     interfaceUnitName = visitor.InterfaceUnitName();
 }
 
-void BuildSequentally(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, BuildFlags flags)
+void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, BuildFlags flags)
 {
     otava::symbols::SetProjectReady(false);
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
@@ -210,10 +212,15 @@ void BuildSequentally(otava::symbols::ModuleMapper& moduleMapper, Project* proje
     std::string projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
     std::vector<std::string> asmFileNames;
     std::vector<std::string> cppFileNames;
+    std::string libraryDirs;
     std::string mainFunctionIrName;
     int mainFunctionParams = 0;
     std::string cppFileName = "__main__.cpp";
-    cppFileNames.push_back(cppFileName);
+    if (project->GetTarget() == Target::program)
+    {
+        cppFileNames.push_back(cppFileName);
+        libraryDirs = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "std"), config));
+    }
     project->AddRoots(moduleMapper);
     otava::symbols::Module projectModule(project->Name() + ".#project");
     otava::ast::SetNodeIdFactory(projectModule.GetNodeIdFactory());
@@ -341,8 +348,19 @@ void BuildSequentally(otava::symbols::ModuleMapper& moduleMapper, Project* proje
     }
     projectModule.ResolveForwardDeclarations();
     projectModule.AddDerivedClasses();
-    GenerateMainUnit(util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), cppFileName), mainFunctionIrName, mainFunctionParams);
-    MakeProjectFile(projectFilePath, project->Name(), asmFileNames, cppFileNames, (flags & BuildFlags::verbose) != BuildFlags::none);
+    ProjectTarget projectTarget = ProjectTarget::library;
+    if (project->GetTarget() == Target::program)
+    {
+        if (mainFunctionIrName.empty())
+        {
+            otava::symbols::SetExceptionThrown();
+            throw std::runtime_error("program has no main function");
+        }
+        GenerateMainUnit(util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), cppFileName), mainFunctionIrName, mainFunctionParams);
+        projectTarget = ProjectTarget::program;
+    }
+    MakeProjectFile(projectFilePath, project->Name(), asmFileNames, cppFileNames, libraryDirs, projectTarget, (flags & BuildFlags::verbose) != BuildFlags::none);
+    MSBuild(projectFilePath, config);
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
         std::cout << "project '" << project->Name() << "' built successfully" << std::endl;
@@ -393,7 +411,7 @@ std::vector<Project*> MakeTopologicalOrder(Solution* solution)
     return topologicalOrder;
 }
 
-void BuildSequentally(otava::symbols::ModuleMapper& moduleMapper, Solution* solution, const std::string& config, BuildFlags flags)
+void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Solution* solution, const std::string& config, BuildFlags flags)
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -420,12 +438,12 @@ void BuildSequentally(otava::symbols::ModuleMapper& moduleMapper, Solution* solu
 
 void Build(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, BuildFlags flags)
 {
-    BuildSequentally(moduleMapper, project, config, flags);
+    BuildSequentially(moduleMapper, project, config, flags);
 }
 
 void Build(otava::symbols::ModuleMapper& moduleMapper, Solution* solution, const std::string& config, BuildFlags flags)
 {
-    BuildSequentally(moduleMapper, solution, config, flags);
+    BuildSequentially(moduleMapper, solution, config, flags);
 }
 
 } // namespace otava::build

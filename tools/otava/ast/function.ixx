@@ -25,12 +25,15 @@ public:
     Node* Specifiers() const { return specifiers.get(); }
     Node* FunctionBody() const { return functionBody.get(); }
     void ResetFunctionBody(Node* functionBody_);
+    int32_t Index() const { return index; }
+    void SetIndex(int32_t index_) { index = index_; }
 private:
     std::unique_ptr<Node> attributes;
     std::unique_ptr<Node> declSpecifiers;
     std::unique_ptr<Node> declarator;
     std::unique_ptr<Node> specifiers;
     std::unique_ptr<Node> functionBody;
+    int32_t index;
 };
 
 class FunctionBodyNode : public UnaryNode

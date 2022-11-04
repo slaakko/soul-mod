@@ -646,7 +646,6 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
                     definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                     ++scopes;
                     BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition);
-                    context->GetBoundCompileUnit()->AddBoundNode(boundFunctionNode);
                     context->SetBoundFunction(boundFunctionNode);
                 }
             }
@@ -682,7 +681,6 @@ int BeginFunctionDefinition(soul::cpp20::ast::Node* declSpecifierSequence, soul:
                 definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                 ++scopes;
                 BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition);
-                context->GetBoundCompileUnit()->AddBoundNode(boundFunctionNode);
                 context->SetBoundFunction(boundFunctionNode);
             }
         }

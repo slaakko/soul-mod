@@ -186,7 +186,7 @@ void ScanDependencies(soul::cpp20::proj::ast::Project* project, int file, bool i
     interfaceUnitName = visitor.InterfaceUnitName();
 }
 
-void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags)
+void BuildSequentially(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags)
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -348,7 +348,7 @@ std::vector<soul::cpp20::proj::ast::Project*> MakeTopologicalOrder(soul::cpp20::
     return topologicalOrder;
 }
 
-void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags)
+void BuildSequentially(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags)
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -375,12 +375,12 @@ void BuildSequentally(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cp
 
 void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Project* project, BuildFlags flags)
 {
-    BuildSequentally(moduleMapper, project, flags);
+    BuildSequentially(moduleMapper, project, flags);
 }
 
 void Build(soul::cpp20::symbols::ModuleMapper& moduleMapper, soul::cpp20::proj::ast::Solution* solution, BuildFlags flags)
 {
-    BuildSequentally(moduleMapper, solution, flags);
+    BuildSequentially(moduleMapper, solution, flags);
 }
 
 } // namespace soul::cpp20::project::build
