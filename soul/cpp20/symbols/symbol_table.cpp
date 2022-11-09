@@ -163,10 +163,6 @@ void SymbolTable::Import(const SymbolTable& that)
 
 void SymbolTable::ImportSpecializations()
 {
-    for (const auto& s : specializationSet)
-    {
-        specializationSet.insert(s);
-    }
 }
 
 void SymbolTable::ImportCompoundTypeMap(const SymbolTable& that)

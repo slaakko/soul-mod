@@ -15,8 +15,10 @@ import otava.ast.error;
 import otava.intermediate.error;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.alias.group.symbol;
+import otava.symbols.alias.type.templates;
 import otava.symbols.bound.node;
 import otava.symbols.class_group.symbol;
+import otava.symbols.class_templates;
 import otava.symbols.function.group.symbol;
 import otava.symbols.variable.group.symbol;
 import otava.symbols.enum_group.symbol;
@@ -38,7 +40,6 @@ import otava.symbols.variable.symbol;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.exception;
-import otava.symbols.specialization;
 import otava.symbols.visitor;
 import otava.symbols.bound.tree;
 import otava.symbols.fundamental.type.operation;
@@ -200,7 +201,7 @@ void SymbolTable::Import(const SymbolTable& that)
     Context context;
     context.SetSymbolTable(this);
     globalNs->Import(that.globalNs.get(), &context);
-    ImportSpecializations();
+    ImportSpecializations(that);
     ImportCompoundTypeMap(that);
     ImportFundamentalTypeMap(that);
     ImportNodeSymbolMap(that);
@@ -219,11 +220,15 @@ void SymbolTable::Import(const SymbolTable& that)
     conversionTable->Import(that.GetConversionTable());
 }
 
-void SymbolTable::ImportSpecializations()
+void SymbolTable::ImportSpecializations(const SymbolTable& that)
 {
-    for (const auto& s : specializationSet)
+    for (const auto& s : that.classTemplateSpecializationSet)
     {
-        specializationSet.insert(s);
+        classTemplateSpecializationSet.insert(s);
+    }
+    for (const auto& a : that.aliasTypeTemplateSpecializationSet)
+    {
+        aliasTypeTemplateSpecializationSet.insert(a);
     }
 }
 
@@ -329,6 +334,12 @@ void SymbolTable::WriteMaps(Writer& writer)
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nns);
     for (const auto& m : nodeSymbolMap)
     {
+        writer.GetBinaryStreamWriter().Write(static_cast<int32_t>(m.first->Kind()));
+        writer.GetBinaryStreamWriter().Write(m.second->Name());
+        if (m.second->Name() == U"remove_reference_t")
+        {
+            int x = 0;
+        }
         int64_t nodeId = m.first->Id();
         if (nodeId == 0xcdcdcdcdcdcdcdcd)
         {
@@ -384,6 +395,9 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
     uint32_t nns = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < nns; ++i)
     {
+        otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(reader.GetBinaryStreamReader().ReadInt());
+        std::u32string name = reader.GetBinaryStreamReader().ReadUtf32String();
+        int x = 0;
         int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
@@ -440,9 +454,15 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
 void SymbolTable::Write(Writer& writer)
 {
     globalNs->Write(writer);
-    uint32_t scount = specializations.size();
+    uint32_t scount = classTemplateSpecializations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(scount);
-    for (const auto& specialization : specializations)
+    for (const auto& specialization : classTemplateSpecializations)
+    {
+        writer.Write(specialization.get());
+    }
+    uint32_t acount = aliasTypeTemplateSpecializations.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(acount);
+    for (const auto& specialization : aliasTypeTemplateSpecializations)
     {
         writer.Write(specialization.get());
     }
@@ -464,15 +484,30 @@ void SymbolTable::Read(Reader& reader)
     for (uint32_t i = 0; i < scount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
-        if (symbol->IsSpecializationSymbol())
+        if (symbol->IsClassTemplateSpecializationSymbol())
         {
-            SpecializationSymbol* specialization = static_cast<SpecializationSymbol*>(symbol);
-            specializations.push_back(std::unique_ptr<Symbol>(specialization));
+            ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol);
+            classTemplateSpecializations.push_back(std::unique_ptr<Symbol>(specialization));
         }
         else
         {
             otava::ast::SetExceptionThrown();
-            throw std::runtime_error("otava.symbols.symbol_table: specialization expected");
+            throw std::runtime_error("otava.symbols.symbol_table: class template specialization expected");
+        }
+    }
+    uint32_t acount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < acount; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsAliasTypeTemplateSpecializationSymbol())
+        {
+            AliasTypeTemplateSpecializationSymbol* specialization = static_cast<AliasTypeTemplateSpecializationSymbol*>(symbol);
+            aliasTypeTemplateSpecializations.push_back(std::unique_ptr<Symbol>(specialization));
+        }
+        else
+        {
+            otava::ast::SetExceptionThrown();
+            throw std::runtime_error("otava.symbols.symbol_table: alias type template specialization expected");
         }
     }
     uint32_t ccount = reader.GetBinaryStreamReader().ReadULEB128UInt();
@@ -494,7 +529,11 @@ void SymbolTable::Read(Reader& reader)
 
 void SymbolTable::Resolve()
 {
-    for (auto& specialization : specializations)
+    for (auto& specialization : classTemplateSpecializations)
+    {
+        MapType(static_cast<TypeSymbol*>(specialization.get()));
+    }
+    for (auto& specialization : aliasTypeTemplateSpecializations)
     {
         MapType(static_cast<TypeSymbol*>(specialization.get()));
     }
@@ -518,9 +557,14 @@ void SymbolTable::Resolve()
         }
     }
     globalNs->Resolve(*this);
-    for (const auto& specialization : specializations)
+    for (const auto& specialization : classTemplateSpecializations)
     {
-        SpecializationSymbol* s = static_cast<SpecializationSymbol*>(specialization.get());
+        ClassTemplateSpecializationSymbol* s = static_cast<ClassTemplateSpecializationSymbol*>(specialization.get());
+        s->Resolve(*this);
+    }
+    for (const auto& specialization : aliasTypeTemplateSpecializations)
+    {
+        AliasTypeTemplateSpecializationSymbol* s = static_cast<AliasTypeTemplateSpecializationSymbol*>(specialization.get());
         s->Resolve(*this);
     }
     conversionTable->Make();
@@ -769,15 +813,16 @@ VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast:
     return variableSymbol;
 }
 
-void SymbolTable::AddAliasType(otava::ast::Node* node, TypeSymbol* type, Context* context)
+AliasTypeSymbol* SymbolTable::AddAliasType(otava::ast::Node* idNode, otava::ast::Node* aliasTypeNode, TypeSymbol* type, Context* context)
 {
-    std::u32string id = node->Str();
-    AliasGroupSymbol* aliasGroup = currentScope->GroupScope()->GetOrInsertAliasGroup(id, node->GetSourcePos(), context);
+    std::u32string id = idNode->Str();
+    AliasGroupSymbol* aliasGroup = currentScope->GroupScope()->GetOrInsertAliasGroup(id, idNode->GetSourcePos(), context);
     AliasTypeSymbol* aliasTypeSymbol = new AliasTypeSymbol(id, type);
     aliasTypeSymbol->SetAccess(currentAccess);
-    currentScope->SymbolScope()->AddSymbol(aliasTypeSymbol, node->GetSourcePos(), context);
+    currentScope->SymbolScope()->AddSymbol(aliasTypeSymbol, idNode->GetSourcePos(), context);
     aliasGroup->AddAliasTypeSymbol(aliasTypeSymbol);
-    MapNode(node, aliasTypeSymbol);
+    MapNode(aliasTypeNode, aliasTypeSymbol);
+    return aliasTypeSymbol;
 }
 
 void SymbolTable::AddUsingDeclaration(otava::ast::Node* node, Symbol* symbol, Context* context)
@@ -851,9 +896,10 @@ void SymbolTable::EndNamespace(int level)
     }
 }
 
-void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, otava::ast::Node* node, Context* context)
+void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context)
 {
     Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
+/*
     if (symbol && symbol->IsClassGroupSymbol())
     {
         ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
@@ -872,12 +918,14 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, ot
             return;
         }
     }
+*/
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
     ClassTypeSymbol* classTypeSymbol = new ClassTypeSymbol(name);
     classTypeSymbol->SetLevel(classLevel++);
     AddClass(classTypeSymbol);
     classTypeSymbol->SetAccess(CurrentAccess());
     classTypeSymbol->SetClassKind(classKind);
+    classTypeSymbol->SetSpecialization(specialization);
     currentScope->SymbolScope()->AddSymbol(classTypeSymbol, node->GetSourcePos(), context);
     classGroup->AddClass(classTypeSymbol);
     MapNode(node, classTypeSymbol);
@@ -920,9 +968,10 @@ void SymbolTable::EndClass()
     EndScope();
 }
 
-void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, otava::ast::Node* node, Context* context)
+void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context)
 {
     Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
+/*
     if (symbol && symbol->IsClassGroupSymbol())
     {
         ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
@@ -940,10 +989,12 @@ void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKi
             return;
         }
     }
+*/
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
     ForwardClassDeclarationSymbol* forwardDeclarationSymbol = new ForwardClassDeclarationSymbol(name);
     forwardDeclarationSymbol->SetAccess(CurrentAccess());
     forwardDeclarationSymbol->SetClassKind(classKind);
+    forwardDeclarationSymbol->SetSpecialization(specialization);
     currentScope->SymbolScope()->AddSymbol(forwardDeclarationSymbol, node->GetSourcePos(), context);
     classGroup->AddForwardDeclaration(forwardDeclarationSymbol);
     MapNode(node, forwardDeclarationSymbol);
@@ -1200,23 +1251,43 @@ ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::N
     return conceptSymbol;
 }
 
-SpecializationSymbol* SymbolTable::MakeSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
+ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
 {
-    std::unique_ptr<SpecializationSymbol> symbol(new SpecializationSymbol(MakeSpecializationName(classTemplate, templateArguments)));
+    std::unique_ptr<ClassTemplateSpecializationSymbol> symbol(new ClassTemplateSpecializationSymbol(MakeSpecializationName(classTemplate, templateArguments)));
     symbol->SetSymbolTable(this);
     symbol->SetClassTemplate(classTemplate);
     for (Symbol* templateArg : templateArguments)
     {
         symbol->AddTemplateArgument(templateArg);
     }
-    auto it = specializationSet.find(symbol.get());
-    if (it != specializationSet.cend())
+    auto it = classTemplateSpecializationSet.find(symbol.get());
+    if (it != classTemplateSpecializationSet.cend())
     {
         return *it;
     }
-    SpecializationSymbol* sym = symbol.get();
-    specializationSet.insert(sym);
-    specializations.push_back(std::move(symbol));
+    ClassTemplateSpecializationSymbol* sym = symbol.get();
+    classTemplateSpecializationSet.insert(sym);
+    classTemplateSpecializations.push_back(std::move(symbol));
+    MapType(sym);
+    return sym;
+}
+
+AliasTypeTemplateSpecializationSymbol* SymbolTable::MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments)
+{
+    std::unique_ptr<AliasTypeTemplateSpecializationSymbol> symbol(new AliasTypeTemplateSpecializationSymbol(MakeSpecializationName(aliasTypeTemplate, templateArguments)));
+    symbol->SetAliasTypeTemplate(aliasTypeTemplate);
+    for (Symbol* templateArg : templateArguments)
+    {
+        symbol->AddTemplateArgument(templateArg);
+    }
+    auto it = aliasTypeTemplateSpecializationSet.find(symbol.get());
+    if (it != aliasTypeTemplateSpecializationSet.cend())
+    {
+        return *it;
+    }
+    AliasTypeTemplateSpecializationSymbol* sym = symbol.get();
+    aliasTypeTemplateSpecializationSet.insert(sym);
+    aliasTypeTemplateSpecializations.push_back(std::move(symbol));
     MapType(sym);
     return sym;
 }

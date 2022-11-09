@@ -34,7 +34,8 @@ void Instantiator::Visit(otava::ast::ClassSpecifierNode& node)
     {
         std::u32string name;
         ClassKind kind;
-        GetClassAttributes(&node, name, kind);
+        TypeSymbol* specialization = nullptr;
+        GetClassAttributes(&node, name, kind, specialization, context);
         switch (kind)
         {
             case ClassKind::class_:
@@ -105,14 +106,7 @@ void Instantiator::Visit(otava::ast::UsingDirectiveNode& node)
 
 void Instantiator::Visit(otava::ast::FunctionDefinitionNode& node)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
-    {
-        ProcessSimpleDeclaration(&node, context);
-    }
-    else
-    {
-        ProcessMemberFunctionDefinition(&node, context);
-    }
+    ProcessFunctionDefinition(&node, context);
 }
 
 void Instantiator::Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node)

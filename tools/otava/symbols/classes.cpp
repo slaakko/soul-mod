@@ -78,7 +78,21 @@ void RecordedParse(otava::ast::CompoundStatementNode* compoundStatementNode, Con
 ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) : 
     TypeSymbol(SymbolKind::classTypeSymbol, name_), 
     classKind(ClassKind::class_), 
+    specialization(nullptr),
     level(0), 
+    irType(nullptr),
+    objectLayoutComputed(false),
+    vptrIndex(-1),
+    currentFunctionIndex(1)
+{
+    GetScope()->SetKind(ScopeKind::classScope);
+}
+
+ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) : 
+    TypeSymbol(kind_, name_),
+    classKind(ClassKind::class_),
+    specialization(nullptr),
+    level(0),
     irType(nullptr),
     objectLayoutComputed(false),
     vptrIndex(-1),
@@ -131,6 +145,12 @@ void ClassTypeSymbol::Write(Writer& writer)
         writer.GetBinaryStreamWriter().Write(baseClass->Id());
     }
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(classKind));
+    util::uuid specializationId = util::nil_uuid();
+    if (specialization)
+    {
+        specializationId = specialization->Id();
+    }
+    writer.GetBinaryStreamWriter().Write(specializationId);
     writer.GetBinaryStreamWriter().Write(level);
     writer.GetBinaryStreamWriter().Write(objectLayoutComputed);
     writer.GetBinaryStreamWriter().WriteULEB128UInt(objectLayout.size());
@@ -158,6 +178,7 @@ void ClassTypeSymbol::Read(Reader& reader)
         baseClassIds.push_back(baseClassId);
     }
     classKind = static_cast<ClassKind>(reader.GetBinaryStreamReader().ReadByte());
+    reader.GetBinaryStreamReader().ReadUuid(specializationId);
     level = reader.GetBinaryStreamReader().ReadInt();
     objectLayoutComputed = reader.GetBinaryStreamReader().ReadBool();
     uint32_t nol = reader.GetBinaryStreamReader().ReadULEB128UInt();
@@ -188,6 +209,10 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
             GetScope()->AddBaseScope(baseClassSymbol->GetScope(), soul::ast::SourcePos(), nullptr);
             baseClasses.push_back(static_cast<ClassTypeSymbol*>(baseClassSymbol));
         }
+    }
+    if (specializationId != util::nil_uuid())
+    {
+        specialization = symbolTable.GetType(specializationId);
     }
     for (const auto& tid : objectLayoutIds)
     {
@@ -327,6 +352,7 @@ FunctionSymbol* ClassTypeSymbol::GetFunction(int32_t functionIndex) const
 ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32string& name_) : 
     TypeSymbol(SymbolKind::forwardClassDeclarationSymbol, name_), 
     classKind(ClassKind::class_),
+    specialization(nullptr),
     classTypeSymbol(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
@@ -418,21 +444,26 @@ int ForwardClassDeclarationSymbol::Arity()
 class ClassResolver : public otava::ast::DefaultVisitor
 {
 public:
-    ClassResolver();
+    ClassResolver(Context* context_);
     std::u32string GetName() const { return name; }
     otava::symbols::ClassKind GetClassKind() const { return classKind; }
+    TypeSymbol* Specialization() const { return specialization; }
     void Visit(otava::ast::ClassSpecifierNode& node) override;
     void Visit(otava::ast::ClassHeadNode& node) override;
     void Visit(otava::ast::ElaboratedTypeSpecifierNode& node) override;
     void Visit(otava::ast::ClassNode& node) override;
     void Visit(otava::ast::StructNode& node) override;
     void Visit(otava::ast::UnionNode& node) override;
+    void Visit(otava::ast::IdentifierNode& node) override;
+    void Visit(otava::ast::TemplateIdNode& node) override;
 private:
+    Context* context;
     std::u32string name;
     otava::symbols::ClassKind classKind;
+    TypeSymbol* specialization;
 };
 
-ClassResolver::ClassResolver() : classKind(otava::symbols::ClassKind::class_)
+ClassResolver::ClassResolver(Context* context_) : context(context_), classKind(otava::symbols::ClassKind::class_), specialization(nullptr)
 {
 }
 
@@ -444,7 +475,18 @@ void ClassResolver::Visit(otava::ast::ClassSpecifierNode& node)
 void ClassResolver::Visit(otava::ast::ClassHeadNode& node)
 {
     node.ClassKey()->Accept(*this);
-    name = node.ClassHeadName()->Str();
+    node.ClassHeadName()->Accept(*this);
+}
+
+void ClassResolver::Visit(otava::ast::IdentifierNode& node)
+{
+    name = node.Str();
+}
+
+void ClassResolver::Visit(otava::ast::TemplateIdNode& node)
+{
+    node.TemplateName()->Accept(*this);
+    specialization = ResolveType(&node, DeclarationFlags::none, context, TypeResolverFlags::dontInstantiate);
 }
 
 void ClassResolver::Visit(otava::ast::ElaboratedTypeSpecifierNode& node)
@@ -487,20 +529,22 @@ void BaseClassResolver::Visit(otava::ast::BaseSpecifierNode& node)
     context->GetSymbolTable()->AddBaseClass(baseClass, node.GetSourcePos(), context);
 }
 
-void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind)
+void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context)
 {
-    ClassResolver resolver;
+    ClassResolver resolver(context);
     node->Accept(resolver);
     name = resolver.GetName();
     kind = resolver.GetClassKind();
+    specialization = resolver.Specialization();
 }
 
 void BeginClass(otava::ast::Node* node, otava::symbols::Context* context)
 {
     std::u32string name;
     otava::symbols::ClassKind kind;
-    GetClassAttributes(node, name, kind);
-    context->GetSymbolTable()->BeginClass(name, kind, node, context);
+    TypeSymbol* specialization = nullptr;
+    GetClassAttributes(node, name, kind, specialization, context);
+    context->GetSymbolTable()->BeginClass(name, kind, specialization, node, context);
     BaseClassResolver resolver(context);
     node->Accept(resolver);
     context->PushSetFlag(ContextFlags::parseMemberFunction);
@@ -536,8 +580,9 @@ void AddForwardClassDeclaration(otava::ast::Node* node, otava::symbols::Context*
 {
     std::u32string name;
     otava::symbols::ClassKind kind;
-    GetClassAttributes(node, name, kind);
-    context->GetSymbolTable()->AddForwardClassDeclaration(name, kind, node, context);
+    TypeSymbol* specialization = nullptr;
+    GetClassAttributes(node, name, kind, specialization, context);
+    context->GetSymbolTable()->AddForwardClassDeclaration(name, kind, specialization, node, context);
 }
 
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context)

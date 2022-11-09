@@ -13,7 +13,6 @@ import otava.symbols.bound.tree.util;
 export namespace otava::symbols {
 
 class BoundTreeVisitor;
-class Context;
 class Emitter;
 class Scope;
 class TypeSymbol;

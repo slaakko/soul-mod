@@ -7,6 +7,7 @@ module otava.symbols.symbol.factory;
 
 import otava.symbols.symbol;
 import otava.symbols.class_group.symbol;
+import otava.symbols.class_templates;
 import otava.symbols.concept_group.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.variable.group.symbol;
@@ -19,6 +20,7 @@ import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.exception;
 import otava.symbols.alias.type.symbol;
+import otava.symbols.alias.type.templates;
 import otava.symbols.block;
 import otava.symbols.classes;
 import otava.symbols.compound.type.symbol;
@@ -27,7 +29,6 @@ import otava.symbols.function.symbol;
 import otava.symbols.namespaces;
 import otava.symbols.templates;
 import otava.symbols.variable.symbol;
-import otava.symbols.specialization;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.fundamental.type.conversion;
 import otava.ast.error;
@@ -184,10 +185,15 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new ParameterSymbol(name);
         }
-        case SymbolKind::specializationSymbol:
+        case SymbolKind::classTemplateSpecializationSymbol:
         {
-            SpecializationSymbol* specialization = new SpecializationSymbol(name);
+            ClassTemplateSpecializationSymbol* specialization = new ClassTemplateSpecializationSymbol(name);
             specialization->SetSymbolTable(symbolTable);
+            return specialization;
+        }
+        case SymbolKind::aliasTypeTemplateSpecializationSymbol: 
+        {
+            AliasTypeTemplateSpecializationSymbol* specialization = new AliasTypeTemplateSpecializationSymbol(name);
             return specialization;
         }
         case SymbolKind::nestedTypeSymbol:

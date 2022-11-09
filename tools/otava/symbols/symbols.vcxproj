@@ -155,6 +155,8 @@
     <ClCompile Include="alias_group_symbol.ixx" />
     <ClCompile Include="alias_type_symbol.cpp" />
     <ClCompile Include="alias_type_symbol.ixx" />
+    <ClCompile Include="alias_type_templates.cpp" />
+    <ClCompile Include="alias_type_templates.ixx" />
     <ClCompile Include="argument_conversion_table.ixx" />
     <ClCompile Include="argument_conversion_table.cpp" />
     <ClCompile Include="block.cpp" />
@@ -171,6 +173,8 @@
     <ClCompile Include="classes.ixx" />
     <ClCompile Include="class_group_symbol.cpp" />
     <ClCompile Include="class_group_symbol.ixx" />
+    <ClCompile Include="class_templates.cpp" />
+    <ClCompile Include="class_templates.ixx" />
     <ClCompile Include="compound_type_symbol.cpp" />
     <ClCompile Include="compound_type_symbol.ixx" />
     <ClCompile Include="concepts.cpp" />
@@ -236,8 +240,6 @@
     <ClCompile Include="scope.ixx" />
     <ClCompile Include="scope_resolver.cpp" />
     <ClCompile Include="scope_resolver.ixx" />
-    <ClCompile Include="specialization.cpp" />
-    <ClCompile Include="specialization.ixx" />
     <ClCompile Include="specialization_compare.cpp" />
     <ClCompile Include="specialization_compare.ixx" />
     <ClCompile Include="statement_binder.cpp" />

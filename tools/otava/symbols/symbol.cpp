@@ -29,7 +29,6 @@ import otava.symbols.class_group.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.variable.group.symbol;
 import otava.symbols.enum_group.symbol;
-import otava.symbols.specialization;
 import otava.symbols.symbol.table;
 import util.unicode;
 import util.sha1;
@@ -150,7 +149,7 @@ void Symbol::Resolve(SymbolTable& symbolTable)
 SymbolTable* Symbol::GetSymbolTable() 
 {
     Symbol* parentSymbol = parent;
-    if (parentSymbol && parentSymbol->IsSpecializationSymbol())
+    if (parentSymbol && parentSymbol->IsClassTemplateSpecializationSymbol())
     {
         return parentSymbol->GetSymbolTable();
     }
@@ -276,7 +275,8 @@ bool Symbol::IsTypeSymbol() const
         case SymbolKind::arrayTypeSymbol:
         case SymbolKind::classTypeSymbol:
         case SymbolKind::forwardClassDeclarationSymbol:
-        case SymbolKind::specializationSymbol:
+        case SymbolKind::classTemplateSpecializationSymbol:
+        case SymbolKind::aliasTypeTemplateSpecializationSymbol:
         case SymbolKind::compoundTypeSymbol:
         case SymbolKind::enumTypeSymbol:
         case SymbolKind::forwardEnumDeclarationSymbol:

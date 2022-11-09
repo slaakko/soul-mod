@@ -84,7 +84,7 @@ Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context
 void ProcessMemberDeclaration(otava::ast::Node* node, Context* context);
 int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, Context* context);
 void EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes, Context* context);
-void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context);
+void ProcessFunctionDefinition(otava::ast::Node* node, Context* context);
 
 void Write(Writer& writer, DeclarationFlags flags);
 void Read(Reader& reader, DeclarationFlags& flags);

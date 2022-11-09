@@ -34,8 +34,9 @@ export import std.string;
 export import std.thread;
 export import std.thread.condition.variable;
 export import std.thread.mutex;
+export import std.type_traits;
 export import std.utilities.pair;
 export import std.utilities.ratio;
 export import std.utilities.unique_ptr;
 export import std.utilities.utility;
-export import std.str;
+

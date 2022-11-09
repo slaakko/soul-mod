@@ -184,6 +184,27 @@ Derivations UnifyDerivations(const Derivations& left, const Derivations& right)
     return result;
 }
 
+int CountMatchingDerivations(const Derivations& left, const Derivations& right)
+{
+    int matchingDerivationsCount = 0;
+    if (HasDerivation(left, Derivation::constDerivation) && HasDerivation(right, Derivation::constDerivation))
+    {
+        ++matchingDerivationsCount;
+    }
+    int leftPointerCount = PointerCount(left);
+    int rightPointerCount = PointerCount(right);
+    matchingDerivationsCount += std::min(leftPointerCount, rightPointerCount);
+    if (HasDerivation(left, Derivation::lvalueRefDerivation) && HasDerivation(right, Derivation::lvalueRefDerivation))
+    {
+        ++matchingDerivationsCount;
+    }
+    else if (HasDerivation(left, Derivation::rvalueRefDerivation) && HasDerivation(right, Derivation::rvalueRefDerivation))
+    {
+        ++matchingDerivationsCount;
+    }
+    return matchingDerivationsCount;
+}
+
 void Write(Writer& writer, const Derivations& derivations)
 {
     uint8_t count = static_cast<uint8_t>(derivations.vec.size());

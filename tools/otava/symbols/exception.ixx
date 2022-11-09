@@ -11,8 +11,6 @@ import soul.ast.source.pos;
 
 export namespace otava::symbols {
 
-class Context;
-
 bool ExceptionThrown();
 void SetExceptionThrown();
 

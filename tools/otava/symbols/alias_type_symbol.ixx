@@ -15,8 +15,11 @@ class AliasTypeSymbol : public TypeSymbol
 {
 public:
     AliasTypeSymbol(const std::u32string& name_);
+    AliasTypeSymbol(const std::u32string& name_, SymbolKind kind_);
     AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referredType_);
-    virtual int Arity() const { return 0;  }
+    TemplateDeclarationSymbol* ParentTemplateDeclaration();
+    int Arity();
+    void SetReferredType(TypeSymbol* referredType_) { referredType = referredType_; }
     TypeSymbol* ReferredType() const { return referredType; }
     std::string SymbolKindStr() const override { return "alias type symbol"; }
     std::string SymbolDocKindStr() const override { return "alias_type"; }
@@ -28,8 +31,6 @@ private:
     TypeSymbol* referredType;
     util::uuid referredTypeId;
 };
-
-class Context;
 
 void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context);
 

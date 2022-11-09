@@ -284,12 +284,12 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     }
     if (functionDefinition->Name() == U"main")
     {
-        mainIrName = functionDefinition->IrName();
+        mainIrName = functionDefinition->IrName(&context);
         mainFunctionParams = functionDefinition->Arity();
     }
     otava::intermediate::Type* functionType = functionDefinition->IrType(emitter, node.GetSourcePos(), &context);
     bool once = false;
-    emitter.CreateFunction(functionDefinition->IrName(), functionType, once);
+    emitter.CreateFunction(functionDefinition->IrName(&context), functionType, once);
     entryBlock = emitter.CreateBasicBlock();
     emitter.SetCurrentBasicBlock(entryBlock);
     int np = functionDefinition->MemFunParameters().size();

@@ -13,7 +13,7 @@ import otava.symbols.symbol.table;
 
 namespace otava::symbols {
 
-AliasGroupSymbol::AliasGroupSymbol(const std::u32string& name_) : Symbol(SymbolKind::aliasGroupSymbol, name_)
+AliasGroupSymbol::AliasGroupSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::aliasGroupSymbol, name_)
 {
 }
 
@@ -108,6 +108,49 @@ void AliasGroupSymbol::Merge(AliasGroupSymbol* that)
             aliasTypeSymbols.push_back(aliasType);
         }
     }
+}
+
+struct ViableAliasTypeGreater
+{
+    bool operator()(const std::pair<AliasTypeSymbol*, int>& left, const std::pair<AliasTypeSymbol*, int>& right) const
+    {
+        return left.second > right.second;
+    }
+};
+    
+AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs) const
+{
+    std::vector<std::pair<AliasTypeSymbol*, int>> viableAliasTypes;
+    int arity = templateArgs.size();
+    for (const auto& alias : aliasTypeSymbols)
+    {
+        if (alias->Arity() == arity)
+        {
+            bool added = false;
+            if (arity == 1)
+            {
+                if (templateArgs[0]->IsTypeSymbol())
+                {
+                    TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArgs[0]);
+                    if (TypesEqual(alias->ReferredType(), templateArgType))
+                    {
+                        viableAliasTypes.push_back(std::make_pair(alias, 1));
+                        added = true;
+                    }
+                }
+            }
+            if (!added)
+            {
+                viableAliasTypes.push_back(std::make_pair(alias, 0));
+            }
+        }
+    }
+    std::sort(viableAliasTypes.begin(), viableAliasTypes.end(), ViableAliasTypeGreater());
+    if (!viableAliasTypes.empty())
+    {
+        return viableAliasTypes[0].first;
+    }
+    return nullptr;
 }
 
 } // namespace otava::symbols

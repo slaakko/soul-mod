@@ -1,4 +1,6 @@
-import std.core;
+export module std.type_traits;
+
+import std.type.fundamental;
 
 export namespace std {
 
@@ -22,18 +24,5 @@ struct remove_reference<T&>
 
 template<class T>
 using remove_reference_t = typename remove_reference<T>::type;
-
-template<class T>
-constexpr remove_reference_t<T>&& move(T&& t)
-{
-    return static_cast<remove_reference_t<T>&&>(t);
-}
-
-int main()
-{
-    int x = 0;
-    int m = move(x);
-    return 0;
-}
 
 } // namespace std

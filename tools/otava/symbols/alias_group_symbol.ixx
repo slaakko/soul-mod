@@ -6,13 +6,13 @@
 export module otava.symbols.alias.group.symbol;
 
 import std.core;
-import otava.symbols.symbol;
+import otava.symbols.type.symbol;
 
 export namespace otava::symbols {
 
 class AliasTypeSymbol;
 
-class AliasGroupSymbol : public Symbol
+class AliasGroupSymbol : public TypeSymbol
 {
 public:
     AliasGroupSymbol(const std::u32string& name_);
@@ -23,6 +23,7 @@ public:
     void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol);
     AliasTypeSymbol* GetAliasTypeSymbol(int arity) const;
     const std::vector<AliasTypeSymbol*>& AliasTypeSymbols() const { return aliasTypeSymbols; }
+    AliasTypeSymbol* GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs) const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

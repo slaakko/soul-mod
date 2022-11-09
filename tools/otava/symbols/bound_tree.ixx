@@ -22,12 +22,9 @@ class ClassTypeSymbol;
 class Value;
 class Scope;
 class FunctionDefinitionSymbol;
-class Context;
-class Emitter;
 
 class BoundTreeVisitor;
 
-class BoundExpressionNode;
 class BoundFunctionCallNode;
 class OperationRepository;
 class ArgumentConversionTable;

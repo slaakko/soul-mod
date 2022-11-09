@@ -61,6 +61,7 @@ const std::pair<std::u32string, std::vector<int>>& FileMap::GetFileContent(int f
 
 std::u32string FileMap::GetFileLine(int file, int line) const
 {
+    if (file == -1) return std::u32string();
     const std::pair<std::u32string, std::vector<int>>& contents = GetFileContent(file);
     std::u32string::size_type lineStart = contents.second[line];
     std::u32string::size_type lineLength = std::u32string::npos;

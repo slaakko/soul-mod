@@ -61,8 +61,8 @@ bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMa
 {
     if (left.conversionFun == nullptr && right.conversionFun != nullptr) return true;
     if (right.conversionFun == nullptr && left.conversionFun != nullptr) return false;
-    if (left.conversionKind == ConversionKind::implicitConversion && right.conversionKind == ConversionKind::narrowingConversion) return true;
-    if (left.conversionKind == ConversionKind::narrowingConversion && right.conversionKind == ConversionKind::implicitConversion) return false;
+    if (left.conversionKind == ConversionKind::implicitConversion && right.conversionKind == ConversionKind::explicitConversion) return true;
+    if (left.conversionKind == ConversionKind::explicitConversion && right.conversionKind == ConversionKind::implicitConversion) return false;
     if (left.distance < right.distance) return true;
     if (left.distance > right.distance) return false;
     return false;
@@ -125,6 +125,22 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
         return true;
     }
     if (left.numQualifyingConversions > right.numQualifyingConversions)
+    {
+        return false;
+    }
+    if (left.function->IsFunctionDefinitionSymbol() && !right.function->IsFunctionDefinitionSymbol())
+    {
+        return true;
+    }
+    if (!left.function->IsFunctionDefinitionSymbol() && right.function->IsFunctionDefinitionSymbol())
+    {
+        return false;
+    }
+    if (left.function->IsSpecialization() && !right.function->IsSpecialization())
+    {
+        return true;
+    }
+    if (!left.function->IsSpecialization() && right.function->IsSpecialization())
     {
         return false;
     }

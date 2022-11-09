@@ -326,7 +326,10 @@ void DeclaratorProcessor::Visit(otava::ast::LvalueRefNode& node)
 void DeclaratorProcessor::Visit(otava::ast::RvalueRefNode& node)
 {
     Derivations derivations;
-    derivations.vec.push_back(Derivation::rvalueRefDerivation);
+    if (!baseType || !baseType->IsLValueRefType())
+    {
+        derivations.vec.push_back(Derivation::rvalueRefDerivation);
+    }
     if (baseType)
     {
         baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);

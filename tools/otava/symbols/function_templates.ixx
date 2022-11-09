@@ -36,6 +36,7 @@ public:
     void AddFunctionDefinition(const FunctionTemplateKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol);
 private:
     std::map<FunctionTemplateKey, FunctionDefinitionSymbol*, FunctionTemplateKeyLess> functionTemplateMap;
+    std::vector<std::unique_ptr<FunctionDefinitionSymbol>> functionDefinitionSymbols;
 };
 
 FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,

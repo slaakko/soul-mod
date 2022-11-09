@@ -55,7 +55,8 @@ class BoundExpressionNode;
 class ClassTypeSymbol;
 class ConceptSymbol;
 class EnumeratedTypeSymbol;
-class SpecializationSymbol;
+class ClassTemplateSpecializationSymbol;
+class AliasTypeTemplateSpecializationSymbol;
 class CompoundTypeSymbol;
 class NamespaceSymbol;
 class TypeSymbol;
@@ -108,10 +109,10 @@ public:
     void EndNamespace();
     void BeginNamespace(otava::ast::Node* node, Context* context);
     void EndNamespace(int level);
-    void BeginClass(const std::u32string& name, ClassKind classKind, otava::ast::Node* node, Context* context);
+    void BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* spcialiation, otava::ast::Node* node, Context* context);
     void AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     void EndClass();
-    void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, otava::ast::Node* node, Context* context);
+    void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context);
     void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
     void EndEnumeratedType();
     void AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
@@ -131,7 +132,7 @@ public:
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
     VariableSymbol* AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type, 
         Value* value, DeclarationFlags flags, Context* context);
-    void AddAliasType(otava::ast::Node* node, TypeSymbol* type, Context* context);
+    AliasTypeSymbol* AddAliasType(otava::ast::Node* idNnode, otava::ast::Node* aliasTypeNode, TypeSymbol* type, Context* context);
     void AddUsingDeclaration(otava::ast::Node* node, Symbol* symbol, Context* context);
     void AddUsingDirective(NamespaceSymbol* ns, otava::ast::Node* node, Context* context);
     TypeSymbol* MakeCompoundType(TypeSymbol* baseType, const Derivations& derivations);
@@ -141,7 +142,8 @@ public:
     TypeSymbol* MakeConstChar32PtrType();
     TypeSymbol* MakeConstWCharPtrType();
     ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
-    SpecializationSymbol* MakeSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
+    ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
+    AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
@@ -199,7 +201,7 @@ private:
     void AddFundamentalType(FundamentalTypeKind kind);
     void CreateCoreSymbols();
     void AddFundamentalTypeOperations();
-    void ImportSpecializations();
+    void ImportSpecializations(const SymbolTable& that);
     void ImportCompoundTypeMap(const SymbolTable& that);
     void ImportFundamentalTypeMap(const SymbolTable& that);
     void ImportNodeSymbolMap(const SymbolTable& that);
@@ -214,8 +216,10 @@ private:
     void ImportClasses(const SymbolTable& that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
-    std::vector<std::unique_ptr<Symbol>> specializations;
-    std::set<SpecializationSymbol*, SpecializationLess> specializationSet;
+    std::vector<std::unique_ptr<Symbol>> classTemplateSpecializations;
+    std::vector<std::unique_ptr<Symbol>> aliasTypeTemplateSpecializations;
+    std::set<ClassTemplateSpecializationSymbol*, ClassTemplateSpecializationLess> classTemplateSpecializationSet;
+    std::set<AliasTypeTemplateSpecializationSymbol*, AliasTypeTemplateSpecializationLess> aliasTypeTemplateSpecializationSet;
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
     std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
     std::map<int32_t, TypeSymbol*> fundamentalTypeMap;

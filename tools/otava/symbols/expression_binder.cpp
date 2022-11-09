@@ -28,6 +28,7 @@ import otava.symbols.type.resolver;
 import otava.symbols.type.symbol;
 import otava.symbols.variable.group.symbol;
 import otava.symbols.variable.symbol;
+import otava.symbols.argument.conversion.table;
 import otava.ast.identifier;
 import otava.ast.expression;
 import otava.ast.literal;
@@ -164,6 +165,7 @@ public:
     void Visit(otava::ast::InvokeExprNode& node) override;
     void Visit(otava::ast::BinaryExprNode& node) override;
     void Visit(otava::ast::UnaryExprNode& node) override;
+    void Visit(otava::ast::CppCastExprNode& node) override;
 private:
     void BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right);
     void BindUnaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
@@ -248,6 +250,22 @@ void ExpressionBinder::BindPrefixInc(const soul::ast::SourcePos& sourcePos, Boun
 void ExpressionBinder::BindPrefixDec(const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand)
 {
     // todo
+}
+
+void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
+{
+    TypeSymbol* resultType = ResolveType(node.TypeId(), DeclarationFlags::none, context);
+    context->GetSymbolTable()->MapType(resultType);
+    node.Child()->Accept(*this);
+    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(resultType, boundExpression->GetType(), context);
+    if (conversion)
+    {
+        boundExpression = new BoundConversionNode(boundExpression, conversion, node.GetSourcePos());
+    }
+    else
+    {
+        ThrowException("no conversion found", node.GetSourcePos(), context);
+    }
 }
 
 void ExpressionBinder::Visit(otava::ast::IntegerLiteralNode& node) 

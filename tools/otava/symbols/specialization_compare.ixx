@@ -9,11 +9,17 @@ import std.core;
 
 export namespace otava::symbols {
 
-class SpecializationSymbol;
+class ClassTemplateSpecializationSymbol;
+class AliasTypeTemplateSpecializationSymbol;
 
-struct SpecializationLess
+struct ClassTemplateSpecializationLess
 {
-    bool operator()(SpecializationSymbol* left, SpecializationSymbol* right) const;
+    bool operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const;
+};
+
+struct AliasTypeTemplateSpecializationLess
+{
+    bool operator()(AliasTypeTemplateSpecializationSymbol* left, AliasTypeTemplateSpecializationSymbol* right) const;
 };
 
 } // namespace otava::symbols

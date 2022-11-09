@@ -40,6 +40,7 @@ Derivations RemovePointer(const Derivations& derivations);
 Derivations RemoveLValueRef(const Derivations& derivations);
 Derivations RemoveRValueRef(const Derivations& derivations);
 Derivations UnifyDerivations(const Derivations& left, const Derivations& right);
+int CountMatchingDerivations(const Derivations& left, const Derivations& right);
 
 class Writer;
 class Reader;

@@ -13,6 +13,7 @@ import otava.intermediate.function;
 import otava.intermediate.type;
 import otava.intermediate.instruction;
 import otava.intermediate.visitor;
+import otava.intermediate.data;
 
 namespace otava::intermediate {
 

@@ -6,14 +6,16 @@
 module otava.symbols.class_group.symbol;
 
 import otava.symbols.classes;
+import otava.symbols.class_templates;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
+import otava.symbols.compound.type.symbol;
 
 namespace otava::symbols {
 
-ClassGroupSymbol::ClassGroupSymbol(const std::u32string& name_) : Symbol(SymbolKind::classGroupSymbol, name_)
+ClassGroupSymbol::ClassGroupSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::classGroupSymbol, name_)
 {
 }
 
@@ -136,6 +138,66 @@ void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
             forwardDeclarations.push_back(fwd);
         }
     }
+}
+
+struct ViableClassGreater
+{
+    bool operator()(const std::pair<ClassTypeSymbol*, int>& left, const std::pair<ClassTypeSymbol*, int>& right) const
+    {
+        return left.second > right.second;
+    }
+};
+
+int Match(Symbol* templateArg, TypeSymbol* specialization, int index)
+{
+    if (templateArg->IsCompoundTypeSymbol())
+    {
+        CompoundTypeSymbol* templateArgType = static_cast<CompoundTypeSymbol*>(templateArg);
+        const Derivations& argDerivations = templateArgType->GetDerivations();
+        CompoundTypeSymbol* specializationArgType = GetSpecializationArgType(specialization, index);
+        const Derivations& specializationDerivations = specializationArgType->GetDerivations();
+        int numMatchingDerivations = CountMatchingDerivations(argDerivations, specializationDerivations);
+        if (numMatchingDerivations > 0)
+        {
+            return numMatchingDerivations;
+        }
+    }
+    return -1;
+}
+
+ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol*>& templateArgs) const
+{
+    std::vector<std::pair<ClassTypeSymbol*, int>> viableClasses;
+    int arity = templateArgs.size();
+    for (const auto& cls : classes)
+    {
+        if (cls->Arity() == arity)
+        {
+            TypeSymbol* specialization = cls->Specialization();
+            if (specialization)
+            {
+                for (int i = 0; i < arity; ++i)
+                {
+                    Symbol* templateArg = templateArgs[i];
+                    int matchValue = Match(templateArg, specialization, i);
+                    if (matchValue >= 0)
+                    {
+                        viableClasses.push_back(std::make_pair(cls, matchValue));
+                    }
+                }
+            }
+            else
+            {
+                viableClasses.push_back(std::make_pair(cls, 0));
+            }
+        }
+    }
+    std::sort(viableClasses.begin(), viableClasses.end(), ViableClassGreater());
+    if (!viableClasses.empty())
+    {
+        return viableClasses[0].first;
+    }
+    return nullptr;
 }
 
 } // namespace otava::symbols

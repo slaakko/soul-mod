@@ -87,6 +87,5 @@ void EndTemplateDeclaration(otava::ast::Node* node, Context* context);
 void RemoveTemplateDeclaration(Context* context);
 void AddTemplateParameter(otava::ast::Node* templateParameterNode, int index, Context* context);
 bool TemplateArgCanBeTypeId(otava::ast::Node* templateIdNode, int index);
-TypeSymbol* Instantiate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node, Context* context);
 
 } // namespace otava::symbols

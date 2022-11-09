@@ -119,13 +119,13 @@ public:
     FundamentalTypeUnaryOperation(SymbolKind kind_) : FunctionSymbol(kind_, Op::GroupName())
     {
     }
-    FundamentalTypeUnaryOperation(SymbolKind kind_, TypeSymbol* type_) : FunctionSymbol(kind_, Op::GroupName())
+    FundamentalTypeUnaryOperation(SymbolKind kind_, TypeSymbol* type_, Context* context) : FunctionSymbol(kind_, Op::GroupName())
     {
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
         ParameterSymbol* param = new ParameterSymbol(U"param", type_);
         AddParameter(param, soul::ast::SourcePos(), nullptr);
-        SetReturnType(type_);
+        SetReturnType(type_, context);
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
@@ -143,7 +143,7 @@ public:
     FundamentalTypeBinaryOperation(SymbolKind kind_) : FunctionSymbol(kind_, Op::GroupName())
     {
     }
-    FundamentalTypeBinaryOperation(SymbolKind kind_, TypeSymbol* type_) : FunctionSymbol(kind_, Op::GroupName())
+    FundamentalTypeBinaryOperation(SymbolKind kind_, TypeSymbol* type_, Context* context) : FunctionSymbol(kind_, Op::GroupName())
     {
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
@@ -151,7 +151,7 @@ public:
         AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
         AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
-        SetReturnType(type_);
+        SetReturnType(type_, context);
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
@@ -171,7 +171,7 @@ public:
     FundamentalTypeComparisonOperation(SymbolKind kind_) : FunctionSymbol(kind_, Op::GroupName())
     {
     }
-    FundamentalTypeComparisonOperation(SymbolKind kind_, TypeSymbol* type_, TypeSymbol* boolType) : FunctionSymbol(kind_, Op::GroupName())
+    FundamentalTypeComparisonOperation(SymbolKind kind_, TypeSymbol* type_, TypeSymbol* boolType, Context* context) : FunctionSymbol(kind_, Op::GroupName())
     {
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
@@ -179,7 +179,7 @@ public:
         AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
         ParameterSymbol* rightParam = new ParameterSymbol(U"right", type_);
         AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
-        SetReturnType(boolType);
+        SetReturnType(boolType, context);
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
@@ -196,112 +196,112 @@ class FundamentalTypeNotOperation : public FundamentalTypeUnaryOperation<Fundame
 {
 public:
     FundamentalTypeNotOperation();
-    FundamentalTypeNotOperation(TypeSymbol* type_);
+    FundamentalTypeNotOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeUnaryPlusOperation : public FundamentalTypeUnaryOperation<FundamentalTypeUnaryPlus>
 {
 public:
     FundamentalTypeUnaryPlusOperation();
-    FundamentalTypeUnaryPlusOperation(TypeSymbol* type_);
+    FundamentalTypeUnaryPlusOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeUnaryMinusOperation : public FundamentalTypeUnaryOperation<FundamentalTypeUnaryMinus>
 {
 public:
     FundamentalTypeUnaryMinusOperation();
-    FundamentalTypeUnaryMinusOperation(TypeSymbol* type_);
+    FundamentalTypeUnaryMinusOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeComplementOperation : public FundamentalTypeUnaryOperation<FundamentalTypeComplement>
 {
 public:
     FundamentalTypeComplementOperation();
-    FundamentalTypeComplementOperation(TypeSymbol* type_);
+    FundamentalTypeComplementOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeAddOperation : public FundamentalTypeBinaryOperation<FundamentalTypeAdd>
 {
 public:
     FundamentalTypeAddOperation();
-    FundamentalTypeAddOperation(TypeSymbol* type_);
+    FundamentalTypeAddOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeSubOperation : public FundamentalTypeBinaryOperation<FundamentalTypeSub>
 {
 public:
     FundamentalTypeSubOperation();
-    FundamentalTypeSubOperation(TypeSymbol* type_);
+    FundamentalTypeSubOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeMulOperation : public FundamentalTypeBinaryOperation<FundamentalTypeMul>
 {
 public:
     FundamentalTypeMulOperation();
-    FundamentalTypeMulOperation(TypeSymbol* type_);
+    FundamentalTypeMulOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeDivOperation : public FundamentalTypeBinaryOperation<FundamentalTypeDiv>
 {
 public:
     FundamentalTypeDivOperation();
-    FundamentalTypeDivOperation(TypeSymbol* type_);
+    FundamentalTypeDivOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeModOperation : public FundamentalTypeBinaryOperation<FundamentalTypeMod>
 {
 public:
     FundamentalTypeModOperation();
-    FundamentalTypeModOperation(TypeSymbol* type_);
+    FundamentalTypeModOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeAndOperation : public FundamentalTypeBinaryOperation<FundamentalTypeAnd>
 {
 public:
     FundamentalTypeAndOperation();
-    FundamentalTypeAndOperation(TypeSymbol* type_);
+    FundamentalTypeAndOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeOrOperation : public FundamentalTypeBinaryOperation<FundamentalTypeOr>
 {
 public:
     FundamentalTypeOrOperation();
-    FundamentalTypeOrOperation(TypeSymbol* type_);
+    FundamentalTypeOrOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeXorOperation : public FundamentalTypeBinaryOperation<FundamentalTypeXor>
 {
 public:
     FundamentalTypeXorOperation();
-    FundamentalTypeXorOperation(TypeSymbol* type_);
+    FundamentalTypeXorOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeShlOperation : public FundamentalTypeBinaryOperation<FundamentalTypeShl>
 {
 public:
     FundamentalTypeShlOperation();
-    FundamentalTypeShlOperation(TypeSymbol* type_);
+    FundamentalTypeShlOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeShrOperation : public FundamentalTypeBinaryOperation<FundamentalTypeShr>
 {
 public:
     FundamentalTypeShrOperation();
-    FundamentalTypeShrOperation(TypeSymbol* type_);
+    FundamentalTypeShrOperation(TypeSymbol* type_, Context* context);
 };
 
 class FundamentalTypeEqualOperation : public FundamentalTypeComparisonOperation<FundamentalTypeEqual>
 {
 public:
     FundamentalTypeEqualOperation();
-    FundamentalTypeEqualOperation(TypeSymbol* type_, TypeSymbol* boolType_);
+    FundamentalTypeEqualOperation(TypeSymbol* type_, TypeSymbol* boolType_, Context* context);
 };
 
 class FundamentalTypeLessOperation : public FundamentalTypeComparisonOperation<FundamentalTypeLess>
 {
 public:
     FundamentalTypeLessOperation();
-    FundamentalTypeLessOperation(TypeSymbol* type_, TypeSymbol* boolType_);
+    FundamentalTypeLessOperation(TypeSymbol* type_, TypeSymbol* boolType_, Context* context);
 };
 
 class FundamentalTypeDefaultCtor : public FunctionSymbol

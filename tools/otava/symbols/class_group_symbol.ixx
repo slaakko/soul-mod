@@ -6,15 +6,14 @@
 export module otava.symbols.class_group.symbol;
 
 import std.core;
-import otava.symbols.symbol;
+import otava.symbols.type.symbol;
 
 export namespace otava::symbols {
 
 class ClassTypeSymbol;
 class ForwardClassDeclarationSymbol;
-class TypeSymbol;
 
-class ClassGroupSymbol : public Symbol
+class ClassGroupSymbol : public TypeSymbol
 {
 public:
     ClassGroupSymbol(const std::u32string& name_);
@@ -28,6 +27,7 @@ public:
     void AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration);
     ForwardClassDeclarationSymbol* GetForwardDeclaration(int arity) const;
     const std::vector<ForwardClassDeclarationSymbol*>& ForwardDeclarations() const { return forwardDeclarations; }
+    ClassTypeSymbol* GetBestMatchingClass(const std::vector<Symbol*>& templateArgs) const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

@@ -237,7 +237,7 @@ PointerCopyAssignment::PointerCopyAssignment(TypeSymbol* type_, const soul::ast:
     AddParameter(thisParam, sourcePos, context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     AddParameter(thatParam, sourcePos, context);
-    SetReturnType(type->AddLValueRef());
+    SetReturnType(type->AddLValueRef(), context);
 }
 
 void PointerCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -302,7 +302,7 @@ PointerMoveAssignment::PointerMoveAssignment(TypeSymbol* type_, const soul::ast:
     AddParameter(thisParam, sourcePos, context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef());
     AddParameter(thatParam, sourcePos, context);
-    SetReturnType(type->AddLValueRef());
+    SetReturnType(type->AddLValueRef(), context);
 }
 
 void PointerMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -369,7 +369,7 @@ PointerPlusOffset::PointerPlusOffset(TypeSymbol* pointerType_, TypeSymbol* longL
     AddParameter(leftParam, sourcePos, context);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", longLongIntType);
     AddParameter(rightParam, sourcePos, context);
-    SetReturnType(pointerType);
+    SetReturnType(pointerType, context);
 }
 
 void PointerPlusOffset::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -441,7 +441,7 @@ OffsetPlusPointer::OffsetPlusPointer(TypeSymbol* pointerType_, TypeSymbol* longL
     AddParameter(leftParam, sourcePos, context);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", pointerType);
     AddParameter(rightParam, sourcePos, context);
-    SetReturnType(pointerType);
+    SetReturnType(pointerType, context);
 }
 
 void OffsetPlusPointer::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -513,7 +513,7 @@ PointerMinusOffset::PointerMinusOffset(TypeSymbol* pointerType_, TypeSymbol* lon
     AddParameter(leftParam, sourcePos, context);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", longLongIntType);
     AddParameter(rightParam, sourcePos, context);
-    SetReturnType(pointerType);
+    SetReturnType(pointerType, context);
 }
 
 void PointerMinusOffset::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -586,7 +586,7 @@ PointerMinusPointer::PointerMinusPointer(TypeSymbol* pointerType_, TypeSymbol* l
     AddParameter(leftParam, sourcePos, context);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", pointerType);
     AddParameter(rightParam, sourcePos, context);
-    SetReturnType(longLongIntType);
+    SetReturnType(longLongIntType, context);
 }
 
 void PointerMinusPointer::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -650,7 +650,7 @@ PointerEqual::PointerEqual(TypeSymbol* pointerType_, const soul::ast::SourcePos&
     AddParameter(leftParam, sourcePos, context);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", pointerType);
     AddParameter(rightParam, sourcePos, context);
-    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType));
+    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType), context);
 }
 
 void PointerEqual::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -714,7 +714,7 @@ PointerLess::PointerLess(TypeSymbol* pointerType_, const soul::ast::SourcePos& s
     AddParameter(leftParam, sourcePos, context);
     ParameterSymbol* rightParam = new ParameterSymbol(U"right", pointerType);
     AddParameter(rightParam, sourcePos, context);
-    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType));
+    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType), context);
 }
 
 void PointerLess::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -776,7 +776,7 @@ PointerArrow::PointerArrow(TypeSymbol* type_, const soul::ast::SourcePos& source
     SetAccess(Access::public_);
     ParameterSymbol* operandParam = new ParameterSymbol(U"operand", type->AddPointer());
     AddParameter(operandParam, sourcePos, context);
-    SetReturnType(type);
+    SetReturnType(type, context);
 }
 
 void PointerArrow::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
@@ -821,7 +821,7 @@ class ClassDefaultCtor : public FunctionDefinitionSymbol
 public:
     ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ClassTypeSymbol* ClassType() const { return classType; }
-    std::string IrName() const override { return irName; }
+    std::string IrName(Context* context) const override { return irName; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -832,7 +832,7 @@ ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast:
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType));
+    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
     irName = "default_ctor_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
 }
 
@@ -901,7 +901,7 @@ class ClassCopyCtor : public FunctionDefinitionSymbol
 public:
     ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ClassTypeSymbol* ClassType() const { return classType; }
-    std::string IrName() const override { return irName; }
+    std::string IrName(Context* context) const override { return irName; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -915,7 +915,7 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     ParameterSymbol* thisParam = ThisParam();
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst()->AddLValueRef());
     AddParameter(thatParam, sourcePos, context);
-    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType));
+    SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
     irName = "copy_ctor_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
 }
 

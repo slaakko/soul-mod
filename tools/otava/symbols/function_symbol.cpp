@@ -24,6 +24,8 @@ import otava.symbols.value;
 import otava.symbols.variable.symbol;
 import otava.symbols.fundamental.type.conversion;
 import otava.symbols.bound.node;
+import otava.symbols.bound.tree;
+import otava.symbols.context;
 import otava.intermediate.function;
 import util.sha1;
 import util.unicode;
@@ -259,6 +261,10 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     flags(FunctionSymbolFlags::none),
     nextTemporaryId(0)
 {
+    if (name_ == U"move")
+    {
+        int x = 0;
+    }
 }
 
 FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
@@ -271,6 +277,10 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     flags(FunctionSymbolFlags::none),
     nextTemporaryId(0)
 {
+    if (name_ == U"move")
+    {
+        int x = 0;
+    }
 }
 
 int FunctionSymbol::Arity() const
@@ -394,11 +404,20 @@ SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind() const
 TemplateDeclarationSymbol* FunctionSymbol::ParentTemplateDeclaration() const
 {
     Symbol* parentSymbol = const_cast<FunctionSymbol*>(this)->Parent();
-    if (parentSymbol->IsTemplateDeclarationSymbol())
+    if (parentSymbol && parentSymbol->IsTemplateDeclarationSymbol())
     {
         return static_cast<TemplateDeclarationSymbol*>(parentSymbol);
     }
     return nullptr;
+}
+
+void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
+{
+    returnType = returnType_;
+    if (returnType)
+    {
+        context->GetSymbolTable()->MapType(returnType);
+    }
 }
 
 bool FunctionSymbol::IsTemplate() const
@@ -503,7 +522,7 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     if (type->IsFunctionType())
     {
         otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(type);
-        otava::intermediate::Function* function = emitter.GetOrInsertFunction(IrName(), functionType);
+        otava::intermediate::Function* function = emitter.GetOrInsertFunction(IrName(context), functionType);
         if (!functionType->ReturnType() || functionType->ReturnType()->IsVoidType())
         {
             emitter.EmitCall(function, arguments);
@@ -544,7 +563,7 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
     return type;
 }
 
-std::string FunctionSymbol::IrName() const
+std::string FunctionSymbol::IrName(Context* context) const
 {
     if (linkage == Linkage::cpp_linkage)
     {
@@ -572,6 +591,10 @@ std::string FunctionSymbol::IrName() const
         }
         std::string fullName = util::ToUtf8(FullName());
         irName.append("_").append(util::GetSha1MessageDigest(fullName));
+        if (IsSpecialization())
+        {
+            irName.append("_").append(context->GetBoundCompileUnit()->Id());
+        }
         return irName;
     }
     else if (linkage == Linkage::c_linkage)
@@ -635,15 +658,15 @@ void FunctionDefinitionSymbol::Resolve(SymbolTable& symbolTable)
     }
 }
 
-std::string FunctionDefinitionSymbol::IrName() const
+std::string FunctionDefinitionSymbol::IrName(Context* context) const
 {
     if (declaration)
     {
-        return declaration->IrName();
+        return declaration->IrName(context);
     }
     else
     {
-        return FunctionSymbol::IrName();
+        return FunctionSymbol::IrName(context);
     }
 }
 

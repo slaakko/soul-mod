@@ -52,6 +52,7 @@ FunctionDefinitionSymbol* FunctionTemplateRepository::GetFunctionDefinition(cons
 void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol)
 {
     functionTemplateMap[key] = functionDefinitionSymbol;
+    functionDefinitionSymbols.push_back(std::unique_ptr<FunctionDefinitionSymbol>(functionDefinitionSymbol));
 }
 
 FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,
@@ -127,7 +128,7 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
         FunctionDefinitionSymbol* specialization = nullptr;
         try
         {
-            context->PushSetFlag(ContextFlags::instantiateFunctionTemplate);
+            context->PushSetFlag(ContextFlags::instantiateFunctionTemplate | ContextFlags::saveDeclarations);
             context->SetFunctionDefinitionNode(functionDefinitionNode);
             functionDefinitionNode->Accept(instantiator);
             specialization = context->GetFunctionTemplateSpecialization();

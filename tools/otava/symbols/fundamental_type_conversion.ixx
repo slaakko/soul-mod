@@ -18,7 +18,7 @@ export namespace otava::symbols {
 
 enum class ConversionKind : int32_t
 {
-    implicitConversion, narrowingConversion
+    implicitConversion, explicitConversion
 };
 
 struct FundamentalTypeSignExtension
@@ -59,7 +59,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         paramTypeId(util::nil_uuid()), argTypeId(util::nil_uuid())
     {
     }
-    FundamentalTypeConversion(SymbolKind kind_, int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) :
+    FundamentalTypeConversion(SymbolKind kind_, int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
         FunctionSymbol(kind_, U"@conversion"), distance(distance_), conversionKind(conversionKind_), paramType(paramType_), argType(argType_),
         paramTypeId(util::nil_uuid()), argTypeId(util::nil_uuid())
     {
@@ -67,7 +67,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         SetAccess(Access::public_);
         ParameterSymbol* arg = new ParameterSymbol(U"arg", argType);
         AddParameter(arg, soul::ast::SourcePos(), nullptr);
-        SetReturnType(paramType_);
+        SetReturnType(paramType_, context);
     }
     TypeSymbol* ConversionParamType() const override
     {
@@ -125,49 +125,49 @@ class FundamentalTypeSignExtendConversion : public FundamentalTypeConversion<Fun
 {
 public:
     FundamentalTypeSignExtendConversion();
-    FundamentalTypeSignExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_);
+    FundamentalTypeSignExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeZeroExtendConversion : public FundamentalTypeConversion<FundamentalTypeZeroExtension>
 {
 public:
     FundamentalTypeZeroExtendConversion();
-    FundamentalTypeZeroExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_);
+    FundamentalTypeZeroExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeTruncateConversion : public FundamentalTypeConversion<FundamentalTypeTruncate>
 {
 public:
     FundamentalTypeTruncateConversion();
-    FundamentalTypeTruncateConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_);
+    FundamentalTypeTruncateConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeBitcastConversion : public FundamentalTypeConversion<FundamentalTypeBitcast>
 {
 public:
     FundamentalTypeBitcastConversion();
-    FundamentalTypeBitcastConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_);
+    FundamentalTypeBitcastConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeIntToFloatConversion : public FundamentalTypeConversion<FundamentalTypeIntToFloat>
 {
 public:
     FundamentalTypeIntToFloatConversion();
-    FundamentalTypeIntToFloatConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_);
+    FundamentalTypeIntToFloatConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeFloatToIntConversion : public FundamentalTypeConversion<FundamentalTypeFloatToInt>
 {
 public:
     FundamentalTypeFloatToIntConversion();
-    FundamentalTypeFloatToIntConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_);
+    FundamentalTypeFloatToIntConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeBooleanConversion : public FunctionSymbol
 {
 public:    
     FundamentalTypeBooleanConversion();
-    FundamentalTypeBooleanConversion(TypeSymbol* type_, TypeSymbol* boolType);
+    FundamentalTypeBooleanConversion(TypeSymbol* type_, TypeSymbol* boolType, Context* context);
     TypeSymbol* ConversionParamType() const override;
     TypeSymbol* ConversionArgType() const override;
     ConversionKind GetConversionKind() const override;

@@ -119,7 +119,7 @@ public:
     void SetConversion() { kind = FunctionKind::conversion; }
     virtual bool IsArrayElementAccess() const { return false; }
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
-    void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
+    void SetReturnType(TypeSymbol* returnType_, Context* context);
     TypeSymbol* ReturnType() const { return returnType; }
     std::u32string FullName() const override;
     bool IsTemplate() const;
@@ -138,7 +138,7 @@ public:
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    virtual std::string IrName() const;
+    virtual std::string IrName(Context* context) const;
     void AddLocalVariable(VariableSymbol* localVariable);
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
@@ -181,7 +181,7 @@ public:
     std::string SymbolDocKindStr() const override { return "function_definition"; }
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
     FunctionSymbol* Declaration() const { return declaration; }
-    std::string IrName() const override;
+    std::string IrName(Context* context) const override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

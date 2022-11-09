@@ -114,6 +114,13 @@ void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
             functions.push_back(function);
         }
     }
+    for (const auto& definition : that->definitions)
+    {
+        if (std::find(definitions.cbegin(), definitions.cend(), definition) == definitions.end())
+        {
+            definitions.push_back(definition);
+        }
+    }
 }
 
 FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const
@@ -181,14 +188,20 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<Function
     {
         if (function->MemFunArity() == arity)
         {
-            viableFunctions.push_back(function);
+            if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
+            {
+                viableFunctions.push_back(function);
+            }
         }
     }
     for (const auto& functionDefinition : definitions)
     {
         if (functionDefinition->MemFunArity() == arity)
         {
-            viableFunctions.push_back(functionDefinition);
+            if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())
+            {
+                viableFunctions.push_back(functionDefinition);
+            }
         }
     }
 }

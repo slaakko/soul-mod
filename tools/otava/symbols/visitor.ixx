@@ -23,6 +23,7 @@ class SymbolValue;
 class InvokeValue;
 class AliasGroupSymbol;
 class AliasTypeSymbol;
+class AliasTypeTemplateSpecializationSymbol;
 class BlockSymbol;
 class ClassGroupSymbol;
 class ClassTypeSymbol;
@@ -41,7 +42,7 @@ class FunctionTypeSymbol;
 class FunctionDefinitionSymbol;
 class FundamentalTypeSymbol;
 class NamespaceSymbol;
-class SpecializationSymbol;
+class ClassTemplateSpecializationSymbol;
 class TypenameConstraintSymbol;
 class TemplateParameterSymbol;
 class BoundTemplateParameterSymbol;
@@ -73,6 +74,7 @@ public:
     virtual void Visit(InvokeValue& value) {}
     virtual void Visit(AliasGroupSymbol& symbol) {}
     virtual void Visit(AliasTypeSymbol& symbol) {}
+    virtual void Visit(AliasTypeTemplateSpecializationSymbol& symbol) {}
     virtual void Visit(BlockSymbol& symbol) {}
     virtual void Visit(ClassGroupSymbol& symbol) {}
     virtual void Visit(ClassTypeSymbol& symbol) {}
@@ -91,7 +93,7 @@ public:
     virtual void Visit(FunctionDefinitionSymbol& symbol) {}
     virtual void Visit(FundamentalTypeSymbol& symbol) {}
     virtual void Visit(NamespaceSymbol& symbol) {}
-    virtual void Visit(SpecializationSymbol& symbol) {}
+    virtual void Visit(ClassTemplateSpecializationSymbol& symbol) {}
     virtual void Visit(TypenameConstraintSymbol& symbol) {}
     virtual void Visit(TemplateParameterSymbol& symbol) {}
     virtual void Visit(BoundTemplateParameterSymbol& symbol) {}
@@ -113,12 +115,13 @@ public:
     void Visit(NamespaceSymbol& symbol) override;
     void Visit(SymbolTable& symbolTable) override;
     void Visit(AliasTypeSymbol& symbol) override;
+    void Visit(AliasTypeTemplateSpecializationSymbol& symbol);
     void Visit(BlockSymbol& symbol) override;
     void Visit(ClassTypeSymbol& symbol) override;
     void Visit(EnumeratedTypeSymbol& symbol) override;
     void Visit(CompoundTypeSymbol& symbol) override;
     void Visit(FunctionSymbol& symbol) override;
-    void Visit(SpecializationSymbol& symbol) override;
+    void Visit(ClassTemplateSpecializationSymbol& symbol) override;
     void Visit(TemplateParameterSymbol& symbol) override;
     void Visit(TemplateDeclarationSymbol& symbol) override;
     void Visit(VariableSymbol& symbol) override;

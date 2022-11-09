@@ -7,6 +7,7 @@ module otava.symbols.visitor;
 
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.symbol;
+import otava.symbols.alias.type.templates;
 import otava.symbols.block;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.concept_group.symbol;
@@ -14,13 +15,13 @@ import otava.symbols.concepts;
 import otava.symbols.container.symbol;
 import otava.symbols.class_group.symbol;
 import otava.symbols.classes;
+import otava.symbols.class_templates;
 import otava.symbols.enums;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.symbol;
 import otava.symbols.modules;
 import otava.symbols.namespaces;
-import otava.symbols.specialization;
 import otava.symbols.templates;
 import otava.symbols.type.symbol;
 import otava.symbols.symbol.table;
@@ -82,6 +83,13 @@ void DefaultVisitor::Visit(AliasTypeSymbol& symbol)
     SetVisitContainer(true);
 }
 
+void DefaultVisitor::Visit(AliasTypeTemplateSpecializationSymbol& symbol)
+{
+    SetVisitContainer(false);
+    symbol.ReferredType()->Accept(*this);
+    SetVisitContainer(true);
+}
+
 void DefaultVisitor::Visit(BlockSymbol& symbol)
 {
     VisitContainer(symbol);
@@ -115,7 +123,7 @@ void DefaultVisitor::Visit(FunctionSymbol& symbol)
     }
 }
 
-void DefaultVisitor::Visit(SpecializationSymbol& symbol)
+void DefaultVisitor::Visit(ClassTemplateSpecializationSymbol& symbol)
 {
     VisitContainer(symbol);
     SetVisitContainer(false);

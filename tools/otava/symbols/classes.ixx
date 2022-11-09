@@ -25,8 +25,6 @@ enum class SpecialFunctionKind : int32_t;
 
 int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
 
-class Context;
-
 using RecordedParseFn = void (*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
 
 void SetRecordedParseFn(RecordedParseFn fn);
@@ -43,9 +41,12 @@ class ClassTypeSymbol : public TypeSymbol
 {
 public:
     ClassTypeSymbol(const std::u32string& name_);
+    ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_);
     int Arity();
     ClassKind GetClassKind() const { return classKind; }
     void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
+    TypeSymbol* Specialization() const { return specialization; }
+    void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
     std::string SymbolKindStr() const override { return "class type symbol"; }
     std::string SymbolDocKindStr() const override { return "class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
@@ -74,6 +75,8 @@ private:
     std::vector<TypeSymbol*> baseClasses;
     std::vector<util::uuid> baseClassIds;
     ClassKind classKind;
+    TypeSymbol* specialization;
+    util::uuid specializationId;
     std::vector<TypeSymbol*> derivedClasses;
     int32_t level;
     std::vector<VariableSymbol*> memberVariables;
@@ -95,6 +98,8 @@ public:
     int Arity();
     ClassKind GetClassKind() const { return classKind; }
     void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
+    TypeSymbol* Specialization() const { return specialization; }
+    void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
     void SetClassTypeSymbol(ClassTypeSymbol* classTypeSymbol_) { classTypeSymbol = classTypeSymbol_; }
     ClassTypeSymbol* GetClassTypeSymbol() const { return classTypeSymbol; }
     std::string SymbolKindStr() const override { return "forward class declaration symbol"; }
@@ -107,6 +112,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
 private:
     ClassKind classKind;
+    TypeSymbol* specialization;
     ClassTypeSymbol* classTypeSymbol;
     util::uuid classTypeSymbolId;
 };
@@ -115,7 +121,7 @@ void BeginClass(otava::ast::Node* node, otava::symbols::Context* context);
 void EndClass(otava::ast::Node* node, otava::symbols::Context* context);
 void AddForwardClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
-void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind);
+void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);
 void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context);
 void ThrowMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);

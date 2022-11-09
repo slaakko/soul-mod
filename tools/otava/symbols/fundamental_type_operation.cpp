@@ -181,7 +181,8 @@ FundamentalTypeNotOperation::FundamentalTypeNotOperation() : FundamentalTypeUnar
 {
 }
 
-FundamentalTypeNotOperation::FundamentalTypeNotOperation(TypeSymbol* type_) : FundamentalTypeUnaryOperation<FundamentalTypeNot>(SymbolKind::fundamentalTypeNot, type_)
+FundamentalTypeNotOperation::FundamentalTypeNotOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeUnaryOperation<FundamentalTypeNot>(SymbolKind::fundamentalTypeNot, type_, context)
 {
 }
 
@@ -190,8 +191,8 @@ FundamentalTypeUnaryPlusOperation::FundamentalTypeUnaryPlusOperation() :
 {
 }
 
-FundamentalTypeUnaryPlusOperation::FundamentalTypeUnaryPlusOperation(TypeSymbol* type_) : 
-    FundamentalTypeUnaryOperation<FundamentalTypeUnaryPlus>(SymbolKind::fundamentalTypeUnaryPlus, type_)
+FundamentalTypeUnaryPlusOperation::FundamentalTypeUnaryPlusOperation(TypeSymbol* type_, Context* context) :
+    FundamentalTypeUnaryOperation<FundamentalTypeUnaryPlus>(SymbolKind::fundamentalTypeUnaryPlus, type_, context)
 {
 }
 
@@ -200,8 +201,8 @@ FundamentalTypeUnaryMinusOperation::FundamentalTypeUnaryMinusOperation() :
 {
 }
 
-FundamentalTypeUnaryMinusOperation::FundamentalTypeUnaryMinusOperation(TypeSymbol* type_) :
-    FundamentalTypeUnaryOperation<FundamentalTypeUnaryMinus>(SymbolKind::fundamentalTypeUnaryMinus, type_)
+FundamentalTypeUnaryMinusOperation::FundamentalTypeUnaryMinusOperation(TypeSymbol* type_, Context* context) :
+    FundamentalTypeUnaryOperation<FundamentalTypeUnaryMinus>(SymbolKind::fundamentalTypeUnaryMinus, type_, context)
 {
 }
 
@@ -210,8 +211,8 @@ FundamentalTypeComplementOperation::FundamentalTypeComplementOperation() :
 {
 }
 
-FundamentalTypeComplementOperation::FundamentalTypeComplementOperation(TypeSymbol* type_) : 
-    FundamentalTypeUnaryOperation<FundamentalTypeComplement>(SymbolKind::fundamentalTypeComplement, type_)
+FundamentalTypeComplementOperation::FundamentalTypeComplementOperation(TypeSymbol* type_, Context* context) :
+    FundamentalTypeUnaryOperation<FundamentalTypeComplement>(SymbolKind::fundamentalTypeComplement, type_, context)
 {
 }
 
@@ -219,7 +220,8 @@ FundamentalTypeAddOperation::FundamentalTypeAddOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeAddOperation::FundamentalTypeAddOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeAdd>(SymbolKind::fundamentalTypeAdd, type_)
+FundamentalTypeAddOperation::FundamentalTypeAddOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeAdd>(SymbolKind::fundamentalTypeAdd, type_, context)
 {
 }
 
@@ -227,7 +229,8 @@ FundamentalTypeSubOperation::FundamentalTypeSubOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeSubOperation::FundamentalTypeSubOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeSub>(SymbolKind::fundamentalTypeSub, type_)
+FundamentalTypeSubOperation::FundamentalTypeSubOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeSub>(SymbolKind::fundamentalTypeSub, type_, context)
 {
 }
 
@@ -235,7 +238,8 @@ FundamentalTypeMulOperation::FundamentalTypeMulOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeMulOperation::FundamentalTypeMulOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeMul>(SymbolKind::fundamentalTypeMul, type_)
+FundamentalTypeMulOperation::FundamentalTypeMulOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeMul>(SymbolKind::fundamentalTypeMul, type_, context)
 {
 }
 
@@ -243,7 +247,8 @@ FundamentalTypeDivOperation::FundamentalTypeDivOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeDivOperation::FundamentalTypeDivOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeDiv>(SymbolKind::fundamentalTypeDiv, type_)
+FundamentalTypeDivOperation::FundamentalTypeDivOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeDiv>(SymbolKind::fundamentalTypeDiv, type_, context)
 {
 }
 
@@ -251,7 +256,8 @@ FundamentalTypeModOperation::FundamentalTypeModOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeModOperation::FundamentalTypeModOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeMod>(SymbolKind::fundamentalTypeMod, type_)
+FundamentalTypeModOperation::FundamentalTypeModOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeMod>(SymbolKind::fundamentalTypeMod, type_, context)
 {
 }
 
@@ -259,7 +265,8 @@ FundamentalTypeAndOperation::FundamentalTypeAndOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeAndOperation::FundamentalTypeAndOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeAnd>(SymbolKind::fundamentalTypeAnd, type_)
+FundamentalTypeAndOperation::FundamentalTypeAndOperation(TypeSymbol* type_, Context* context) 
+    : FundamentalTypeBinaryOperation<FundamentalTypeAnd>(SymbolKind::fundamentalTypeAnd, type_, context)
 {
 }
 
@@ -267,7 +274,8 @@ FundamentalTypeOrOperation::FundamentalTypeOrOperation() : FundamentalTypeBinary
 {
 }
 
-FundamentalTypeOrOperation::FundamentalTypeOrOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeOr>(SymbolKind::fundamentalTypeOr, type_)
+FundamentalTypeOrOperation::FundamentalTypeOrOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeOr>(SymbolKind::fundamentalTypeOr, type_, context)
 {
 }
 
@@ -275,7 +283,8 @@ FundamentalTypeXorOperation::FundamentalTypeXorOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeXorOperation::FundamentalTypeXorOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeXor>(SymbolKind::fundamentalTypeXor, type_)
+FundamentalTypeXorOperation::FundamentalTypeXorOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeXor>(SymbolKind::fundamentalTypeXor, type_, context)
 {
 }
 
@@ -283,7 +292,8 @@ FundamentalTypeShlOperation::FundamentalTypeShlOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeShlOperation::FundamentalTypeShlOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeShl>(SymbolKind::fundamentalTypeShl, type_)
+FundamentalTypeShlOperation::FundamentalTypeShlOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeShl>(SymbolKind::fundamentalTypeShl, type_, context)
 {
 }
 
@@ -291,7 +301,8 @@ FundamentalTypeShrOperation::FundamentalTypeShrOperation() : FundamentalTypeBina
 {
 }
 
-FundamentalTypeShrOperation::FundamentalTypeShrOperation(TypeSymbol* type_) : FundamentalTypeBinaryOperation<FundamentalTypeShr>(SymbolKind::fundamentalTypeShr, type_)
+FundamentalTypeShrOperation::FundamentalTypeShrOperation(TypeSymbol* type_, Context* context) : 
+    FundamentalTypeBinaryOperation<FundamentalTypeShr>(SymbolKind::fundamentalTypeShr, type_, context)
 {
 }
 
@@ -299,8 +310,8 @@ FundamentalTypeEqualOperation::FundamentalTypeEqualOperation() : FundamentalType
 {
 }
 
-FundamentalTypeEqualOperation::FundamentalTypeEqualOperation(TypeSymbol* type_, TypeSymbol* boolType_) : 
-    FundamentalTypeComparisonOperation<FundamentalTypeEqual>(SymbolKind::fundamentalTypeEqual, type_, boolType_)
+FundamentalTypeEqualOperation::FundamentalTypeEqualOperation(TypeSymbol* type_, TypeSymbol* boolType_, Context* context) : 
+    FundamentalTypeComparisonOperation<FundamentalTypeEqual>(SymbolKind::fundamentalTypeEqual, type_, boolType_, context)
 {
 }
 
@@ -308,8 +319,8 @@ FundamentalTypeLessOperation::FundamentalTypeLessOperation() : FundamentalTypeCo
 {
 }
 
-FundamentalTypeLessOperation::FundamentalTypeLessOperation(TypeSymbol* type_, TypeSymbol* boolType_) :
-    FundamentalTypeComparisonOperation<FundamentalTypeLess>(SymbolKind::fundamentalTypeLess, type_, boolType_)
+FundamentalTypeLessOperation::FundamentalTypeLessOperation(TypeSymbol* type_, TypeSymbol* boolType_, Context* context) :
+    FundamentalTypeComparisonOperation<FundamentalTypeLess>(SymbolKind::fundamentalTypeLess, type_, boolType_, context)
 {
 }
 
@@ -449,7 +460,7 @@ FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment(TypeSymbol* type_, 
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     AddParameter(thatParam, soul::ast::SourcePos(), context);
-    SetReturnType(type->AddLValueRef());
+    SetReturnType(type->AddLValueRef(), context);
 }
 
 void FundamentalTypeCopyAssignment::Write(Writer& writer)
@@ -491,7 +502,7 @@ FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment(TypeSymbol* type_, 
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef());
     AddParameter(thatParam, soul::ast::SourcePos(), context);
-    SetReturnType(type->AddLValueRef());
+    SetReturnType(type->AddLValueRef(), context);
 }
 
 void FundamentalTypeMoveAssignment::Write(Writer& writer)
@@ -526,21 +537,21 @@ void AddFundamentalIntegerOperationsToSymbolTable(TypeSymbol* type, Context* con
 {
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
 
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryPlusOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryMinusOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeComplementOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeAddOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeSubOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMulOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDivOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeModOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeAndOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeOrOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeXorOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeShlOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeShrOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeEqualOperation(type, boolType), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeLessOperation(type, boolType), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryPlusOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeUnaryMinusOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeComplementOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeAddOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeSubOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMulOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDivOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeModOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeAndOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeOrOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeXorOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeShlOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeShrOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeEqualOperation(type, boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeLessOperation(type, boolType, context), context);
 
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDefaultCtor(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtor(type, context), context);
@@ -552,12 +563,12 @@ void AddFundamentalIntegerOperationsToSymbolTable(TypeSymbol* type, Context* con
 void AddFundamentalFloatingPointOperationsToSymbolTable(TypeSymbol* type, Context* context)
 {
     TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeAddOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeSubOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMulOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDivOperation(type), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeEqualOperation(type, boolType), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeLessOperation(type, boolType), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeAddOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeSubOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMulOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDivOperation(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeEqualOperation(type, boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeLessOperation(type, boolType, context), context);
 
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDefaultCtor(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyCtor(type, context), context);
@@ -592,7 +603,7 @@ void AddFundamentalTypeOperationsToSymbolTable(Context* context)
     TypeSymbol* floatType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::floatType);
     TypeSymbol* doubleType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::doubleType);
     TypeSymbol* longDoubleType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longDoubleType);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeNotOperation(boolType), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeNotOperation(boolType, context), context);
     AddFundamentalIntegerOperationsToSymbolTable(charType, context);
     AddFundamentalIntegerOperationsToSymbolTable(signedCharType, context);
     AddFundamentalIntegerOperationsToSymbolTable(unsignedCharType, context);

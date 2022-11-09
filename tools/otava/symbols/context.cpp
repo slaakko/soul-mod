@@ -24,7 +24,8 @@ Context::Context() :
     boundFunction(nullptr),
     fileMap(nullptr),
     specialization(nullptr),
-    functionDefinitionNode(nullptr)
+    functionDefinitionNode(nullptr),
+    aliasType(nullptr)
 {
 }
 

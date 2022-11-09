@@ -43,8 +43,9 @@ FundamentalTypeSignExtendConversion::FundamentalTypeSignExtendConversion() : Fun
 {
 }
 
-FundamentalTypeSignExtendConversion::FundamentalTypeSignExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) :
-    FundamentalTypeConversion<FundamentalTypeSignExtension>(SymbolKind::fundamentalTypeSignExtension, distance_, conversionKind_, paramType_, argType_)
+FundamentalTypeSignExtendConversion::FundamentalTypeSignExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+    Context* context) :
+    FundamentalTypeConversion<FundamentalTypeSignExtension>(SymbolKind::fundamentalTypeSignExtension, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
 
@@ -52,8 +53,9 @@ FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion() : Fun
 {
 }
 
-FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) :
-    FundamentalTypeConversion<FundamentalTypeZeroExtension>(SymbolKind::fundamentalTypeZeroExtension, distance_, conversionKind_, paramType_, argType_)
+FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+    Context* context) :
+    FundamentalTypeConversion<FundamentalTypeZeroExtension>(SymbolKind::fundamentalTypeZeroExtension, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
 
@@ -61,8 +63,8 @@ FundamentalTypeTruncateConversion::FundamentalTypeTruncateConversion() : Fundame
 {
 }
 
-FundamentalTypeTruncateConversion::FundamentalTypeTruncateConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) : 
-    FundamentalTypeConversion<FundamentalTypeTruncate>(SymbolKind::fundamentalTypeTruncate, distance_, conversionKind_, paramType_, argType_)
+FundamentalTypeTruncateConversion::FundamentalTypeTruncateConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
+    FundamentalTypeConversion<FundamentalTypeTruncate>(SymbolKind::fundamentalTypeTruncate, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
 
@@ -70,8 +72,8 @@ FundamentalTypeBitcastConversion::FundamentalTypeBitcastConversion() : Fundament
 {
 }
     
-FundamentalTypeBitcastConversion::FundamentalTypeBitcastConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) : 
-    FundamentalTypeConversion<FundamentalTypeBitcast>(SymbolKind::fundamentalTypeBitcast, distance_, conversionKind_, paramType_, argType_)
+FundamentalTypeBitcastConversion::FundamentalTypeBitcastConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
+    FundamentalTypeConversion<FundamentalTypeBitcast>(SymbolKind::fundamentalTypeBitcast, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
 
@@ -79,8 +81,9 @@ FundamentalTypeIntToFloatConversion::FundamentalTypeIntToFloatConversion() : Fun
 {
 }
 
-FundamentalTypeIntToFloatConversion::FundamentalTypeIntToFloatConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) :
-    FundamentalTypeConversion<FundamentalTypeIntToFloat>(SymbolKind::fundamentalTypeIntToFloat, distance_, conversionKind_, paramType_, argType_)
+FundamentalTypeIntToFloatConversion::FundamentalTypeIntToFloatConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+    Context* context) :
+    FundamentalTypeConversion<FundamentalTypeIntToFloat>(SymbolKind::fundamentalTypeIntToFloat, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
 
@@ -88,8 +91,9 @@ FundamentalTypeFloatToIntConversion::FundamentalTypeFloatToIntConversion() : Fun
 {
 }
 
-FundamentalTypeFloatToIntConversion::FundamentalTypeFloatToIntConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_) : 
-    FundamentalTypeConversion<FundamentalTypeFloatToInt>(SymbolKind::fundamentalTypeFloatToInt, distance_, conversionKind_, paramType_, argType_)
+FundamentalTypeFloatToIntConversion::FundamentalTypeFloatToIntConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+    Context* context) :
+    FundamentalTypeConversion<FundamentalTypeFloatToInt>(SymbolKind::fundamentalTypeFloatToInt, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
 
@@ -97,14 +101,14 @@ FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion() : FunctionS
 {
 }
 
-FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* type_, TypeSymbol* boolType) : 
+FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* type_, TypeSymbol* boolType, Context* context) : 
     FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion"), paramType(boolType), argType(type_)
 {
     SetFunctionKind(FunctionKind::conversion);
     SetAccess(Access::public_);
     ParameterSymbol* param = new ParameterSymbol(U"param", argType);
-    AddParameter(param, soul::ast::SourcePos(), nullptr);
-    SetReturnType(boolType);
+    AddParameter(param, soul::ast::SourcePos(), context);
+    SetReturnType(boolType, context);
 }
 
 TypeSymbol* FundamentalTypeBooleanConversion::ConversionParamType() const 

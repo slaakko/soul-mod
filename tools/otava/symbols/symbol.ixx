@@ -28,8 +28,6 @@ class NamespaceSymbol;
 class TemplateDeclarationSymbol;
 class VariableSymbol;
 
-enum class ScopeKind : int32_t;
-
 enum class DeclarationFlags : int32_t;
 
 enum class Access : int32_t
@@ -75,7 +73,7 @@ enum class SymbolKind : int32_t
     conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, functionDefinitionSymbol,
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol,
     templateParameterSymbol, varArgTypeSymbol, variableSymbol, parameterSymbol, errorSymbol,
-    specializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
+    classTemplateSpecializationSymbol, aliasTypeTemplateSpecializationSymbol, nestedTypeSymbol, nullPtrValueSymbol, symbolValueSymbol, invokeValueSymbol,
     forwardClassDeclarationSymbol, forwardEnumDeclarationSymbol, boundTemplateParameterSymbol, constraintExprSymbol,
     fundamentalTypeNot, fundamentalTypeUnaryPlus, fundamentalTypeUnaryMinus, fundamentalTypeComplement,
     fundamentalTypeAdd, fundamentalTypeSub, fundamentalTypeMul, fundamentalTypeDiv, fundamentalTypeMod,
@@ -133,13 +131,14 @@ public:
     bool IsTypeSymbol() const;
     bool IsNamespaceSymbol() const { return kind == SymbolKind::namespaceSymbol; }
     bool IsGlobalNamespace() const { return kind == SymbolKind::namespaceSymbol && parent == nullptr; }
-    bool IsSpecializationSymbol() const { return kind == SymbolKind::specializationSymbol;  }
+    bool IsClassTemplateSpecializationSymbol() const { return kind == SymbolKind::classTemplateSpecializationSymbol;  }
+    bool IsAliasTypeTemplateSpecializationSymbol() const { return kind == SymbolKind::aliasTypeTemplateSpecializationSymbol; }
     bool IsCompoundTypeSymbol() const { return kind == SymbolKind::compoundTypeSymbol; }
     bool IsIntegerValueSymbol() const { return kind == SymbolKind::integerValueSymbol; }
     bool IsFloatingValueSymbol() const { return kind == SymbolKind::floatingValueSymbol; }
     bool IsStringValueSymbol() const { return kind == SymbolKind::stringValueSymbol; }
     bool IsCharValueSymbol() const { return kind == SymbolKind::charValueSymbol; }
-    bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol; }
+    bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol || IsAliasTypeTemplateSpecializationSymbol(); }
     bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
     bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol; }

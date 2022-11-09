@@ -11,11 +11,17 @@ import otava.symbols.symbol.table;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
+import otava.symbols.templates;
 
 namespace otava::symbols {
 
 AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_) : 
     TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(nullptr), referredTypeId(util::nil_uuid())
+{
+}
+
+AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, SymbolKind kind_) : 
+    TypeSymbol(kind_, name_), referredType(nullptr), referredTypeId(util::nil_uuid())
 {
 }
 
@@ -47,6 +53,29 @@ void AliasTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+TemplateDeclarationSymbol* AliasTypeSymbol::ParentTemplateDeclaration()
+{
+    Symbol* parentSymbol = Parent();
+    if (parentSymbol->IsTemplateDeclarationSymbol())
+    {
+        return static_cast<TemplateDeclarationSymbol*>(parentSymbol);
+    }
+    return nullptr;
+}
+
+int AliasTypeSymbol::Arity() 
+{
+    TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
+    if (templateDeclaration)
+    {
+        return templateDeclaration->Arity();
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 class AliasDeclarationProcessor : public otava::ast::DefaultVisitor
 {
 public:
@@ -68,15 +97,40 @@ void AliasDeclarationProcessor::Visit(otava::ast::AliasDeclarationNode& node)
 {
     idNode = node.Identifier();
     type = ResolveType(node.DefiningTypeId(), DeclarationFlags::none, context);
+    while (type->IsAliasTypeSymbol())
+    {
+        AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(type);
+        type = aliasType->ReferredType();
+    }
 }
 
 void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context)
 {
+    bool instantiate = context->GetFlag(ContextFlags::instantiateAliasTypeTemplate);
+    if (instantiate)
+    {
+        context->PushResetFlag(ContextFlags::instantiateAliasTypeTemplate);
+    }
+    AliasTypeSymbol* aliasType = context->GetAliasType();
     AliasDeclarationProcessor processor(context);
     aliasDeclarationNode->Accept(processor);
     otava::ast::Node* idNode = processor.GetIdNode();
     TypeSymbol* type = processor.GetType();
-    context->GetSymbolTable()->AddAliasType(idNode, type, context);
+    if (instantiate)
+    {
+        if (!aliasType->ReferredType())
+        {
+            aliasType->SetReferredType(type);
+        }
+    }
+    else
+    {
+        context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, type, context);
+    }
+    if (instantiate)
+    {
+        context->PopFlags();
+    }
 }
 
 bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const

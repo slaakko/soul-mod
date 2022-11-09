@@ -34,7 +34,8 @@ enum class ContextFlags : int32_t
     addClassScope = 1 << 10,
     saveDeclarations = 1 << 11,
     linkageDeclaration = 1 << 12,
-    instantiateFunctionTemplate = 1 << 13
+    instantiateFunctionTemplate = 1 << 13,
+    instantiateAliasTypeTemplate = 1 << 14
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -60,6 +61,7 @@ class BoundExpressionNode;
 class BoundCompoundStatementNode;
 class OperationRepository;
 class FunctionDefinitionSymbol;
+class AliasTypeSymbol;
 
 class Context
 {
@@ -99,6 +101,8 @@ public:
     FunctionDefinitionSymbol* GetFunctionTemplateSpecialization() const { return specialization; }
     void SetFunctionDefinitionNode(otava::ast::FunctionDefinitionNode* functionDefinitionNode_) { functionDefinitionNode = functionDefinitionNode_; }
     otava::ast::Node* GetFunctionDefinitionNode() const { return functionDefinitionNode; }
+    void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }
+    AliasTypeSymbol* GetAliasType() const { return aliasType; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -113,6 +117,7 @@ private:
     soul::lexer::FileMap* fileMap;
     FunctionDefinitionSymbol* specialization;
     otava::ast::FunctionDefinitionNode* functionDefinitionNode;
+    AliasTypeSymbol* aliasType;
 };
 
 } // namespace otava::symbols

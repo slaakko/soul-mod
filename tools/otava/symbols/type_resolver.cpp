@@ -7,7 +7,11 @@ module otava.symbols.type.resolver;
 
 import otava.symbols.context;
 import otava.symbols.exception;
+import otava.symbols.alias.group.symbol;
+import otava.symbols.alias.type.symbol;
+import otava.symbols.alias.type.templates;
 import otava.symbols.classes;
+import otava.symbols.class_group.symbol;
 import otava.symbols.declaration;
 import otava.symbols.declarator;
 import otava.symbols.derivations;
@@ -15,10 +19,10 @@ import otava.symbols.enums;
 import otava.symbols.evaluator;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.compound.type.symbol;
-import otava.symbols.specialization;
 import otava.symbols.symbol.table;
 import otava.symbols.scope.resolver;
 import otava.symbols.templates;
+import otava.symbols.class_templates;
 import otava.symbols.value;
 import util.unicode;
 
@@ -35,7 +39,7 @@ void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, cons
 class TypeResolver : public otava::ast::DefaultVisitor
 {
 public:
-    TypeResolver(Context* context_, DeclarationFlags flags_);
+    TypeResolver(Context* context_, DeclarationFlags flags_, TypeResolverFlags resolverFlags_);
     TypeSymbol* GetType();
     void ResolveBaseType(otava::ast::Node* node);
     void ResolveType();
@@ -72,16 +76,18 @@ private:
     TypeSymbol* type;
     TypeSymbol* baseType;
     DeclarationFlags flags;
+    TypeResolverFlags resolverFlags;
     int pointerCount;
     bool typeResolved;
     bool createTypeSymbol;
 };
 
-TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_) : 
+TypeResolver::TypeResolver(Context* context_, DeclarationFlags flags_, TypeResolverFlags resolverFlags_) :
     context(context_), 
     type(nullptr), 
     baseType(nullptr), 
     flags(flags_), 
+    resolverFlags(resolverFlags_),
     pointerCount(0), 
     typeResolved(false), 
     createTypeSymbol(false)
@@ -131,7 +137,7 @@ void TypeResolver::ResolveType()
     {
         derivations.vec.push_back(Derivation::lvalueRefDerivation);
     }
-    else if ((flags & DeclarationFlags::lvalueRefFlag) != DeclarationFlags::none)
+    else if ((flags & DeclarationFlags::rvalueRefFlag) != DeclarationFlags::none)
     {
         derivations.vec.push_back(Derivation::rvalueRefDerivation);
     }
@@ -395,19 +401,76 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
         TypeSymbol* templateArg = otava::symbols::ResolveType(argItem, DeclarationFlags::none, context);
         templateArgs.push_back(templateArg);
     }
-    TypeSymbol* specialization = Instantiate(typeSymbol, templateArgs, &node, context);
-    type = specialization;
+    if (typeSymbol->IsClassGroupSymbol())
+    {
+        ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(typeSymbol);
+        typeSymbol = classGroup->GetBestMatchingClass(templateArgs);
+        if (!typeSymbol)
+        {
+            ThrowException("no matching class found from class group '" + util::ToUtf8(classGroup->Name()) + "'", node.GetSourcePos(), context);
+        }
+    }
+    else if (typeSymbol->IsAliasGroupSymbol())
+    {
+        AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(typeSymbol);
+        typeSymbol = aliasGroup->GetBestMatchingAliasType(templateArgs);
+        if (!typeSymbol)
+        {
+            ThrowException("no matching alias type found from alias group '" + util::ToUtf8(aliasGroup->Name()) + "'", node.GetSourcePos(), context);
+        }
+    }
+    else if (typeSymbol->IsForwardClassDeclarationSymbol())
+    {
+        typeSymbol = ResolveFwdDeclaredType(typeSymbol, node.GetSourcePos(), context);
+    }
+    if ((resolverFlags & TypeResolverFlags::dontInstantiate) == TypeResolverFlags::none)
+    {
+        if (typeSymbol->IsAliasTypeSymbol())
+        {
+            TypeSymbol* specialization = InstantiateAliasTypeSymbol(typeSymbol, templateArgs, &node, context);
+            type = specialization;
+        }
+        else if (typeSymbol->IsClassTypeSymbol())
+        {
+            TypeSymbol* specialization = InstantiateClassTemplate(typeSymbol, templateArgs, &node, context);
+            type = specialization;
+        }
+        else if (typeSymbol->IsForwardClassDeclarationSymbol())
+        {
+            type = typeSymbol;
+        }
+        else
+        {
+            ThrowException("alias type or class type expected", node.GetSourcePos(), context);
+        }
+    }
+    else
+    {
+        ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(typeSymbol, templateArgs);
+        type = specialization;
+    }
 }
 
 void TypeResolver::Visit(otava::ast::TypeIdNode& node)
 {
     node.TypeSpecifiers()->Accept(*this);
+    while (type && type->IsAliasTypeSymbol())
+    {
+        AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(type);
+        type = aliasType->ReferredType();
+    }
     if (!type)
     {
         ResolveBaseType(&node);
         type = baseType;
     }
+    DeclarationFlags prevFlags = flags;
     node.Declarator()->Accept(*this);
+    if (flags != prevFlags)
+    {
+        typeResolved = false;
+    }
+    ResolveType();
 }
 
 void TypeResolver::Visit(otava::ast::FunctionDeclaratorNode& node)
@@ -419,7 +482,12 @@ void TypeResolver::Visit(otava::ast::FunctionDeclaratorNode& node)
 
 TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context)
 {
-    TypeResolver resolver(context, flags);
+    return ResolveType(node, flags, context, TypeResolverFlags::none);
+}
+
+TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context* context, TypeResolverFlags resolverFlags)
+{
+    TypeResolver resolver(context, flags, resolverFlags);
     node->Accept(resolver);
     return resolver.GetType();
 }

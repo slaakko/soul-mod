@@ -19,7 +19,6 @@ using SourcePos = soul::ast::SourcePos;
 class BinaryInstruction;
 class Context;
 class RegisterAllocator;
-class CallFrame;
 
 class CodeGenerator : public Visitor
 {
