@@ -14,6 +14,7 @@ export module otava.intermediate.code.parser;
 [implementation]import otava.intermediate.metadata;
 [implementation]import otava.intermediate.data;
 [implementation]import otava.intermediate.instruction;
+[implementation]import otava.intermediate.token_parser;
 
 parser IntermediateCodeParser
 {
@@ -138,7 +139,7 @@ parser IntermediateCodeParser
         )
         ;
 
-    Constant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    Constant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= BoolConstant(context):boolConstant{ return boolConstant; }
         |   SByteConstant(context):sbyteConstant{ return sbyteConstant; }
         |   ByteConstant(context):byteConstant{ return byteConstant; }
@@ -160,54 +161,54 @@ parser IntermediateCodeParser
         |   SymbolConstant(context):symbolConstant{ return symbolConstant; }
         ;
 
-    BoolConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    BoolConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= BOOL
         (   TRUE{ return context->GetTrueValue(); }
         |   FALSE{ return context->GetFalseValue(); }
         )
         ;
 
-    SByteConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    SByteConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= SBYTE NUMBER{ return context->GetSByteValue(lexer.GetToken(pos).ToSByte()); }
         ;
 
-    ByteConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    ByteConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= BYTE NUMBER{ return context->GetByteValue(lexer.GetToken(pos).ToByte()); }
         ;
 
-    ShortConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    ShortConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= SHORT NUMBER{ return context->GetShortValue(lexer.GetToken(pos).ToShort()); }
         ;
 
-    UShortConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    UShortConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= USHORT NUMBER{ return context->GetUShortValue(lexer.GetToken(pos).ToUShort()); }
         ;
 
-    IntConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    IntConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= INT NUMBER{ return context->GetIntValue(lexer.GetToken(pos).ToInt()); }
         ;
 
-    UIntConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    UIntConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= UINT NUMBER{ return context->GetUIntValue(lexer.GetToken(pos).ToUInt()); }
         ;
 
-    LongConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    LongConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= LONG NUMBER{ return context->GetLongValue(lexer.GetToken(pos).ToLong()); }
         ;
 
-    ULongConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    ULongConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= ULONG NUMBER{ return context->GetULongValue(lexer.GetToken(pos).ToULong()); }
         ;
 
-    FloatConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    FloatConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= FLOAT NUMBER{ return context->GetFloatValue(lexer.GetToken(pos).ToFloat()); }
         ;
 
-    DoubleConstant(otava::intermediate::Context* context) : otava::intermediate::ConstantValue*
+    DoubleConstant(otava::intermediate::Context* context) : otava::intermediate::Value*
         ::= DOUBLE NUMBER{ return context->GetDoubleValue(lexer.GetToken(pos).ToDouble()); }
         ;
 
-    AddressConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::ConstantValue*
+    AddressConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } 
         (   NULL_TOKEN
             {
@@ -221,7 +222,7 @@ parser IntermediateCodeParser
         ;
 
     ArrayConstant(otava::intermediate::Context* context, 
-        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::ConstantValue*> elements) : otava::intermediate::ConstantValue*
+        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::Value*> elements) : otava::intermediate::Value*
         ::= LBRACKET{ sp = lexer.GetSourcePos(pos); } 
             (Constant(context):first{ elements.push_back(first); } 
             (COMMA Constant(context):next{ elements.push_back(next); })*)? 
@@ -232,7 +233,7 @@ parser IntermediateCodeParser
         ;
 
     StructureConstant(otava::intermediate::Context* context, 
-        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::ConstantValue*> fieldValues) : otava::intermediate::ConstantValue*
+        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::Value*> fieldValues) : otava::intermediate::Value*
         ::= LBRACE{ sp = lexer.GetSourcePos(pos); }
             (Constant(context):first{ fieldValues.push_back(first); }
             (COMMA Constant(context):next{ fieldValues.push_back(next); })*)?
@@ -242,12 +243,12 @@ parser IntermediateCodeParser
         }
         ;
 
-    StringConstant(otava::intermediate::Context* context, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
-        ::= STRING{ return context->MakeStringValue(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())); }
+    StringConstant(otava::intermediate::Context* context, var soul::ast::SourcePos sp) : otava::intermediate::Value*
+        ::= STRING{ return context->MakeStringValue(lexer.GetSourcePos(pos), ParseStringValue(util::ToUtf8(lexer.GetToken(pos).ToString()))); }
         ;
 
     StringArrayConstant(otava::intermediate::Context* context, 
-        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::ConstantValue*> strings) : otava::intermediate::ConstantValue*
+        var soul::ast::SourcePos sp, var std::vector<otava::intermediate::Value*> strings) : otava::intermediate::Value*
         ::= StringArrayPrefix:prefix{ sp = lexer.GetSourcePos(pos); } 
             LBRACKET 
             (Constant(context):first{ strings.push_back(first); } 
@@ -262,21 +263,21 @@ parser IntermediateCodeParser
         ::= ID{ std::string p = util::ToUtf8(lexer.GetToken(pos).ToString()); pass = p == "u" || p == "w" || p == "b"; if (pass) { return p[0]; } }
         ;
 
-    ConversionConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
+    ConversionConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); sp = lexer.GetSourcePos(pos); } CONV LPAREN Constant(context):from RPAREN
         {
             return context->MakeConversionValue(sp, tref.GetType(), from);
         }
         ;
 
-    ClsIdConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
+    ClsIdConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); sp = lexer.GetSourcePos(pos); } CLSID 
         {
             return context->MakeClsIdValue(sp, tref.GetType(), util::ToUtf8(lexer.GetToken(pos).ToString()));
         }
         ;
 
-    SymbolConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::ConstantValue*
+    SymbolConstant(otava::intermediate::Context* context, var otava::intermediate::TypeRef tref) : otava::intermediate::Value*
         ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } SymbolValue(context, tref.GetType()):symbolValue
         {
             return symbolValue;
@@ -297,11 +298,11 @@ parser IntermediateCodeParser
         ::= DOLLAR{ sp = lexer.GetSourcePos(pos); } NUMBER{ int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->MakeRegValue(sp, type, reg, context); }
         ;
 
-    SymbolValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::ConstantValue*
+    SymbolValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::Value*
         ::= AT ID{ sp = lexer.GetSourcePos(pos); return context->MakeSymbolValue(sp, type, util::ToUtf8(lexer.GetToken(pos).ToString()));  }
         ;
 
-    LiteralValue(otava::intermediate::Context* context, otava::intermediate::Type* type) : otava::intermediate::ConstantValue*
+    LiteralValue(otava::intermediate::Context* context, otava::intermediate::Type* type) : otava::intermediate::Value*
         ::= TRUE{ return context->GetBooleanLiteral(lexer.GetSourcePos(pos), type, true); }
         |   FALSE{ return context->GetBooleanLiteral(lexer.GetSourcePos(pos), type, false); }
         |   NULL_TOKEN{ return context->GetNullValue(lexer.GetSourcePos(pos), type); }

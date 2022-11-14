@@ -237,30 +237,30 @@ private:
 
 struct CaseTarget
 {
-    CaseTarget(Value* caseValue_, int32_t targetLabelId_) : caseValue(caseValue_), targetLabelId(targetLabelId_), targetBlock(nullptr) {}
+    CaseTarget(Value* caseValue_, int32_t targetBlockId_) : caseValue(caseValue_), targetBlockId(targetBlockId_), targetBlock(nullptr) {}
     Value* caseValue;
-    int32_t targetLabelId;
+    int32_t targetBlockId;
     BasicBlock* targetBlock;
 };
 
 class SwitchInstruction : public Instruction
 {
 public:
-    SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t defaultTargetLabelId_);
+    SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t defaultTargetId_);
     void Write(util::CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
     Value* Cond() const { return cond; }
-    int32_t DefaultTargetLabelId() const { return defaultTargetLabelId; }
+    int32_t DefaultTargetId() const { return defaultTargetId; }
+    void SetDefaultTargetBlock(BasicBlock* defaultTargetBlock_);
     void AddCaseTarget(const CaseTarget& caseTarget);
     const std::vector<CaseTarget>& CaseTargets() const { return caseTargets; }
     std::vector<CaseTarget>& CaseTargets() { return caseTargets; }
     BasicBlock* DefaultTargetBlock() const { return defaultTargetBlock; }
-    void SetDefaultTargetBlock(BasicBlock* defaultTargetBlock_) { defaultTargetBlock = defaultTargetBlock_; }
     void AddUse();
     void AddToUses(std::vector<Use>& uses);
 private:
     Value* cond;
-    int32_t defaultTargetLabelId;
+    int32_t defaultTargetId;
     BasicBlock* defaultTargetBlock;
     std::vector<CaseTarget> caseTargets;
 };

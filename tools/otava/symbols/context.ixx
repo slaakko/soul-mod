@@ -35,7 +35,8 @@ enum class ContextFlags : int32_t
     saveDeclarations = 1 << 11,
     linkageDeclaration = 1 << 12,
     instantiateFunctionTemplate = 1 << 13,
-    instantiateAliasTypeTemplate = 1 << 14
+    instantiateAliasTypeTemplate = 1 << 14,
+    dontBind = 1 << 15
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

@@ -46,17 +46,11 @@ public:
     Type* GetType() const { return type; }
     virtual void SetType(Type* type_);
     virtual std::string ToString() const { return std::string(); }
+    virtual void Accept(Visitor& visitor) {}
 private:
     SourcePos sourcePos;
     ValueKind kind;
     Type* type;
-};
-
-class ConstantValue : public Value
-{
-public:
-    ConstantValue(const SourcePos& sourcePos_, ValueKind kind_, Type* type_);
-    virtual void Accept(Visitor& visitor) = 0;
 };
 
 } // namespace value

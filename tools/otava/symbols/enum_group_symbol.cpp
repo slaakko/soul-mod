@@ -17,7 +17,8 @@ import otava.ast.error;
 
 namespace otava::symbols {
 
-EnumGroupSymbol::EnumGroupSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumGroupSymbol, name_), enumType(nullptr), forwardDeclaration(nullptr)
+EnumGroupSymbol::EnumGroupSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumGroupSymbol, name_), enumType(nullptr), forwardDeclaration(nullptr), enumTypeId(),
+    fwdDeclId()
 {
 }
 

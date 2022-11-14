@@ -21,6 +21,17 @@ private:
     std::vector<std::unique_ptr<FunctionDeclaration>> declarations;
 };
 
+class Data;
+
+class DataSection
+{
+public:
+    void AddData(Data* data);
+    void Write(util::CodeFormatter& formatter);
+private:
+    std::vector<std::unique_ptr<Data>> dataVec;
+};
+
 class Function;
 
 class CodeSection
@@ -38,6 +49,7 @@ public:
     File(const std::string& filePath_);
     const std::string& FilePath() const { return filePath; }
     DeclarationSection& GetDeclarationSection() { return declarationSection; }
+    DataSection& GetDataSection() { return dataSection; }
     CodeSection& GetCodeSection() { return codeSection; }
     void Write();
 private:
@@ -45,6 +57,7 @@ private:
     std::ofstream file;
     util::CodeFormatter formatter;
     DeclarationSection declarationSection;
+    DataSection dataSection;
     CodeSection codeSection;
     std::vector<std::unique_ptr<Function>> functions;
 };

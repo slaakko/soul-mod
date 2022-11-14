@@ -237,7 +237,7 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
         debugLibraryDirs->AppendChild(debugLibraryDirsText);
         debugLink->AppendChild(debugLibraryDirs);
         soul::xml::Element* debugDependencies = soul::xml::MakeElement("AdditionalDependencies");
-        soul::xml::Text* debugDependenciesText = soul::xml::MakeText("std.lib");
+        soul::xml::Text* debugDependenciesText = soul::xml::MakeText("std.lib;ortd.lib");
         debugDependencies->AppendChild(debugDependenciesText);
         debugLink->AppendChild(debugDependencies);
     }
@@ -300,7 +300,7 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
         releaseLibraryDirs->AppendChild(releaseLibraryDirsText);
         releaseLink->AppendChild(releaseLibraryDirs);
         soul::xml::Element* releaseDependencies = soul::xml::MakeElement("AdditionalDependencies");
-        soul::xml::Text* releaseDepenciesText = soul::xml::MakeText("std.lib");
+        soul::xml::Text* releaseDepenciesText = soul::xml::MakeText("std.lib;ort.lib");
         releaseDependencies->AppendChild(releaseDepenciesText);
         releaseLink->AppendChild(releaseDependencies);
     }

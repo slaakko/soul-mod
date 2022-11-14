@@ -14,7 +14,7 @@ const T& min(const T& left, const T& right)
 template<class T>
 const T& max(const T& left, const T& right)
 {
-    if (left >= rigth) return left;
+    if (left >= right) return left;
     else return right;
 }
 

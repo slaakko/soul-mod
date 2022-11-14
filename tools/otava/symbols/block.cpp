@@ -21,14 +21,14 @@ void BlockSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
+BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    context->GetSymbolTable()->BeginBlock(sourcePos, context);
+    return context->GetSymbolTable()->BeginBlock(sourcePos, context);
 }
 
 void EndBlock(Context* context)
 {
-    context->GetSymbolTable()->EndBlock();
+    context->GetSymbolTable()->EndBlock(context);
 }
 
 void RemoveBlock(Context* context)

@@ -191,11 +191,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlsergen", "soul\xml\xmlse
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "book_server", "examples\book_server\book_server.vcxproj", "{7CE86BEA-74DD-4798-82B2-8142DDE69661}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "std", "std", "{8EF5DD6D-E5DC-4499-B576-D1D78BA8463A}"
-	ProjectSection(SolutionItems) = preProject
-		std\std.project = std\std.project
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gendoc", "gendoc", "{DA74402A-B866-45C2-9F0E-E2678FFB320A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "code", "code", "{E9BA1B51-CE99-499E-9CCF-00C0355E6B97}"
@@ -239,7 +234,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hexdump", "tools\hexdump\he
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "otava", "otava", "{899788FF-5DF2-42A2-A468-156FAB6DAF9B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "otava", "tools\otava\otava\otava.vcxproj", "{E6E592E8-F13F-4DE4-8A1E-282F6994571A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oc", "tools\otava\oc\oc.vcxproj", "{E6E592E8-F13F-4DE4-8A1E-282F6994571A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "intermediate", "tools\otava\intermediate\intermediate.vcxproj", "{7C7341EE-DECA-40A1-A050-E731482F91AF}"
 EndProject
@@ -270,6 +265,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pp", "tools\otava\pp\pp.vcxproj", "{9D2B17B0-97F0-4C3C-94DA-D9EA9CA8262A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "assembly", "tools\otava\assembly\assembly.vcxproj", "{86C6DBF9-631B-42E0-81F0-B14D48E5F2E8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ort", "tools\otava\ort\ort.vcxproj", "{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1319,6 +1316,30 @@ Global
 		{86C6DBF9-631B-42E0-81F0-B14D48E5F2E8}.Trace|x64.Build.0 = Debug|x64
 		{86C6DBF9-631B-42E0-81F0-B14D48E5F2E8}.Trace|x86.ActiveCfg = Debug|Win32
 		{86C6DBF9-631B-42E0-81F0-B14D48E5F2E8}.Trace|x86.Build.0 = Debug|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Debug|Itanium.ActiveCfg = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Debug|Itanium.Build.0 = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Debug|x64.ActiveCfg = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Debug|x64.Build.0 = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Debug|x86.ActiveCfg = Debug|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Debug|x86.Build.0 = Debug|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Release|Itanium.ActiveCfg = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Release|Itanium.Build.0 = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Release|x64.ActiveCfg = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Release|x64.Build.0 = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Release|x86.ActiveCfg = Release|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Release|x86.Build.0 = Release|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.ReleaseWithoutAsm|Itanium.ActiveCfg = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.ReleaseWithoutAsm|Itanium.Build.0 = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.ReleaseWithoutAsm|x64.ActiveCfg = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.ReleaseWithoutAsm|x64.Build.0 = Release|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.ReleaseWithoutAsm|x86.ActiveCfg = Release|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.ReleaseWithoutAsm|x86.Build.0 = Release|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Trace|Itanium.ActiveCfg = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Trace|Itanium.Build.0 = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Trace|x64.ActiveCfg = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Trace|x64.Build.0 = Debug|x64
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Trace|x86.ActiveCfg = Debug|Win32
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8}.Trace|x86.Build.0 = Debug|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1381,6 +1402,7 @@ Global
 		{633D5849-CD60-4C05-805C-D6B7E5FEF3A7} = {899788FF-5DF2-42A2-A468-156FAB6DAF9B}
 		{9D2B17B0-97F0-4C3C-94DA-D9EA9CA8262A} = {899788FF-5DF2-42A2-A468-156FAB6DAF9B}
 		{86C6DBF9-631B-42E0-81F0-B14D48E5F2E8} = {899788FF-5DF2-42A2-A468-156FAB6DAF9B}
+		{04FC18FE-00B6-4B0C-9898-7DB04C5B54A8} = {899788FF-5DF2-42A2-A468-156FAB6DAF9B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A635957-C3E9-4A44-AC4F-5DF7EA63264E}

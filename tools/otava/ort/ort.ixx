@@ -3,11 +3,8 @@
 // Distributed under the MIT license
 // =================================
 
-export module std.crt;
+export module ort;
 
-export {
+import std.core;
 
-extern "C" void* malloc(size_t size);
-extern "C" void free(void* ptr);
-
-}
+export extern "C" void prints(const char* s);

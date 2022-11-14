@@ -20,6 +20,7 @@ import otava.symbols.bound.tree;
 import otava.symbols.statement.binder;
 import otava.symbols.classes;
 import otava.symbols.alias.type.symbol;
+import otava.symbols.variable.symbol;
 import otava.ast.error;
 import util;
 
@@ -515,84 +516,48 @@ VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, Type
 
 void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbol* type, DeclarationFlags flags, Context* context)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    FunctionSymbol* functionSymbol = context->GetSymbolTable()->AddFunction(
+        functionDeclarator->Name(),
+        functionDeclarator->Node(),
+        functionDeclarator->GetFunctionKind(),
+        functionDeclarator->GetFunctionQualifiers(),
+        flags,
+        context);
+    functionSymbol->SetReturnType(type, context);
+    for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
     {
-        std::vector<TypeSymbol*> parameterTypes;
-        for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+        soul::ast::SourcePos sourcePos;
+        std::u32string name;
+        otava::ast::Node* node = nullptr;
+        if (parameterDeclaration.declarator)
         {
-            parameterTypes.push_back(parameterDeclaration.type);
+            name = parameterDeclaration.declarator->Name();
+            node = parameterDeclaration.declarator->Node();
+            sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
         }
-        FunctionDefinitionSymbol* functionDefinitionSymbol = new FunctionDefinitionSymbol(functionDeclarator->Name());
-        functionDefinitionSymbol->SetLinkage(context->GetSymbolTable()->CurrentLinkage());
-        functionDefinitionSymbol->SetFunctionQualifiers(functionDeclarator->GetFunctionQualifiers());
-        functionDefinitionSymbol->SetReturnType(type, context);
-        functionDefinitionSymbol->SetParent(context->GetSymbolTable()->CurrentScope()->SymbolScope()->GetSymbol());
-        for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+        if (parameterDeclaration.value)
         {
-            soul::ast::SourcePos sourcePos;
-            std::u32string name;
-            otava::ast::Node* node = nullptr;
-            if (parameterDeclaration.declarator)
-            {
-                name = parameterDeclaration.declarator->Name();
-                node = parameterDeclaration.declarator->Node();
-                sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
-            }
-            ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
-            if (parameterDeclaration.value)
-            {
-                parameter->SetDefaultValue(parameterDeclaration.value);
-            }
-            functionDefinitionSymbol->AddParameter(parameter, sourcePos, context);
+            parameter->SetDefaultValue(parameterDeclaration.value);
         }
-        functionDefinitionSymbol->SetSpecialization();
-        context->SetFunctionTemplateSpecialization(functionDefinitionSymbol);
+        functionSymbol->AddParameter(parameter, sourcePos, context);
     }
-    else
+    ClassTypeSymbol* classType = functionSymbol->ParentClassType();
+    if (classType)
     {
-        FunctionSymbol* functionSymbol = context->GetSymbolTable()->AddFunction(
-            functionDeclarator->Name(),
-            functionDeclarator->Node(),
-            functionDeclarator->GetFunctionKind(),
-            functionDeclarator->GetFunctionQualifiers(),
-            flags,
-            context);
-        functionSymbol->SetReturnType(type, context);
-        for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+        int32_t functionIndex = 0;
+        SpecialFunctionKind specialFunctionKind = functionSymbol->GetSpecialFunctionKind();
+        if (specialFunctionKind != SpecialFunctionKind::none)
         {
-            soul::ast::SourcePos sourcePos;
-            std::u32string name;
-            otava::ast::Node* node = nullptr;
-            if (parameterDeclaration.declarator)
-            {
-                name = parameterDeclaration.declarator->Name();
-                node = parameterDeclaration.declarator->Node();
-                sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
-            }
-            ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
-            if (parameterDeclaration.value)
-            {
-                parameter->SetDefaultValue(parameterDeclaration.value);
-            }
-            functionSymbol->AddParameter(parameter, sourcePos, context);
+            functionIndex = GetSpecialFunctionIndex(specialFunctionKind);
         }
-        ClassTypeSymbol* classType = functionSymbol->ParentClassType();
-        if (classType)
+        else
         {
-            int32_t functionIndex = 0;
-            SpecialFunctionKind specialFunctionKind = functionSymbol->GetSpecialFunctionKind();
-            if (specialFunctionKind != SpecialFunctionKind::none)
-            {
-                functionIndex = GetSpecialFunctionIndex(specialFunctionKind);
-            }
-            else
-            {
-                functionIndex = classType->NextFunctionIndex();
-            }
-            functionSymbol->SetIndex(functionIndex);
-            classType->MapFunction(functionSymbol);
-            context->GetSymbolTable()->MapFunction(functionSymbol);
+            functionIndex = classType->NextFunctionIndex();
         }
+        functionSymbol->SetIndex(functionIndex);
+        classType->MapFunction(functionSymbol);
+        context->GetSymbolTable()->MapFunction(functionSymbol);
     }
 }
 
@@ -611,6 +576,10 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
             {
                 SimpleDeclarator* simpleDeclarator = static_cast<SimpleDeclarator*>(declarator);
                 VariableSymbol* variable = ProcessSimpleDeclarator(simpleDeclarator, declaration.type, declaration.value, declaration.flags, context);
+                if (variable->IsGlobalVariable())
+                {
+                    context->GetBoundCompileUnit()->AddBoundNode(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos()));
+                }
                 declaration.variable = variable;
                 break;
             }
@@ -670,7 +639,10 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
     int scopes = 0;
     DeclarationProcessor processor(context);
     processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
-    context->GetSymbolTable()->CurrentScope()->PopParentScope();
+    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    {
+        context->GetSymbolTable()->CurrentScope()->PopParentScope();
+    }
     std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
     if (declarationList->declarations.size() == 1)
     {
@@ -694,6 +666,10 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     FunctionSymbol* functionSymbol = functionGroup->ResolveFunction(parameterTypes, qualifiers);
                     FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
                         parameterTypes, qualifiers, declarator, functionSymbol, context);
+                    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                    {
+                        context->SetFunctionTemplateSpecialization(definition);
+                    }
                     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
                     {
                         soul::ast::SourcePos sourcePos;
@@ -713,8 +689,11 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                         definition->AddParameter(parameter, sourcePos, context);
                     }
                     definition->SetReturnType(declaration.type, context);
-                    context->GetSymbolTable()->BeginScope(definition->GetScope());
-                    definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                    context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); // GENERIC
+                    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                    {
+                        definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                    }
                     ++scopes;
                     BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
                     context->PushBoundFunction(boundFunctionNode);
@@ -729,6 +708,10 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 }
                 FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
                     parameterTypes, qualifiers, declarator, nullptr, context);
+                if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                {
+                    context->SetFunctionTemplateSpecialization(definition);
+                }
                 for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
                 {
                     soul::ast::SourcePos sourcePos;
@@ -748,8 +731,11 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     definition->AddParameter(parameter, sourcePos, context);
                 }
                 definition->SetReturnType(declaration.type, context);
-                context->GetSymbolTable()->BeginScope(definition->GetScope());
-                definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); // GENERIC
+                if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                {
+                    definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+                }
                 ++scopes;
                 BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
                 context->PushBoundFunction(boundFunctionNode);
@@ -770,7 +756,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);
         FunctionDefinitionSymbol* functionDefinitionSymbol = nullptr;
-        Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
+        Symbol* symbol = context->GetSymbolTable()->CurrentScope()->SymbolScope()->GetSymbol();
         if (symbol && symbol->IsFunctionDefinitionSymbol())
         {
             functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
@@ -815,9 +801,12 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         }
         for (int i = 0; i < scopes; ++i)
         {
-            context->GetSymbolTable()->EndScope();
+            context->GetSymbolTable()->EndScopeGeneric(context); // GENERIC
         }
-        BindFunction(functionDefinitionNode, functionDefinitionSymbol, context);
+        if (!context->GetFlag(ContextFlags::dontBind))
+        {
+            BindFunction(functionDefinitionNode, functionDefinitionSymbol, context);
+        }
     }
     if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->IsBound())
     {
@@ -826,9 +815,9 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
     context->PopBoundFunction();
 }
 
-void ProcessFunctionDefinition(otava::ast::Node* node, Context* context)
+void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context)
 {
-    ProcessSimpleDeclaration(node, context);
+    ProcessSimpleDeclaration(node, context); 
 }
 
 void Write(Writer& writer, DeclarationFlags flags)

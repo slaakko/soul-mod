@@ -11,6 +11,7 @@ import otava.intermediate.context;
 import otava.intermediate.type;
 import otava.intermediate.basic.block;
 import otava.intermediate.value;
+import otava.intermediate.data;
 import otava.assembly.expr;
 import otava.assembly.literal;
 import otava.assembly.value;
@@ -27,6 +28,7 @@ CodeGenerator::~CodeGenerator()
 
 void GenerateCode(Context& context, CodeGenerator& codeGenerator, bool verbose)
 {
+    context.GetData().VisitGlobalVariables(codeGenerator);
     context.GetCode().VisitFunctions(codeGenerator);
     codeGenerator.Write();
     if (verbose)
@@ -196,7 +198,7 @@ otava::assembly::Register* MakeRegOperand(Value* value, otava::assembly::Registe
         otava::assembly::Instruction* movInst = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
         movInst->AddOperand(reg);
         otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
-        movInst->AddOperand(assemblyContext.MakeSymbol(v->Value()->Name()));
+        movInst->AddOperand(assemblyContext.MakeSymbol(v->GetValue()->Name()));
         codeGen.Emit(movInst);
     }
     else
@@ -313,7 +315,7 @@ void EmitPtrOperand(int64_t size, Value* value, otava::assembly::Instruction* in
     {
         otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
         AddressValue* addressValue = static_cast<AddressValue*>(value);
-        GlobalVariable* globalVar = addressValue->Value();
+        GlobalVariable* globalVar = addressValue->GetValue();
         otava::assembly::Instruction* movInst = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
         movInst->AddOperand(assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax));
         movInst->AddOperand(assemblyContext.MakeSymbol(globalVar->Name()));
@@ -1250,6 +1252,28 @@ void EmitNop(NoOperationInstruction& inst, CodeGenerator& codeGen)
 {
     otava::assembly::Instruction* nopInst = new otava::assembly::Instruction(otava::assembly::OpCode::NOP);
     codeGen.Emit(nopInst);
+}
+
+void EmitSwitch(SwitchInstruction& inst, CodeGenerator& codeGen)
+{
+    otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
+    int64_t size = inst.Cond()->GetType()->Size();
+    otava::assembly::Register* condReg = MakeRegOperand(inst.Cond(), assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rbx), codeGen);
+    for (const auto& caseTarget : inst.CaseTargets())
+    {
+        int64_t size = caseTarget.caseValue->GetType()->Size();
+        otava::assembly::Register* caseReg = MakeRegOperand(caseTarget.caseValue, assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax), codeGen);
+        otava::assembly::Instruction* cmpInst = new otava::assembly::Instruction(otava::assembly::OpCode::CMP);
+        cmpInst->AddOperand(caseReg);
+        cmpInst->AddOperand(condReg);
+        codeGen.Emit(cmpInst);
+        otava::assembly::Instruction* jeInst = new otava::assembly::Instruction(otava::assembly::OpCode::JE);
+        jeInst->AddOperand(assemblyContext.MakeSymbol("@" + std::to_string(caseTarget.targetBlock->Id())));
+        codeGen.Emit(jeInst);
+    }
+    otava::assembly::Instruction* jmpInst = new otava::assembly::Instruction(otava::assembly::OpCode::JMP);
+    jmpInst->AddOperand(assemblyContext.MakeSymbol("@" + std::to_string(inst.DefaultTargetBlock()->Id())));
+    codeGen.Emit(jmpInst);
 }
 
 void EmitPrologue(CodeGenerator& codeGen)

@@ -14,11 +14,13 @@ import otava.symbols.symbol;
 import otava.symbols.templates;
 import otava.symbols.using_declaration;
 import otava.symbols.using_directive;
+import otava.symbols.function.symbol;
+import otava.symbols.block;
 import otava.ast;
 
 namespace otava::symbols {
 
-Instantiator::Instantiator(Context* context_) : context(context_), innerClass(false), index(0)
+Instantiator::Instantiator(Context* context_, InstantiationScope* instantiationScope_) : context(context_), innerClass(false), index(0), instantiationScope(instantiationScope_)
 {
 }
 
@@ -106,7 +108,13 @@ void Instantiator::Visit(otava::ast::UsingDirectiveNode& node)
 
 void Instantiator::Visit(otava::ast::FunctionDefinitionNode& node)
 {
-    ProcessFunctionDefinition(&node, context);
+    int scopes = BeginFunctionDefinition(node.DeclSpecifiers(), node.Declarator(), context);
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    {
+        instantiationScope->PushParentScope(context->GetFunctionTemplateSpecialization()->GetScope());
+    }
+    node.FunctionBody()->Accept(*this);
+    otava::symbols::EndFunctionDefinition(&node, scopes, context);
 }
 
 void Instantiator::Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node)
@@ -117,6 +125,22 @@ void Instantiator::Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node)
 void Instantiator::Visit(otava::ast::TemplateDeclarationNode& node)
 {
     // member templates not supported (they are skipped)
+}
+
+void Instantiator::Visit(otava::ast::CompoundStatementNode& node)
+{
+    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    context->GetSymbolTable()->MapNode(&node, block);
+    VisitSequence(node);
+    EndBlock(context);
+}
+
+void Instantiator::Visit(otava::ast::ExpressionStatementNode& node)
+{
+}
+
+void Instantiator::Visit(otava::ast::ReturnStatementNode& node)
+{
 }
 
 } // namespace otava::symbols

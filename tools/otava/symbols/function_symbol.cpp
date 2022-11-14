@@ -259,12 +259,11 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     linkage(Linkage::cpp_linkage), 
     index(0),
     flags(FunctionSymbolFlags::none),
-    nextTemporaryId(0)
+    nextTemporaryId(0),
+    kind(),
+    qualifiers()
 {
-    if (name_ == U"move")
-    {
-        int x = 0;
-    }
+    GetScope()->SetKind(ScopeKind::functionScope);
 }
 
 FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
@@ -275,12 +274,11 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     linkage(Linkage::cpp_linkage),
     index(0),
     flags(FunctionSymbolFlags::none),
-    nextTemporaryId(0)
+    nextTemporaryId(0),
+    kind(),
+    qualifiers()
 {
-    if (name_ == U"move")
-    {
-        int x = 0;
-    }
+    GetScope()->SetKind(ScopeKind::functionScope);
 }
 
 int FunctionSymbol::Arity() const
@@ -427,7 +425,8 @@ bool FunctionSymbol::IsTemplate() const
 
 std::u32string FunctionSymbol::FullName() const
 {
-    std::u32string fullName = Parent()->FullName() + U"(";
+    std::u32string fullName = Parent()->FullName();
+    fullName.append(U"::").append(Name()).append(U"(");
     bool first = true;
     for (const auto& parameter : parameters)
     {
@@ -456,6 +455,10 @@ void FunctionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourc
     if (symbol->IsParameterSymbol())
     {
         parameters.push_back(static_cast<ParameterSymbol*>(symbol));
+    }
+    if (symbol->IsLocalVariableSymbol())
+    {
+        localVariables.push_back(static_cast<VariableSymbol*>(symbol));
     }
 }
 
@@ -509,7 +512,8 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     int n = args.size();
     for (int i = 0; i < n; ++i)
     {
-        args[i]->Load(emitter, OperationFlags::none, sourcePos, context);
+        BoundExpressionNode* arg = args[i];
+        arg->Load(emitter, OperationFlags::none, sourcePos, context);
     }
     std::vector<otava::intermediate::Value*> arguments;
     arguments.resize(n);
@@ -621,7 +625,7 @@ VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
     return temporary;
 }
 
-FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_)
+FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_), declaration(), declarationId()
 {
 }
 

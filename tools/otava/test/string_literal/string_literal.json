@@ -1,0 +1,24 @@
+{
+    "dependsOnProjects" : 
+    [
+    ]
+    , 
+    "error" : "", 
+    "fileInfos" : 
+    [
+        {
+            "content" : "", 
+            "fileHash" : "3F8130432BEB5FBD39139119BE56C1D35A4D9B16", 
+            "fileId" : "string_literal_DED8B181D3694E51A181AF46E5E303F50777D9CF", 
+            "filePath" : "C:\/work\/soul-mod\/tools\/otava\/test\/string_literal\/string_literal.cm", 
+            "info" : ""
+        }
+    ]
+    , 
+    "info" : "", 
+    "projectFilePath" : "C:\/work\/soul-mod\/tools\/otava\/test\/string_literal\/string_literal.cmp", 
+    "projectHash" : "A7817C2D75F97B064DA8E084A12212A0E6247C7F", 
+    "projectId" : "project_string_literal_F99530AECBE854F6031D5ED98E20BA7678F8AA15", 
+    "projectName" : "string_literal", 
+    "target" : "program"
+}

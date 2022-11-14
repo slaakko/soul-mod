@@ -1,0 +1,9 @@
+using System;
+
+const char* foo = "foo";
+
+int main()
+{
+	string s = foo;
+	return 0;
+}

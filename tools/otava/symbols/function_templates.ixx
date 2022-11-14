@@ -7,6 +7,7 @@ export module otava.symbols.function.templates;
 
 import std.core;
 import soul.ast.source.pos;
+import otava.ast.node;
 
 export namespace otava::symbols {
 
@@ -33,10 +34,10 @@ class FunctionTemplateRepository
 public:
     FunctionTemplateRepository();
     FunctionDefinitionSymbol* GetFunctionDefinition(const FunctionTemplateKey& key) const;
-    void AddFunctionDefinition(const FunctionTemplateKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol);
+    void AddFunctionDefinition(const FunctionTemplateKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol, otava::ast::Node* functionDefinitionNode);
 private:
     std::map<FunctionTemplateKey, FunctionDefinitionSymbol*, FunctionTemplateKeyLess> functionTemplateMap;
-    std::vector<std::unique_ptr<FunctionDefinitionSymbol>> functionDefinitionSymbols;
+    std::vector<std::unique_ptr<otava::ast::Node>> functionDefinitionNodes;
 };
 
 FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,

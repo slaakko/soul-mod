@@ -27,6 +27,7 @@ class Module
 {
 public:
     Module(const std::string& name_);
+    ~Module();
     void SetFilePath(const std::string& filePath_);
     const std::string& FilePath() const { return filePath; }
     const std::string& Name() const { return name; }

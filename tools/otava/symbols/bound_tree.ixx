@@ -473,4 +473,14 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
 };
 
+class BoundGlobalVariableDefinitionNode : public BoundNode
+{
+public:
+    BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::SourcePos& sourcePos_);
+    VariableSymbol* GetGlobalVariable() const { return globalVariable; }
+    void Accept(BoundTreeVisitor& visitor) override;
+private:
+    VariableSymbol* globalVariable;
+};
+
 } // namespace otava::symbols

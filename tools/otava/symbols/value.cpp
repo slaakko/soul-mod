@@ -412,6 +412,11 @@ void StringValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+otava::intermediate::Value* StringValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return emitter.EmitStringValue(value);
+}
+
 CharValue::CharValue(TypeSymbol* type_) : Value(SymbolKind::charValueSymbol, U"", type_), value()
 {
 }

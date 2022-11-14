@@ -915,4 +915,14 @@ void BoundErrorNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
+BoundGlobalVariableDefinitionNode::BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::SourcePos& sourcePos_) : 
+    BoundNode(BoundNodeKind::boundGlobalVariableDefinitionNode, sourcePos_), globalVariable(globalVariable_)
+{
+}
+
+void BoundGlobalVariableDefinitionNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 } // namespace otava::symbols

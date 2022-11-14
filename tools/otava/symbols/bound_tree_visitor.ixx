@@ -42,6 +42,7 @@ class BoundDereferenceNode;
 class BoundRefToPtrNode;
 class BoundTemporaryNode;
 class BoundErrorNode;
+class BoundGlobalVariableDefinitionNode;
 
 class BoundTreeVisitor
 {
@@ -80,6 +81,7 @@ public:
     virtual void Visit(BoundRefToPtrNode& node) {}
     virtual void Visit(BoundTemporaryNode& node) {}
     virtual void Visit(BoundErrorNode& node) {}
+    virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
 };
 
 class DefaultBoundTreeVisitor : public BoundTreeVisitor

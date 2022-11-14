@@ -83,7 +83,8 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     irType(nullptr),
     objectLayoutComputed(false),
     vptrIndex(-1),
-    currentFunctionIndex(1)
+    currentFunctionIndex(1),
+    specializationId()
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -96,7 +97,8 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) 
     irType(nullptr),
     objectLayoutComputed(false),
     vptrIndex(-1),
-    currentFunctionIndex(1)
+    currentFunctionIndex(1),
+    specializationId()
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -353,7 +355,8 @@ ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32strin
     TypeSymbol(SymbolKind::forwardClassDeclarationSymbol, name_), 
     classKind(ClassKind::class_),
     specialization(nullptr),
-    classTypeSymbol(nullptr)
+    classTypeSymbol(nullptr),
+    classTypeSymbolId()
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }

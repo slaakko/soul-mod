@@ -207,6 +207,16 @@ std::string Symbol::DocName() const
     return docName;
 }
 
+bool Symbol::IsLocalVariableSymbol() const
+{
+    if (IsVariableSymbol())
+    {
+        const VariableSymbol* symbol = static_cast<const VariableSymbol*>(this);
+        return symbol->IsLocalVariable();
+    }
+    return false;
+}
+
 bool Symbol::CanInstall() const
 {
     switch (kind)
@@ -245,11 +255,10 @@ bool Symbol::CanInstall() const
         case SymbolKind::fundamentalTypeMoveCtor:
         case SymbolKind::fundamentalTypeCopyAssignment:
         case SymbolKind::fundamentalTypeMoveAssignment:
-
-        case SymbolKind::variableSymbol:
         case SymbolKind::templateDeclarationSymbol:
         case SymbolKind::typenameConstraintSymbol:
         case SymbolKind::forwardClassDeclarationSymbol:
+        case SymbolKind::variableSymbol:
         {
             return false; 
         }

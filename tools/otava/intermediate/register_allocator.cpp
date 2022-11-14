@@ -76,4 +76,8 @@ RegisterAllocator::~RegisterAllocator()
 {
 }
 
+SpillData::SpillData() : registerGroupToSpill(), spillToFrameLocation()
+{
+}
+
 } // otava::intermediate

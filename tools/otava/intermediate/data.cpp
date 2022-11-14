@@ -12,7 +12,7 @@ import util.text.util;
 
 namespace otava::intermediate {
 
-BoolValue::BoolValue(bool value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::boolValue, type_), value(value_)
+BoolValue::BoolValue(bool value_, Type* type_) : Value(SourcePos(), ValueKind::boolValue, type_), value(value_)
 {
 }
 
@@ -26,7 +26,7 @@ std::string BoolValue::ToString() const
     return value ? "true" : "false";
 }
 
-SByteValue::SByteValue(int8_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::sbyteValue, type_), value(value_)
+SByteValue::SByteValue(int8_t value_, Type* type_) : Value(SourcePos(), ValueKind::sbyteValue, type_), value(value_)
 {
 }
 
@@ -40,7 +40,7 @@ void SByteValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ByteValue::ByteValue(uint8_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::byteValue, type_), value(value_)
+ByteValue::ByteValue(uint8_t value_, Type* type_) : Value(SourcePos(), ValueKind::byteValue, type_), value(value_)
 {
 }
 
@@ -54,7 +54,7 @@ void ByteValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ShortValue::ShortValue(int16_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::shortValue, type_), value(value_)
+ShortValue::ShortValue(int16_t value_, Type* type_) : Value(SourcePos(), ValueKind::shortValue, type_), value(value_)
 {
 }
 
@@ -68,7 +68,7 @@ void ShortValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-UShortValue::UShortValue(uint16_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::ushortValue, type_), value(value_)
+UShortValue::UShortValue(uint16_t value_, Type* type_) : Value(SourcePos(), ValueKind::ushortValue, type_), value(value_)
 {
 }
 
@@ -82,7 +82,7 @@ void UShortValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-IntValue::IntValue(int32_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::intValue, type_), value(value_)
+IntValue::IntValue(int32_t value_, Type* type_) : Value(SourcePos(), ValueKind::intValue, type_), value(value_)
 {
 }
 
@@ -96,7 +96,7 @@ void IntValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-UIntValue::UIntValue(uint32_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::uintValue, type_), value(value_)
+UIntValue::UIntValue(uint32_t value_, Type* type_) : Value(SourcePos(), ValueKind::uintValue, type_), value(value_)
 {
 }
 
@@ -110,7 +110,7 @@ void UIntValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LongValue::LongValue(int64_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::longValue, type_), value(value_)
+LongValue::LongValue(int64_t value_, Type* type_) : Value(SourcePos(), ValueKind::longValue, type_), value(value_)
 {
 }
 
@@ -124,7 +124,7 @@ void LongValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ULongValue::ULongValue(uint64_t value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::ulongValue, type_), value(value_)
+ULongValue::ULongValue(uint64_t value_, Type* type_) : Value(SourcePos(), ValueKind::ulongValue, type_), value(value_)
 {
 }
 
@@ -138,7 +138,7 @@ void ULongValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-FloatValue::FloatValue(float value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::floatValue, type_), value(value_)
+FloatValue::FloatValue(float value_, Type* type_) : Value(SourcePos(), ValueKind::floatValue, type_), value(value_)
 {
 }
 
@@ -152,7 +152,7 @@ void FloatValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-DoubleValue::DoubleValue(double value_, Type* type_) : ConstantValue(SourcePos(), ValueKind::doubleValue, type_), value(value_)
+DoubleValue::DoubleValue(double value_, Type* type_) : Value(SourcePos(), ValueKind::doubleValue, type_), value(value_)
 {
 }
 
@@ -166,7 +166,7 @@ void DoubleValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-NullValue::NullValue(Type* type_) : ConstantValue(SourcePos(), ValueKind::nullValue, type_)
+NullValue::NullValue(Type* type_) : Value(SourcePos(), ValueKind::nullValue, type_)
 {
 }
 
@@ -181,7 +181,7 @@ void NullValue::Accept(Visitor& visitor)
 }
 
 AddressValue::AddressValue(const SourcePos& sourcePos_, GlobalVariable* globalVariable_, Type* type) :
-    ConstantValue(sourcePos_, ValueKind::addressValue, type), globalVariable(globalVariable_)
+    Value(sourcePos_, ValueKind::addressValue, type), globalVariable(globalVariable_)
 {
 }
 
@@ -195,8 +195,8 @@ void AddressValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ArrayValue::ArrayValue(const SourcePos& sourcePos_, const std::vector<ConstantValue*>& elements_) :
-    ConstantValue(sourcePos_, ValueKind::arrayValue, nullptr), elements(elements_)
+ArrayValue::ArrayValue(const SourcePos& sourcePos_, const std::vector<Value*>& elements_) :
+    Value(sourcePos_, ValueKind::arrayValue, nullptr), elements(elements_)
 {
 }
 
@@ -204,7 +204,7 @@ std::string ArrayValue::ToString() const
 {
     std::string name = "[ ";
     bool first = true;
-    for (ConstantValue* element : elements)
+    for (Value* element : elements)
     {
         if (first)
         {
@@ -229,7 +229,7 @@ std::string ArrayValue::ToString() const
 
 void ArrayValue::SetType(Type* type)
 {
-    ConstantValue::SetType(type);
+    Value::SetType(type);
     if (type->IsArrayType())
     {
         ArrayType* arrayType = static_cast<ArrayType*>(type);
@@ -249,8 +249,8 @@ void ArrayValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-StructureValue::StructureValue(const SourcePos& sourcePos_, const std::vector<ConstantValue*>& fieldValues_) :
-    ConstantValue(sourcePos_, ValueKind::structureValue, nullptr), fieldValues(fieldValues_)
+StructureValue::StructureValue(const SourcePos& sourcePos_, const std::vector<Value*>& fieldValues_) :
+    Value(sourcePos_, ValueKind::structureValue, nullptr), fieldValues(fieldValues_)
 {
 }
 
@@ -258,7 +258,7 @@ std::string StructureValue::ToString() const
 {
     std::string name = "{ ";
     bool first = true;
-    for (ConstantValue* member : fieldValues)
+    for (Value* member : fieldValues)
     {
         if (first)
         {
@@ -283,14 +283,14 @@ std::string StructureValue::ToString() const
 
 void StructureValue::SetType(Type* type)
 {
-    ConstantValue::SetType(type);
+    Value::SetType(type);
     if (type->IsStructureType())
     {
         StructureType* structureType = static_cast<StructureType*>(type);
         int n = fieldValues.size();
         for (int i = 0; i < n; ++i)
         {
-            ConstantValue* fieldValue = fieldValues[i];
+            Value* fieldValue = fieldValues[i];
             fieldValue->SetType(structureType->FieldType(i));
         }
     }
@@ -306,7 +306,7 @@ void StructureValue::Accept(Visitor& visitor)
 }
 
 StringValue::StringValue(const SourcePos& sourcePos_, const std::string& value_) :
-    ConstantValue(sourcePos_, ValueKind::stringValue, nullptr), value(value_)
+    Value(sourcePos_, ValueKind::stringValue, nullptr), value(value_)
 {
 }
 
@@ -342,8 +342,8 @@ void StringValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-StringArrayValue::StringArrayValue(const SourcePos& sourcePos_, char prefix_, const std::vector<ConstantValue*>& strings_) :
-    ConstantValue(sourcePos_, ValueKind::stringArrayValue, nullptr), prefix(prefix_), strings(strings_)
+StringArrayValue::StringArrayValue(const SourcePos& sourcePos_, char prefix_, const std::vector<Value*>& strings_) :
+    Value(sourcePos_, ValueKind::stringArrayValue, nullptr), prefix(prefix_), strings(strings_)
 {
 }
 
@@ -351,7 +351,7 @@ std::string StringArrayValue::ToString() const
 {
     std::string name = std::string(1, prefix) + "[ ";
     bool first = true;
-    for (ConstantValue* element : strings)
+    for (Value* element : strings)
     {
         if (first)
         {
@@ -379,8 +379,8 @@ void StringArrayValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ConversionValue::ConversionValue(const SourcePos& sourcePos_, Type* type_, ConstantValue* from_) :
-    ConstantValue(sourcePos_, ValueKind::conversionValue, type_), from(from_)
+ConversionValue::ConversionValue(const SourcePos& sourcePos_, Type* type_, Value* from_) :
+    Value(sourcePos_, ValueKind::conversionValue, type_), from(from_)
 {
 }
 
@@ -397,7 +397,7 @@ void ConversionValue::Accept(Visitor& visitor)
 }
 
 ClsIdValue::ClsIdValue(const SourcePos& sourcePos_, Type* type_, const std::string& typeId_) :
-    ConstantValue(sourcePos_, ValueKind::clsIdValue, type_), typeId(typeId_)
+    Value(sourcePos_, ValueKind::clsIdValue, type_), typeId(typeId_)
 {
 }
 
@@ -413,7 +413,7 @@ void ClsIdValue::Accept(Visitor& visitor)
 }
 
 SymbolValue::SymbolValue(const SourcePos& sourcePos_, Type* type_, const std::string& symbol_) :
-    ConstantValue(sourcePos_, ValueKind::symbolValue, type_), symbol(symbol_), function(nullptr), globalVariable(nullptr)
+    Value(sourcePos_, ValueKind::symbolValue, type_), symbol(symbol_), function(nullptr), globalVariable(nullptr)
 {
 }
 
@@ -427,7 +427,12 @@ void SymbolValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-GlobalVariable::GlobalVariable(const SourcePos& sourcePos_, Type* type_, const std::string& name_, ConstantValue* initializer_, bool once_) :
+void Populate(otava::assembly::Data* data)
+{
+
+}
+
+GlobalVariable::GlobalVariable(const SourcePos& sourcePos_, Type* type_, const std::string& name_, Value* initializer_, bool once_) :
     Value(sourcePos_, ValueKind::globalVariable, type_), name(name_), initializer(initializer_), once(once_)
 {
     if (initializer)
@@ -490,7 +495,7 @@ void Data::Write(util::CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
-void Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, ConstantValue* initializer, bool once, Context* context)
+void Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context)
 {
     try
     {
@@ -505,7 +510,7 @@ void Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::
     }
 }
 
-ConstantValue* Data::GetTrueValue(const Types& types)
+Value* Data::GetTrueValue(const Types& types)
 {
     if (!trueValue)
     {
@@ -514,7 +519,7 @@ ConstantValue* Data::GetTrueValue(const Types& types)
     return trueValue.get();
 }
 
-ConstantValue* Data::GetFalseValue(const Types& types)
+Value* Data::GetFalseValue(const Types& types)
 {
     if (!falseValue)
     {
@@ -523,57 +528,57 @@ ConstantValue* Data::GetFalseValue(const Types& types)
     return falseValue.get();
 }
 
-ConstantValue* Data::GetSByteValue(int8_t value, const Types& types)
+Value* Data::GetSByteValue(int8_t value, const Types& types)
 {
     return sbyteValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetByteValue(uint8_t value, const Types& types)
+Value* Data::GetByteValue(uint8_t value, const Types& types)
 {
     return byteValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetShortValue(int16_t value, const Types& types)
+Value* Data::GetShortValue(int16_t value, const Types& types)
 {
     return shortValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetUShortValue(uint16_t value, const Types& types)
+Value* Data::GetUShortValue(uint16_t value, const Types& types)
 {
     return ushortValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetIntValue(int32_t value, const Types& types)
+Value* Data::GetIntValue(int32_t value, const Types& types)
 {
     return intValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetUIntValue(uint32_t value, const Types& types)
+Value* Data::GetUIntValue(uint32_t value, const Types& types)
 {
     return uintValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetLongValue(int64_t value, const Types& types)
+Value* Data::GetLongValue(int64_t value, const Types& types)
 {
     return longValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetULongValue(uint64_t value, const Types& types)
+Value* Data::GetULongValue(uint64_t value, const Types& types)
 {
     return ulongValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetFloatValue(float value, const Types& types)
+Value* Data::GetFloatValue(float value, const Types& types)
 {
     return floatValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetDoubleValue(double value, const Types& types)
+Value* Data::GetDoubleValue(double value, const Types& types)
 {
     return doubleValueMap.Get(value, this, types);
 }
 
-ConstantValue* Data::GetNullValue(Type* type)
+Value* Data::GetNullValue(Type* type)
 {
     auto it = nullValueMap.find(type);
     if (it != nullValueMap.cend())
@@ -589,77 +594,77 @@ ConstantValue* Data::GetNullValue(Type* type)
     }
 }
 
-ConstantValue* Data::MakeValue(int8_t value, const Types& types)
+Value* Data::MakeValue(int8_t value, const Types& types)
 {
     SByteValue* constantValue = new SByteValue(value, types.Get(sbyteTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(uint8_t value, const Types& types)
+Value* Data::MakeValue(uint8_t value, const Types& types)
 {
     ByteValue* constantValue = new ByteValue(value, types.Get(byteTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(int16_t value, const Types& types)
+Value* Data::MakeValue(int16_t value, const Types& types)
 {
     ShortValue* constantValue = new ShortValue(value, types.Get(shortTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(uint16_t value, const Types& types)
+Value* Data::MakeValue(uint16_t value, const Types& types)
 {
     UShortValue* constantValue = new UShortValue(value, types.Get(ushortTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(int32_t value, const Types& types)
+Value* Data::MakeValue(int32_t value, const Types& types)
 {
     IntValue* constantValue = new IntValue(value, types.Get(intTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(uint32_t value, const Types& types)
+Value* Data::MakeValue(uint32_t value, const Types& types)
 {
     UIntValue* constantValue = new UIntValue(value, types.Get(uintTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(int64_t value, const Types& types)
+Value* Data::MakeValue(int64_t value, const Types& types)
 {
     LongValue* constantValue = new LongValue(value, types.Get(longTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(uint64_t value, const Types& types)
+Value* Data::MakeValue(uint64_t value, const Types& types)
 {
     ULongValue* constantValue = new ULongValue(value, types.Get(ulongTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(float value, const Types& types)
+Value* Data::MakeValue(float value, const Types& types)
 {
     FloatValue* constantValue = new FloatValue(value, types.Get(floatTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::MakeValue(double value, const Types& types)
+Value* Data::MakeValue(double value, const Types& types)
 {
     DoubleValue* constantValue = new DoubleValue(value, types.Get(doubleTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-ConstantValue* Data::GetIntegerValue(Type* type, int64_t value, const Types& types)
+Value* Data::GetIntegerValue(Type* type, int64_t value, const Types& types)
 {
     switch (type->Id())
     {
@@ -700,7 +705,7 @@ ConstantValue* Data::GetIntegerValue(Type* type, int64_t value, const Types& typ
     return nullptr;
 }
 
-ConstantValue* Data::GetFloatingValue(Type* type, double value, const Types& types)
+Value* Data::GetFloatingValue(Type* type, double value, const Types& types)
 {
     switch (type->Id())
     {
@@ -717,42 +722,42 @@ ConstantValue* Data::GetFloatingValue(Type* type, double value, const Types& typ
     return nullptr;
 }
 
-ConstantValue* Data::MakeArrayValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& elements)
+Value* Data::MakeArrayValue(const SourcePos& sourcePos, const std::vector<Value*>& elements)
 {
     ArrayValue* arrayValue = new ArrayValue(sourcePos, elements);
     values.push_back(std::unique_ptr<Value>(arrayValue));
     return arrayValue;
 }
 
-ConstantValue* Data::MakeStructureValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& fieldValues)
+Value* Data::MakeStructureValue(const SourcePos& sourcePos, const std::vector<Value*>& fieldValues)
 {
     StructureValue* structureValue = new StructureValue(sourcePos, fieldValues);
     values.push_back(std::unique_ptr<Value>(structureValue));
     return structureValue;
 }
 
-ConstantValue* Data::MakeStringValue(const SourcePos& sourcePos, const std::string& value)
+Value* Data::MakeStringValue(const SourcePos& sourcePos, const std::string& value)
 {
-    StringValue* stringValue = new StringValue(sourcePos, value.substr(1, value.length() - 2));
+    StringValue* stringValue = new StringValue(sourcePos, value);
     values.push_back(std::unique_ptr<Value>(stringValue));
     return stringValue;
 }
 
-ConstantValue* Data::MakeStringArrayValue(const SourcePos& sourcePos, char prefix, const std::vector<ConstantValue*>& strings)
+Value* Data::MakeStringArrayValue(const SourcePos& sourcePos, char prefix, const std::vector<Value*>& strings)
 {
     StringArrayValue* stringArrayValue = new StringArrayValue(sourcePos, prefix, strings);
     values.push_back(std::unique_ptr<Value>(stringArrayValue));
     return stringArrayValue;
 }
 
-ConstantValue* Data::MakeConversionValue(const SourcePos& sourcePos, Type* type, ConstantValue* from)
+Value* Data::MakeConversionValue(const SourcePos& sourcePos, Type* type, Value* from)
 {
     ConversionValue* conversionValue = new ConversionValue(sourcePos, type, from);
     values.push_back(std::unique_ptr<Value>(conversionValue));
     return conversionValue;
 }
 
-ConstantValue* Data::MakeClsIdValue(const SourcePos& sourcePos, Type* type, const std::string& clsIdStr)
+Value* Data::MakeClsIdValue(const SourcePos& sourcePos, Type* type, const std::string& clsIdStr)
 {
     std::string typeId = clsIdStr.substr(6, clsIdStr.length() - 6 - 1);
     ClsIdValue* clsIdValue = new ClsIdValue(sourcePos, type, typeId);
@@ -760,14 +765,14 @@ ConstantValue* Data::MakeClsIdValue(const SourcePos& sourcePos, Type* type, cons
     return clsIdValue;
 }
 
-ConstantValue* Data::MakeSymbolValue(const SourcePos& sourcePos, Type* type, const std::string& symbol)
+Value* Data::MakeSymbolValue(const SourcePos& sourcePos, Type* type, const std::string& symbol)
 {
     SymbolValue* symbolValue = new SymbolValue(sourcePos, type, symbol);
     values.push_back(std::unique_ptr<Value>(symbolValue));
     return symbolValue;
 }
 
-ConstantValue* Data::MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue, const Types& types, Context* context)
+Value* Data::MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue, const Types& types, Context* context)
 {
     switch (type->Id())
     {
@@ -876,7 +881,7 @@ ConstantValue* Data::MakeNumericLiteral(const SourcePos& sourcePos, Type* type, 
     return nullptr;
 }
 
-ConstantValue* Data::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id, Context* context)
+Value* Data::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id, Context* context)
 {
     auto it = globalVariableMap.find(id);
     if (it != globalVariableMap.cend())

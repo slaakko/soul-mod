@@ -25,7 +25,8 @@ import otava.symbols.fundamental.type.symbol;
 
 namespace otava::symbols {
 
-EnumeratedTypeSymbol::EnumeratedTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::enumTypeSymbol, name_), underlyingType(nullptr), kind(EnumTypeKind::enum_)
+EnumeratedTypeSymbol::EnumeratedTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::enumTypeSymbol, name_), underlyingType(nullptr), kind(EnumTypeKind::enum_),
+    underlyingTypeId()
 {
     GetScope()->SetKind(ScopeKind::enumerationScope);
 }
@@ -96,7 +97,10 @@ otava::intermediate::Type* EnumeratedTypeSymbol::IrType(Emitter& emitter, const 
 ForwardEnumDeclarationSymbol::ForwardEnumDeclarationSymbol(const std::u32string& name_) : 
     TypeSymbol(SymbolKind::forwardEnumDeclarationSymbol, name_), 
     underlyingType(nullptr), 
-    enumTypeKind(EnumTypeKind::enum_)
+    enumTypeKind(EnumTypeKind::enum_),
+    enumTypeSymbol(),
+    enumTypeSymbolId(),
+    underlyingTypeId()
 {
     GetScope()->SetKind(ScopeKind::enumerationScope);
 }
@@ -174,7 +178,7 @@ void ForwardEnumDeclarationSymbol::Resolve(SymbolTable& symbolTable)
     }
 }
 
-EnumConstantSymbol::EnumConstantSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumConstantSymbol, name_)
+EnumConstantSymbol::EnumConstantSymbol(const std::u32string& name_) : Symbol(SymbolKind::enumConstantSymbol, name_), value(), valueId()
 {
 }
 

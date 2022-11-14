@@ -21,7 +21,7 @@ import util.text.util;
 
 void PrintHelp()
 {
-    std::cout << "usage: otava [options] { FILE.project | FILE.solution }" << std::endl;
+    std::cout << "usage: oc [options] { FILE.project | FILE.solution }" << std::endl;
     std::cout << "options:" << std::endl;
     std::cout << "--help | -h" << std::endl;
     std::cout << "  Print help and exit." << std::endl;

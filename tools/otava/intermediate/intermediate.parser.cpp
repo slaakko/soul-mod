@@ -13,6 +13,7 @@ import otava.intermediate.basic.block;
 import otava.intermediate.metadata;
 import otava.intermediate.data;
 import otava.intermediate.instruction;
+import otava.intermediate.token_parser;
 
 using namespace otava::intermediate::lexer;
 using namespace otava::intermediate::token;
@@ -22,6 +23,7 @@ using namespace otava::intermediate::basic::block;
 using namespace otava::intermediate::metadata;
 using namespace otava::intermediate::data;
 using namespace otava::intermediate::instruction;
+using namespace otava::intermediate::token_parser;
 
 namespace otava::intermediate::code::parser {
 
@@ -2045,7 +2047,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
     bool once = bool();
     std::string variableName = std::string();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
-    std::unique_ptr<otava::intermediate::ConstantValue> initializer;
+    std::unique_ptr<otava::intermediate::Value> initializer;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2202,7 +2204,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
                                 {
                                     int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                                    initializer.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                    initializer.reset(static_cast<otava::intermediate::Value*>(match.value));
                                     if (match.hit)
                                     {
                                         context->AddGlobalVariable(sp, tref.GetType(), variableName, initializer.release(), once);
@@ -2253,25 +2255,25 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
     }
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589454);
-    std::unique_ptr<otava::intermediate::ConstantValue> boolConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> sbyteConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> byteConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> shortConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> ushortConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> intConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> uintConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> longConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> ulongConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> floatConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> doubleConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> addressConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> arrayConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> structureConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> stringConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> stringArrayConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> conversionConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> clsidConstant;
-    std::unique_ptr<otava::intermediate::ConstantValue> symbolConstant;
+    std::unique_ptr<otava::intermediate::Value> boolConstant;
+    std::unique_ptr<otava::intermediate::Value> sbyteConstant;
+    std::unique_ptr<otava::intermediate::Value> byteConstant;
+    std::unique_ptr<otava::intermediate::Value> shortConstant;
+    std::unique_ptr<otava::intermediate::Value> ushortConstant;
+    std::unique_ptr<otava::intermediate::Value> intConstant;
+    std::unique_ptr<otava::intermediate::Value> uintConstant;
+    std::unique_ptr<otava::intermediate::Value> longConstant;
+    std::unique_ptr<otava::intermediate::Value> ulongConstant;
+    std::unique_ptr<otava::intermediate::Value> floatConstant;
+    std::unique_ptr<otava::intermediate::Value> doubleConstant;
+    std::unique_ptr<otava::intermediate::Value> addressConstant;
+    std::unique_ptr<otava::intermediate::Value> arrayConstant;
+    std::unique_ptr<otava::intermediate::Value> structureConstant;
+    std::unique_ptr<otava::intermediate::Value> stringConstant;
+    std::unique_ptr<otava::intermediate::Value> stringArrayConstant;
+    std::unique_ptr<otava::intermediate::Value> conversionConstant;
+    std::unique_ptr<otava::intermediate::Value> clsidConstant;
+    std::unique_ptr<otava::intermediate::Value> symbolConstant;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2317,7 +2319,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::BoolConstant(lexer, context);
-                                        boolConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        boolConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2342,7 +2344,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::SByteConstant(lexer, context);
-                                        sbyteConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        sbyteConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2367,7 +2369,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::ByteConstant(lexer, context);
-                                        byteConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        byteConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2392,7 +2394,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::ShortConstant(lexer, context);
-                                        shortConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        shortConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2417,7 +2419,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::UShortConstant(lexer, context);
-                                        ushortConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        ushortConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2442,7 +2444,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::IntConstant(lexer, context);
-                                        intConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        intConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2467,7 +2469,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::UIntConstant(lexer, context);
-                                        uintConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        uintConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2492,7 +2494,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::LongConstant(lexer, context);
-                                        longConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        longConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2517,7 +2519,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::ULongConstant(lexer, context);
-                                        ulongConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        ulongConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2542,7 +2544,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::FloatConstant(lexer, context);
-                                        floatConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        floatConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2567,7 +2569,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::DoubleConstant(lexer, context);
-                                        doubleConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        doubleConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2598,7 +2600,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                                     {
                                         int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IntermediateCodeParser<Lexer>::AddressConstant(lexer, context);
-                                        addressConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                        addressConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                                         if (match.hit)
                                         {
                                             {
@@ -2628,7 +2630,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match = IntermediateCodeParser<Lexer>::ArrayConstant(lexer, context);
-                            arrayConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                            arrayConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                             if (match.hit)
                             {
                                 {
@@ -2653,7 +2655,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match = IntermediateCodeParser<Lexer>::StructureConstant(lexer, context);
-                            structureConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                            structureConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                             if (match.hit)
                             {
                                 {
@@ -2678,7 +2680,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match = IntermediateCodeParser<Lexer>::StringConstant(lexer, context);
-                            stringConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                            stringConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                             if (match.hit)
                             {
                                 {
@@ -2703,7 +2705,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match = IntermediateCodeParser<Lexer>::StringArrayConstant(lexer, context);
-                            stringArrayConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                            stringArrayConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                             if (match.hit)
                             {
                                 {
@@ -2734,7 +2736,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match = IntermediateCodeParser<Lexer>::ConversionConstant(lexer, context);
-                            conversionConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                            conversionConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                             if (match.hit)
                             {
                                 {
@@ -2763,7 +2765,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = IntermediateCodeParser<Lexer>::ClsIdConstant(lexer, context);
-                        clsidConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                        clsidConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                         if (match.hit)
                         {
                             {
@@ -2792,7 +2794,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Constant(Lexer& lexer, otava:
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = IntermediateCodeParser<Lexer>::SymbolConstant(lexer, context);
-                    symbolConstant.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                    symbolConstant.reset(static_cast<otava::intermediate::Value*>(match.value));
                     if (match.hit)
                     {
                         {
@@ -3756,9 +3758,9 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ArrayConstant(Lexer& lexer, o
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589467);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
-    std::vector<otava::intermediate::ConstantValue*> elements = std::vector<otava::intermediate::ConstantValue*>();
-    std::unique_ptr<otava::intermediate::ConstantValue> first;
-    std::unique_ptr<otava::intermediate::ConstantValue> next;
+    std::vector<otava::intermediate::Value*> elements = std::vector<otava::intermediate::Value*>();
+    std::unique_ptr<otava::intermediate::Value> first;
+    std::unique_ptr<otava::intermediate::Value> next;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3803,7 +3805,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ArrayConstant(Lexer& lexer, o
                             {
                                 int64_t pos = lexer.GetPos();
                                 soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                                first.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                first.reset(static_cast<otava::intermediate::Value*>(match.value));
                                 if (match.hit)
                                 {
                                     elements.push_back(first.release());
@@ -3848,7 +3850,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ArrayConstant(Lexer& lexer, o
                                                         {
                                                             int64_t pos = lexer.GetPos();
                                                             soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                                                            next.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                                            next.reset(static_cast<otava::intermediate::Value*>(match.value));
                                                             if (match.hit)
                                                             {
                                                                 elements.push_back(next.release());
@@ -3952,9 +3954,9 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StructureConstant(Lexer& lexe
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589468);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
-    std::vector<otava::intermediate::ConstantValue*> fieldValues = std::vector<otava::intermediate::ConstantValue*>();
-    std::unique_ptr<otava::intermediate::ConstantValue> first;
-    std::unique_ptr<otava::intermediate::ConstantValue> next;
+    std::vector<otava::intermediate::Value*> fieldValues = std::vector<otava::intermediate::Value*>();
+    std::unique_ptr<otava::intermediate::Value> first;
+    std::unique_ptr<otava::intermediate::Value> next;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3999,7 +4001,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StructureConstant(Lexer& lexe
                             {
                                 int64_t pos = lexer.GetPos();
                                 soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                                first.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                first.reset(static_cast<otava::intermediate::Value*>(match.value));
                                 if (match.hit)
                                 {
                                     fieldValues.push_back(first.release());
@@ -4044,7 +4046,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StructureConstant(Lexer& lexe
                                                         {
                                                             int64_t pos = lexer.GetPos();
                                                             soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                                                            next.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                                            next.reset(static_cast<otava::intermediate::Value*>(match.value));
                                                             if (match.hit)
                                                             {
                                                                 fieldValues.push_back(next.release());
@@ -4164,7 +4166,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StringConstant(Lexer& lexer, 
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "StringConstant");
                 #endif
-                return soul::parser::Match(true, context->MakeStringValue(lexer.GetSourcePos(pos), util::ToUtf8(lexer.GetToken(pos).ToString())));
+                return soul::parser::Match(true, context->MakeStringValue(lexer.GetSourcePos(pos), ParseStringValue(util::ToUtf8(lexer.GetToken(pos).ToString()))));
             }
         }
         *parentMatch0 = match;
@@ -4197,10 +4199,10 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StringArrayConstant(Lexer& le
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589470);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
-    std::vector<otava::intermediate::ConstantValue*> strings = std::vector<otava::intermediate::ConstantValue*>();
+    std::vector<otava::intermediate::Value*> strings = std::vector<otava::intermediate::Value*>();
     std::unique_ptr<soul::parser::Value<char>> prefix;
-    std::unique_ptr<otava::intermediate::ConstantValue> first;
-    std::unique_ptr<otava::intermediate::ConstantValue> next;
+    std::unique_ptr<otava::intermediate::Value> first;
+    std::unique_ptr<otava::intermediate::Value> next;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4261,7 +4263,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StringArrayConstant(Lexer& le
                             {
                                 int64_t pos = lexer.GetPos();
                                 soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                                first.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                first.reset(static_cast<otava::intermediate::Value*>(match.value));
                                 if (match.hit)
                                 {
                                     strings.push_back(first.release());
@@ -4306,7 +4308,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StringArrayConstant(Lexer& le
                                                         {
                                                             int64_t pos = lexer.GetPos();
                                                             soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                                                            next.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                                                            next.reset(static_cast<otava::intermediate::Value*>(match.value));
                                                             if (match.hit)
                                                             {
                                                                 strings.push_back(next.release());
@@ -4470,7 +4472,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ConversionConstant(Lexer& lex
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
-    std::unique_ptr<otava::intermediate::ConstantValue> from;
+    std::unique_ptr<otava::intermediate::Value> from;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4539,7 +4541,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ConversionConstant(Lexer& lex
             soul::parser::Match* parentMatch7 = &match;
             {
                 soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
-                from.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                from.reset(static_cast<otava::intermediate::Value*>(match.value));
                 *parentMatch7 = match;
             }
             *parentMatch1 = match;
@@ -4684,7 +4686,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::SymbolConstant(Lexer& lexer, 
     soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589474);
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
-    std::unique_ptr<otava::intermediate::ConstantValue> symbolValue;
+    std::unique_ptr<otava::intermediate::Value> symbolValue;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4713,7 +4715,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::SymbolConstant(Lexer& lexer, 
             {
                 int64_t pos = lexer.GetPos();
                 soul::parser::Match match = IntermediateCodeParser<Lexer>::SymbolValue(lexer, context, tref.GetType());
-                symbolValue.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                symbolValue.reset(static_cast<otava::intermediate::Value*>(match.value));
                 if (match.hit)
                 {
                     {
@@ -4757,8 +4759,8 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Value(Lexer& lexer, otava::in
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589475);
     std::unique_ptr<otava::intermediate::Value> regValue;
-    std::unique_ptr<otava::intermediate::ConstantValue> symbolValue;
-    std::unique_ptr<otava::intermediate::ConstantValue> literalValue;
+    std::unique_ptr<otava::intermediate::Value> symbolValue;
+    std::unique_ptr<otava::intermediate::Value> literalValue;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
@@ -4795,7 +4797,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Value(Lexer& lexer, otava::in
             {
                 int64_t pos = lexer.GetPos();
                 soul::parser::Match match = IntermediateCodeParser<Lexer>::SymbolValue(lexer, context, type);
-                symbolValue.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                symbolValue.reset(static_cast<otava::intermediate::Value*>(match.value));
                 if (match.hit)
                 {
                     {
@@ -4824,7 +4826,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Value(Lexer& lexer, otava::in
             {
                 int64_t pos = lexer.GetPos();
                 soul::parser::Match match = IntermediateCodeParser<Lexer>::LiteralValue(lexer, context, type);
-                literalValue.reset(static_cast<otava::intermediate::ConstantValue*>(match.value));
+                literalValue.reset(static_cast<otava::intermediate::Value*>(match.value));
                 if (match.hit)
                 {
                     {

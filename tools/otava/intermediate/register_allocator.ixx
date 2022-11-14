@@ -76,6 +76,7 @@ private:
 
 struct SpillData
 {
+    SpillData();
     otava::assembly::RegisterGroup* registerGroupToSpill;
     FrameLocation spillToFrameLocation;
 };

@@ -219,7 +219,8 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     if (project->GetTarget() == Target::program)
     {
         cppFileNames.push_back(cppFileName);
-        libraryDirs = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "std"), config));
+        libraryDirs = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config));
+        libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
     }
     project->AddRoots(moduleMapper);
     otava::symbols::Module projectModule(project->Name() + ".#project");

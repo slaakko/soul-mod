@@ -22,6 +22,19 @@ Type::~Type()
 {
 }
 
+bool Type::IsBytePtrType() const
+{
+    if (IsPointerType())
+    {
+        const PointerType* pointerType = static_cast<const PointerType*>(this);
+        if (pointerType->PointerCount() == 1 && pointerType->BaseType()->IsByteType())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Type::IsIntegerType() const
 {
     switch (id)
@@ -182,7 +195,7 @@ void Type::WriteDeclaration(util::CodeFormatter& formatter)
     formatter.Write(" = type ");
 }
 
-void Type::SetDefaultValue(ConstantValue* defaultValue_)
+void Type::SetDefaultValue(Value* defaultValue_)
 {
     defaultValue = defaultValue_;
 }
@@ -254,7 +267,7 @@ bool operator<(const TypeRef& left, const TypeRef& right)
 }
 
 StructureType::StructureType(const SourcePos& sourcePos_, int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
-    Type(sourcePos_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false)
+    Type(sourcePos_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false), size()
 {
 }
 

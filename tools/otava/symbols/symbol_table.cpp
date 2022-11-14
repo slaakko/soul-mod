@@ -1051,16 +1051,17 @@ void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, otava:
     MapNode(node, enumConstantSymbol);
 }
 
-void SymbolTable::BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
+BlockSymbol* SymbolTable::BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
 {
     BlockSymbol* blockSymbol = new BlockSymbol(); 
     currentScope->SymbolScope()->AddSymbol(blockSymbol, sourcePos, context);
-    BeginScope(blockSymbol->GetScope());
+    BeginScopeGeneric(blockSymbol->GetScope(), context);
+    return blockSymbol;
 }
 
-void SymbolTable::EndBlock()
+void SymbolTable::EndBlock(Context* context)
 {
-    EndScope();
+    EndScopeGeneric(context);
 }
 
 void SymbolTable::RemoveBlock()
@@ -1145,6 +1146,10 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
     }
     FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    {
+        functionDefinition->SetSpecialization();
+    }
     functionDefinition->SetLinkage(currentLinkage);
     MapNode(node, functionDefinition, MapKind::nodeToSymbol);
     functionDefinition->SetFunctionQualifiers(qualifiers);

@@ -331,18 +331,6 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
                 initializer = BindExpression(declaration.initializer, context);
             }
             VariableSymbol* variable = declaration.variable;
-            TypeSymbol* variableBaseType = variable->GetType()->GetBaseType();
-            if (variableBaseType->IsTemplateParameterSymbol())
-            {
-                Symbol* symbol = context->GetSymbolTable()->CurrentScope()->Lookup(variableBaseType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, 
-                    node.GetSourcePos(), context, LookupFlags::none);
-                if (symbol && symbol->IsTypeSymbol())
-                {
-                    TypeSymbol* typeSymbol = static_cast<TypeSymbol*>(symbol);
-                    TypeSymbol* specializedType = variable->GetType()->Unify(typeSymbol, context);
-                    variable->SetDeclaredType(specializedType);
-                }
-            }
             if (initializer)
             {
                 variable->SetInitializerType(initializer->GetType());

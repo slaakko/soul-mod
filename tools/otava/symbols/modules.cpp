@@ -35,6 +35,10 @@ Module::Module(const std::string& name_) : name(name_), symbolTable(), evaluatio
     symbolTable.SetModule(this);
 }
 
+Module::~Module()
+{
+}
+
 int32_t Module::Id() const
 {
     return static_cast<int32_t>(std::hash<std::string>()(name) & 0x7FFFFFFF);
@@ -297,7 +301,7 @@ bool ModuleNameLess::operator()(Module* left, Module* right) const
 
 ModuleMapper::ModuleMapper()
 {
-    roots.push_back(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "std")));
+    roots.push_back(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools"), "otava"), "std")));
 }
 
 void ModuleMapper::AddRoot(const std::string& root)

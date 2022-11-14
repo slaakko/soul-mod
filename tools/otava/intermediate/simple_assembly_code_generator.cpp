@@ -12,12 +12,16 @@ import otava.intermediate.context;
 import otava.intermediate.function;
 import otava.intermediate.linear_scan_register_allocator;
 import otava.intermediate.type;
+import otava.intermediate.data;
+import otava.intermediate.data_item_adder;
 import otava.assembly.function;
+import otava.assembly.symbol;
 
 namespace otava::intermediate {
 
 SimpleAssemblyCodeGenerator::SimpleAssemblyCodeGenerator(Context* context_, const std::string& assemblyFilePath_) : 
-    CodeGenerator(context_), context(context_), file(assemblyFilePath_), currentFunction(nullptr), currentInst(nullptr), leader(false)
+    CodeGenerator(context_), context(context_), file(assemblyFilePath_), currentFunction(nullptr), currentInst(nullptr), leader(false), assemblyFunction(), lineNumber(),
+    registerAllocator()
 {
 }
 
@@ -49,6 +53,23 @@ void SimpleAssemblyCodeGenerator::Error(const std::string& message)
 void SimpleAssemblyCodeGenerator::Write() 
 {
     file.Write();
+}
+
+void SimpleAssemblyCodeGenerator::Visit(GlobalVariable& globalVariable)
+{
+    Type* type = globalVariable.GetType(); 
+    if (type->IsBytePtrType())
+    {
+        PointerType* pointerType = static_cast<PointerType*>(type);
+        Type* baseType = pointerType->BaseType();
+        otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), otava::assembly::DataInst::DQ);
+        variable->AddItem(new otava::assembly::Symbol(globalVariable.Name() + "_data"));
+        file.GetDataSection().AddData(variable);
+        otava::assembly::Data* data = new otava::assembly::Data(globalVariable.Name() + "_data", baseType->DataInstruction());
+        DataItemAdder adder(context, data);
+        globalVariable.Initializer()->Accept(adder);
+        file.GetDataSection().AddData(data);
+    }
 }
 
 void SimpleAssemblyCodeGenerator::Visit(Function& function)
@@ -302,6 +323,11 @@ void SimpleAssemblyCodeGenerator::Visit(NegInstruction& inst)
 void SimpleAssemblyCodeGenerator::Visit(NoOperationInstruction& inst)
 {
     EmitNop(inst, *this);
+}
+
+void SimpleAssemblyCodeGenerator::Visit(SwitchInstruction& inst)
+{
+    EmitSwitch(inst, *this);
 }
 
 } // otava::intermediate

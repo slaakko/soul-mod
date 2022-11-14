@@ -233,6 +233,7 @@ void Evaluator::Visit(otava::ast::UnaryExprNode& node)
                     IntegerValue* integerValue = static_cast<IntegerValue*>(value);
                     value = context->GetEvaluationContext()->GetIntegerValue(~integerValue->GetValue(), U"~" + value->Rep(), integerValue->GetType());
                 }
+                break;
             }
             case otava::ast::NodeKind::notNode:
             {

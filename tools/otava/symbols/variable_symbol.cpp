@@ -16,6 +16,9 @@ import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.value;
 import otava.symbols.visitor;
+import otava.symbols.context;
+import util.unicode;
+import util.sha1;
 
 namespace otava::symbols {
 
@@ -128,9 +131,32 @@ TypeSymbol* VariableSymbol::GetReferredType() const
     return referredType;
 }
 
+std::string VariableSymbol::IrName() const
+{
+    std::string irName = "variable_";
+    irName.append(util::ToUtf8(Name())).append("_").append(util::GetSha1MessageDigest(util::ToUtf8(FullName())));
+    return irName;
+}
+
 bool VariableLess::operator()(VariableSymbol* left, VariableSymbol* right) const
 {
     return left->Name() < right->Name();
+}
+
+void SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    TypeSymbol* variableBaseType = variable->GetType()->GetBaseType();
+    if (variableBaseType->IsTemplateParameterSymbol())
+    {
+        Symbol* symbol = context->GetSymbolTable()->CurrentScope()->Lookup(variableBaseType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope,
+            sourcePos, context, LookupFlags::none);
+        if (symbol && symbol->IsTypeSymbol())
+        {
+            TypeSymbol* typeSymbol = static_cast<TypeSymbol*>(symbol);
+            TypeSymbol* specializedType = variable->GetType()->Unify(typeSymbol, context);
+            variable->SetDeclaredType(specializedType);
+        }
+    }
 }
 
 } // namespace otava::symbols

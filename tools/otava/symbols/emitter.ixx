@@ -57,6 +57,11 @@ public:
     otava::intermediate::Value* EmitDouble(double value);
     otava::intermediate::Value* EmitFloatingValue(otava::intermediate::Type* type, double value);
     otava::intermediate::Value* EmitNull(otava::intermediate::Type* type);
+    otava::intermediate::Value* EmitArrayValue(const std::vector<otava::intermediate::Value*>& elements);
+    otava::intermediate::Value* EmitStructureValue(const std::vector<otava::intermediate::Value*>& fieldValues);
+    otava::intermediate::Value* EmitStringValue(const std::string& value);
+    otava::intermediate::Value* EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from);
+    void EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer);
     otava::intermediate::Value* EmitNot(otava::intermediate::Value* value);
     otava::intermediate::Value* EmitNeg(otava::intermediate::Value* value);
     otava::intermediate::Value* EmitAdd(otava::intermediate::Value* left, otava::intermediate::Value* right);

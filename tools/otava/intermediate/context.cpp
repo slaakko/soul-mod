@@ -149,7 +149,7 @@ FunctionType* Context::GetFunctionType(const SourcePos& sourcePos, int32_t typeI
     return types->GetFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
 }
 
-void Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, ConstantValue* initializer, bool once)
+void Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once)
 {
     data->AddGlobalVariable(sourcePos, type, variableName, initializer, once, this);
 }
@@ -164,17 +164,17 @@ void Context::ResolveType(TypeRef& typeRef)
     types->ResolveType(typeRef, this);
 }
 
-ConstantValue* Context::GetTrueValue()
+Value* Context::GetTrueValue()
 {
     return data->GetTrueValue(*types);
 }
 
-ConstantValue* Context::GetFalseValue()
+Value* Context::GetFalseValue()
 {
     return data->GetFalseValue(*types);
 }
 
-ConstantValue* Context::GetBooleanLiteral(const SourcePos& sourcePos, Type* type, bool value)
+Value* Context::GetBooleanLiteral(const SourcePos& sourcePos, Type* type, bool value)
 {
     if (type->IsBooleanType())
     {
@@ -194,67 +194,67 @@ ConstantValue* Context::GetBooleanLiteral(const SourcePos& sourcePos, Type* type
     return nullptr;
 }
 
-ConstantValue* Context::GetSByteValue(int8_t value)
+Value* Context::GetSByteValue(int8_t value)
 {
     return data->GetSByteValue(value, *types);
 }
 
-ConstantValue* Context::GetByteValue(uint8_t value)
+Value* Context::GetByteValue(uint8_t value)
 {
     return data->GetByteValue(value, *types);
 }
 
-ConstantValue* Context::GetShortValue(int16_t value)
+Value* Context::GetShortValue(int16_t value)
 {
     return data->GetShortValue(value, *types);
 }
 
-ConstantValue* Context::GetUShortValue(uint16_t value)
+Value* Context::GetUShortValue(uint16_t value)
 {
     return data->GetUShortValue(value, *types);
 }
 
-ConstantValue* Context::GetIntValue(int32_t value)
+Value* Context::GetIntValue(int32_t value)
 {
     return data->GetIntValue(value, *types);
 }
 
-ConstantValue* Context::GetUIntValue(uint32_t value)
+Value* Context::GetUIntValue(uint32_t value)
 {
     return data->GetUIntValue(value, *types);
 }
 
-ConstantValue* Context::GetLongValue(int64_t value)
+Value* Context::GetLongValue(int64_t value)
 {
     return data->GetLongValue(value, *types);
 }
 
-ConstantValue* Context::GetULongValue(uint64_t value)
+Value* Context::GetULongValue(uint64_t value)
 {
     return data->GetULongValue(value, *types);
 }
 
-ConstantValue* Context::GetIntegerValue(Type* type, int64_t value)
+Value* Context::GetIntegerValue(Type* type, int64_t value)
 {
     return data->GetIntegerValue(type, value, *types);
 }
 
-ConstantValue* Context::GetFloatValue(float value)
+Value* Context::GetFloatValue(float value)
 {
     return data->GetFloatValue(value, *types);
 }
 
-ConstantValue* Context::GetDoubleValue(double value)
+Value* Context::GetDoubleValue(double value)
 {
     return data->GetDoubleValue(value, *types);
 }
 
-ConstantValue* Context::GetFloatingValue(Type* type, double value)
+Value* Context::GetFloatingValue(Type* type, double value)
 {
     return data->GetFloatingValue(type, value, *types);
 }
 
-ConstantValue* Context::GetNullValue(const SourcePos& sourcePos, Type* type)
+Value* Context::GetNullValue(const SourcePos& sourcePos, Type* type)
 {
     if (type->IsPointerType())
     {
@@ -267,47 +267,47 @@ ConstantValue* Context::GetNullValue(const SourcePos& sourcePos, Type* type)
     return nullptr;
 }
 
-ConstantValue* Context::MakeArrayValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& elements)
+Value* Context::MakeArrayValue(const SourcePos& sourcePos, const std::vector<Value*>& elements)
 {
     return data->MakeArrayValue(sourcePos, elements);
 }
 
-ConstantValue* Context::MakeStructureValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& fieldValues)
+Value* Context::MakeStructureValue(const SourcePos& sourcePos, const std::vector<Value*>& fieldValues)
 {
     return data->MakeStructureValue(sourcePos, fieldValues);
 }
 
-ConstantValue* Context::MakeStringValue(const SourcePos& sourcePos, const std::string& value)
+Value* Context::MakeStringValue(const SourcePos& sourcePos, const std::string& value)
 {
     return data->MakeStringValue(sourcePos, value);
 }
 
-ConstantValue* Context::MakeStringArrayValue(const SourcePos& sourcePos, char prefix, const std::vector<ConstantValue*>& strings)
+Value* Context::MakeStringArrayValue(const SourcePos& sourcePos, char prefix, const std::vector<Value*>& strings)
 {
     return data->MakeStringArrayValue(sourcePos, prefix, strings);
 }
 
-ConstantValue* Context::MakeConversionValue(const SourcePos& sourcePos, Type* type, ConstantValue* from)
+Value* Context::MakeConversionValue(const SourcePos& sourcePos, Type* type, Value* from)
 {
     return data->MakeConversionValue(sourcePos, type, from);
 }
 
-ConstantValue* Context::MakeClsIdValue(const SourcePos& sourcePos, Type* type, const std::string& clsIdStr)
+Value* Context::MakeClsIdValue(const SourcePos& sourcePos, Type* type, const std::string& clsIdStr)
 {
     return data->MakeClsIdValue(sourcePos, type, clsIdStr);
 }
 
-ConstantValue* Context::MakeSymbolValue(const SourcePos& sourcePos, Type* type, const std::string& symbol)
+Value* Context::MakeSymbolValue(const SourcePos& sourcePos, Type* type, const std::string& symbol)
 {
     return data->MakeSymbolValue(sourcePos, type, symbol);
 }
 
-ConstantValue* Context::MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue)
+Value* Context::MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue)
 {
     return data->MakeNumericLiteral(sourcePos, type, strValue, *types, this);
 }
 
-ConstantValue* Context::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id)
+Value* Context::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id)
 {
     return data->MakeAddressLiteral(sourcePos, type, id, this);
 }

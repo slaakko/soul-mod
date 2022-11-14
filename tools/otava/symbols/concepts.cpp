@@ -19,7 +19,7 @@ import otava.ast;
 namespace otava::symbols {
 
 ConstraintExprSymbol::ConstraintExprSymbol() : 
-    Symbol(SymbolKind::constraintExprSymbol, std::u32string()), constraintEprNodeId(-1)
+    Symbol(SymbolKind::constraintExprSymbol, std::u32string()), constraintEprNodeId(-1), constraintExprNode()
 {
 }
 

@@ -5,6 +5,7 @@
 
 export module otava.intermediate.type;
 
+import otava.assembly.data;
 import std.core;
 import soul.ast.source.pos;
 import util.code.formatter;
@@ -21,7 +22,6 @@ class Visitor;
 class ArrayType;
 class StructureType;
 class TypeRef;
-class ConstantValue;
 class Value;
 
 const int32_t voidTypeId = 0;
@@ -92,6 +92,7 @@ public:
     virtual void Accept(Visitor& visitor) {}
     virtual int64_t Size() const = 0;
     virtual int64_t Alignment() const = 0;
+    virtual otava::assembly::DataInst DataInstruction() const { return otava::assembly::DataInst::DB; }
     TypeKind Kind() const { return kind; }
     bool IsFundamentalType() const { return kind == TypeKind::fundamentalType; }
     bool IsVoidType() const { return id == voidTypeId; }
@@ -102,6 +103,7 @@ public:
     bool IsUnsignedType() const;
     bool IsFloatingPointType() const;
     bool IsFloatType() const { return id == floatTypeId; }
+    bool IsByteType() const { return id == byteTypeId; }
     bool IsDoubleType() const { return id == doubleTypeId; }
     bool IsPointerType() const { return kind == TypeKind::pointerType; }
     bool IsAggregateType() const;
@@ -113,6 +115,7 @@ public:
     ArrayType* GetArrayPointeeType(const SourcePos& sourcePos, Context* context) const;
     bool IsArrayType() const { return kind == TypeKind::arrayType; }
     bool IsFunctionType() const { return kind == TypeKind::functionType; }
+    bool IsBytePtrType() const;
     virtual bool IsWeakType() const { return true; }
     virtual void Add(Types* types, Context* context);
     virtual void Resolve(Types* types, Context* context);
@@ -120,10 +123,10 @@ public:
     int32_t Id() const { return id; }
     TypeRef GetTypeRef();
     virtual void WriteDeclaration(util::CodeFormatter& formatter);
-    ConstantValue* DefaultValue() { return defaultValue; }
-    void SetDefaultValue(ConstantValue* defaultValue_);
+    Value* DefaultValue() { return defaultValue; }
+    void SetDefaultValue(Value* defaultValue_);
 private:
-    ConstantValue* defaultValue;
+    Value* defaultValue;
     SourcePos sourcePos;
     TypeKind kind;
     int32_t id;
@@ -144,6 +147,7 @@ public:
     std::string Name() const override { return "bool"; }
     int64_t Size() const override { return 1; }
     int64_t Alignment() const override { return 1; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
 };
 
 class SByteType : public Type
@@ -153,6 +157,7 @@ public:
     std::string Name() const override { return "sbyte"; }
     int64_t Size() const override { return 1; }
     int64_t Alignment() const override { return 1; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
 };
 
 class ByteType : public Type
@@ -162,6 +167,7 @@ public:
     std::string Name() const override { return "byte"; }
     int64_t Size() const override { return 1; }
     int64_t Alignment() const override { return 1; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
 };
 
 class ShortType : public Type
@@ -171,6 +177,7 @@ public:
     std::string Name() const override { return "short"; }
     int64_t Size() const override { return 2; }
     int64_t Alignment() const override { return 2; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DW; }
 };
 
 class UShortType : public Type
@@ -180,6 +187,7 @@ public:
     std::string Name() const override { return "ushort"; }
     int64_t Size() const override { return 2; }
     int64_t Alignment() const override { return 2; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DW; }
 };
 
 class IntType : public Type
@@ -189,6 +197,7 @@ public:
     std::string Name() const override { return "int"; }
     int64_t Size() const override { return 4; }
     int64_t Alignment() const override { return 4; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
 };
 
 class UIntType : public Type
@@ -198,6 +207,7 @@ public:
     std::string Name() const override { return "uint"; }
     int64_t Size() const override { return 4; }
     int64_t Alignment() const override { return 4; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
 };
 
 class LongType : public Type
@@ -207,6 +217,7 @@ public:
     std::string Name() const override { return "long"; }
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
 };
 
 class ULongType : public Type
@@ -216,6 +227,7 @@ public:
     std::string Name() const override { return "ulong"; }
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
 };
 
 class FloatType : public Type
@@ -225,6 +237,7 @@ public:
     std::string Name() const override { return "float"; }
     int64_t Size() const override { return 4; }
     int64_t Alignment() const override { return 4; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
 };
 
 class DoubleType : public Type
@@ -234,6 +247,7 @@ public:
     std::string Name() const override { return "double"; }
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
 };
 
 class TypeRef
@@ -336,6 +350,7 @@ public:
     const TypeRef& BaseTypeRef() const { return baseTypeRef; }
     TypeRef& BaseTypeRef() { return baseTypeRef; }
     Type* BaseType() const { return baseTypeRef.GetType(); }
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
 private:
     int8_t pointerCount;
     TypeRef baseTypeRef;

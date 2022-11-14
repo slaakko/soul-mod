@@ -20,7 +20,7 @@ class GlobalVariable;
 class Type;
 class Types;
 
-class BoolValue : public ConstantValue
+class BoolValue : public Value
 {
 public:
     BoolValue(bool value_, Type* type_);
@@ -31,7 +31,7 @@ private:
     bool value;
 };
 
-class SByteValue : public ConstantValue
+class SByteValue : public Value
 {
 public:
     SByteValue(int8_t value_, Type* type_);
@@ -42,7 +42,7 @@ private:
     int8_t value;
 };
 
-class ByteValue : public ConstantValue
+class ByteValue : public Value
 {
 public:
     ByteValue(uint8_t value_, Type* type_);
@@ -53,7 +53,7 @@ private:
     uint8_t value;
 };
 
-class ShortValue : public ConstantValue
+class ShortValue : public Value
 {
 public:
     ShortValue(int16_t value_, Type* type_);
@@ -64,7 +64,7 @@ private:
     int16_t value;
 };
 
-class UShortValue : public ConstantValue
+class UShortValue : public Value
 {
 public:
     UShortValue(uint16_t value_, Type* type_);
@@ -75,7 +75,7 @@ private:
     uint16_t value;
 };
 
-class IntValue : public ConstantValue
+class IntValue : public Value
 {
 public:
     IntValue(int32_t value_, Type* type_);
@@ -86,7 +86,7 @@ private:
     int32_t value;
 };
 
-class UIntValue : public ConstantValue
+class UIntValue : public Value
 {
 public:
     UIntValue(uint32_t value_, Type* type_);
@@ -97,7 +97,7 @@ private:
     uint32_t value;
 };
 
-class LongValue : public ConstantValue
+class LongValue : public Value
 {
 public:
     LongValue(int64_t value_, Type* type_);
@@ -108,7 +108,7 @@ private:
     int64_t value;
 };
 
-class ULongValue : public ConstantValue
+class ULongValue : public Value
 {
 public:
     ULongValue(uint64_t value_, Type* type_);
@@ -119,7 +119,7 @@ private:
     uint64_t value;
 };
 
-class FloatValue : public ConstantValue
+class FloatValue : public Value
 {
 public:
     FloatValue(float value_, Type* type_);
@@ -130,7 +130,7 @@ private:
     float value;
 };
 
-class DoubleValue : public ConstantValue
+class DoubleValue : public Value
 {
 public:
     DoubleValue(double value_, Type* type_);
@@ -141,7 +141,7 @@ private:
     double value;
 };
 
-class NullValue : public ConstantValue
+class NullValue : public Value
 {
 public:
     NullValue(Type* type_);
@@ -149,77 +149,77 @@ public:
     std::string ToString() const override;
 };
 
-class AddressValue : public ConstantValue
+class AddressValue : public Value
 {
 public:
     AddressValue(const SourcePos& sourcePos_, GlobalVariable* globalVariable_, Type* type);
-    GlobalVariable* Value() const { return globalVariable; }
+    GlobalVariable* GetValue() const { return globalVariable; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
     GlobalVariable* globalVariable;
 };
 
-class ArrayValue : public ConstantValue
+class ArrayValue : public Value
 {
 public:
-    ArrayValue(const SourcePos& sourcePos_, const std::vector<ConstantValue*>& elements_);
-    const std::vector<ConstantValue*>& Elements() const { return elements; }
+    ArrayValue(const SourcePos& sourcePos_, const std::vector<Value*>& elements_);
+    const std::vector<Value*>& Elements() const { return elements; }
     void SetType(Type* type) override;
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    std::vector<ConstantValue*> elements;
+    std::vector<Value*> elements;
 };
 
-class StructureValue : public ConstantValue
+class StructureValue : public Value
 {
 public:
-    StructureValue(const SourcePos& sourcePos_, const std::vector<ConstantValue*>& fieldValues_);
-    const std::vector<ConstantValue*>& FieldValues() const { return fieldValues; }
+    StructureValue(const SourcePos& sourcePos_, const std::vector<Value*>& fieldValues_);
+    const std::vector<Value*>& FieldValues() const { return fieldValues; }
     void SetType(Type* type) override;
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    std::vector<ConstantValue*> fieldValues;
+    std::vector<Value*> fieldValues;
 };
 
-class StringValue : public ConstantValue
+class StringValue : public Value
 {
 public:
     StringValue(const SourcePos& sourcePos_, const std::string& value_);
-    const std::string& Value() const { return value; }
+    const std::string& GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
     std::string value;
 };
 
-class StringArrayValue : public ConstantValue
+class StringArrayValue : public Value
 {
 public:
-    StringArrayValue(const SourcePos& sourcePos_, char prefix_, const std::vector<ConstantValue*>& strings_);
+    StringArrayValue(const SourcePos& sourcePos_, char prefix_, const std::vector<Value*>& strings_);
     char Prefix() const { return prefix; }
-    const std::vector<ConstantValue*>& Strings() const { return strings; }
+    const std::vector<Value*>& Strings() const { return strings; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
     char prefix;
-    std::vector<ConstantValue*> strings;
+    std::vector<Value*> strings;
 };
 
-class ConversionValue : public ConstantValue
+class ConversionValue : public Value
 {
 public:
-    ConversionValue(const SourcePos& sourcePos_, Type* type_, ConstantValue* from_);
-    ConstantValue* From() const { return from; }
+    ConversionValue(const SourcePos& sourcePos_, Type* type_, Value* from_);
+    Value* From() const { return from; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    ConstantValue* from;
+    Value* from;
 };
 
-class ClsIdValue : public ConstantValue
+class ClsIdValue : public Value
 {
 public:
     ClsIdValue(const SourcePos& sourcePos_, Type* type_, const std::string& typeId_);
@@ -230,7 +230,7 @@ private:
     std::string typeId;
 };
 
-class SymbolValue : public ConstantValue
+class SymbolValue : public Value
 {
 public:
     SymbolValue(const SourcePos& sourcePos_, Type* type_, const std::string& symbol_);
@@ -250,27 +250,27 @@ private:
 class GlobalVariable : public Value
 {
 public:
-    GlobalVariable(const SourcePos& sourcePos_, Type* type_, const std::string& name_, ConstantValue* initializer_, bool once_);
+    GlobalVariable(const SourcePos& sourcePos_, Type* type_, const std::string& name_, Value* initializer_, bool once_);
     void Write(util::CodeFormatter& formatter);
     virtual void Accept(Visitor& visitor);
     const std::string& Name() const { return name; }
-    ConstantValue* Initializer() const { return initializer; }
+    Value* Initializer() const { return initializer; }
     bool Once() const { return once; }
     std::string ToString() const override { return name; }
 private:
     std::string name;
-    ConstantValue* initializer;
+    Value* initializer;
     bool once;
 };
 
 template<class T>
-class ConstantValueMap
+class ValueMap
 {
 public:
-    ConstantValueMap();
-    ConstantValue* Get(const T& value, Data* data, const Types& types);
+    ValueMap();
+    Value* Get(const T& value, Data* data, const Types& types);
 private:
-    std::map<T, ConstantValue*> valueMap;
+    std::map<T, Value*> valueMap;
 };
 
 class Data
@@ -280,41 +280,41 @@ public:
     void Write(util::CodeFormatter& formatter);
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
-    void AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, ConstantValue* initializer, bool once, Context* context);
-    ConstantValue* GetTrueValue(const Types& types);
-    ConstantValue* GetFalseValue(const Types& types);
-    ConstantValue* GetSByteValue(int8_t value, const Types& types);
-    ConstantValue* GetByteValue(uint8_t value, const Types& types);
-    ConstantValue* GetShortValue(int16_t value, const Types& types);
-    ConstantValue* GetUShortValue(uint16_t value, const Types& types);
-    ConstantValue* GetIntValue(int32_t value, const Types& types);
-    ConstantValue* GetUIntValue(uint32_t value, const Types& types);
-    ConstantValue* GetLongValue(int64_t value, const Types& types);
-    ConstantValue* GetULongValue(uint64_t value, const Types& types);
-    ConstantValue* GetIntegerValue(Type* type, int64_t value, const Types& types);
-    ConstantValue* GetFloatValue(float value, const Types& types);
-    ConstantValue* GetDoubleValue(double value, const Types& types);
-    ConstantValue* GetFloatingValue(Type* type, double value, const Types& types);
-    ConstantValue* GetNullValue(Type* type);
-    ConstantValue* MakeValue(int8_t value, const Types& types);
-    ConstantValue* MakeValue(uint8_t value, const Types& types);
-    ConstantValue* MakeValue(int16_t value, const Types& types);
-    ConstantValue* MakeValue(uint16_t value, const Types& types);
-    ConstantValue* MakeValue(int32_t value, const Types& types);
-    ConstantValue* MakeValue(uint32_t value, const Types& types);
-    ConstantValue* MakeValue(int64_t value, const Types& types);
-    ConstantValue* MakeValue(uint64_t value, const Types& types);
-    ConstantValue* MakeValue(float value, const Types& types);
-    ConstantValue* MakeValue(double value, const Types& types);
-    ConstantValue* MakeArrayValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& elements);
-    ConstantValue* MakeStructureValue(const SourcePos& sourcePos, const std::vector<ConstantValue*>& fieldValues);
-    ConstantValue* MakeStringValue(const SourcePos& sourcePos, const std::string& value);
-    ConstantValue* MakeStringArrayValue(const SourcePos& sourcePos, char prefix, const std::vector<ConstantValue*>& strings);
-    ConstantValue* MakeConversionValue(const SourcePos& sourcePos, Type* type, ConstantValue* from);
-    ConstantValue* MakeClsIdValue(const SourcePos& sourcePos, Type* type, const std::string& clsIdStr);
-    ConstantValue* MakeSymbolValue(const SourcePos& sourcePos, Type* type, const std::string& symbol);
-    ConstantValue* MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue, const Types& types, Context* context);
-    ConstantValue* MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id, Context* context);
+    void AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context);
+    Value* GetTrueValue(const Types& types);
+    Value* GetFalseValue(const Types& types);
+    Value* GetSByteValue(int8_t value, const Types& types);
+    Value* GetByteValue(uint8_t value, const Types& types);
+    Value* GetShortValue(int16_t value, const Types& types);
+    Value* GetUShortValue(uint16_t value, const Types& types);
+    Value* GetIntValue(int32_t value, const Types& types);
+    Value* GetUIntValue(uint32_t value, const Types& types);
+    Value* GetLongValue(int64_t value, const Types& types);
+    Value* GetULongValue(uint64_t value, const Types& types);
+    Value* GetIntegerValue(Type* type, int64_t value, const Types& types);
+    Value* GetFloatValue(float value, const Types& types);
+    Value* GetDoubleValue(double value, const Types& types);
+    Value* GetFloatingValue(Type* type, double value, const Types& types);
+    Value* GetNullValue(Type* type);
+    Value* MakeValue(int8_t value, const Types& types);
+    Value* MakeValue(uint8_t value, const Types& types);
+    Value* MakeValue(int16_t value, const Types& types);
+    Value* MakeValue(uint16_t value, const Types& types);
+    Value* MakeValue(int32_t value, const Types& types);
+    Value* MakeValue(uint32_t value, const Types& types);
+    Value* MakeValue(int64_t value, const Types& types);
+    Value* MakeValue(uint64_t value, const Types& types);
+    Value* MakeValue(float value, const Types& types);
+    Value* MakeValue(double value, const Types& types);
+    Value* MakeArrayValue(const SourcePos& sourcePos, const std::vector<Value*>& elements);
+    Value* MakeStructureValue(const SourcePos& sourcePos, const std::vector<Value*>& fieldValues);
+    Value* MakeStringValue(const SourcePos& sourcePos, const std::string& value);
+    Value* MakeStringArrayValue(const SourcePos& sourcePos, char prefix, const std::vector<Value*>& strings);
+    Value* MakeConversionValue(const SourcePos& sourcePos, Type* type, Value* from);
+    Value* MakeClsIdValue(const SourcePos& sourcePos, Type* type, const std::string& clsIdStr);
+    Value* MakeSymbolValue(const SourcePos& sourcePos, Type* type, const std::string& symbol);
+    Value* MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue, const Types& types, Context* context);
+    Value* MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id, Context* context);
     void VisitGlobalVariables(Visitor& visitor);
 private:
     Context* context;
@@ -323,26 +323,26 @@ private:
     std::map<std::string, GlobalVariable*> globalVariableMap;
     std::unique_ptr<BoolValue> trueValue;
     std::unique_ptr<BoolValue> falseValue;
-    ConstantValueMap<int8_t> sbyteValueMap;
-    ConstantValueMap<uint8_t> byteValueMap;
-    ConstantValueMap<int16_t> shortValueMap;
-    ConstantValueMap<uint16_t> ushortValueMap;
-    ConstantValueMap<int32_t> intValueMap;
-    ConstantValueMap<uint32_t> uintValueMap;
-    ConstantValueMap<int64_t> longValueMap;
-    ConstantValueMap<uint64_t> ulongValueMap;
-    ConstantValueMap<float> floatValueMap;
-    ConstantValueMap<double> doubleValueMap;
+    ValueMap<int8_t> sbyteValueMap;
+    ValueMap<uint8_t> byteValueMap;
+    ValueMap<int16_t> shortValueMap;
+    ValueMap<uint16_t> ushortValueMap;
+    ValueMap<int32_t> intValueMap;
+    ValueMap<uint32_t> uintValueMap;
+    ValueMap<int64_t> longValueMap;
+    ValueMap<uint64_t> ulongValueMap;
+    ValueMap<float> floatValueMap;
+    ValueMap<double> doubleValueMap;
     std::map<Type*, NullValue*> nullValueMap;
 };
 
 template<class T>
-ConstantValueMap<T>::ConstantValueMap()
+ValueMap<T>::ValueMap()
 {
 }
 
 template<class T>
-ConstantValue* ConstantValueMap<T>::Get(const T& value, Data* data, const Types& types)
+Value* ValueMap<T>::Get(const T& value, Data* data, const Types& types)
 {
     auto it = valueMap.find(value);
     if (it != valueMap.cend())
@@ -351,7 +351,7 @@ ConstantValue* ConstantValueMap<T>::Get(const T& value, Data* data, const Types&
     }
     else
     {
-        ConstantValue* constantValue = data->MakeValue(value, types);
+        Value* constantValue = data->MakeValue(value, types);
         valueMap[value] = constantValue;
         return constantValue;
     }

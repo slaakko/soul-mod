@@ -135,6 +135,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::string value;
 };

@@ -54,7 +54,6 @@ void ResolverVisitor::Visit(JmpInstruction& inst)
         Error("resolve error: jump target basic block " + std::to_string(target) + " not found from function '" + function->Name() + "'", inst.GetSourcePos(), GetContext());
     }
     inst.SetTargetBasicBlock(targetBasicBlock);
-
 }
 
 void ResolverVisitor::Visit(BranchInstruction& inst)
@@ -83,7 +82,7 @@ void ResolverVisitor::Visit(BranchInstruction& inst)
 
 void ResolverVisitor::Visit(SwitchInstruction& inst)
 {
-    int32_t defaultTarget = inst.DefaultTargetLabelId();
+    int32_t defaultTarget = inst.DefaultTargetId();
     BasicBlock* parent = inst.Parent();
     Function* function = parent->Parent();
     BasicBlock* defaultTargetBlock = function->GetBasicBlock(defaultTarget);
@@ -95,10 +94,10 @@ void ResolverVisitor::Visit(SwitchInstruction& inst)
     inst.SetDefaultTargetBlock(defaultTargetBlock);
     for (CaseTarget& caseTarget : inst.CaseTargets())
     {
-        BasicBlock* caseTargetBlock = function->GetBasicBlock(caseTarget.targetLabelId);
+        BasicBlock* caseTargetBlock = function->GetBasicBlock(caseTarget.targetBlockId);
         if (!caseTargetBlock)
         {
-            Error("resolve error: switch case target basic block " + std::to_string(caseTarget.targetLabelId) +
+            Error("resolve error: switch case target basic block " + std::to_string(caseTarget.targetBlockId) +
                 " not found from function '" + function->Name() + "'", inst.GetSourcePos(), GetContext());
         }
         caseTarget.targetBlock = caseTargetBlock;

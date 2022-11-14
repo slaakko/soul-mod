@@ -17,6 +17,7 @@ import otava.intermediate.verify;
 import otava.intermediate.code.generator;
 import otava.intermediate.instruction;
 import otava.intermediate.basic.block;
+import otava.symbols.type.resolver;
 import otava.intermediate.simple.assembly.code.generator;
 import otava.assembly;
 import otava.symbols.bound.tree;
@@ -75,36 +76,36 @@ class SwitchTargetCollector : public otava::symbols::DefaultBoundTreeVisitor
 {
 public:
     SwitchTargetCollector(otava::symbols::Emitter& emitter_);
-    SwitchTargets GetSwitchTargets() { return std::move(switchTargets); }
+    std::unique_ptr<SwitchTargets> GetSwitchTargets() { return std::move(switchTargets); }
     void Visit(otava::symbols::BoundCaseStatementNode& node) override;
     void Visit(otava::symbols::BoundDefaultStatementNode& node) override;
 private:
     otava::symbols::Emitter& emitter;
-    SwitchTargets switchTargets;
+    std::unique_ptr<SwitchTargets> switchTargets;
 };
 
-SwitchTargetCollector::SwitchTargetCollector(otava::symbols::Emitter& emitter_) : emitter(emitter_)
+SwitchTargetCollector::SwitchTargetCollector(otava::symbols::Emitter& emitter_) : emitter(emitter_), switchTargets(new SwitchTargets())
 {
 }
 
 void SwitchTargetCollector::Visit(otava::symbols::BoundCaseStatementNode& node)
 {
     SwitchTarget* caseTarget = new SwitchTarget(emitter.CreateBasicBlock(), node.Statement(), node.CaseExpr());
-    switchTargets.AddCase(caseTarget);
+    switchTargets->AddCase(caseTarget);
 }
 
 void SwitchTargetCollector::Visit(otava::symbols::BoundDefaultStatementNode& node)
 {
     SwitchTarget* defaultTarget = new SwitchTarget(emitter.CreateBasicBlock(), node.Statement(), nullptr);
-    switchTargets.SetDefault(defaultTarget);
+    switchTargets->SetDefault(defaultTarget);
 }
 
-SwitchTargets CollectSwitchTargets(otava::symbols::Emitter& emitter, otava::symbols::BoundStatementNode* statement)
+std::unique_ptr<SwitchTargets> CollectSwitchTargets(otava::symbols::Emitter& emitter, otava::symbols::BoundStatementNode* statement)
 {
     SwitchTargetCollector collector(emitter);
     statement->Accept(collector);
-    SwitchTargets targets = collector.GetSwitchTargets();
-    return targets;
+    std::unique_ptr<SwitchTargets> targets = collector.GetSwitchTargets();
+    return std::move(targets);
 }
 
 class ConstantExpressionEvaluator : public otava::symbols::DefaultBoundTreeVisitor
@@ -170,6 +171,7 @@ public:
     void Visit(otava::symbols::BoundConversionNode& node) override;
     void Visit(otava::symbols::BoundConjunctionNode& boundConjunction) override;
     void Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction) override;
+    void Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node) override;
 private:
     void StatementPrefix();
     void GenJumpingBoolCode();
@@ -398,15 +400,18 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
 {
     StatementPrefix();
-    node.InitStatement()->Accept(*this);
+    if (node.InitStatement())
+    {
+        node.InitStatement()->Accept(*this);
+    }
     node.GetCondition()->Accept(*this);
     otava::intermediate::BasicBlock* prevDefaultBlock = defaultBlock;
     otava::intermediate::BasicBlock* prevBreakBlock = breakBlock;
     otava::intermediate::Value* condition = emitter.Stack().Pop();
-    SwitchTargets switchTargets = CollectSwitchTargets(emitter, node.Statement());
-    if (switchTargets.Default())
+    std::unique_ptr<SwitchTargets> switchTargets = CollectSwitchTargets(emitter, node.Statement());
+    if (switchTargets->Default())
     {
-        defaultBlock = switchTargets.Default()->block;
+        defaultBlock = switchTargets->Default()->block;
         nextBlock = emitter.CreateBasicBlock();
     }
     else
@@ -416,21 +421,25 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
     }
     breakBlock = nextBlock;
     otava::intermediate::SwitchInstruction* switchInst = emitter.EmitSwitch(condition, defaultBlock);
-    int n = switchTargets.Cases().size();
+    int n = switchTargets->Cases().size();
     for (int i = 0; i < n; ++i)
     {
-        const auto& caseTarget = switchTargets.Cases()[i];
+        const auto& caseTarget = switchTargets->Cases()[i];
         emitter.SetCurrentBasicBlock(caseTarget->block);
         EvaluateConstantExpr(emitter, node.GetSourcePos(), context, caseTarget->expr);
         otava::intermediate::Value* caseValue = emitter.Stack().Pop();
         otava::intermediate::CaseTarget target(caseValue, caseTarget->block->Id());
         switchInst->AddCaseTarget(target);
+        otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
+        nextBlock = nullptr;
+        prevWasTerminator = false;
         caseTarget->statement->Accept(*this);
+        nextBlock = prevNextBlock;
         if (!caseTarget->statement->EndsWithTerminator())
         {
             if (i < n - 1)
             {
-                emitter.EmitJump(switchTargets.Cases()[i + 1]->block);
+                emitter.EmitJump(switchTargets->Cases()[i + 1]->block);
             }
             else
             {
@@ -438,11 +447,15 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
             }
         }
     }
-    if (switchTargets.Default())
+    if (switchTargets->Default())
     {
         emitter.SetCurrentBasicBlock(defaultBlock);
-        switchTargets.Default()->statement->Accept(*this);
-        if (!switchTargets.Default()->statement->EndsWithTerminator())
+        otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
+        nextBlock = nullptr;
+        prevWasTerminator = false;
+        switchTargets->Default()->statement->Accept(*this);
+        nextBlock = prevNextBlock;
+        if (!switchTargets->Default()->statement->EndsWithTerminator())
         {
             emitter.EmitJump(nextBlock);
         }
@@ -697,6 +710,25 @@ void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction
         falseBlock = prevFalseBlock;
         boundDisjunction.Right()->Accept(*this);
     }
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node)
+{
+    otava::symbols::VariableSymbol* variable = node.GetGlobalVariable();
+    otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(variable->GetType(), node.GetSourcePos(), &context);
+    if (type->IsForwardClassDeclarationSymbol()) return;
+    variable->SetDeclaredType(type);
+    otava::intermediate::Value* initializer = nullptr;
+    otava::intermediate::Type* irType = variable->GetType()->IrType(emitter, node.GetSourcePos(), &context);
+    if (variable->GetValue())
+    {
+        initializer = variable->GetValue()->IrValue(emitter, node.GetSourcePos(), &context);
+    }
+    else
+    {
+        initializer = irType->DefaultValue();
+    }
+    emitter.EmitGlobalVariable(irType, variable->IrName(), initializer);
 }
 
 std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams)

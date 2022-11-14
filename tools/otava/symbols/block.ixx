@@ -23,7 +23,7 @@ public:
 
 class Context;
 
-void BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
+BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
 void EndBlock(Context* context);
 void RemoveBlock(Context* context);
 void MapNode(otava::ast::Node* node, Context* context);

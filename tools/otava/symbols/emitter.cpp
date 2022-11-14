@@ -249,6 +249,31 @@ otava::intermediate::Value* Emitter::EmitNull(otava::intermediate::Type* type)
     return context->GetNullValue(otava::intermediate::SourcePos(), type);
 }
 
+otava::intermediate::Value* Emitter::EmitArrayValue(const std::vector<otava::intermediate::Value*>& elements)
+{
+    return context->MakeArrayValue(otava::intermediate::SourcePos(), elements);
+}
+
+otava::intermediate::Value* Emitter::EmitStructureValue(const std::vector<otava::intermediate::Value*>& fieldValues)
+{
+    return context->MakeStructureValue(otava::intermediate::SourcePos(), fieldValues);
+}
+
+otava::intermediate::Value* Emitter::EmitStringValue(const std::string& value)
+{
+    return context->MakeStringValue(otava::intermediate::SourcePos(), value);
+}
+
+otava::intermediate::Value* Emitter::EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from)
+{
+    return context->MakeConversionValue(otava::intermediate::SourcePos(), type, from);
+}
+
+void Emitter::EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer)
+{
+    context->AddGlobalVariable(otava::intermediate::SourcePos(), type, variableName, initializer, false);
+}
+
 otava::intermediate::Value* Emitter::EmitNot(otava::intermediate::Value* value)
 {
     return context->CreateNot(value);

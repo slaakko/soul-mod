@@ -418,7 +418,7 @@ void VerifierVisitor::Visit(SwitchInstruction& inst)
     {
         Error("code verification error: terminator in the middle of basic block " + std::to_string(inst.Parent()->Id()), inst.GetSourcePos(), GetContext());
     }
-    int32_t defaultTarget = inst.DefaultTargetLabelId();
+    int32_t defaultTarget = inst.DefaultTargetId();
     BasicBlock* parent = inst.Parent();
     Function* function = parent->Parent();
     BasicBlock* defaultTargetBlock = function->GetBasicBlock(defaultTarget);
@@ -430,10 +430,10 @@ void VerifierVisitor::Visit(SwitchInstruction& inst)
     inst.SetDefaultTargetBlock(defaultTargetBlock);
     for (CaseTarget& caseTarget : inst.CaseTargets())
     {
-        BasicBlock* caseTargetBlock = function->GetBasicBlock(caseTarget.targetLabelId);
+        BasicBlock* caseTargetBlock = function->GetBasicBlock(caseTarget.targetBlockId);
         if (!caseTargetBlock)
         {
-            Error("code verification error: switch case target basic block " + std::to_string(caseTarget.targetLabelId) +
+            Error("code verification error: switch case target basic block " + std::to_string(caseTarget.targetBlockId) +
                 " not found from function '" + function->Name() + "'", inst.GetSourcePos(), GetContext());
         }
         caseTarget.targetBlock = caseTargetBlock;

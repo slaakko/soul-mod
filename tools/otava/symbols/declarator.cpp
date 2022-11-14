@@ -201,7 +201,9 @@ DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags fla
     operatorFunctionId(false), 
     trailingQualifiers(false),
     processTrailingQualifiers(false),
-    scope(context->GetSymbolTable()->CurrentScope())
+    scope(context->GetSymbolTable()->CurrentScope()),
+    functionDeclarator(),
+    qualifiers()
 {
 }
 

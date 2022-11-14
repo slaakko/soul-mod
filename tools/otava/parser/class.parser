@@ -254,14 +254,14 @@ parser ClassParser
             { 
                 std::unique_ptr<otava::ast::Node> memFunDefNode;
                 memFunDefNode.reset(memberFunctionDefinition);
-                otava::symbols::ProcessFunctionDefinition(memFunDefNode.get(), context);
+                otava::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
                 return memFunDefNode.release(); 
             }
         |   RetMemberFunctionDefinition(context):retMemberFunctionDefinition
             { 
                 std::unique_ptr<otava::ast::Node> memFunDefNode;
                 memFunDefNode.reset(retMemberFunctionDefinition);
-                otava::symbols::ProcessFunctionDefinition(memFunDefNode.get(), context);
+                otava::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
                 return memFunDefNode.release(); 
             }
         |   UsingDeclaration(context):usingDeclaration{ return usingDeclaration; }

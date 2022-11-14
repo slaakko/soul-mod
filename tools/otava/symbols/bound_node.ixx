@@ -25,7 +25,7 @@ enum class BoundNodeKind
     boundLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode,
     boundConjunctionNode, boundDisjunctionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode,
-    boundTemporaryNode,
+    boundTemporaryNode, boundGlobalVariableDefinitionNode,
     boundErrorNode
 };
 

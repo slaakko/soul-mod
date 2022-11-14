@@ -106,7 +106,7 @@ MetadataItem* MetadataStruct::GetItem(const std::string& fieldName) const
     }
 }
 
-Metadata::Metadata() : context(nullptr), trueItem(), falseItem()
+Metadata::Metadata() : context(nullptr), trueItem(), falseItem(), nextNodeId()
 {
 }
 

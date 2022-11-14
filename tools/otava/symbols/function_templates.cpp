@@ -49,10 +49,10 @@ FunctionDefinitionSymbol* FunctionTemplateRepository::GetFunctionDefinition(cons
     }
 }
 
-void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol)
+void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol, otava::ast::Node* functionDefinitionNode)
 {
     functionTemplateMap[key] = functionDefinitionSymbol;
-    functionDefinitionSymbols.push_back(std::unique_ptr<FunctionDefinitionSymbol>(functionDefinitionSymbol));
+    functionDefinitionNodes.push_back(std::unique_ptr<otava::ast::Node>(functionDefinitionNode));
 }
 
 FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,
@@ -80,7 +80,7 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
     {
         return functionDefinitionSymbol;
     }
-    otava::ast::Node* node = context->GetSymbolTable()->GetNode(functionTemplate);
+    otava::ast::Node* node = context->GetSymbolTable()->GetNode(functionTemplate)->Clone();
     if (node->IsFunctionDefinitionNode())
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);
@@ -124,15 +124,14 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
             instantiationScope.Install(boundTemplateParameter);
         }
         context->GetSymbolTable()->BeginScope(&instantiationScope);
-        Instantiator instantiator(context);
+        Instantiator instantiator(context, &instantiationScope);
         FunctionDefinitionSymbol* specialization = nullptr;
         try
         {
-            context->PushSetFlag(ContextFlags::instantiateFunctionTemplate | ContextFlags::saveDeclarations);
+            context->PushSetFlag(ContextFlags::instantiateFunctionTemplate | ContextFlags::saveDeclarations | ContextFlags::dontBind);
             context->SetFunctionDefinitionNode(functionDefinitionNode);
             functionDefinitionNode->Accept(instantiator);
             specialization = context->GetFunctionTemplateSpecialization();
-            instantiationScope.SetParentScope(specialization->GetScope());
             context->PushBoundFunction(new BoundFunctionNode(specialization, sourcePos));
             BindFunction(functionDefinitionNode, specialization, context);
             context->PopFlags();
@@ -141,6 +140,7 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
                 context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
             }
             context->PopBoundFunction();
+            specialization->GetScope()->ClearParentScopes();
         }
         catch (const std::exception& ex)
         {
@@ -148,7 +148,7 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
                 util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), node->GetSourcePos(), context);
         }
         context->GetSymbolTable()->EndScope();
-        functionTemplateRepository->AddFunctionDefinition(key, specialization);
+        functionTemplateRepository->AddFunctionDefinition(key, specialization, node);
         return specialization;
     }
     else

@@ -18,7 +18,7 @@ class VariableSymbol : public Symbol
 {
 public:
     VariableSymbol(const std::u32string& name_);
-    virtual int Arity() const { return 0; }
+    int Arity() const { return 0; }
     std::string SymbolKindStr() const override { return "variable symbol"; }
     std::string SymbolDocKindStr() const override { return "variable"; }
     TypeSymbol* GetDeclaredType() const { return declaredType; }
@@ -38,6 +38,7 @@ public:
     bool IsGlobalVariable() const;
     int32_t LayoutIndex() const { return layoutIndex; }
     void SetLayoutIndex(int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
+    std::string IrName() const;
 private:
     TypeSymbol* declaredType;
     util::uuid declaredTypeId;
@@ -52,5 +53,7 @@ struct VariableLess
 {
     bool operator()(VariableSymbol* left, VariableSymbol* right) const;
 };
+
+void SetDeclaredVariableType(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

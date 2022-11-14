@@ -2589,7 +2589,7 @@ soul::parser::Match ClassParser<Lexer>::MemberDeclaration(Lexer& lexer, otava::s
                                                                     {
                                                                         std::unique_ptr<otava::ast::Node> memFunDefNode;
                                                                         memFunDefNode.reset(memberFunctionDefinition.release());
-                                                                        otava::symbols::ProcessFunctionDefinition(memFunDefNode.get(), context);
+                                                                        otava::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
                                                                         {
                                                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberDeclaration");
@@ -2621,7 +2621,7 @@ soul::parser::Match ClassParser<Lexer>::MemberDeclaration(Lexer& lexer, otava::s
                                                                 {
                                                                     std::unique_ptr<otava::ast::Node> memFunDefNode;
                                                                     memFunDefNode.reset(retMemberFunctionDefinition.release());
-                                                                    otava::symbols::ProcessFunctionDefinition(memFunDefNode.get(), context);
+                                                                    otava::symbols::ProcessMemberFunctionDefinition(memFunDefNode.get(), context);
                                                                     {
                                                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MemberDeclaration");

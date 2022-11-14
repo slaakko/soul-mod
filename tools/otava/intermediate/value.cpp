@@ -118,8 +118,4 @@ std::string Value::KindStr() const
     return valueKindStr[static_cast<int>(kind)];
 }
 
-ConstantValue::ConstantValue(const SourcePos& sourcePos_, ValueKind kind_, Type* type_) : Value(sourcePos_, kind_, type_)
-{
-}
-
 } // namespace otava::intermediate

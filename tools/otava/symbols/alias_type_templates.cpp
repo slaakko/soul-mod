@@ -133,7 +133,7 @@ TypeSymbol* InstantiateAliasTypeSymbol(TypeSymbol* typeSymbol, const std::vector
                 instantiationScope.Install(boundTemplateParameter);
             }
             context->GetSymbolTable()->BeginScope(&instantiationScope);
-            Instantiator instantiator(context);
+            Instantiator instantiator(context, &instantiationScope);
             try
             {
                 context->PushSetFlag(ContextFlags::instantiateAliasTypeTemplate);

@@ -49,6 +49,7 @@ enum class Access : int32_t;
 class Context;
 class Module;
 class Symbol;
+class BlockSymbol;
 class Scope;
 class AliasTypeSymbol;
 class BoundExpressionNode;
@@ -117,8 +118,8 @@ public:
     void EndEnumeratedType();
     void AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
     void AddEnumerator(const std::u32string& name, Value* value, otava::ast::Node* node, Context* context);
-    void BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
-    void EndBlock();
+    BlockSymbol* BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context);
+    void EndBlock(Context* context);
     void RemoveBlock();
     void BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
     void EndTemplateDeclaration();

@@ -157,6 +157,8 @@
     <ClCompile Include="context.ixx" />
     <ClCompile Include="data.cpp" />
     <ClCompile Include="data.ixx" />
+    <ClCompile Include="data_item_adder.cpp" />
+    <ClCompile Include="data_item_adder.ixx" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="error.ixx" />
     <ClCompile Include="function.cpp" />
@@ -182,6 +184,8 @@
     <ClCompile Include="register_allocator.ixx" />
     <ClCompile Include="simple_assembly_code_generator.cpp" />
     <ClCompile Include="simple_assembly_code_generator.ixx" />
+    <ClCompile Include="token_parser.cpp" />
+    <ClCompile Include="token_parser.ixx" />
     <ClCompile Include="type.cpp" />
     <ClCompile Include="type.ixx" />
     <ClCompile Include="util.ixx" />

@@ -23,6 +23,7 @@ public:
     void Error(const std::string& message) override;
     otava::assembly::File* AssemblyFile() override { return &file; }
     void Write() override;
+    void Visit(GlobalVariable& globalVariable) override;
     void Visit(Function& function) override;
     void Visit(BasicBlock& basicBlock) override;
     void Visit(StoreInstruction& inst) override;
@@ -60,6 +61,7 @@ public:
     void Visit(NotInstruction& inst) override;
     void Visit(NegInstruction& inst) override;
     void Visit(NoOperationInstruction& inst) override;
+    void Visit(SwitchInstruction& inst) override;
 private:
     Context* context;
     otava::assembly::File file;

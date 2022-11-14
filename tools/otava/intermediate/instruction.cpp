@@ -474,6 +474,10 @@ void StoreInstruction::AddToUses(std::vector<Use>& uses)
 
 ArgInstruction::ArgInstruction(const SourcePos& sourcePos_, Value* arg_) : Instruction(sourcePos_, nullptr, OpCode::arg), arg(arg_)
 {
+    if (!arg)
+    {
+        int x = 0;
+    }
 }
 
 void ArgInstruction::Write(util::CodeFormatter& formatter)
@@ -657,9 +661,14 @@ void RetInstruction::AddToUses(std::vector<Use>& uses)
     }
 }
 
-SwitchInstruction::SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t defaultTargetLabelId_) :
-    Instruction(sourcePos_, nullptr, OpCode::switch_), cond(cond_), defaultTargetLabelId(defaultTargetLabelId_), defaultTargetBlock(nullptr)
+SwitchInstruction::SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t defaultTargetId_) : 
+    Instruction(sourcePos_, nullptr, OpCode::switch_), cond(cond_), defaultTargetId(defaultTargetId_), defaultTargetBlock()
 {
+}
+
+void SwitchInstruction::SetDefaultTargetBlock(BasicBlock* defaultTargetBlock_)
+{
+    defaultTargetBlock = defaultTargetBlock_;
 }
 
 void SwitchInstruction::Write(util::CodeFormatter& formatter)

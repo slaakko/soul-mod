@@ -7,6 +7,7 @@ module otava.assembly.file;
 
 import otava.assembly.function;
 import otava.assembly.instruction;
+import otava.assembly.data;
 
 namespace otava::assembly {
 
@@ -20,6 +21,22 @@ void DeclarationSection::Write(util::CodeFormatter& formatter)
     for (const auto& functionDeclaration : declarations)
     {
         functionDeclaration->Write(formatter);
+    }
+    formatter.WriteLine();
+}
+
+void DataSection::AddData(Data* data)
+{
+    dataVec.push_back(std::unique_ptr<Data>(data));
+}
+
+void DataSection::Write(util::CodeFormatter& formatter)
+{
+    formatter.WriteLine(".DATA");
+    formatter.WriteLine();
+    for (const auto& data : dataVec)
+    {
+        data->Write(formatter);
     }
     formatter.WriteLine();
 }
@@ -50,6 +67,7 @@ File::File(const std::string& filePath_) : filePath(filePath_), file(filePath), 
 void File::Write()
 {
     declarationSection.Write(formatter);
+    dataSection.Write(formatter);
     codeSection.Write(formatter);
     formatter.WriteLine("END");
 }

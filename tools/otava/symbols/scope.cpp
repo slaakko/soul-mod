@@ -591,24 +591,28 @@ std::string UsingDirectiveScope::FullName() const
     return util::ToUtf8(ns->FullName());
 }
 
-InstantiationScope::InstantiationScope(Scope* parentScope_) : parentScope(parentScope_)
+InstantiationScope::InstantiationScope(Scope* parentScope_)
 {
     SetKind(ScopeKind::instantiationScope);
+    parentScopes.push_back(parentScope_);
 }
 
 std::string InstantiationScope::FullName() const
 {
-    return parentScope->FullName();
+    Scope* first = *parentScopes.begin();
+    return first->FullName();
 }
 
 Scope* InstantiationScope::GroupScope()
 {
-    return parentScope->GroupScope();
+    Scope* first = *parentScopes.begin();
+    return first->GroupScope();
 }
 
 Scope* InstantiationScope::SymbolScope()
 {
-    return parentScope->SymbolScope();
+    Scope* first = *parentScopes.begin();
+    return first->SymbolScope();
 }
 
 void InstantiationScope::PushParentScope(Scope* parentScope_)
@@ -619,11 +623,6 @@ void InstantiationScope::PushParentScope(Scope* parentScope_)
 void InstantiationScope::PopParentScope()
 {
     parentScopes.erase(parentScopes.begin());
-}
-
-void InstantiationScope::SetParentScope(Scope* parentScope_)
-{
-    parentScope = parentScope_;
 }
 
 void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags,
@@ -647,13 +646,9 @@ void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbol
     {
         if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
         {
-            if (parentScope)
+            for (Scope* parentScope : parentScopes)
             {
-                parentScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
-            }
-            if (symbols.empty())
-            {
-                for (Scope* parentScope : parentScopes)
+                if (symbols.empty())
                 {
                     parentScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
                 }

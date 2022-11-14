@@ -148,6 +148,8 @@
     <ClCompile Include="assembly.ixx" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="context.ixx" />
+    <ClCompile Include="data.cpp" />
+    <ClCompile Include="data.ixx" />
     <ClCompile Include="expr.cpp" />
     <ClCompile Include="expr.ixx" />
     <ClCompile Include="file.cpp" />

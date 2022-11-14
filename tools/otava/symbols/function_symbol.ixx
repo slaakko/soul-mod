@@ -131,6 +131,7 @@ public:
     const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
     const std::vector<ParameterSymbol*>& MemFunParameters() const;
     void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddLocalVariable(VariableSymbol* variable);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -139,7 +140,6 @@ public:
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     virtual std::string IrName(Context* context) const;
-    void AddLocalVariable(VariableSymbol* localVariable);
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
     bool IsVirtual() const;

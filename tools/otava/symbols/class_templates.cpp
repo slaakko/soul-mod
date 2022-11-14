@@ -230,10 +230,12 @@ TypeSymbol* InstantiateClassTemplate(TypeSymbol* typeSymbol, const std::vector<S
                 instantiationScope.Install(boundTemplateParameter);
             }
             context->GetSymbolTable()->BeginScope(&instantiationScope);
-            Instantiator instantiator(context);
+            Instantiator instantiator(context, &instantiationScope);
             try
             {
+                context->PushSetFlag(ContextFlags::dontBind);
                 classNode->Accept(instantiator);
+                context->PopFlags();
             }
             catch (const std::exception& ex)
             {

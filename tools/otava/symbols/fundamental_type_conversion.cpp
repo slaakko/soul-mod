@@ -97,12 +97,13 @@ FundamentalTypeFloatToIntConversion::FundamentalTypeFloatToIntConversion(int32_t
 {
 }
 
-FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion() : FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion")
+FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion() : FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion"), argType(), argTypeId(), paramType(),
+    paramTypeId()
 {
 }
 
 FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* type_, TypeSymbol* boolType, Context* context) : 
-    FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion"), paramType(boolType), argType(type_)
+    FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion"), paramType(boolType), argType(type_), argTypeId(), paramTypeId()
 {
     SetFunctionKind(FunctionKind::conversion);
     SetAccess(Access::public_);
@@ -136,7 +137,7 @@ void FundamentalTypeBooleanConversion::GenerateCode(Emitter& emitter, std::vecto
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
     otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(GetIrType(emitter, argType, sourcePos, context));
-    otava::intermediate::ConstantValue* defaultValue = irType->DefaultValue();
+    otava::intermediate::Value* defaultValue = irType->DefaultValue();
     otava::intermediate::Value* equal = emitter.EmitEqual(value, defaultValue);
     otava::intermediate::Value* notEqual = emitter.EmitNot(equal);
     emitter.Stack().Push(notEqual);
