@@ -1,0 +1,3 @@
+project prints;
+target=program;
+source <prints.cpp>;

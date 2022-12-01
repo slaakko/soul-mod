@@ -280,7 +280,7 @@ public:
     void Write(util::CodeFormatter& formatter);
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
-    void AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context);
+    GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context);
     Value* GetTrueValue(const Types& types);
     Value* GetFalseValue(const Types& types);
     Value* GetSByteValue(int8_t value, const Types& types);
@@ -316,6 +316,7 @@ public:
     Value* MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue, const Types& types, Context* context);
     Value* MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id, Context* context);
     void VisitGlobalVariables(Visitor& visitor);
+    std::string GetNextStringValueId();
 private:
     Context* context;
     std::vector<std::unique_ptr<Value>> values;
@@ -334,6 +335,7 @@ private:
     ValueMap<float> floatValueMap;
     ValueMap<double> doubleValueMap;
     std::map<Type*, NullValue*> nullValueMap;
+    int32_t nextStringValueId;
 };
 
 template<class T>

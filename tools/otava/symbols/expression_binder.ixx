@@ -14,9 +14,10 @@ export namespace otava::symbols {
 class BoundExpressionNode;
 class Context;
 class Scope;
+class StatementBinder;
     
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context);
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);
+BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, StatementBinder* statementBinder);
+BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope, StatementBinder* statementBinder);
 void InitExpressionBinder();
 
 } // namespace otava::symbols

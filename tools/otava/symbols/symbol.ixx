@@ -156,6 +156,7 @@ public:
     bool IsFundamentalTypeSymbol() const { return kind == SymbolKind::fundamentalTypeSymbol; }
     bool IsParameterSymbol() const { return kind == SymbolKind::parameterSymbol; }
     bool IsLocalVariableSymbol() const;
+    bool IsMemberVariableSymbol() const;
     bool IsTemplateParameterSymbol() const { return kind == SymbolKind::templateParameterSymbol; }
     bool IsBoundTemplateParameterSymbol() const { return kind == SymbolKind::boundTemplateParameterSymbol; }
     bool IsTemplateDeclarationSymbol() const { return kind == SymbolKind::templateDeclarationSymbol; }

@@ -7,6 +7,7 @@ module otava.intermediate.instruction;
 
 import otava.intermediate.basic.block;
 import otava.intermediate.error;
+import otava.intermediate.function;
 import otava.intermediate.metadata;
 import otava.intermediate.type;
 import otava.intermediate.util;
@@ -24,7 +25,7 @@ const char* opCodeStr[] =
     "nop"
 };
 
-RegValue::RegValue(const SourcePos& sourcePos_, Type* type_, int32_t reg_) : Value(sourcePos_, ValueKind::regValue, type_), reg(reg_), inst(nullptr)
+RegValue::RegValue(const SourcePos& sourcePos_, Type* type_) : Value(sourcePos_, ValueKind::regValue, type_), reg(-1), inst(nullptr)
 {
 }
 
@@ -58,6 +59,10 @@ void Use::Set(Value* value_)
 Instruction::Instruction(const SourcePos& sourcePos_, Type* type_, OpCode opCode_) :
     Value(sourcePos_, ValueKind::instruction, type_), opCode(opCode_), metadataRef(nullptr), index(-1),
     parent(nullptr), next(nullptr), prev(nullptr)
+{
+}
+
+void Instruction::SetRegNumber(Function& function)
 {
 }
 
@@ -474,10 +479,6 @@ void StoreInstruction::AddToUses(std::vector<Use>& uses)
 
 ArgInstruction::ArgInstruction(const SourcePos& sourcePos_, Value* arg_) : Instruction(sourcePos_, nullptr, OpCode::arg), arg(arg_)
 {
-    if (!arg)
-    {
-        int x = 0;
-    }
 }
 
 void ArgInstruction::Write(util::CodeFormatter& formatter)
@@ -750,6 +751,11 @@ void SwitchInstruction::AddToUses(std::vector<Use>& uses)
 ValueInstruction::ValueInstruction(const SourcePos& sourcePos_, RegValue* result_, OpCode opCode_) : 
     Instruction(sourcePos_, result_->GetType(), opCode_), result(result_)
 {
+}
+
+void ValueInstruction::SetRegNumber(Function& function)
+{
+    result->SetReg(function.NextRegNumber());
 }
 
 void ValueInstruction::WriteResult(util::CodeFormatter& formatter)

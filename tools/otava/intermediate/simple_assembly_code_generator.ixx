@@ -23,6 +23,7 @@ public:
     void Error(const std::string& message) override;
     otava::assembly::File* AssemblyFile() override { return &file; }
     void Write() override;
+    void AddFrameLocation(otava::assembly::UniqueLiteral* frameLoc);
     void Visit(GlobalVariable& globalVariable) override;
     void Visit(Function& function) override;
     void Visit(BasicBlock& basicBlock) override;
@@ -63,6 +64,7 @@ public:
     void Visit(NoOperationInstruction& inst) override;
     void Visit(SwitchInstruction& inst) override;
 private:
+    void PatchFrameLocations();
     Context* context;
     otava::assembly::File file;
     Function* currentFunction;
@@ -72,6 +74,7 @@ private:
     bool leader;
     int lineNumber;
     std::vector<ArgInstruction*> args;
+    std::vector<otava::assembly::UniqueLiteral*> frameLocations;
 };
 
 } // otava::intermediate

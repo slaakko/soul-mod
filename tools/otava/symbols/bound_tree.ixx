@@ -50,6 +50,17 @@ private:
     std::unique_ptr<FunctionTemplateRepository> functionTemplateRepository;
 };
 
+class BoundCtorInitializerNode : public BoundNode
+{
+public:
+    BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    void AddMemberInitializer(BoundFunctionCallNode* memberInitializer);
+    void GenerateCode(Emitter& emitter, Context* context);
+private:
+    std::vector<std::unique_ptr<BoundFunctionCallNode>> memberInitializers;
+};
+
 class BoundCompoundStatementNode;
 
 class BoundFunctionNode : public BoundNode
@@ -60,9 +71,12 @@ public:
     void SetBody(BoundCompoundStatementNode* body_);
     const BoundCompoundStatementNode* Body() const { return body.get(); }
     BoundCompoundStatementNode* Body() { return body.get(); }
+    void SetCtorInitializer(BoundCtorInitializerNode* ctorInitializer_);
+    BoundCtorInitializerNode* CtorInitializer() const { return ctorInitializer.get(); }
     FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
+    std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
     std::unique_ptr<BoundCompoundStatementNode> body;
 };
 
@@ -74,8 +88,11 @@ public:
     virtual bool IsTerminator() const { return false; }
     bool Generated() const { return generated; }
     void SetGenerated() { generated = true; }
+    bool Postfix() const { return postfix; }
+    void SetPostfix() { postfix = true; }
 private:
     bool generated;
+    bool postfix;
 };
 
 class BoundCompoundStatementNode : public BoundStatementNode
@@ -277,8 +294,23 @@ public:
     bool HasValue() const override { return true; }
     Value* GetValue() const { return value; }
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
 private:
     Value* value;
+};
+
+class BoundStringLiteralNode : public BoundExpressionNode
+{
+public:
+    BoundStringLiteralNode(Value* value_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return true; }
+    Value* GetValue() const { return value; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
+private:
+    Value* value;
+    otava::intermediate::Value* irValue;
 };
 
 class BoundVariableNode : public BoundExpressionNode
@@ -294,6 +326,7 @@ public:
     bool IsBoundLocalVariable() const override;
     bool IsBoundMemberVariable() const override;
     bool IsLvalueExpression() const override { return true; }
+    BoundExpressionNode* Clone() const override;
 private:
     VariableSymbol* variable;
     std::unique_ptr<BoundExpressionNode> thisPtr;
@@ -309,6 +342,7 @@ public:
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override { return true; }
+    BoundExpressionNode* Clone() const override;
 private:
     ParameterSymbol* parameter;
 };
@@ -321,6 +355,7 @@ public:
     bool HasValue() const override { return true; }
     EnumConstantSymbol* EnumConstant() const { return enumConstant; }
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
 private:
     EnumConstantSymbol* enumConstant;
 };
@@ -331,6 +366,7 @@ public:
     BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     FunctionGroupSymbol* GetFunctionGroupSymbol() const { return functionGroupSymbol; }
+    BoundExpressionNode* Clone() const override;
 private:
     FunctionGroupSymbol* functionGroupSymbol;
 };
@@ -340,6 +376,7 @@ class BoundTypeNode : public BoundExpressionNode
 public:
     BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
 };
 
 class BoundMemberExprNode : public BoundExpressionNode
@@ -349,6 +386,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* Subject() const { return subject.get(); }
     BoundExpressionNode* Member() const { return member.get(); }
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
     std::unique_ptr<BoundExpressionNode> member;
@@ -365,6 +403,7 @@ public:
     const std::vector<std::unique_ptr<BoundExpressionNode>>& Args() const { return args; }
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override;
+    BoundExpressionNode* Clone() const override;
 private:
     FunctionSymbol* functionSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
@@ -380,6 +419,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> left;
     std::unique_ptr<BoundExpressionNode> right;
@@ -396,6 +436,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> left;
     std::unique_ptr<BoundExpressionNode> right;
@@ -409,6 +450,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override;
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
     FunctionSymbol* conversionFunction;
@@ -423,6 +465,7 @@ public:
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Subject() { return subject.get(); }
     BoundExpressionNode* ReleaseSubject() { return subject.release(); }
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };
@@ -436,6 +479,7 @@ public:
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override { return true; }
     BoundExpressionNode* Subject() { return subject.get(); }
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };
@@ -447,6 +491,19 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
+private:
+    std::unique_ptr<BoundExpressionNode> subject;
+};
+
+class BoundDefaultInitNode : public BoundExpressionNode
+{
+public:    
+    BoundDefaultInitNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
 };
@@ -461,16 +518,24 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
     bool IsLvalueExpression() const override { return true; }
+    BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> rvalueExpr;
     std::unique_ptr<BoundVariableNode> backingStore;
 };
 
-class BoundErrorNode : public BoundExpressionNode
+class BoundConstructTemporaryNode : public BoundExpressionNode
 {
 public:
-    BoundErrorNode(const soul::ast::SourcePos& sourcePos_);
+    BoundConstructTemporaryNode(BoundExpressionNode* constructorCall_, BoundExpressionNode* temporary_, const soul::ast::SourcePos& sourcePos_);
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return true; }
+    bool IsLvalueExpression() const override { return true; }
+    BoundExpressionNode* Clone() const override;
+private:
+    std::unique_ptr<BoundExpressionNode> constructorCall;
+    std::unique_ptr<BoundExpressionNode> temporary;
 };
 
 class BoundGlobalVariableDefinitionNode : public BoundNode

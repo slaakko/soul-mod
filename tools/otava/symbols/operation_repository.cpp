@@ -938,6 +938,7 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
 {
     TypeSymbol* type = args[0]->GetType();
     if (type->PointerCount() != 1 || !type->RemovePointer()->PlainType()->IsClassTypeSymbol()) return nullptr;
+    if (!args[1]->GetType()->PlainType()->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (TypesEqual(args[1]->GetType(), classType->AddRValueRef()) || args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* copyCtor = classType->GetFunction(copyCtorIndex);

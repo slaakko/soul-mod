@@ -281,6 +281,22 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     GetScope()->SetKind(ScopeKind::functionScope);
 }
 
+std::u32string FunctionSymbol::GroupName() const
+{
+    if (kind == FunctionKind::constructor)
+    {
+        return U"@constructor";
+    }
+    else if (kind == FunctionKind::destructor)
+    {
+        return U"@destructor";
+    }
+    else
+    {
+        return Name();
+    }
+}
+
 int FunctionSymbol::Arity() const
 {
     return parameters.size();
@@ -425,7 +441,16 @@ bool FunctionSymbol::IsTemplate() const
 
 std::u32string FunctionSymbol::FullName() const
 {
-    std::u32string fullName = Parent()->FullName();
+    ClassTypeSymbol* parentClassType = ParentClassType();
+    std::u32string fullName;
+    if (parentClassType)
+    {
+        fullName = parentClassType->FullName();
+    }
+    else
+    {
+        fullName = Parent()->FullName();
+    }
     fullName.append(U"::").append(Name()).append(U"(");
     bool first = true;
     for (const auto& parameter : parameters)

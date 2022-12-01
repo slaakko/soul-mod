@@ -50,7 +50,7 @@ void Data::Write(util::CodeFormatter& formatter)
         {
             formatter.Write(", ");
         }
-        formatter.Write(item->Name());
+        formatter.Write(item->ToString());
     }
     formatter.WriteLine();
 }

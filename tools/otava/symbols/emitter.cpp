@@ -15,6 +15,7 @@ import otava.intermediate.compile.unit;
 import otava.intermediate.instruction;
 import otava.intermediate.function;
 import otava.intermediate.type;
+import otava.intermediate.data;
 import otava.intermediate.reference_resolver;
 
 namespace otava::symbols {
@@ -63,6 +64,11 @@ void Emitter::CreateFunction(const std::string& name, otava::intermediate::Type*
 {
     otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::SourcePos(), type, name, once, nullptr);
     context->SetCurrentFunction(function);
+}
+
+void Emitter::SetRegNumbers()
+{
+    context->CurrentFunction()->SetRegNumbers();
 }
 
 otava::intermediate::Function* Emitter::GetOrInsertFunction(const std::string& name, otava::intermediate::FunctionType* functionType)
@@ -261,7 +267,10 @@ otava::intermediate::Value* Emitter::EmitStructureValue(const std::vector<otava:
 
 otava::intermediate::Value* Emitter::EmitStringValue(const std::string& value)
 {
-    return context->MakeStringValue(otava::intermediate::SourcePos(), value);
+    otava::intermediate::Value* stringValue = context->MakeStringValue(otava::intermediate::SourcePos(), value);
+    otava::intermediate::GlobalVariable* globalVar = context->AddGlobalVariable(otava::intermediate::SourcePos(), 
+        context->MakePtrType(context->GetByteType()), context->GetNextStringValueId(), stringValue, false);
+    return globalVar;
 }
 
 otava::intermediate::Value* Emitter::EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from)
@@ -269,9 +278,9 @@ otava::intermediate::Value* Emitter::EmitConversionValue(otava::intermediate::Ty
     return context->MakeConversionValue(otava::intermediate::SourcePos(), type, from);
 }
 
-void Emitter::EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer)
+otava::intermediate::Value* Emitter::EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer)
 {
-    context->AddGlobalVariable(otava::intermediate::SourcePos(), type, variableName, initializer, false);
+    return context->AddGlobalVariable(otava::intermediate::SourcePos(), type, variableName, initializer, false);
 }
 
 otava::intermediate::Value* Emitter::EmitNot(otava::intermediate::Value* value)

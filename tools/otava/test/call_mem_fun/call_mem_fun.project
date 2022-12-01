@@ -1,0 +1,3 @@
+project call_mem_fun;
+target=program;
+source <call_mem_fun.cpp>;

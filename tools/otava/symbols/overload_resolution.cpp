@@ -33,6 +33,21 @@ struct ArgumentMatch
     OperationFlags postConversionFlags;
 };
 
+int32_t ArgumentConversionValue(const ArgumentMatch& match)
+{
+    int32_t argumentConversionValue = 0;
+    if (match.conversionFun)
+    {
+        argumentConversionValue = 100;
+        if (match.conversionKind == ConversionKind::explicitConversion)
+        {
+            argumentConversionValue += 10;
+        }
+        argumentConversionValue += match.distance;
+    }
+    return argumentConversionValue;
+}
+
 struct FunctionMatch
 {
     FunctionMatch(FunctionSymbol* function_);
@@ -109,6 +124,31 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
         return true;
     }
     if (rightBetterArgumentMatches > leftBetterArgumentMatches)
+    {
+        return false;
+    }
+    int leftValue = 0;
+    int rightValue = 0;
+    for (int i = 0; i < n; ++i)
+    {
+        ArgumentMatch leftMatch;
+        if (i < int(left.argumentMatches.size()))
+        {
+            leftMatch = left.argumentMatches[i];
+        }
+        ArgumentMatch rightMatch;
+        if (i < int(right.argumentMatches.size()))
+        {
+            rightMatch = right.argumentMatches[i];
+        }
+        leftValue += ArgumentConversionValue(leftMatch);
+        rightValue += ArgumentConversionValue(rightMatch);
+    }
+    if (leftValue < rightValue)
+    {
+        return true;
+    }
+    if (leftValue > rightValue)
     {
         return false;
     }
@@ -208,6 +248,7 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
     int distance = 0;
     if (argumentMatch.conversionFun)
     {
+        argumentMatch.conversionKind = argumentMatch.conversionFun->GetConversionKind();
         distance = argumentMatch.conversionFun->ConversionDistance();
     }
     if (paramType->IsRValueRefType() && !argType->IsRValueRefType())
@@ -489,6 +530,28 @@ FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& via
     }
 }
 
+Scope* GetArgumentScope(BoundExpressionNode* arg)
+{
+    TypeSymbol* type = arg->GetType();
+    return type->GetBaseType()->GetScope();
+}
+
+void AddArgumentScopes(std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::vector<std::unique_ptr<BoundExpressionNode>>& args)
+{
+    for (const auto& arg : args)
+    {
+        Scope* scope = GetArgumentScope(arg.get());
+        if (scope)
+        {
+            std::pair<Scope*, ScopeLookup> scopeLookup = std::make_pair(scope, ScopeLookup::thisAndBaseScopes);
+            if (std::find(scopeLookups.begin(), scopeLookups.end(), scopeLookup) == scopeLookups.end())
+            {
+                scopeLookups.push_back(scopeLookup);
+            }
+        }
+    }
+}
+
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
 {
@@ -500,7 +563,10 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     }
     else
     {
-        context->GetSymbolTable()->CollectViableFunctions(scope, groupName, args.size(), viableFunctions, context);
+        std::vector<std::pair<Scope*, ScopeLookup>> scopeLookups;
+        scopeLookups.push_back(std::make_pair(scope, ScopeLookup::allScopes));
+        AddArgumentScopes(scopeLookups, args);
+        context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, args.size(), viableFunctions, context);
     }
     FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, sourcePos, context, ex);
     if (!bestMatch.function) return std::unique_ptr<BoundFunctionCallNode>();

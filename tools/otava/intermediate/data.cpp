@@ -8,6 +8,8 @@ module otava.intermediate.data;
 import otava.intermediate.type;
 import otava.intermediate.error;
 import otava.intermediate.visitor;
+import otava.intermediate.context;
+import otava.intermediate.compile.unit;
 import util.text.util;
 
 namespace otava::intermediate {
@@ -475,7 +477,7 @@ void GlobalVariable::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-Data::Data() : context(nullptr)
+Data::Data() : context(nullptr), nextStringValueId(0)
 {
 }
 
@@ -495,7 +497,7 @@ void Data::Write(util::CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
-void Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context)
+GlobalVariable* Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context)
 {
     try
     {
@@ -503,10 +505,12 @@ void Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::
         values.push_back(std::unique_ptr<Value>(globalVariable));
         globalVariableMap[variableName] = globalVariable;
         globalVariables.push_back(globalVariable);
+        return globalVariable;
     }
     catch (const std::exception& ex)
     {
         Error("error adding global variable: " + std::string(ex.what()), sourcePos, context);
+        return nullptr;
     }
 }
 
@@ -905,5 +909,12 @@ void Data::VisitGlobalVariables(Visitor& visitor)
         globalVariable->Accept(visitor);
     }
 }
+
+std::string Data::GetNextStringValueId()
+{
+    int32_t id = nextStringValueId++;
+    return "string_" + std::to_string(id) + "_" + context->GetCompileUnit().Id();
+}
+
 
 } // otava::intermediate

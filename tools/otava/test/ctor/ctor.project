@@ -1,0 +1,3 @@
+project ctor;
+target=program;
+source <ctor.cpp>;

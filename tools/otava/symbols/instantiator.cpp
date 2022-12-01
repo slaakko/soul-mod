@@ -135,6 +135,59 @@ void Instantiator::Visit(otava::ast::CompoundStatementNode& node)
     EndBlock(context);
 }
 
+void Instantiator::Visit(otava::ast::IfStatementNode& node)
+{
+    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    context->GetSymbolTable()->MapNode(&node, block);
+    if (node.InitStatement())
+    {
+        node.InitStatement()->Accept(*this);
+    }
+    node.ThenStatement()->Accept(*this);
+    if (node.ElseStatement())
+    {
+        node.ElseStatement()->Accept(*this);
+    }
+    EndBlock(context);
+}
+
+void Instantiator::Visit(otava::ast::SwitchStatementNode& node)
+{
+    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    context->GetSymbolTable()->MapNode(&node, block);
+    if (node.InitStatement())
+    {
+        node.InitStatement()->Accept(*this);
+    }
+    node.Statement()->Accept(*this);
+    EndBlock(context);
+}
+
+void Instantiator::Visit(otava::ast::WhileStatementNode& node)
+{
+    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    context->GetSymbolTable()->MapNode(&node, block);
+    node.Statement()->Accept(*this);
+    EndBlock(context);
+}
+
+void Instantiator::Visit(otava::ast::DoStatementNode& node)
+{
+    node.Statement()->Accept(*this);
+}
+
+void Instantiator::Visit(otava::ast::ForStatementNode& node)
+{
+    BlockSymbol* block = BeginBlock(node.GetSourcePos(), context);
+    context->GetSymbolTable()->MapNode(&node, block);
+    if (node.InitStatement())
+    {
+        node.InitStatement()->Accept(*this);
+    }
+    node.Statement()->Accept(*this);
+    EndBlock(context);
+}
+
 void Instantiator::Visit(otava::ast::ExpressionStatementNode& node)
 {
 }

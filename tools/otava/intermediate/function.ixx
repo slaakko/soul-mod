@@ -92,8 +92,8 @@ public:
     void AddRetBlock(BasicBlock* retBlock);
     void AddEntryAndExitBlocks();
     void RemoveEntryAndExitBlocks();
-    void SetNextRegNumber(int32_t nextRegNumber_) { nextRegNumber = nextRegNumber_; }
-    int32_t NextRegNumber() const { return nextRegNumber; }
+    void SetRegNumbers();
+    int32_t NextRegNumber() { return nextRegNumber++; }
     void LinkBefore(Function* fn)
     {
         if (prev)

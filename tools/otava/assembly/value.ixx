@@ -15,7 +15,7 @@ public:
     Value(const std::string& name_);
     virtual ~Value();
     const std::string& Name() const { return name; }
-    friend class UniqueLiteral;
+    virtual std::string ToString() const { return Name(); }
 private:
     std::string name;
 };

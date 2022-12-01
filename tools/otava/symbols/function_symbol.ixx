@@ -107,6 +107,7 @@ class FunctionSymbol : public ContainerSymbol
 public:
     FunctionSymbol(const std::u32string& name_);
     FunctionSymbol(SymbolKind kind_, const std::u32string& name_);
+    std::u32string GroupName() const;
     int Arity() const;
     int MemFunArity() const;
     std::string SymbolKindStr() const override { return "function symbol"; }

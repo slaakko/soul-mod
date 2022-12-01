@@ -27,7 +27,7 @@ Function::Function(const SourcePos& sourcePos_, FunctionType* type_, const std::
     for (int32_t index = 0; index < n; ++index)
     {
         const TypeRef& paramTypeRef = type->ParamTypeRefs()[index];
-        RegValue* regValue = new RegValue(sourcePos_, paramTypeRef.GetType(), nextRegNumber++);
+        RegValue* regValue = new RegValue(sourcePos_, paramTypeRef.GetType());
         Instruction* paramInst = new ParamInstruction(sourcePos_, regValue);
         context->AddLineInfo(paramInst);
         entryBlock->AddInstruction(paramInst);
@@ -289,7 +289,8 @@ RegValue* Function::MakeRegValue(const SourcePos& sourcePos, Type* type, int32_t
     {
         Error("error adding register " + std::to_string(reg) + ": register not unique", sourcePos, context, prev->GetSourcePos());
     }
-    RegValue* regValue = new RegValue(sourcePos, type, reg);
+    RegValue* regValue = new RegValue(sourcePos, type);
+    regValue->SetReg(reg);
     regValues.push_back(std::unique_ptr<RegValue>(regValue));
     regValueMap[reg] = regValue;
     return regValue;
@@ -410,45 +411,21 @@ Value* Function::GetParam(int index) const
     }
 }
 
-/*
-soul::xml::Element* Function::ToXml()
+void Function::SetRegNumbers()
 {
-    soul::xml::Element* element = soul::xml::MakeElement(U"function");
-    element->SetAttribute(U"name", ToUtf32(Name()));
-    BasicBlock* block = FirstBasicBlock();
-    while (block)
+    nextRegNumber = 0;
+    BasicBlock* bb = first;
+    while (bb)
     {
-        sngxml::dom::Element* blockElement = new sngxml::dom::Element(U"block");
-        blockElement->SetAttribute(U"id", ToUtf32(block->Name()));
-        for (BasicBlock* successor : block->Successors())
+        Instruction* inst = bb->FirstInstruction();
+        while (inst)
         {
-            sngxml::dom::Element* successorElement = new sngxml::dom::Element(U"successor");
-            successorElement->SetAttribute(U"id", ToUtf32(successor->Name()));
-            blockElement->AppendChild(std::unique_ptr<sngxml::dom::Node>(successorElement));
+            inst->SetRegNumber(*this);
+            inst = inst->Next();
         }
-        for (BasicBlock* predecessor : block->Predecessors())
-        {
-            sngxml::dom::Element* predecessorElement = new sngxml::dom::Element(U"predecessor");
-            predecessorElement->SetAttribute(U"id", ToUtf32(predecessor->Name()));
-            blockElement->AppendChild(std::unique_ptr<sngxml::dom::Node>(predecessorElement));
-        }
-        element->AppendChild(std::unique_ptr<sngxml::dom::Node>(blockElement));
-        block = block->Next();
+        bb = bb->Next();
     }
-    return element;
 }
-
-void Function::WriteXmlDocument(const std::string& filePath)
-{
-    sngxml::dom::Element* element = ToXml();
-    sngxml::dom::Document document;
-    document.AppendChild(std::unique_ptr<sngxml::dom::Node>(element));
-    std::ofstream file(filePath);
-    CodeFormatter formatter(file);
-    formatter.SetIndentSize(1);
-    document.Write(formatter);
-}
-*/
 
 int Function::Arity() const 
 { 

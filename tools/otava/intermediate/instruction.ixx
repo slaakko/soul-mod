@@ -25,8 +25,9 @@ using SourcePos = soul::ast::SourcePos;
 class RegValue : public Value
 {
 public:
-    RegValue(const SourcePos& sourcePos_, Type* type_, int32_t reg_);
+    RegValue(const SourcePos& sourcePos_, Type* type_);
     int32_t Reg() const { return reg; }
+    void SetReg(int32_t reg_) { reg = reg_; }
     void SetInst(Instruction* inst_) { inst = inst_; }
     Instruction* Inst() const { return inst; }
 private:
@@ -60,6 +61,7 @@ class Instruction : public Value
 public:
     Instruction(const SourcePos& sourcePos_, Type* type_, OpCode opCode_);
     virtual void Write(util::CodeFormatter& formatter) = 0;
+    virtual void SetRegNumber(Function& function);
     void WriteMetadataRef(util::CodeFormatter& formatter);
     std::string Name() const;
     virtual void Accept(Visitor& visitor) = 0;
@@ -272,6 +274,7 @@ public:
     RegValue* Result() const { return result; }
     void WriteResult(util::CodeFormatter& formatter);
     std::string ToString() const override { return "$" + std::to_string(result->Reg()); }
+    void SetRegNumber(Function& function) override;
 private:
     RegValue* result;
 };

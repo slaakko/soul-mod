@@ -1,14 +1,20 @@
 import std.core;
 
-template<class T>
-void bug(T& x)
+class Foo
 {
-    T temp(std::move(x));
+public:
+    Foo();
+private:
+    char* chars;
+    ssize_t len;
+    ssize_t res;
+};
+
+Foo::Foo() : chars(nullptr), len(0), res(0)
+{
 }
 
 int main()
 {
-    int x = 0;
-    bug(x);
-    return 0;
+    Foo foo;
 }

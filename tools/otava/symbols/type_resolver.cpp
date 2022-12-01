@@ -466,10 +466,7 @@ void TypeResolver::Visit(otava::ast::TypeIdNode& node)
     }
     DeclarationFlags prevFlags = flags;
     node.Declarator()->Accept(*this);
-    if (flags != prevFlags)
-    {
-        typeResolved = false;
-    }
+    typeResolved = false;
     ResolveType();
 }
 

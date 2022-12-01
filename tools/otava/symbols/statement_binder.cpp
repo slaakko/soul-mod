@@ -5,11 +5,14 @@
 
 module otava.symbols.statement.binder;
 
-import otava.ast.visitor;
 import otava.ast.statement;
 import otava.ast.function;
 import otava.ast.declaration;
 import otava.ast.type;
+import otava.ast.classes;
+import otava.ast.identifier;
+import otava.ast.expression;
+import otava.symbols.argument.conversion.table;
 import otava.symbols.bound.tree;
 import otava.symbols.context;
 import otava.symbols.declarator;
@@ -20,49 +23,46 @@ import otava.symbols.overload.resolution;
 import otava.symbols.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.type.symbol;
+import otava.symbols.fundamental.type.symbol;
 import otava.symbols.variable.symbol;
 
 namespace otava::symbols {
 
-class StatementBinder : public otava::ast::DefaultVisitor
+struct MemberInitializerLess
 {
-public:
-    StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
-    BoundStatementNode* GetBoundStatement() const { return boundStatement; }
-    void Visit(otava::ast::FunctionDefinitionNode& node) override;
-    void Visit(otava::ast::FunctionBodyNode& node) override;
-    void Visit(otava::ast::CompoundStatementNode& node) override;
-    void Visit(otava::ast::IfStatementNode& node) override;
-    void Visit(otava::ast::SwitchStatementNode& node) override;
-    void Visit(otava::ast::CaseStatementNode& node) override;
-    void Visit(otava::ast::DefaultStatementNode& node) override;
-    void Visit(otava::ast::WhileStatementNode& node) override;
-    void Visit(otava::ast::DoStatementNode& node) override;
-    void Visit(otava::ast::RangeForStatementNode& node) override;
-    void Visit(otava::ast::ForStatementNode& node) override;
-    void Visit(otava::ast::BreakStatementNode& node) override;
-    void Visit(otava::ast::ContinueStatementNode& node) override;
-    void Visit(otava::ast::ReturnStatementNode& node) override;
-    void Visit(otava::ast::ExpressionStatementNode& node) override;
-    void Visit(otava::ast::DeclarationStatementNode& node) override;
-private:
-    Context* context;
-    BoundStatementNode* boundStatement;
-    FunctionDefinitionSymbol* functionDefinitionSymbol;
+    bool operator()(const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& left, const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& right) const;
 };
+
+bool MemberInitializerLess::operator()(const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& left, const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& right) const
+{
+    return left.first < right.first;
+}
 
 StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) : 
     context(context_), 
-    functionDefinitionSymbol(functionDefinitionSymbol_), 
-    boundStatement()
+    ctorInitializer(nullptr),
+    boundStatement(nullptr),
+    functionDefinitionSymbol(functionDefinitionSymbol_),
+    memberVariableSymbol(nullptr),
+    resolveMemberVariable(false),
+    resolveInitializerArguments(false),
+    postfix(false)
 {
+}
+
+void StatementBinder::CompileStatement(otava::ast::Node* statementNode, bool setPostfix)
+{
+    bool prevPostfix = postfix;
+    postfix = setPostfix;
+    statementNode->Accept(*this);
+    postfix = prevPostfix;
 }
 
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 {
+    Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
     if (node.FunctionBody()->IsDefaultedOrDeletedFunctionNode())
     {
-        Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
         if (symbol->IsFunctionDefinitionSymbol())
         {
             FunctionDefinitionSymbol* definition = static_cast<FunctionDefinitionSymbol*>(symbol);
@@ -78,7 +78,90 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
         }
         return;
     }
+    context->GetSymbolTable()->BeginScopeGeneric(symbol->GetScope(), context);
     node.FunctionBody()->Accept(*this);
+    context->GetSymbolTable()->EndScopeGeneric(context);
+}
+
+void StatementBinder::Visit(otava::ast::ConstructorNode& node)
+{
+    node.Left()->Accept(*this);
+    if (ctorInitializer)
+    {
+        context->GetBoundFunction()->SetCtorInitializer(ctorInitializer);
+    }
+    node.Right()->Accept(*this);
+    context->GetBoundFunction()->SetBody(static_cast<BoundCompoundStatementNode*>(boundStatement));
+}
+
+void StatementBinder::Visit(otava::ast::ConstructorInitializerNode& node) 
+{
+    ctorInitializer = new BoundCtorInitializerNode(node.GetSourcePos());
+    node.Child()->Accept(*this);
+}
+
+void StatementBinder::Visit(otava::ast::MemberInitializerListNode& node)
+{
+    int n = node.Items().size();
+    for (int i = 0; i < n; ++i)
+    {
+        otava::ast::Node* initializer = node.Items()[i];
+        initializer->Accept(*this);
+    }
+    std::sort(memberInitializers.begin(), memberInitializers.end(), MemberInitializerLess());
+    for (auto& initializer : memberInitializers)
+    {
+        ctorInitializer->AddMemberInitializer(initializer.second.release());
+    }
+}
+
+void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
+{
+    resolveMemberVariable = true;
+    node.Left()->Accept(*this);
+    resolveMemberVariable = false;
+    initializerArgs.clear();
+    int index = -1;
+    if (memberVariableSymbol)
+    {
+        BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVariableSymbol, node.GetSourcePos());
+        BoundParameterNode* thisPtr = new BoundParameterNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(), node.GetSourcePos());
+        boundVariableNode->SetThisPtr(thisPtr);
+        initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(new BoundDefaultInitNode(boundVariableNode, node.GetSourcePos()), node.GetSourcePos())));
+        index = memberVariableSymbol->Index();
+    }
+    resolveInitializerArguments = true;
+    node.Right()->Accept(*this);
+    resolveInitializerArguments = false;
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+        context->GetSymbolTable()->CurrentScope(), U"@constructor", initializerArgs, node.GetSourcePos(), context);
+    memberInitializers.push_back(std::make_pair(index, std::move(boundFunctionCall)));
+}
+
+void StatementBinder::Visit(otava::ast::IdentifierNode& node)
+{
+    if (resolveMemberVariable)
+    {
+        Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, node.GetSourcePos(), context);
+        if (symbol->IsMemberVariableSymbol())
+        {
+            memberVariableSymbol = static_cast<VariableSymbol*>(symbol);
+        }
+    }
+}
+
+void StatementBinder::Visit(otava::ast::ExpressionListNode& node)
+{
+    if (resolveInitializerArguments)
+    {
+        int n = node.Items().size();
+        for (int i = 0; i < n; ++i)
+        {
+            otava::ast::Node* item = node.Items()[i];
+            BoundExpressionNode* arg = BindExpression(item, context, this);
+            initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
+        }
+    }
 }
 
 void StatementBinder::Visit(otava::ast::FunctionBodyNode& node)
@@ -101,7 +184,7 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
         currentCompoundStatement->AddStatement(boundStatement);
     }
     context->GetSymbolTable()->EndScopeGeneric(context);
-    boundStatement = currentCompoundStatement;
+    SetStatement(currentCompoundStatement);
 }
 
 void StatementBinder::Visit(otava::ast::IfStatementNode& node)
@@ -118,10 +201,16 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
             boundIfStatement->SetInitStatement(boundInitStatement);
         }
     }
-    BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
     if (!condition->GetType()->IsBoolType())
     {
-        condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+        FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context); 
+        if (!conversionFunction)
+        {
+            ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
+        }
+        condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
     }
     boundIfStatement->SetCondition(condition);
     BoundStatementNode* boundThenStatement = BindStatement(node.ThenStatement(), functionDefinitionSymbol, context);
@@ -137,7 +226,7 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
             boundIfStatement->SetElseStatement(boundElseStatement);
         }
     }
-    boundStatement = boundIfStatement;
+    SetStatement(boundIfStatement);
     context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
@@ -147,7 +236,6 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     if (!block) return;
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundSwitchStatementNode* boundSwitchStatement = new BoundSwitchStatementNode(node.GetSourcePos());
-    boundStatement = boundSwitchStatement;
     if (node.InitStatement())
     {
         BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), functionDefinitionSymbol, context);
@@ -156,38 +244,39 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
             boundSwitchStatement->SetInitStatement(boundInitStatement);
         }
     }
-    BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
     boundSwitchStatement->SetCondition(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundSwitchStatement->SetStatement(boundStmt);
     }
+    SetStatement(boundSwitchStatement);
     context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
 void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
 {
     BoundCaseStatementNode* boundCaseStatement = new BoundCaseStatementNode(node.GetSourcePos());
-    boundStatement = boundCaseStatement;
-    BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context);
+    BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context, this);
     boundCaseStatement->SetCaseExpr(caseExpr);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundCaseStatement->SetStatement(boundStmt);
     }
+    SetStatement(boundCaseStatement);
 }
 
 void StatementBinder::Visit(otava::ast::DefaultStatementNode& node)
 {
     BoundDefaultStatementNode* boundDefaultStatement = new BoundDefaultStatementNode(node.GetSourcePos());
-    boundStatement = boundDefaultStatement;
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
     {
         boundDefaultStatement->SetStatement(boundStmt);
     }
+    SetStatement(boundDefaultStatement);
 }
 
 void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
@@ -196,11 +285,16 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     if (!block) return;
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
-    boundStatement = boundWhileStatement;
-    BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+    BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
     if (!condition->GetType()->IsBoolType())
     {
-        condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+        FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context);
+        if (!conversionFunction)
+        {
+            ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
+        }
+        condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
     }
     boundWhileStatement->SetCondition(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
@@ -208,17 +302,23 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     {
         boundWhileStatement->SetStatement(boundStmt);
     }
+    SetStatement(boundWhileStatement);
     context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
 void StatementBinder::Visit(otava::ast::DoStatementNode& node)
 {
     BoundDoStatementNode* boundDoStatement = new BoundDoStatementNode(node.GetSourcePos());
-    boundStatement = boundDoStatement;
-    BoundExpressionNode* condition = BindExpression(node.Expression(), context);
+    BoundExpressionNode* condition = BindExpression(node.Expression(), context, this);
     if (!condition->GetType()->IsBoolType())
     {
-        condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+        FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context);
+        if (!conversionFunction)
+        {
+            ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
+        }
+        condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
     }
     boundDoStatement->SetExpr(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
@@ -226,6 +326,7 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     {
         boundDoStatement->SetStatement(boundStmt);
     }
+    SetStatement(boundDoStatement);
 }
 
 void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
@@ -254,7 +355,6 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     if (!block) return;
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundForStatementNode* boundForStatement = new BoundForStatementNode(node.GetSourcePos());
-    boundStatement = boundForStatement;
     if (node.InitStatement())
     {
         BoundStatementNode* boundInitStatement = BindStatement(node.InitStatement(), functionDefinitionSymbol, context);
@@ -265,16 +365,22 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     }
     if (node.Condition())
     {
-        BoundExpressionNode* condition = BindExpression(node.Condition(), context);
+        BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
         if (!condition->GetType()->IsBoolType())
         {
-            condition = context->GetSymbolTable()->MakeBooleanConversion(condition, context);
+            FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context);
+            if (!conversionFunction)
+            {
+                ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
+            }
+            condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
         }
         boundForStatement->SetCondition(condition);
     }
     if (node.LoopExpr())
     {
-        BoundExpressionNode* loopExpr = BindExpression(node.LoopExpr(), context);
+        BoundExpressionNode* loopExpr = BindExpression(node.LoopExpr(), context, this);
         boundForStatement->SetLoopExpr(loopExpr);
     }
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
@@ -282,44 +388,57 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     {
         boundForStatement->SetStatement(boundStmt);
     }
+    SetStatement(boundForStatement);
     context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
 void StatementBinder::Visit(otava::ast::BreakStatementNode& node)
 {
     BoundBreakStatementNode* boundBreakStatement = new BoundBreakStatementNode(node.GetSourcePos());
-    boundStatement = boundBreakStatement;
+    SetStatement(boundBreakStatement);
 }
 
 void StatementBinder::Visit(otava::ast::ContinueStatementNode& node)
 {
     BoundContinueStatementNode* boundContinueStatement = new BoundContinueStatementNode(node.GetSourcePos());
-    boundStatement = boundContinueStatement;
+    SetStatement(boundContinueStatement);
 }
 
 void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
 {
     BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
-    boundStatement = boundReturnStatement;
     if (node.ReturnValue())
     {
-        BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
+        BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context, this);
+        TypeSymbol* returnType = functionDefinitionSymbol->ReturnType();
+        if (returnValueExpr->GetType() != returnType)
+        {
+            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(returnType, returnValueExpr->GetType(), context);
+            if (conversion)
+            {
+                returnValueExpr = new BoundConversionNode(returnValueExpr, conversion, node.GetSourcePos());
+            }
+            else
+            {
+                ThrowException("no conversion found", node.GetSourcePos(), context);
+            }
+        }
         boundReturnStatement->SetExpr(returnValueExpr);
     }
+    SetStatement(boundReturnStatement);
 }
 
 void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
 {
     BoundExpressionStatementNode* boundExpressionStatement = new BoundExpressionStatementNode(node.GetSourcePos());
-    boundStatement = boundExpressionStatement;
-    BoundExpressionNode* expr = BindExpression(node.Expression(), context);
+    BoundExpressionNode* expr = BindExpression(node.Expression(), context, this);
     boundExpressionStatement->SetExpr(expr);
+    SetStatement(boundExpressionStatement);
 }
 
 void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
 {
     BoundCompoundStatementNode* boundCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
-    boundStatement = boundCompoundStatement;
     std::unique_ptr<DeclarationList> declarationList = context->ReleaseDeclarationList(node.Declaration());
     if (declarationList)
     {
@@ -328,7 +447,7 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
             BoundExpressionNode* initializer = nullptr;
             if (declaration.initializer)
             {
-                initializer = BindExpression(declaration.initializer, context);
+                initializer = BindExpression(declaration.initializer, context, this);
             }
             VariableSymbol* variable = declaration.variable;
             if (initializer)
@@ -348,11 +467,38 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
             boundCompoundStatement->AddStatement(boundConstructionStatement);
             functionDefinitionSymbol->AddLocalVariable(variable);
         }
+        SetStatement(boundCompoundStatement);
     }
     else
     {
         int x = 0;
     }
+}
+
+void StatementBinder::SetStatement(BoundStatementNode* statement)
+{
+    if (postfix)
+    {
+        statement->SetPostfix();
+    }
+    if (boundStatement)
+    {
+        if (boundStatement->Postfix())
+        {
+            BoundSequenceStatementNode* sequenceStatement = new BoundSequenceStatementNode(statement->GetSourcePos(), statement, boundStatement);
+            statement = sequenceStatement;
+        }
+        else
+        {
+            BoundSequenceStatementNode* sequenceStatement = new BoundSequenceStatementNode(statement->GetSourcePos(), boundStatement, statement);
+            statement = sequenceStatement;
+        }
+        if (postfix)
+        {
+            statement->SetPostfix();
+        }
+    }
+    boundStatement = statement;
 }
 
 BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)

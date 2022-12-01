@@ -12,6 +12,7 @@ import otava.assembly.value;
 export namespace otava::assembly {
 
 enum class Operator;
+class UniqueLiteral;
 
 class Context
 {

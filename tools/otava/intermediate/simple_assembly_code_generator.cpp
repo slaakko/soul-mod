@@ -15,6 +15,7 @@ import otava.intermediate.type;
 import otava.intermediate.data;
 import otava.intermediate.data_item_adder;
 import otava.assembly.function;
+import otava.assembly.literal;
 import otava.assembly.symbol;
 
 namespace otava::intermediate {
@@ -50,6 +51,11 @@ void SimpleAssemblyCodeGenerator::Error(const std::string& message)
     otava::intermediate::Error(message, currentInst->GetSourcePos(), GetContext());
 }
 
+void SimpleAssemblyCodeGenerator::AddFrameLocation(otava::assembly::UniqueLiteral* frameLoc)
+{
+    frameLocations.push_back(frameLoc);
+}
+
 void SimpleAssemblyCodeGenerator::Write() 
 {
     file.Write();
@@ -62,13 +68,20 @@ void SimpleAssemblyCodeGenerator::Visit(GlobalVariable& globalVariable)
     {
         PointerType* pointerType = static_cast<PointerType*>(type);
         Type* baseType = pointerType->BaseType();
-        otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), otava::assembly::DataInst::DQ);
-        variable->AddItem(new otava::assembly::Symbol(globalVariable.Name() + "_data"));
-        file.GetDataSection().AddData(variable);
-        otava::assembly::Data* data = new otava::assembly::Data(globalVariable.Name() + "_data", baseType->DataInstruction());
-        DataItemAdder adder(context, data);
+        otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), baseType->DataInstruction());
+        DataItemAdder adder(context, variable);
         globalVariable.Initializer()->Accept(adder);
-        file.GetDataSection().AddData(data);
+        file.GetDataSection().AddData(variable);
+    }
+    else
+    {
+        otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), type->DataInstruction());
+        DataItemAdder adder(context, variable);
+        if (globalVariable.Initializer())
+        {
+            globalVariable.Initializer()->Accept(adder);
+        }
+        file.GetDataSection().AddData(variable);
     }
 }
 
@@ -82,14 +95,28 @@ void SimpleAssemblyCodeGenerator::Visit(Function& function)
     {
         currentFunction = &function;
         Ctx()->AssemblyContext().ResetRegisterPool();
+        frameLocations.clear();
         std::unique_ptr<RegisterAllocator> linearScanRregisterAllocator = LinearScanRegisterAllocation(function, Ctx());
         registerAllocator = linearScanRregisterAllocator.get();
         assemblyFunction = file.GetCodeSection().CreateFunction(function.Name());
         function.VisitBasicBlocks(*this);
+        PatchFrameLocations();
         assemblyFunction->SetActiveFunctionPart(otava::assembly::FunctionPart::prologue);
         EmitPrologue(*this);
         assemblyFunction->SetActiveFunctionPart(otava::assembly::FunctionPart::epilogue);
         EmitEpilogue(*this);
+    }
+}
+
+void SimpleAssemblyCodeGenerator::PatchFrameLocations()
+{
+    Frame& frame = registerAllocator->GetFrame();
+    int64_t frameSize = frame.Size();
+    for (auto& frameLoc : frameLocations)
+    {
+        int64_t offset = frameLoc->GetValue();
+        int64_t newOffset = frameSize - offset;
+        frameLoc->SetValue(newOffset);
     }
 }
 

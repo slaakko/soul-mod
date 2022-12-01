@@ -107,10 +107,6 @@ void Value::SetType(Type* type_)
     {
         type = type_;
     }
-    if (type != type_)
-    {
-        throw std::runtime_error("type conflict");
-    }
 }
 
 std::string Value::KindStr() const

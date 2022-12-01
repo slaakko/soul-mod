@@ -174,17 +174,6 @@ void SymbolTable::AddClass(ClassTypeSymbol* cls)
     allClasses.insert(cls);
 }
 
-BoundExpressionNode* SymbolTable::MakeBooleanConversion(BoundExpressionNode* subject, Context* context)
-{
-    FunctionSymbol* conversionFunction = conversionTable->GetConversion(GetFundamentalType(FundamentalTypeKind::boolType), subject->GetType());
-    if (!conversionFunction)
-    {
-        ThrowException("condition must be convertible to Boolean type value", subject->GetSourcePos(), context);
-        return nullptr;
-    }
-    return new BoundConversionNode(subject, conversionFunction, subject->GetSourcePos());
-}
-
 void SymbolTable::Init()
 {
     if (module->Name() == "std.type.fundamental")
@@ -336,10 +325,6 @@ void SymbolTable::WriteMaps(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(static_cast<int32_t>(m.first->Kind()));
         writer.GetBinaryStreamWriter().Write(m.second->Name());
-        if (m.second->Name() == U"remove_reference_t")
-        {
-            int x = 0;
-        }
         int64_t nodeId = m.first->Id();
         if (nodeId == 0xcdcdcdcdcdcdcdcd)
         {
@@ -632,11 +617,15 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
     return nullptr;
 }
 
-void SymbolTable::CollectViableFunctions(Scope* scope, const std::u32string& groupName, int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
+void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, int arity, 
+    std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
     std::vector<Symbol*> symbols;
     std::set<Scope*> visited;
-    scope->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, ScopeLookup::allScopes, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
+    for (const auto& [scope, lookup] : scopeLookups)
+    {
+        scope->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
+    }
     for (Symbol* symbol : symbols)
     {
         if (symbol->IsFunctionGroupSymbol())
@@ -1053,7 +1042,7 @@ void SymbolTable::AddEnumerator(const std::u32string& name, Value* value, otava:
 
 BlockSymbol* SymbolTable::BeginBlock(const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    BlockSymbol* blockSymbol = new BlockSymbol(); 
+    BlockSymbol* blockSymbol = new BlockSymbol();
     currentScope->SymbolScope()->AddSymbol(blockSymbol, sourcePos, context);
     BeginScopeGeneric(blockSymbol->GetScope(), context);
     return blockSymbol;
@@ -1101,7 +1090,7 @@ void SymbolTable::RemoveTemplateDeclaration()
     }
 }
 
-void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, otava::ast::Node* defaultTemplateArgNode, 
+void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, otava::ast::Node* defaultTemplateArgNode,
     Context* context)
 {
     TemplateParameterSymbol* templateParameterSymbol = new TemplateParameterSymbol(constraint, name, index, defaultTemplateArgNode);
@@ -1115,7 +1104,16 @@ void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::N
 
 FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context)
 {
-    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(name, node->GetSourcePos(), context);
+    std::u32string groupName = name;
+    if (kind == FunctionKind::constructor)
+    {
+        groupName = U"@constructor";
+    }
+    else if (kind == FunctionKind::destructor)
+    {
+        groupName = U"@destructor";
+    }
+    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
     FunctionSymbol* functionSymbol = new FunctionSymbol(name);
     functionSymbol->SetAccess(CurrentAccess());
     functionSymbol->SetFunctionKind(kind);
@@ -1130,16 +1128,25 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast:
 
 void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context)
 {
-    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(functionSymbol->Name(), soul::ast::SourcePos(), context);
+    FunctionGroupSymbol* functionGroup = currentScope->GroupScope()->GetOrInsertFunctionGroup(functionSymbol->GroupName(), soul::ast::SourcePos(), context);
     functionSymbol->SetLinkage(currentLinkage);
     scope->SymbolScope()->AddSymbol(functionSymbol, soul::ast::SourcePos(), context);
     functionGroup->AddFunction(functionSymbol);
 }
 
-FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes, 
-    FunctionQualifiers qualifiers, otava::ast::Node* node, FunctionSymbol* declaration, Context* context)
+FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes,
+    FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, FunctionSymbol* declaration, Context* context)
 {
-    FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(name, node->GetSourcePos(), context);
+    std::u32string groupName = name;
+    if (kind == FunctionKind::constructor)
+    {
+        groupName = U"@constructor";
+    }
+    else if (kind == FunctionKind::destructor)
+    {
+        groupName = U"@destructor";
+    }
+    FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
     FunctionDefinitionSymbol* prev = functionGroup->GetFunctionDefinition(parameterTypes, qualifiers);
     if (prev)
     {

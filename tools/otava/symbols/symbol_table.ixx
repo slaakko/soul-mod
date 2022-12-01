@@ -128,8 +128,8 @@ public:
         otava::ast::Node* defaultTemplateArgNode, Context* context);
     FunctionSymbol* AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     void AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
-    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& paramterTypes, 
-        FunctionQualifiers qualifiers, otava::ast::Node* node, FunctionSymbol* declaration, Context* context);
+    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& paramterTypes,
+        FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, FunctionSymbol* declaration, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
     VariableSymbol* AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type, 
         Value* value, DeclarationFlags flags, Context* context);
@@ -149,7 +149,8 @@ public:
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupSymbol(Symbol* symbol);
-    void CollectViableFunctions(Scope* scope, const std::u32string& groupName, int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
+    void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, int arity, 
+        std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     void MapNode(otava::ast::Node* node);
     void MapNode(otava::ast::Node* node, Symbol* symbol);
     void MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind);
@@ -193,7 +194,6 @@ public:
     SymbolMap* GetSymbolMap() { return symbolMap; }
     ConversionTable& GetConversionTable() { return *conversionTable; }
     const ConversionTable& GetConversionTable() const { return *conversionTable; }
-    BoundExpressionNode* MakeBooleanConversion(BoundExpressionNode* subject, Context* context);
     Linkage CurrentLinkage() const { return currentLinkage; }
     void PushLinkage(Linkage linkage_);
     void PopLinkage();

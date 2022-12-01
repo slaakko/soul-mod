@@ -217,6 +217,16 @@ bool Symbol::IsLocalVariableSymbol() const
     return false;
 }
 
+bool Symbol::IsMemberVariableSymbol() const
+{
+    if (IsVariableSymbol())
+    {
+        const VariableSymbol* symbol = static_cast<const VariableSymbol*>(this);
+        return symbol->IsMemberVariable();
+    }
+    return false;
+}
+
 bool Symbol::CanInstall() const
 {
     switch (kind)

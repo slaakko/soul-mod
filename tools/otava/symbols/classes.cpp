@@ -301,7 +301,9 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     TypeSymbol::AddSymbol(symbol, sourcePos, context);
     if (symbol->IsVariableSymbol())
     {
-        memberVariables.push_back(static_cast<VariableSymbol*>(symbol));
+        VariableSymbol* memberVariable = static_cast<VariableSymbol*>(symbol);
+        memberVariable->SetIndex(memberVariables.size());
+        memberVariables.push_back(memberVariable);
     }
     else if (symbol->IsFunctionSymbol())
     {

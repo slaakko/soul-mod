@@ -496,10 +496,6 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
             nonterminalName = nt->InstanceName();
         }
         soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
-        if (!returnType)
-        {
-            int x = 0;
-        }
         ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
         parser.SuccessCode()->Write(*formatter);
         stage = CodeGenerationStage::endGenerateTokenSwitch;
@@ -551,10 +547,6 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
             nonterminalName = nt->InstanceName();
         }
         soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
-        if (!returnType)
-        {
-            int x = 0;
-        }
         ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
         parser.SuccessCode()->Write(*formatter);
         if (parser.FailureCode())

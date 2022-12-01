@@ -651,6 +651,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
         {
             FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declaration.declarator.get());
             FunctionQualifiers qualifiers = functionDeclarator->GetFunctionQualifiers();
+            FunctionKind kind = functionDeclarator->GetFunctionKind();
             Symbol* symbol = context->GetSymbolTable()->Lookup(functionDeclarator->Name(), SymbolGroupKind::functionSymbolGroup, declarator->GetSourcePos(), context, 
                 LookupFlags::dontResolveSingle);
             if (symbol)
@@ -665,7 +666,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     }
                     FunctionSymbol* functionSymbol = functionGroup->ResolveFunction(parameterTypes, qualifiers);
                     FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                        parameterTypes, qualifiers, declarator, functionSymbol, context);
+                        parameterTypes, qualifiers, kind, declarator, functionSymbol, context);
                     if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
                     {
                         context->SetFunctionTemplateSpecialization(definition);
@@ -689,7 +690,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                         definition->AddParameter(parameter, sourcePos, context);
                     }
                     definition->SetReturnType(declaration.type, context);
-                    context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); // GENERIC
+                    context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); 
                     if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate))
                     {
                         definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
@@ -707,7 +708,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     parameterTypes.push_back(parameterDeclaration.type);
                 }
                 FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                    parameterTypes, qualifiers, declarator, nullptr, context);
+                    parameterTypes, qualifiers, kind, declarator, nullptr, context);
                 if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
                 {
                     context->SetFunctionTemplateSpecialization(definition);
@@ -801,7 +802,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         }
         for (int i = 0; i < scopes; ++i)
         {
-            context->GetSymbolTable()->EndScopeGeneric(context); // GENERIC
+            context->GetSymbolTable()->EndScopeGeneric(context); 
         }
         if (!context->GetFlag(ContextFlags::dontBind))
         {

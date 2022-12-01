@@ -22,11 +22,11 @@ enum class BoundNodeKind
     boundCompileUnitNode, boundFunctionNode, boundCompoundStatementNode, boundIfStatementNode, boundSwitchStatementNode, boundCaseStatementNode, boundDefaultStatementNode,
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
-    boundLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode,
+    boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, 
+    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode,
     boundConjunctionNode, boundDisjunctionNode,
-    boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode,
-    boundTemporaryNode, boundGlobalVariableDefinitionNode,
-    boundErrorNode
+    boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundDefaultInitNode,
+    boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode,
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -44,6 +44,7 @@ public:
     bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
     bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
     bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
+    bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
 private:
     BoundNodeKind kind;
     soul::ast::SourcePos sourcePos;
@@ -79,6 +80,7 @@ public:
     virtual bool HasValue() const { return false; }
     virtual void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual BoundExpressionNode* Clone() const = 0;
     bool GetFlag(BoundExpressionFlags flag) const;
     void SetFlag(BoundExpressionFlags flag);
     virtual bool IsBoundLocalVariable() const { return false; }

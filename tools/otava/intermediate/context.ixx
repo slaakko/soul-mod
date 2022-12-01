@@ -37,6 +37,7 @@ class Instruction;
 class SwitchInstruction;
 class Value;
 class RegValue;
+class GlobalVariable;
 
 using SourcePos = soul::ast::SourcePos;
 
@@ -71,7 +72,7 @@ public:
     StructureType* GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     ArrayType* GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
     FunctionType* GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
-    void AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once);
+    GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once);
     void ResolveTypes();
     void ValidateData();
     void ResolveType(TypeRef& typeRef);
@@ -154,6 +155,7 @@ public:
     Instruction* CreateNop();
     soul::lexer::FileMap& GetFileMap() { return fileMap; }
     int32_t NextTypeId();
+    std::string GetNextStringValueId();
     void AddLineInfo(Instruction* inst);
     otava::assembly::Context& AssemblyContext() { return assemblyContext; }
 private:

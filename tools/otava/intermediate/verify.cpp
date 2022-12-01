@@ -265,7 +265,6 @@ void VerifierVisitor::Visit(Function& function)
         Error("code verification error: function '" + function.Name() + "' has wrong number of parameters: " + std::to_string(numParams) +
             " parameters, function arity=" + std::to_string(function.Arity()), function.GetSourcePos(), GetContext());
     }
-    function.SetNextRegNumber(regNumber);
 }
 
 void VerifierVisitor::Visit(BasicBlock& basicBlock)

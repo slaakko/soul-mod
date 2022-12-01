@@ -28,6 +28,7 @@ class UniqueLiteral : public Literal
 public:
     UniqueLiteral(int64_t value_, int size_);
     void SetValue(int64_t value_);
+    std::string ToString() const override;
 };
 
 } // namespace otava::assembly

@@ -69,7 +69,7 @@ void Instruction::Write(util::CodeFormatter& formatter)
     }
     formatter.Write(util::Format(OpCodeStr(opCode), 16));
     bool first = true;
-    for (const auto& operand : operands)
+    for (auto& operand : operands)
     {
         if (first)
         {
@@ -79,7 +79,7 @@ void Instruction::Write(util::CodeFormatter& formatter)
         {
             formatter.Write(", ");
         }
-        formatter.Write(operand->Name());
+        formatter.Write(operand->ToString());
     }
     formatter.WriteLine();
     if (!label.empty())

@@ -149,9 +149,9 @@ FunctionType* Context::GetFunctionType(const SourcePos& sourcePos, int32_t typeI
     return types->GetFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
 }
 
-void Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once)
+GlobalVariable* Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once)
 {
-    data->AddGlobalVariable(sourcePos, type, variableName, initializer, once, this);
+    return data->AddGlobalVariable(sourcePos, type, variableName, initializer, once, this);
 }
 
 void Context::ResolveTypes()
@@ -322,6 +322,11 @@ int32_t Context::NextTypeId()
     return types->NextTypeId();
 }
 
+std::string Context::GetNextStringValueId()
+{
+    return data->GetNextStringValueId();
+}
+
 void Context::ValidateData()
 {
     // todo
@@ -444,7 +449,6 @@ RegValue* Context::MakeRegValue(Type* type)
 {
     Function* currentFunction = CurrentFunction();
     RegValue* regValue = currentFunction->MakeRegValue(SourcePos(), type, currentFunction->NextRegNumber(), this);
-    currentFunction->SetNextRegNumber(currentFunction->NextRegNumber() + 1);
     return regValue;
 }
 

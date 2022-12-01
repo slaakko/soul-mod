@@ -8,6 +8,7 @@ export module otava.intermediate.code.generator;
 import otava.intermediate.visitor;
 import otava.intermediate.register_allocator;
 import otava.assembly.instruction;
+import otava.assembly.literal;
 import otava.assembly.file;
 import soul.ast.source.pos;
 import std.core;
@@ -33,6 +34,7 @@ public:
     virtual int ExitLabelId() const = 0;
     virtual otava::assembly::File* AssemblyFile() = 0;
     virtual void Write() = 0;
+    virtual void AddFrameLocation(otava::assembly::UniqueLiteral* frameLoc) = 0;
 };
 
 void GenerateCode(Context& context, CodeGenerator& codeGenerator, bool verbose);

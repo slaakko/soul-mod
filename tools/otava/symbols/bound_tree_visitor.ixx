@@ -11,6 +11,7 @@ export namespace otava::symbols {
 
 class BoundCompileUnitNode;
 class BoundFunctionNode;
+class BoundCtorInitializerNode;
 class BoundCompoundStatementNode;
 class BoundIfStatementNode;
 class BoundSwitchStatementNode;
@@ -27,6 +28,7 @@ class BoundGotoStatementNode;
 class BoundConstructionStatementNode;
 class BoundExpressionStatementNode;
 class BoundLiteralNode;
+class BoundStringLiteralNode;
 class BoundVariableNode;
 class BoundParameterNode;
 class BoundEnumConstant;
@@ -40,8 +42,8 @@ class BoundConversionNode;
 class BoundAddressOfNode;
 class BoundDereferenceNode;
 class BoundRefToPtrNode;
+class BoundDefaultInitNode;
 class BoundTemporaryNode;
-class BoundErrorNode;
 class BoundGlobalVariableDefinitionNode;
 
 class BoundTreeVisitor
@@ -50,6 +52,7 @@ public:
     virtual ~BoundTreeVisitor();
     virtual void Visit(BoundCompileUnitNode& node) {}
     virtual void Visit(BoundFunctionNode& node) {}
+    virtual void Visit(BoundCtorInitializerNode& node) {}
     virtual void Visit(BoundCompoundStatementNode& node) {}
     virtual void Visit(BoundIfStatementNode& node) {}
     virtual void Visit(BoundSwitchStatementNode& node) {}
@@ -66,6 +69,7 @@ public:
     virtual void Visit(BoundConstructionStatementNode& node) {}
     virtual void Visit(BoundExpressionStatementNode& node) {}
     virtual void Visit(BoundLiteralNode& node) {}
+    virtual void Visit(BoundStringLiteralNode& node) {}
     virtual void Visit(BoundVariableNode& node) {}
     virtual void Visit(BoundParameterNode& node) {}
     virtual void Visit(BoundEnumConstant& node) {}
@@ -79,8 +83,8 @@ public:
     virtual void Visit(BoundAddressOfNode& node) {}
     virtual void Visit(BoundDereferenceNode& node) {}
     virtual void Visit(BoundRefToPtrNode& node) {}
+    virtual void Visit(BoundDefaultInitNode& node) {}
     virtual void Visit(BoundTemporaryNode& node) {}
-    virtual void Visit(BoundErrorNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
 };
 

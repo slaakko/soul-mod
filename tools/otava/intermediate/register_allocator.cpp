@@ -68,7 +68,7 @@ int64_t Frame::Size() const
     else
     {
         const FrameLocation& last = frameLocations.back();
-        return std::max(32ll, last.offset + last.size);
+        return 32ll + last.offset + last.size;
     }
 }
 

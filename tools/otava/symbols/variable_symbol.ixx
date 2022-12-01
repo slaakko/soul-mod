@@ -39,6 +39,8 @@ public:
     int32_t LayoutIndex() const { return layoutIndex; }
     void SetLayoutIndex(int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
     std::string IrName() const;
+    int32_t Index() const { return index; }
+    void SetIndex(int32_t index_) { index = index_; }
 private:
     TypeSymbol* declaredType;
     util::uuid declaredTypeId;
@@ -47,6 +49,7 @@ private:
     Value* value;
     util::uuid valueId;
     int32_t layoutIndex;
+    int32_t index;
 };
 
 struct VariableLess

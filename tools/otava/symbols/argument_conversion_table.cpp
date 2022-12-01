@@ -297,6 +297,58 @@ FunctionSymbol* UInt64ToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSy
     return nullptr;
 }
 
+class PtrToBooleanConversion : public FunctionSymbol
+{
+public:
+    PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol* boolType_, Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    TypeSymbol* ConversionParamType() const override { return boolType; }
+    TypeSymbol* ConversionArgType() const override { return ptrType; }
+    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
+    int32_t ConversionDistance() const override { return 1; }
+private:
+    TypeSymbol* ptrType;
+    TypeSymbol* boolType;
+};
+
+PtrToBooleanConversion::PtrToBooleanConversion(TypeSymbol* ptrType_, TypeSymbol* boolType_, Context* context) :
+    FunctionSymbol(U"@conversion"), ptrType(ptrType_), boolType(boolType_)
+{
+    SetConversion();
+    SetAccess(Access::public_);
+    ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
+    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    SetReturnType(boolType, context);
+}
+
+void PtrToBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    otava::intermediate::Value* value = emitter.Stack().Pop();
+    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(GetIrType(emitter, ptrType, sourcePos, context));
+    otava::intermediate::Value* defaultValue = irType->DefaultValue();
+    otava::intermediate::Value* equal = emitter.EmitEqual(value, defaultValue);
+    otava::intermediate::Value* notEqual = emitter.EmitNot(equal);
+    emitter.Stack().Push(notEqual);
+}
+
+class PtrToBooleanArgumentConversion : public ArgumentConversion
+{
+public:
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context) override;
+};
+
+FunctionSymbol* PtrToBooleanArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
+{
+    TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::boolType);
+    if (argType->IsPointerType() && TypesEqual(paramType, boolType))
+    {
+        return new PtrToBooleanConversion(argType, paramType, context);
+    }
+    return nullptr;
+}
+
 ArgumentConversionTable::ArgumentConversionTable()
 {
     AddArgumentConversion(new IdentityArgumentConversion());
@@ -305,6 +357,7 @@ ArgumentConversionTable::ArgumentConversionTable()
     AddArgumentConversion(new PtrToVoidPtrArgumentConversion());
     AddArgumentConversion(new PtrToUInt64ArgumentConversion());
     AddArgumentConversion(new UInt64ToPtrArgumentConversion());
+    AddArgumentConversion(new PtrToBooleanArgumentConversion());
 }
 
 void ArgumentConversionTable::AddArgumentConversion(ArgumentConversion* argumentConversion)

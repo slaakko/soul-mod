@@ -16,6 +16,7 @@ using uint32_t = unsigned int;
 using int64_t = long long int;
 using uint64_t = unsigned long long int;
 using size_t = uint64_t;
+using ssize_t = int64_t;
 using time_t = int64_t;
 
 } 

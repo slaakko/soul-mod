@@ -84,10 +84,10 @@ public:
     };
 };
 
-istream cin;
-ostream cout;
-ostream cerr;
-ostream clog;
-ostream& endl(ostream& os);
+// istream cin;
+// ostream cout;
+// ostream cerr;
+// ostream clog;
+// ostream& endl(ostream& os);
 
 } // namespace std

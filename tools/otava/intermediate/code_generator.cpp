@@ -43,8 +43,10 @@ void EmitFrameLocationOperand(int64_t size, const FrameLocation& frameLocation, 
 {
     otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
     otava::assembly::Register* rbp = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbp);
-    instruction->AddOperand(assemblyContext.MakeSizePrefix(size,
-        assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rbp, assemblyContext.MakeLiteral(frameLocation.offset, 8), otava::assembly::Operator::sub))));
+    otava::assembly::UniqueLiteral* frameLoc = assemblyContext.MakeUniqueLiteral(frameLocation.offset, 8);
+    codeGen.AddFrameLocation(frameLoc);
+    instruction->AddOperand(assemblyContext.MakeSizePrefix(size, assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rbp, frameLoc, otava::assembly::Operator::sub))));
+// NOTE: frameLocation changed
 }
 
 void EmitArgLocationOperand(int64_t size, const ArgLocation& argLocation, otava::assembly::Instruction* instruction, CodeGenerator& codeGen)
@@ -53,6 +55,7 @@ void EmitArgLocationOperand(int64_t size, const ArgLocation& argLocation, otava:
     otava::assembly::Register* rsp = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rsp);
     instruction->AddOperand(assemblyContext.MakeSizePrefix(size,
         assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rsp, assemblyContext.MakeLiteral(argLocation.offset, 8), otava::assembly::Operator::sub))));
+// NOTE: argLocation changed
 }
 
 int64_t GetIndex(Value* index, CodeGenerator& codeGen)
@@ -195,11 +198,11 @@ otava::assembly::Register* MakeRegOperand(Value* value, otava::assembly::Registe
     else if (value->IsAddressValue())
     {
         AddressValue* v = static_cast<AddressValue*>(value);
-        otava::assembly::Instruction* movInst = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
-        movInst->AddOperand(reg);
+        otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
+        leaInst->AddOperand(reg);
         otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
-        movInst->AddOperand(assemblyContext.MakeSymbol(v->GetValue()->Name()));
-        codeGen.Emit(movInst);
+        leaInst->AddOperand(assemblyContext.MakeSymbol(v->GetValue()->Name()));
+        codeGen.Emit(leaInst);
     }
     else
     {
@@ -316,10 +319,10 @@ void EmitPtrOperand(int64_t size, Value* value, otava::assembly::Instruction* in
         otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
         AddressValue* addressValue = static_cast<AddressValue*>(value);
         GlobalVariable* globalVar = addressValue->GetValue();
-        otava::assembly::Instruction* movInst = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
-        movInst->AddOperand(assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax));
-        movInst->AddOperand(assemblyContext.MakeSymbol(globalVar->Name()));
-        codeGen.Emit(movInst);
+        otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
+        leaInst->AddOperand(assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax));
+        leaInst->AddOperand(assemblyContext.MakeSymbol(globalVar->Name()));
+        codeGen.Emit(leaInst);
         instruction->AddOperand(assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax));
         return;
     }

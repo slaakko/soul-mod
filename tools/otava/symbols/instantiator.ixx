@@ -28,6 +28,11 @@ public:
     void Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node) override;
     void Visit(otava::ast::TemplateDeclarationNode& node) override;
     void Visit(otava::ast::CompoundStatementNode& node) override;
+    void Visit(otava::ast::IfStatementNode& node) override;
+    void Visit(otava::ast::SwitchStatementNode& node) override;
+    void Visit(otava::ast::WhileStatementNode& node) override;
+    void Visit(otava::ast::DoStatementNode& node) override;
+    void Visit(otava::ast::ForStatementNode& node) override;
     void Visit(otava::ast::ExpressionStatementNode& node) override;
     void Visit(otava::ast::ReturnStatementNode& node) override;
 private:

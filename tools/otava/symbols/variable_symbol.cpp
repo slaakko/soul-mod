@@ -30,7 +30,8 @@ VariableSymbol::VariableSymbol(const std::u32string& name_) :
     initializerTypeId(util::nil_uuid()),
     value(nullptr),
     valueId(util::nil_uuid()),
-    layoutIndex(-1)
+    layoutIndex(-1),
+    index(-1)
 {
 }
 

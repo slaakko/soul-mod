@@ -32,10 +32,6 @@ Symbol* Reader::ReadSymbol()
     else
     {
         std::u32string name = binaryStreamReader.ReadUtf32String();
-        if (name == U"remove_reference_t")
-        {
-            int x = 0;
-        }
         Symbol* symbol = CreateSymbol(kind, name, symbolTable);
         symbol->Read(*this);
         symbolMap->AddSymbol(symbol);
