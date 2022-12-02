@@ -1,0 +1,3 @@
+project constructor_calls;
+target=program;
+source <constructor_calls.cpp>;

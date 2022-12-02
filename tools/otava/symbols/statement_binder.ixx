@@ -15,6 +15,7 @@ class BoundStatementNode;
 class Context;
 class FunctionDefinitionSymbol;
 class BoundCtorInitializerNode;
+class ClassTypeSymbol;
 class VariableSymbol;
 class BoundExpressionNode;
 class BoundFunctionCallNode;
@@ -54,8 +55,10 @@ private:
     BoundCtorInitializerNode* ctorInitializer;
     BoundStatementNode* boundStatement;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
+    ClassTypeSymbol* classTypeSymbol;
     VariableSymbol* memberVariableSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> initializerArgs;
+    bool resolveClass;
     bool resolveMemberVariable;
     bool resolveInitializerArguments;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberInitializers;

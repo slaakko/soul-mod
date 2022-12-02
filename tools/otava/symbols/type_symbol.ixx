@@ -26,6 +26,7 @@ public:
     bool IsRValueRefType() const;
     bool IsReferenceType() const;
     virtual TypeSymbol* PlainType() { return this; }
+    virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance) const { return false; }
     virtual bool IsVoidType() const { return false; }
     virtual bool IsBoolType() const { return false; }
     virtual bool IsNullPtrType() const { return false; }

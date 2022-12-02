@@ -409,6 +409,19 @@ private:
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
 };
 
+class BoundExpressionListNode : public BoundExpressionNode
+{
+public:
+    BoundExpressionListNode(const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
+    void AddExpression(BoundExpressionNode* expr);
+    int Count() const { return exprs.size(); }
+    BoundExpressionNode* ReleaseExpr(int i) { return exprs[i].release(); }
+private:
+    std::vector<std::unique_ptr<BoundExpressionNode>> exprs;
+};
+
 class BoundConjunctionNode : public BoundExpressionNode
 {
 public:

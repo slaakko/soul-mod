@@ -60,6 +60,55 @@ FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbo
     return nullptr;
 }
 
+class DerivedToBaseConversion : public FunctionSymbol
+{
+public:
+    DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, TypeSymbol* baseTypePtr_, int distance_, Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    TypeSymbol* ConversionParamType() const override { return baseTypePtr; }
+    TypeSymbol* ConversionArgType() const override { return derivedTypePtr; }
+    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
+    int32_t ConversionDistance() const override { return distance; }
+private:
+    TypeSymbol* derivedTypePtr;
+    TypeSymbol* baseTypePtr;
+    int distance;
+};
+
+DerivedToBaseConversion::DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, TypeSymbol* baseTypePtr_, int distance_, Context* context) :
+    FunctionSymbol(U"@conversion"), derivedTypePtr(derivedTypePtr_), baseTypePtr(baseTypePtr_), distance(distance_)
+{
+    SetConversion();
+    SetAccess(Access::public_);
+    ParameterSymbol* arg = new ParameterSymbol(U"arg", derivedTypePtr);
+    AddParameter(arg, soul::ast::SourcePos(), context);
+    SetReturnType(baseTypePtr, context);
+}
+
+void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    otava::intermediate::Value* value = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitBitcast(value, baseTypePtr->IrType(emitter, sourcePos, context)));
+}
+
+class DerivedToBaseArgumentConversion : public ArgumentConversion
+{
+public:
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context) override;
+};
+
+FunctionSymbol* DerivedToBaseArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
+{
+    int distance = 0;
+    if (paramType->PointerCount() == 1 && argType->PointerCount() == 1 && argType->GetBaseType()->HasBaseClass(paramType->GetBaseType(), distance))
+    {
+        return new DerivedToBaseConversion(argType, paramType, distance, context);
+    }
+    return nullptr;
+}
+
 class NullPtrToPtrConversion : public FunctionSymbol
 {
 public:
@@ -352,6 +401,7 @@ FunctionSymbol* PtrToBooleanArgumentConversion::Get(TypeSymbol* paramType, TypeS
 ArgumentConversionTable::ArgumentConversionTable()
 {
     AddArgumentConversion(new IdentityArgumentConversion());
+    AddArgumentConversion(new DerivedToBaseArgumentConversion());
     AddArgumentConversion(new NullPtrToPtrArgumentConversion());
     AddArgumentConversion(new VoidPtrToPtrArgumentConversion());
     AddArgumentConversion(new PtrToVoidPtrArgumentConversion());

@@ -11,6 +11,8 @@ public:
 	~string();
 	const char* c_str() const;
 	string(const char* chars_);
+	string(const char* chars_, ssize_t len_);
+	string(const char* begin, const char* end);
 	void reserve(ssize_t min_len);
 private:
 	void grow(ssize_t min_res);

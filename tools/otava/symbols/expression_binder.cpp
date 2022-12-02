@@ -209,6 +209,7 @@ public:
     void Visit(otava::ast::PostfixIncExprNode& node) override;
     void Visit(otava::ast::PostfixDecExprNode& node) override;
     void Visit(otava::ast::CppCastExprNode& node) override;
+    void Visit(otava::ast::ExpressionListNode& node) override;
 private:
     void BindBinaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* left, BoundExpressionNode* right);
     void BindUnaryOp(otava::ast::NodeKind op, const soul::ast::SourcePos& sourcePos, BoundExpressionNode* operand);
@@ -768,6 +769,18 @@ void ExpressionBinder::Visit(otava::ast::UnaryExprNode& node)
             break;
         }
     }
+}
+
+void ExpressionBinder::Visit(otava::ast::ExpressionListNode& node)
+{
+    BoundExpressionListNode* boundExpressionListNode = new BoundExpressionListNode(node.GetSourcePos());
+    for (int i = 0; i < node.Items().size(); ++i)
+    {
+        otava::ast::Node* itemNode = node.Items()[i];
+        BoundExpressionNode* boundExpr = BindExpression(itemNode, context, statementBinder);
+        boundExpressionListNode->AddExpression(boundExpr);
+    }
+    boundExpression = boundExpressionListNode;
 }
 
 void ExpressionBinder::Visit(otava::ast::PostfixIncExprNode& node)

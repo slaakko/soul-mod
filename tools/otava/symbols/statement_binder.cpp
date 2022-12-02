@@ -14,6 +14,7 @@ import otava.ast.identifier;
 import otava.ast.expression;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.bound.tree;
+import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.declarator;
 import otava.symbols.exception;
@@ -43,7 +44,9 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
     ctorInitializer(nullptr),
     boundStatement(nullptr),
     functionDefinitionSymbol(functionDefinitionSymbol_),
+    classTypeSymbol(nullptr),
     memberVariableSymbol(nullptr),
+    resolveClass(false),
     resolveMemberVariable(false),
     resolveInitializerArguments(false),
     postfix(false)
@@ -117,18 +120,34 @@ void StatementBinder::Visit(otava::ast::MemberInitializerListNode& node)
 
 void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
 {
-    resolveMemberVariable = true;
-    node.Left()->Accept(*this);
-    resolveMemberVariable = false;
-    initializerArgs.clear();
     int index = -1;
-    if (memberVariableSymbol)
+    resolveClass = true;
+    node.Left()->Accept(*this);
+    resolveClass = false;
+    if (classTypeSymbol)
     {
-        BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVariableSymbol, node.GetSourcePos());
-        BoundParameterNode* thisPtr = new BoundParameterNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(), node.GetSourcePos());
-        boundVariableNode->SetThisPtr(thisPtr);
-        initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(new BoundDefaultInitNode(boundVariableNode, node.GetSourcePos()), node.GetSourcePos())));
-        index = memberVariableSymbol->Index();
+        BoundExpressionNode* thisPtr = context->GetThisPtr(node.GetSourcePos());
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            classTypeSymbol->AddPointer(), thisPtr->GetType(), context);
+        if (conversion)
+        {
+            initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, node.GetSourcePos())));
+        }
+    }
+    else
+    {
+        resolveMemberVariable = true;
+        node.Left()->Accept(*this);
+        resolveMemberVariable = false;
+        initializerArgs.clear();
+        if (memberVariableSymbol)
+        {
+            BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVariableSymbol, node.GetSourcePos());
+            BoundParameterNode* thisPtr = new BoundParameterNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(), node.GetSourcePos());
+            boundVariableNode->SetThisPtr(thisPtr);
+            initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(new BoundDefaultInitNode(boundVariableNode, node.GetSourcePos()), node.GetSourcePos())));
+            index = memberVariableSymbol->Index();
+        }
     }
     resolveInitializerArguments = true;
     node.Right()->Accept(*this);
@@ -140,10 +159,18 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
 
 void StatementBinder::Visit(otava::ast::IdentifierNode& node)
 {
-    if (resolveMemberVariable)
+    if (resolveClass)
+    {
+        Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context);
+        if (symbol && symbol->IsClassTypeSymbol())
+        {
+            classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
+        }
+    }
+    else if (resolveMemberVariable)
     {
         Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::variableSymbolGroup, node.GetSourcePos(), context);
-        if (symbol->IsMemberVariableSymbol())
+        if (symbol && symbol->IsMemberVariableSymbol())
         {
             memberVariableSymbol = static_cast<VariableSymbol*>(symbol);
         }
@@ -450,7 +477,7 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
                 initializer = BindExpression(declaration.initializer, context, this);
             }
             VariableSymbol* variable = declaration.variable;
-            if (initializer)
+            if (initializer && initializer->GetType())
             {
                 variable->SetInitializerType(initializer->GetType());
             }
@@ -459,7 +486,19 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
             arguments.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariable, node.GetSourcePos())));
             if (initializer)
             {
-                arguments.push_back(std::unique_ptr<BoundExpressionNode>(initializer));
+                if (initializer->IsBoundExpressionListNode())
+                {
+                    BoundExpressionListNode* exprListNode = static_cast<BoundExpressionListNode*>(initializer);
+                    int n = exprListNode->Count();
+                    for (int i = 0; i < n; ++i)
+                    {
+                        arguments.push_back(std::unique_ptr<BoundExpressionNode>(exprListNode->ReleaseExpr(i)));
+                    }
+                }
+                else
+                {
+                    arguments.push_back(std::unique_ptr<BoundExpressionNode>(initializer));
+                }
             }
             std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", arguments, 
                 node.GetSourcePos(), context);

@@ -55,6 +55,7 @@ public:
     void AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     const std::vector<TypeSymbol*>& DerivedClasses() const { return derivedClasses; }
     void AddDerivedClass(TypeSymbol* derivedClass);
+    bool HasBaseClass(TypeSymbol* baseClass, int& distance) const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

@@ -596,7 +596,7 @@ void PointerMinusPointer::GenerateCode(Emitter& emitter, std::vector<BoundExpres
     otava::intermediate::Value* left = emitter.Stack().Pop();
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
     otava::intermediate::Value* right = emitter.Stack().Pop();
-    emitter.EmitPtrDiff(left, right);
+    emitter.Stack().Push(emitter.EmitPtrDiff(left, right));
 }
 
 class PointerMinusPointerOperation : public Operation

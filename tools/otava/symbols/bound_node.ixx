@@ -23,7 +23,7 @@ enum class BoundNodeKind
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
     boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode, 
-    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode,
+    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode,
@@ -45,6 +45,7 @@ public:
     bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
     bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
     bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
+    bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
 private:
     BoundNodeKind kind;
     soul::ast::SourcePos sourcePos;
@@ -75,6 +76,7 @@ class BoundExpressionNode : public BoundNode
 public:
     BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
     TypeSymbol* GetType() const { return type; }
+    void SetType(TypeSymbol* type_) { type = type_; }
     Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const override;
     bool BindToRvalueRef() const { return GetFlag(BoundExpressionFlags::bindToRvalueRef); }
     virtual bool HasValue() const { return false; }

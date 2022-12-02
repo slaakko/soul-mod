@@ -132,6 +132,28 @@ void ClassTypeSymbol::AddDerivedClass(TypeSymbol* derivedClass)
     }
 }
 
+bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance) const
+{
+    for (const auto& baseCls : baseClasses)
+    {
+        if (TypesEqual(baseCls, baseClass))
+        {
+            ++distance;
+            return true;
+        }
+        else 
+        {
+            ++distance;
+            if (baseCls->HasBaseClass(baseClass, distance))
+            {
+                return true;
+            }
+            --distance;
+        }
+    }
+    return false;
+}
+
 void ClassTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);

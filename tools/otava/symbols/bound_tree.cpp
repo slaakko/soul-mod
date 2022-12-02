@@ -719,6 +719,10 @@ void BoundFunctionCallNode::AddArgument(BoundExpressionNode* arg)
 
 void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (functionSymbol->Name() == U"string")
+    {
+        int x = 0;
+    }
     std::vector<BoundExpressionNode*> arguments;
     for (const auto& arg : args)
     {
@@ -756,6 +760,39 @@ BoundExpressionNode* BoundFunctionCallNode::Clone() const
         clone->AddArgument(arg->Clone());
     }
     return clone;
+}
+
+BoundExpressionListNode::BoundExpressionListNode(const soul::ast::SourcePos& sourcePos_) :
+    BoundExpressionNode(BoundNodeKind::boundExpressionListNode, sourcePos_, nullptr)
+{
+}
+
+void BoundExpressionListNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundExpressionListNode::Clone() const
+{
+    BoundExpressionListNode* clone = new BoundExpressionListNode(GetSourcePos());
+    for (auto& expr : exprs)
+    {
+        clone->AddExpression(expr->Clone());
+    }
+    return clone;
+}
+
+void BoundExpressionListNode::AddExpression(BoundExpressionNode* expr)
+{
+    if (exprs.empty())
+    {
+        SetType(expr->GetType());
+    }
+    else
+    {
+        SetType(nullptr);
+    }
+    exprs.push_back(std::unique_ptr<BoundExpressionNode>(expr));
 }
 
 BoundConjunctionNode::BoundConjunctionNode(BoundExpressionNode* left_, BoundExpressionNode* right_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* boolType) :

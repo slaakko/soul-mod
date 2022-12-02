@@ -20,6 +20,19 @@ string::string(const char* chars_) : chars(nullptr), len(slen(chars_)), res(0)
 	}
 }
 
+string::string(const char* chars_, ssize_t len_) : chars(nullptr), len(0), res(0)
+{
+	if (len_ > 0)
+	{
+		reserve(len_);
+		len = slencpy(chars, chars_, len_);
+	}
+}
+
+string::string(const char* begin, const char* end) : string(begin, end - begin)
+{
+}
+
 string::~string()
 {
 	deallocate();
