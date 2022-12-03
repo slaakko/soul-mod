@@ -13,6 +13,9 @@ public:
 	string(const char* chars_);
 	string(const char* chars_, ssize_t len_);
 	string(const char* begin, const char* end);
+	string(const string& that);
+	string(string&& that);
+	string(ssize_t count, char c);
 	void reserve(ssize_t min_len);
 private:
 	void grow(ssize_t min_res);

@@ -21,6 +21,7 @@ public:
     virtual TypeSymbol* GetBaseType() { return this; }
     bool IsAutoTypeSymbol() const;
     bool IsPointerType() const;
+    bool IsArrayType() const;
     bool IsConstType() const;
     bool IsLValueRefType() const;
     bool IsRValueRefType() const;

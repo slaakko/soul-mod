@@ -402,6 +402,7 @@ public:
     void AddArgument(BoundExpressionNode* arg);
     const std::vector<std::unique_ptr<BoundExpressionNode>>& Args() const { return args; }
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override;
     BoundExpressionNode* Clone() const override;
 private:

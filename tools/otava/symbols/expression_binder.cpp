@@ -106,6 +106,7 @@ OperatorGroupNameMap::OperatorGroupNameMap()
     operatorGroupNameMap[otava::ast::NodeKind::prefixIncNode] = U"operator++";
     operatorGroupNameMap[otava::ast::NodeKind::prefixDecNode] = U"operator--";
     operatorGroupNameMap[otava::ast::NodeKind::arrowNode] = U"operator->";
+    operatorGroupNameMap[otava::ast::NodeKind::subscriptExprNode] = U"operator[]";
 }
 
 const std::u32string& OperatorGroupNameMap::GetGroupName(otava::ast::NodeKind nodeKind, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -206,6 +207,7 @@ public:
     void Visit(otava::ast::InvokeExprNode& node) override;
     void Visit(otava::ast::BinaryExprNode& node) override;
     void Visit(otava::ast::UnaryExprNode& node) override;
+    void Visit(otava::ast::SubscriptExprNode& node) override;
     void Visit(otava::ast::PostfixIncExprNode& node) override;
     void Visit(otava::ast::PostfixDecExprNode& node) override;
     void Visit(otava::ast::CppCastExprNode& node) override;
@@ -572,6 +574,29 @@ void ExpressionBinder::Visit(otava::ast::MemberExprNode& node)
         memberVar->SetThisPtr(new BoundAddressOfNode(localVar, node.GetSourcePos()));
         boundExpression = memberVar;
     }
+    else if (subject->IsBoundParameterNode() && member->IsBoundMemberVariable())
+    {
+        BoundParameterNode* param = static_cast<BoundParameterNode*>(subject.release());
+        if (param->GetType()->PlainType()->IsClassTypeSymbol())
+        {
+            BoundExpressionNode* thisPtr = nullptr;
+            if (param->GetType()->IsReferenceType())
+            {
+                thisPtr = new BoundRefToPtrNode(param, node.GetSourcePos());
+            }
+            else
+            {
+                thisPtr = new BoundAddressOfNode(param, node.GetSourcePos());
+            }
+            BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+            memberVar->SetThisPtr(thisPtr);
+            boundExpression = memberVar;
+        }
+        else
+        {
+            boundExpression = new BoundMemberExprNode(subject.release(), member.release(), node.GetSourcePos());
+        }
+    }
     else
     {
         boundExpression = new BoundMemberExprNode(subject.release(), member.release(), node.GetSourcePos());
@@ -768,6 +793,30 @@ void ExpressionBinder::Visit(otava::ast::UnaryExprNode& node)
             BindPrefixDec(node.GetSourcePos(), child.release(), node.Child());
             break;
         }
+    }
+}
+
+void ExpressionBinder::Visit(otava::ast::SubscriptExprNode& node)
+{
+    std::unique_ptr<BoundExpressionNode> subject(BindExpression(node.Child(), context, statementBinder));
+    std::unique_ptr<BoundExpressionNode> index(BindExpression(node.Index(), context, statementBinder));
+    TypeSymbol* plainSubjectType = subject->GetType()->PlainType();
+    if (plainSubjectType->IsClassTypeSymbol())
+    {
+        BindBinaryOp(otava::ast::NodeKind::subscriptExprNode, node.GetSourcePos(), subject.release(), index.release());
+    }
+    else  if (plainSubjectType->IsPointerType())
+    {
+        BindBinaryOp(otava::ast::NodeKind::plusNode, node.GetSourcePos(), subject.release(), index.release());
+        BindDeref(node.GetSourcePos(), boundExpression);
+    }
+    else if (plainSubjectType->IsArrayType())
+    {
+        // todo
+    }
+    else
+    {
+        ThrowException("subscript operator can be applied only to pointer, array or class type subject", node.GetSourcePos(), context);
     }
 }
 

@@ -1,0 +1,3 @@
+project char_ptr_subscript;
+target=program;
+source <char_ptr_subscript.cpp>;

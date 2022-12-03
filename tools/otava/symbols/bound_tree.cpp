@@ -719,10 +719,6 @@ void BoundFunctionCallNode::AddArgument(BoundExpressionNode* arg)
 
 void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (functionSymbol->Name() == U"string")
-    {
-        int x = 0;
-    }
     std::vector<BoundExpressionNode*> arguments;
     for (const auto& arg : args)
     {
@@ -738,6 +734,43 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
             value = emitter.EmitLoad(value);
         }
         emitter.Stack().Push(value);
+    }
+}
+
+void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if ((flags & OperationFlags::addr) != OperationFlags::none)
+    {
+        ThrowException("cannot take address of a function call", sourcePos, context);
+    }
+    else 
+    {
+        otava::intermediate::Value* value = emitter.Stack().Pop();
+        std::vector<BoundExpressionNode*> arguments;
+        for (const auto& arg : args)
+        {
+            arguments.push_back(arg.get());
+        }
+        OperationFlags callFlags = OperationFlags::none;
+        if (GetFlag(BoundExpressionFlags::virtualCall))
+        {
+            callFlags = callFlags | OperationFlags::virtualCall;
+        }
+        functionSymbol->GenerateCode(emitter, arguments, callFlags, sourcePos, context);
+        otava::intermediate::Value* ptr = emitter.Stack().Pop();
+        if ((flags & OperationFlags::deref) != OperationFlags::none || GetFlag(BoundExpressionFlags::deref))
+        {
+            uint8_t n = GetDerefCount(flags);
+            for (uint8_t i = 1; i < n; ++i)
+            {
+                ptr = emitter.EmitLoad(ptr);
+            }
+            emitter.EmitStore(value, ptr);
+        }
+        else
+        {
+            emitter.EmitStore(emitter.EmitLoad(value), ptr);
+        }
     }
 }
 

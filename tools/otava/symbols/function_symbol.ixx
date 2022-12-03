@@ -133,6 +133,7 @@ public:
     const std::vector<ParameterSymbol*>& MemFunParameters() const;
     void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
     void AddLocalVariable(VariableSymbol* variable);
+    void RemoveLocalVariable(VariableSymbol* variable);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

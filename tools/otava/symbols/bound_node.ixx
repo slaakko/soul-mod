@@ -46,6 +46,7 @@ public:
     bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
     bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
+    bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
 private:
     BoundNodeKind kind;
     soul::ast::SourcePos sourcePos;
@@ -53,7 +54,7 @@ private:
 
 enum class BoundExpressionFlags
 {
-    none = 0, bindToRvalueRef = 1 << 0
+    none = 0, bindToRvalueRef = 1 << 0, virtualCall = 1 << 1, deref = 1 << 2
 };
 
 constexpr BoundExpressionFlags operator|(BoundExpressionFlags left, BoundExpressionFlags right)

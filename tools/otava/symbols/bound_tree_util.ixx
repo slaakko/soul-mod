@@ -18,7 +18,7 @@ class TypeSymbol;
 
 enum class OperationFlags : int32_t
 {
-    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, derefCount = 0xFF << 8
+    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, derefCount = 0xFF << 8
 };
 
 constexpr OperationFlags operator|(OperationFlags left, OperationFlags right)

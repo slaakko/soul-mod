@@ -70,9 +70,9 @@ void Function::Finalize()
     }
 }
 
-void Function::Write(util::CodeFormatter& formatter)
+bool Function::Write(util::CodeFormatter& formatter)
 {
-    if (!IsDefined()) return;
+    if (!IsDefined()) return false;
     Finalize();
     std::string once;
     if (Once())
@@ -109,6 +109,7 @@ void Function::Write(util::CodeFormatter& formatter)
     }
     formatter.DecIndent();
     formatter.WriteLine("}");
+    return true;
 }
 
 void Function::Accept(Visitor& visitor)

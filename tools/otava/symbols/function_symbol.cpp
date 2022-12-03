@@ -638,8 +638,20 @@ std::string FunctionSymbol::IrName(Context* context) const
 
 void FunctionSymbol::AddLocalVariable(VariableSymbol* localVariable)
 {
-    localVariable->SetParent(this);
+    if (!localVariable->Parent())
+    {
+        localVariable->SetParent(this);
+    }
     localVariables.push_back(localVariable);
+}
+
+void FunctionSymbol::RemoveLocalVariable(VariableSymbol* variable)
+{
+    auto it = std::find(localVariables.begin(), localVariables.end(), variable);
+    if (it != localVariables.end())
+    {
+        localVariables.erase(it);
+    }
 }
 
 VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)

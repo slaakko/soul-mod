@@ -171,6 +171,20 @@ Module* Symbol::GetModule()
     return nullptr;
 }
 
+FunctionSymbol* Symbol::ParentFunction() const
+{
+    Symbol* parentSymbol = parent;
+    while (parentSymbol)
+    {
+        if (parentSymbol->IsFunctionSymbol())
+        {
+            return static_cast<FunctionSymbol*>(parentSymbol);
+        }
+        parentSymbol = parentSymbol->Parent();
+    }
+    return nullptr;
+}
+
 ClassTypeSymbol* Symbol::ParentClass() const
 {
     Symbol* parentSymbol = parent;

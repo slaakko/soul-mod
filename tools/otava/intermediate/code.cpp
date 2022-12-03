@@ -41,6 +41,7 @@ void Code::Finalize()
 void Code::Write(util::CodeFormatter& formatter)
 {
     bool first = true;
+    bool written = false;
     Function* f = FirstFunction();
     while (f)
     {
@@ -48,11 +49,11 @@ void Code::Write(util::CodeFormatter& formatter)
         {
             first = false;
         }
-        else
+        else if (written)
         {
             formatter.WriteLine();
         }
-        f->Write(formatter);
+        written = f->Write(formatter);
         f = f->Next();
     }
 }

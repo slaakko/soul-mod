@@ -52,7 +52,7 @@ public:
     Function(const SourcePos& sourcePos_, FunctionType* functionType_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_, Context* context);
     ~Function();
     void Finalize();
-    void Write(util::CodeFormatter& formatter);
+    bool Write(util::CodeFormatter& formatter);
     bool GetFlag(FunctionFlags flag) const { return (flags & flag) != FunctionFlags::none; }
     void SetFlag(FunctionFlags flag) { flags = flags | flag; }
     void ResetFlag(FunctionFlags flag) { flags = flags & ~flag; }

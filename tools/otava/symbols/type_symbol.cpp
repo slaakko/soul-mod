@@ -43,6 +43,11 @@ bool TypeSymbol::IsPointerType() const
     return false;
 }
 
+bool TypeSymbol::IsArrayType() const
+{
+    return false; // TODO!!!
+}
+
 bool TypeSymbol::IsConstType() const
 {
     if (IsCompoundTypeSymbol())

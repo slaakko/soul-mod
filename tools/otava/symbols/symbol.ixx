@@ -124,6 +124,7 @@ public:
     Symbol* Parent() { return parent; }
     const Symbol* Parent() const { return parent; }
     void SetParent(Symbol* parent_) { parent = parent_; }
+    FunctionSymbol* ParentFunction() const;
     ClassTypeSymbol* ParentClass() const;
     NamespaceSymbol* ParentNamespace() const;
     std::string DocName() const;

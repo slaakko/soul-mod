@@ -33,6 +33,35 @@ string::string(const char* begin, const char* end) : string(begin, end - begin)
 {
 }
 
+string::string(const string& that) : chars(nullptr), len(that.len), res(0)
+{
+	if (len > 0)
+	{
+		reserve(len);
+		scpy(chars, that.chars);
+	}
+}
+
+string::string(string&& that) : chars(that.chars), len(that.len), res(that.res)
+{
+	that.chars = nullptr;
+	that.len = 0;
+	that.res = 0;
+}
+
+string::string(ssize_t count, char c)
+{
+	if (count > 0)
+	{
+		reserve(count);
+		for (ssize_t i = 0; i < count; ++i)
+		{
+			chars[i] = c;
+		}
+		chars[count] = '\0';
+	}
+}
+
 string::~string()
 {
 	deallocate();
