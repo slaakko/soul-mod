@@ -6,11 +6,41 @@
 export module otava.symbols.bound.tree;
 
 import std.core;
+import soul.ast.source.pos;
 import otava.ast.node;
-import otava.symbols.bound.node;
 import otava.symbols.emitter;
 
 export namespace otava::symbols {
+
+enum class OperationFlags : int32_t
+{
+    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, derefCount = 0xFF << 8
+};
+
+constexpr OperationFlags operator|(OperationFlags left, OperationFlags right)
+{
+    return OperationFlags(int32_t(left) | int32_t(right));
+}
+
+constexpr OperationFlags operator&(OperationFlags left, OperationFlags right)
+{
+    return OperationFlags(int32_t(left) & int32_t(right));
+}
+
+constexpr OperationFlags operator~(OperationFlags flags)
+{
+    return OperationFlags(~int32_t(flags));
+}
+
+constexpr uint8_t GetDerefCount(OperationFlags flags)
+{
+    return uint8_t(uint16_t(flags & OperationFlags::derefCount) >> 8);
+}
+
+constexpr OperationFlags SetDerefCount(OperationFlags flags, uint8_t n)
+{
+    return OperationFlags(flags | OperationFlags(uint16_t(n) << 8));
+}
 
 class FunctionSymbol;
 class FunctionGroupSymbol;
@@ -19,6 +49,7 @@ class ParameterSymbol;
 class EnumConstantSymbol;
 class TypeSymbol;
 class ClassTypeSymbol;
+class Context;
 class Value;
 class Scope;
 class FunctionDefinitionSymbol;
@@ -29,6 +60,83 @@ class BoundFunctionCallNode;
 class OperationRepository;
 class ArgumentConversionTable;
 class FunctionTemplateRepository;
+
+enum class BoundNodeKind
+{
+    boundCompileUnitNode, boundFunctionNode, boundCompoundStatementNode, boundIfStatementNode, boundSwitchStatementNode, boundCaseStatementNode, boundDefaultStatementNode,
+    boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
+    boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
+    boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
+    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundExpressionListNode,
+    boundConjunctionNode, boundDisjunctionNode,
+    boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundDefaultInitNode,
+    boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode,
+};
+
+std::string BoundNodeKindStr(BoundNodeKind nodeKind);
+
+class BoundNode
+{
+public:
+    BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_);
+    virtual ~BoundNode();
+    virtual void Accept(BoundTreeVisitor& visitor) = 0;
+    BoundNodeKind Kind() const { return kind; }
+    virtual Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const { return nullptr; }
+    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
+    bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
+    bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
+    bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
+    bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
+    bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
+    bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
+private:
+    BoundNodeKind kind;
+    soul::ast::SourcePos sourcePos;
+};
+
+enum class BoundExpressionFlags
+{
+    none = 0, bindToRvalueRef = 1 << 0, virtualCall = 1 << 1, deref = 1 << 2
+};
+
+constexpr BoundExpressionFlags operator|(BoundExpressionFlags left, BoundExpressionFlags right)
+{
+    return BoundExpressionFlags(int(left) | int(right));
+}
+
+constexpr BoundExpressionFlags operator&(BoundExpressionFlags left, BoundExpressionFlags right)
+{
+    return BoundExpressionFlags(int(left) & int(right));
+}
+
+constexpr BoundExpressionFlags operator~(BoundExpressionFlags flag)
+{
+    return BoundExpressionFlags(~int(flag));
+}
+
+class BoundExpressionNode : public BoundNode
+{
+public:
+    BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
+    TypeSymbol* GetType() const { return type; }
+    void SetType(TypeSymbol* type_) { type = type_; }
+    Scope* GetMemberScope(otava::ast::Node* op, const soul::ast::SourcePos& sourcePos, Context* context) const override;
+    bool BindToRvalueRef() const { return GetFlag(BoundExpressionFlags::bindToRvalueRef); }
+    virtual bool HasValue() const { return false; }
+    virtual void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual BoundExpressionNode* Clone() const = 0;
+    bool GetFlag(BoundExpressionFlags flag) const;
+    void SetFlag(BoundExpressionFlags flag);
+    virtual bool IsBoundLocalVariable() const { return false; }
+    virtual bool IsBoundMemberVariable() const { return false; }
+    virtual bool IsLvalueExpression() const { return false; }
+private:
+    BoundExpressionFlags flags;
+    TypeSymbol* type;
+};
 
 class BoundCompileUnitNode : public BoundNode
 {

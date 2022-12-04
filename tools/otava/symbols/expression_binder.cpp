@@ -8,7 +8,6 @@ module otava.symbols.expression.binder;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.bound.tree;
-import otava.symbols.bound.node;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.class_group.symbol;
 import otava.symbols.classes;

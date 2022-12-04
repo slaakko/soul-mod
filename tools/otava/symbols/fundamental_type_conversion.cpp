@@ -5,8 +5,6 @@
 
 module otava.symbols.fundamental.type.conversion;
 
-import otava.symbols.bound.tree.util;
-
 namespace otava::symbols {
 
 otava::intermediate::Value* FundamentalTypeSignExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
@@ -136,7 +134,7 @@ void FundamentalTypeBooleanConversion::GenerateCode(Emitter& emitter, std::vecto
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(GetIrType(emitter, argType, sourcePos, context));
+    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(argType->IrType(emitter, sourcePos, context));
     otava::intermediate::Value* defaultValue = irType->DefaultValue();
     otava::intermediate::Value* equal = emitter.EmitEqual(value, defaultValue);
     otava::intermediate::Value* notEqual = emitter.EmitNot(equal);

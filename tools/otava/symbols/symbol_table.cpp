@@ -16,7 +16,7 @@ import otava.intermediate.error;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.templates;
-import otava.symbols.bound.node;
+import otava.symbols.bound.tree;
 import otava.symbols.class_group.symbol;
 import otava.symbols.class_templates;
 import otava.symbols.function.group.symbol;

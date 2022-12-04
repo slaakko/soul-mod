@@ -161,12 +161,8 @@
     <ClCompile Include="argument_conversion_table.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="block.ixx" />
-    <ClCompile Include="bound_node.cpp" />
-    <ClCompile Include="bound_node.ixx" />
     <ClCompile Include="bound_tree.cpp" />
     <ClCompile Include="bound_tree.ixx" />
-    <ClCompile Include="bound_tree_util.cpp" />
-    <ClCompile Include="bound_tree_util.ixx" />
     <ClCompile Include="bound_tree_visitor.cpp" />
     <ClCompile Include="bound_tree_visitor.ixx" />
     <ClCompile Include="classes.cpp" />

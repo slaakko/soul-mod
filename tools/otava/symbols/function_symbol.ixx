@@ -8,13 +8,11 @@ export module otava.symbols.function.symbol;
 import std.core;
 import otava.symbols.symbol;
 import otava.symbols.container.symbol;
-import otava.symbols.bound.tree.util;
+import otava.symbols.bound.tree;
 import otava.ast.node;
 import otava.intermediate.type;
 
 export namespace otava::symbols {
-
-class BoundExpressionNode;
 
 enum class FunctionKind
 {

@@ -23,7 +23,6 @@ import otava.symbols.templates;
 import otava.symbols.value;
 import otava.symbols.variable.symbol;
 import otava.symbols.fundamental.type.conversion;
-import otava.symbols.bound.node;
 import otava.symbols.bound.tree;
 import otava.symbols.context;
 import otava.intermediate.function;

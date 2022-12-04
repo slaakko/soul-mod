@@ -5,7 +5,6 @@
 
 module otava.symbols.bound.tree.visitor;
 
-import otava.symbols.bound.node;
 import otava.symbols.bound.tree;
 
 namespace otava::symbols {

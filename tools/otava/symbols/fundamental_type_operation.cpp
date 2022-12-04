@@ -7,7 +7,7 @@ module otava.symbols.fundamental.type.operation;
 
 import otava.symbols.fundamental.type.conversion.init;
 import otava.symbols.fundamental.type.symbol;
-import otava.symbols.bound.node;
+import otava.symbols.bound.tree;
 import otava.symbols.symbol.table;
 import otava.symbols.context;
 import otava.symbols.namespaces;

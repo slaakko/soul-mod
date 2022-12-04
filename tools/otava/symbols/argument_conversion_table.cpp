@@ -375,7 +375,7 @@ void PtrToBooleanConversion::GenerateCode(Emitter& emitter, std::vector<BoundExp
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
-    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(GetIrType(emitter, ptrType, sourcePos, context));
+    otava::intermediate::Type* irType = static_cast<otava::intermediate::Type*>(ptrType->IrType(emitter, sourcePos, context));
     otava::intermediate::Value* defaultValue = irType->DefaultValue();
     otava::intermediate::Value* equal = emitter.EmitEqual(value, defaultValue);
     otava::intermediate::Value* notEqual = emitter.EmitNot(equal);

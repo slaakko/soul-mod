@@ -6,7 +6,6 @@
 module otava.symbols.overload.resolution;
 
 import otava.symbols.bound.tree;
-import otava.symbols.bound.node;
 import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;

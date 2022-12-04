@@ -7,7 +7,6 @@ export module otava.symbols.fundamental.type.operation;
 
 import otava.symbols.emitter;
 import otava.symbols.function.symbol;
-import otava.symbols.bound.tree.util;
 import otava.intermediate.value;
 import std.core;
 
@@ -130,7 +129,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
-        Load(emitter, args[0], OperationFlags::none, sourcePos, context);
+        args[0]->Load(emitter, flags, sourcePos, context);
         otava::intermediate::Value* value = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, value));
     }
@@ -156,9 +155,9 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
-        Load(emitter, args[0], OperationFlags::none, sourcePos, context);
+        args[0]->Load(emitter, flags, sourcePos, context);
         otava::intermediate::Value* left = emitter.Stack().Pop();
-        Load(emitter, args[1], OperationFlags::none, sourcePos, context);
+        args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
     }
@@ -184,9 +183,9 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
-        Load(emitter, args[0], OperationFlags::none, sourcePos, context);
+        args[0]->Load(emitter, flags, sourcePos, context);
         otava::intermediate::Value* left = emitter.Stack().Pop();
-        Load(emitter, args[1], OperationFlags::none, sourcePos, context);
+        args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
     }

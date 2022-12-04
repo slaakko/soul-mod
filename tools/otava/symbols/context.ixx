@@ -57,8 +57,8 @@ constexpr  ContextFlags operator~(ContextFlags flags)
 class SymbolTable;
 class EvaluationContext;
 class BoundCompileUnitNode;
-class BoundFunctionNode;
 class BoundExpressionNode;
+class BoundFunctionNode;
 class BoundCompoundStatementNode;
 class OperationRepository;
 class FunctionDefinitionSymbol;

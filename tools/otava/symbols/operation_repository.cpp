@@ -9,7 +9,6 @@ import otava.symbols.type.symbol;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.function.symbol;
-import otava.symbols.bound.node;
 import otava.symbols.context;
 import otava.symbols.emitter;
 import otava.symbols.argument.conversion.table;

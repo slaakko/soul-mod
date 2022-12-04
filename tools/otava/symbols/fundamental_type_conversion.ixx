@@ -11,7 +11,7 @@ import otava.symbols.function.symbol;
 import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.symbol.table;
-import otava.symbols.bound.tree.util;
+import otava.symbols.type.symbol;
 import otava.intermediate.value;
 
 export namespace otava::symbols {
@@ -90,8 +90,8 @@ struct FundamentalTypeConversion : public FunctionSymbol
         FunctionSymbol::Write(writer);
         writer.GetBinaryStreamWriter().Write(distance);
         writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(conversionKind));
-        writer.GetBinaryStreamWriter().Write(GetTypeId(paramType));
-        writer.GetBinaryStreamWriter().Write(GetTypeId(argType));
+        writer.GetBinaryStreamWriter().Write(paramType->Id());
+        writer.GetBinaryStreamWriter().Write(argType->Id());
     }
     void Read(Reader& reader) override
     {
@@ -111,7 +111,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(GetIrType(emitter, paramType, sourcePos, context))));
+        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(paramType->IrType(emitter, sourcePos, context))));
     }
     int32_t distance;
     ConversionKind conversionKind;
@@ -175,8 +175,8 @@ public:
     void Write(Writer& writer) override
     {
         FunctionSymbol::Write(writer);
-        writer.GetBinaryStreamWriter().Write(GetTypeId(paramType));
-        writer.GetBinaryStreamWriter().Write(GetTypeId(argType));
+        writer.GetBinaryStreamWriter().Write(paramType->Id());
+        writer.GetBinaryStreamWriter().Write(argType->Id());
     }
     void Read(Reader& reader) override
     {
