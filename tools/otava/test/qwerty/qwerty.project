@@ -1,0 +1,3 @@
+project qwerty;
+target=program;
+source <qwerty.cpp>;

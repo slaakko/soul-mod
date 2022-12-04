@@ -742,7 +742,13 @@ Value* Data::MakeStructureValue(const SourcePos& sourcePos, const std::vector<Va
 
 Value* Data::MakeStringValue(const SourcePos& sourcePos, const std::string& value)
 {
+    auto it = stringValueMap.find(value);
+    if (it != stringValueMap.cend())
+    {
+        return it->second;
+    }
     StringValue* stringValue = new StringValue(sourcePos, value);
+    stringValueMap[value] = stringValue;
     values.push_back(std::unique_ptr<Value>(stringValue));
     return stringValue;
 }
@@ -891,7 +897,7 @@ Value* Data::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const st
     if (it != globalVariableMap.cend())
     {
         GlobalVariable* globalVariable = it->second;
-        AddressValue* addressValue = new AddressValue(sourcePos, globalVariable, globalVariable->GetType()->AddPointer(context));
+        AddressValue* addressValue = new AddressValue(sourcePos, globalVariable, globalVariable->GetType());
         values.push_back(std::unique_ptr<Value>(addressValue));
         return addressValue;
     }

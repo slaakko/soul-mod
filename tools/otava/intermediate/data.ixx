@@ -335,6 +335,7 @@ private:
     ValueMap<float> floatValueMap;
     ValueMap<double> doubleValueMap;
     std::map<Type*, NullValue*> nullValueMap;
+    std::map<std::string, StringValue*> stringValueMap;
     int32_t nextStringValueId;
 };
 
