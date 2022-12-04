@@ -13,19 +13,18 @@ import otava.intermediate.visitor;
 
 namespace otava::intermediate {
 
-Code::Code() : context(nullptr), currentFunction(nullptr), first(nullptr), last(nullptr)
+Code::Code() : functions(this), context(nullptr), currentFunction(nullptr)
 {
 }
 
-Code::~Code()
+Function* Code::FirstFunction()
 {
-    Function* fn = first;
-    while (fn)
-    {
-        Function* next = fn->Next();
-        delete fn;
-        fn = next;
-    }
+    return static_cast<Function*>(functions.FirstChild());
+}
+
+Function* Code::LastFunction() 
+{ 
+    return static_cast<Function*>(functions.LastChild());
 }
 
 void Code::Finalize()
@@ -60,39 +59,12 @@ void Code::Write(util::CodeFormatter& formatter)
 
 void Code::AddFunction(Function* fn)
 {
-    Code* container = fn->Parent();
-    if (container)
-    {
-        std::unique_ptr<Function> removedChild = container->RemoveFunction(fn);
-        fn = removedChild.release();
-    }
-    if (last)
-    {
-        last->LinkAfter(fn);
-    }
-    if (!first)
-    {
-        first = fn;
-    }
-    fn->SetParent(this);
-    last = fn;
+    functions.AddChild(fn);
 }
 
 std::unique_ptr<Function> Code::RemoveFunction(Function* fn)
 {
-    fn->Unlink();
-    if (fn == first)
-    {
-        first = fn->Next();
-    }
-    if (fn == last)
-    {
-        last = fn->Prev();
-    }
-    fn->SetParent(nullptr);
-    fn->SetNext(nullptr);
-    fn->SetPrev(nullptr);
-    return std::unique_ptr<Function>(fn);
+    return std::unique_ptr<Function>(static_cast<Function*>(functions.RemoveChild(fn).release()));
 }
 
 void Code::SetCurrentFunction(Function* function)

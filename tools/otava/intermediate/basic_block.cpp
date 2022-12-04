@@ -14,19 +14,18 @@ import util.text.util;
 
 namespace otava::intermediate {
 
-BasicBlock::BasicBlock(const SourcePos& sourcePos_, int32_t id_) : sourcePos(sourcePos_), id(id_), parent(nullptr), next(nullptr), prev(nullptr), first(nullptr), last(nullptr)
+BasicBlock::BasicBlock(const SourcePos& sourcePos_, int32_t id_) : sourcePos(sourcePos_), id(id_), instructions(this) 
 {
 }
 
-BasicBlock::~BasicBlock()
-{
-    Instruction* inst = first;
-    while (inst)
-    {
-        Instruction* next = inst->Next();
-        delete inst;
-        inst = next;
-    }
+Instruction* BasicBlock::FirstInstruction()
+{ 
+    return static_cast<Instruction*>(instructions.FirstChild()); 
+}
+
+Instruction* BasicBlock::LastInstruction()
+{ 
+    return  static_cast<Instruction*>(instructions.LastChild()); 
 }
 
 void BasicBlock::Write(util::CodeFormatter& formatter)
@@ -55,16 +54,6 @@ void BasicBlock::Write(util::CodeFormatter& formatter)
         }
         inst = inst->Next();
     }
-}
-
-Function* BasicBlock::Parent() const
-{
-    return parent;
-}
-
-void BasicBlock::SetParent(Function* parent_)
-{
-    parent = parent_;
 }
 
 void BasicBlock::Accept(Visitor& visitor)
@@ -100,45 +89,12 @@ std::string BasicBlock::Name() const
 
 void BasicBlock::AddInst(Instruction* inst)
 {
-    BasicBlock* container = inst->Parent();
-    if (container)
-    {
-        std::unique_ptr<Instruction> removedChild = container->RemoveInst(inst);
-        inst = removedChild.release();
-    }
-    if (last)
-    {
-        last->LinkAfter(inst);
-    }
-    if (!first)
-    {
-        first = inst;
-    }
-    inst->SetParent(this);
-    last = inst;
+    instructions.AddChild(inst);
 }
 
-void BasicBlock::InsertBefore(Instruction* inst, Instruction* before)
+Function* BasicBlock::Parent() const
 {
-    if (!before)
-    {
-        AddInst(inst);
-    }
-    else
-    {
-        BasicBlock* container = inst->Parent();
-        if (container)
-        {
-            std::unique_ptr<Instruction> removedChild = container->RemoveInst(inst);
-            inst = removedChild.release();
-        }
-        inst->SetParent(this);
-        if (first == before)
-        {
-            first = inst;
-        }
-        before->LinkBefore(inst);
-    }
+    return static_cast<Function*>(GetContainer()->Parent());
 }
 
 void BasicBlock::AddInstruction(Instruction* instruction, MetadataRef* metadataRef)
@@ -162,30 +118,18 @@ void BasicBlock::AddInstruction(Instruction* instruction)
 
 std::unique_ptr<Instruction> BasicBlock::RemoveInst(Instruction* inst)
 {
-    inst->Unlink();
-    if (inst == first)
-    {
-        first = inst->Next();
-    }
-    if (inst == last)
-    {
-        last = inst->Prev();
-    }
-    inst->SetParent(nullptr);
-    inst->SetNext(nullptr);
-    inst->SetPrev(nullptr);
-    return std::unique_ptr<Instruction>(inst);
+    return std::unique_ptr<Instruction>(static_cast<Instruction*>(instructions.RemoveChild(inst).release()));
 }
 
 void BasicBlock::InsertFront(Instruction* instruction)
 {
-    if (IsEmpty())
+    if (instructions.IsEmpty())
     {
-        AddInst(instruction);
+        instructions.AddChild(instruction);
     }
     else
     {
-        InsertBefore(instruction, first);
+        instructions.InsertBefore(instruction, FirstInstruction());
     }
     if (instruction->IsValueInstruction())
     {

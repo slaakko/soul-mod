@@ -13,6 +13,7 @@ import otava.intermediate.type;
 import otava.intermediate.util;
 import otava.intermediate.visitor;
 import util.text.util;
+import util.container;
 
 namespace otava::intermediate {
 
@@ -56,9 +57,7 @@ void Use::Set(Value* value_)
     }
 }
 
-Instruction::Instruction(const SourcePos& sourcePos_, Type* type_, OpCode opCode_) :
-    Value(sourcePos_, ValueKind::instruction, type_), opCode(opCode_), metadataRef(nullptr), index(-1),
-    parent(nullptr), next(nullptr), prev(nullptr)
+Instruction::Instruction(const SourcePos& sourcePos_, Type* type_, OpCode opCode_) : Value(sourcePos_, ValueKind::instruction, type_), opCode(opCode_), metadataRef(nullptr), index(-1)
 {
 }
 
@@ -78,6 +77,11 @@ void Instruction::WriteMetadataRef(util::CodeFormatter& formatter)
 std::string Instruction::Name() const
 {
     return opCodeStr[static_cast<int>(opCode)];
+}
+
+BasicBlock* Instruction::Parent() const
+{
+    return static_cast<BasicBlock*>(GetContainer()->Parent());
 }
 
 bool Instruction::IsLeader() const
@@ -419,12 +423,7 @@ void Instruction::ReplaceUsesWith(Value* value)
 
 std::unique_ptr<Instruction> Instruction::Remove()
 {
-    return parent->RemoveInst(this);
-}
-
-BasicBlock* Instruction::Parent() const
-{
-    return parent;
+    return Parent()->RemoveInst(this);
 }
 
 StoreInstruction::StoreInstruction(const SourcePos& sourcePos_, Value* value_, Value* ptr_) : Instruction(sourcePos_, nullptr, OpCode::store), value(value_), ptr(ptr_)

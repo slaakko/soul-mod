@@ -7,6 +7,8 @@ export module otava.intermediate.basic.block;
 
 import std.core;
 import util.code.formatter;
+import util.component;
+import util.container;
 import soul.ast.source.pos;
 
 export namespace otava::intermediate::basic::block {}
@@ -23,11 +25,10 @@ class MetadataRef;
 const int32_t entryBlockId = -1;
 const int32_t exitBlockId = -2;
 
-class BasicBlock
+class BasicBlock : public util::Component
 {
 public:
     BasicBlock(const SourcePos& sourcePos_, int32_t id_);
-    ~BasicBlock();
     void Write(util::CodeFormatter& formatter);
     void Accept(Visitor& visitor);
     void VisitInstructions(Visitor& visitor);
@@ -35,20 +36,19 @@ public:
     std::string Name() const;
     int32_t Id() const { return id; }
     void SetId(int32_t id_) { id = id_; }
+    bool IsEmpty() const { return instructions.IsEmpty(); }
     Function* Parent() const;
-    void SetParent(Function* parent_);
-    BasicBlock* Next() { return next; }
-    void SetNext(BasicBlock* next_) { next = next_; }
-    BasicBlock* Prev() { return prev; }
-    void SetPrev(BasicBlock* prev_) { prev = prev_; }
-    Instruction* FirstInstruction() { return first; }
-    Instruction* LastInstruction() { return last; }
+    BasicBlock* Next() { return static_cast<BasicBlock*>(NextSibling()); }
+    void SetNext(BasicBlock* next_) { SetNextSibling(next_); }
+    BasicBlock* Prev() { return static_cast<BasicBlock*>(PrevSibling()); }
+    void SetPrev(BasicBlock* prev_) { SetPrevSibling(prev_); }
+    Instruction* FirstInstruction();
+    Instruction* LastInstruction();
     bool HasPhiInstructions();
     void AddInstruction(Instruction* instruction, MetadataRef* metadataRef);
     void AddInstruction(Instruction* instruction);
     void InsertFront(Instruction* instruction);
     std::unique_ptr<Instruction> RemoveInst(Instruction* inst);
-    bool IsEmpty() const { return first == nullptr; }
     bool IsEntryBlock() const { return id == entryBlockId; }
     bool IsExitBlock() const { return id == exitBlockId; }
     const std::vector<BasicBlock*>& Successors() const { return successors; }
@@ -59,49 +59,13 @@ public:
     bool RemovePredecessor(BasicBlock* predecessor);
     void ClearSuccessorsAndPredecessors();
     int IndexOf(Instruction* x);
-    void LinkBefore(BasicBlock* bb)
-    {
-        if (prev)
-        {
-            prev->next = bb;
-        }
-        bb->prev = prev;
-        bb->next = this;
-        prev = bb;
-    }
-    void LinkAfter(BasicBlock* bb)
-    {
-        if (next)
-        {
-            next->prev = bb;
-        }
-        bb->prev = this;
-        bb->next = next;
-        next = bb;
-    }
-    void Unlink()
-    {
-        if (prev)
-        {
-            prev->next = next;
-        }
-        if (next)
-        {
-            next->prev = prev;
-        }
-    }
 private:
     void AddInst(Instruction* inst);
-    void InsertBefore(Instruction* inst, Instruction* before);
     SourcePos sourcePos;
     int32_t id;
     std::vector<BasicBlock*> successors;
     std::vector<BasicBlock*> predecessors;
-    Function* parent;
-    BasicBlock* next;
-    BasicBlock* prev;
-    Instruction* first;
-    Instruction* last;
+    util::Container instructions;
 };
 
 } // namespace otava::intermediate

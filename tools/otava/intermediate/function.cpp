@@ -19,8 +19,7 @@ namespace otava::intermediate {
 
 Function::Function(const SourcePos& sourcePos_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_, Context* context) :
     Value(sourcePos_, ValueKind::function, type_),
-    flags(FunctionFlags::none), sourcePos(sourcePos_), type(type_), name(name_), metadataRef(metadataRef_), nextRegNumber(0),
-    parent(nullptr), next(nullptr), prev(nullptr), first(nullptr), last(nullptr), nextBasicBlockId(0)
+    flags(FunctionFlags::none), sourcePos(sourcePos_), type(type_), name(name_), metadataRef(metadataRef_), nextRegNumber(0), basicBlocks(this), nextBasicBlockId(0)
 {
     entryBlock.reset(new BasicBlock(sourcePos_, nextBasicBlockId++));
     int32_t n = type->ParamTypeRefs().size();
@@ -43,21 +42,25 @@ Function::Function(const SourcePos& sourcePos_, FunctionType* type_, const std::
     }
 }
 
-Function::~Function()
+Code* Function::Parent() const
 {
-    BasicBlock* bb = first;
-    while (bb)
-    {
-        BasicBlock* next = bb->Next();
-        delete bb;
-        bb = next;
-    }
+    return static_cast<Code*>(GetContainer()->Parent());
+}
+
+BasicBlock* Function::FirstBasicBlock()
+{ 
+    return static_cast<BasicBlock*>(basicBlocks.FirstChild()); 
+}
+
+BasicBlock* Function::LastBasicBlock()
+{ 
+    return static_cast<BasicBlock*>(basicBlocks.LastChild()); 
 }
 
 void Function::Finalize()
 {
     int nextBBNumber = 0;
-    BasicBlock* bb = first;
+    BasicBlock* bb = FirstBasicBlock();
     while (bb)
     {
         if (bb->IsEmpty())
@@ -127,14 +130,9 @@ void Function::VisitBasicBlocks(Visitor& visitor)
     }
 }
 
-Code* Function::Parent() const
-{
-    return parent;
-}
-
 BasicBlock* Function::CreateBasicBlock()
 {
-    if (!first)
+    if (!FirstBasicBlock())
     {
         BasicBlock* eb = entryBlock.release();
         AddBasicBlock(eb);
@@ -161,62 +159,17 @@ BasicBlock* Function::GetBasicBlock(int32_t id) const
 
 void Function::AddBasicBlock(BasicBlock* bb)
 {
-    Function* container = bb->Parent();
-    if (container)
-    {
-        std::unique_ptr<BasicBlock> removedChild = container->RemoveBasicBlock(bb);
-        bb = removedChild.release();
-    }
-    if (last)
-    {
-        last->LinkAfter(bb);
-    }
-    if (!first)
-    {
-        first = bb;
-    }
-    bb->SetParent(this);
-    last = bb;
+    basicBlocks.AddChild(bb);
 }
 
 void Function::InsertBefore(BasicBlock* bb, BasicBlock* before)
 {
-    if (!before)
-    {
-        AddBasicBlock(bb);
-    }
-    else
-    {
-        Function* container = bb->Parent();
-        if (container)
-        {
-            std::unique_ptr<BasicBlock> removedChild = container->RemoveBasicBlock(bb);
-            bb = removedChild.release();
-        }
-        bb->SetParent(this);
-        if (first == before)
-        {
-            first = bb;
-        }
-        before->LinkBefore(bb);
-    }
+    basicBlocks.InsertBefore(bb, before);
 }
 
 std::unique_ptr<BasicBlock> Function::RemoveBasicBlock(BasicBlock* bb)
 {
-    bb->Unlink();
-    if (bb == first)
-    {
-        first = bb->Next();
-    }
-    if (bb == last)
-    {
-        last = bb->Prev();
-    }
-    bb->SetParent(nullptr);
-    bb->SetNext(nullptr);
-    bb->SetPrev(nullptr);
-    return std::unique_ptr<BasicBlock>(bb);
+    return std::unique_ptr<BasicBlock>(static_cast<BasicBlock*>(basicBlocks.RemoveChild(bb).release()));
 }
 
 BasicBlock* Function::AddBasicBlock(const SourcePos& sourcePos, int32_t id, Context* context)
@@ -332,7 +285,7 @@ void Function::AddRetBlock(BasicBlock* retBlock)
 
 void Function::AddEntryAndExitBlocks()
 {
-    if (IsEmpty())
+    if (basicBlocks.IsEmpty())
     {
         Error("error adding entry and exit blocks: function '" + Name() + "' has no basic blocks", GetSourcePos(), Parent()->GetContext());
     }
@@ -415,7 +368,7 @@ Value* Function::GetParam(int index) const
 void Function::SetRegNumbers()
 {
     nextRegNumber = 0;
-    BasicBlock* bb = first;
+    BasicBlock* bb = FirstBasicBlock();
     while (bb)
     {
         Instruction* inst = bb->FirstInstruction();

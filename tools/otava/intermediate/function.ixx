@@ -7,6 +7,8 @@ export module otava.intermediate.function;
 
 import std.core;
 import util.code.formatter;
+import util.component;
+import util.container;
 import soul.ast.source.pos;
 import otava.intermediate.value;
 
@@ -46,11 +48,10 @@ constexpr FunctionFlags operator~(FunctionFlags flags)
     return FunctionFlags(~static_cast<int>(flags));
 }
 
-class Function : public Value
+class Function : public Value, public util::Component
 {
 public:
     Function(const SourcePos& sourcePos_, FunctionType* functionType_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_, Context* context);
-    ~Function();
     void Finalize();
     bool Write(util::CodeFormatter& formatter);
     bool GetFlag(FunctionFlags flag) const { return (flags & flag) != FunctionFlags::none; }
@@ -64,19 +65,17 @@ public:
     void Accept(Visitor& visitor);
     void VisitBasicBlocks(Visitor& visitor);
     Code* Parent() const;
-    void SetParent(Code* parent_) { parent = parent_; }
-    Function* Next() { return next; }
-    void SetNext(Function* next_) { next = next_; }
-    Function* Prev() { return prev; }
-    void SetPrev(Function* prev_) { prev = prev_; }
-    bool IsEmpty() const { return first == nullptr; }
+    Function* Next() { return static_cast<Function*>(NextSibling()); }
+    void SetNext(Function* next_) { SetNextSibling(next_); }
+    Function* Prev() { return static_cast<Function*>(PrevSibling()); }
+    void SetPrev(Function* prev_) { SetPrevSibling(prev_); }
     BasicBlock* GetBasicBlock(int32_t id) const;
     BasicBlock* CreateBasicBlock();
     BasicBlock* AddBasicBlock(const SourcePos& sourcePos, int32_t id, Context* context);
     std::unique_ptr<BasicBlock> RemoveBasicBlock(BasicBlock* bb);
     bool DoRemoveBasicBlock(BasicBlock* block);
-    BasicBlock* FirstBasicBlock() { return first; }
-    BasicBlock* LastBasicBlock() { return last; }
+    BasicBlock* FirstBasicBlock();
+    BasicBlock* LastBasicBlock();
     const SourcePos& GetSourcePos() const { return sourcePos; }
     FunctionType* GetType() const { return type; }
     const std::string& Name() const { return name; }
@@ -94,37 +93,6 @@ public:
     void RemoveEntryAndExitBlocks();
     void SetRegNumbers();
     int32_t NextRegNumber() { return nextRegNumber++; }
-    void LinkBefore(Function* fn)
-    {
-        if (prev)
-        {
-            prev->next = fn;
-        }
-        fn->prev = prev;
-        fn->next = this;
-        prev = fn;
-    }
-    void LinkAfter(Function* fn)
-    {
-        if (next)
-        {
-            next->prev = fn;
-        }
-        fn->prev = this;
-        fn->next = next;
-        next = fn;
-    }
-    void Unlink()
-    {
-        if (prev)
-        {
-            prev->next = next;
-        }
-        if (next)
-        {
-            next->prev = prev;
-        }
-    }
     Value* GetParam(int index) const;
 private:
     void AddBasicBlock(BasicBlock* bb);
@@ -142,11 +110,7 @@ private:
     std::vector<std::unique_ptr<RegValue>> regValues;
     std::vector<BasicBlock*> retBlocks;
     int32_t nextRegNumber;
-    Code* parent;
-    Function* next;
-    Function* prev;
-    BasicBlock* first;
-    BasicBlock* last;
+    util::Container basicBlocks;
     int32_t nextBasicBlockId;
 };
 

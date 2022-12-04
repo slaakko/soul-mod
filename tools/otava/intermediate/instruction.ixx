@@ -8,6 +8,7 @@ export module otava.intermediate.instruction;
 import std.core;
 import soul.ast.source.pos;
 import util.code.formatter;
+import util.component;
 import otava.intermediate.data;
 import otava.intermediate.value;
 
@@ -56,7 +57,7 @@ private:
     Value*& value;
 };
 
-class Instruction : public Value
+class Instruction : public Value, public util::Component
 {
 public:
     Instruction(const SourcePos& sourcePos_, Type* type_, OpCode opCode_);
@@ -65,8 +66,9 @@ public:
     void WriteMetadataRef(util::CodeFormatter& formatter);
     std::string Name() const;
     virtual void Accept(Visitor& visitor) = 0;
-    Instruction* Next() { return next; }
-    Instruction* Prev() { return prev; }
+    Instruction* Next() { return static_cast<Instruction*>(NextSibling()); }
+    Instruction* Prev() { return static_cast<Instruction*>(PrevSibling()); }
+    BasicBlock* Parent() const;
     OpCode GetOpCode() const { return opCode; }
     void SetMetadataRef(MetadataRef* metadataRef_) { metadataRef = metadataRef_; }
     MetadataRef* GetMetadataRef() const { return metadataRef; }
@@ -96,51 +98,11 @@ public:
     void ReplaceUsesWith(Value* value);
     int Index() const { return index; }
     void SetIndex(int index_) { index = index_; }
-    BasicBlock* Parent() const { return parent; }
-    void SetParent(BasicBlock* parent_) { parent = parent_; }
-    Instruction* Next() const { return next; }
-    void SetNext(Instruction* next_) { next = next_; }
-    Instruction* Prev() const { return prev; }
-    void SetPrev(Instruction* prev_) { prev = prev_; }
-    void LinkBefore(Instruction* inst)
-    {
-        if (prev)
-        {
-            prev->next = inst;
-        }
-        inst->prev = prev;
-        inst->next = this;
-        prev = inst;
-    }
-    void LinkAfter(Instruction* inst)
-    {
-        if (next)
-        {
-            next->prev = inst;
-        }
-        inst->prev = this;
-        inst->next = next;
-        next = inst;
-    }
-    void Unlink()
-    {
-        if (prev)
-        {
-            prev->next = next;
-        }
-        if (next)
-        {
-            next->prev = prev;
-        }
-    }
 private:
     OpCode opCode;
     MetadataRef* metadataRef;
     std::vector<Instruction*> users;
     int index;
-    BasicBlock* parent;
-    Instruction* next;
-    Instruction* prev;
 };
 
 class StoreInstruction : public Instruction
@@ -640,5 +602,3 @@ public:
 };
 
 } // namespace otava::intermediate
-
-

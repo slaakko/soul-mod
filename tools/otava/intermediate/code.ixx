@@ -9,6 +9,8 @@ import std.core;
 import otava.intermediate.data;
 import otava.intermediate.metadata;
 import util.code.formatter;
+import util.component;
+import util.container;
 
 export namespace otava::intermediate {
 
@@ -17,11 +19,10 @@ class BasicBlock;
 class FunctionType;
 class Visitor;
 
-class Code 
+class Code : public util::Component
 {
 public:
     Code();
-    ~Code();
     void Finalize();
     void Write(util::CodeFormatter& formatter);
     Context* GetContext() const { return context; }
@@ -32,16 +33,15 @@ public:
     Function* GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
     Function* AddFunctionDefinition(const SourcePos& sourcePos, FunctionType* functionType, const std::string& functionId, bool once, MetadataRef* metadataRef, Context* context);
     Function* AddFunctionDeclaration(const SourcePos& sourcePos, FunctionType* functionType, const std::string& functionId);
-    Function* FirstFunction() { return first; }
-    Function* LastFunction() { return last; }
+    Function* FirstFunction();
+    Function* LastFunction();
     void VisitFunctions(Visitor& visitor);
     void AddFunction(Function* fn);
     std::unique_ptr<Function> RemoveFunction(Function* fn);
 private:
     Context* context;
     Function* currentFunction;
-    Function* first;
-    Function* last;
+    util::Container functions;
     std::map<std::string, Function*> functionMap;
 };
 
