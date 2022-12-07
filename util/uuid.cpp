@@ -3,48 +3,72 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#ifdef _WIN32
-#include <rpc.h>
-#pragma comment(lib, "rpcrt4.lib")
-#endif
-
 module util.uuid;
 
 import util.text.util;
+import util.rand;
 
 namespace util {
 
-void UuidToInts(const boost::uuids::uuid& id, uint64_t& int1, uint64_t& int2)
+uuid::uuid()
 {
-#ifndef NDEBUG
-    static_assert(boost::uuids::uuid::static_size() == 2 * sizeof(uint64_t), "16 bytes expected");
-#endif
-    const uint8_t* i = id.begin();
+    for (auto& byte : data)
+    {
+        byte = 0;
+    }
+}
+
+uuid uuid::random()
+{
+    uuid rand_uuid;
+    for (auto& byte : rand_uuid.data)
+    {
+        byte = get_random_byte();
+    }
+    return rand_uuid;
+}
+
+bool operator==(const uuid& left, const uuid& right)
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        if (left.data[i] != right.data[i]) return false;
+    }
+    return true;
+}
+
+bool operator<(const uuid& left, const uuid& right)
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        if (left.data[i] < right.data[i]) return true;
+        if (left.data[i] > right.data[i]) return false;
+    }
+    return false;
+}
+
+void UuidToInts(const uuid& id, uint64_t& int1, uint64_t& int2)
+{
+    const uint8_t* i = &id.data[0];
     const uint64_t* i64 = reinterpret_cast<const uint64_t*>(i);
     int1 = *i64++;
     int2 = *i64;
 }
 
-void IntsToUuid(uint64_t int1, uint64_t int2, boost::uuids::uuid& id)
+void IntsToUuid(uint64_t int1, uint64_t int2, uuid& id)
 {
-#ifndef NDEBUG
-    static_assert(boost::uuids::uuid::static_size() == 2 * sizeof(uint64_t), "16 bytes expected");
-#endif
-    uint8_t* i = id.begin();
+    uint8_t* i = &id.data[0];
     uint64_t* i64 = reinterpret_cast<uint64_t*>(i);
     *i64++ = int1;
     *i64 = int2;
 }
 
-void RandomUuid(boost::uuids::uuid& id)
+void RandomUuid(uuid& id)
 {
-    UUID u;
-    UuidCreate(&u);
-    id = *static_cast<boost::uuids::uuid*>(static_cast<void*>(&u));
+    id = uuid::random();
 }
 
-std::string ToString(const boost::uuids::uuid& uuid)
+std::string ToString(const uuid& uuid)
 {
     std::string s;
     int index = 0;
@@ -60,15 +84,15 @@ std::string ToString(const boost::uuids::uuid& uuid)
     return s;
 }
 
-boost::uuids::uuid ParseUuid(const std::string& str)
+uuid ParseUuid(const std::string& str)
 {
-    if (str.length() != 2 * boost::uuids::uuid::static_size() + 4)
+    if (str.length() != 2 * uuid::static_size() + 4)
     {
-        throw std::runtime_error("wrong number of hex bytes in uuid string '" + str + "'." + std::to_string(boost::uuids::uuid::static_size()) + " hex bytes + 4 hyphens expected.");
+        throw std::runtime_error("wrong number of hex bytes in uuid string '" + str + "'." + std::to_string(uuid::static_size()) + " hex bytes + 4 hyphens expected.");
     }
-    boost::uuids::uuid uuid;
+    uuid uuid;
     int index = 0;
-    for (long i = 0; i < boost::uuids::uuid::static_size(); ++i)
+    for (long i = 0; i < uuid::static_size(); ++i)
     {
         std::string hexByteStr = str.substr(index, 2);
         uint8_t hexByte = ParseHexByte(hexByteStr);

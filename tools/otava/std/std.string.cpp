@@ -49,7 +49,7 @@ string::string(string&& that) : chars(that.chars), len(that.len), res(that.res)
 	that.res = 0;
 }
 
-string::string(ssize_t count, char c)
+string::string(ssize_t count, char c) : chars(nullptr), len(count), res(0)
 {
 	if (count > 0)
 	{
@@ -95,7 +95,7 @@ void string::grow(ssize_t min_res)
 {
 	min_res = std::grow_size(min_res);
 	char* new_chars = static_cast<char*>(malloc(min_res));
-	if (new_chars)
+	if (chars)
 	{
 		scpy(new_chars, chars);
 		free(chars);

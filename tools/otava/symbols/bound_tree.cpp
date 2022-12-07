@@ -127,6 +127,14 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         {
             return "boundFunctionCallNode";
         }
+        case BoundNodeKind::boundExpressionSequenceNode:
+        {
+            return "boundExpressionSequenceNode";
+        }
+        case BoundNodeKind::boundExpressionListNode:
+        {
+            return "boundExpressionListNode";
+        }
         case BoundNodeKind::boundDisjunctionNode:
         {
             return "boundDisjunctionNode";
@@ -669,10 +677,18 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
             {
                 ptr = emitter.EmitLoad(ptr);
             }
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(ptr);
+            }
             emitter.EmitStore(value, ptr);
         }
         else
         {
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(ptr);
+            }
             emitter.EmitStore(value, ptr);
         }
     }
@@ -695,10 +711,18 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
             {
                 elementPtr = emitter.EmitLoad(elementPtr);
             }
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(elementPtr);
+            }
             emitter.EmitStore(value, elementPtr);
         }
         else
         {
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(elementPtr);
+            }
             emitter.EmitStore(value, elementPtr);
         }
     }
@@ -714,10 +738,18 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
             {
                 ptr = emitter.EmitLoad(ptr);
             }
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(ptr);
+            }
             emitter.EmitStore(value, ptr);
         }
         else
         {
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(ptr);
+            }
             emitter.EmitStore(value, ptr);
         }
     }
@@ -787,10 +819,18 @@ void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const sou
         {
             ptr = emitter.EmitLoad(ptr);
         }
+        if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+        {
+            context->SetPtr(ptr);
+        }
         emitter.EmitStore(value, ptr);
     }
     else
     {
+        if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+        {
+            context->SetPtr(ptr);
+        }
         emitter.EmitStore(value, ptr);
     }
 }
@@ -944,10 +984,18 @@ void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const 
             {
                 ptr = emitter.EmitLoad(ptr);
             }
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(ptr);
+            }
             emitter.EmitStore(value, ptr);
         }
         else
         {
+            if ((flags & OperationFlags::setPtr) != OperationFlags::none)
+            {
+                context->SetPtr(ptr);
+            }
             emitter.EmitStore(emitter.EmitLoad(value), ptr);
         }
     }
@@ -972,6 +1020,51 @@ BoundExpressionNode* BoundFunctionCallNode::Clone() const
         clone->AddArgument(arg->Clone());
     }
     return clone;
+}
+
+BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::SourcePos& sourcePos_, BoundExpressionNode* left_, BoundExpressionNode* right_) : 
+    BoundExpressionNode(BoundNodeKind::boundExpressionSequenceNode, sourcePos_, right_->GetType()), left(left_), right(right_)
+{
+}
+
+void BoundExpressionSequenceNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+bool BoundExpressionSequenceNode::IsLvalueExpression() const
+{
+    return right->IsLvalueExpression();
+}
+
+BoundExpressionNode* BoundExpressionSequenceNode::Clone() const
+{
+    return new BoundExpressionSequenceNode(GetSourcePos(), left->Clone(), right->Clone());
+}
+
+void BoundExpressionSequenceNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    left->Load(emitter, flags, sourcePos, context);
+    if (left->HasValue())
+    {
+        emitter.Stack().Pop();
+    }
+    right->Load(emitter, flags, sourcePos, context);
+}
+
+void BoundExpressionSequenceNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    left->Load(emitter, flags, sourcePos, context);
+    if (left->HasValue())
+    {
+        emitter.Stack().Pop();
+    }
+    right->Store(emitter, flags, sourcePos, context);
+}
+
+bool BoundExpressionSequenceNode::HasValue() const
+{
+    return right->HasValue();
 }
 
 BoundExpressionListNode::BoundExpressionListNode(const soul::ast::SourcePos& sourcePos_) :
@@ -1173,7 +1266,7 @@ void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const sou
 {
     if (!subject->IsBoundDereferenceNode())
     {
-        subject->Store(emitter, OperationFlags::addr, sourcePos, context);
+        subject->Store(emitter, OperationFlags::addr | (flags & OperationFlags::setPtr), sourcePos, context);
     }
     else
     {
@@ -1221,7 +1314,7 @@ void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const s
 {
     if (!subject->IsBoundAddressOfNode())
     {
-        subject->Store(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), sourcePos, context);
+        subject->Store(emitter, SetDerefCount(OperationFlags::deref | (flags & OperationFlags::setPtr), GetDerefCount(flags) + 1), sourcePos, context);
     }
     else
     {

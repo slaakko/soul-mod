@@ -3,9 +3,6 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#include <boost/uuid/uuid.hpp>
-
 export module util.binary.stream.writer;
 import std.core;
 import util.boost.uuid;

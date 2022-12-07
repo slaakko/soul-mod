@@ -243,8 +243,9 @@ void PointerCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpr
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
-    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
-    args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
+    args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+    emitter.Stack().Push(context->Ptr());
+    //args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
 }
 
 class PointerCopyAssignmentOperation : public Operation
@@ -310,8 +311,9 @@ void PointerMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpr
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
     otava::intermediate::Value* refValue = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLoad(refValue));
-    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
-    args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
+    args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+    emitter.Stack().Push(context->Ptr());
+    //args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
 }
 
 class PointerMoveAssignmentOperation : public Operation

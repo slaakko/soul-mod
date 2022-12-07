@@ -3,9 +3,12 @@
 // Distributed under the MIT license
 // =================================
 
-export module ort;
+export module util.rand;
 
 import std.core;
 
-export extern "C" void prints(const char* s);
-export extern "C" uint8_t get_random_byte();
+export namespace util {
+
+uint8_t get_random_byte();
+
+} // namespace util

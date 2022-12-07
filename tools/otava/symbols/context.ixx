@@ -11,6 +11,7 @@ import soul.lexer.file.map;
 import soul.ast.source.pos;
 import otava.ast.node;
 import otava.ast.function;
+import otava.intermediate.value;
 
 export namespace otava::symbols {
 
@@ -104,6 +105,8 @@ public:
     otava::ast::Node* GetFunctionDefinitionNode() const { return functionDefinitionNode; }
     void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }
     AliasTypeSymbol* GetAliasType() const { return aliasType; }
+    void SetPtr(otava::intermediate::Value* ptr_) { ptr = ptr_; }
+    otava::intermediate::Value* Ptr() const { return ptr; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -119,6 +122,7 @@ private:
     FunctionDefinitionSymbol* specialization;
     otava::ast::FunctionDefinitionNode* functionDefinitionNode;
     AliasTypeSymbol* aliasType;
+    otava::intermediate::Value* ptr;
 };
 
 } // namespace otava::symbols

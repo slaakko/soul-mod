@@ -563,8 +563,15 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     else
     {
         std::vector<std::pair<Scope*, ScopeLookup>> scopeLookups;
-        scopeLookups.push_back(std::make_pair(scope, ScopeLookup::allScopes));
-        AddArgumentScopes(scopeLookups, args);
+        if ((flags & OverloadResolutionFlags::dontSearchArgumentScopes) != OverloadResolutionFlags::none)
+        {
+            scopeLookups.push_back(std::make_pair(scope, ScopeLookup::thisScope));
+        }
+        else
+        {
+            scopeLookups.push_back(std::make_pair(scope, ScopeLookup::allScopes));
+            AddArgumentScopes(scopeLookups, args);
+        }
         context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, args.size(), viableFunctions, context);
     }
     FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, sourcePos, context, ex);
@@ -590,15 +597,21 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
 }
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Context* context, OverloadResolutionFlags flags)
 {
     Exception ex;
-    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex);
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex, flags);
     if (!boundFunctionCall)
     {
         ThrowException(ex);
     }
     return boundFunctionCall;
+}
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return ResolveOverloadThrow(scope, groupName, args, sourcePos, context, OverloadResolutionFlags::none);
 }
 
 } // namespace otava::symbols

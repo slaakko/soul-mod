@@ -18,7 +18,7 @@ class Exception;
 
 enum class OverloadResolutionFlags : int32_t
 {
-    none = 0, dontInstantiate = 1 << 0
+    none = 0, dontInstantiate = 1 << 0, dontSearchArgumentScopes = 1 << 1
 };
 
 constexpr OverloadResolutionFlags operator|(OverloadResolutionFlags left, OverloadResolutionFlags right)
@@ -41,6 +41,9 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex);
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, OverloadResolutionFlags flags);
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context);

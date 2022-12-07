@@ -157,6 +157,7 @@ public:
     void SetBound() { SetFlag(FunctionSymbolFlags::bound); }
     bool IsSpecialization() const { return GetFlag(FunctionSymbolFlags::specialization); }
     void SetSpecialization() { SetFlag(FunctionSymbolFlags::specialization); }
+    std::u32string NextTemporaryName();
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;

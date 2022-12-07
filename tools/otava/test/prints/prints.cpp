@@ -10,8 +10,17 @@ int main()
     prints("\n");
 
     const char* us = "qwerty";
-    //std::string u(us, us + 3);
-    //prints(u.c_str());
-    //prints("\n");
+    std::string u(us, us + 3);
+    prints(u.c_str());
+    prints("\n");
+
+    std::string c(u);
+    prints(c.c_str());
+    prints("\n");
+
+    std::string d(std::move(c));
+    prints(d.c_str());
+    prints("\n");
+
     return 0;
 }

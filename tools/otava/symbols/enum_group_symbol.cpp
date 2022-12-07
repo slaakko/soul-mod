@@ -3,9 +3,6 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#include <boost/uuid/uuid.hpp>
-
 module otava.symbols.enum_group.symbol;
 
 import otava.symbols.enums;

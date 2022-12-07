@@ -514,6 +514,19 @@ GlobalVariable* Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, 
     }
 }
 
+GlobalVariable* Data::GetGlobalVariableForString(Value* stringValue)
+{
+    auto it = globalStringVariableMap.find(stringValue);
+    if (it != globalStringVariableMap.cend())
+    {
+        return it->second;
+    }
+    GlobalVariable* globalVariable = context->AddGlobalVariable(otava::intermediate::SourcePos(), 
+        context->MakePtrType(context->GetByteType()), context->GetNextStringValueId(), stringValue, false);
+    globalStringVariableMap[stringValue] = globalVariable;
+    return globalVariable;
+}
+
 Value* Data::GetTrueValue(const Types& types)
 {
     if (!trueValue)
@@ -897,7 +910,16 @@ Value* Data::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const st
     if (it != globalVariableMap.cend())
     {
         GlobalVariable* globalVariable = it->second;
-        AddressValue* addressValue = new AddressValue(sourcePos, globalVariable, globalVariable->GetType());
+        Type* type = nullptr;
+        if (globalVariable->Initializer()->IsStringValue())
+        {
+            type = globalVariable->GetType();
+        }
+        else
+        {
+            type = globalVariable->GetType()->AddPointer(context);
+        }
+        AddressValue* addressValue = new AddressValue(sourcePos, globalVariable, type);
         values.push_back(std::unique_ptr<Value>(addressValue));
         return addressValue;
     }

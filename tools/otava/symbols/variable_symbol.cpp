@@ -3,9 +3,6 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#include <boost/uuid/uuid.hpp>
-
 module otava.symbols.variable.symbol;
 
 import otava.symbols.modules;

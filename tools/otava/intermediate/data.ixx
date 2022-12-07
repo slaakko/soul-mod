@@ -281,6 +281,7 @@ public:
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
     GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context);
+    GlobalVariable* GetGlobalVariableForString(Value* stringValue);
     Value* GetTrueValue(const Types& types);
     Value* GetFalseValue(const Types& types);
     Value* GetSByteValue(int8_t value, const Types& types);
@@ -322,6 +323,7 @@ private:
     std::vector<std::unique_ptr<Value>> values;
     std::vector<GlobalVariable*> globalVariables;
     std::map<std::string, GlobalVariable*> globalVariableMap;
+    std::map<Value*, GlobalVariable*> globalStringVariableMap;
     std::unique_ptr<BoolValue> trueValue;
     std::unique_ptr<BoolValue> falseValue;
     ValueMap<int8_t> sbyteValueMap;

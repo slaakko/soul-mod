@@ -1,0 +1,3 @@
+project at3;
+target=program;
+source <at3.cpp>;

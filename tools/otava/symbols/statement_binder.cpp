@@ -465,8 +465,13 @@ void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
 
 void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
 {
+    node.Declaration()->Accept(*this);
+}
+
+void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
+{
     BoundCompoundStatementNode* boundCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
-    std::unique_ptr<DeclarationList> declarationList = context->ReleaseDeclarationList(node.Declaration());
+    std::unique_ptr<DeclarationList> declarationList = context->ReleaseDeclarationList(&node);
     if (declarationList)
     {
         for (auto& declaration : declarationList->declarations)
@@ -500,9 +505,9 @@ void StatementBinder::Visit(otava::ast::DeclarationStatementNode& node)
                     arguments.push_back(std::unique_ptr<BoundExpressionNode>(initializer));
                 }
             }
-            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", arguments, 
+            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", arguments,
                 node.GetSourcePos(), context);
-            BoundConstructionStatementNode * boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
+            BoundConstructionStatementNode* boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
             boundCompoundStatement->AddStatement(boundConstructionStatement);
             functionDefinitionSymbol->AddLocalVariable(variable);
         }

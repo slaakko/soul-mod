@@ -626,6 +626,7 @@ void EmitPtrDiff(PtrDiffInstruction& inst, CodeGenerator& codeGen)
     otava::assembly::Register* rcx = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rcx);
     movInst->AddOperand(rcx);
     movInst->AddOperand(assemblyContext.MakeLiteral(scaleFactor, 8));
+    codeGen.Emit(movInst);
     otava::assembly::Instruction* subInst = new otava::assembly::Instruction(otava::assembly::OpCode::SUB);
     otava::assembly::RegisterGroup* regGroup = codeGen.RegAllocator()->GetRegisterGroup(&inst);
     if (regGroup)
@@ -636,6 +637,11 @@ void EmitPtrDiff(PtrDiffInstruction& inst, CodeGenerator& codeGen)
         otava::assembly::Register* rightReg = MakeRegOperand(inst.RightPtr(), assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbx), codeGen);
         subInst->AddOperand(rightReg);
         codeGen.Emit(subInst);
+        otava::assembly::Register* rdx = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rdx);
+        otava::assembly::Instruction* xorInst = new otava::assembly::Instruction(otava::assembly::OpCode::XOR);
+        xorInst->AddOperand(rdx);
+        xorInst->AddOperand(rdx);
+        codeGen.Emit(xorInst);
         otava::assembly::Register* rax = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rax);
         otava::assembly::Instruction* movInst = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
         movInst->AddOperand(rax);
@@ -1121,8 +1127,28 @@ void EmitIntegerBinOpInst(BinaryInstruction& inst, CodeGenerator& codeGen)
             resultOperandReg = leftOperandReg;
             break;
         }
-        case OpCode::mul:
         case OpCode::div_:
+        {
+            otava::assembly::Register* rdx = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax);
+            otava::assembly::Instruction* xorInst = new otava::assembly::Instruction(otava::assembly::OpCode::XOR);
+            xorInst->AddOperand(rdx);
+            xorInst->AddOperand(rdx);
+            codeGen.Emit(xorInst);
+            otava::assembly::Register* rax = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax);
+            leftOperandReg = MakeRegOperand(inst.Left(), assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax), codeGen);
+            if (leftOperandReg->Group() != otava::assembly::RegisterGroupKind::rax)
+            {
+                otava::assembly::Instruction* movInstruction = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
+                movInstruction->AddOperand(rax);
+                movInstruction->AddOperand(leftOperandReg);
+                codeGen.Emit(movInstruction);
+            }
+            resultOperandReg = rax;
+            rightOperandReg = MakeRegOperand(inst.Right(), assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rbx), codeGen);
+            instruction->AddOperand(rightOperandReg);
+            break;
+        }
+        case OpCode::mul:
         {
             otava::assembly::Register* rax = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax);
             leftOperandReg = MakeRegOperand(inst.Left(), assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax), codeGen);
@@ -1140,8 +1166,12 @@ void EmitIntegerBinOpInst(BinaryInstruction& inst, CodeGenerator& codeGen)
         }
         case OpCode::mod:
         {
-            otava::assembly::Register* rax = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax);
             otava::assembly::Register* rdx = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rdx);
+            otava::assembly::Instruction* xorInst = new otava::assembly::Instruction(otava::assembly::OpCode::XOR);
+            xorInst->AddOperand(rdx);
+            xorInst->AddOperand(rdx);
+            codeGen.Emit(xorInst);
+            otava::assembly::Register* rax = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax);
             leftOperandReg = MakeRegOperand(inst.Left(), assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax), codeGen);
             if (leftOperandReg->Group() != otava::assembly::RegisterGroupKind::rax)
             {

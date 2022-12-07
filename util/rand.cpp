@@ -2,15 +2,25 @@
 // Copyright (c) 2022 Seppo Laakko
 // Distributed under the MIT license
 // =================================
-module;
-#include <stdio.h>
 
-module ort;
+module util.rand;
 
-void prints(const char* s)
+#ifdef OTAVA
+
+extern "C" uint8_t get_random_byte();
+
+#endif
+
+namespace util {
+
+#ifdef OTAVA
+
+uint8_t get_random_byte()
 {
-    fwrite(s, strlen(s), 1, stdout);
+    return ::get_random_byte();
 }
+
+#else
 
 uint8_t get_random_byte()
 {
@@ -19,3 +29,7 @@ uint8_t get_random_byte()
     static std::uniform_int_distribution<> dist(0, 255);
     return dist(mt);
 }
+
+#endif
+
+} // namespace util

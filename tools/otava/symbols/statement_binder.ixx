@@ -49,6 +49,7 @@ public:
     void Visit(otava::ast::ReturnStatementNode& node) override;
     void Visit(otava::ast::ExpressionStatementNode& node) override;
     void Visit(otava::ast::DeclarationStatementNode& node) override;
+    void Visit(otava::ast::SimpleDeclarationNode& node) override;
 private:
     void SetStatement(BoundStatementNode* statement);
     Context* context;

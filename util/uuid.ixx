@@ -1,6 +1,3 @@
-module;
-#include <boost/uuid/uuid.hpp>
-
 export module util.uuid;
 
 import std.core;
@@ -8,7 +5,21 @@ import util.boost.uuid;
 
 export namespace util {
 
-using uuid = boost::uuids::uuid;
+struct uuid
+{
+    using value_type = uint8_t;
+    uuid();
+    static uuid random();
+    static constexpr int static_size() { return 16; }
+    const std::uint8_t* begin() const { return &data[0]; }
+    const std::uint8_t* end() const { return &data[static_size()]; }
+    std::uint8_t* begin() { return &data[0]; }
+    std::uint8_t* end() { return &data[static_size()]; }
+    std::uint8_t data[16];
+};
+
+bool operator==(const uuid& left, const uuid& right);
+bool operator<(const uuid& left, const uuid& right);
 
 void UuidToInts(const uuid& id, uint64_t& int1, uint64_t& int2);
 void IntsToUuid(uint64_t int1, uint64_t int2, uuid& id);
@@ -16,35 +27,14 @@ void RandomUuid(uuid& id);
 std::string ToString(const uuid& uuid);
 uuid ParseUuid(const std::string& str);
 
-} // namespace util
-
-export namespace util::uuids {
-
-struct nil_generator 
+inline uuid nil_uuid()
 {
-    using result_type = uuid;
-
-    uuid operator()() const 
-    {
-        uuid u = { {0} };
-        return u;
-    }
-};
-
-} // namespace util::uuid
-
-export namespace util {
-
-inline uuid nil_uuid() 
-{
-    return util::uuids::nil_generator()();
+    return uuid();
 }
 
 inline uuid random_uuid()
 {
-    uuid id;
-    RandomUuid(id);
-    return id;
+    return uuid::random();
 }
 
 } // namespace util

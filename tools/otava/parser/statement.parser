@@ -540,8 +540,20 @@ parser StatementParser
         ;
 
     InitStatement(otava::symbols::Context* context) : otava::ast::Node*
-        ::= SimpleDeclaration(context):simpleDeclaration{ return simpleDeclaration; }
-        |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
+        ::= 
+        (
+            empty{ context->PushSetFlag(otava::symbols::ContextFlags::saveDeclarations); }
+            (   SimpleDeclaration(context):simpleDeclaration{ return simpleDeclaration; }
+            |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
+            )
+            {
+                context->PopFlags();
+            }
+            /
+            {
+                context->PopFlags();
+            }
+        )
         ;
 
     Condition(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> declSpecifiers) : otava::ast::Node*

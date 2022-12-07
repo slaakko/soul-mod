@@ -154,6 +154,11 @@ GlobalVariable* Context::AddGlobalVariable(const SourcePos& sourcePos, Type* typ
     return data->AddGlobalVariable(sourcePos, type, variableName, initializer, once, this);
 }
 
+GlobalVariable* Context::GetGlobalVariableForString(otava::intermediate::Value* stringValue)
+{
+    return data->GetGlobalVariableForString(stringValue);
+}
+
 void Context::ResolveTypes()
 {
     types->Resolve(this);

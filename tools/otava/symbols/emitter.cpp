@@ -3,9 +3,6 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#include <boost/uuid/uuid.hpp>
-
 module otava.symbols.emitter;
 
 import otava.intermediate.register_allocator;
@@ -268,8 +265,7 @@ otava::intermediate::Value* Emitter::EmitStructureValue(const std::vector<otava:
 otava::intermediate::Value* Emitter::EmitStringValue(const std::string& value)
 {
     otava::intermediate::Value* stringValue = context->MakeStringValue(otava::intermediate::SourcePos(), value);
-    otava::intermediate::GlobalVariable* globalVar = context->AddGlobalVariable(otava::intermediate::SourcePos(), 
-        context->MakePtrType(context->GetByteType()), context->GetNextStringValueId(), stringValue, false);
+    otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(stringValue);
     return globalVar;
 }
 

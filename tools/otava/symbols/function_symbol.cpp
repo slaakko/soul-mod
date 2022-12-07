@@ -3,9 +3,6 @@
 // Distributed under the MIT license
 // =================================
 
-module;
-#include <boost/uuid/uuid.hpp>
-
 module otava.symbols.function.symbol;
 
 import otava.symbols.modules;
@@ -85,7 +82,7 @@ std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind)
 {
     switch (specialFunctionKind)
     {
-        case SpecialFunctionKind::defaultCtor: return "ctor";
+        case SpecialFunctionKind::defaultCtor: return "default_ctor";
         case SpecialFunctionKind::copyCtor: return "copy_ctor";
         case SpecialFunctionKind::moveCtor: return "move_ctor";
         case SpecialFunctionKind::copyAssignment: return "copy_assignment";
@@ -637,6 +634,7 @@ std::string FunctionSymbol::IrName(Context* context) const
 
 void FunctionSymbol::AddLocalVariable(VariableSymbol* localVariable)
 {
+    if (std::find(localVariables.begin(), localVariables.end(), localVariable) != localVariables.end()) return;
     if (!localVariable->Parent())
     {
         localVariable->SetParent(this);
@@ -653,9 +651,14 @@ void FunctionSymbol::RemoveLocalVariable(VariableSymbol* variable)
     }
 }
 
+std::u32string FunctionSymbol::NextTemporaryName()
+{
+    return U"@t" + util::ToUtf32(std::to_string(nextTemporaryId++));
+}
+
 VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
 {
-    VariableSymbol* temporary = new VariableSymbol(U"@t" + util::ToUtf32(std::to_string(nextTemporaryId++)));
+    VariableSymbol* temporary = new VariableSymbol(NextTemporaryName());
     temporary->SetDeclaredType(type);
     AddLocalVariable(temporary);
     return temporary;

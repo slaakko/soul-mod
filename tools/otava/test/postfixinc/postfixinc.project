@@ -1,0 +1,3 @@
+project postfixinc;
+target=program;
+source <postfixinc.cpp>;

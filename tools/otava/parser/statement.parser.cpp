@@ -5504,52 +5504,101 @@ soul::parser::Match StatementParser<Lexer>::InitStatement(Lexer& lexer, otava::s
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t save = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            int64_t pos = lexer.GetPos();
-            soul::parser::Match match = DeclarationParser<Lexer>::SimpleDeclaration(lexer, context);
-            simpleDeclaration.reset(static_cast<otava::ast::Node*>(match.value));
-            if (match.hit)
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
             {
+                int64_t pos = lexer.GetPos();
+                soul::parser::Match match(true);
+                if (match.hit)
                 {
-                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitStatement");
-                    #endif
-                    return soul::parser::Match(true, simpleDeclaration.release());
+                    context->PushSetFlag(otava::symbols::ContextFlags::saveDeclarations);
                 }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch3 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch4 = &match;
+                {
+                    int64_t pos = lexer.GetPos();
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch5 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch6 = &match;
+                        {
+                            int64_t save = lexer.GetPos();
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch7 = &match;
+                            {
+                                int64_t pos = lexer.GetPos();
+                                soul::parser::Match match = DeclarationParser<Lexer>::SimpleDeclaration(lexer, context);
+                                simpleDeclaration.reset(static_cast<otava::ast::Node*>(match.value));
+                                if (match.hit)
+                                {
+                                    {
+                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitStatement");
+                                        #endif
+                                        return soul::parser::Match(true, simpleDeclaration.release());
+                                    }
+                                }
+                                *parentMatch7 = match;
+                            }
+                            *parentMatch6 = match;
+                            if (!match.hit)
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch8 = &match;
+                                lexer.SetPos(save);
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch9 = &match;
+                                    {
+                                        int64_t pos = lexer.GetPos();
+                                        soul::parser::Match match = StatementParser<Lexer>::ExpressionStatement(lexer, context);
+                                        expressionStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                                        if (match.hit)
+                                        {
+                                            {
+                                                #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitStatement");
+                                                #endif
+                                                return soul::parser::Match(true, expressionStatement.release());
+                                            }
+                                        }
+                                        *parentMatch9 = match;
+                                    }
+                                    *parentMatch8 = match;
+                                }
+                                *parentMatch6 = match;
+                            }
+                        }
+                        *parentMatch5 = match;
+                    }
+                    if (match.hit)
+                    {
+                        context->PopFlags();
+                    }
+                    else
+                    {
+                        context->PopFlags();
+                    }
+                    *parentMatch4 = match;
+                }
+                *parentMatch3 = match;
             }
             *parentMatch1 = match;
         }
         *parentMatch0 = match;
-        if (!match.hit)
-        {
-            soul::parser::Match match(false);
-            soul::parser::Match* parentMatch2 = &match;
-            lexer.SetPos(save);
-            {
-                soul::parser::Match match(false);
-                soul::parser::Match* parentMatch3 = &match;
-                {
-                    int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = StatementParser<Lexer>::ExpressionStatement(lexer, context);
-                    expressionStatement.reset(static_cast<otava::ast::Node*>(match.value));
-                    if (match.hit)
-                    {
-                        {
-                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InitStatement");
-                            #endif
-                            return soul::parser::Match(true, expressionStatement.release());
-                        }
-                    }
-                    *parentMatch3 = match;
-                }
-                *parentMatch2 = match;
-            }
-            *parentMatch0 = match;
-        }
     }
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (parser_debug_write_to_log)

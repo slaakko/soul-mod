@@ -36,6 +36,7 @@ class BoundFunctionGroupNode;
 class BoundTypeNode;
 class BoundMemberExprNode;
 class BoundFunctionCallNode;
+class BoundExpressionSequenceNode;
 class BoundExpressionListNode;
 class BoundConjunctionNode;
 class BoundDisjunctionNode;
@@ -78,6 +79,7 @@ public:
     virtual void Visit(BoundTypeNode& node) {}
     virtual void Visit(BoundMemberExprNode& node) {}
     virtual void Visit(BoundFunctionCallNode& node) {}
+    virtual void Visit(BoundExpressionSequenceNode& node) {}
     virtual void Visit(BoundExpressionListNode& node) {}
     virtual void Visit(BoundConjunctionNode& node) {}
     virtual void Visit(BoundDisjunctionNode& node) {}

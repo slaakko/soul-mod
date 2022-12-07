@@ -14,7 +14,7 @@ export namespace otava::symbols {
 
 enum class OperationFlags : int32_t
 {
-    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, derefCount = 0xFF << 8
+    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, setPtr = 1 << 4, derefCount = 0xFF << 8
 };
 
 constexpr OperationFlags operator|(OperationFlags left, OperationFlags right)
@@ -68,7 +68,7 @@ enum class BoundNodeKind
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
     boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
     boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundExpressionListNode,
-    boundConjunctionNode, boundDisjunctionNode,
+    boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode,
 };
@@ -518,6 +518,23 @@ private:
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
 };
 
+class BoundExpressionSequenceNode : public BoundExpressionNode
+{
+public:
+    BoundExpressionSequenceNode(const soul::ast::SourcePos& sourcePos_, BoundExpressionNode* left_, BoundExpressionNode* right_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override;
+    bool IsLvalueExpression() const override;
+    BoundExpressionNode* Clone() const override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Left() const { return left.get(); }
+    BoundExpressionNode* Right() const { return right.get(); }
+private:
+    std::unique_ptr<BoundExpressionNode> left;
+    std::unique_ptr<BoundExpressionNode> right;
+};
+
 class BoundExpressionListNode : public BoundExpressionNode
 {
 public:
@@ -526,6 +543,7 @@ public:
     BoundExpressionNode* Clone() const override;
     void AddExpression(BoundExpressionNode* expr);
     int Count() const { return exprs.size(); }
+    const std::vector<std::unique_ptr<BoundExpressionNode>>& Exprs() const { return exprs; }
     BoundExpressionNode* ReleaseExpr(int i) { return exprs[i].release(); }
 private:
     std::vector<std::unique_ptr<BoundExpressionNode>> exprs;
