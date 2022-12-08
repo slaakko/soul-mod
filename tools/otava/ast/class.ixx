@@ -7,6 +7,7 @@ export module otava.ast.classes;
 
 import std.core;
 import otava.ast.node;
+import soul.ast.lexer.pos.pair;
 
 export namespace otava::ast {
 
@@ -145,13 +146,23 @@ public:
     void Accept(Visitor& visitor) override;
 };
 
-class ConstructorInitializerNode : public UnaryNode
+class ConstructorInitializerNode : public CompoundNode
 {
 public:
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_);
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_);
+    Node* MemberInitializerListNode() const { return memberInitializerListNode.get(); }
+    void SetMemberInitializerListNode(Node* memberInitializerListNode_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
+    void SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_);
+    const soul::ast::lexer::pos::pair::LexerPosPair& GetLexerPosPair() const { return lexerPosPair; }
+    void* FunctionScope() const { return functionScope; }
+    void SetFunctionScope(void* functionScope_) { functionScope = functionScope_; }
+private:
+    std::unique_ptr<Node> memberInitializerListNode;
+    soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair;
+    void* functionScope;
 };
 
 class MemberInitializerListNode : public ListNode

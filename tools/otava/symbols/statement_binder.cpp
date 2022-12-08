@@ -100,7 +100,7 @@ void StatementBinder::Visit(otava::ast::ConstructorNode& node)
 void StatementBinder::Visit(otava::ast::ConstructorInitializerNode& node) 
 {
     ctorInitializer = new BoundCtorInitializerNode(node.GetSourcePos());
-    node.Child()->Accept(*this);
+    node.MemberInitializerListNode()->Accept(*this);
 }
 
 void StatementBinder::Visit(otava::ast::MemberInitializerListNode& node)
@@ -557,6 +557,7 @@ void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSy
 {
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;
+    if (context->GetFlag(ContextFlags::parseMemberFunction)) return;
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     functionDefinitionNode->Accept(binder);

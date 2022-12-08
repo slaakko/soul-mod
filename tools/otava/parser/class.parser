@@ -16,9 +16,11 @@ export module otava.parser.classes;
 [implementation]import otava.parser.enums;
 [implementation]import otava.parser.expression;
 [implementation]import otava.parser.function;
+[implementation]import otava.parser.guard;
 [implementation]import otava.parser.identifier;
 [implementation]import otava.parser.initialization;
 [implementation]import otava.parser.punctuation;
+[implementation]import otava.parser.recorded.parse;
 [implementation]import otava.parser.templates;
 [implementation]import otava.parser.type;
 
@@ -39,6 +41,8 @@ parser ClassParser
     using ExpressionParser.ExpressionList;
     using FunctionParser.FunctionDefinition;
     using FunctionParser.NoDeclSpecFunctionDefinition;
+    using GuardParser.MemberFunctionGuard;
+    using GuardParser.SavedCtorInitializerGuard;
     using IdentifierParser.Identifier;
     using IdentifierParser.NestedNameSpecifier;
     using IdentifierParser.Unnamed;
@@ -354,11 +358,66 @@ parser ClassParser
 
 
     CtorInitializer(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= MemberFunctionGuard(context):memberFunctionGuard
+            CtorInitializerGuarded(context):ctorInitializerGuarded{ return ctorInitializerGuarded; }
+        |   SavedCtorInitializerGuard(context):savedCtorInitializer{ context->ResetFlag(ContextFlags::parseSavedCtorInitializer); }
+            CtorInitializerSaved(context):ctorInitializerSaved{ return ctorInitializerSaved; }
+        |   CtorInitializerUnguarded(context):ctorInitializerUnguarded{ return ctorInitializerUnguarded; }
+        ;
+
+    CtorInitializerGuarded(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
+        ::= COLON
+            {   
+                sourcePos = lexer.GetSourcePos(pos);  
+                soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair = otava::parser::recorded::parse::RecordCtorInitializer(lexer); 
+                if (lexerPosPair.IsValid())
+                {
+                    otava::ast::ConstructorInitializerNode* ctorInitializerNode = new otava::ast::ConstructorInitializerNode(sourcePos);
+                    ctorInitializerNode->SetLexerPosPair(lexerPosPair);
+                    ctorInitializerNode->SetFunctionScope(context->GetSymbolTable()->CurrentScope());
+                    return ctorInitializerNode;
+                }
+                else
+                {
+                   pass = false;
+                }
+            }
+        ;
+
+    CtorInitializerUnguarded(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
         ::= COLON{ sourcePos = lexer.GetSourcePos(pos); } 
             MemberInitializerList(context):memberInitializerList
         {
             return new otava::ast::ConstructorInitializerNode(sourcePos, memberInitializerList);
         }
+        ;
+
+    CtorInitializerSaved(otava::symbols::Context* context, var otava::ast::ConstructorInitializerNode* ctorInitializerNode) : otava::ast::Node*
+        ::= empty
+            {
+                ctorInitializerNode = otava::parser::recorded::parse::GetSavedCtorInitializerNode(context);
+                if (!ctorInitializerNode)
+                {
+                    pass = false;
+                }
+                else
+                {
+                    lexer.BeginRecordedParse(ctorInitializerNode->GetLexerPosPair()); 
+                    Scope* functionScope = static_cast<Scope*>(ctorInitializerNode->FunctionScope());
+                    context->GetSymbolTable()->BeginScope(functionScope);
+                }
+            }
+            MemberInitializerList(context):memberInitializerList
+            {
+                ctorInitializerNode->SetMemberInitializerListNode(memberInitializerList);
+                lexer.EndRecordedParse(); 
+                return ctorInitializerNode;
+            }
+        |   empty
+            {
+                lexer.EndRecordedParse(); 
+                pass = false;
+            }
         ;
 
     MemberInitializerList(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> node) : otava::ast::Node*

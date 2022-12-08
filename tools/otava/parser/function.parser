@@ -111,7 +111,10 @@ parser FunctionParser
                     return new otava::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign, del, semicolon2); 
                 }
             )
-        |   CtorInitializer(context):ctorInitializer{ sourcePos = lexer.GetSourcePos(pos); } 
+        |   CtorInitializer(context):ctorInitializer
+            {   
+                sourcePos = lexer.GetSourcePos(pos); 
+            }
             CompoundStatement(context):compoundStatement
             {
                 return new otava::ast::ConstructorNode(sourcePos, ctorInitializer, compoundStatement);

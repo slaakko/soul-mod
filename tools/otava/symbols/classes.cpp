@@ -57,19 +57,31 @@ int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
 }
 
 
-RecordedParseFn recordedParseFn = nullptr;
+RecordedParseCompoundStatementFn recordedParseCompoundStatementFn = nullptr;
 
-void SetRecordedParseFn(RecordedParseFn fn)
+void SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatementFn fn)
 {
-    recordedParseFn = fn;
+    recordedParseCompoundStatementFn = fn;
 }
 
-void RecordedParse(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context)
+void RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context)
 {
-    if (recordedParseFn)
+    if (recordedParseCompoundStatementFn)
     {
-        recordedParseFn(compoundStatementNode, context);
+        recordedParseCompoundStatementFn(compoundStatementNode, context);
     }
+}
+
+RecordedParseCtorInitializerFn recordedParseInitializerFn = nullptr;
+
+void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn)
+{
+    recordedParseInitializerFn = fn;
+}
+
+void RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context)
+{
+    recordedParseInitializerFn(ctorInitializerNode, context);
 }
 
 ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) : 
@@ -652,10 +664,12 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
         {
             Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
             otava::ast::Node* fnBody = node.FunctionBody();
+            otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
             otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
             if (fnBody->IsConstructorNode())
             {
                 otava::ast::ConstructorNode* constructorNode = static_cast<otava::ast::ConstructorNode*>(fnBody);
+                ctorInitializerNode = static_cast<otava::ast::ConstructorInitializerNode*>(constructorNode->Left());
                 compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(constructorNode->Right());
             }
             else if (fnBody->IsFunctionBodyNode())
@@ -663,11 +677,18 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
                 otava::ast::FunctionBodyNode* functionBody = static_cast<otava::ast::FunctionBodyNode*>(node.FunctionBody());
                 compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(functionBody->Child());
             }
+            if (ctorInitializerNode)
+            {
+                if (ctorInitializerNode->GetLexerPosPair().IsValid())
+                {
+                    RecordedParseCtorInitializer(ctorInitializerNode, context);
+                }
+            }
             if (compoundStatementNode)
             {
                 if (compoundStatementNode->GetLexerPosPair().IsValid())
                 {
-                    RecordedParse(compoundStatementNode, context);
+                    RecordedParseCompoundStatement(compoundStatementNode, context);
                 }
             }
             FunctionDefinitionSymbol* functionDefinitionSymbol = nullptr;
@@ -679,7 +700,14 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
             {
                 ThrowException("function definition symbol expected", node.GetSourcePos(), context);
             }
+            context->PushBoundFunction(new BoundFunctionNode(functionDefinitionSymbol, node.GetSourcePos()));
             BindFunction(&node, functionDefinitionSymbol, context);
+            BoundFunctionNode* boundFunction = context->ReleaseBoundFunction();
+            if (functionDefinitionSymbol->IsBound())
+            {
+                context->GetBoundCompileUnit()->AddBoundNode(boundFunction);
+            }
+            context->PopBoundFunction();
         }
     }
     catch (const std::exception& ex)
@@ -712,3 +740,4 @@ void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::sy
 }
 
 } // namespace otava::symbols
+

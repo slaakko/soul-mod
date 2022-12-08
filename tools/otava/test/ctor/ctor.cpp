@@ -3,17 +3,13 @@ import std.core;
 class foo
 {
 public:
-	foo();
+	foo(int xyzzy_) : xyzzy(xyzzy_) {}
 private:
-	int x;
+	int xyzzy;
 };
-
-foo::foo() : x(0)
-{
-}
 
 int main()
 {
-	foo f;
+	foo f(1);
 	return 0;
 }

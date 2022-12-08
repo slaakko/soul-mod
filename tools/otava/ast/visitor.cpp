@@ -342,7 +342,7 @@ void DefaultVisitor::Visit(ConstructorInitializerNode& node)
 {
     BeginVisit(node);
     VisitOperator(":", node.GetSourcePos());
-    node.Child()->Accept(*this);
+    node.MemberInitializerListNode()->Accept(*this);
     EndVisit(node);
 }
 

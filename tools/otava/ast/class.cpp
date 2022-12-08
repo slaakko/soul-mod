@@ -328,24 +328,34 @@ void ConstructorNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_) : UnaryNode(NodeKind::constructorInitializerNode, sourcePos_, nullptr)
+ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::constructorInitializerNode, sourcePos_), functionScope(nullptr)
 {
 }
 
 ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_) :
-    UnaryNode(NodeKind::constructorInitializerNode, sourcePos_, memberInitializerList_)
+    CompoundNode(NodeKind::constructorInitializerNode, sourcePos_), memberInitializerListNode(memberInitializerList_), functionScope(nullptr)
 {
 }
 
 Node* ConstructorInitializerNode::Clone() const
 {
-    ConstructorInitializerNode* clone = new ConstructorInitializerNode(GetSourcePos(), Child()->Clone());
+    ConstructorInitializerNode* clone = new ConstructorInitializerNode(GetSourcePos(), memberInitializerListNode->Clone());
     return clone;
 }
 
 void ConstructorInitializerNode::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+void ConstructorInitializerNode::SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_)
+{
+    lexerPosPair = lexerPosPair_;
+}
+
+void ConstructorInitializerNode::SetMemberInitializerListNode(Node* memberInitializerListNode_)
+{
+    memberInitializerListNode.reset(memberInitializerListNode_);
 }
 
 MemberInitializerListNode::MemberInitializerListNode(const soul::ast::SourcePos& sourcePos_) : ListNode(NodeKind::memberInitializerListNode, sourcePos_)

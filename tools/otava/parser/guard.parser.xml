@@ -25,6 +25,11 @@
     <empty first="{#}"/>
    </action>
   </rule>
+  <rule first="{#}" name="SavedCtorInitializerGuard">
+   <action first="{#}">
+    <empty first="{#}"/>
+   </action>
+  </rule>
   <rule first="{#}" name="NoDeclSpecFunctionDeclarationGuard">
    <action first="{#}">
     <empty first="{#}"/>

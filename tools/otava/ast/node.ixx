@@ -115,6 +115,7 @@ public:
     bool IsUnionNode() const { return kind == NodeKind::unionNode; }
     bool IsClassSpecifierNode() const { return kind == NodeKind::classSpecifierNode; }
     bool IsCompoundStatementNode() const { return kind == NodeKind::compoundStatementNode; }
+    bool IsCtorInitializerNode() const { return kind == NodeKind::constructorInitializerNode; }
     bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
     bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
     bool IsQualifiedIdNode() const { return kind == NodeKind::qualifiedIdNode; }

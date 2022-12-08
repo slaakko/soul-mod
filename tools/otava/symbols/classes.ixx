@@ -10,6 +10,7 @@ import otava.symbols.scope;
 import otava.symbols.type.symbol;
 import otava.ast.node;
 import otava.ast.statement;
+import otava.ast.classes;
 
 export namespace otava::symbols {
 
@@ -25,9 +26,13 @@ enum class SpecialFunctionKind : int32_t;
 
 int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
 
-using RecordedParseFn = void (*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
+using RecordedParseCompoundStatementFn = void (*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
 
-void SetRecordedParseFn(RecordedParseFn fn);
+void SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatementFn fn);
+
+using RecordedParseCtorInitializerFn = void (*)(otava::ast::ConstructorInitializerNode* ctorInitializerNode, Context* context);
+
+void SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializerFn fn);
 
 class TemplateDeclarationSymbol;
 class TemplateParameterSymbol;

@@ -536,195 +536,190 @@ soul::parser::Match FunctionParser<Lexer>::FunctionBody(Lexer& lexer, otava::sym
             int64_t save = lexer.GetPos();
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
-            switch (*lexer)
             {
-                case ASSIGN:
+                int64_t save = lexer.GetPos();
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch3 = &match;
+                    soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch4 = &match;
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match = PunctuationParser<Lexer>::Assign(lexer);
+                        assign.reset(static_cast<otava::ast::Node*>(match.value));
+                        if (match.hit)
                         {
-                            int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = PunctuationParser<Lexer>::Assign(lexer);
-                            assign.reset(static_cast<otava::ast::Node*>(match.value));
-                            if (match.hit)
-                            {
-                                sourcePos = lexer.GetSourcePos(pos);
-                            }
-                            *parentMatch4 = match;
+                            sourcePos = lexer.GetSourcePos(pos);
                         }
-                        *parentMatch3 = match;
+                        *parentMatch4 = match;
                     }
-                    if (match.hit)
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch5 = &match;
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch5 = &match;
+                        soul::parser::Match* parentMatch6 = &match;
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch6 = &match;
+                            soul::parser::Match* parentMatch7 = &match;
+                            switch (*lexer)
                             {
-                                soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch7 = &match;
-                                switch (*lexer)
+                                case DEFAULT:
                                 {
-                                    case DEFAULT:
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch8 = &match;
+                                    {
+                                        soul::parser::Match match = FunctionParser<Lexer>::Default(lexer);
+                                        def.reset(static_cast<otava::ast::Node*>(match.value));
+                                        *parentMatch8 = match;
+                                    }
+                                    if (match.hit)
                                     {
                                         soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch8 = &match;
-                                        {
-                                            soul::parser::Match match = FunctionParser<Lexer>::Default(lexer);
-                                            def.reset(static_cast<otava::ast::Node*>(match.value));
-                                            *parentMatch8 = match;
-                                        }
-                                        if (match.hit)
+                                        soul::parser::Match* parentMatch9 = &match;
                                         {
                                             soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch9 = &match;
+                                            soul::parser::Match* parentMatch10 = &match;
                                             {
-                                                soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch10 = &match;
+                                                int64_t pos = lexer.GetPos();
+                                                soul::parser::Match match = PunctuationParser<Lexer>::Semicolon(lexer);
+                                                semicolon.reset(static_cast<otava::ast::Node*>(match.value));
+                                                if (match.hit)
                                                 {
-                                                    int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = PunctuationParser<Lexer>::Semicolon(lexer);
-                                                    semicolon.reset(static_cast<otava::ast::Node*>(match.value));
-                                                    if (match.hit)
                                                     {
-                                                        {
-                                                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
-                                                            #endif
-                                                            return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign.release(), def.release(), semicolon.release()));
-                                                        }
+                                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
+                                                        #endif
+                                                        return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign.release(), def.release(), semicolon.release()));
                                                     }
-                                                    *parentMatch10 = match;
                                                 }
-                                                *parentMatch9 = match;
+                                                *parentMatch10 = match;
                                             }
-                                            *parentMatch8 = match;
+                                            *parentMatch9 = match;
                                         }
-                                        if (match.hit)
-                                        {
-                                            *parentMatch7 = match;
-                                        }
-                                        break;
+                                        *parentMatch8 = match;
                                     }
-                                    case DELETE:
+                                    if (match.hit)
                                     {
-                                        soul::parser::Match match(false);
-                                        soul::parser::Match* parentMatch11 = &match;
-                                        {
-                                            soul::parser::Match match = FunctionParser<Lexer>::Delete(lexer);
-                                            del.reset(static_cast<otava::ast::Node*>(match.value));
-                                            *parentMatch11 = match;
-                                        }
-                                        if (match.hit)
-                                        {
-                                            soul::parser::Match match(false);
-                                            soul::parser::Match* parentMatch12 = &match;
-                                            {
-                                                soul::parser::Match match(false);
-                                                soul::parser::Match* parentMatch13 = &match;
-                                                {
-                                                    int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = PunctuationParser<Lexer>::Semicolon(lexer);
-                                                    semicolon2.reset(static_cast<otava::ast::Node*>(match.value));
-                                                    if (match.hit)
-                                                    {
-                                                        {
-                                                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
-                                                            #endif
-                                                            return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign.release(), del.release(), semicolon2.release()));
-                                                        }
-                                                    }
-                                                    *parentMatch13 = match;
-                                                }
-                                                *parentMatch12 = match;
-                                            }
-                                            *parentMatch11 = match;
-                                        }
-                                        if (match.hit)
-                                        {
-                                            *parentMatch7 = match;
-                                        }
-                                        break;
+                                        *parentMatch7 = match;
                                     }
+                                    break;
                                 }
-                                *parentMatch6 = match;
+                                case DELETE:
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch11 = &match;
+                                    {
+                                        soul::parser::Match match = FunctionParser<Lexer>::Delete(lexer);
+                                        del.reset(static_cast<otava::ast::Node*>(match.value));
+                                        *parentMatch11 = match;
+                                    }
+                                    if (match.hit)
+                                    {
+                                        soul::parser::Match match(false);
+                                        soul::parser::Match* parentMatch12 = &match;
+                                        {
+                                            soul::parser::Match match(false);
+                                            soul::parser::Match* parentMatch13 = &match;
+                                            {
+                                                int64_t pos = lexer.GetPos();
+                                                soul::parser::Match match = PunctuationParser<Lexer>::Semicolon(lexer);
+                                                semicolon2.reset(static_cast<otava::ast::Node*>(match.value));
+                                                if (match.hit)
+                                                {
+                                                    {
+                                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
+                                                        #endif
+                                                        return soul::parser::Match(true, new otava::ast::DefaultedOrDeletedFunctionNode(sourcePos, assign.release(), del.release(), semicolon2.release()));
+                                                    }
+                                                }
+                                                *parentMatch13 = match;
+                                            }
+                                            *parentMatch12 = match;
+                                        }
+                                        *parentMatch11 = match;
+                                    }
+                                    if (match.hit)
+                                    {
+                                        *parentMatch7 = match;
+                                    }
+                                    break;
+                                }
                             }
-                            *parentMatch5 = match;
+                            *parentMatch6 = match;
                         }
-                        *parentMatch3 = match;
+                        *parentMatch5 = match;
                     }
-                    if (match.hit)
-                    {
-                        *parentMatch2 = match;
-                    }
-                    break;
+                    *parentMatch3 = match;
                 }
-                case COLON:
+                *parentMatch2 = match;
+                if (!match.hit)
                 {
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch14 = &match;
+                    lexer.SetPos(save);
                     {
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch15 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = ClassParser<Lexer>::CtorInitializer(lexer, context);
-                            ctorInitializer.reset(static_cast<otava::ast::Node*>(match.value));
-                            if (match.hit)
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch16 = &match;
                             {
-                                sourcePos = lexer.GetSourcePos(pos);
+                                int64_t pos = lexer.GetPos();
+                                soul::parser::Match match = ClassParser<Lexer>::CtorInitializer(lexer, context);
+                                ctorInitializer.reset(static_cast<otava::ast::Node*>(match.value));
+                                if (match.hit)
+                                {
+                                    sourcePos = lexer.GetSourcePos(pos);
+                                }
+                                *parentMatch16 = match;
+                            }
+                            *parentMatch15 = match;
+                        }
+                        if (match.hit)
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch17 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch18 = &match;
+                                {
+                                    int64_t pos = lexer.GetPos();
+                                    soul::parser::Match match = StatementParser<Lexer>::CompoundStatement(lexer, context);
+                                    compoundStatement.reset(static_cast<otava::ast::Node*>(match.value));
+                                    if (match.hit)
+                                    {
+                                        {
+                                            #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                                            if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
+                                            #endif
+                                            return soul::parser::Match(true, new otava::ast::ConstructorNode(sourcePos, ctorInitializer.release(), compoundStatement.release()));
+                                        }
+                                    }
+                                    *parentMatch18 = match;
+                                }
+                                *parentMatch17 = match;
                             }
                             *parentMatch15 = match;
                         }
                         *parentMatch14 = match;
                     }
-                    if (match.hit)
-                    {
-                        soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch16 = &match;
-                        {
-                            soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch17 = &match;
-                            {
-                                int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = StatementParser<Lexer>::CompoundStatement(lexer, context);
-                                compoundStatement.reset(static_cast<otava::ast::Node*>(match.value));
-                                if (match.hit)
-                                {
-                                    {
-                                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionBody");
-                                        #endif
-                                        return soul::parser::Match(true, new otava::ast::ConstructorNode(sourcePos, ctorInitializer.release(), compoundStatement.release()));
-                                    }
-                                }
-                                *parentMatch17 = match;
-                            }
-                            *parentMatch16 = match;
-                        }
-                        *parentMatch14 = match;
-                    }
-                    if (match.hit)
-                    {
-                        *parentMatch2 = match;
-                    }
-                    break;
+                    *parentMatch2 = match;
                 }
             }
             *parentMatch1 = match;
             if (!match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch18 = &match;
+                soul::parser::Match* parentMatch19 = &match;
                 lexer.SetPos(save);
                 {
                     soul::parser::Match match(false);
-                    soul::parser::Match* parentMatch19 = &match;
+                    soul::parser::Match* parentMatch20 = &match;
                     {
                         int64_t pos = lexer.GetPos();
                         soul::parser::Match match = StatementParser<Lexer>::CompoundStatement(lexer, context);
@@ -738,9 +733,9 @@ soul::parser::Match FunctionParser<Lexer>::FunctionBody(Lexer& lexer, otava::sym
                                 return soul::parser::Match(true, new otava::ast::FunctionBodyNode(lexer.GetSourcePos(pos), compoundStatement2.release()));
                             }
                         }
-                        *parentMatch19 = match;
+                        *parentMatch20 = match;
                     }
-                    *parentMatch18 = match;
+                    *parentMatch19 = match;
                 }
                 *parentMatch1 = match;
             }
@@ -749,11 +744,11 @@ soul::parser::Match FunctionParser<Lexer>::FunctionBody(Lexer& lexer, otava::sym
         if (!match.hit)
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch20 = &match;
+            soul::parser::Match* parentMatch21 = &match;
             lexer.SetPos(save);
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch21 = &match;
+                soul::parser::Match* parentMatch22 = &match;
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match = FunctionParser<Lexer>::FunctionTryBlock(lexer, context);
@@ -767,9 +762,9 @@ soul::parser::Match FunctionParser<Lexer>::FunctionBody(Lexer& lexer, otava::sym
                             return soul::parser::Match(true, functionTryBlock.release());
                         }
                     }
-                    *parentMatch21 = match;
+                    *parentMatch22 = match;
                 }
-                *parentMatch20 = match;
+                *parentMatch21 = match;
             }
             *parentMatch0 = match;
         }

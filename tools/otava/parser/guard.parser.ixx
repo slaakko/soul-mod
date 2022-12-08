@@ -20,6 +20,7 @@ struct GuardParser
     static soul::parser::Match AssumeTypeGuard(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match MemberFunctionGuard(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match SavedMemberFunctionBodyGuard(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SavedCtorInitializerGuard(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match NoDeclSpecFunctionDeclarationGuard(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match NoDeclSpecFunctionDefinitionGuard(Lexer& lexer, otava::symbols::Context* context);
 };

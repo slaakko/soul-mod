@@ -7,16 +7,20 @@ module otava.parser.recorded.parse;
 
 import otava.token;
 import otava.parser.statement;
+import otava.parser.classes;
 import otava.lexer;
 import otava.symbols;
 
 namespace otava::parser::recorded::parse {
 
-void RecordedParse(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context);
+void RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context);
+
+void RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context);
 
 void Init()
 {
-    otava::symbols::SetRecordedParseFn(RecordedParse);
+    otava::symbols::SetRecordedParseCompoundStatementFn(RecordedParseCompoundStatement);
+    otava::symbols::SetRecordedParseCtorInitializerFn(RecordedParseCtorInitializer);
 }
     
 soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>& lexer)
@@ -58,6 +62,25 @@ soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::L
     return soul::ast::lexer::pos::pair::LexerPosPair();
 }
 
+soul::ast::lexer::pos::pair::LexerPosPair RecordCtorInitializer(soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>& lexer)
+{
+    int64_t start = lexer.GetPos();
+    while (*lexer != soul::lexer::END_TOKEN)
+    {
+        if (*lexer == otava::token::LBRACE)
+        {
+            int64_t end = lexer.GetPos();
+            return soul::ast::lexer::pos::pair::LexerPosPair(start, end);
+        }
+        else
+        {
+            ++lexer;
+        }
+    }
+    lexer.SetPos(start);
+    return soul::ast::lexer::pos::pair::LexerPosPair();
+}
+
 void PushSavedCompoundStatementNode(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context)
 {
     context->PushNode(node);
@@ -83,13 +106,48 @@ otava::ast::CompoundStatementNode* GetSavedCompoundStatementNode(otava::symbols:
     return compoundStatementNode;
 }
 
-void RecordedParse(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context)
+void PushSavedCtorInitializerNode(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context)
+{
+    context->PushNode(node);
+}
+
+void PopSavedCtorInitializerNode(otava::symbols::Context* context)
+{
+    context->PopNode();
+}
+
+otava::ast::ConstructorInitializerNode* GetSavedCtorInitializerNode(otava::symbols::Context* context)
+{
+    otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
+    otava::ast::Node* n = context->GetNode();
+    if (n && n->IsCtorInitializerNode())
+    {
+        return static_cast<otava::ast::ConstructorInitializerNode*>(n);
+    }
+    else
+    {
+        throw std::runtime_error("context has no constructor initializer node");
+    }
+    return ctorInitializerNode;
+}
+
+void RecordedParseCompoundStatement(otava::ast::CompoundStatementNode* node, otava::symbols::Context* context)
 {
     context->PushSetFlag(otava::symbols::ContextFlags::parseSavedMemberFunctionBody);
     PushSavedCompoundStatementNode(node, context);
     using Lexer = soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>;
     otava::parser::statement::StatementParser<Lexer>::CompoundStatement(*static_cast<Lexer*>(context->GetLexer()), context);
     PopSavedCompoundStatementNode(context);
+    context->PopFlags();
+}
+
+void RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* node, otava::symbols::Context* context)
+{
+    context->PushSetFlag(otava::symbols::ContextFlags::parseSavedCtorInitializer);
+    PushSavedCtorInitializerNode(node, context);
+    using Lexer = soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>;
+    otava::parser::classes::ClassParser<Lexer>::CtorInitializer(*static_cast<Lexer*>(context->GetLexer()), context);
+    PopSavedCtorInitializerNode(context);
     context->PopFlags();
 }
 

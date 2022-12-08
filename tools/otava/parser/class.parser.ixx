@@ -42,6 +42,9 @@ struct ClassParser
     static soul::parser::Match MemberDeclaratorList(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match MemberDeclarator(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match CtorInitializer(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match CtorInitializerGuarded(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match CtorInitializerUnguarded(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match CtorInitializerSaved(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match MemberInitializerList(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match MemberInitializer(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match MemberInitializerId(Lexer& lexer, otava::symbols::Context* context);
