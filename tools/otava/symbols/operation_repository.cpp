@@ -111,6 +111,10 @@ void PointerCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpression
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    if ((flags & OperationFlags::dup) != OperationFlags::none)
+    {
+        emitter.Stack().Dup();
+    }
     args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
 }
 
@@ -857,11 +861,13 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
     TypeSymbol* type = args[0]->GetType();
     if (type->PointerCount() != 1 || !type->RemovePointer()->PlainType()->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
+    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
     FunctionSymbol* defaultCtor = classType->GetFunction(defaultCtorIndex);
     if (defaultCtor)
     {
         return defaultCtor;
     }
+    if (classType->HasUserDefinedConstructor()) return nullptr;
     auto it = functionMap.find(classType);
     if (it != functionMap.cend())
     {
@@ -941,6 +947,7 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     if (type->PointerCount() != 1 || !type->RemovePointer()->PlainType()->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType()->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
+    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
     if (TypesEqual(args[1]->GetType(), classType->AddRValueRef()) || args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* copyCtor = classType->GetFunction(copyCtorIndex);
     if (copyCtor)

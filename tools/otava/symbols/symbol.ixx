@@ -125,7 +125,7 @@ public:
     const Symbol* Parent() const { return parent; }
     void SetParent(Symbol* parent_) { parent = parent_; }
     FunctionSymbol* ParentFunction() const;
-    ClassTypeSymbol* ParentClass() const;
+    virtual ClassTypeSymbol* ParentClassType() const;
     NamespaceSymbol* ParentNamespace() const;
     std::string DocName() const;
     bool CanInstall() const;
@@ -142,7 +142,7 @@ public:
     bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol || IsAliasTypeTemplateSpecializationSymbol(); }
     bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
-    bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol; }
+    bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol || IsClassTemplateSpecializationSymbol(); }
     bool IsForwardClassDeclarationSymbol() const { return kind == SymbolKind::forwardClassDeclarationSymbol; }
     bool IsConceptSymbol() const { return kind == SymbolKind::conceptSymbol; }
     bool IsEnumGroupSymbol() const { return kind == SymbolKind::enumGroupSymbol; }

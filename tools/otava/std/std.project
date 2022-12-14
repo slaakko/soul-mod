@@ -27,6 +27,8 @@ interface <std.iterator.reverse.ixx>;
 interface <std.iterator.set.ixx>;
 interface <std.iterator.unordered_map.ixx>;
 interface <std.iterator.ixx>;
+interface <std.new.ixx>;
+source <std.new.cpp>;
 interface <std.stream.ixx>;
 interface <std.string.ixx>;
 source <std.string.cpp>;

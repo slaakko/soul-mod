@@ -21,8 +21,12 @@ import otava.symbols.type.resolver;
 import otava.symbols.statement.binder;
 import otava.symbols.variable.symbol;
 import otava.symbols.function.symbol;
+import otava.symbols.overload.resolution;
+import otava.symbols.argument.conversion.table;
 
 namespace otava::symbols {
+
+void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 
 int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
 {
@@ -86,11 +90,11 @@ void RecordedParseCtorInitializer(otava::ast::ConstructorInitializerNode* ctorIn
 
 ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) : 
     TypeSymbol(SymbolKind::classTypeSymbol, name_), 
+    flags(ClassTypeSymbolFlags::none),
     classKind(ClassKind::class_), 
     specialization(nullptr),
     level(0), 
     irType(nullptr),
-    objectLayoutComputed(false),
     vptrIndex(-1),
     currentFunctionIndex(1),
     specializationId()
@@ -100,11 +104,11 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
 
 ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) : 
     TypeSymbol(kind_, name_),
+    flags(ClassTypeSymbolFlags::none),
     classKind(ClassKind::class_),
     specialization(nullptr),
     level(0),
     irType(nullptr),
-    objectLayoutComputed(false),
     vptrIndex(-1),
     currentFunctionIndex(1),
     specializationId()
@@ -171,6 +175,7 @@ void ClassTypeSymbol::Accept(Visitor& visitor)
 void ClassTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(flags));
     uint32_t nb = baseClasses.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nb);
     for (const auto& baseClass : baseClasses)
@@ -185,7 +190,6 @@ void ClassTypeSymbol::Write(Writer& writer)
     }
     writer.GetBinaryStreamWriter().Write(specializationId);
     writer.GetBinaryStreamWriter().Write(level);
-    writer.GetBinaryStreamWriter().Write(objectLayoutComputed);
     writer.GetBinaryStreamWriter().WriteULEB128UInt(objectLayout.size());
     for (const auto& type : objectLayout)
     {
@@ -203,6 +207,7 @@ void ClassTypeSymbol::Write(Writer& writer)
 void ClassTypeSymbol::Read(Reader& reader)
 {
     TypeSymbol::Read(reader);
+    flags = static_cast<ClassTypeSymbolFlags>(reader.GetBinaryStreamReader().ReadByte());
     uint32_t nb = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < nb; ++i)
     {
@@ -213,7 +218,6 @@ void ClassTypeSymbol::Read(Reader& reader)
     classKind = static_cast<ClassKind>(reader.GetBinaryStreamReader().ReadByte());
     reader.GetBinaryStreamReader().ReadUuid(specializationId);
     level = reader.GetBinaryStreamReader().ReadInt();
-    objectLayoutComputed = reader.GetBinaryStreamReader().ReadBool();
     uint32_t nol = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < nol; ++i)
     {
@@ -278,8 +282,8 @@ bool ClassTypeSymbol::IsPolymorphic() const
 
 void ClassTypeSymbol::MakeObjectLayout(Context* context)
 {
-    if (objectLayoutComputed) return;
-    objectLayoutComputed = true;
+    if (ObjectLayoutComputed()) return;
+    SetObjectLayoutComputed();
     for (const auto& baseClass : baseClasses)
     {
         objectLayout.push_back(baseClass);
@@ -304,14 +308,19 @@ void ClassTypeSymbol::MakeObjectLayout(Context* context)
     }
 }
 
-TemplateDeclarationSymbol* ClassTypeSymbol::ParentTemplateDeclaration() 
+TemplateDeclarationSymbol* ClassTypeSymbol::ParentTemplateDeclaration() const
 {
-    Symbol* parentSymbol = Parent();
-    if (parentSymbol->IsTemplateDeclarationSymbol())
+    Symbol* parentSymbol = const_cast<ClassTypeSymbol*>(this)->Parent();
+    if (parentSymbol && parentSymbol->IsTemplateDeclarationSymbol())
     {
         return static_cast<TemplateDeclarationSymbol*>(parentSymbol);
     }
     return nullptr;
+}
+
+bool ClassTypeSymbol::IsTemplate() const
+{
+    return ParentTemplateDeclaration() != nullptr;
 }
 
 int ClassTypeSymbol::Arity() 
@@ -604,6 +613,10 @@ void EndClass(otava::ast::Node* node, otava::symbols::Context* context)
     {
         ThrowException("otava.symbols.classes: EndClass(): class specifier node expected", node->GetSourcePos(), context);
     }
+    if (!classTypeSymbol->IsTemplate() && !classTypeSymbol->HasUserDefinedDestructor())
+    {
+        GenerateDestructor(classTypeSymbol, node->GetSourcePos(), context);
+    }
     context->PopFlags();
     context->GetSymbolTable()->EndClass();
     if (classTypeSymbol->Level() == 0)
@@ -660,46 +673,46 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
 {
     try
     {
+        Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
+        otava::ast::Node* fnBody = node.FunctionBody();
+        otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
+        otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
+        if (fnBody->IsConstructorNode())
+        {
+            otava::ast::ConstructorNode* constructorNode = static_cast<otava::ast::ConstructorNode*>(fnBody);
+            ctorInitializerNode = static_cast<otava::ast::ConstructorInitializerNode*>(constructorNode->Left());
+            compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(constructorNode->Right());
+        }
+        else if (fnBody->IsFunctionBodyNode())
+        {
+            otava::ast::FunctionBodyNode* functionBody = static_cast<otava::ast::FunctionBodyNode*>(node.FunctionBody());
+            compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(functionBody->Child());
+        }
+        if (ctorInitializerNode)
+        {
+            if (ctorInitializerNode->GetLexerPosPair().IsValid())
+            {
+                RecordedParseCtorInitializer(ctorInitializerNode, context);
+            }
+        }
+        if (compoundStatementNode)
+        {
+            if (compoundStatementNode->GetLexerPosPair().IsValid())
+            {
+                RecordedParseCompoundStatement(compoundStatementNode, context);
+            }
+        }
+        FunctionDefinitionSymbol* functionDefinitionSymbol = nullptr;
+        if (symbol->IsFunctionDefinitionSymbol())
+        {
+            functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+        }
+        else
+        {
+            ThrowException("function definition symbol expected", node.GetSourcePos(), context);
+        }
         if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration))
         {
-            Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
-            otava::ast::Node* fnBody = node.FunctionBody();
-            otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
-            otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
-            if (fnBody->IsConstructorNode())
-            {
-                otava::ast::ConstructorNode* constructorNode = static_cast<otava::ast::ConstructorNode*>(fnBody);
-                ctorInitializerNode = static_cast<otava::ast::ConstructorInitializerNode*>(constructorNode->Left());
-                compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(constructorNode->Right());
-            }
-            else if (fnBody->IsFunctionBodyNode())
-            {
-                otava::ast::FunctionBodyNode* functionBody = static_cast<otava::ast::FunctionBodyNode*>(node.FunctionBody());
-                compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(functionBody->Child());
-            }
-            if (ctorInitializerNode)
-            {
-                if (ctorInitializerNode->GetLexerPosPair().IsValid())
-                {
-                    RecordedParseCtorInitializer(ctorInitializerNode, context);
-                }
-            }
-            if (compoundStatementNode)
-            {
-                if (compoundStatementNode->GetLexerPosPair().IsValid())
-                {
-                    RecordedParseCompoundStatement(compoundStatementNode, context);
-                }
-            }
-            FunctionDefinitionSymbol* functionDefinitionSymbol = nullptr;
-            if (symbol->IsFunctionDefinitionSymbol())
-            {
-                functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
-            }
-            else
-            {
-                ThrowException("function definition symbol expected", node.GetSourcePos(), context);
-            }
             context->PushBoundFunction(new BoundFunctionNode(functionDefinitionSymbol, node.GetSourcePos()));
             BindFunction(&node, functionDefinitionSymbol, context);
             BoundFunctionNode* boundFunction = context->ReleaseBoundFunction();
@@ -737,6 +750,76 @@ void ThrowMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, o
 void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     ThrowException("statement parsing error", sourcePos, context);
+}
+
+void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    FunctionDefinitionSymbol* destructorSymbol = new FunctionDefinitionSymbol(U"@destructor");
+    destructorSymbol->SetFunctionKind(FunctionKind::destructor);
+    destructorSymbol->SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", classTypeSymbol->AddPointer());
+    destructorSymbol->AddParameter(thisParam, sourcePos, context);
+    classTypeSymbol->AddSymbol(destructorSymbol, sourcePos, context);
+    int nm = classTypeSymbol->MemberVariables().size();
+    int nb = classTypeSymbol->BaseClasses().size();
+    if (nm == 0 && nb == 0)
+    {
+        destructorSymbol->SetFlag(FunctionSymbolFlags::trivialDestructor);
+        return;
+    }
+    bool hasNonTrivialDestructor = false;
+    std::unique_ptr<BoundDtorTerminatorNode> terminator(new BoundDtorTerminatorNode(sourcePos));
+    for (int i = nm - 1; i >= 0; --i)
+    {
+        VariableSymbol* memberVar = classTypeSymbol->MemberVariables()[i];
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
+        ParameterSymbol* thisParam = destructorSymbol->ThisParam();
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos);
+        boundVariableNode->SetThisPtr(thisPtr);
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos)));
+        std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+            context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context);
+        if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
+        {
+            hasNonTrivialDestructor = true;
+        }
+        terminator->AddMemberTerminator(boundFunctionCall.release());
+    }
+    for (int i = nb - 1; i >= 0; --i)
+    {
+        TypeSymbol* baseClass = classTypeSymbol->BaseClasses()[i];
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        ParameterSymbol* thisParam = destructorSymbol->ThisParam();
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos);
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            baseClass->AddPointer(), thisPtr->GetType(), context);
+        if (conversion)
+        {
+            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
+            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context);
+            if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
+            {
+                hasNonTrivialDestructor = true;
+            }
+            terminator->AddMemberTerminator(boundFunctionCall.release());
+        }
+        else
+        {
+            ThrowException("base class conversion not found", sourcePos, context);
+        }
+    }
+    if (!hasNonTrivialDestructor)
+    {
+        destructorSymbol->SetFlag(FunctionSymbolFlags::trivialDestructor);
+        return;
+    }
+    BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorSymbol, sourcePos);
+    BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    boundDestructor->SetBody(body);
+    boundDestructor->SetDtorTerminator(terminator.release());
+    context->GetBoundCompileUnit()->AddBoundNode(boundDestructor);
 }
 
 } // namespace otava::symbols

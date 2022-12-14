@@ -114,7 +114,7 @@ void SymbolTable::EndScope()
 
 void SymbolTable::BeginScopeGeneric(Scope* scope, Context* context)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
         CurrentScope()->PushParentScope(scope);
     }
@@ -126,7 +126,7 @@ void SymbolTable::BeginScopeGeneric(Scope* scope, Context* context)
 
 void SymbolTable::EndScopeGeneric(Context* context)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
         CurrentScope()->PopParentScope();
     }
@@ -621,7 +621,17 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
     std::set<Scope*> visited;
     for (const auto& [scope, lookup] : scopeLookups)
     {
-        scope->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
+        Scope* scp = scope;
+        if (scp->IsClassScope())
+        {
+            Symbol* symbol = scope->GetSymbol();
+            if (symbol->IsClassTemplateSpecializationSymbol())
+            {
+                ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol);
+                scp = specialization->ClassTemplate()->GetScope();
+            }
+        }
+        scp->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
     }
     for (Symbol* symbol : symbols)
     {
@@ -1150,12 +1160,13 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
     }
     FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
         functionDefinition->SetSpecialization();
     }
     functionDefinition->SetLinkage(currentLinkage);
     MapNode(node, functionDefinition, MapKind::nodeToSymbol);
+    functionDefinition->SetFunctionKind(kind);
     functionDefinition->SetFunctionQualifiers(qualifiers);
     functionDefinition->SetDeclaration(declaration);
     if (declaration)

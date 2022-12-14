@@ -6,6 +6,7 @@
 module otava.symbols.overload.resolution;
 
 import otava.symbols.bound.tree;
+import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
@@ -18,6 +19,7 @@ import otava.symbols.templates;
 import otava.symbols.fundamental.type.conversion;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.function.templates;
+import otava.symbols.class_templates;
 import util.unicode;
 
 namespace otava::symbols {
@@ -418,6 +420,135 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
     return false;
 }
 
+bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, Context* context)
+{
+    if (!paramType->GetBaseType()->IsClassTypeSymbol()) return false;
+    ClassTypeSymbol* paramClassType = static_cast<ClassTypeSymbol*>(paramType->GetBaseType());
+    if (!paramClassType->IsTemplate()) return false;
+    TemplateDeclarationSymbol* paramTemplateDeclaration = paramClassType->ParentTemplateDeclaration();
+    int n = paramTemplateDeclaration->Arity();
+    int numArgumentMatches = functionMatch.argumentMatches.size();
+    if (argType->GetBaseType()->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* sourceClassTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(argType->GetBaseType());
+        int m = sourceClassTemplateSpecialization->TemplateArguments().size();
+        if (n != m) return false;
+        for (int i = 0; i < n; ++i)
+        {
+            Symbol* sourceArgumentSymbol = sourceClassTemplateSpecialization->TemplateArguments()[i];
+            TypeSymbol* sourceArgumentType = nullptr;
+            if (sourceArgumentSymbol->IsTypeSymbol())
+            {
+                sourceArgumentType = static_cast<TypeSymbol*>(sourceArgumentSymbol);
+            }
+            else
+            {
+                return false;
+            }
+            Symbol* targetArgumentSymbol = paramTemplateDeclaration->TemplateParameters()[i];
+            TypeSymbol* targetArgumentType = nullptr;
+            if (targetArgumentSymbol->IsTypeSymbol())
+            {
+                targetArgumentType = static_cast<TypeSymbol*>(targetArgumentSymbol);
+            }
+            else
+            {
+                return false;
+            }
+            if (FindTemplateParameterMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, context))
+            {
+                continue;
+            }
+            else if (FindClassTemplateSpecializationMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, context))
+            {
+                continue;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        std::vector<Symbol*> targetTemplateArguments;
+        for (int i = 0; i < n; ++i)
+        {
+            Symbol* targetArgumentSymbol = paramTemplateDeclaration->TemplateParameters()[i];
+            TypeSymbol* targetArgumentType = nullptr;
+            if (targetArgumentSymbol->IsTypeSymbol())
+            {
+                targetArgumentType = static_cast<TypeSymbol*>(targetArgumentSymbol);
+            }
+            else
+            {
+                return false;
+            }
+            TypeSymbol* templateArgumentType = targetArgumentType->GetBaseType()->UnifyTemplateArgumentType(functionMatch.templateParameterMap, context);
+            if (templateArgumentType)
+            {
+                targetTemplateArguments.push_back(templateArgumentType);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        TypeSymbol* plainTargetType = context->GetSymbolTable()->MakeClassTemplateSpecialization(paramClassType, targetTemplateArguments);
+        paramType = context->GetSymbolTable()->MakeCompoundType(plainTargetType, paramType->GetDerivations());
+        if (TypesEqual(argType, paramType))
+        {
+            functionMatch.argumentMatches.push_back(ArgumentMatch());
+            return true;
+        }
+        else
+        {
+            bool qualificationConversionMatch = false;
+            ArgumentMatch argumentMatch;
+            if (TypesEqual(argType->PlainType(), paramType->PlainType()))
+            {
+                qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
+            }
+            if (qualificationConversionMatch)
+            {
+                functionMatch.argumentMatches.push_back(argumentMatch);
+                return true;
+            }
+            else
+            {
+                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
+                if (conversionFun)
+                {
+                    ++functionMatch.numConversions;
+                    argumentMatch.conversionFun = conversionFun;
+                    if (argumentMatch.preConversionFlags == OperationFlags::none)
+                    {
+                        if (FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch))
+                        {
+                            functionMatch.argumentMatches.push_back(argumentMatch);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
+                        {
+                            functionMatch.argumentMatches.push_back(argumentMatch);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, Context* context)
 {
     int arity = args.size();
@@ -481,6 +612,13 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
                     if (functionMatch.function->IsTemplate())
                     {
                         if (FindTemplateParameterMatch(argType, paramType, arg, functionMatch, context))
+                        {
+                            continue;
+                        }
+                    }
+                    else if (functionMatch.function->IsMemFnOfClassTemplate())
+                    {
+                        if (FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, context))
                         {
                             continue;
                         }
@@ -582,9 +720,27 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         return std::unique_ptr<BoundFunctionCallNode>();
     }
     bool instantiate = (flags & OverloadResolutionFlags::dontInstantiate) == OverloadResolutionFlags::none;
-    if (instantiate && bestMatch.function->IsTemplate())
+    if (instantiate)
     {
-        bestMatch.function = InstantiateFunctionTemplate(bestMatch.function, bestMatch.templateParameterMap, sourcePos, context);
+        if (bestMatch.function->IsTemplate())
+        {
+            bestMatch.function = InstantiateFunctionTemplate(bestMatch.function, bestMatch.templateParameterMap, sourcePos, context);
+        }
+        else if (bestMatch.function->IsMemFnOfClassTemplate())
+        {
+            ClassTemplateSpecializationSymbol* classTemplateSpecialization = nullptr;
+            TypeSymbol* arg0Type = args[0]->GetType()->GetBaseType();
+            if (arg0Type->IsClassTemplateSpecializationSymbol())
+            {
+                classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(arg0Type);
+            }
+            else
+            {
+                ex = Exception("function argument 0 is expected to be a class template specialization", sourcePos, context);
+                return std::unique_ptr<BoundFunctionCallNode>();
+            }
+            bestMatch.function = InstantiateMemFnOfClassTemplate(bestMatch.function, bestMatch.templateParameterMap, classTemplateSpecialization, sourcePos, context);
+        }
     }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(bestMatch, args, sourcePos, context);
     return boundFunctionCall;

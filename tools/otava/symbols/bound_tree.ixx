@@ -14,7 +14,7 @@ export namespace otava::symbols {
 
 enum class OperationFlags : int32_t
 {
-    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, setPtr = 1 << 4, derefCount = 0xFF << 8
+    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, setPtr = 1 << 4, dup = 1 << 5, storeDeref = 1 << 6, derefCount = 0xFF << 8
 };
 
 constexpr OperationFlags operator|(OperationFlags left, OperationFlags right)
@@ -60,6 +60,7 @@ class BoundFunctionCallNode;
 class OperationRepository;
 class ArgumentConversionTable;
 class FunctionTemplateRepository;
+class ClassTemplateRepository;
 
 enum class BoundNodeKind
 {
@@ -68,9 +69,9 @@ enum class BoundNodeKind
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
     boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
     boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundExpressionListNode,
-    boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode,
+    boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundDefaultInitNode,
-    boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode,
+    boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode, boundDtorTerminatorNode
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -145,6 +146,7 @@ public:
     OperationRepository* GetOperationRepository() const { return operationRepository.get(); }
     ArgumentConversionTable* GetArgumentConversionTable() const { return argumentConversionTable.get(); }
     FunctionTemplateRepository* GetFunctionTemplateRepository() const { return functionTemplateRepository.get(); }
+    ClassTemplateRepository* GetClassTemplateRepository() const { return classTemplateRepository.get(); }
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(BoundNode* node);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
@@ -156,6 +158,7 @@ private:
     std::unique_ptr<OperationRepository> operationRepository;
     std::unique_ptr<ArgumentConversionTable> argumentConversionTable;
     std::unique_ptr<FunctionTemplateRepository> functionTemplateRepository;
+    std::unique_ptr<ClassTemplateRepository> classTemplateRepository;
 };
 
 class BoundCtorInitializerNode : public BoundNode
@@ -169,6 +172,17 @@ private:
     std::vector<std::unique_ptr<BoundFunctionCallNode>> memberInitializers;
 };
 
+class BoundDtorTerminatorNode : public BoundNode
+{
+public:
+    BoundDtorTerminatorNode(const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    void AddMemberTerminator(BoundFunctionCallNode* memberTerminator);
+    void GenerateCode(Emitter& emitter, Context* context);
+private:
+    std::vector<std::unique_ptr<BoundFunctionCallNode>> memberTerminators;
+};
+
 class BoundCompoundStatementNode;
 
 class BoundFunctionNode : public BoundNode
@@ -180,11 +194,14 @@ public:
     const BoundCompoundStatementNode* Body() const { return body.get(); }
     BoundCompoundStatementNode* Body() { return body.get(); }
     void SetCtorInitializer(BoundCtorInitializerNode* ctorInitializer_);
+    void SetDtorTerminator(BoundDtorTerminatorNode* dtorTerminator_);
     BoundCtorInitializerNode* CtorInitializer() const { return ctorInitializer.get(); }
+    BoundDtorTerminatorNode* DtorTerminator() const { return dtorTerminator.get(); }
     FunctionDefinitionSymbol* GetFunctionDefinitionSymbol() { return functionDefinitionSymbol; }
 private:
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     std::unique_ptr<BoundCtorInitializerNode> ctorInitializer;
+    std::unique_ptr<BoundDtorTerminatorNode> dtorTerminator;
     std::unique_ptr<BoundCompoundStatementNode> body;
 };
 
@@ -589,6 +606,7 @@ public:
     BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override;
     BoundExpressionNode* Clone() const override;
 private:
@@ -655,6 +673,7 @@ public:
     BoundExpressionNode* RvalueExpr() { return rvalueExpr.get(); }
     BoundVariableNode* BackingStore() { return backingStore.get(); }
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
     bool IsLvalueExpression() const override { return true; }
@@ -669,6 +688,7 @@ class BoundConstructTemporaryNode : public BoundExpressionNode
 public:
     BoundConstructTemporaryNode(BoundExpressionNode* constructorCall_, BoundExpressionNode* temporary_, const soul::ast::SourcePos& sourcePos_);
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
     bool IsLvalueExpression() const override { return true; }
@@ -676,6 +696,21 @@ public:
 private:
     std::unique_ptr<BoundExpressionNode> constructorCall;
     std::unique_ptr<BoundExpressionNode> temporary;
+};
+
+class BoundConstructExpressionNode : public BoundExpressionNode
+{
+public:
+    BoundConstructExpressionNode(BoundExpressionNode* allocation_, BoundExpressionNode* constructObjectCall_, TypeSymbol* type_, bool hasPlacement_, 
+        const soul::ast::SourcePos& sourcePos_);
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return !hasPlacement; }
+    BoundExpressionNode* Clone() const override;
+private:
+    std::unique_ptr<BoundExpressionNode> allocation;
+    std::unique_ptr<BoundExpressionNode> constructObjectCall;
+    bool hasPlacement;
 };
 
 class BoundGlobalVariableDefinitionNode : public BoundNode

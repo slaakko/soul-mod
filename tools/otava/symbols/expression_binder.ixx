@@ -16,8 +16,8 @@ class Context;
 class Scope;
 class StatementBinder;
     
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, StatementBinder* statementBinder);
-BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope, StatementBinder* statementBinder);
+BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context);
+BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);
 void InitExpressionBinder();
 
 } // namespace otava::symbols

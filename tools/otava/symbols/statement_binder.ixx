@@ -15,7 +15,9 @@ class BoundStatementNode;
 class Context;
 class FunctionDefinitionSymbol;
 class BoundCtorInitializerNode;
+class BoundDtorTerminatorNode;
 class ClassTypeSymbol;
+class TypeSymbol;
 class VariableSymbol;
 class BoundExpressionNode;
 class BoundFunctionCallNode;
@@ -26,7 +28,6 @@ class StatementBinder : public otava::ast::DefaultVisitor
 public:
     StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
     BoundStatementNode* GetBoundStatement() const { return boundStatement; }
-    void CompileStatement(otava::ast::Node* statementNode, bool setPostfix);
     void Visit(otava::ast::FunctionDefinitionNode& node) override;
     void Visit(otava::ast::ConstructorNode& node) override;
     void Visit(otava::ast::ConstructorInitializerNode& node) override;
@@ -52,8 +53,21 @@ public:
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
 private:
     void SetStatement(BoundStatementNode* statement);
+    void CompleteMemberInitializers(const soul::ast::SourcePos& sourcePos);
+    void AddDefaultMemberInitializer(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
+    int GetBaseInitializerOrTerminatorIndex(TypeSymbol* baseClass) const;
+    void CompleteBaseInitializers(const soul::ast::SourcePos& sourcePos);
+    void AddDefaultBaseInitializer(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
+    void GenerateDefaultCtorInitializer(const soul::ast::SourcePos& sourcePos);
+    void GenerateDestructorTerminator(const soul::ast::SourcePos& sourcePos);
+    void GenerateBaseTerminators(const soul::ast::SourcePos& sourcePos);
+    void AddBaseTerminator(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
+    void GenerateMemberTerminators(const soul::ast::SourcePos& sourcePos);
+    void AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
     Context* context;
+    ClassTypeSymbol* currentClass; 
     BoundCtorInitializerNode* ctorInitializer;
+    BoundDtorTerminatorNode* dtorTerminator;
     BoundStatementNode* boundStatement;
     FunctionDefinitionSymbol* functionDefinitionSymbol;
     ClassTypeSymbol* classTypeSymbol;
@@ -63,6 +77,7 @@ private:
     bool resolveMemberVariable;
     bool resolveInitializerArguments;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberInitializers;
+    std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberTerminators;
     bool postfix;
 };
 

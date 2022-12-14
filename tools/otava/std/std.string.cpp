@@ -20,7 +20,7 @@ string::string(const char* chars_) : chars(nullptr), len(slen(chars_)), res(0)
 	}
 }
 
-string::string(const char* chars_, ssize_t len_) : chars(nullptr), len(0), res(0)
+string::string(const char* chars_, size_type len_) : chars(nullptr), len(0), res(0)
 {
 	if (len_ > 0)
 	{
@@ -29,7 +29,7 @@ string::string(const char* chars_, ssize_t len_) : chars(nullptr), len(0), res(0
 	}
 }
 
-string::string(const char* begin, const char* end) : string(begin, end - begin)
+string::string(const char* b, const char* e) : string(b, e - b)
 {
 }
 
@@ -49,12 +49,12 @@ string::string(string&& that) : chars(that.chars), len(that.len), res(that.res)
 	that.res = 0;
 }
 
-string::string(ssize_t count, char c) : chars(nullptr), len(count), res(0)
+string::string(size_type count, char c) : chars(nullptr), len(count), res(0)
 {
 	if (count > 0)
 	{
 		reserve(count);
-		for (ssize_t i = 0; i < count; ++i)
+		for (size_type i = 0; i < count; ++i)
 		{
 			chars[i] = c;
 		}
@@ -79,11 +79,11 @@ const char* string::c_str() const
 	}
 }
 
-void string::reserve(ssize_t min_len)
+void string::reserve(size_type min_len)
 {
 	if (min_len > 0)
 	{
-		ssize_t min_res = min_len + 1;
+		size_type min_res = min_len + 1;
 		if (min_res > res)
 		{
 			grow(min_res);
@@ -91,7 +91,12 @@ void string::reserve(ssize_t min_len)
 	}
 }
 
-void string::grow(ssize_t min_res)
+void string::clear()
+{
+	deallocate();
+}
+
+void string::grow(size_type min_res)
 {
 	min_res = std::grow_size(min_res);
 	char* new_chars = static_cast<char*>(malloc(min_res));

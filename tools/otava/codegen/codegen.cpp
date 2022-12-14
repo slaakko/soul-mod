@@ -324,6 +324,11 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         ctorInitializer->GenerateCode(emitter, &context);
     }
     node.Body()->Accept(*this);
+    otava::symbols::BoundDtorTerminatorNode* dtorTerminator = node.DtorTerminator();
+    if (dtorTerminator)
+    {
+        dtorTerminator->GenerateCode(emitter, &context);
+    }
     StatementPrefix();
     otava::symbols::BoundStatementNode* lastStatement = nullptr;
     if (!node.Body()->Statements().empty())

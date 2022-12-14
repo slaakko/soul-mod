@@ -108,10 +108,11 @@ void Instantiator::Visit(otava::ast::UsingDirectiveNode& node)
 
 void Instantiator::Visit(otava::ast::FunctionDefinitionNode& node)
 {
+    if (context->GetFlag(ContextFlags::skipFunctionDefinitions)) return;
     int scopes = BeginFunctionDefinition(node.DeclSpecifiers(), node.Declarator(), context);
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
-        instantiationScope->PushParentScope(context->GetFunctionTemplateSpecialization()->GetScope());
+        instantiationScope->PushParentScope(context->GetSpecialization()->GetScope());
     }
     node.FunctionBody()->Accept(*this);
     otava::symbols::EndFunctionDefinition(&node, scopes, context);

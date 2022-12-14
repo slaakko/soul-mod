@@ -1,0 +1,3 @@
+project vec;
+target=program;
+source <vec.cpp>;

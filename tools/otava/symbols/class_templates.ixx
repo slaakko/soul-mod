@@ -6,6 +6,7 @@
 export module otava.symbols.class_templates;
 
 import std.core;
+import otava.ast.node;
 import otava.ast.templates;
 import otava.symbols.classes;
 import otava.symbols.type.symbol;
@@ -13,6 +14,7 @@ import otava.symbols.type.symbol;
 export namespace otava::symbols {
 
 class CompoundTypeSymbol;
+class FunctionDefinitionSymbol;
 
 class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
 {
@@ -32,6 +34,7 @@ public:
     void Accept(Visitor& visitor) override;
     SymbolTable* GetSymbolTable() override { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
+    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) override;
 private:
     TypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;
@@ -40,10 +43,36 @@ private:
     bool instantiated;
 };
 
+struct MemFunKey
+{
+    MemFunKey(FunctionSymbol* memFun_, const std::vector<TypeSymbol*>& templateArgumentTypes_);
+    FunctionSymbol* memFun;
+    std::vector<TypeSymbol*> templateArgumentTypes;
+};
+
+struct MemFunKeyLess
+{
+    bool operator()(const MemFunKey& left, const MemFunKey& right) const;
+};
+
+class ClassTemplateRepository
+{
+public:
+    ClassTemplateRepository();
+    FunctionDefinitionSymbol* GetFunctionDefinition(const MemFunKey& key) const;
+    void AddFunctionDefinition(const MemFunKey& key, FunctionDefinitionSymbol* functionDefinitionSymbol, otava::ast::Node* functionDefinitionNode);
+private:
+    std::map<MemFunKey, FunctionDefinitionSymbol*, MemFunKeyLess> memFunMap;
+    std::vector<std::unique_ptr<otava::ast::Node>> functionDefinitionNodes;
+};
+
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments);
 
 CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int index);
 
 TypeSymbol* InstantiateClassTemplate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node, Context* context);
+
+FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,
+    ClassTemplateSpecializationSymbol* classTemplateSpecialization, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

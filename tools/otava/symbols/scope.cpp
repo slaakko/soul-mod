@@ -17,6 +17,7 @@ import otava.symbols.variable.group.symbol;
 import otava.symbols.enum_group.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.templates;
+import otava.symbols.class_templates;
 import otava.ast.error;
 import util.unicode;
 

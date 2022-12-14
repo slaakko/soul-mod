@@ -39,9 +39,23 @@ bool MemberInitializerLess::operator()(const std::pair<int, std::unique_ptr<Boun
     return left.first < right.first;
 }
 
+struct MemberTerminatorGreater
+{
+    bool operator()(const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& left, const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& right) const;
+};
+
+bool MemberTerminatorGreater::operator()(const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& left, const std::pair<int, std::unique_ptr<BoundFunctionCallNode>>& right) const
+{
+    return left.first > right.first;
+}
+
+constexpr int maxBaseInitializers = 10000;
+
 StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) : 
     context(context_), 
+    currentClass(nullptr),
     ctorInitializer(nullptr),
+    dtorTerminator(nullptr),
     boundStatement(nullptr),
     functionDefinitionSymbol(functionDefinitionSymbol_),
     classTypeSymbol(nullptr),
@@ -51,14 +65,6 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
     resolveInitializerArguments(false),
     postfix(false)
 {
-}
-
-void StatementBinder::CompileStatement(otava::ast::Node* statementNode, bool setPostfix)
-{
-    bool prevPostfix = postfix;
-    postfix = setPostfix;
-    statementNode->Accept(*this);
-    postfix = prevPostfix;
 }
 
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
@@ -81,8 +87,26 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
         }
         return;
     }
+    currentClass = symbol->ParentClassType();
     context->GetSymbolTable()->BeginScopeGeneric(symbol->GetScope(), context);
     node.FunctionBody()->Accept(*this);
+    if (symbol->IsFunctionDefinitionSymbol())
+    {
+        FunctionDefinitionSymbol* definition = static_cast<FunctionDefinitionSymbol*>(symbol);
+        if (definition->GetFunctionKind() == FunctionKind::constructor)
+        {
+            currentClass->SetHasUserDefinedConstructor();
+            if (!ctorInitializer)
+            {
+                GenerateDefaultCtorInitializer(node.GetSourcePos());
+            }
+        }
+        else if (definition->GetFunctionKind() == FunctionKind::destructor)
+        {
+            currentClass->SetHasUserDefinedDestructor();
+            GenerateDestructorTerminator(node.GetSourcePos());
+        }
+    }
     context->GetSymbolTable()->EndScopeGeneric(context);
 }
 
@@ -97,10 +121,92 @@ void StatementBinder::Visit(otava::ast::ConstructorNode& node)
     context->GetBoundFunction()->SetBody(static_cast<BoundCompoundStatementNode*>(boundStatement));
 }
 
-void StatementBinder::Visit(otava::ast::ConstructorInitializerNode& node) 
+void StatementBinder::Visit(otava::ast::ConstructorInitializerNode& node)
 {
     ctorInitializer = new BoundCtorInitializerNode(node.GetSourcePos());
     node.MemberInitializerListNode()->Accept(*this);
+}
+
+void StatementBinder::GenerateDefaultCtorInitializer(const soul::ast::SourcePos& sourcePos)
+{
+    ctorInitializer = new BoundCtorInitializerNode(sourcePos);
+    CompleteBaseInitializers(sourcePos);
+    CompleteMemberInitializers(sourcePos);
+    std::sort(memberInitializers.begin(), memberInitializers.end(), MemberInitializerLess());
+    for (auto& initializer : memberInitializers)
+    {
+        ctorInitializer->AddMemberInitializer(initializer.second.release());
+    }
+    context->GetBoundFunction()->SetCtorInitializer(ctorInitializer);
+}
+
+void StatementBinder::GenerateDestructorTerminator(const soul::ast::SourcePos& sourcePos)
+{
+    dtorTerminator = new BoundDtorTerminatorNode(sourcePos);
+    GenerateBaseTerminators(sourcePos);
+    GenerateMemberTerminators(sourcePos);
+    std::sort(memberTerminators.begin(), memberTerminators.end(), MemberTerminatorGreater());
+    for (auto& terminator : memberTerminators)
+    {
+        dtorTerminator->AddMemberTerminator(terminator.second.release());
+    }
+    context->GetBoundFunction()->SetDtorTerminator(dtorTerminator);
+}
+
+void StatementBinder::GenerateBaseTerminators(const soul::ast::SourcePos& sourcePos)
+{
+    if (currentClass)
+    {
+        for (const auto& baseClass : currentClass->BaseClasses())
+        {
+            int index = GetBaseInitializerOrTerminatorIndex(baseClass);
+            AddBaseTerminator(baseClass, index, sourcePos);
+        }
+    }
+}
+
+void StatementBinder::AddBaseTerminator(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos)
+{
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+        baseClass->AddPointer(), thisPtr->GetType(), context);
+    if (conversion)
+    {
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
+        std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+            context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context);
+        memberTerminators.push_back(std::make_pair(index, std::move(boundFunctionCall)));
+    }
+    else
+    {
+        ThrowException("base class conversion not found", sourcePos, context);
+    }
+}
+
+void StatementBinder::GenerateMemberTerminators(const soul::ast::SourcePos& sourcePos)
+{
+    if (currentClass)
+    {
+        for (const auto& mermberVar : currentClass->MemberVariables())
+        {
+            AddMemberTerminator(mermberVar, sourcePos);
+        }
+    }
+}
+
+void StatementBinder::AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos)
+{
+    TypeSymbol* memberVarType = memberVar->GetType();
+    if (memberVarType->IsPointerType() || memberVarType->IsReferenceType()) return;
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
+    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    boundVariableNode->SetThisPtr(thisPtr);
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos)));
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+        context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context);
+    memberTerminators.push_back(std::make_pair(memberVar->Index(), std::move(boundFunctionCall)));
 }
 
 void StatementBinder::Visit(otava::ast::MemberInitializerListNode& node)
@@ -111,10 +217,105 @@ void StatementBinder::Visit(otava::ast::MemberInitializerListNode& node)
         otava::ast::Node* initializer = node.Items()[i];
         initializer->Accept(*this);
     }
+    CompleteBaseInitializers(node.GetSourcePos());
+    CompleteMemberInitializers(node.GetSourcePos());
     std::sort(memberInitializers.begin(), memberInitializers.end(), MemberInitializerLess());
     for (auto& initializer : memberInitializers)
     {
         ctorInitializer->AddMemberInitializer(initializer.second.release());
+    }
+}
+
+void StatementBinder::CompleteMemberInitializers(const soul::ast::SourcePos& sourcePos)
+{
+    if (currentClass)
+    {
+        for (const auto& memberVar : currentClass->MemberVariables())
+        {
+            int index = memberVar->Index();
+            bool found = false;
+            for (const auto& memberInitilizer : memberInitializers)
+            {
+                if (memberInitilizer.first == index)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                AddDefaultMemberInitializer(memberVar, sourcePos);
+            }
+        }
+    }
+}
+
+void StatementBinder::AddDefaultMemberInitializer(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos)
+{
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
+    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    boundVariableNode->SetThisPtr(thisPtr);
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos)));
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+        context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+    memberInitializers.push_back(std::make_pair(memberVar->Index(), std::move(boundFunctionCall)));
+}
+
+int StatementBinder::GetBaseInitializerOrTerminatorIndex(TypeSymbol* baseClass) const
+{
+    int n = currentClass->BaseClasses().size();
+    for (int i = 0; i < n; ++i)
+    {
+        TypeSymbol* baseCls = currentClass->BaseClasses()[i];
+        if (TypesEqual(baseCls, baseClass))
+        {
+            return i - maxBaseInitializers;
+        }
+    }
+    return -1;
+}
+
+void StatementBinder::CompleteBaseInitializers(const soul::ast::SourcePos& sourcePos)
+{
+    if (currentClass)
+    {
+        for (const auto& baseClass : currentClass->BaseClasses())
+        {
+            int index = GetBaseInitializerOrTerminatorIndex(baseClass);
+            bool found = false;
+            for (const auto& memberInitilizer : memberInitializers)
+            {
+                if (memberInitilizer.first == index)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                AddDefaultBaseInitializer(baseClass, index, sourcePos);
+            }
+        }
+    }
+}
+
+void StatementBinder::AddDefaultBaseInitializer(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos)
+{
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+        baseClass->AddPointer(), thisPtr->GetType(), context);
+    if (conversion)
+    {
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
+        std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+            context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+        memberInitializers.push_back(std::make_pair(index, std::move(boundFunctionCall)));
+    }
+    else
+    {
+        ThrowException("base class conversion not found", sourcePos, context);
     }
 }
 
@@ -133,6 +334,11 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
         {
             initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, node.GetSourcePos())));
         }
+        else
+        {
+            ThrowException("base class conversion not found", node.GetSourcePos(), context);
+        }
+        index = GetBaseInitializerOrTerminatorIndex(classTypeSymbol);
     }
     else
     {
@@ -185,7 +391,7 @@ void StatementBinder::Visit(otava::ast::ExpressionListNode& node)
         for (int i = 0; i < n; ++i)
         {
             otava::ast::Node* item = node.Items()[i];
-            BoundExpressionNode* arg = BindExpression(item, context, this);
+            BoundExpressionNode* arg = BindExpression(item, context);
             initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
         }
     }
@@ -228,7 +434,7 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
             boundIfStatement->SetInitStatement(boundInitStatement);
         }
     }
-    BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
+    BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition->GetType()->IsBoolType())
     {
         FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
@@ -271,7 +477,7 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
             boundSwitchStatement->SetInitStatement(boundInitStatement);
         }
     }
-    BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
+    BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     boundSwitchStatement->SetCondition(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
@@ -285,7 +491,7 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
 void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
 {
     BoundCaseStatementNode* boundCaseStatement = new BoundCaseStatementNode(node.GetSourcePos());
-    BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context, this);
+    BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context);
     boundCaseStatement->SetCaseExpr(caseExpr);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
@@ -312,7 +518,7 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     if (!block) return;
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
-    BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
+    BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition->GetType()->IsBoolType())
     {
         FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
@@ -336,7 +542,7 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
 void StatementBinder::Visit(otava::ast::DoStatementNode& node)
 {
     BoundDoStatementNode* boundDoStatement = new BoundDoStatementNode(node.GetSourcePos());
-    BoundExpressionNode* condition = BindExpression(node.Expression(), context, this);
+    BoundExpressionNode* condition = BindExpression(node.Expression(), context);
     if (!condition->GetType()->IsBoolType())
     {
         FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
@@ -392,7 +598,7 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     }
     if (node.Condition())
     {
-        BoundExpressionNode* condition = BindExpression(node.Condition(), context, this);
+        BoundExpressionNode* condition = BindExpression(node.Condition(), context);
         if (!condition->GetType()->IsBoolType())
         {
             FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
@@ -407,7 +613,7 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     }
     if (node.LoopExpr())
     {
-        BoundExpressionNode* loopExpr = BindExpression(node.LoopExpr(), context, this);
+        BoundExpressionNode* loopExpr = BindExpression(node.LoopExpr(), context);
         boundForStatement->SetLoopExpr(loopExpr);
     }
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
@@ -436,7 +642,7 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
     BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
     if (node.ReturnValue())
     {
-        BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context, this);
+        BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
         TypeSymbol* returnType = functionDefinitionSymbol->ReturnType();
         if (returnValueExpr->GetType() != returnType)
         {
@@ -458,7 +664,7 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
 void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
 {
     BoundExpressionStatementNode* boundExpressionStatement = new BoundExpressionStatementNode(node.GetSourcePos());
-    BoundExpressionNode* expr = BindExpression(node.Expression(), context, this);
+    BoundExpressionNode* expr = BindExpression(node.Expression(), context);
     boundExpressionStatement->SetExpr(expr);
     SetStatement(boundExpressionStatement);
 }
@@ -479,7 +685,7 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
             BoundExpressionNode* initializer = nullptr;
             if (declaration.initializer)
             {
-                initializer = BindExpression(declaration.initializer, context, this);
+                initializer = BindExpression(declaration.initializer, context);
             }
             VariableSymbol* variable = declaration.variable;
             if (initializer && initializer->GetType())

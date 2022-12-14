@@ -113,6 +113,19 @@ TypeSymbol* TemplateParameterSymbol::Unify(TypeSymbol* argType, Context* context
     return argType;
 }
 
+TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context)
+{
+    auto it = templateParameterMap.find(this);
+    if (it != templateParameterMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string & name_) : 
     TypeSymbol(SymbolKind::boundTemplateParameterSymbol, name_), 
     templateParameterSymbol(nullptr), 

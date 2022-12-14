@@ -42,6 +42,26 @@ enum class ClassKind
     class_, struct_, union_
 };
 
+enum class ClassTypeSymbolFlags : int32_t
+{
+    none = 0, objectLayoutComputed = 1 << 0, hasUserDefinedDestructor = 1 << 1, hasUserDefinedConstructor = 1 << 2
+};
+
+constexpr ClassTypeSymbolFlags operator|(ClassTypeSymbolFlags left, ClassTypeSymbolFlags right)
+{
+    return static_cast<ClassTypeSymbolFlags>(int32_t(left) | int32_t(right));
+}
+
+constexpr ClassTypeSymbolFlags operator&(ClassTypeSymbolFlags left, ClassTypeSymbolFlags right)
+{
+    return static_cast<ClassTypeSymbolFlags>(int32_t(left) & int32_t(right));
+}
+
+constexpr ClassTypeSymbolFlags operator~(ClassTypeSymbolFlags flags)
+{
+    return static_cast<ClassTypeSymbolFlags>(~int32_t(flags));
+}
+
 class ClassTypeSymbol : public TypeSymbol
 {
 public:
@@ -55,7 +75,8 @@ public:
     std::string SymbolKindStr() const override { return "class type symbol"; }
     std::string SymbolDocKindStr() const override { return "class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    TemplateDeclarationSymbol* ParentTemplateDeclaration();
+    TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
+    bool IsTemplate() const;
     const std::vector<TypeSymbol*>& BaseClasses() const { return baseClasses; }
     void AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     const std::vector<TypeSymbol*>& DerivedClasses() const { return derivedClasses; }
@@ -77,7 +98,16 @@ public:
     void MapFunction(FunctionSymbol* function);
     FunctionSymbol* GetFunction(int32_t functionIndex) const;
     int32_t NextFunctionIndex();
+    bool GetFlag(ClassTypeSymbolFlags flag) const { return (flags & flag) != ClassTypeSymbolFlags::none; }
+    void SetFlag(ClassTypeSymbolFlags flag) { flags = flags | flag; }
+    bool ObjectLayoutComputed() const { return GetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
+    void SetObjectLayoutComputed() { SetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
+    bool HasUserDefinedDestructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
+    void SetHasUserDefinedDestructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
+    bool HasUserDefinedConstructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
+    void SetHasUserDefinedConstructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
 private:
+    ClassTypeSymbolFlags flags;
     std::vector<TypeSymbol*> baseClasses;
     std::vector<util::uuid> baseClassIds;
     ClassKind classKind;
@@ -87,7 +117,6 @@ private:
     int32_t level;
     std::vector<VariableSymbol*> memberVariables;
     std::vector<FunctionSymbol*> memberFunctions;
-    bool objectLayoutComputed;
     std::vector<TypeSymbol*> objectLayout;
     std::vector<util::uuid> objectLayoutIds;
     int32_t vptrIndex;

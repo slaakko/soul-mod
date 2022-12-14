@@ -57,7 +57,7 @@ std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
 
 enum class FunctionSymbolFlags : int32_t
 {
-    none = 0, bound = 1 << 0, specialization = 1 << 1
+    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2
 };
 
 constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
@@ -122,6 +122,7 @@ public:
     TypeSymbol* ReturnType() const { return returnType; }
     std::u32string FullName() const override;
     bool IsTemplate() const;
+    bool IsMemFnOfClassTemplate() const;
     virtual TypeSymbol* ConversionParamType() const { return nullptr; }
     virtual TypeSymbol* ConversionArgType() const { return nullptr; }
     virtual ConversionKind GetConversionKind() const;
@@ -143,7 +144,7 @@ public:
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
     bool IsVirtual() const;
-    ClassTypeSymbol* ParentClassType() const;
+    ClassTypeSymbol* ParentClassType() const override;
     ParameterSymbol* ThisParam() const;
     bool IsMemberFunction() const;
     SpecialFunctionKind GetSpecialFunctionKind() const;

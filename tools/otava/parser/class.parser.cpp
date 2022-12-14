@@ -4120,6 +4120,7 @@ soul::parser::Match ClassParser<Lexer>::CtorInitializerSaved(Lexer& lexer, otava
                     {
                         ctorInitializerNode->SetMemberInitializerListNode(memberInitializerList.release());
                         lexer.EndRecordedParse();
+                        context->GetSymbolTable()->EndScope();
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "CtorInitializerSaved");

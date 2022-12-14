@@ -1,0 +1,3 @@
+project default_init;
+target=program;
+source <default_init.cpp>;

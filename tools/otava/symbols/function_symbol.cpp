@@ -435,6 +435,17 @@ bool FunctionSymbol::IsTemplate() const
     return ParentTemplateDeclaration() != nullptr && !IsSpecialization();
 }
 
+bool FunctionSymbol::IsMemFnOfClassTemplate() const
+{
+    if (IsSpecialization()) return false;
+    ClassTypeSymbol* parentClassType = ParentClassType();
+    if (parentClassType && parentClassType->IsTemplate())
+    {
+        return true;
+    }
+    return false;
+}
+
 std::u32string FunctionSymbol::FullName() const
 {
     ClassTypeSymbol* parentClassType = ParentClassType();
@@ -607,7 +618,10 @@ std::string FunctionSymbol::IrName(Context* context) const
             {
                 irName.append(operatorFunctionPrefix);
                 ClassTypeSymbol* classType = ParentClassType();
-                irName.append("_").append(util::ToUtf8(classType->Name()));
+                if (classType)
+                {
+                    irName.append("_").append(util::ToUtf8(classType->Name()));
+                }
             }
             else
             {

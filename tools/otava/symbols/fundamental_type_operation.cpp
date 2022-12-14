@@ -402,7 +402,12 @@ void FundamentalTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundEx
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
-    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    OperationFlags storeFlags = OperationFlags::none;
+    if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+    {
+        storeFlags = storeFlags | OperationFlags::deref;
+    }
+    args[0]->Store(emitter, storeFlags, sourcePos, context);
 }
 
 FundamentalTypeMoveCtor::FundamentalTypeMoveCtor() : FunctionSymbol(SymbolKind::fundamentalTypeMoveCtor, U"@constructor"), type(nullptr)
@@ -487,7 +492,6 @@ void FundamentalTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<B
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
     args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
     emitter.Stack().Push(context->Ptr());
-    // args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
 }
 
 FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment() : FunctionSymbol(SymbolKind::fundamentalTypeMoveAssignment, U"operator="), type(nullptr)
@@ -532,7 +536,24 @@ void FundamentalTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<B
     emitter.Stack().Push(emitter.EmitLoad(refValue));
     args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
     emitter.Stack().Push(context->Ptr());
-    // args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
+}
+
+FundamentalTypeDestructor::FundamentalTypeDestructor() : FunctionSymbol(U"@destructor"), type(nullptr)
+{
+}
+
+FundamentalTypeDestructor::FundamentalTypeDestructor(TypeSymbol* type_, Context* context) : FunctionSymbol(U"@destructor"), type(type_)
+{
+    SetFunctionKind(FunctionKind::destructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    SetFlag(FunctionSymbolFlags::trivialDestructor);
+}
+
+void FundamentalTypeDestructor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
 }
 
 void AddFundamentalIntegerOperationsToSymbolTable(TypeSymbol* type, Context* context)
@@ -560,6 +581,7 @@ void AddFundamentalIntegerOperationsToSymbolTable(TypeSymbol* type, Context* con
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveCtor(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyAssignment(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveAssignment(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDestructor(type, context), context);
 }
 
 void AddFundamentalFloatingPointOperationsToSymbolTable(TypeSymbol* type, Context* context)
@@ -577,6 +599,7 @@ void AddFundamentalFloatingPointOperationsToSymbolTable(TypeSymbol* type, Contex
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveCtor(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyAssignment(type, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveAssignment(type, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDestructor(type, context), context);
 }
 
 void AddFundamentalTypeOperationsToSymbolTable(Context* context)
@@ -587,6 +610,7 @@ void AddFundamentalTypeOperationsToSymbolTable(Context* context)
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveCtor(boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyAssignment(boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveAssignment(boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeDestructor(boolType, context), context);
     TypeSymbol* charType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::charType);
     TypeSymbol* signedCharType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::signedCharType);
     TypeSymbol* unsignedCharType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedCharType);

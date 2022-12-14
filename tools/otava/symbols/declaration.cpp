@@ -550,6 +550,10 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
         if (specialFunctionKind != SpecialFunctionKind::none)
         {
             functionIndex = GetSpecialFunctionIndex(specialFunctionKind);
+            if (specialFunctionKind == SpecialFunctionKind::dtor)
+            {
+                classType->SetHasUserDefinedDestructor();
+            }
         }
         else
         {
@@ -639,7 +643,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
     int scopes = 0;
     DeclarationProcessor processor(context);
     processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
-    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
         context->GetSymbolTable()->CurrentScope()->PopParentScope();
     }
@@ -667,9 +671,9 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     FunctionSymbol* functionSymbol = functionGroup->ResolveFunction(parameterTypes, qualifiers);
                     FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
                         parameterTypes, qualifiers, kind, declarator, functionSymbol, context);
-                    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
                     {
-                        context->SetFunctionTemplateSpecialization(definition);
+                        context->SetSpecialization(definition);
                     }
                     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
                     {
@@ -691,7 +695,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     }
                     definition->SetReturnType(declaration.type, context);
                     context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); 
-                    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
                     {
                         definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                     }
@@ -709,9 +713,9 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 }
                 FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
                     parameterTypes, qualifiers, kind, declarator, nullptr, context);
-                if (context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
                 {
-                    context->SetFunctionTemplateSpecialization(definition);
+                    context->SetSpecialization(definition);
                 }
                 for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
                 {
@@ -732,8 +736,8 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                     definition->AddParameter(parameter, sourcePos, context);
                 }
                 definition->SetReturnType(declaration.type, context);
-                context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); // GENERIC
-                if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate))
+                context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); 
+                if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
                 {
                     definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
                 }

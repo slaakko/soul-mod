@@ -411,6 +411,7 @@ parser ClassParser
             {
                 ctorInitializerNode->SetMemberInitializerListNode(memberInitializerList);
                 lexer.EndRecordedParse(); 
+                context->GetSymbolTable()->EndScope();
                 return ctorInitializerNode;
             }
         |   empty

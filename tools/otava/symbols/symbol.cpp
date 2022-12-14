@@ -185,7 +185,7 @@ FunctionSymbol* Symbol::ParentFunction() const
     return nullptr;
 }
 
-ClassTypeSymbol* Symbol::ParentClass() const
+ClassTypeSymbol* Symbol::ParentClassType() const
 {
     Symbol* parentSymbol = parent;
     while (parentSymbol)

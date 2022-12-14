@@ -1,0 +1,3 @@
+project size_of;
+target=program;
+source <size_of.cpp>;

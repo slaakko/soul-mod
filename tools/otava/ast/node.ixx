@@ -125,6 +125,8 @@ public:
     bool IsDefaultedOrDeletedFunctionNode() const { return kind == NodeKind::defaultedOrDeletedFunctionNode; } 
     bool IsStringLiteralNode() const { return kind == NodeKind::stringLiteralNode; }
     bool IsFunctionDefinitionNode() const { return kind == NodeKind::functionDefinitionNode; }
+    bool IsNewPlacementNode() const { return kind == NodeKind::newPlacementNode; }
+    bool IsCommaNode() const { return kind == NodeKind::commaNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

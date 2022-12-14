@@ -378,6 +378,17 @@ private:
     util::uuid typeId;
 };
 
+class FundamentalTypeDestructor : public FunctionSymbol
+{
+public:
+    FundamentalTypeDestructor();
+    FundamentalTypeDestructor(TypeSymbol* type_, Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    TypeSymbol* type;
+};
+
 void AddFundamentalTypeOperationsToSymbolTable(Context* context);
 
 } // namespace otava::symbols

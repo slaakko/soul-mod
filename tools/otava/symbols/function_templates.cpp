@@ -131,7 +131,7 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
             context->PushSetFlag(ContextFlags::instantiateFunctionTemplate | ContextFlags::saveDeclarations | ContextFlags::dontBind);
             context->SetFunctionDefinitionNode(functionDefinitionNode);
             functionDefinitionNode->Accept(instantiator);
-            specialization = context->GetFunctionTemplateSpecialization();
+            specialization = context->GetSpecialization();
             context->PushBoundFunction(new BoundFunctionNode(specialization, sourcePos));
             BindFunction(functionDefinitionNode, specialization, context);
             context->PopFlags();

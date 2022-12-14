@@ -30,6 +30,7 @@ export import std.iterator.reverse;
 export import std.iterator.set;
 export import std.iterator.unordered_map;
 export import std.iterator;
+export import std.new_op;
 export import std.stream;
 export import std.string;
 export import std.thread;

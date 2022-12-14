@@ -37,8 +37,10 @@ enum class ContextFlags : int32_t
     linkageDeclaration = 1 << 12,
     instantiateFunctionTemplate = 1 << 13,
     instantiateAliasTypeTemplate = 1 << 14,
-    dontBind = 1 << 15,
-    parseSavedCtorInitializer = 1 << 16
+    instantiateMemFnOfClassTemplate = 1 << 15,
+    dontBind = 1 << 16,
+    parseSavedCtorInitializer = 1 << 17,
+    skipFunctionDefinitions = 1 << 18
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -100,8 +102,8 @@ public:
     std::unique_ptr<DeclarationList> ReleaseDeclarationList(otava::ast::Node* node);
     soul::lexer::FileMap* GetFileMap() const { return fileMap; }
     void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
-    void SetFunctionTemplateSpecialization(FunctionDefinitionSymbol* specialization_) { specialization = specialization_; }
-    FunctionDefinitionSymbol* GetFunctionTemplateSpecialization() const { return specialization; }
+    void SetSpecialization(FunctionDefinitionSymbol* specialization_) { specialization = specialization_; }
+    FunctionDefinitionSymbol* GetSpecialization() const { return specialization; }
     void SetFunctionDefinitionNode(otava::ast::FunctionDefinitionNode* functionDefinitionNode_) { functionDefinitionNode = functionDefinitionNode_; }
     otava::ast::Node* GetFunctionDefinitionNode() const { return functionDefinitionNode; }
     void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }

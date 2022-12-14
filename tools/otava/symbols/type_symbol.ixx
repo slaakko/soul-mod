@@ -13,6 +13,7 @@ import otava.intermediate.type;
 export namespace otava::symbols {
 
 class Emitter;
+class TemplateParameterSymbol;
 
 class TypeSymbol : public ContainerSymbol
 {
@@ -37,6 +38,7 @@ public:
     virtual const Derivations& GetDerivations() const;
     virtual TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context);
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
+    virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) { return nullptr; }
     TypeSymbol* AddConst();
     TypeSymbol* RemoveConst();
     TypeSymbol* AddPointer();

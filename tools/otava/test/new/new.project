@@ -1,0 +1,3 @@
+project new;
+target=program;
+source <new.cpp>;

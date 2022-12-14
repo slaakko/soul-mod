@@ -1031,7 +1031,7 @@ Node* NewExprNode::Clone() const
     {
         clonedColonColonHead = colonColonHead->Clone();
     }
-    NewExprNode* clone = new NewExprNode(GetSourcePos(), clonedPlacement, Child(), clonedInitializer, clonedColonColonHead, newPos);
+    NewExprNode* clone = new NewExprNode(GetSourcePos(), clonedPlacement, Child()->Clone(), clonedInitializer, clonedColonColonHead, newPos);
     return clone;
 }
 
