@@ -184,7 +184,7 @@ public:
     {
         SetFunctionKind(FunctionKind::function);
         SetAccess(Access::public_);
-        ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+        ParameterSymbol* thisParam = new ParameterSymbol(U"this", type);
         AddParameter(thisParam, soul::ast::SourcePos(), context);
         ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
         AddParameter(thatParam, soul::ast::SourcePos(), context);

@@ -253,7 +253,8 @@ void ExpressionBinder::BindBinaryOp(otava::ast::NodeKind op, const soul::ast::So
     if (!functionCall)
     {
         args[0].reset(new BoundAddressOfNode(args[0].release(), sourcePos));
-        functionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex);
+        Exception ex2;
+        functionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex2);
     }
     if (!functionCall)
     {

@@ -1,0 +1,3 @@
+project convert;
+target=program;
+source <convert.cpp>;
