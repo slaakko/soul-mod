@@ -272,6 +272,46 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new FundamentalTypeShrOperation();
         }
+        case SymbolKind::fundamentalTypePlusAssign:
+        {
+            return new FundamentalTypePlusAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeMinusAssign:
+        {
+            return new FundamentalTypeMinusAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeMulAssign:
+        {
+            return new FundamentalTypeMulAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeDivAssign:
+        {
+            return new FundamentalTypeDivAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeModAssign:
+        {
+            return new FundamentalTypeModAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeAndAssign:
+        {
+            return new FundamentalTypeAndAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeOrAssign:
+        {
+            return new FundamentalTypeOrAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeXorAssign:
+        {
+            return new FundamentalTypeXorAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeShlAssign:
+        {
+            return new FundamentalTypeShlAssignOperation();
+        }
+        case SymbolKind::fundamentalTypeShrAssign:
+        {
+            return new FundamentalTypeShrAssignOperation();
+        }
         case SymbolKind::fundamentalTypeEqual:
         {
             return new FundamentalTypeEqualOperation();

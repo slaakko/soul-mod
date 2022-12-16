@@ -280,7 +280,6 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
-        std::unique_ptr<otava::ast::Node> clonedNode(node->Clone());
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
             std::string xmlFilePath = filePath + ".ast.xml";
@@ -326,7 +325,6 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
-        std::unique_ptr<otava::ast::Node> clonedNode(node->Clone());
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
             std::string xmlFilePath = filePath + ".ast.xml";

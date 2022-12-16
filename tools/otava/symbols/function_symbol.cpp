@@ -427,6 +427,11 @@ void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
     if (returnType)
     {
         context->GetSymbolTable()->MapType(returnType);
+        if (returnType->IsClassTypeSymbol())
+        {
+            SetReturnsClass();
+            SetReturnValueParam(new ParameterSymbol(U"@return_value", returnType->AddPointer()));
+        }
     }
 }
 
@@ -499,12 +504,19 @@ void FunctionSymbol::AddParameter(ParameterSymbol* parameter, const soul::ast::S
     AddSymbol(parameter, sourcePos, context);
 }
 
+void FunctionSymbol::SetReturnValueParam(ParameterSymbol* returnValueParam_)
+{
+    returnValueParam.reset(returnValueParam_);
+}
+
 void FunctionSymbol::Write(Writer& writer)
 {
     ContainerSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(kind));
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(qualifiers));
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(linkage));
+    writer.GetBinaryStreamWriter().Write(index);
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(flags));
     if (returnType)
     {
         writer.GetBinaryStreamWriter().Write(returnType->Id());
@@ -512,6 +524,10 @@ void FunctionSymbol::Write(Writer& writer)
     else
     {
         writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+    }
+    if (ReturnsClass())
+    {
+        writer.Write(ReturnValueParam());
     }
 }
 
@@ -521,7 +537,17 @@ void FunctionSymbol::Read(Reader& reader)
     kind = static_cast<FunctionKind>(reader.GetBinaryStreamReader().ReadByte());
     qualifiers = static_cast<FunctionQualifiers>(reader.GetBinaryStreamReader().ReadByte());
     linkage = static_cast<Linkage>(reader.GetBinaryStreamReader().ReadByte());
+    index = reader.GetBinaryStreamReader().ReadInt();
+    flags = static_cast<FunctionSymbolFlags>(reader.GetBinaryStreamReader().ReadByte());
     reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
+    if (ReturnsClass())
+    {
+        Symbol* returnValueParamSymbol = reader.ReadSymbol();
+        if (returnValueParamSymbol->IsParameterSymbol())
+        {
+            returnValueParam.reset(static_cast<ParameterSymbol*>(returnValueParamSymbol));
+        }
+    }
 }
 
 void FunctionSymbol::Resolve(SymbolTable& symbolTable)
@@ -530,6 +556,10 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
     if (returnTypeId != util::nil_uuid())
     {
         returnType = symbolTable.GetType(returnTypeId);
+        if (ReturnsClass())
+        {
+            returnValueParam->Resolve(symbolTable);
+        }
     }
 }
 
@@ -580,7 +610,7 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
     if (!type)
     {
         otava::intermediate::Type* returnIrType = nullptr;
-        if (returnType)
+        if (returnType && !ReturnsClass())
         {
             returnIrType = returnType->IrType(emitter, sourcePos, context);
         }
@@ -592,6 +622,10 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
         for (const auto& param : MemFunParameters())
         {
             paramIrTypes.push_back(param->GetReferredType()->IrType(emitter, sourcePos, context));
+        }
+        if (ReturnsClass())
+        {
+            paramIrTypes.push_back(ReturnValueParam()->GetReferredType()->IrType(emitter, sourcePos, context));
         }
         type = emitter.MakeFunctionType(returnIrType, paramIrTypes);
         emitter.SetType(Id(), type);

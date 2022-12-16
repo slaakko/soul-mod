@@ -7,12 +7,12 @@ export module otava.symbols.fundamental.type.operation;
 
 import otava.symbols.emitter;
 import otava.symbols.function.symbol;
+import otava.symbols.context;
 import otava.intermediate.value;
 import std.core;
 
 export namespace otava::symbols {
 
-class Context;
 class SymbolTable;
 
 struct FundamentalTypeNot
@@ -42,60 +42,70 @@ struct FundamentalTypeComplement
 struct FundamentalTypeAdd
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeSub
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeMul
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeDiv
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeMod
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeAnd
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeOr
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeXor
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeShl
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
 struct FundamentalTypeShr
 {
     static const char32_t* GroupName();
+    static const char32_t* AssignmentOpGroupName();
     static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* left, otava::intermediate::Value* right);
 };
 
@@ -161,6 +171,39 @@ public:
         otava::intermediate::Value* right = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, left, right));
     }
+};
+
+template<typename Op>
+class FundamentalTypeAssignmentOperation : public FunctionSymbol
+{
+public:
+    FundamentalTypeAssignmentOperation(SymbolKind kind_) : FunctionSymbol(kind_, Op::AssignmentOpGroupName())
+    {
+    }
+    FundamentalTypeAssignmentOperation(SymbolKind kind_, TypeSymbol* type_, Context* context) : FunctionSymbol(kind_, Op::AssignmentOpGroupName()), type(type_)
+    {
+        SetFunctionKind(FunctionKind::function);
+        SetAccess(Access::public_);
+        ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+        AddParameter(thisParam, soul::ast::SourcePos(), context);
+        ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
+        AddParameter(thatParam, soul::ast::SourcePos(), context);
+        SetReturnType(type->AddLValueRef(), context);
+    }
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+    {
+        args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+        otava::intermediate::Value* left = emitter.Stack().Pop();
+        args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+        otava::intermediate::Value* right = emitter.Stack().Pop();
+        emitter.Stack().Push(Op::Generate(emitter, left, right));
+        args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+        emitter.Stack().Push(context->Ptr());
+    }
+    bool IsCtorAssignmentOrArrow() const override { return true; }
+private:
+    TypeSymbol* type;
 };
 
 template<class Op>
@@ -289,6 +332,76 @@ public:
     FundamentalTypeShrOperation(TypeSymbol* type_, Context* context);
 };
 
+class FundamentalTypePlusAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeAdd>
+{
+public:
+    FundamentalTypePlusAssignOperation();
+    FundamentalTypePlusAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeMinusAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeSub>
+{
+public:
+    FundamentalTypeMinusAssignOperation();
+    FundamentalTypeMinusAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeMulAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeMul>
+{
+public:
+    FundamentalTypeMulAssignOperation();
+    FundamentalTypeMulAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeDivAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeDiv>
+{
+public:
+    FundamentalTypeDivAssignOperation();
+    FundamentalTypeDivAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeModAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeMod>
+{
+public:
+    FundamentalTypeModAssignOperation();
+    FundamentalTypeModAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeAndAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeAnd>
+{
+public:
+    FundamentalTypeAndAssignOperation();
+    FundamentalTypeAndAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeOrAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeOr>
+{
+public:
+    FundamentalTypeOrAssignOperation();
+    FundamentalTypeOrAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeXorAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeXor>
+{
+public:
+    FundamentalTypeXorAssignOperation();
+    FundamentalTypeXorAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeShlAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeShl>
+{
+public:
+    FundamentalTypeShlAssignOperation();
+    FundamentalTypeShlAssignOperation(TypeSymbol* type_, Context* context);
+};
+
+class FundamentalTypeShrAssignOperation : public FundamentalTypeAssignmentOperation<FundamentalTypeShr>
+{
+public:
+    FundamentalTypeShrAssignOperation();
+    FundamentalTypeShrAssignOperation(TypeSymbol* type_, Context* context);
+};
+
 class FundamentalTypeEqualOperation : public FundamentalTypeComparisonOperation<FundamentalTypeEqual>
 {
 public:
@@ -313,6 +426,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -328,6 +442,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -343,6 +458,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -358,6 +474,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
@@ -373,16 +490,17 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
     util::uuid typeId;
 };
 
-class FundamentalTypeDestructor : public FunctionSymbol
+class TrivialDestructor : public FunctionSymbol
 {
 public:
-    FundamentalTypeDestructor();
-    FundamentalTypeDestructor(TypeSymbol* type_, Context* context);
+    TrivialDestructor();
+    TrivialDestructor(TypeSymbol* type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
 private:

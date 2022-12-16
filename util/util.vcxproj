@@ -169,7 +169,6 @@
     <ClCompile Include="binary_stream_reader.ixx" />
     <ClCompile Include="binary_stream_writer.cpp" />
     <ClCompile Include="binary_stream_writer.ixx" />
-    <ClCompile Include="boost.uuid.ixx" />
     <ClCompile Include="buffered_stream.cpp" />
     <ClCompile Include="buffered_stream.ixx" />
     <ClCompile Include="code_formatter.cpp" />

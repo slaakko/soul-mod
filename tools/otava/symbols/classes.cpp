@@ -23,6 +23,7 @@ import otava.symbols.variable.symbol;
 import otava.symbols.function.symbol;
 import otava.symbols.overload.resolution;
 import otava.symbols.argument.conversion.table;
+import otava.symbols.fundamental.type.operation;
 
 namespace otava::symbols {
 
@@ -754,20 +755,21 @@ void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::sy
 
 void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    FunctionDefinitionSymbol* destructorSymbol = new FunctionDefinitionSymbol(U"@destructor");
-    destructorSymbol->SetFunctionKind(FunctionKind::destructor);
-    destructorSymbol->SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", classTypeSymbol->AddPointer());
-    destructorSymbol->AddParameter(thisParam, sourcePos, context);
-    classTypeSymbol->AddSymbol(destructorSymbol, sourcePos, context);
+    std::unique_ptr<TrivialDestructor> trivialDestructor(new TrivialDestructor(classTypeSymbol, context));
     int nm = classTypeSymbol->MemberVariables().size();
     int nb = classTypeSymbol->BaseClasses().size();
     if (nm == 0 && nb == 0)
     {
-        destructorSymbol->SetFlag(FunctionSymbolFlags::trivialDestructor);
+        classTypeSymbol->AddSymbol(trivialDestructor.release(), sourcePos, context);
         return;
     }
     bool hasNonTrivialDestructor = false;
+    std::unique_ptr<FunctionDefinitionSymbol> destructorSymbol(new FunctionDefinitionSymbol(U"@destructor"));
+    destructorSymbol->SetParent(classTypeSymbol);
+    destructorSymbol->SetFunctionKind(FunctionKind::destructor);
+    destructorSymbol->SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", classTypeSymbol->AddPointer());
+    destructorSymbol->AddParameter(thisParam, sourcePos, context);
     std::unique_ptr<BoundDtorTerminatorNode> terminator(new BoundDtorTerminatorNode(sourcePos));
     for (int i = nm - 1; i >= 0; --i)
     {
@@ -812,10 +814,11 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
     }
     if (!hasNonTrivialDestructor)
     {
-        destructorSymbol->SetFlag(FunctionSymbolFlags::trivialDestructor);
+        classTypeSymbol->AddSymbol(trivialDestructor.release(), sourcePos, context);
         return;
     }
-    BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorSymbol, sourcePos);
+    BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorSymbol.get(), sourcePos);
+    classTypeSymbol->AddSymbol(destructorSymbol.release(), sourcePos, context);
     BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
     boundDestructor->SetBody(body);
     boundDestructor->SetDtorTerminator(terminator.release());

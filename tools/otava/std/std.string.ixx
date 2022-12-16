@@ -23,6 +23,7 @@ public:
 	string(const string& that);
 	string(string&& that);
 	string(size_type count, char c);
+	string& append(size_type count, char c);
 	void reserve(size_type min_len);
 	size_type length() const { return len; }
 	size_type size() const { return len; }

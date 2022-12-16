@@ -1,7 +1,6 @@
 export module util.uuid;
 
 import std.core;
-import util.boost.uuid;
 
 export namespace util {
 
@@ -9,6 +8,10 @@ struct uuid
 {
     using value_type = uint8_t;
     uuid();
+    uuid(const uuid& that);
+    uuid& operator=(const uuid& that); 
+    uuid(uuid&& that);
+    uuid& operator=(uuid&& that);
     static uuid random();
     static constexpr int static_size() { return 16; }
     const std::uint8_t* begin() const { return &data[0]; }
@@ -19,6 +22,7 @@ struct uuid
 };
 
 bool operator==(const uuid& left, const uuid& right);
+inline bool operator!=(const uuid& left, const uuid& right) { return !(left == right); }
 bool operator<(const uuid& left, const uuid& right);
 
 void UuidToInts(const uuid& id, uint64_t& int1, uint64_t& int2);

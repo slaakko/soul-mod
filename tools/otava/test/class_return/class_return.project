@@ -1,0 +1,3 @@
+project class_return;
+target=program;
+source <class_return.cpp>;

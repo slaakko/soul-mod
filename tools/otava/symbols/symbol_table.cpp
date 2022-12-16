@@ -85,6 +85,19 @@ void SymbolTable::SetCurrentScope(Scope* scope)
     currentScope = scope;
 }
 
+Scope* SymbolTable::GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context) 
+{
+    Symbol* ns = Lookup(nsName, SymbolGroupKind::typeSymbolGroup, sourcePos, context);
+    if (ns)
+    {
+        return ns->GetScope();
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 void SymbolTable::PushScope()
 {
     scopeStack.push_back(currentScope);
@@ -1111,6 +1124,10 @@ void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::N
 
 FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context)
 {
+    if (name == U"to_string")
+    {
+        int x = 0;
+    }
     std::u32string groupName = name;
     if (kind == FunctionKind::constructor)
     {

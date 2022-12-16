@@ -1,6 +1,4 @@
-module std.new_op;
-
-import std.crt;
+module std.new_delete_op;
 
 void* operator new(size_t size)
 {
@@ -10,4 +8,10 @@ void* operator new(size_t size)
 void* operator new(size_t size, void* placement)
 {
     return placement;
+}
+
+void operator delete(void* object)
+{
+    free(object);
+
 }

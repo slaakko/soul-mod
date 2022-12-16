@@ -8,7 +8,6 @@ interface <binary_stream_reader.ixx>;
 source <binary_stream_reader.cpp>;
 interface <binary_stream_writer.ixx>;
 source <binary_stream_writer.cpp>;
-interface <boost.uuid.soul.ixx>;
 interface <buffered_stream.ixx>;
 source <buffered_stream.cpp>;
 interface <code_formatter.ixx>;

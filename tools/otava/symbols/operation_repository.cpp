@@ -29,6 +29,7 @@ public:
     TypeSymbol* Type() const { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -92,6 +93,7 @@ public:
     TypeSymbol* Type() const { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -160,6 +162,7 @@ public:
     TypeSymbol* Type() const { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -227,6 +230,7 @@ public:
     TypeSymbol* Type() const { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -249,7 +253,6 @@ void PointerCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpr
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
     args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
     emitter.Stack().Push(context->Ptr());
-    //args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
 }
 
 class PointerCopyAssignmentOperation : public Operation
@@ -293,6 +296,7 @@ public:
     TypeSymbol* Type() const { return type; }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -317,7 +321,6 @@ void PointerMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpr
     emitter.Stack().Push(emitter.EmitLoad(refValue));
     args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
     emitter.Stack().Push(context->Ptr());
-    //args[0]->Load(emitter, OperationFlags::addr, sourcePos, context);
 }
 
 class PointerMoveAssignmentOperation : public Operation
@@ -770,6 +773,7 @@ public:
     PointerArrow(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
 private:
     TypeSymbol* type;
 };

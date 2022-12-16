@@ -230,6 +230,7 @@ void StatementBinder::CompleteMemberInitializers(const soul::ast::SourcePos& sou
 {
     if (currentClass)
     {
+        if (HasThisInitializer()) return;
         for (const auto& memberVar : currentClass->MemberVariables())
         {
             int index = memberVar->Index();
@@ -280,6 +281,7 @@ void StatementBinder::CompleteBaseInitializers(const soul::ast::SourcePos& sourc
 {
     if (currentClass)
     {
+        if (HasThisInitializer()) return;
         for (const auto& baseClass : currentClass->BaseClasses())
         {
             int index = GetBaseInitializerOrTerminatorIndex(baseClass);
@@ -418,6 +420,15 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
     }
     context->GetSymbolTable()->EndScopeGeneric(context);
     SetStatement(currentCompoundStatement);
+}
+
+bool StatementBinder::HasThisInitializer() const
+{
+    for (const auto& memberInit : memberInitializers)
+    {
+        if (memberInit.first == -1) return true;
+    }
+    return false;
 }
 
 void StatementBinder::Visit(otava::ast::IfStatementNode& node)
@@ -642,21 +653,45 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
     BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
     if (node.ReturnValue())
     {
-        BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
-        TypeSymbol* returnType = functionDefinitionSymbol->ReturnType();
-        if (returnValueExpr->GetType() != returnType)
+        if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnsClass())
         {
-            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(returnType, returnValueExpr->GetType(), context);
-            if (conversion)
+            std::vector<std::unique_ptr<BoundExpressionNode>> classReturnArgs;
+            classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnValueParam(),
+                node.GetSourcePos())));
+            BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
+            if (returnValueExpr->IsBoundLocalVariable())
             {
-                returnValueExpr = new BoundConversionNode(returnValueExpr, conversion, node.GetSourcePos());
-            }
-            else
-            {
-                ThrowException("no conversion found", node.GetSourcePos(), context);
+                std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
+                moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(returnValueExpr));
+                Scope* scope = context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context);
+                std::unique_ptr<BoundFunctionCallNode> moveExpr = ResolveOverloadThrow(
+                    scope, U"move", moveArgs, node.GetSourcePos(), context, OverloadResolutionFlags::dontSearchArgumentScopes);
+                classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(moveExpr.release()));
+                std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", classReturnArgs,
+                    node.GetSourcePos(), context);
+                std::unique_ptr<BoundExpressionStatementNode> expressionStatement(new BoundExpressionStatementNode(node.GetSourcePos()));
+                expressionStatement->SetExpr(constructorCall.release());
+                SetStatement(expressionStatement.release());
             }
         }
-        boundReturnStatement->SetExpr(returnValueExpr);
+        else
+        {
+            BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
+            TypeSymbol* returnType = functionDefinitionSymbol->ReturnType();
+            if (returnValueExpr->GetType() != returnType)
+            {
+                FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(returnType, returnValueExpr->GetType(), context);
+                if (conversion)
+                {
+                    returnValueExpr = new BoundConversionNode(returnValueExpr, conversion, node.GetSourcePos());
+                }
+                else
+                {
+                    ThrowException("no conversion found", node.GetSourcePos(), context);
+                }
+            }
+            boundReturnStatement->SetExpr(returnValueExpr);
+        }
     }
     SetStatement(boundReturnStatement);
 }

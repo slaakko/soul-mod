@@ -18,12 +18,46 @@ uuid::uuid()
     }
 }
 
+uuid::uuid(const uuid& that)
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        data[i] = that.data[i];
+    }
+}
+
+uuid::uuid(uuid&& that)
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        data[i] = that.data[i];
+    }
+}
+
+uuid& uuid::operator=(const uuid& that)
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        data[i] = that.data[i];
+    }
+    return *this;
+}
+
+uuid& uuid::operator=(uuid&& that)
+{
+    for (int i = 0; i < uuid::static_size(); ++i)
+    {
+        data[i] = that.data[i];
+    }
+    return *this;
+}
+
 uuid uuid::random()
 {
     uuid rand_uuid;
-    for (auto& byte : rand_uuid.data)
+    for (int i = 0; i < uuid::static_size(); ++i)
     {
-        byte = get_random_byte();
+        rand_uuid.data[i] = get_random_byte();
     }
     return rand_uuid;
 }

@@ -207,8 +207,7 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
     for (int i = 0; i < n; ++i)
     {
         BoundExpressionNode* arg = args[i].release();
-        if (i == 0 && !functionMatch.function->IsMemberFunction() && 
-            (functionMatch.function->Name() == U"@constructor" || functionMatch.function->Name() == U"operator=" || functionMatch.function->Name() == U"operator->"))
+        if (i == 0 && !functionMatch.function->IsMemberFunction() && functionMatch.function->IsCtorAssignmentOrArrow())
         {
             if (arg->IsBoundAddressOfNode())
             {

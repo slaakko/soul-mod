@@ -206,6 +206,7 @@ using u16string = basic_string<char16_t>;
 using u32string = basic_string<char32_t>;
 using wstring = basic_string<wchar_t>;
 
+/*
 string to_string(int val);
 string to_string(unsigned val);
 string to_string(long val);
@@ -215,7 +216,9 @@ string to_string(unsigned long long val);
 string to_string(float val);
 string to_string(double val);
 string to_string(long double val);
+*/
 
+/*
 wstring to_wstring(int val);
 wstring to_wstring(unsigned val);
 wstring to_wstring(long val);
@@ -225,6 +228,7 @@ wstring to_wstring(unsigned long long val);
 wstring to_wstring(float val);
 wstring to_wstring(double val);
 wstring to_wstring(long double val);
+*/
 
 int stoi(const string& str, size_t* idx = nullptr, int base = 10);
 long stol(const string& str, size_t* idx = nullptr, int base = 10);

@@ -1,0 +1,3 @@
+project to_string;
+target=program;
+source <to_string.cpp>;

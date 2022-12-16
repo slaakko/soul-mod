@@ -265,6 +265,16 @@ bool Symbol::CanInstall() const
         case SymbolKind::fundamentalTypeXor:
         case SymbolKind::fundamentalTypeShl:
         case SymbolKind::fundamentalTypeShr:
+        case SymbolKind::fundamentalTypePlusAssign:
+        case SymbolKind::fundamentalTypeMinusAssign:
+        case SymbolKind::fundamentalTypeMulAssign:
+        case SymbolKind::fundamentalTypeDivAssign:
+        case SymbolKind::fundamentalTypeModAssign:
+        case SymbolKind::fundamentalTypeAndAssign:
+        case SymbolKind::fundamentalTypeOrAssign:
+        case SymbolKind::fundamentalTypeXorAssign:
+        case SymbolKind::fundamentalTypeShlAssign:
+        case SymbolKind::fundamentalTypeShrAssign:
         case SymbolKind::fundamentalTypeEqual:
         case SymbolKind::fundamentalTypeLess:
         case SymbolKind::fundamentalTypeSignExtension:
@@ -349,6 +359,16 @@ bool Symbol::IsFunctionSymbol() const
         case SymbolKind::fundamentalTypeXor:
         case SymbolKind::fundamentalTypeShl:
         case SymbolKind::fundamentalTypeShr:
+        case SymbolKind::fundamentalTypePlusAssign:
+        case SymbolKind::fundamentalTypeMinusAssign:
+        case SymbolKind::fundamentalTypeMulAssign:
+        case SymbolKind::fundamentalTypeDivAssign:
+        case SymbolKind::fundamentalTypeModAssign:
+        case SymbolKind::fundamentalTypeAndAssign:
+        case SymbolKind::fundamentalTypeOrAssign:
+        case SymbolKind::fundamentalTypeXorAssign:
+        case SymbolKind::fundamentalTypeShlAssign:
+        case SymbolKind::fundamentalTypeShrAssign:
         case SymbolKind::fundamentalTypeEqual:
         case SymbolKind::fundamentalTypeLess:
         case SymbolKind::fundamentalTypeSignExtension:
@@ -435,6 +455,16 @@ SymbolGroupKind Symbol::GetSymbolGroupKind() const
         case SymbolKind::fundamentalTypeEqual:
         case SymbolKind::fundamentalTypeLess:
         case SymbolKind::fundamentalTypeBoolean:
+        case SymbolKind::fundamentalTypePlusAssign:
+        case SymbolKind::fundamentalTypeMinusAssign:
+        case SymbolKind::fundamentalTypeMulAssign:
+        case SymbolKind::fundamentalTypeDivAssign:
+        case SymbolKind::fundamentalTypeModAssign:
+        case SymbolKind::fundamentalTypeAndAssign:
+        case SymbolKind::fundamentalTypeOrAssign:
+        case SymbolKind::fundamentalTypeXorAssign:
+        case SymbolKind::fundamentalTypeShlAssign:
+        case SymbolKind::fundamentalTypeShrAssign:
         {
             return SymbolGroupKind::functionSymbolGroup;
         }

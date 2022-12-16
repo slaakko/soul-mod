@@ -98,6 +98,7 @@ public:
     void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) { errorTypeSymbol = errorTypeSymbol_; }
     Scope* CurrentScope() const { return currentScope; }
     void SetCurrentScope(Scope* scope);
+    Scope* GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context);
     void PushScope();
     void PopScope();
     void BeginScope(Scope* scope);

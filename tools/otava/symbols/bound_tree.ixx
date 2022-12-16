@@ -70,7 +70,7 @@ enum class BoundNodeKind
     boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
     boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
-    boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundDefaultInitNode,
+    boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode, boundDtorTerminatorNode
 };
 
@@ -87,7 +87,7 @@ public:
     const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
     bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
     bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
-    bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
+    virtual bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
     bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
     bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
@@ -349,6 +349,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundStatementNode* First() const { return first.get(); }
     BoundStatementNode* Second() const { return second.get(); }
+    bool IsReturnStatementNode() const override { return second->IsReturnStatementNode(); }
 private:
     std::unique_ptr<BoundStatementNode> first;
     std::unique_ptr<BoundStatementNode> second;
@@ -649,6 +650,17 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
+private:
+    std::unique_ptr<BoundExpressionNode> subject;
+};
+
+class BoundPtrToRefNode : public BoundExpressionNode
+{
+public:
+    BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;

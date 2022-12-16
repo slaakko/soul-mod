@@ -15,6 +15,7 @@ int main()
     prints("\n");
 
     std::string c(u);
+    c.append(1, 'Q');
     prints(c.c_str());
     prints("\n");
 

@@ -18,6 +18,7 @@ import util.init.done;
 import util.unicode;
 import util.path;
 import util.text.util;
+import util.uuid;
 
 void PrintHelp()
 {

@@ -1396,6 +1396,26 @@ BoundExpressionNode* BoundRefToPtrNode::Clone() const
     return new BoundRefToPtrNode(subject->Clone(), GetSourcePos());
 }
 
+BoundPtrToRefNode::BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
+    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, sourcePos_, subject_->GetType()->RemovePointer()->AddLValueRef()), subject(subject_)
+{
+}
+
+void BoundPtrToRefNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundPtrToRefNode::Clone() const
+{
+    return new BoundPtrToRefNode(subject->Clone(), GetSourcePos());
+}
+
+void BoundPtrToRefNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    subject->Load(emitter, flags, sourcePos, context);
+}
+
 BoundDefaultInitNode::BoundDefaultInitNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
     BoundExpressionNode(BoundNodeKind::boundDefaultInitNode, sourcePos_, subject_->GetType()), subject(subject_)
 {
@@ -1481,6 +1501,7 @@ void BoundConstructTemporaryNode::Store(Emitter& emitter, OperationFlags flags, 
 
 void BoundConstructTemporaryNode::Accept(BoundTreeVisitor& visitor) 
 {
+    visitor.Visit(*this);
 }
 
 BoundExpressionNode* BoundConstructTemporaryNode::Clone() const

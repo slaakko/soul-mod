@@ -53,6 +53,7 @@ public:
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
 private:
     void SetStatement(BoundStatementNode* statement);
+    bool HasThisInitializer() const;
     void CompleteMemberInitializers(const soul::ast::SourcePos& sourcePos);
     void AddDefaultMemberInitializer(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
     int GetBaseInitializerOrTerminatorIndex(TypeSymbol* baseClass) const;

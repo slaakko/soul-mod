@@ -57,7 +57,7 @@ std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
 
 enum class FunctionSymbolFlags : int32_t
 {
-    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2
+    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3
 };
 
 constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
@@ -120,6 +120,8 @@ public:
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
     void SetReturnType(TypeSymbol* returnType_, Context* context);
     TypeSymbol* ReturnType() const { return returnType; }
+    bool ReturnsClass() const { return GetFlag(FunctionSymbolFlags::returnsClass); }
+    void SetReturnsClass() { SetFlag(FunctionSymbolFlags::returnsClass); }
     std::u32string FullName() const override;
     bool IsTemplate() const;
     bool IsMemFnOfClassTemplate() const;
@@ -127,9 +129,12 @@ public:
     virtual TypeSymbol* ConversionArgType() const { return nullptr; }
     virtual ConversionKind GetConversionKind() const;
     virtual int32_t ConversionDistance() const { return 0; }
+    virtual bool IsCtorAssignmentOrArrow() const { return false; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
     const std::vector<ParameterSymbol*>& MemFunParameters() const;
+    ParameterSymbol* ReturnValueParam() const { return returnValueParam.get(); }
+    void SetReturnValueParam(ParameterSymbol* returnValueParam_);
     void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
     void AddLocalVariable(VariableSymbol* variable);
     void RemoveLocalVariable(VariableSymbol* variable);
@@ -170,6 +175,7 @@ private:
     util::uuid returnTypeId;
     std::vector<ParameterSymbol*> parameters;
     mutable std::unique_ptr<ParameterSymbol> thisParam;
+    std::unique_ptr<ParameterSymbol> returnValueParam;
     mutable std::vector<ParameterSymbol*> memFunParameters;
     std::vector<VariableSymbol*> localVariables;
     int32_t nextTemporaryId;

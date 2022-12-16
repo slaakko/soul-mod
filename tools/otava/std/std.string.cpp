@@ -62,6 +62,21 @@ string::string(size_type count, char c) : chars(nullptr), len(count), res(0)
 	}
 }
 
+string& string::append(size_type count, char c)
+{
+	if (count > 0)
+	{
+		reserve(len + count);
+		for (size_type i = 0; i < count; ++i)
+		{
+			chars[len] = c;
+			++len;
+		}
+		chars[len] = '\0';
+	}
+	return *this;
+}
+
 string::~string()
 {
 	deallocate();

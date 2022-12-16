@@ -204,6 +204,7 @@ public:
     void Visit(otava::ast::NullPtrLiteralNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
     void Visit(otava::ast::QualifiedIdNode& node) override;
+    void Visit(otava::ast::ThisNode& node) override;
     void Visit(otava::ast::TemplateIdNode& node) override;
     void Visit(otava::ast::MemberExprNode& node) override;
     void Visit(otava::ast::InvokeExprNode& node) override;
@@ -289,7 +290,14 @@ void ExpressionBinder::BindDeref(const soul::ast::SourcePos& sourcePos, BoundExp
 {
     if (operand->GetType()->IsPointerType())
     {
-        boundExpression = new BoundDereferenceNode(operand, sourcePos);
+        if (operand->GetType()->RemovePointer()->IsClassTypeSymbol())
+        {
+            boundExpression = new BoundPtrToRefNode(operand, sourcePos);
+        }
+        else
+        {
+            boundExpression = new BoundDereferenceNode(operand, sourcePos);
+        }
     }
     else
     {
@@ -545,6 +553,19 @@ void ExpressionBinder::Visit(otava::ast::QualifiedIdNode& node)
     node.Right()->Accept(*this);
 }
 
+void ExpressionBinder::Visit(otava::ast::ThisNode& node)
+{
+    ParameterSymbol* thisParam = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam();
+    if (thisParam)
+    {
+        boundExpression = new BoundParameterNode(thisParam, node.GetSourcePos());
+    }
+    else
+    {
+        ThrowException("'this' can only be used in member function context", node.GetSourcePos(), context);
+    }
+}
+
 void ExpressionBinder::Visit(otava::ast::TemplateIdNode& node)
 {
     context->GetSymbolTable()->BeginScope(scope);
@@ -663,7 +684,19 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         {
             ThrowException(ex);
         }
+        FunctionSymbol* functionSymbol = functionCall->GetFunctionSymbol();
+        VariableSymbol* classTemporary = nullptr;
+        if (functionSymbol->ReturnsClass())
+        {
+            classTemporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(functionSymbol->ReturnType());
+            functionCall->AddArgument(new BoundAddressOfNode(new BoundVariableNode(classTemporary, node.GetSourcePos()), node.GetSourcePos()));
+        }
         boundExpression = functionCall.release();
+        if (classTemporary)
+        {
+            boundExpression = new BoundConstructTemporaryNode(boundExpression, new BoundVariableNode(classTemporary, node.GetSourcePos()), node.GetSourcePos());
+            boundExpression->SetFlag(BoundExpressionFlags::bindToRvalueRef);
+        }
         if (subject->IsBoundTypeNode())
         {
             boundExpression = new BoundConstructTemporaryNode(boundExpression, new BoundVariableNode(temporary, node.GetSourcePos()), node.GetSourcePos());

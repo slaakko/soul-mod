@@ -45,9 +45,11 @@ class BoundConversionNode;
 class BoundAddressOfNode;
 class BoundDereferenceNode;
 class BoundRefToPtrNode;
+class BoundPtrToRefNode;
 class BoundDefaultInitNode;
 class BoundTemporaryNode;
 class BoundConstructExpressionNode;
+class BoundConstructTemporaryNode;
 class BoundGlobalVariableDefinitionNode;
 
 class BoundTreeVisitor
@@ -90,8 +92,10 @@ public:
     virtual void Visit(BoundAddressOfNode& node) {}
     virtual void Visit(BoundDereferenceNode& node) {}
     virtual void Visit(BoundRefToPtrNode& node) {}
+    virtual void Visit(BoundPtrToRefNode& node) {}
     virtual void Visit(BoundDefaultInitNode& node) {}
     virtual void Visit(BoundTemporaryNode& node) {}
+    virtual void Visit(BoundConstructTemporaryNode& node) {}
     virtual void Visit(BoundConstructExpressionNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
 };

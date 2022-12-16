@@ -1129,7 +1129,7 @@ void EmitIntegerBinOpInst(BinaryInstruction& inst, CodeGenerator& codeGen)
         }
         case OpCode::div_:
         {
-            otava::assembly::Register* rdx = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax);
+            otava::assembly::Register* rdx = assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rdx);
             otava::assembly::Instruction* xorInst = new otava::assembly::Instruction(otava::assembly::OpCode::XOR);
             xorInst->AddOperand(rdx);
             xorInst->AddOperand(rdx);
