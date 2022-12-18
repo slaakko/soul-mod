@@ -236,13 +236,17 @@ void ParameterSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-TypeSymbol* ParameterSymbol::GetReferredType() const
+TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
 {
-    TypeSymbol* referredType = type;
+    TypeSymbol* referredType = type->GetBaseType();
     while (referredType->IsAliasTypeSymbol())
     {
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);
         referredType = aliasType->ReferredType();
+    }
+    if (type->IsCompoundType())
+    {
+        referredType = context->GetSymbolTable()->MakeCompoundType(referredType, type->GetDerivations());
     }
     return referredType;
 }
@@ -430,6 +434,8 @@ void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
         if (returnType->IsClassTypeSymbol())
         {
             SetReturnsClass();
+            context->GetSymbolTable()->MapType(returnType);
+            context->GetSymbolTable()->MapType(returnType->AddPointer());
             SetReturnValueParam(new ParameterSymbol(U"@return_value", returnType->AddPointer()));
         }
     }
@@ -571,6 +577,7 @@ void FunctionSymbol::Accept(Visitor& visitor)
 void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
+    if (IsTrivialDestructor()) return;
     int n = args.size();
     for (int i = 0; i < n; ++i)
     {
@@ -621,11 +628,11 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
         std::vector<otava::intermediate::Type*> paramIrTypes;
         for (const auto& param : MemFunParameters())
         {
-            paramIrTypes.push_back(param->GetReferredType()->IrType(emitter, sourcePos, context));
+            paramIrTypes.push_back(param->GetReferredType(context)->IrType(emitter, sourcePos, context));
         }
         if (ReturnsClass())
         {
-            paramIrTypes.push_back(ReturnValueParam()->GetReferredType()->IrType(emitter, sourcePos, context));
+            paramIrTypes.push_back(ReturnValueParam()->GetReferredType(context)->IrType(emitter, sourcePos, context));
         }
         type = emitter.MakeFunctionType(returnIrType, paramIrTypes);
         emitter.SetType(Id(), type);

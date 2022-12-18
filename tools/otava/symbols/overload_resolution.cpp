@@ -557,7 +557,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         BoundExpressionNode* arg = args[i].get();
         TypeSymbol* argType = arg->GetType();
         ParameterSymbol* parameter = functionMatch.function->MemFunParameters()[i];
-        TypeSymbol* paramType = parameter->GetReferredType();
+        TypeSymbol* paramType = parameter->GetReferredType(context);
         if (TypesEqual(argType, paramType))
         {
             functionMatch.argumentMatches.push_back(ArgumentMatch());
@@ -608,14 +608,14 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
                 }
                 else
                 {
-                    if (functionMatch.function->IsTemplate())
+                    if (functionMatch.function->IsTemplate() || functionMatch.function->IsMemFnOfClassTemplate())
                     {
                         if (FindTemplateParameterMatch(argType, paramType, arg, functionMatch, context))
                         {
                             continue;
                         }
                     }
-                    else if (functionMatch.function->IsMemFnOfClassTemplate())
+                    if (functionMatch.function->IsMemFnOfClassTemplate())
                     {
                         if (FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, context))
                         {

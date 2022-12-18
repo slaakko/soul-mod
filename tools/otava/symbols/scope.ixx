@@ -24,6 +24,7 @@ class AliasGroupSymbol;
 class EnumGroupSymbol;
 class UsingDeclarationScope;
 class UsingDirectiveScope;
+class ClassTemplateSpecializationSymbol;
 
 enum class ScopeKind : int32_t
 {
@@ -53,7 +54,9 @@ public:
     virtual std::string FullName() const = 0;
     virtual bool IsContainerScope() const { return false; }
     virtual Scope* GetClassScope() const { return nullptr; }
+    virtual Scope* GetNamespaceScope() const { return nullptr; }
     virtual Symbol* GetSymbol() { return nullptr; }
+    virtual ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const { return nullptr; }
     virtual void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const;
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -90,8 +93,10 @@ public:
     void ClearParentScopes() override;
     bool IsContainerScope() const override { return true; }
     Scope* GetClassScope() const override;
+    Scope* GetNamespaceScope() const override;
     void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Symbol* GetSymbol() override;
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const override;
     ContainerSymbol* GetContainerSymbol() const { return containerSymbol; }
     void SetContainerSymbol(ContainerSymbol* containerSymbol_) { containerSymbol = containerSymbol_; }
     void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -147,6 +152,8 @@ public:
     std::string FullName() const override;
     Scope* GroupScope() override;
     Scope* SymbolScope() override;
+    Scope* GetNamespaceScope() const override;
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
         std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const override;
     void PushParentScope(Scope* parentScope_) override;

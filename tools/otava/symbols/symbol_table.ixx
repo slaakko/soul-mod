@@ -129,7 +129,7 @@ public:
         otava::ast::Node* defaultTemplateArgNode, Context* context);
     FunctionSymbol* AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     void AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
-    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& paramterTypes,
+    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes,
         FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, FunctionSymbol* declaration, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
     VariableSymbol* AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type, 

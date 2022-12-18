@@ -881,7 +881,7 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
     ClassDefaultCtor* function = new ClassDefaultCtor(classType, sourcePos, context);
     function->SetParent(classType);
     GenerateImplementation(function, sourcePos, context);
-    functionMap[type] = function;
+    functionMap[classType] = function;
     functions.push_back(std::unique_ptr<FunctionSymbol>(function));
     return function;
 }
@@ -891,12 +891,34 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
     ClassTypeSymbol* classType = classDefaultCtor->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classDefaultCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos)); 
+    int nb = classType->BaseClasses().size();
+    for (int i = 0; i < nb; ++i)
+    {
+        TypeSymbol* baseClass = classType->BaseClasses()[i];
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        BoundExpressionNode* thisPtr = new BoundParameterNode(classDefaultCtor->ThisParam(), sourcePos, classDefaultCtor->ThisParam()->GetReferredType(context));
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            baseClass->AddPointer(), thisPtr->GetType(), context);
+        if (conversion)
+        {
+            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
+            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+            BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+            expressionStatement->SetExpr(boundFunctionCall.release());
+            boundFunction->Body()->AddStatement(expressionStatement);
+        }
+        else
+        {
+            ThrowException("base class conversion not found", sourcePos, context);
+        }
+    }
     int n = classType->MemberVariables().size();
     for (int i = 0; i < n; ++i)
     {
         VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        boundMemberVariable->SetThisPtr(new BoundParameterNode(classDefaultCtor->ThisParam(), sourcePos));
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(classDefaultCtor->ThisParam(), sourcePos, classDefaultCtor->ThisParam()->GetReferredType(context)));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos)));
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
@@ -977,17 +999,41 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
     ClassTypeSymbol* classType = classCopyCtor->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classCopyCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    int nb = classType->BaseClasses().size();
+    for (int i = 0; i < nb; ++i)
+    {
+        TypeSymbol* baseClass = classType->BaseClasses()[i];
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyCtor->ThisParam(), sourcePos, classCopyCtor->ThisParam()->GetReferredType(context));
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            baseClass->AddPointer(), thisPtr->GetType(), context);
+        if (conversion)
+        {
+            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
+            ParameterSymbol* thatParam = classCopyCtor->MemFunParameters()[1];
+            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
+            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+            BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+            expressionStatement->SetExpr(boundFunctionCall.release());
+            boundFunction->Body()->AddStatement(expressionStatement);
+        }
+        else
+        {
+            ThrowException("base class conversion not found", sourcePos, context);
+        }
+    }
     int n = classType->MemberVariables().size();
     for (int i = 0; i < n; ++i)
     {
         VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        boundMemberVariable->SetThisPtr(new BoundParameterNode(classCopyCtor->ThisParam(), sourcePos));
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(classCopyCtor->ThisParam(), sourcePos, classCopyCtor->ThisParam()->GetReferredType(context)));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos)));
         ParameterSymbol* thatParam = classCopyCtor->MemFunParameters()[1];
         BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
-        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(new BoundParameterNode(thatParam, sourcePos), sourcePos));
+        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos));
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);

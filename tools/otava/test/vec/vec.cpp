@@ -126,7 +126,7 @@ private:
     void grow(size_type min_res)
     {
         min_res = std::grow_size(min_res);
-        char* new_elements = static_cast<char*>(malloc(min_res * sizeof(T)));
+        T* new_elements = static_cast<T*>(malloc(min_res * sizeof(T)));
         if (elements)
         {
             std::constructive_move(new_elements, elements, sz);
@@ -161,7 +161,10 @@ private:
 int main()
 {
     std::vec<int> v;
-    string s = std::to_string(v.size());
+    v.push_back(1);
+    std::string s = std::to_string(v.size());
+    prints(s.c_str());
+    prints("\n");
     return 0;
 }
 

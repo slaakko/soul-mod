@@ -56,7 +56,7 @@ BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
     ParameterSymbol* thisParam = function->ThisParam();
     if (thisParam)
     {
-        return new BoundParameterNode(thisParam, sourcePos);
+        return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
     }
     else
     {

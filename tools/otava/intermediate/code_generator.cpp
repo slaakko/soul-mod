@@ -776,6 +776,10 @@ void EmitSignExtend(SignExtendInstruction& inst, CodeGenerator& codeGen)
 void EmitZeroExtend(ZeroExtendInstruction& inst, CodeGenerator& codeGen)
 {
     int64_t operandSize = inst.Operand()->GetType()->Size();
+    if (operandSize > 2)
+    {
+        codeGen.Error("error emitting zero extend instruction: byte or word sized operand expected");
+    }
     int64_t resultSize = inst.Result()->GetType()->Size();
     otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
     otava::assembly::OpCode opCode = otava::assembly::OpCode::MOVZX;
@@ -928,7 +932,12 @@ void EmitLess(LessInstruction& inst, CodeGenerator& codeGen)
         otava::assembly::Register* rightOperandReg = MakeRegOperand(inst.Right(), assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rdx), codeGen);
         cmpInstruction->AddOperand(rightOperandReg);
         codeGen.Emit(cmpInstruction);
-        otava::assembly::Instruction* setInst = new otava::assembly::Instruction(otava::assembly::OpCode::SETC);
+        otava::assembly::OpCode opCode = otava::assembly::OpCode::SETL;
+        if (inst.Left()->GetType()->IsUnsignedType())
+        {
+            opCode = otava::assembly::OpCode::SETC;
+        }
+        otava::assembly::Instruction* setInst = new otava::assembly::Instruction(opCode);
         setInst->AddOperand(resultReg);
         codeGen.Emit(setInst);
     }

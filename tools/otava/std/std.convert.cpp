@@ -44,38 +44,32 @@ string to_string_unsigned(T x)
 
 string to_string(int val)
 {
-    string s = to_string_signed(val);
-    return s;
+    return to_string_signed(val);
 }
 
 string to_string(unsigned val)
 {
-    string s = to_string_unsigned(val);
-    return s;
+    return to_string_unsigned(val);
 }
 
 string to_string(long val)
 {
-    string s = to_string_signed(val);
-    return s;
+    return to_string_signed(val);
 }
 
 string to_string(unsigned long val)
 {
-    string s = to_string_unsigned(val);
-    return s;
+    return to_string_unsigned(val);
 }
 
 string to_string(long long val)
 {
-    string s = to_string_signed(val);
-    return s;
+    return to_string_signed(val);
 }
 
 string to_string(unsigned long long val)
 {
-    string s = to_string_unsigned(val);
-    return s;
+    return to_string_unsigned(val);
 }
 
 } // namespace std

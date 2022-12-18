@@ -24,6 +24,7 @@ import otava.symbols.function.symbol;
 import otava.symbols.overload.resolution;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.fundamental.type.operation;
+import otava.symbols.function.group.symbol;
 
 namespace otava::symbols {
 
@@ -753,14 +754,38 @@ void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::sy
     ThrowException("statement parsing error", sourcePos, context);
 }
 
+class TrivialClassDtor : public FunctionSymbol
+{
+public:
+    TrivialClassDtor();
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+};
+
+TrivialClassDtor::TrivialClassDtor() : FunctionSymbol(U"@destructor")
+{
+    SetFunctionKind(FunctionKind::destructor);
+    SetAccess(Access::public_);
+    SetFlag(FunctionSymbolFlags::trivialDestructor);
+}
+
+void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+}
+
 void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    std::unique_ptr<TrivialDestructor> trivialDestructor(new TrivialDestructor(classTypeSymbol, context));
+    Symbol* dtorSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::none);
+    if (dtorSymbol) return;
+    std::unique_ptr<TrivialClassDtor> trivialClassDestructor(new TrivialClassDtor());
     int nm = classTypeSymbol->MemberVariables().size();
     int nb = classTypeSymbol->BaseClasses().size();
     if (nm == 0 && nb == 0)
     {
-        classTypeSymbol->AddSymbol(trivialDestructor.release(), sourcePos, context);
+        FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+        functionGroup->AddFunction(trivialClassDestructor.get());
+        classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
         return;
     }
     bool hasNonTrivialDestructor = false;
@@ -768,16 +793,15 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
     destructorSymbol->SetParent(classTypeSymbol);
     destructorSymbol->SetFunctionKind(FunctionKind::destructor);
     destructorSymbol->SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", classTypeSymbol->AddPointer());
-    destructorSymbol->AddParameter(thisParam, sourcePos, context);
     std::unique_ptr<BoundDtorTerminatorNode> terminator(new BoundDtorTerminatorNode(sourcePos));
     for (int i = nm - 1; i >= 0; --i)
     {
         VariableSymbol* memberVar = classTypeSymbol->MemberVariables()[i];
+        if (memberVar->GetType()->IsPointerType() || memberVar->GetType()->IsReferenceType()) continue;
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
         ParameterSymbol* thisParam = destructorSymbol->ThisParam();
-        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos);
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetReferredType(context));
         boundVariableNode->SetThisPtr(thisPtr);
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos)));
         std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
@@ -793,7 +817,7 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
         TypeSymbol* baseClass = classTypeSymbol->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         ParameterSymbol* thisParam = destructorSymbol->ThisParam();
-        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos);
+        BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             baseClass->AddPointer(), thisPtr->GetType(), context);
         if (conversion)
@@ -814,10 +838,14 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
     }
     if (!hasNonTrivialDestructor)
     {
-        classTypeSymbol->AddSymbol(trivialDestructor.release(), sourcePos, context);
+        FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+        functionGroup->AddFunction(trivialClassDestructor.get());
+        classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
         return;
     }
     BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorSymbol.get(), sourcePos);
+    FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    functionGroup->AddFunction(destructorSymbol.get());
     classTypeSymbol->AddSymbol(destructorSymbol.release(), sourcePos, context);
     BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
     boundDestructor->SetBody(body);

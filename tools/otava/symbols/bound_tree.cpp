@@ -205,6 +205,11 @@ Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast
             TypeSymbol* baseType = ResolveFwdDeclaredType(type->DirectType()->RemovePointer()->GetBaseType(), sourcePos, context);
             return baseType->GetScope();
         }
+        else if (op->IsArrowNode() && type->PlainType()->IsClassTypeSymbol())
+        {
+            TypeSymbol* baseType = ResolveFwdDeclaredType(type->PlainType()->DirectType(), sourcePos, context);
+            return baseType->GetScope();
+        }
     }
     return nullptr;
 }
@@ -807,8 +812,8 @@ bool BoundVariableNode::IsBoundMemberVariable() const
     return variable->IsMemberVariable(); 
 }
 
-BoundParameterNode::BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_) : 
-    BoundExpressionNode(BoundNodeKind::boundParameterNode, sourcePos_, parameter_->GetReferredType()), parameter(parameter_)
+BoundParameterNode::BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type) : 
+    BoundExpressionNode(BoundNodeKind::boundParameterNode, sourcePos_, type), parameter(parameter_)
 {
 }
 
@@ -874,7 +879,7 @@ void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const sou
 
 BoundExpressionNode* BoundParameterNode::Clone() const
 {
-    return new BoundParameterNode(parameter, GetSourcePos());
+    return new BoundParameterNode(parameter, GetSourcePos(), GetType());
 }
 
 BoundEnumConstant::BoundEnumConstant(EnumConstantSymbol* enumConstant_, const soul::ast::SourcePos& sourcePos_) :
@@ -938,8 +943,8 @@ BoundExpressionNode* BoundTypeNode::Clone() const
     return new BoundTypeNode(GetType(), GetSourcePos());
 }
 
-BoundMemberExprNode::BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, sourcePos_, nullptr), subject(subject_), member(member_)
+BoundMemberExprNode::BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, otava::ast::NodeKind op_, const soul::ast::SourcePos& sourcePos_) :
+    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, sourcePos_, nullptr), subject(subject_), member(member_), op(op_)
 {
 }
 
@@ -950,7 +955,7 @@ void BoundMemberExprNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundMemberExprNode::Clone() const
 {
-    return new BoundMemberExprNode(subject->Clone(), member->Clone(), GetSourcePos());
+    return new BoundMemberExprNode(subject->Clone(), member->Clone(), op, GetSourcePos());
 }
 
 BoundFunctionCallNode::BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::SourcePos& sourcePos_) :

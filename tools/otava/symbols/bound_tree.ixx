@@ -92,6 +92,7 @@ public:
     bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
     bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
+    bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
 private:
     BoundNodeKind kind;
     soul::ast::SourcePos sourcePos;
@@ -461,7 +462,7 @@ private:
 class BoundParameterNode : public BoundExpressionNode
 {
 public:
-    BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_);
+    BoundParameterNode(ParameterSymbol* parameter_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type);
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
     ParameterSymbol* GetParameter() const { return parameter; }
@@ -508,14 +509,16 @@ public:
 class BoundMemberExprNode : public BoundExpressionNode
 {
 public:
-    BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, const soul::ast::SourcePos& sourcePos_);
+    BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, otava::ast::NodeKind op_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* Subject() const { return subject.get(); }
     BoundExpressionNode* Member() const { return member.get(); }
+    otava::ast::NodeKind Op() const { return op; }
     BoundExpressionNode* Clone() const override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;
     std::unique_ptr<BoundExpressionNode> member;
+    otava::ast::NodeKind op;
 };
 
 class BoundFunctionCallNode : public BoundExpressionNode

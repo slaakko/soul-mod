@@ -302,14 +302,14 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     for (int i = 0; i < np; ++i)
     {
         otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters()[i];
-        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType()->IrType(emitter, node.GetSourcePos(), &context));
+        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType(&context)->IrType(emitter, node.GetSourcePos(), &context));
         emitter.SetIrObject(parameter, local);
         lastLocal = local;
     }
     if (functionDefinition->ReturnsClass())
     {
         otava::symbols::ParameterSymbol* parameter = functionDefinition->ReturnValueParam();
-        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType()->IrType(emitter, node.GetSourcePos(), &context));
+        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType(&context)->IrType(emitter, node.GetSourcePos(), &context));
         emitter.SetIrObject(parameter, local);
         lastLocal = local;
     }

@@ -1,0 +1,3 @@
+project dtor;
+target=program;
+source <dtor.cpp>;

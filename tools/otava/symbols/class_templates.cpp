@@ -365,7 +365,7 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
                         node->GetSourcePos(),
                         context);
                 }
-                classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetSymbol()->ParentNamespace()->GetScope());
+                classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
                 InstantiationScope instantiationScope(classTemplateSpecialization->GetScope());
                 std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
                 for (int i = 0; i < arity; ++i)

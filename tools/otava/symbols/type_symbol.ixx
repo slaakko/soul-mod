@@ -20,6 +20,7 @@ class TypeSymbol : public ContainerSymbol
 public:
     TypeSymbol(SymbolKind kind_, const std::u32string& name_);
     virtual TypeSymbol* GetBaseType() { return this; }
+    bool IsCompoundType() const { return Kind() == SymbolKind::compoundTypeSymbol; }
     bool IsAutoTypeSymbol() const;
     bool IsPointerType() const;
     bool IsArrayType() const;

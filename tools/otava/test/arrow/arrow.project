@@ -1,0 +1,3 @@
+project arrow;
+target=program;
+source <arrow.cpp>;

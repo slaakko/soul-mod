@@ -86,7 +86,7 @@ public:
     std::string SymbolKindStr() const override { return "parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "paremeter"; }
     TypeSymbol* GetType() const { return type; }
-    TypeSymbol* GetReferredType() const;
+    TypeSymbol* GetReferredType(Context* context) const;
     Value* DefaultValue() const { return defaultValue; }
     void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
     void Write(Writer& writer) override;
@@ -163,6 +163,7 @@ public:
     void SetBound() { SetFlag(FunctionSymbolFlags::bound); }
     bool IsSpecialization() const { return GetFlag(FunctionSymbolFlags::specialization); }
     void SetSpecialization() { SetFlag(FunctionSymbolFlags::specialization); }
+    bool IsTrivialDestructor() const { return GetFlag(FunctionSymbolFlags::trivialDestructor); }
     std::u32string NextTemporaryName();
 private:
     mutable bool memFunParamsConstructed;

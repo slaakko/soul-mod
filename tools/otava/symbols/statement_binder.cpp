@@ -351,7 +351,8 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
         if (memberVariableSymbol)
         {
             BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVariableSymbol, node.GetSourcePos());
-            BoundParameterNode* thisPtr = new BoundParameterNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(), node.GetSourcePos());
+            ParameterSymbol* thisParam = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam();
+            BoundParameterNode* thisPtr = new BoundParameterNode(thisParam, node.GetSourcePos(), thisParam->GetType());
             boundVariableNode->SetThisPtr(thisPtr);
             initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(new BoundDefaultInitNode(boundVariableNode, node.GetSourcePos()), node.GetSourcePos())));
             index = memberVariableSymbol->Index();
@@ -656,23 +657,25 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
         if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnsClass())
         {
             std::vector<std::unique_ptr<BoundExpressionNode>> classReturnArgs;
-            classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnValueParam(),
-                node.GetSourcePos())));
-            BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
-            if (returnValueExpr->IsBoundLocalVariable())
+            ParameterSymbol* returnValueParam = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ReturnValueParam();
+            classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(returnValueParam,
+                node.GetSourcePos(), returnValueParam->GetReferredType(context))));
+            BoundExpressionNode* expression = BindExpression(node.ReturnValue(), context);
+            if (expression->IsBoundLocalVariable())
             {
                 std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
-                moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(returnValueExpr));
+                moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(expression));
                 Scope* scope = context->GetSymbolTable()->GetNamespaceScope(U"std", node.GetSourcePos(), context);
                 std::unique_ptr<BoundFunctionCallNode> moveExpr = ResolveOverloadThrow(
                     scope, U"move", moveArgs, node.GetSourcePos(), context, OverloadResolutionFlags::dontSearchArgumentScopes);
-                classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(moveExpr.release()));
-                std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", classReturnArgs,
-                    node.GetSourcePos(), context);
-                std::unique_ptr<BoundExpressionStatementNode> expressionStatement(new BoundExpressionStatementNode(node.GetSourcePos()));
-                expressionStatement->SetExpr(constructorCall.release());
-                SetStatement(expressionStatement.release());
+                expression = moveExpr.release();
             }
+            classReturnArgs.push_back(std::unique_ptr<BoundExpressionNode>(expression));
+            std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", classReturnArgs,
+                node.GetSourcePos(), context);
+            std::unique_ptr<BoundExpressionStatementNode> expressionStatement(new BoundExpressionStatementNode(node.GetSourcePos()));
+            expressionStatement->SetExpr(constructorCall.release());
+            SetStatement(expressionStatement.release());
         }
         else
         {

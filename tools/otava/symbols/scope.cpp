@@ -343,6 +343,23 @@ Scope* ContainerScope::GetClassScope() const
     return nullptr;
 }
 
+Scope* ContainerScope::GetNamespaceScope() const
+{
+    if (Kind() == ScopeKind::namespaceScope)
+    {
+        return const_cast<Scope*>(static_cast<const Scope*>(this));
+    }
+    for (Scope* parentScope : ParentScopes())
+    {
+        Scope* namespaceScope = parentScope->GetNamespaceScope();
+        if (namespaceScope)
+        {
+            return namespaceScope;
+        }
+    }
+    return nullptr;
+}
+
 void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (baseScope->IsContainerScope())
@@ -357,6 +374,26 @@ void ContainerScope::AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& 
 Symbol* ContainerScope::GetSymbol()
 {
     return containerSymbol;
+}
+
+ClassTemplateSpecializationSymbol* ContainerScope::GetClassTemplateSpecialization() const
+{
+    if (containerSymbol->IsClassTemplateSpecializationSymbol())
+    {
+        return static_cast<ClassTemplateSpecializationSymbol*>(containerSymbol);
+    }
+    else
+    {
+        for (const auto& parentScope : parentScopes)
+        {
+            ClassTemplateSpecializationSymbol* sp = parentScope->GetClassTemplateSpecialization();
+            if (sp)
+            {
+                return sp;
+            }
+        }
+    }
+    return nullptr;
 }
 
 std::string ContainerScope::FullName() const
@@ -624,6 +661,32 @@ void InstantiationScope::PushParentScope(Scope* parentScope_)
 void InstantiationScope::PopParentScope()
 {
     parentScopes.erase(parentScopes.begin());
+}
+
+ClassTemplateSpecializationSymbol* InstantiationScope::GetClassTemplateSpecialization() const
+{
+    for (const auto& parentScope : parentScopes)
+    {
+        ClassTemplateSpecializationSymbol* sp = parentScope->GetClassTemplateSpecialization();
+        if (sp)
+        {
+            return sp;
+        }
+    }
+    return nullptr;
+}
+
+Scope* InstantiationScope::GetNamespaceScope() const
+{
+    for (Scope* parentScope : parentScopes)
+    {
+        Scope* namespaceScope = parentScope->GetNamespaceScope();
+        if (namespaceScope)
+        {
+            return namespaceScope;
+        }
+    }
+    return nullptr;
 }
 
 void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags,
