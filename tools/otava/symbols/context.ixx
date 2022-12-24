@@ -40,7 +40,8 @@ enum class ContextFlags : int32_t
     instantiateMemFnOfClassTemplate = 1 << 15,
     dontBind = 1 << 16,
     parseSavedCtorInitializer = 1 << 17,
-    skipFunctionDefinitions = 1 << 18
+    skipFunctionDefinitions = 1 << 18,
+    returnRef = 1 << 19
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

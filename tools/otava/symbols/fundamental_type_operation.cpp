@@ -473,7 +473,7 @@ FundamentalTypeDefaultCtor::FundamentalTypeDefaultCtor(TypeSymbol* type_, Contex
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
 }
 
@@ -514,7 +514,7 @@ FundamentalTypeCopyCtor::FundamentalTypeCopyCtor(TypeSymbol* type_, Context* con
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     AddParameter(thatParam, soul::ast::SourcePos(), context);
@@ -559,9 +559,9 @@ FundamentalTypeMoveCtor::FundamentalTypeMoveCtor(TypeSymbol* type_, Context* con
 {
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef());
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
 }
 
@@ -589,7 +589,12 @@ void FundamentalTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundEx
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
     otava::intermediate::Value* rvalueRefValue = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLoad(rvalueRefValue));
-    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    OperationFlags storeFlags = OperationFlags::none;
+    if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+    {
+        storeFlags = storeFlags | OperationFlags::deref;
+    }
+    args[0]->Store(emitter, storeFlags, sourcePos, context);
 }
 
 FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment() : FunctionSymbol(SymbolKind::fundamentalTypeCopyAssignment, U"operator="), type(nullptr)
@@ -601,11 +606,11 @@ FundamentalTypeCopyAssignment::FundamentalTypeCopyAssignment(TypeSymbol* type_, 
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
     AddParameter(thatParam, soul::ast::SourcePos(), context);
-    SetReturnType(type->AddLValueRef(), context);
+    SetReturnType(type->AddLValueRef(context), context);
 }
 
 void FundamentalTypeCopyAssignment::Write(Writer& writer)
@@ -643,11 +648,11 @@ FundamentalTypeMoveAssignment::FundamentalTypeMoveAssignment(TypeSymbol* type_, 
 {
     SetFunctionKind(FunctionKind::special);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
-    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef());
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type->AddRValueRef(context));
     AddParameter(thatParam, soul::ast::SourcePos(), context);
-    SetReturnType(type->AddLValueRef(), context);
+    SetReturnType(type->AddLValueRef(context), context);
 }
 
 void FundamentalTypeMoveAssignment::Write(Writer& writer)
@@ -686,7 +691,7 @@ TrivialDestructor::TrivialDestructor(TypeSymbol* type_, Context* context) : Func
 {
     SetFunctionKind(FunctionKind::destructor);
     SetAccess(Access::public_);
-    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer());
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
     AddParameter(thisParam, soul::ast::SourcePos(), context);
     SetFlag(FunctionSymbolFlags::trivialDestructor);
 }

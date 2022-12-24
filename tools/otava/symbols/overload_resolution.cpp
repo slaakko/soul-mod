@@ -202,7 +202,12 @@ BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::
 std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMatch& functionMatch, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall(new BoundFunctionCallNode(functionMatch.function, sourcePos));
+    TypeSymbol* type = functionMatch.function->ReturnType();
+    if (type)
+    {
+        type = type->DirectType(context);
+    }
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall(new BoundFunctionCallNode(functionMatch.function, sourcePos, type));
     int n = args.size();
     for (int i = 0; i < n; ++i)
     {
@@ -220,11 +225,11 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
         const ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
         if (argumentMatch.preConversionFlags == OperationFlags::addr)
         {
-            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos);
+            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos, arg->GetType()->AddPointer(context));
         }
         else if (argumentMatch.preConversionFlags == OperationFlags::deref)
         {
-            arg = new BoundDereferenceNode(arg, sourcePos);
+            arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
         }
         if (argumentMatch.conversionFun)
         {
@@ -232,11 +237,11 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
         }
         if (argumentMatch.postConversionFlags == OperationFlags::addr)
         {
-            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos);
+            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos, arg->GetType()->AddPointer(context));
         }
         else if (argumentMatch.postConversionFlags == OperationFlags::deref)
         {
-            arg = new BoundDereferenceNode(arg, sourcePos);
+            arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
         }
         boundFunctionCall->AddArgument(arg);
     }
@@ -373,7 +378,7 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
     {
         bool qualificationConversionMatch = false;
         ArgumentMatch argumentMatch;
-        if (TypesEqual(argType->PlainType(), paramType->PlainType()))
+        if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
         {
             qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
             if (qualificationConversionMatch)
@@ -467,6 +472,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                 return false;
             }
         }
+        functionMatch.argumentMatches.resize(numArgumentMatches);
         std::vector<Symbol*> targetTemplateArguments;
         for (int i = 0; i < n; ++i)
         {
@@ -501,7 +507,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
         {
             bool qualificationConversionMatch = false;
             ArgumentMatch argumentMatch;
-            if (TypesEqual(argType->PlainType(), paramType->PlainType()))
+            if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
             }
@@ -551,12 +557,12 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
 bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, Context* context)
 {
     int arity = args.size();
-    int n = std::min(arity, functionMatch.function->MemFunArity());
+    int n = std::min(arity, functionMatch.function->MemFunArity(context));
     for (int i = 0; i < n; ++i)
     {
         BoundExpressionNode* arg = args[i].get();
         TypeSymbol* argType = arg->GetType();
-        ParameterSymbol* parameter = functionMatch.function->MemFunParameters()[i];
+        ParameterSymbol* parameter = functionMatch.function->MemFunParameters(context)[i];
         TypeSymbol* paramType = parameter->GetReferredType(context);
         if (TypesEqual(argType, paramType))
         {
@@ -566,7 +572,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         {
             bool qualificationConversionMatch = false;
             ArgumentMatch argumentMatch;
-            if (TypesEqual(argType->PlainType(), paramType->PlainType()))
+            if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
             {
                 qualificationConversionMatch = FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch);
                 if (qualificationConversionMatch)

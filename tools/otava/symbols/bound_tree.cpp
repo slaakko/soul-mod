@@ -197,17 +197,17 @@ Scope* BoundExpressionNode::GetMemberScope(otava::ast::Node* op, const soul::ast
     {
         if (op->IsDotNode())
         {
-            TypeSymbol* baseType = ResolveFwdDeclaredType(type->DirectType()->GetBaseType(), sourcePos, context);
+            TypeSymbol* baseType = ResolveFwdDeclaredType(type->DirectType(context)->GetBaseType(), sourcePos, context);
             return baseType->GetScope();
         }
         else if (op->IsArrowNode() && type->IsPointerType())
         {
-            TypeSymbol* baseType = ResolveFwdDeclaredType(type->DirectType()->RemovePointer()->GetBaseType(), sourcePos, context);
+            TypeSymbol* baseType = ResolveFwdDeclaredType(type->DirectType(context)->RemovePointer(context)->GetBaseType(), sourcePos, context);
             return baseType->GetScope();
         }
-        else if (op->IsArrowNode() && type->PlainType()->IsClassTypeSymbol())
+        else if (op->IsArrowNode() && type->PlainType(context)->IsClassTypeSymbol())
         {
-            TypeSymbol* baseType = ResolveFwdDeclaredType(type->PlainType()->DirectType(), sourcePos, context);
+            TypeSymbol* baseType = ResolveFwdDeclaredType(type->PlainType(context)->DirectType(context), sourcePos, context);
             return baseType->GetScope();
         }
     }
@@ -958,8 +958,8 @@ BoundExpressionNode* BoundMemberExprNode::Clone() const
     return new BoundMemberExprNode(subject->Clone(), member->Clone(), op, GetSourcePos());
 }
 
-BoundFunctionCallNode::BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundFunctionCallNode, sourcePos_, functionSymbol_->ReturnType()), functionSymbol(functionSymbol_)
+BoundFunctionCallNode::BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundFunctionCallNode, sourcePos_, type_), functionSymbol(functionSymbol_)
 {
 }
 
@@ -1056,7 +1056,7 @@ bool BoundFunctionCallNode::IsLvalueExpression() const
 
 BoundExpressionNode* BoundFunctionCallNode::Clone() const
 {
-    BoundFunctionCallNode* clone = new BoundFunctionCallNode(functionSymbol, GetSourcePos());
+    BoundFunctionCallNode* clone = new BoundFunctionCallNode(functionSymbol, GetSourcePos(), GetType());
     for (auto& arg : args)
     {
         clone->AddArgument(arg->Clone());
@@ -1287,8 +1287,8 @@ BoundExpressionNode* BoundConversionNode::Clone() const
     return new BoundConversionNode(subject->Clone(), conversionFunction, GetSourcePos());
 }
 
-BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, sourcePos_, subject_->GetType()->AddPointer()), subject(subject_)
+BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->AddPointer()
 {
 }
 
@@ -1325,11 +1325,11 @@ void BoundAddressOfNode::Store(Emitter& emitter, OperationFlags flags, const sou
 
 BoundExpressionNode* BoundAddressOfNode::Clone() const
 {
-    return new BoundAddressOfNode(subject->Clone(), GetSourcePos());
+    return new BoundAddressOfNode(subject->Clone(), GetSourcePos(), GetType());
 }
 
-BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, subject_->GetType()->RemoveRefOrPtr()), subject(subject_)
+BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->RemoveRefOrPtr()
 {
 }
 
@@ -1373,11 +1373,11 @@ void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const s
 
 BoundExpressionNode* BoundDereferenceNode::Clone() const
 {
-    return new BoundDereferenceNode(subject->Clone(), GetSourcePos());
+    return new BoundDereferenceNode(subject->Clone(), GetSourcePos(), GetType());
 }
 
-BoundRefToPtrNode::BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) : 
-    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, sourcePos_, subject_->GetType()->RemoveReference()->AddPointer()), subject(subject_)
+BoundRefToPtrNode::BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) : 
+    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->RemoveReference()->AddPointer()
 {
 }
 
@@ -1398,11 +1398,11 @@ void BoundRefToPtrNode::Store(Emitter& emitter, OperationFlags flags, const soul
 
 BoundExpressionNode* BoundRefToPtrNode::Clone() const
 {
-    return new BoundRefToPtrNode(subject->Clone(), GetSourcePos());
+    return new BoundRefToPtrNode(subject->Clone(), GetSourcePos(), GetType());
 }
 
-BoundPtrToRefNode::BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, sourcePos_, subject_->GetType()->RemovePointer()->AddLValueRef()), subject(subject_)
+BoundPtrToRefNode::BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->RemovePointer()->AddLValueRef()
 {
 }
 
@@ -1413,7 +1413,7 @@ void BoundPtrToRefNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundPtrToRefNode::Clone() const
 {
-    return new BoundPtrToRefNode(subject->Clone(), GetSourcePos());
+    return new BoundPtrToRefNode(subject->Clone(), GetSourcePos(), GetType());
 }
 
 void BoundPtrToRefNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)

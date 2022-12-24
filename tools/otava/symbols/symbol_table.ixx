@@ -256,6 +256,7 @@ private:
     std::unique_ptr<ConversionTable> conversionTable;
     Linkage currentLinkage;
     std::stack<Linkage> linkageStack;
+    std::vector<ParameterSymbol*> returnValueParametersToResolve;
 };
 
 } // namespace otava::symbols

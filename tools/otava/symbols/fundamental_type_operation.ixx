@@ -188,7 +188,7 @@ public:
         AddParameter(thisParam, soul::ast::SourcePos(), context);
         ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
         AddParameter(thatParam, soul::ast::SourcePos(), context);
-        SetReturnType(type->AddLValueRef(), context);
+        SetReturnType(type->AddLValueRef(context), context);
     }
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)

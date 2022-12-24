@@ -24,13 +24,6 @@ NamespaceSymbol::NamespaceSymbol(const std::u32string& name_) : ContainerSymbol(
     GetScope()->SetKind(ScopeKind::namespaceScope);
 }
 
-SymbolTable* NamespaceSymbol::GetSymbolTable() 
-{
-    if (symbolTable) return symbolTable;
-    if (Parent()) return Parent()->GetSymbolTable();
-    return nullptr;
-}
-
 bool NamespaceSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 {
     switch (scopeKind)

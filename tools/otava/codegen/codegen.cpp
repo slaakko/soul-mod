@@ -171,10 +171,15 @@ public:
     void Visit(otava::symbols::BoundFunctionCallNode& node) override;
     void Visit(otava::symbols::BoundExpressionSequenceNode& node) override;
     void Visit(otava::symbols::BoundConversionNode& node) override;
-    void Visit(otava::symbols::BoundConjunctionNode& boundConjunction) override;
-    void Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction) override;
+    void Visit(otava::symbols::BoundAddressOfNode& node) override;
+    void Visit(otava::symbols::BoundDereferenceNode& node) override;
     void Visit(otava::symbols::BoundPtrToRefNode& node) override;
     void Visit(otava::symbols::BoundConstructTemporaryNode& node) override;
+    void Visit(otava::symbols::BoundConstructExpressionNode& node) override;
+    void Visit(otava::symbols::BoundDefaultInitNode& node) override;
+    void Visit(otava::symbols::BoundTemporaryNode& node) override;
+    void Visit(otava::symbols::BoundConjunctionNode& boundConjunction) override;
+    void Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction) override;
     void Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node) override;
 private:
     void StatementPrefix();
@@ -288,6 +293,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         return;
     }
+    if (functionDefinition->Name() == U"push_back")
+    {
+        int x = 0;
+    }
     if (functionDefinition->Name() == U"main")
     {
         mainIrName = functionDefinition->IrName(&context);
@@ -298,10 +307,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     emitter.CreateFunction(functionDefinition->IrName(&context), functionType, once);
     entryBlock = emitter.CreateBasicBlock();
     emitter.SetCurrentBasicBlock(entryBlock);
-    int np = functionDefinition->MemFunParameters().size();
+    int np = functionDefinition->MemFunParameters(&context).size();
     for (int i = 0; i < np; ++i)
     {
-        otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters()[i];
+        otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters(&context)[i];
         otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType(&context)->IrType(emitter, node.GetSourcePos(), &context));
         emitter.SetIrObject(parameter, local);
         lastLocal = local;
@@ -324,7 +333,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     for (int i = 0; i < np; ++i)
     {
         otava::intermediate::Value* param = emitter.GetParam(i);
-        otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters()[i];
+        otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters(&context)[i];
         emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
     }
     if (functionDefinition->ReturnsClass())
@@ -728,6 +737,18 @@ void CodeGenerator::Visit(otava::symbols::BoundConversionNode& node)
     GenJumpingBoolCode();
 }
 
+void CodeGenerator::Visit(otava::symbols::BoundAddressOfNode& node)
+{
+    node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundDereferenceNode& node)
+{
+    node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
 void CodeGenerator::Visit(otava::symbols::BoundPtrToRefNode& node)
 {
     node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
@@ -735,6 +756,24 @@ void CodeGenerator::Visit(otava::symbols::BoundPtrToRefNode& node)
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundConstructTemporaryNode& node)
+{
+    node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundConstructExpressionNode& node)
+{
+    node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundDefaultInitNode& node)
+{
+    node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundTemporaryNode& node)
 {
     node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
     GenJumpingBoolCode();

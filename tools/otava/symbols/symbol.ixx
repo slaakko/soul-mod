@@ -110,6 +110,7 @@ public:
     virtual int PtrIndex() const { return -1; }
     virtual Scope* GetScope() { return nullptr; }
     virtual Scope* GetGroupScope() { return nullptr; }
+    virtual std::string IrName(Context* context) const;
     virtual std::u32string FullName() const;
     virtual std::string SymbolKindStr() const = 0;
     virtual bool IsValidDeclarationScope(ScopeKind scopeKind) const { return true; }
@@ -121,8 +122,6 @@ public:
     virtual void Accept(Visitor& visitor) = 0;
     virtual Symbol* GetSingleSymbol() { return this; }
     virtual std::string SymbolDocKindStr() const = 0;
-    virtual SymbolTable* GetSymbolTable();
-    Module* GetModule();
     Symbol* Parent() { return parent; }
     const Symbol* Parent() const { return parent; }
     void SetParent(Symbol* parent_) { parent = parent_; }

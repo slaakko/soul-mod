@@ -3,6 +3,6 @@ import std.core;
 int main()
 {
     int x = 100;
-    x /= 10;
-    return 0;
+    int y(x);
+    int z(std::move(x));
 }

@@ -546,7 +546,7 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
     if (classType)
     {
         int32_t functionIndex = 0;
-        SpecialFunctionKind specialFunctionKind = functionSymbol->GetSpecialFunctionKind();
+        SpecialFunctionKind specialFunctionKind = functionSymbol->GetSpecialFunctionKind(context);
         if (specialFunctionKind != SpecialFunctionKind::none)
         {
             functionIndex = GetSpecialFunctionIndex(specialFunctionKind);
@@ -786,7 +786,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
                     }
                 }
                 int32_t functionIndex = 0;
-                SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind();
+                SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
                 if (specialFunctionKind != SpecialFunctionKind::none)
                 {
                     functionIndex = GetSpecialFunctionIndex(specialFunctionKind);

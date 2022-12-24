@@ -40,6 +40,7 @@ class vec
 public:
     using size_type = ssize_t;
     using value_type = T;
+    using pointer = T*;
     using const_pointer = const T*;
     using reference = value_type&;
     using const_reference = const value_type&;
@@ -66,7 +67,7 @@ public:
     }
     iterator begin() { return elements; }
     const_iterator begin() const { return elements; }
-    const_iterator cbegin() { return elements; }
+    const_iterator cbegin() const { return elements; }
     iterator end()
     {
         if (elements)
@@ -103,6 +104,8 @@ public:
     bool empty() const { return sz == 0; }
     size_type size() const { return sz; }
     size_type capacity() const { return res; }
+    pointer data() { return elements; }
+    const_pointer data() const { return elements; }
     void push_back(const value_type& element)
     {
         reserve(sz + 1);
@@ -114,6 +117,14 @@ public:
         reserve(sz + 1);
         new (elements + sz) T(std::move(element));
         ++sz;
+    }
+    reference operator[](size_type index)
+    {
+        return elements[index];
+    }
+    const_reference operator[](size_type index) const
+    {
+        return elements[index];
     }
     void reserve(size_type min_res)
     {
@@ -158,13 +169,24 @@ private:
 
 } // namespace std
 
+struct Foo
+{
+};
+
 int main()
 {
-    std::vec<int> v;
-    v.push_back(1);
-    std::string s = std::to_string(v.size());
-    prints(s.c_str());
-    prints("\n");
+    std::vec<Foo> v;
+    Foo f;
+    v.push_back(std::move(f));
+/*
+    int n = v.size();
+    for (int i = 0; i < n; ++i)
+    {
+        int x = v[i];
+        std::string s = std::to_string(x);
+        prints(s.c_str());
+        prints("\n");
+    }
+*/
     return 0;
 }
-

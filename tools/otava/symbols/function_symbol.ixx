@@ -107,7 +107,7 @@ public:
     FunctionSymbol(SymbolKind kind_, const std::u32string& name_);
     std::u32string GroupName() const;
     int Arity() const;
-    int MemFunArity() const;
+    int MemFunArity(Context* context) const;
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
     FunctionKind GetFunctionKind() const { return kind; }
@@ -130,9 +130,10 @@ public:
     virtual ConversionKind GetConversionKind() const;
     virtual int32_t ConversionDistance() const { return 0; }
     virtual bool IsCtorAssignmentOrArrow() const { return false; }
+    virtual bool IsIdentityConversion() const { return false; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
-    const std::vector<ParameterSymbol*>& MemFunParameters() const;
+    const std::vector<ParameterSymbol*>& MemFunParameters(Context* context) const;
     ParameterSymbol* ReturnValueParam() const { return returnValueParam.get(); }
     void SetReturnValueParam(ParameterSymbol* returnValueParam_);
     void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -145,14 +146,14 @@ public:
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
-    virtual std::string IrName(Context* context) const;
+    std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
     bool IsVirtual() const;
     ClassTypeSymbol* ParentClassType() const override;
-    ParameterSymbol* ThisParam() const;
+    ParameterSymbol* ThisParam(Context* ciontext) const;
     bool IsMemberFunction() const;
-    SpecialFunctionKind GetSpecialFunctionKind() const;
+    SpecialFunctionKind GetSpecialFunctionKind(Context* context) const;
     Linkage GetLinkage() const { return linkage; }
     void SetLinkage(Linkage linkage_) { linkage = linkage_; }
     int32_t Index() const { return index; }

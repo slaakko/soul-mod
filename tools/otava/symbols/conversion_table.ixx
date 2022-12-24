@@ -9,6 +9,7 @@ import std.core;
 
 export namespace otava::symbols {
 
+class Context;
 class TypeSymbol;
 class FunctionSymbol;
 
@@ -34,7 +35,7 @@ class ConversionTable
 public:
     void Import(const ConversionTable& that);
     void AddConversion(FunctionSymbol* conversion);
-    FunctionSymbol* GetConversion(TypeSymbol* paramType, TypeSymbol* argType) const;
+    FunctionSymbol* GetConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context) const;
     void Make();
 private:
     std::vector<FunctionSymbol*> conversionFunctions;

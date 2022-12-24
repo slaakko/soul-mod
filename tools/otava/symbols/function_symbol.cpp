@@ -253,30 +253,30 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
 
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : 
     ContainerSymbol(SymbolKind::functionSymbol, name_), 
-    returnType(nullptr), 
-    returnTypeId(util::nil_uuid()), 
     memFunParamsConstructed(false), 
-    linkage(Linkage::cpp_linkage), 
+    kind(FunctionKind::function),
+    qualifiers(FunctionQualifiers::none),
+    linkage(Linkage::cpp_linkage),
     index(0),
     flags(FunctionSymbolFlags::none),
-    nextTemporaryId(0),
-    kind(),
-    qualifiers()
+    returnType(nullptr),
+    returnTypeId(util::nil_uuid()),
+    nextTemporaryId(0)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
 
 FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     ContainerSymbol(kind_, name_), 
-    returnType(nullptr), 
-    returnTypeId(util::nil_uuid()), 
     memFunParamsConstructed(false), 
+    kind(FunctionKind::function),
+    qualifiers(FunctionQualifiers::none),
     linkage(Linkage::cpp_linkage),
     index(0),
     flags(FunctionSymbolFlags::none),
-    nextTemporaryId(0),
-    kind(),
-    qualifiers()
+    returnType(nullptr),
+    returnTypeId(util::nil_uuid()),
+    nextTemporaryId(0)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -302,9 +302,9 @@ int FunctionSymbol::Arity() const
     return parameters.size();
 }
 
-int FunctionSymbol::MemFunArity() const
+int FunctionSymbol::MemFunArity(Context* context) const
 {
-    return MemFunParameters().size();
+    return MemFunParameters(context).size();
 }
 
 ConversionKind FunctionSymbol::GetConversionKind() const
@@ -343,7 +343,7 @@ ClassTypeSymbol* FunctionSymbol::ParentClassType() const
     return nullptr;
 }
 
-ParameterSymbol* FunctionSymbol::ThisParam() const
+ParameterSymbol* FunctionSymbol::ThisParam(Context* context) const
 {
     if (!thisParam)
     {
@@ -352,22 +352,22 @@ ParameterSymbol* FunctionSymbol::ThisParam() const
         {
             if ((Qualifiers() & FunctionQualifiers::isConst) != FunctionQualifiers::none)
             {
-                thisParam.reset(new ParameterSymbol(U"this", classType->AddConst()->AddPointer()));
+                thisParam.reset(new ParameterSymbol(U"this", classType->AddConst(context)->AddPointer(context)));
             }
             else
             {
-                thisParam.reset(new ParameterSymbol(U"this", classType->AddPointer()));
+                thisParam.reset(new ParameterSymbol(U"this", classType->AddPointer(context)));
             }
         }
     }
     return thisParam.get();
 }
 
-const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters() const
+const std::vector<ParameterSymbol*>& FunctionSymbol::MemFunParameters(Context* context) const
 {
     if (memFunParamsConstructed) return memFunParameters;
     memFunParamsConstructed = true;
-    ParameterSymbol* thisParam = ThisParam();
+    ParameterSymbol* thisParam = ThisParam(context);
     if (thisParam)
     {
         memFunParameters.push_back(thisParam);
@@ -392,19 +392,19 @@ bool FunctionSymbol::IsMemberFunction() const
     }
 }
 
-SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind() const
+SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) const
 {
     ClassTypeSymbol* classType = ParentClassType();
     if (classType)
     {
-        const std::vector<ParameterSymbol*>& memFunParams = MemFunParameters();
-        TypeSymbol* pointerType = classType->AddPointer();
+        const std::vector<ParameterSymbol*>& memFunParams = MemFunParameters(context);
+        TypeSymbol* pointerType = classType->AddPointer(context);
         if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name()) return SpecialFunctionKind::defaultCtor;
         if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + classType->Name()) return SpecialFunctionKind::dtor;
-        TypeSymbol* constRefType = classType->AddConst()->AddLValueRef();
+        TypeSymbol* constRefType = classType->AddConst(context)->AddLValueRef(context);
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name() &&
             TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyCtor;
-        TypeSymbol* rvalueRefType = classType->AddRValueRef();
+        TypeSymbol* rvalueRefType = classType->AddRValueRef(context);
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name() &&
             TypesEqual(memFunParams[1]->GetType(), rvalueRefType)) return SpecialFunctionKind::moveCtor;
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"operator=" &&
@@ -430,13 +430,11 @@ void FunctionSymbol::SetReturnType(TypeSymbol* returnType_, Context* context)
     returnType = returnType_;
     if (returnType)
     {
-        context->GetSymbolTable()->MapType(returnType);
         if (returnType->IsClassTypeSymbol())
         {
             SetReturnsClass();
-            context->GetSymbolTable()->MapType(returnType);
-            context->GetSymbolTable()->MapType(returnType->AddPointer());
-            SetReturnValueParam(new ParameterSymbol(U"@return_value", returnType->AddPointer()));
+            TypeSymbol* returnValueType = returnType->AddPointer(context);
+            SetReturnValueParam(new ParameterSymbol(U"@return_value", returnValueType));
         }
     }
 }
@@ -619,14 +617,14 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
         otava::intermediate::Type* returnIrType = nullptr;
         if (returnType && !ReturnsClass())
         {
-            returnIrType = returnType->IrType(emitter, sourcePos, context);
+            returnIrType = returnType->DirectType(context)->IrType(emitter, sourcePos, context);
         }
         else
         {
             returnIrType = emitter.GetVoidType();
         }
         std::vector<otava::intermediate::Type*> paramIrTypes;
-        for (const auto& param : MemFunParameters())
+        for (const auto& param : MemFunParameters(context))
         {
             paramIrTypes.push_back(param->GetReferredType(context)->IrType(emitter, sourcePos, context));
         }
@@ -645,12 +643,12 @@ std::string FunctionSymbol::IrName(Context* context) const
     if (linkage == Linkage::cpp_linkage)
     {
         std::string irName;
-        SpecialFunctionKind specialFunctionKind = GetSpecialFunctionKind();
+        SpecialFunctionKind specialFunctionKind = GetSpecialFunctionKind(context);
         if (specialFunctionKind != SpecialFunctionKind::none)
         {
             irName.append(SpecialFunctionKindPrefix(specialFunctionKind));
             ClassTypeSymbol* classType = ParentClassType();
-            irName.append("_").append(util::ToUtf8(classType->Name()));
+            irName.append("_").append(classType->IrName(context));
         }
         else
         {
@@ -661,7 +659,7 @@ std::string FunctionSymbol::IrName(Context* context) const
                 ClassTypeSymbol* classType = ParentClassType();
                 if (classType)
                 {
-                    irName.append("_").append(util::ToUtf8(classType->Name()));
+                    irName.append("_").append(classType->IrName(context));
                 }
             }
             else

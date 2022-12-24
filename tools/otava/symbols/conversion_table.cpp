@@ -61,10 +61,10 @@ void ConversionTable::Make()
     }
 }
 
-FunctionSymbol* ConversionTable::GetConversion(TypeSymbol* paramType, TypeSymbol* argType) const
+FunctionSymbol* ConversionTable::GetConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context) const
 {
-    TypeSymbol* paramPlainType = paramType->PlainType();
-    TypeSymbol* argPlainType = argType->PlainType();
+    TypeSymbol* paramPlainType = paramType->PlainType(context);
+    TypeSymbol* argPlainType = argType->PlainType(context);
     ConversionTableEntry entry(paramPlainType, argPlainType);
     auto it = conversionMap.find(entry);
     if (it != conversionMap.cend())

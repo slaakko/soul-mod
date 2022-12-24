@@ -13,6 +13,7 @@ import otava.symbols.derivations;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.symbol;
 import otava.symbols.exception;
+import otava.symbols.context;
 
 namespace otava::symbols {
 
@@ -80,91 +81,91 @@ bool TypeSymbol::IsReferenceType() const
     return IsLValueRefType() || IsRValueRefType();
 }
 
-TypeSymbol* TypeSymbol::AddConst() 
+TypeSymbol* TypeSymbol::AddConst(Context* context)
 {
-    SymbolTable* symbolTable = GetSymbolTable();
+    SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations;
     derivations.vec.push_back(Derivation::constDerivation);
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
-TypeSymbol* TypeSymbol::RemoveConst()
+TypeSymbol* TypeSymbol::RemoveConst(Context* context)
 {
     if (IsCompoundTypeSymbol())
     {
-        SymbolTable* symbolTable = GetSymbolTable();
+        SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
         return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveConst(compoundTypeSymbol->GetDerivations()));
     }
     return this;
 }
 
-TypeSymbol* TypeSymbol::AddPointer() 
+TypeSymbol* TypeSymbol::AddPointer(Context* context)
 {
-    SymbolTable* symbolTable = GetSymbolTable();
+    SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations;
     derivations.vec.push_back(Derivation::pointerDerivation);
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
-TypeSymbol* TypeSymbol::RemovePointer() 
+TypeSymbol* TypeSymbol::RemovePointer(Context* context)
 {
     if (IsCompoundTypeSymbol())
     {
-        SymbolTable* symbolTable = GetSymbolTable();
+        SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
         return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemovePointer(compoundTypeSymbol->GetDerivations()));
     }
     return this;
 }
 
-TypeSymbol* TypeSymbol::AddLValueRef()
+TypeSymbol* TypeSymbol::AddLValueRef(Context* context)
 {
-    SymbolTable* symbolTable = GetSymbolTable();
+    SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations;
     derivations.vec.push_back(Derivation::lvalueRefDerivation);
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
-TypeSymbol* TypeSymbol::RemoveLValueRef()
+TypeSymbol* TypeSymbol::RemoveLValueRef(Context* context)
 {
     if (IsCompoundTypeSymbol())
     {
-        SymbolTable* symbolTable = GetSymbolTable();
+        SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
         return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveLValueRef(compoundTypeSymbol->GetDerivations()));
     }
     return this;
 }
 
-TypeSymbol* TypeSymbol::AddRValueRef()
+TypeSymbol* TypeSymbol::AddRValueRef(Context* context)
 {
-    SymbolTable* symbolTable = GetSymbolTable();
+    SymbolTable* symbolTable = context->GetSymbolTable();
     Derivations derivations;
     derivations.vec.push_back(Derivation::rvalueRefDerivation);
     return symbolTable->MakeCompoundType(this, derivations);
 }
 
-TypeSymbol* TypeSymbol::RemoveRValueRef()
+TypeSymbol* TypeSymbol::RemoveRValueRef(Context* context)
 {
     if (IsCompoundTypeSymbol())
     {
-        SymbolTable* symbolTable = GetSymbolTable();
+        SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(this);
         return symbolTable->MakeCompoundType(GetBaseType(), otava::symbols::RemoveRValueRef(compoundTypeSymbol->GetDerivations()));
     }
     return this;
 }
 
-TypeSymbol* TypeSymbol::RemoveReference()
+TypeSymbol* TypeSymbol::RemoveReference(Context* context)
 {
     if (IsLValueRefType())
     {
-        return RemoveLValueRef();
+        return RemoveLValueRef(context);
     }
     else if (IsRValueRefType())
     {
-        return RemoveRValueRef();
+        return RemoveRValueRef(context);
     }
     else
     {
@@ -172,26 +173,26 @@ TypeSymbol* TypeSymbol::RemoveReference()
     }
 }
 
-TypeSymbol* TypeSymbol::RemoveRefOrPtr()
+TypeSymbol* TypeSymbol::RemoveRefOrPtr(Context* context)
 {
     if (IsReferenceType())
     {
-        return PlainType();
+        return PlainType(context);
     }
     else if (IsPointerType())
     {
-        return RemovePointer();
+        return RemovePointer(context);
     }
     return this;
 }
 
-TypeSymbol* TypeSymbol::DirectType()
+TypeSymbol* TypeSymbol::DirectType(Context* context)
 {
     if (IsCompoundTypeSymbol())
     {
-        SymbolTable* symbolTable = GetSymbolTable();
+        SymbolTable* symbolTable = context->GetSymbolTable();
         CompoundTypeSymbol* compoundType = static_cast<CompoundTypeSymbol*>(this);
-        return symbolTable->MakeCompoundType(GetBaseType()->DirectType(), compoundType->GetDerivations());
+        return symbolTable->MakeCompoundType(GetBaseType()->DirectType(context), compoundType->GetDerivations());
     }
     else if (IsAliasTypeSymbol())
     {

@@ -18,6 +18,7 @@ import util.init.done;
 import util.unicode;
 import util.path;
 import util.text.util;
+import util.rand;
 import util.uuid;
 
 void PrintHelp()
@@ -37,6 +38,8 @@ void PrintHelp()
     std::cout << "  Print source parsing log to \"parse.log\" file located in the current working directory." << std::endl;
     std::cout << "--xml | -x" << std::endl;
     std::cout << "  Write ASTs as XML." << std::endl;
+    std::cout << "--seed | -s" << std::endl;
+    std::cout << "  Initialize uuid seed to 0" << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -52,6 +55,7 @@ int main(int argc, const char** argv)
         std::string config = "debug";
         bool multithreaded = false;
         bool debugParse = false;
+        bool setSeed = false;
         bool xml = false;
         for (int i = 1; i < argc; ++i)
         {
@@ -95,6 +99,10 @@ int main(int argc, const char** argv)
                     else if (arg == "--debug-parse")
                     {
                         debugParse = true;
+                    }
+                    else if (arg == "--seed")
+                    {
+                        setSeed = true;
                     }
                     else if (arg == "--xml")
                     {
@@ -159,6 +167,11 @@ int main(int argc, const char** argv)
                                 xml = true;
                                 break;
                             }
+                            case 's':
+                            {
+                                setSeed = true;
+                                break;
+                            }
                             default:
                             {
                                 throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
@@ -179,6 +192,10 @@ int main(int argc, const char** argv)
         if (config != "debug" && config != "release")
         {
             throw std::runtime_error("unknown configuration (" + config + "): not 'debug' or 'release'");
+        }
+        if (setSeed)
+        {
+            util::set_rand_seed(0);
         }
         for (const auto& file : files)
         {

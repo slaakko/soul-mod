@@ -35,7 +35,7 @@ public:
     void Merge(FunctionGroupSymbol* that);
     FunctionDefinitionSymbol* GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const;
     void AddFunctionDefinition(FunctionDefinitionSymbol* definition_);
-    void CollectViableFunctions(int arity, std::vector<FunctionSymbol*>& viableFunctions);
+    void CollectViableFunctions(int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
 private:
     std::vector<FunctionSymbol*> functions;
     std::vector<util::uuid> functionIds;

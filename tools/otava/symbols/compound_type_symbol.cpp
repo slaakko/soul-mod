@@ -15,20 +15,19 @@ import otava.symbols.context;
 namespace otava::symbols {
 
 CompoundTypeSymbol::CompoundTypeSymbol(const std::u32string& name_) :
-    TypeSymbol(SymbolKind::compoundTypeSymbol, name_), baseType(nullptr), derivations(), baseTypeId(util::nil_uuid()), symbolTable(nullptr)
+    TypeSymbol(SymbolKind::compoundTypeSymbol, name_), baseType(nullptr), derivations(), baseTypeId(util::nil_uuid())
 {
 }
 
 CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_) : 
-    TypeSymbol(SymbolKind::compoundTypeSymbol, MakeCompoundTypeName(baseType_, derivations_)), baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid()),
-    symbolTable(nullptr)
+    TypeSymbol(SymbolKind::compoundTypeSymbol, MakeCompoundTypeName(baseType_, derivations_)), baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid())
 {
 }
 
-TypeSymbol* CompoundTypeSymbol::PlainType()
+TypeSymbol* CompoundTypeSymbol::PlainType(Context* context)
 {
     Derivations plainDerivations = Plain(derivations);
-    return symbolTable->MakeCompoundType(BaseType(), plainDerivations);
+    return context->GetSymbolTable()->MakeCompoundType(BaseType(), plainDerivations);
 }
     
 void CompoundTypeSymbol::Write(Writer& writer)
@@ -49,7 +48,7 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     baseType = symbolTable.GetType(baseTypeId);
-    SetSymbolTable(&symbolTable);
+    //SetSymbolTable(&symbolTable);
 }
 
 void CompoundTypeSymbol::Accept(Visitor& visitor)

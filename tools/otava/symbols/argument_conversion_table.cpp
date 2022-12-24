@@ -27,6 +27,7 @@ public:
     TypeSymbol* ConversionArgType() const override { return type; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
     int32_t ConversionDistance() const override { return 255; }
+    bool IsIdentityConversion() const override { return true; }
 private:
     TypeSymbol* type;
 };
@@ -53,7 +54,7 @@ public:
 
 FunctionSymbol* IdentityArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
 {
-    if (TypesEqual(argType->PlainType(), paramType->PlainType()))
+    if (TypesEqual(argType->PlainType(context), paramType->PlainType(context)))
     {
         return new IdentityConversion(argType, context);
     }
@@ -250,10 +251,10 @@ FunctionSymbol* PtrToVoidPtrArgumentConversion::Get(TypeSymbol* paramType, TypeS
     return nullptr;
 }
 
-class PtrToUInt64Conversion : public FunctionSymbol
+class VoidPtrToUInt64Conversion : public FunctionSymbol
 {
 public:
-    PtrToUInt64Conversion(TypeSymbol* ptrType_, TypeSymbol* uint64Type_, Context* context);
+    VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeSymbol* uint64Type_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const override { return uint64Type; }
@@ -265,7 +266,7 @@ private:
     TypeSymbol* uint64Type;
 };
 
-PtrToUInt64Conversion::PtrToUInt64Conversion(TypeSymbol* ptrType_, TypeSymbol* uint64Type_, Context* context) :
+VoidPtrToUInt64Conversion::VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeSymbol* uint64Type_, Context* context) :
     FunctionSymbol(U"@conversion"), ptrType(ptrType_), uint64Type(uint64Type_)
 {
     SetConversion();
@@ -275,33 +276,33 @@ PtrToUInt64Conversion::PtrToUInt64Conversion(TypeSymbol* ptrType_, TypeSymbol* u
     SetReturnType(uint64Type, context);
 }
 
-void PtrToUInt64Conversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+void VoidPtrToUInt64Conversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitPtrToInt(value, uint64Type->IrType(emitter, sourcePos, context)));
 }
 
-class PtrToUInt64ArgumentConversion : public ArgumentConversion
+class VoidPtrToUInt64ArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context) override;
 };
 
-FunctionSymbol* PtrToUInt64ArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
+FunctionSymbol* VoidPtrToUInt64ArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
 {
     TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
-    if (argType->IsPointerType() && TypesEqual(paramType, uint64Type))
+    if (argType->IsVoidPtrType() && TypesEqual(paramType, uint64Type))
     {
-        return new PtrToUInt64Conversion(argType, paramType, context);
+        return new VoidPtrToUInt64Conversion(argType, paramType, context);
     }
     return nullptr;
 }
 
-class UInt64ToPtrConversion : public FunctionSymbol
+class UInt64ToVoidPtrConversion : public FunctionSymbol
 {
 public:
-    UInt64ToPtrConversion(TypeSymbol* uint64Type_, TypeSymbol* ptrType_, Context* context);
+    UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, TypeSymbol* ptrType_, Context* context);
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     TypeSymbol* ConversionParamType() const override { return ptrType; }
@@ -313,7 +314,7 @@ private:
     TypeSymbol* ptrType;
 };
 
-UInt64ToPtrConversion::UInt64ToPtrConversion(TypeSymbol* uint64Type_, TypeSymbol* ptrType_, Context* context) : 
+UInt64ToVoidPtrConversion::UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, TypeSymbol* ptrType_, Context* context) :
     FunctionSymbol(U"@conversion"), uint64Type(uint64Type), ptrType(ptrType_)
 {
     SetConversion();
@@ -323,25 +324,25 @@ UInt64ToPtrConversion::UInt64ToPtrConversion(TypeSymbol* uint64Type_, TypeSymbol
     SetReturnType(ptrType, context);
 }
 
-void UInt64ToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+void UInt64ToVoidPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     otava::intermediate::Value* value = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitIntToPtr(value, ptrType->IrType(emitter, sourcePos, context)));
 }
 
-class UInt64ToPtrArgumentConversion : public ArgumentConversion
+class UInt64ToVoidPtrArgumentConversion : public ArgumentConversion
 {
 public:
     FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context) override;
 };
 
-FunctionSymbol* UInt64ToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
+FunctionSymbol* UInt64ToVoidPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
 {
     TypeSymbol* uint64Type = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType);
-    if (TypesEqual(argType, uint64Type) && paramType->IsPointerType())
+    if (TypesEqual(argType, uint64Type) && paramType->IsVoidPtrType())
     {
-        return new UInt64ToPtrConversion(argType, paramType, context);
+        return new UInt64ToVoidPtrConversion(argType, paramType, context);
     }
     return nullptr;
 }
@@ -405,8 +406,8 @@ ArgumentConversionTable::ArgumentConversionTable()
     AddArgumentConversion(new NullPtrToPtrArgumentConversion());
     AddArgumentConversion(new VoidPtrToPtrArgumentConversion());
     AddArgumentConversion(new PtrToVoidPtrArgumentConversion());
-    AddArgumentConversion(new PtrToUInt64ArgumentConversion());
-    AddArgumentConversion(new UInt64ToPtrArgumentConversion());
+    AddArgumentConversion(new VoidPtrToUInt64ArgumentConversion());
+    AddArgumentConversion(new UInt64ToVoidPtrArgumentConversion());
     AddArgumentConversion(new PtrToBooleanArgumentConversion());
 }
 
@@ -417,7 +418,7 @@ void ArgumentConversionTable::AddArgumentConversion(ArgumentConversion* argument
 
 FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
 {
-    FunctionSymbol* conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType);
+    FunctionSymbol* conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType, context);
     if (conversion)
     {
         return conversion;

@@ -27,7 +27,7 @@ import util.unicode;
 namespace otava::symbols {
 
 ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const std::u32string& name_) : 
-    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_), classTemplate(nullptr), instantiated(false), symbolTable(nullptr)
+    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_), classTemplate(nullptr), instantiated(false)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -40,6 +40,16 @@ void ClassTemplateSpecializationSymbol::SetClassTemplate(TypeSymbol* classTempla
 void ClassTemplateSpecializationSymbol::AddTemplateArgument(Symbol* templateArgument)
 {
     templateArguments.push_back(templateArgument);
+}
+
+std::string ClassTemplateSpecializationSymbol::IrName(Context* context) const
+{
+    std::string irName = classTemplate->IrName(context);
+    for (Symbol* templateArg : templateArguments)
+    {
+        irName.append(1, '_').append(templateArg->IrName(context));
+    }
+    return irName;
 }
 
 void ClassTemplateSpecializationSymbol::Write(Writer& writer)
@@ -133,11 +143,6 @@ TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(const s
         }
     }
     return context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, targetTemplateArguments);
-}
-
-SymbolTable* ClassTemplateSpecializationSymbol::GetSymbolTable()
-{
-    return classTemplate->GetSymbolTable();
 }
 
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments)

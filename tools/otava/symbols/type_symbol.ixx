@@ -28,11 +28,12 @@ public:
     bool IsLValueRefType() const;
     bool IsRValueRefType() const;
     bool IsReferenceType() const;
-    virtual TypeSymbol* PlainType() { return this; }
+    virtual TypeSymbol* PlainType(Context* context) { return this; }
     virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance) const { return false; }
     virtual bool IsVoidType() const { return false; }
     virtual bool IsBoolType() const { return false; }
     virtual bool IsNullPtrType() const { return false; }
+    virtual bool IsVoidPtrType() const { return false; }
     virtual bool IsIntegralType() const { return false; }
     virtual bool IsPolymorphic() const { return false; }
     virtual int PointerCount() const { return 0; }
@@ -40,17 +41,17 @@ public:
     virtual TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context);
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
     virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) { return nullptr; }
-    TypeSymbol* AddConst();
-    TypeSymbol* RemoveConst();
-    TypeSymbol* AddPointer();
-    TypeSymbol* RemovePointer();
-    TypeSymbol* AddLValueRef();
-    TypeSymbol* RemoveLValueRef();
-    TypeSymbol* AddRValueRef();
-    TypeSymbol* RemoveRValueRef();
-    TypeSymbol* RemoveReference();
-    TypeSymbol* RemoveRefOrPtr();
-    TypeSymbol* DirectType();
+    TypeSymbol* AddConst(Context* context);
+    TypeSymbol* RemoveConst(Context* context);
+    TypeSymbol* AddPointer(Context* context);
+    TypeSymbol* RemovePointer(Context* context);
+    TypeSymbol* AddLValueRef(Context* context);
+    TypeSymbol* RemoveLValueRef(Context* context);
+    TypeSymbol* AddRValueRef(Context* context);
+    TypeSymbol* RemoveRValueRef(Context* context);
+    TypeSymbol* RemoveReference(Context* context);
+    TypeSymbol* RemoveRefOrPtr(Context* context);
+    TypeSymbol* DirectType(Context* context);
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
 };

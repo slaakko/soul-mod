@@ -53,7 +53,7 @@ EvaluationContext* Context::GetEvaluationContext()
 BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
 {
     FunctionDefinitionSymbol* function = boundFunction->GetFunctionDefinitionSymbol();
-    ParameterSymbol* thisParam = function->ThisParam();
+    ParameterSymbol* thisParam = function->ThisParam(this);
     if (thisParam)
     {
         return new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());

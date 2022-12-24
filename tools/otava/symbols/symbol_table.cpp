@@ -72,7 +72,7 @@ SymbolTable::SymbolTable() :
     conversionTable(new ConversionTable()),
     currentLinkage(Linkage::cpp_linkage)
 {
-    globalNs->SetSymbolTable(this);
+    //globalNs->SetSymbolTable(this);
 }
 
 void SymbolTable::Accept(Visitor& visitor)
@@ -651,7 +651,7 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
         if (symbol->IsFunctionGroupSymbol())
         {
             FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
-            functionGroup->CollectViableFunctions(arity, viableFunctions);
+            functionGroup->CollectViableFunctions(arity, viableFunctions, context);
         }
     }
 }
@@ -1234,7 +1234,6 @@ TypeSymbol* SymbolTable::MakeCompoundType(TypeSymbol* baseType, const Derivation
     {
         AddToRecomputeNameSet(compoundType);
     }
-    compoundType->SetSymbolTable(this);
     return compoundType;
 }
 
@@ -1291,7 +1290,7 @@ ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::N
 ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
 {
     std::unique_ptr<ClassTemplateSpecializationSymbol> symbol(new ClassTemplateSpecializationSymbol(MakeSpecializationName(classTemplate, templateArguments)));
-    symbol->SetSymbolTable(this);
+    //symbol->SetSymbolTable(this);
     symbol->SetClassTemplate(classTemplate);
     for (Symbol* templateArg : templateArguments)
     {

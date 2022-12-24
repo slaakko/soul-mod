@@ -26,20 +26,18 @@ public:
     std::string SymbolDocKindStr() const override { return "specialization"; }
     TypeSymbol* ClassTemplate() const { return classTemplate; }
     void SetClassTemplate(TypeSymbol* classTemplate_);
+    std::string IrName(Context* context) const override;
     const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
     void AddTemplateArgument(Symbol* templateArgument);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
-    SymbolTable* GetSymbolTable() override { return symbolTable; }
-    void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) override;
 private:
     TypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;
     std::vector<std::pair<util::uuid, bool>> ids;
-    SymbolTable* symbolTable;
     bool instantiated;
 };
 

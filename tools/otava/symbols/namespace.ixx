@@ -22,11 +22,7 @@ public:
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     void Import(NamespaceSymbol* that, Context* context);
     void Accept(Visitor& visitor) override;
-    SymbolTable* GetSymbolTable() override;
-    void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
     bool ContainsSymbols() const;
-private:
-    SymbolTable* symbolTable;
 };
 
 void BeginNamespace(otava::ast::Node* node, Context* context);

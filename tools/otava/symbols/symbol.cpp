@@ -116,6 +116,11 @@ std::u32string Symbol::FullName() const
     return fullName;
 }
 
+std::string Symbol::IrName(Context* context) const
+{ 
+    return util::ToUtf8(Name()); 
+}
+
 void Symbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ThrowException("cannot add " + symbol->SymbolKindStr() + " '" + util::ToUtf8(symbol->FullName()) + "' to " + SymbolKindStr() + " '" + util::ToUtf8(FullName()), 
@@ -144,31 +149,6 @@ void Symbol::Read(Reader& reader)
 
 void Symbol::Resolve(SymbolTable& symbolTable)
 {
-}
-
-SymbolTable* Symbol::GetSymbolTable() 
-{
-    Symbol* parentSymbol = parent;
-    if (parentSymbol && parentSymbol->IsClassTemplateSpecializationSymbol())
-    {
-        return parentSymbol->GetSymbolTable();
-    }
-    NamespaceSymbol* ns = ParentNamespace();
-    if (ns)
-    {
-        return ns->GetSymbolTable();
-    }
-    return nullptr;
-}
-
-Module* Symbol::GetModule()
-{
-    SymbolTable* symbolTable = GetSymbolTable();
-    if (symbolTable)
-    {
-        return symbolTable->GetModule();
-    }
-    return nullptr;
 }
 
 FunctionSymbol* Symbol::ParentFunction() const

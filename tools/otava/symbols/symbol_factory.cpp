@@ -121,7 +121,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::compoundTypeSymbol:
         {
             CompoundTypeSymbol* compoundType = new CompoundTypeSymbol(name);
-            compoundType->SetSymbolTable(symbolTable);
+            //compoundType->SetSymbolTable(symbolTable);
             return compoundType;
         }
         case SymbolKind::conceptSymbol:
@@ -188,7 +188,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::classTemplateSpecializationSymbol:
         {
             ClassTemplateSpecializationSymbol* specialization = new ClassTemplateSpecializationSymbol(name);
-            specialization->SetSymbolTable(symbolTable);
+            //specialization->SetSymbolTable(symbolTable);
             return specialization;
         }
         case SymbolKind::aliasTypeTemplateSpecializationSymbol: 

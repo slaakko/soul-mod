@@ -272,6 +272,11 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
+        if (module->Name() == "std.chrono")
+        {
+            std::cout << "chrono!" << std::endl;
+            int x = 0;
+        }
         module->GetNodeIdFactory()->SetModuleId(module->Id());
         module->SetFilePath(filePath);
         otava::symbols::SetCurrentModule(module);

@@ -19,7 +19,8 @@ public:
     TypeSymbol* GetBaseType() override { return baseType; }
     std::string SymbolKindStr() const override { return "compound type symbol"; }
     std::string SymbolDocKindStr() const override { return "compound_type"; }
-    TypeSymbol* PlainType() override;
+    TypeSymbol* PlainType(Context* context) override;
+    bool IsVoidPtrType() const override { return baseType->IsVoidType(); }
     int PointerCount() const override;
     TypeSymbol* BaseType() const { return baseType; }
     const Derivations& GetDerivations() const override { return derivations; }
@@ -29,14 +30,11 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
-    SymbolTable* GetSymbolTable() override { return symbolTable; }
-    void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     TypeSymbol* baseType;
     Derivations derivations;
     util::uuid baseTypeId;
-    SymbolTable* symbolTable;
 };
 
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations);

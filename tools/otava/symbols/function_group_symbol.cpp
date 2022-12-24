@@ -182,11 +182,11 @@ void FunctionGroupSymbol::AddFunctionDefinition(FunctionDefinitionSymbol* defini
     definitions.push_back(definition_);
 }
 
-void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<FunctionSymbol*>& viableFunctions)
+void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
     for (const auto& function : functions)
     {
-        if (function->MemFunArity() == arity)
+        if (function->MemFunArity(context) == arity)
         {
             if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
             {
@@ -196,7 +196,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<Function
     }
     for (const auto& functionDefinition : definitions)
     {
-        if (functionDefinition->MemFunArity() == arity)
+        if (functionDefinition->MemFunArity(context) == arity)
         {
             if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())
             {

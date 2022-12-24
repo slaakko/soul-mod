@@ -295,7 +295,7 @@ void ClassTypeSymbol::MakeObjectLayout(Context* context)
         if (IsPolymorphic())
         {
             vptrIndex = objectLayout.size();
-            objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer());
+            objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context));
         }
         else if (memberVariables.empty())
         {
@@ -800,10 +800,10 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
         if (memberVar->GetType()->IsPointerType() || memberVar->GetType()->IsReferenceType()) continue;
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
-        ParameterSymbol* thisParam = destructorSymbol->ThisParam();
+        ParameterSymbol* thisParam = destructorSymbol->ThisParam(context);
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetReferredType(context));
         boundVariableNode->SetThisPtr(thisPtr);
-        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos)));
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, boundVariableNode->GetType()->AddPointer(context))));
         std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
             context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context);
         if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
@@ -816,10 +816,10 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
     {
         TypeSymbol* baseClass = classTypeSymbol->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        ParameterSymbol* thisParam = destructorSymbol->ThisParam();
+        ParameterSymbol* thisParam = destructorSymbol->ThisParam(context);
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(), thisPtr->GetType(), context);
+            baseClass->AddPointer(context), thisPtr->GetType(), context);
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
