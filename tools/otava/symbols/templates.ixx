@@ -14,6 +14,8 @@ export namespace otava::symbols {
 
 class Value;
 class ParameterSymbol;
+class FunctionDefinitionSymbol;
+class ExplicitlyInstantiatedFunctionDefinitionSymbol;
 
 class TypenameConstraintSymbol : public TypeSymbol
 {
@@ -83,10 +85,31 @@ private:
     std::vector<TemplateParameterSymbol*> templateParameters;
 };
 
+class ExplicitInstantiationSymbol : public Symbol
+{
+public:
+    ExplicitInstantiationSymbol();
+    ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_);
+    ClassTemplateSpecializationSymbol* Specialization() const { return specialization; }
+    void AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    FunctionDefinitionSymbol* GetFunctionDefinitionSymbol(int index)  const;
+    std::string SymbolKindStr() const override { return "explicit instantiation symbol"; }
+    std::string SymbolDocKindStr() const override { return "explicit_instantiation"; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
+private:
+    ClassTemplateSpecializationSymbol* specialization;
+    util::uuid specializationId;
+    std::vector<std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>> functionDefinitionSymbols;
+};
+
 void BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
 void EndTemplateDeclaration(otava::ast::Node* node, Context* context);
 void RemoveTemplateDeclaration(Context* context);
 void AddTemplateParameter(otava::ast::Node* templateParameterNode, int index, Context* context);
 bool TemplateArgCanBeTypeId(otava::ast::Node* templateIdNode, int index);
+void ProcessExplicitInstantiation(otava::ast::Node* node, Context* context);
 
 } // namespace otava::symbols

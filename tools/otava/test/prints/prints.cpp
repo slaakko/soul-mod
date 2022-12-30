@@ -10,7 +10,7 @@ int main()
     prints("\n");
 
     const char* us = "qwerty";
-    std::string u(us, us + 3);
+    std::string u(us, 3);
     prints(u.c_str());
     prints("\n");
 

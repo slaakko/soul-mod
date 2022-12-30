@@ -20,7 +20,9 @@ import otava.symbols.bound.tree;
 import otava.symbols.statement.binder;
 import otava.symbols.classes;
 import otava.symbols.alias.type.symbol;
+import otava.symbols.templates;
 import otava.symbols.variable.symbol;
+import otava.symbols.class_templates;
 import otava.ast.error;
 import util;
 
@@ -133,6 +135,7 @@ class DeclarationProcessor : public otava::ast::DefaultVisitor
 public:
     DeclarationProcessor(Context* context_);
     std::unique_ptr<DeclarationList> GetDeclarations();
+    TypeSymbol* GetType() const { return type; }
     void BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator);
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
     void Visit(otava::ast::MemberDeclarationNode& node) override;
@@ -317,6 +320,7 @@ void DeclarationProcessor::Visit(otava::ast::EnumSpecifierNode& node)
 
 void DeclarationProcessor::Visit(otava::ast::ElaboratedTypeSpecifierNode& node)
 {
+    type = ResolveType(node.Id(), DeclarationFlags::none, context);
 }
 
 void DeclarationProcessor::Visit(otava::ast::CharNode& node)
@@ -523,7 +527,8 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
         functionDeclarator->GetFunctionQualifiers(),
         flags,
         context);
-    functionSymbol->SetReturnType(type, context);
+    TypeSymbol* returnType = MapType(functionSymbol, type, context);
+    functionSymbol->SetReturnType(returnType, context);
     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
     {
         soul::ast::SourcePos sourcePos;
@@ -535,7 +540,8 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
             node = parameterDeclaration.declarator->Node();
             sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
         }
-        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+        TypeSymbol* parameterType = MapType(functionSymbol, parameterDeclaration.type, context);
+        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
         if (parameterDeclaration.value)
         {
             parameter->SetDefaultValue(parameterDeclaration.value);
@@ -686,14 +692,16 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                             node = parameterDeclaration.declarator->Node();
                             sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
                         }
-                        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+                        TypeSymbol* parameterType = MapType(definition, parameterDeclaration.type, context);
+                        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
                         if (parameterDeclaration.value)
                         {
                             parameter->SetDefaultValue(parameterDeclaration.value);
                         }
                         definition->AddParameter(parameter, sourcePos, context);
                     }
-                    definition->SetReturnType(declaration.type, context);
+                    TypeSymbol* returnType = MapType(definition, declaration.type, context);
+                    definition->SetReturnType(returnType, context);
                     context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); 
                     if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
                     {
@@ -728,14 +736,16 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                         node = parameterDeclaration.declarator->Node();
                         sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
                     }
-                    ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterDeclaration.type, context);
+                    TypeSymbol* parameterType = MapType(definition, parameterDeclaration.type, context);
+                    ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
                     if (parameterDeclaration.value)
                     {
                         parameter->SetDefaultValue(parameterDeclaration.value);
                     }
                     definition->AddParameter(parameter, sourcePos, context);
                 }
-                definition->SetReturnType(declaration.type, context);
+                TypeSymbol* returnType = MapType(definition, declaration.type, context);
+                definition->SetReturnType(returnType, context);
                 context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); 
                 if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
                 {
@@ -889,6 +899,33 @@ void ProcessLinkageSpecification(otava::ast::Node* node, Context* context)
 {
     LinkageProcessor linkageProcessor(context);
     node->Accept(linkageProcessor);
+}
+
+TypeSymbol* ProcessExplicitInstantiationDeclaration(otava::ast::Node* node, Context* context)
+{
+    DeclarationProcessor processor(context);
+    node->Accept(processor);
+    return processor.GetType();
+}
+
+TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context)
+{
+    if (type)
+    {
+        ClassTypeSymbol* parentClassType = functionSymbol->ParentClassType();
+        if (parentClassType && parentClassType->IsClassTemplateSpecializationSymbol())
+        {
+            ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(parentClassType);
+            if (type->GetBaseType()->IsClassTypeSymbol())
+            {
+                if (TypesEqual(type->GetBaseType(), specialization->ClassTemplate()))
+                {
+                    type = context->GetSymbolTable()->MakeCompoundType(specialization, type->GetDerivations());
+                }
+            }
+        }
+    }
+    return type;
 }
 
 } // namespace otava::symbols

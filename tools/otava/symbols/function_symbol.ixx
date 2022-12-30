@@ -87,6 +87,8 @@ public:
     std::string SymbolDocKindStr() const override { return "paremeter"; }
     TypeSymbol* GetType() const { return type; }
     TypeSymbol* GetReferredType(Context* context) const;
+    void SetType(TypeSymbol* type_) { type = type_; }
+    ParameterSymbol* Copy() const;
     Value* DefaultValue() const { return defaultValue; }
     void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
     void Write(Writer& writer) override;
@@ -187,6 +189,7 @@ class FunctionDefinitionSymbol : public FunctionSymbol
 {
 public:
     FunctionDefinitionSymbol(const std::u32string& name_);
+    FunctionDefinitionSymbol(SymbolKind kind_, const std::u32string& name_);
     std::string SymbolKindStr() const override { return "function definition symbol"; }
     std::string SymbolDocKindStr() const override { return "function_definition"; }
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
@@ -196,9 +199,26 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    int32_t DefIndex() const { return defIndex; }
+    void SetDefIndex(int32_t defIndex_) { defIndex = defIndex_; }
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
+    int32_t defIndex;
+};
+
+class ExplicitlyInstantiatedFunctionDefinitionSymbol : public FunctionDefinitionSymbol
+{
+public:
+    ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_);
+    std::string SymbolKindStr() const override { return "explicitly instantiated function definition symbol"; }
+    std::string SymbolDocKindStr() const override { return "explcitly_instantiated_function_definition"; }
+    std::string IrName(Context* context) const override { return irName; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+private:
+    std::string irName;
 };
 
 struct FunctionLess

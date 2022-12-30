@@ -1,7 +1,7 @@
 export module std.error;
 
 import std.type.fundamental;
-import std.string;
+import std.basic_string;
 
 export namespace std {
 

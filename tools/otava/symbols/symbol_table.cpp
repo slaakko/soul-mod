@@ -72,7 +72,6 @@ SymbolTable::SymbolTable() :
     conversionTable(new ConversionTable()),
     currentLinkage(Linkage::cpp_linkage)
 {
-    //globalNs->SetSymbolTable(this);
 }
 
 void SymbolTable::Accept(Visitor& visitor)
@@ -213,6 +212,7 @@ void SymbolTable::Import(const SymbolTable& that)
     ImportForwardDeclarations(that);
     ImportSpecifierMap(that);
     ImportClasses(that);
+    ImportExplicitInstantiations(that);
     typenameConstraintSymbol = that.typenameConstraintSymbol;
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
@@ -321,9 +321,17 @@ void SymbolTable::ImportSpecifierMap(const SymbolTable& that)
 
 void SymbolTable::ImportClasses(const SymbolTable& that)
 {
-    for (auto cls : that.allClasses)
+    for (auto& cls : that.allClasses)
     {
         allClasses.insert(cls);
+    }
+}
+
+void SymbolTable::ImportExplicitInstantiations(const SymbolTable& that)
+{
+    for (const auto& instantiation : that.explicitInstantiationMap)
+    {
+        explicitInstantiationMap.insert(instantiation);
     }
 }
 
@@ -336,9 +344,9 @@ void SymbolTable::WriteMaps(Writer& writer)
         writer.GetBinaryStreamWriter().Write(static_cast<int32_t>(m.first->Kind()));
         writer.GetBinaryStreamWriter().Write(m.second->Name());
         int64_t nodeId = m.first->Id();
-        if (nodeId == 0xcdcdcdcdcdcdcdcd)
+        if (m.first->IsInternallyMapped())
         {
-            int x = 0;
+            nodeId = -1;
         }
         writer.GetBinaryStreamWriter().Write(nodeId);
         const util::uuid& uuid = m.second->Id();
@@ -351,9 +359,9 @@ void SymbolTable::WriteMaps(Writer& writer)
         const util::uuid& uuid = m.first->Id();
         writer.GetBinaryStreamWriter().Write(uuid);
         int64_t nodeId = m.second->Id();
-        if (nodeId == 0xcdcdcdcdcdcdcdcd)
+        if (m.second->IsInternallyMapped())
         {
-            int x = 0;
+            nodeId = -1;
         }
         writer.GetBinaryStreamWriter().Write(nodeId);
     }
@@ -370,10 +378,6 @@ void SymbolTable::WriteMaps(Writer& writer)
         const util::uuid& uuid = spec.first->Id();
         writer.GetBinaryStreamWriter().Write(uuid);
         int64_t nodeId = spec.second->Id();
-        if (nodeId == 0xcdcdcdcdcdcdcdcd)
-        {
-            int x = 0;
-        }
         writer.GetBinaryStreamWriter().Write(nodeId);
     }
     uint32_t nc = classes.size();
@@ -392,14 +396,16 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
     {
         otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(reader.GetBinaryStreamReader().ReadInt());
         std::u32string name = reader.GetBinaryStreamReader().ReadUtf32String();
-        int x = 0;
         int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
-        otava::ast::Node* node = nodeMap->GetNode(nodeId);
-        Symbol* symbol = symbolMap->GetSymbol(symbolId);
-        nodeSymbolMap[node] = symbol;
-        allNodeSymbolMap[node] = symbol;
+        if (nodeId != -1)
+        {
+            otava::ast::Node* node = nodeMap->GetNode(nodeId);
+            Symbol* symbol = symbolMap->GetSymbol(symbolId);
+            nodeSymbolMap[node] = symbol;
+            allNodeSymbolMap[node] = symbol;
+        }
     }
     uint32_t nsn = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < nsn; ++i)
@@ -407,10 +413,13 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
         int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
-        Symbol* symbol = symbolMap->GetSymbol(symbolId);
-        otava::ast::Node* node = nodeMap->GetNode(nodeId);
-        symbolNodeMap[symbol] = node;
-        allSymbolNodeMap[symbol] = node;
+        if (nodeId != -1)
+        {
+            Symbol* symbol = symbolMap->GetSymbol(symbolId);
+            otava::ast::Node* node = nodeMap->GetNode(nodeId);
+            symbolNodeMap[symbol] = node;
+            allSymbolNodeMap[symbol] = node;
+        }
     }
     uint32_t nfwd = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < nfwd; ++i)
@@ -467,6 +476,12 @@ void SymbolTable::Write(Writer& writer)
     {
         writer.Write(compoundType.get());
     }
+    uint32_t ecount = explicitInstantiations.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(ecount);
+    for (const auto& explicitInstantiation : explicitInstantiations)
+    {
+        writer.Write(explicitInstantiation.get());
+    }
 }
 
 void SymbolTable::Read(Reader& reader)
@@ -520,6 +535,21 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: compound type expected");
         }
     }
+    uint32_t ecount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < ecount; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsExplicitInstantiationSymbol())
+        {
+            ExplicitInstantiationSymbol* explicitInstantiation = static_cast<ExplicitInstantiationSymbol*>(symbol);
+            explicitInstantiations.push_back(std::unique_ptr<ExplicitInstantiationSymbol>(explicitInstantiation));
+        }
+        else
+        {
+            otava::ast::SetExceptionThrown();
+            throw std::runtime_error("otava.symbols.symbol_table: explicit instantiation symbol expected");
+        }
+    }
 }
 
 void SymbolTable::Resolve()
@@ -561,6 +591,10 @@ void SymbolTable::Resolve()
     {
         AliasTypeTemplateSpecializationSymbol* s = static_cast<AliasTypeTemplateSpecializationSymbol*>(specialization.get());
         s->Resolve(*this);
+    }
+    for (const auto& instantiation : explicitInstantiations)
+    {
+        instantiation->Resolve(*this);
     }
     conversionTable->Make();
 }
@@ -669,10 +703,6 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol)
 
 void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
 {
-    if (symbol->IsTemplateParameterSymbol())
-    {
-        int x = 0;
-    }
     if ((kind & MapKind::nodeToSymbol) != MapKind::none)
     {
         nodeSymbolMap[node] = symbol;
@@ -1190,6 +1220,11 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
     {
         functionDefinition->SetAccess(declaration->GetAccess());
     }
+    if (context->MemFunDefSymbolIndex() != -1)
+    {
+        functionDefinition->SetDefIndex(context->MemFunDefSymbolIndex());
+        context->SetMemFunDefSymbolIndex(-1);
+    }
     currentScope->SymbolScope()->AddSymbol(functionDefinition, node->GetSourcePos(), context);
     functionGroup->AddFunctionDefinition(functionDefinition);
     return functionDefinition;
@@ -1290,7 +1325,6 @@ ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::N
 ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
 {
     std::unique_ptr<ClassTemplateSpecializationSymbol> symbol(new ClassTemplateSpecializationSymbol(MakeSpecializationName(classTemplate, templateArguments)));
-    //symbol->SetSymbolTable(this);
     symbol->SetClassTemplate(classTemplate);
     for (Symbol* templateArg : templateArguments)
     {
@@ -1433,6 +1467,7 @@ FunctionDefinitionSymbol* SymbolTable::GetFunctionDefinition(const util::uuid& i
     }
     else
     {
+        return nullptr;
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("otava.symbols.symbol_table: function definition for id '" + util::ToString(id) + "' not found");
     }
@@ -1542,6 +1577,30 @@ void SymbolTable::PopLinkage()
 {
     currentLinkage = linkageStack.top();
     linkageStack.pop();
+}
+
+ExplicitInstantiationSymbol* SymbolTable::GetExplicitInstantiation(ClassTemplateSpecializationSymbol* classTemplateSpecialization) const
+{
+    auto it = explicitInstantiationMap.find(classTemplateSpecialization);
+    if (it != explicitInstantiationMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+void SymbolTable::AddExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition)
+{
+    explicitInstantiations.push_back(std::unique_ptr<ExplicitInstantiationSymbol>(explicitInstantition));
+    MapExplicitInstantiation(explicitInstantition);
+}
+
+void SymbolTable::MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition)
+{
+    explicitInstantiationMap[explicitInstantition->Specialization()] = explicitInstantition;
 }
 
 } // namespace otava::symbols

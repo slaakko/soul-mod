@@ -22,6 +22,8 @@ const int32_t copyAssignmentIndex = -4;
 const int32_t moveAssignmentIndex = -5;
 const int32_t destructorIndex = -6;
 
+class FunctionDefinitionSymbol;
+
 enum class SpecialFunctionKind : int32_t;
 
 int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
@@ -91,6 +93,7 @@ public:
     bool IsPolymorphic() const override;
     const std::vector<VariableSymbol*>& MemberVariables() const { return memberVariables; }
     const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
+    std::vector<FunctionDefinitionSymbol*> MemFunDefSymbols() const { return memFunDefSymbols; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
@@ -116,7 +119,9 @@ private:
     std::vector<TypeSymbol*> derivedClasses;
     int32_t level;
     std::vector<VariableSymbol*> memberVariables;
+    std::vector<VariableSymbol*> staticMemberVariables;
     std::vector<FunctionSymbol*> memberFunctions;
+    std::vector<FunctionDefinitionSymbol*> memFunDefSymbols;
     std::vector<TypeSymbol*> objectLayout;
     std::vector<util::uuid> objectLayoutIds;
     int32_t vptrIndex;

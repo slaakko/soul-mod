@@ -1,7 +1,7 @@
 export module std.convert;
 
 import std.type.fundamental;
-import std.string;
+import std.basic_string;
 import std.algorithm;
 
 export namespace std {

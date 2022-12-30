@@ -1,6 +1,6 @@
 export module std.exception;
 
-import std.string;
+import std.basic_string;
 
 export namespace std {
 

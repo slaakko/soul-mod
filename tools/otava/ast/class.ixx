@@ -153,6 +153,8 @@ public:
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_);
     Node* MemberInitializerListNode() const { return memberInitializerListNode.get(); }
     void SetMemberInitializerListNode(Node* memberInitializerListNode_);
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_);

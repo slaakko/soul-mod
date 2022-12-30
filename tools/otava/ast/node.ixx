@@ -27,6 +27,8 @@ using NodeDestroyedFunc = void(*)(Node*);
 
 void SetNodeDestroyedFunc(NodeDestroyedFunc func);
 
+constexpr int32_t internallyMappedFlag = 0x40000000;
+
 enum class NodeKind : uint16_t
 {
     nullNode,
@@ -108,7 +110,8 @@ public:
     virtual void Clear();
     Node* Parent() const { return parent; }
     void SetParent(Node* parent_) { parent = parent_; }
-    int64_t Id() const { return id; }
+    int64_t Id() const { return id & ~internallyMappedFlag; }
+    bool IsInternallyMapped() const { return (id & internallyMappedFlag) != 0; }
     bool IsImportDeclarationNode() const { return kind == NodeKind::importDeclarationNode; }
     bool IsClassNode() const { return kind == NodeKind::classNode; }
     bool IsStructNode() const { return kind == NodeKind::structNode;  }
@@ -211,11 +214,13 @@ class NodeIdFactory
 {
 public:
     NodeIdFactory();
+    void SetInternallyMapped(bool internallyMapped_);
     void SetModuleId(int32_t moduleId_) { moduleId = moduleId_; }
     int64_t GetNextNodeId();
 private:
     int32_t moduleId;
     int32_t nodeId;
+    int32_t internallyMappedBit;
 };
 
 void MakeNodeFactoryCollection();

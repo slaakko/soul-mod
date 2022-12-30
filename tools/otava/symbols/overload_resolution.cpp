@@ -637,11 +637,17 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
 }
 
 FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
+    const std::u32string& groupName, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
     std::vector<FunctionMatch> functionMatches;
-    for (FunctionSymbol* viableFunction : viableFunctions)
+    int n = viableFunctions.size();
+    for (int i = 0; i < n; ++i)
     {
+        if (i == 37)
+        {
+            int x = 0;
+        }
+        FunctionSymbol* viableFunction = viableFunctions[i];
         FunctionMatch functionMatch(viableFunction);
         if (FindConversions(functionMatch, args, context))
         {
@@ -661,13 +667,14 @@ FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& via
         }
         else
         {
-            ex = Exception("ambiguous function call", sourcePos, context);
+            ex = Exception("ambiguous function call, " + std::to_string(viableFunctions.size()) + " viable functions examined.", sourcePos, context);
             return FunctionMatch(nullptr);
         }
     }
     else
     {
-        ex = Exception("no matching function found for function call", sourcePos, context);
+        ex = Exception("overload resolution failed: overload in function group '" + util::ToUtf8(groupName) + "' not found, " + 
+            "or there are no acceptable conversions for all argument types. " + std::to_string(viableFunctions.size()) + " viable functions examined.", sourcePos, context);
         return FunctionMatch(nullptr);
     }
 }
@@ -717,7 +724,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         }
         context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, args.size(), viableFunctions, context);
     }
-    FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, sourcePos, context, ex);
+    FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, groupName, sourcePos, context, ex);
     if (!bestMatch.function) return std::unique_ptr<BoundFunctionCallNode>();
     if ((bestMatch.function->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
     {
@@ -744,7 +751,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
                 ex = Exception("function argument 0 is expected to be a class template specialization", sourcePos, context);
                 return std::unique_ptr<BoundFunctionCallNode>();
             }
-            bestMatch.function = InstantiateMemFnOfClassTemplate(bestMatch.function, bestMatch.templateParameterMap, classTemplateSpecialization, sourcePos, context);
+            bestMatch.function = InstantiateMemFnOfClassTemplate(bestMatch.function, classTemplateSpecialization, sourcePos, context);
         }
     }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(bestMatch, args, sourcePos, context);

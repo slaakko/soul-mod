@@ -70,7 +70,7 @@ CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int ind
 
 TypeSymbol* InstantiateClassTemplate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node, Context* context);
 
-FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,
+FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     ClassTemplateSpecializationSymbol* classTemplateSpecialization, const soul::ast::SourcePos& sourcePos, Context* context);
 
 } // namespace otava::symbols

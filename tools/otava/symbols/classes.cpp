@@ -25,6 +25,7 @@ import otava.symbols.overload.resolution;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.function.group.symbol;
+import otava.symbols.declaration;
 
 namespace otava::symbols {
 
@@ -344,12 +345,36 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     if (symbol->IsVariableSymbol())
     {
         VariableSymbol* memberVariable = static_cast<VariableSymbol*>(symbol);
-        memberVariable->SetIndex(memberVariables.size());
-        memberVariables.push_back(memberVariable);
+        if ((symbol->GetDeclarationFlags() & DeclarationFlags::staticFlag) != DeclarationFlags::none)
+        {
+            staticMemberVariables.push_back(memberVariable);
+        }
+        else
+        {
+            memberVariable->SetIndex(memberVariables.size());
+            memberVariables.push_back(memberVariable);
+        }
     }
     else if (symbol->IsFunctionSymbol())
     {
         memberFunctions.push_back(static_cast<FunctionSymbol*>(symbol));
+    }
+    if (symbol->IsFunctionDefinitionSymbol())
+    {
+        FunctionDefinitionSymbol* memFunDefSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+        if (memFunDefSymbol->DefIndex() == -1)
+        {
+            memFunDefSymbol->SetDefIndex(memFunDefSymbols.size());
+            memFunDefSymbols.push_back(memFunDefSymbol);
+        }
+        else
+        {
+            while (memFunDefSymbol->DefIndex() >= memFunDefSymbols.size())
+            {
+                memFunDefSymbols.push_back(nullptr);
+            }
+            memFunDefSymbols[memFunDefSymbol->DefIndex()] = memFunDefSymbol;
+        }
     }
 }
 
@@ -679,16 +704,18 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
         otava::ast::Node* fnBody = node.FunctionBody();
         otava::ast::ConstructorInitializerNode* ctorInitializerNode = nullptr;
         otava::ast::CompoundStatementNode* compoundStatementNode = nullptr;
+        otava::ast::ConstructorNode* constructorNode = nullptr;
+        otava::ast::FunctionBodyNode* functionBodyNode = nullptr;
         if (fnBody->IsConstructorNode())
         {
-            otava::ast::ConstructorNode* constructorNode = static_cast<otava::ast::ConstructorNode*>(fnBody);
+            constructorNode = static_cast<otava::ast::ConstructorNode*>(fnBody);
             ctorInitializerNode = static_cast<otava::ast::ConstructorInitializerNode*>(constructorNode->Left());
             compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(constructorNode->Right());
         }
         else if (fnBody->IsFunctionBodyNode())
         {
-            otava::ast::FunctionBodyNode* functionBody = static_cast<otava::ast::FunctionBodyNode*>(node.FunctionBody());
-            compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(functionBody->Child());
+            functionBodyNode = static_cast<otava::ast::FunctionBodyNode*>(node.FunctionBody());
+            compoundStatementNode = static_cast<otava::ast::CompoundStatementNode*>(functionBodyNode->Child());
         }
         if (ctorInitializerNode)
         {

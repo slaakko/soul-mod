@@ -17,6 +17,8 @@ import otava.symbols.fundamental.type.symbol;
 import otava.symbols.classes;
 import otava.symbols.overload.resolution;
 import otava.symbols.exception;
+import otava.symbols.expression.binder;
+import otava.ast.expression;
 import util.unicode;
 import util.sha1;
 
@@ -274,7 +276,6 @@ FunctionSymbol* PointerCopyAssignmentOperation::Get(std::vector<std::unique_ptr<
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return nullptr;
-    if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer(context);
     if (TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
@@ -342,7 +343,6 @@ FunctionSymbol* PointerMoveAssignmentOperation::Get(std::vector<std::unique_ptr<
     BoundExpressionNode* arg = args[0].get();
     TypeSymbol* type = arg->GetType();
     if (type->PointerCount() <= 1) return nullptr;
-    if (type->IsReferenceType()) return nullptr;
     TypeSymbol* pointerType = type->RemovePointer(context);
     if (!TypesEqual(args[1]->GetType(), pointerType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
     auto it = functionMap.find(pointerType);
@@ -1169,6 +1169,248 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
     context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
 }
 
+class ClassCopyAssignment: public FunctionDefinitionSymbol
+{
+public:
+    ClassCopyAssignment(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    ClassTypeSymbol* ClassType() const { return classType; }
+    std::string IrName(Context* context) const override { return irName; }
+private:
+    ClassTypeSymbol* classType;
+    std::string irName;
+};
+
+ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) :
+    FunctionDefinitionSymbol(U"operator="), classType(classType_)
+{
+    SetFunctionKind(FunctionKind::special);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = ThisParam(context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
+    AddParameter(thatParam, sourcePos, context);
+    SetReturnType(classType->AddLValueRef(context), context);
+    irName = "copy_assignment_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+}
+
+class ClassCopyAssignmentOperation : public Operation
+{
+public:
+    ClassCopyAssignmentOperation();
+    FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    void GenerateImplementation(ClassCopyAssignment* classCopyAssignment, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+private:
+    std::map<TypeSymbol*, FunctionSymbol*> functionMap;
+    std::vector<std::unique_ptr<FunctionSymbol>> functions;
+};
+
+ClassCopyAssignmentOperation::ClassCopyAssignmentOperation() : Operation(U"operator=", 2)
+{
+}
+
+FunctionSymbol* ClassCopyAssignmentOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    TypeSymbol* type = args[0]->GetType();
+    if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
+    if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
+    ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
+    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
+    if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
+    FunctionSymbol* copyAssignment = classType->GetFunction(copyAssignmentIndex);
+    if (copyAssignment)
+    {
+        return copyAssignment;
+    }
+    auto it = functionMap.find(classType);
+    if (it != functionMap.cend())
+    {
+        FunctionSymbol* function = it->second;
+        return function;
+    }
+    ClassCopyAssignment* function = new ClassCopyAssignment(classType, sourcePos, context);
+    function->SetParent(classType);
+    GenerateImplementation(function, sourcePos, context);
+    functionMap[classType] = function;
+    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
+    return function;
+}
+
+void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* classCopyAssignment, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    ClassTypeSymbol* classType = classCopyAssignment->ClassType();
+    std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classCopyAssignment, sourcePos));
+    boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    int nb = classType->BaseClasses().size();
+    for (int i = 0; i < nb; ++i)
+    {
+        TypeSymbol* baseClass = classType->BaseClasses()[i];
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyAssignment->ThisParam(context), sourcePos, classCopyAssignment->ThisParam(context)->GetReferredType(context));
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            baseClass->AddPointer(context), thisPtr->GetType(), context);
+        if (conversion)
+        {
+            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
+            ParameterSymbol* thatParam = classCopyAssignment->MemFunParameters(context)[1];
+            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
+            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
+            BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+            expressionStatement->SetExpr(boundFunctionCall.release());
+            boundFunction->Body()->AddStatement(expressionStatement);
+        }
+        else
+        {
+            ThrowException("base class conversion not found", sourcePos, context);
+        }
+    }
+    int n = classType->MemberVariables().size();
+    for (int i = 0; i < n; ++i)
+    {
+        VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
+        BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(classCopyAssignment->ThisParam(context), sourcePos, classCopyAssignment->ThisParam(context)->GetReferredType(context)));
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
+        ParameterSymbol* thatParam = classCopyAssignment->MemFunParameters(context)[1];
+        BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
+        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
+            new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
+        args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
+        std::unique_ptr<BoundFunctionCallNode> memberAssignmentrCall = ResolveOverloadThrow(classType->GetScope(), U"operator=", args, sourcePos, context);
+        BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+        expressionStatement->SetExpr(memberAssignmentrCall.release());
+        boundFunction->Body()->AddStatement(expressionStatement);
+    }
+    BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
+    otava::ast::ThisNode* thisNode(new otava::ast::ThisNode(sourcePos));
+    otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
+    BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
+    returnStatement->SetExpr(derefThisExpr);
+    boundFunction->Body()->AddStatement(returnStatement);
+    context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
+}
+
+class ClassMoveAssignment : public FunctionDefinitionSymbol
+{
+public:
+    ClassMoveAssignment(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    ClassTypeSymbol* ClassType() const { return classType; }
+    std::string IrName(Context* context) const override { return irName; }
+private:
+    ClassTypeSymbol* classType;
+    std::string irName;
+};
+
+ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) :
+    FunctionDefinitionSymbol(U"operator="), classType(classType_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = ThisParam(context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
+    AddParameter(thatParam, sourcePos, context);
+    SetReturnType(classType->AddLValueRef(context), context);
+    irName = "move_assignment_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+}
+
+class ClassMoveAssignmentOperation : public Operation
+{
+public:
+    ClassMoveAssignmentOperation();
+    FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    void GenerateImplementation(ClassMoveAssignment* classMoveAssignment, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+private:
+    std::map<TypeSymbol*, FunctionSymbol*> functionMap;
+    std::vector<std::unique_ptr<FunctionSymbol>> functions;
+};
+
+ClassMoveAssignmentOperation::ClassMoveAssignmentOperation() : Operation(U"operator=", 2)
+{
+}
+
+FunctionSymbol* ClassMoveAssignmentOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    TypeSymbol* type = args[0]->GetType();
+    if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
+    if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
+    ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
+    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
+    if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
+    FunctionSymbol* moveAssignment = classType->GetFunction(moveAssignmentIndex);
+    if (moveAssignment)
+    {
+        return moveAssignment;
+    }
+    auto it = functionMap.find(classType);
+    if (it != functionMap.cend())
+    {
+        FunctionSymbol* function = it->second;
+        return function;
+    }
+    ClassMoveAssignment* function = new ClassMoveAssignment(classType, sourcePos, context);
+    function->SetParent(classType);
+    GenerateImplementation(function, sourcePos, context);
+    functionMap[classType] = function;
+    functions.push_back(std::unique_ptr<FunctionSymbol>(function));
+    return function;
+}
+
+void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* classMoveAssignment, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    ClassTypeSymbol* classType = classMoveAssignment->ClassType();
+    std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classMoveAssignment, sourcePos));
+    boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    int nb = classType->BaseClasses().size();
+    for (int i = 0; i < nb; ++i)
+    {
+        TypeSymbol* baseClass = classType->BaseClasses()[i];
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveAssignment->ThisParam(context), sourcePos, classMoveAssignment->ThisParam(context)->GetReferredType(context));
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            baseClass->AddPointer(context), thisPtr->GetType(), context);
+        if (conversion)
+        {
+            args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
+            ParameterSymbol* thatParam = classMoveAssignment->MemFunParameters(context)[1];
+            std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
+            moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
+            Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(
+                stdScope, U"move", moveArgs, sourcePos, context));
+            args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
+            std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
+                context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
+            BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+            expressionStatement->SetExpr(boundFunctionCall.release());
+            boundFunction->Body()->AddStatement(expressionStatement);
+        }
+        else
+        {
+            ThrowException("base class conversion not found", sourcePos, context);
+        }
+    }
+    int n = classType->MemberVariables().size();
+    for (int i = 0; i < n; ++i)
+    {
+        VariableSymbol* memberVariableSymbol = classType->MemberVariables()[i];
+        BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
+        boundMemberVariable->SetThisPtr(new BoundParameterNode(classMoveAssignment->ThisParam(context), sourcePos, classMoveAssignment->ThisParam(context)->GetReferredType(context)));
+        std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
+        ParameterSymbol* thatParam = classMoveAssignment->MemFunParameters(context)[1];
+        BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
+        thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
+            new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
+        args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
+        Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(stdScope, U"swap", args, sourcePos, context);
+        BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
+        expressionStatement->SetExpr(memberConstructorCall.release());
+        boundFunction->Body()->AddStatement(expressionStatement);
+    }
+    context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
+}
+
 Operation::Operation(const std::u32string& groupName_, int arity_) : groupName(groupName_), arity(arity_)
 {
 }
@@ -1219,10 +1461,11 @@ OperationRepository::OperationRepository()
     AddOperation(new PointerEqualOperation());
     AddOperation(new PointerLessOperation());
     AddOperation(new PointerArrowOperation());
-
     AddOperation(new ClassDefaultCtorOperation());
     AddOperation(new ClassCopyCtorOperation());
     AddOperation(new ClassMoveCtorOperation());
+    AddOperation(new ClassCopyAssignmentOperation());
+    AddOperation(new ClassMoveAssignmentOperation());
 }
 
 OperationGroup* OperationRepository::GetOrInsertOperationGroup(const std::u32string& operationGroupName)

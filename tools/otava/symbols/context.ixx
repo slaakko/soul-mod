@@ -60,6 +60,7 @@ constexpr  ContextFlags operator~(ContextFlags flags)
 }
 
 class SymbolTable;
+class Module;
 class EvaluationContext;
 class BoundCompileUnitNode;
 class BoundExpressionNode;
@@ -77,6 +78,7 @@ public:
     void SetLexer(Lexer* lexer_);
     SymbolTable* GetSymbolTable() { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_);
+    Module* GetModule();
     BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit.get(); }
     OperationRepository* GetOperationRepository() const;
     BoundFunctionNode* GetBoundFunction() const { return boundFunction.get(); }
@@ -111,6 +113,8 @@ public:
     AliasTypeSymbol* GetAliasType() const { return aliasType; }
     void SetPtr(otava::intermediate::Value* ptr_) { ptr = ptr_; }
     otava::intermediate::Value* Ptr() const { return ptr; }
+    int MemFunDefSymbolIndex() const { return memFunDefSymbolIndex; }
+    void SetMemFunDefSymbolIndex(int index) { memFunDefSymbolIndex = index; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -127,6 +131,7 @@ private:
     otava::ast::FunctionDefinitionNode* functionDefinitionNode;
     AliasTypeSymbol* aliasType;
     otava::intermediate::Value* ptr;
+    int memFunDefSymbolIndex;
 };
 
 } // namespace otava::symbols

@@ -22,6 +22,7 @@ import otava.symbols.variable.symbol;
 import otava.symbols.fundamental.type.conversion;
 import otava.symbols.bound.tree;
 import otava.symbols.context;
+import otava.symbols.class_templates;
 import otava.intermediate.function;
 import util.sha1;
 import util.unicode;
@@ -251,6 +252,16 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
     return referredType;
 }
 
+ParameterSymbol* ParameterSymbol::Copy() const
+{
+    ParameterSymbol* copy = new ParameterSymbol(Name(), type);
+    if (defaultValue)
+    {
+        copy->SetDefaultValue(defaultValue);
+    }
+    return copy;
+}
+
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : 
     ContainerSymbol(SymbolKind::functionSymbol, name_), 
     memFunParamsConstructed(false), 
@@ -395,12 +406,22 @@ bool FunctionSymbol::IsMemberFunction() const
 SpecialFunctionKind FunctionSymbol::GetSpecialFunctionKind(Context* context) const
 {
     ClassTypeSymbol* classType = ParentClassType();
+    TypeSymbol* classTemplate = nullptr;
+    if (classType && classType->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(classType);
+        classTemplate = specialization->ClassTemplate();
+    }
     if (classType)
     {
         const std::vector<ParameterSymbol*>& memFunParams = MemFunParameters(context);
         TypeSymbol* pointerType = classType->AddPointer(context);
         if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name()) return SpecialFunctionKind::defaultCtor;
         if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + classType->Name()) return SpecialFunctionKind::dtor;
+        if (classTemplate)
+        {
+            if (memFunParams.size() == 1 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == U"~" + classTemplate->Name()) return SpecialFunctionKind::dtor;
+        }
         TypeSymbol* constRefType = classType->AddConst(context)->AddLValueRef(context);
         if (memFunParams.size() == 2 && TypesEqual(memFunParams[0]->GetType(), pointerType) && Name() == classType->Name() &&
             TypesEqual(memFunParams[1]->GetType(), constRefType)) return SpecialFunctionKind::copyCtor;
@@ -495,9 +516,10 @@ void FunctionSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourc
     ContainerSymbol::AddSymbol(symbol, sourcePos, context);
     if (symbol->IsParameterSymbol())
     {
-        parameters.push_back(static_cast<ParameterSymbol*>(symbol));
+        ParameterSymbol* parameterSymbol = static_cast<ParameterSymbol*>(symbol);
+        parameters.push_back(parameterSymbol);
     }
-    if (symbol->IsLocalVariableSymbol())
+    else if (symbol->IsLocalVariableSymbol())
     {
         localVariables.push_back(static_cast<VariableSymbol*>(symbol));
     }
@@ -717,7 +739,19 @@ VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
     return temporary;
 }
 
-FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_), declaration(), declarationId()
+FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : 
+    FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_), 
+    declaration(), 
+    declarationId(),
+    defIndex(-1)
+{
+}
+
+FunctionDefinitionSymbol::FunctionDefinitionSymbol(SymbolKind kind_, const std::u32string& name_) :
+    FunctionSymbol(kind_, name_),
+    declaration(),
+    declarationId(),
+    defIndex(-1)
 {
 }
 
@@ -732,12 +766,14 @@ void FunctionDefinitionSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(util::nil_uuid());
     }
+    writer.GetBinaryStreamWriter().Write(defIndex);
 }
 
 void FunctionDefinitionSymbol::Read(Reader& reader)
 {
     FunctionSymbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(declarationId);
+    defIndex = reader.GetBinaryStreamReader().ReadInt();
 }
 
 void FunctionDefinitionSymbol::Accept(Visitor& visitor) 
@@ -764,6 +800,38 @@ std::string FunctionDefinitionSymbol::IrName(Context* context) const
     {
         return FunctionSymbol::IrName(context);
     }
+}
+
+ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, 
+    const soul::ast::SourcePos& sourcePos, Context* context) : 
+    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol->Name()), irName(functionDefinitionSymbol->IrName(context))
+{
+    SetDefIndex(functionDefinitionSymbol->DefIndex());
+    for (ParameterSymbol* parameter : functionDefinitionSymbol->Parameters())
+    {
+        AddParameter(parameter->Copy(), sourcePos, context);
+    }
+    if (functionDefinitionSymbol->ReturnType())
+    {
+        SetReturnType(functionDefinitionSymbol->ReturnType(), context);
+    }
+}
+
+ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(const std::u32string& name_) : 
+    FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, name_)
+{
+}
+
+void ExplicitlyInstantiatedFunctionDefinitionSymbol::Write(Writer& writer)
+{
+    FunctionDefinitionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(irName);
+}
+
+void ExplicitlyInstantiatedFunctionDefinitionSymbol::Read(Reader& reader)
+{
+    FunctionDefinitionSymbol::Read(reader);
+    irName = reader.GetBinaryStreamReader().ReadUtf8String();
 }
 
 bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const

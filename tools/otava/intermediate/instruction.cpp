@@ -880,6 +880,10 @@ void TruncateInstruction::Accept(Visitor& visitor)
 
 BitcastInstruction::BitcastInstruction(const SourcePos& sourcePos_, RegValue* result_, Value* operand_) : UnaryInstruction(sourcePos_, result_, operand_, OpCode::bitcast)
 {
+    if (!operand_)
+    {
+        int x = 0;
+    }
 }
 
 void BitcastInstruction::Write(util::CodeFormatter& formatter)

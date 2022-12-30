@@ -1,8 +1,12 @@
 import std.core;
 
+
+void foo(char*& x, char*& y)
+{
+    std::swap(x, y);
+}
+
 int main()
 {
-    int x = 100;
-    int y(x);
-    int z(std::move(x));
+    return 0;
 }

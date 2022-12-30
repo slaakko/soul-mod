@@ -47,6 +47,7 @@ class TypenameConstraintSymbol;
 class TemplateParameterSymbol;
 class BoundTemplateParameterSymbol;
 class TemplateDeclarationSymbol;
+class ExplicitInstantiationSymbol;
 class ErrorTypeSymbol;
 class NestedTypeSymbol;
 class VariableGroupSymbol;
@@ -98,6 +99,7 @@ public:
     virtual void Visit(TemplateParameterSymbol& symbol) {}
     virtual void Visit(BoundTemplateParameterSymbol& symbol) {}
     virtual void Visit(TemplateDeclarationSymbol& symbol) {}
+    virtual void Visit(ExplicitInstantiationSymbol& symbol) {}
     virtual void Visit(NestedTypeSymbol& symbol) {}
     virtual void Visit(ErrorTypeSymbol& symbol) {}
     virtual void Visit(VariableGroupSymbol& symbol) {}

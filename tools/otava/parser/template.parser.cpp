@@ -2559,11 +2559,13 @@ soul::parser::Match TemplateParser<Lexer>::ExplicitInstantiation(Lexer& lexer, o
         }
         if (match.hit)
         {
+            otava::ast::ExplicitInstantiationNode *node = new otava::ast::ExplicitInstantiationNode(sourcePos, extrn.release(), tmp.release(), declaration.release());
+            otava::symbols::ProcessExplicitInstantiation(node, context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExplicitInstantiation");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ExplicitInstantiationNode(sourcePos, extrn.release(), tmp.release(), declaration.release()));
+                return soul::parser::Match(true, node);
             }
         }
         *parentMatch0 = match;

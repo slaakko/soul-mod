@@ -153,6 +153,7 @@ public:
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
     void SetId(const std::string& id_) { id = id_; }
     const std::string& Id() const { return id; }
+    otava::intermediate::Value* CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
 private:
     std::string id;
     std::vector<std::unique_ptr<BoundNode>> boundNodes;

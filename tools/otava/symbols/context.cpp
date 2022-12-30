@@ -26,7 +26,8 @@ Context::Context() :
     specialization(nullptr),
     functionDefinitionNode(nullptr),
     aliasType(nullptr),
-    ptr(nullptr)
+    ptr(nullptr),
+    memFunDefSymbolIndex(-1)
 {
 }
 
@@ -38,6 +39,11 @@ void Context::SetLexer(Lexer* lexer_)
 void Context::SetSymbolTable(SymbolTable* symbolTable_)
 {
     symbolTable = symbolTable_;
+}
+
+Module* Context::GetModule()
+{
+    return symbolTable->GetModule();
 }
 
 OperationRepository* Context::GetOperationRepository() const

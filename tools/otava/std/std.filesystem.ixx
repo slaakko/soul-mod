@@ -3,7 +3,7 @@ export module std.filesystem;
 import std.type.fundamental;
 import std.error;
 import std.chrono.clock;
-//import std.basic_string;
+import std.basic_string;
 
 export namespace std::filesystem {
 

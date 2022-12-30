@@ -45,7 +45,7 @@ void AliasTypeSymbol::Read(Reader& reader)
 void AliasTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
-    referredType = symbolTable.GetType(referredTypeId);
+    referredType = symbolTable.GetTypeNothrow(referredTypeId);
 }
 
 void AliasTypeSymbol::Accept(Visitor& visitor)

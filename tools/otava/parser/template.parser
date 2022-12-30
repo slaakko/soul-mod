@@ -304,7 +304,9 @@ parser TemplateParser
             Declaration(context):declaration
         )
         {
-            return new otava::ast::ExplicitInstantiationNode(sourcePos, extrn, tmp, declaration);
+            otava::ast::ExplicitInstantiationNode* node = new otava::ast::ExplicitInstantiationNode(sourcePos, extrn, tmp, declaration);
+            otava::symbols::ProcessExplicitInstantiation(node, context);
+            return node;
         }
         ;
 

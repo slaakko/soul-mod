@@ -93,7 +93,7 @@ void ClassTemplateSpecializationSymbol::Read(Reader& reader)
 
 void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
 {
-    // note: not calling ClassTypeSymbol::Resolve(symbolTable); on purpose
+    ClassTypeSymbol::Resolve(symbolTable);
     classTemplate = static_cast<ClassTypeSymbol*>(symbolTable.GetType(ids[0].first));
     for (int i = 1; i < ids.size(); ++i)
     {
@@ -330,8 +330,8 @@ void ClassTemplateRepository::AddFunctionDefinition(const MemFunKey& key, Functi
     functionDefinitionNodes.push_back(std::unique_ptr<otava::ast::Node>(functionDefinitionNode));
 }
 
-FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,
-    ClassTemplateSpecializationSymbol* classTemplateSpecialization, const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemplateSpecializationSymbol* classTemplateSpecialization, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ClassTemplateRepository* classTemplateRepository = context->GetBoundCompileUnit()->GetClassTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
@@ -350,6 +350,20 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     if (functionDefinitionSymbol)
     {
         return functionDefinitionSymbol;
+    }
+    ExplicitInstantiationSymbol* explicitInstantiation = context->GetSymbolTable()->GetExplicitInstantiation(classTemplateSpecialization);
+    if (explicitInstantiation)
+    {
+        if (memFn->IsFunctionDefinitionSymbol())
+        {
+            FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
+            FunctionDefinitionSymbol* functionDefinitionSymbol = explicitInstantiation->GetFunctionDefinitionSymbol(memFnDefSymbol->DefIndex());
+            return functionDefinitionSymbol;
+        }
+        else 
+        { 
+            ThrowException("otava.symbols.class_templates: function definition symbol expected", sourcePos, context);
+        }
     }
     otava::ast::Node* node = context->GetSymbolTable()->GetNode(memFn)->Clone();
     if (node->IsFunctionDefinitionNode())
@@ -383,6 +397,10 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
                     boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
                     instantiationScope.Install(boundTemplateParameter);
                 }
+                BoundTemplateParameterSymbol* templateNameParameter(new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name()));
+                templateNameParameter->SetBoundSymbol(classTemplateSpecialization);
+                boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(templateNameParameter));
+                instantiationScope.Install(templateNameParameter);
                 context->GetSymbolTable()->BeginScope(&instantiationScope);
                 Instantiator instantiator(context, &instantiationScope);
                 FunctionDefinitionSymbol* specialization = nullptr;
@@ -390,9 +408,17 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
                 {
                     context->PushSetFlag(ContextFlags::instantiateMemFnOfClassTemplate | ContextFlags::saveDeclarations | ContextFlags::dontBind);
                     context->SetFunctionDefinitionNode(functionDefinitionNode);
+                    if (memFn->IsFunctionDefinitionSymbol())
+                    {
+                        FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
+                        context->SetMemFunDefSymbolIndex(memFnDefSymbol->DefIndex());
+                    }
                     functionDefinitionNode->Accept(instantiator);
+                    context->SetMemFunDefSymbolIndex(-1);
                     specialization = context->GetSpecialization();
                     context->PushBoundFunction(new BoundFunctionNode(specialization, sourcePos));
+                    Scope* nsScope = classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope();
+                    instantiationScope.PushParentScope(nsScope);
                     BindFunction(functionDefinitionNode, specialization, context);
                     context->PopFlags();
                     if (specialization->IsBound())

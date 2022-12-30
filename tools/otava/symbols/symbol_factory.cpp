@@ -81,11 +81,11 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         }
         case SymbolKind::stringValueSymbol:
         {
-            return new StringValue(symbolTable->MakeConstCharPtrType());
+            return new StringValue(nullptr);
         }
         case SymbolKind::charValueSymbol:
         {
-            return new CharValue(symbolTable->GetFundamentalTypeSymbol(FundamentalTypeKind::char32Type));
+            return new CharValue(nullptr);
         }
         case SymbolKind::genericTypeSymbol:
         {
@@ -120,9 +120,11 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         }
         case SymbolKind::compoundTypeSymbol:
         {
-            CompoundTypeSymbol* compoundType = new CompoundTypeSymbol(name);
-            //compoundType->SetSymbolTable(symbolTable);
-            return compoundType;
+            return new CompoundTypeSymbol(name);
+        }
+        case SymbolKind::explicitInstantiationSymbol:
+        {
+            return new ExplicitInstantiationSymbol();
         }
         case SymbolKind::conceptSymbol:
         {
@@ -147,6 +149,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::functionDefinitionSymbol:
         {
             return new FunctionDefinitionSymbol(name);
+        }
+        case SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol:
+        {
+            return new ExplicitlyInstantiatedFunctionDefinitionSymbol(name);
         }
         case SymbolKind::functionTypeSymbol:
         {

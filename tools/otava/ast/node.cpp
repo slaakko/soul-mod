@@ -693,13 +693,25 @@ void MakeNodeFactoryCollection()
     NodeFactoryCollection::Instance();
 }
 
-NodeIdFactory::NodeIdFactory() : moduleId(0), nodeId(0)
+NodeIdFactory::NodeIdFactory() : moduleId(0), nodeId(0), internallyMappedBit(0)
 {
+}
+
+void NodeIdFactory::SetInternallyMapped(bool internallyMapped_)
+{
+    if (internallyMapped_)
+    {
+        internallyMappedBit = internallyMappedFlag;
+    }
+    else
+    {
+        internallyMappedBit = 0;
+    }
 }
 
 int64_t NodeIdFactory::GetNextNodeId()
 {
-    int64_t nextNodeId = (static_cast<int64_t>(moduleId) << 32) | static_cast<int64_t>(nodeId);
+    int64_t nextNodeId = (static_cast<int64_t>(moduleId) << 32) | static_cast<int64_t>(nodeId) | static_cast<int64_t>(internallyMappedBit);
     ++nodeId;
     return nextNodeId;
 }

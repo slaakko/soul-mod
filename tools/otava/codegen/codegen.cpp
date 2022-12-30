@@ -293,10 +293,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         return;
     }
-    if (functionDefinition->Name() == U"push_back")
-    {
-        int x = 0;
-    }
     if (functionDefinition->Name() == U"main")
     {
         mainIrName = functionDefinition->IrName(&context);
@@ -363,7 +359,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
         {
-            otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->IrType(emitter, node.GetSourcePos(), &context)->DefaultValue();
+            otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->IrType(emitter, node.GetSourcePos(), &context)->DefaultValue();
             emitter.EmitRet(returnValue);
         }
         else

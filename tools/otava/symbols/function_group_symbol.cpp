@@ -96,7 +96,10 @@ void FunctionGroupSymbol::Resolve(SymbolTable& symbolTable)
     for (const auto& functionDefinitionId : functionDefinitionIds)
     {
         FunctionDefinitionSymbol* functionDefinition = symbolTable.GetFunctionDefinition(functionDefinitionId);
-        definitions.push_back(functionDefinition);
+        if (functionDefinition)
+        {
+            definitions.push_back(functionDefinition);
+        }
     }
 }
 

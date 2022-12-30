@@ -2,9 +2,14 @@ export module std.basic_string;
 
 import std.type.fundamental;
 import std.iterator.reverse;
-import std.string;
+import std.utilities.utility;
+import std.type_traits;
+import std.crt;
+import std.algorithm;
 
 export namespace std {
+
+char32_t nul = 0;
 
 template<class charT>
 class basic_string
@@ -24,53 +29,201 @@ public:
     
     static const size_type npos = -1;
     
-    basic_string();
-    basic_string(const basic_string& str);
-    basic_string(const basic_string& str, size_type pos);
-    basic_string(const basic_string& str, size_type pos, size_type n);
-    basic_string(const charT* s, size_type n);
-    basic_string(const charT* s);
-    basic_string(size_type n, charT c);
-    basic_string(basic_string&&);
-    ~basic_string();
-    
-    basic_string& operator=(const basic_string& str);
-    basic_string& operator=(basic_string&& str);
-    basic_string& operator=(const charT* s);
-    basic_string& operator=(charT c);
-    
-    iterator begin();
-    const_iterator begin() const;
-    iterator end();
-    const_iterator end() const;
+    basic_string() : chars(nullptr), len(0), res(0)
+    {
+    }
+    basic_string(const basic_string& that) : chars(nullptr), len(that.len), res(0)
+    {
+        if (len > 0)
+        {
+            reserve(len);
+            scpy(chars, that.chars);
+        }
+    }
+    basic_string(const basic_string& that, size_type pos)  : chars(nullptr), len(slen(that.chars + pos)), res(0)
+    {
+        if (len > 0)
+        {
+            reserve(len);
+            scpy(chars, that.chars + pos);
+        }
+    }
+    basic_string(const basic_string& that, size_type pos, size_type n) : chars(nullptr), len(0), res(0)
+    {
+        size_type ln = std::min(slen(that.chars + pos), n);
+        if (ln > 0)
+        {
+            reserve(ln);
+            len = slencpy(chars, that.chars + pos, n);
+        }
+    }
+    basic_string(const charT* s, size_type n) : chars(nullptr), len(0), res(0)
+    {
+        if (n > 0)
+        {
+            reserve(n);
+            len = slencpy(chars, s, n);
+        }
+    }
+    basic_string(const charT* s) : chars(nullptr), len(slen(s)), res(0)
+    {
+        if (len > 0)
+        {
+            reserve(len);
+            scpy(chars, s);
+        }
+    }
+    basic_string(size_type n, charT c) : chars(nullptr), len(n), res(0)
+    {
+        if (n > 0)
+        {
+            reserve(n);
+            for (size_type i = 0; i < n; ++i)
+            {
+                chars[i] = c;
+            }
+            chars[n] = '\0';
+        }
+    }
+    basic_string(basic_string&& that) : chars(that.chars), len(that.len), res(that.res)
+    {
+        that.chars = nullptr;
+        that.len = 0;
+        that.res = 0;
+    }
+    ~basic_string()
+    {
+        deallocate();
+    }
+    basic_string& operator=(const basic_string& that)
+    {
+        deallocate();
+        reserve(that.len);
+        len = that.len;
+        if (len > 0)
+        {
+            scpy(chars, that.chars);
+        }
+        return *this;
+    }
+    basic_string& operator=(basic_string&& that)
+    {
+        std::swap(chars, that.chars);
+        std::swap(len, that.len);
+        std::swap(res, that.res);
+        return *this;
+    }
+    basic_string& operator=(const charT* s)
+    {
+        deallocate();
+        reserve(slen(s));
+        scpy(chars, s);
+        return *this;
+    }
+    basic_string& operator=(charT c)
+    {
+        deallocate();
+        reserve(1);
+        chars[0] = c;
+        chars[1] = '\0';
+        return *this;
+    }
+    iterator begin() { return chars; }
+    const_iterator begin() const { return chars; }
+    iterator end()
+    {
+        if (chars)
+        {
+            return chars + len;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+    const_iterator end() const
+    {
+        if (chars)
+        {
+            return chars + len;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
     reverse_iterator rbegin();
     const_reverse_iterator rbegin() const;
     reverse_iterator rend();
     const_reverse_iterator rend() const;
-    const_iterator cbegin() const;
-    const_iterator cend() const;
+    const_iterator cbegin() const { return chars; }
+    const_iterator cend() const
+    {
+        if (chars)
+        {
+            return chars + len;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
     const_reverse_iterator crbegin() const;
     const_reverse_iterator crend() const;
     
-    size_type size() const;
-    size_type length() const;
+    size_type size() const { return len; }
+    size_type length() const { return len; }
     size_type max_size() const;
     void resize(size_type n, charT c);
     void resize(size_type n);
-    size_type capacity() const;
-    void reserve(size_type n);
+    size_type capacity() const { return res; }
+    void reserve(size_type n)
+    {
+        if (n > 0)
+        {
+            size_type min_res = n + 1;
+            if (min_res > res)
+            {
+                grow(min_res);
+            }
+        }
+    }
     void shrink_to_fit();
-    void clear();
-    bool empty() const;
+    void clear() { deallocate; }
+    bool empty() const { return len == 0; }
     
-    const_reference operator[](size_type pos) const;
-    reference operator[](size_type pos);
-    const_reference at(size_type n) const;
-    reference at(size_type n);
-    const charT& front() const;
-    charT& front();
-    const charT& back() const;
-    charT& back();
+    const_reference operator[](size_type pos) const 
+    {
+        return chars[pos];
+    }
+    reference operator[](size_type pos)
+    {
+        return chars[pos];
+    }
+    const_reference at(size_type n) const
+    {
+        return chars[n];
+    }
+    reference at(size_type n)
+    {
+        return chars[n];
+    }
+    const charT& front() const
+    {
+        return chars[0];
+    }
+    charT& front()
+    {
+        return chars[0];
+    }
+    const charT& back() const
+    {
+        return chars[len - 1];
+    }
+    charT& back()
+    {
+        return chars[len - 1];
+    }
     
     basic_string& operator+=(const basic_string& str);
     basic_string& operator+=(const charT* s);
@@ -79,7 +232,20 @@ public:
     basic_string& append(const basic_string& str, size_type pos, size_type n = npos);
     basic_string& append(const charT* s, size_type n);
     basic_string& append(const charT* s);
-    basic_string& append(size_type n, charT c);
+    basic_string& append(size_type n, charT c)
+    {
+        if (n > 0)
+        {
+            reserve(len + n);
+            for (size_type i = 0; i < n; ++i)
+            {
+                chars[len] = c;
+                ++len;
+            }
+            chars[len] = '\0';
+        }
+        return *this;
+    }
     void push_back(charT c);
     
     basic_string& assign(const basic_string& str);
@@ -114,10 +280,25 @@ public:
     basic_string& replace(const_iterator i1, const_iterator i2, size_type n, charT c);
     
     size_type copy(const charT* s, size_type n, size_type pos = 0) const;
-    void swap(basic_string& str);
-    const charT* c_str() const;
-    const charT* data() const;
-    charT* data();
+    void swap(basic_string& that)
+    {
+        std::swap(chars, that.chars);
+        std::swap(len, that.len);
+        std::swap(res, that.res);
+    }
+    const charT* c_str() const
+    {
+        if (chars)
+        {
+            return chars;
+        }
+        else
+        {
+            return static_cast<const charT*>(static_cast<void*>(&nul));
+        }
+    }
+    const charT* data() const { return chars; }
+    charT* data() { return chars; }
     
     size_type find(const basic_string& str, size_type pos = 0) const;
     size_type find(const charT* s, size_type n, size_type pos) const;
@@ -163,6 +344,32 @@ public:
     bool ends_with(const charT* s) const;
     bool contains(charT x) const;
     bool contains(const charT* s) const;
+private:
+    void grow(size_type min_res)
+    {
+        min_res = std::grow_size(min_res);
+        char* new_chars = static_cast<char*>(malloc(min_res));
+        if (chars)
+        {
+            scpy(new_chars, chars);
+            free(chars);
+        }
+        chars = new_chars;
+        res = min_res;
+    }
+    void deallocate()
+    {
+        len = 0;
+        if (res != 0)
+        {
+            free(chars);
+            res = 0;
+        }
+        chars = nullptr;
+    }
+    charT* chars;
+    size_type len;
+    size_type res;
 };
 
 template<class charT>
@@ -197,16 +404,12 @@ bool operator==(const basic_string& lhs, const charT* rhs);
 template<class charT>
 bool operator==(const charT* lhs, const basic_string& rhs);
 
-template<class charT>
-void swap(basic_string& lhs, basic_string& rhs);
-
-// using string = basic_string<char>;
+using string = basic_string<char>;
 using u8string = basic_string<char8_t>;
 using u16string = basic_string<char16_t>;
 using u32string = basic_string<char32_t>;
 using wstring = basic_string<wchar_t>;
 
-/*
 string to_string(int val);
 string to_string(unsigned val);
 string to_string(long val);
@@ -216,7 +419,6 @@ string to_string(unsigned long long val);
 string to_string(float val);
 string to_string(double val);
 string to_string(long double val);
-*/
 
 /*
 wstring to_wstring(int val);
@@ -247,5 +449,7 @@ unsigned long long stoull(const wstring& str, size_t* idx = nullptr, int base = 
 float stof(const wstring& str, size_t* idx = nullptr);
 double stod(const wstring& str, size_t* idx = nullptr);
 long double stold(const wstring& str, size_t* idx = nullptr);
+
+template class basic_string<char>; // explicit instantiation for char type
 
 } // namespace std

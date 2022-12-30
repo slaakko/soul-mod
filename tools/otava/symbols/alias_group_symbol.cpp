@@ -46,7 +46,12 @@ Symbol* AliasGroupSymbol::GetSingleSymbol()
 
 void AliasGroupSymbol::AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol)
 {
-    aliasTypeSymbols.push_back(aliasTypeSymbol);
+    if (std::find(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), aliasTypeSymbol) == aliasTypeSymbols.end() &&
+        std::find_if(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), 
+            [&](AliasTypeSymbol* symbol) { return TypesEqual(symbol->ReferredType(), aliasTypeSymbol->ReferredType()); }) == aliasTypeSymbols.end())
+    {
+        aliasTypeSymbols.push_back(aliasTypeSymbol);
+    }
 }
 
 AliasTypeSymbol* AliasGroupSymbol::GetAliasTypeSymbol(int arity) const
@@ -90,7 +95,7 @@ void AliasGroupSymbol::Resolve(SymbolTable& symbolTable)
     for (const auto& aliasTypeId : aliasTypeIds)
     {
         AliasTypeSymbol* aliasType = symbolTable.GetAliasType(aliasTypeId);
-        aliasTypeSymbols.push_back(aliasType);
+        AddAliasTypeSymbol(aliasType);
     }
 }
 
@@ -103,10 +108,7 @@ void AliasGroupSymbol::Merge(AliasGroupSymbol* that)
 {
     for (const auto& aliasType : that->aliasTypeSymbols)
     {
-        if (std::find(aliasTypeSymbols.cbegin(), aliasTypeSymbols.cend(), aliasType) == aliasTypeSymbols.end())
-        {
-            aliasTypeSymbols.push_back(aliasType);
-        }
+        AddAliasTypeSymbol(aliasType);
     }
 }
 

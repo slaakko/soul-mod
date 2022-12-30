@@ -244,6 +244,26 @@ void BoundCompileUnitNode::AddBoundNode(BoundNode* node)
     boundNodes.push_back(std::unique_ptr<BoundNode>(node));
 }
 
+otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
+    Context* context)
+{
+    otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(globalVariableSymbol->GetType(), sourcePos, context);
+    globalVariableSymbol->SetDeclaredType(type);
+    otava::intermediate::Value* initializer = nullptr;
+    otava::intermediate::Type* irType = globalVariableSymbol->GetType()->IrType(emitter, sourcePos, context);
+    if (globalVariableSymbol->GetValue())
+    {
+        initializer = globalVariableSymbol->GetValue()->IrValue(emitter, sourcePos, context);
+    }
+    else
+    {
+        initializer = irType->DefaultValue();
+    }
+    otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, globalVariableSymbol->IrName(), initializer);
+    emitter.SetIrObject(globalVariableSymbol, irVariable);
+    return irVariable;
+}
+
 BoundCtorInitializerNode::BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundCtorInitializerNode, sourcePos_)
 {
 }
@@ -680,6 +700,10 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
     else if (variable->IsGlobalVariable())
     {
         otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        if (!ptr)
+        {
+            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context);
+        }
         if ((flags & OperationFlags::addr) != OperationFlags::none)
         {
             emitter.Stack().Push(ptr);
@@ -772,6 +796,10 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
         otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+        if (!ptr)
+        {
+            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context);
+        }
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
             ptr = emitter.EmitLoad(ptr);

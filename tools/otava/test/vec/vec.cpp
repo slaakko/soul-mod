@@ -178,15 +178,5 @@ int main()
     std::vec<Foo> v;
     Foo f;
     v.push_back(std::move(f));
-/*
-    int n = v.size();
-    for (int i = 0; i < n; ++i)
-    {
-        int x = v[i];
-        std::string s = std::to_string(x);
-        prints(s.c_str());
-        prints("\n");
-    }
-*/
     return 0;
 }

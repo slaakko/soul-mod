@@ -59,6 +59,7 @@ class EnumeratedTypeSymbol;
 class ClassTemplateSpecializationSymbol;
 class AliasTypeTemplateSpecializationSymbol;
 class CompoundTypeSymbol;
+class ExplicitInstantiationSymbol;
 class NamespaceSymbol;
 class TypeSymbol;
 class FundamentalTypeSymbol;
@@ -198,6 +199,9 @@ public:
     Linkage CurrentLinkage() const { return currentLinkage; }
     void PushLinkage(Linkage linkage_);
     void PopLinkage();
+    ExplicitInstantiationSymbol* GetExplicitInstantiation(ClassTemplateSpecializationSymbol* classTemplateSpecialization) const;
+    void AddExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
+    void MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -216,6 +220,7 @@ private:
     void ImportForwardDeclarations(const SymbolTable& that);
     void ImportSpecifierMap(const SymbolTable& that);
     void ImportClasses(const SymbolTable& that);
+    void ImportExplicitInstantiations(const SymbolTable& that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
     std::vector<std::unique_ptr<Symbol>> classTemplateSpecializations;
@@ -224,6 +229,8 @@ private:
     std::set<AliasTypeTemplateSpecializationSymbol*, AliasTypeTemplateSpecializationLess> aliasTypeTemplateSpecializationSet;
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
     std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
+    std::vector<std::unique_ptr<ExplicitInstantiationSymbol>> explicitInstantiations;
+    std::map<ClassTemplateSpecializationSymbol*, ExplicitInstantiationSymbol*> explicitInstantiationMap;
     std::map<int32_t, TypeSymbol*> fundamentalTypeMap;
     std::vector<Scope*> scopeStack;
     Scope* currentScope;

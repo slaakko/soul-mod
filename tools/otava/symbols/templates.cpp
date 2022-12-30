@@ -17,6 +17,8 @@ import otava.symbols.reader;
 import otava.symbols.value;
 import otava.symbols.visitor;
 import otava.symbols.function.symbol;
+import otava.symbols.class_templates;
+import otava.symbols.modules;
 import util;
 
 namespace otava::symbols {
@@ -281,6 +283,143 @@ void AddTemplateParameter(otava::ast::Node* templateParameterNode, int index, Co
 bool TemplateArgCanBeTypeId(otava::ast::Node* templateIdNode, int index)
 {
     return true; // TODO
+}
+
+ExplicitInstantiationSymbol::ExplicitInstantiationSymbol() : 
+    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(nullptr)
+{
+}
+
+ExplicitInstantiationSymbol::ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_) : 
+    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(specialization_)
+{
+}
+
+void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(functionDefinitionSymbol, sourcePos, context);
+    while (functionDefinitionSymbol->DefIndex() >= functionDefinitionSymbols.size())
+    {
+        functionDefinitionSymbols.push_back(nullptr);
+    }
+    functionDefinitionSymbols[functionDefinitionSymbol->DefIndex()] = std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol);
+}
+
+FunctionDefinitionSymbol* ExplicitInstantiationSymbol::GetFunctionDefinitionSymbol(int index)  const
+{
+    FunctionDefinitionSymbol* functionDefinitionSymbol = functionDefinitionSymbols[index].get();
+    functionDefinitionSymbol->SetParent(specialization);
+    return functionDefinitionSymbol;
+}
+
+void ExplicitInstantiationSymbol::Write(Writer& writer)
+{
+    Symbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(specialization->Id());
+    int32_t n = functionDefinitionSymbols.size();
+    writer.GetBinaryStreamWriter().Write(n);
+    for (auto& funDefSymbol : functionDefinitionSymbols)
+    {
+        writer.Write(funDefSymbol.get());
+    }
+}
+
+void ExplicitInstantiationSymbol::Read(Reader& reader)
+{
+    Symbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(specializationId);
+    int32_t n = reader.GetBinaryStreamReader().ReadInt();
+    for (int32_t i = 0; i < n; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol())
+        {
+            ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = static_cast<ExplicitlyInstantiatedFunctionDefinitionSymbol*>(symbol);
+            while (explicitlyInstantiatedSymbol->DefIndex() >= functionDefinitionSymbols.size())
+            {
+                functionDefinitionSymbols.push_back(nullptr);
+            }
+            functionDefinitionSymbols[explicitlyInstantiatedSymbol->DefIndex()].reset(explicitlyInstantiatedSymbol);
+        }
+        else
+        {
+            otava::symbols::SetExceptionThrown();
+            throw std::runtime_error("explicitly instantiated function definition symbol expected");
+        }
+    }
+}
+
+void ExplicitInstantiationSymbol::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* specializationType = symbolTable.GetType(specializationId);
+    if (specializationType && specializationType->IsClassTemplateSpecializationSymbol())
+    {
+        specialization = static_cast<ClassTemplateSpecializationSymbol*>(specializationType);
+        symbolTable.MapExplicitInstantiation(this);
+    }
+    for (auto& functionDefSymbol : functionDefinitionSymbols)
+    {
+        functionDefSymbol->Resolve(symbolTable);
+    }
+}
+
+void ExplicitInstantiationSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+class ExplicitInstantiationProcessor : public otava::ast::DefaultVisitor
+{
+public:
+    ExplicitInstantiationProcessor(Context* context_);
+    void Visit(otava::ast::ExplicitInstantiationNode& node) override;
+private:
+    Context* context;
+};
+
+ExplicitInstantiationProcessor::ExplicitInstantiationProcessor(Context* context_) : context(context_)
+{
+}
+
+void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode& node)
+{
+    TypeSymbol* type = ProcessExplicitInstantiationDeclaration(node.Declaration(), context);
+    if (type && type->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(type);
+        ExplicitInstantiationSymbol* explicitInstantiationSymbol = context->GetSymbolTable()->GetExplicitInstantiation(specialization);
+        if (!explicitInstantiationSymbol)
+        {
+            explicitInstantiationSymbol = new ExplicitInstantiationSymbol(specialization);
+            TypeSymbol* classTemplateType = specialization->ClassTemplate();
+            if (classTemplateType->IsClassTypeSymbol())
+            {
+                ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(classTemplateType);
+                context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
+                for (const auto& memFunDefSymbol : classTemplate->MemFunDefSymbols())
+                {
+                    FunctionDefinitionSymbol* instantiatedMemFunDefSymbol = InstantiateMemFnOfClassTemplate(memFunDefSymbol, specialization, node.GetSourcePos(), context);
+                    explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFunDefSymbol, node.GetSourcePos(), context);
+                }
+                context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(false);
+            }
+            else
+            {
+                ThrowException("class type symbol expected", node.GetSourcePos(), context);
+            }
+            context->GetSymbolTable()->AddExplicitInstantiation(explicitInstantiationSymbol);
+        }
+    }
+    else
+    {
+        ThrowException("class template specialization expected", node.GetSourcePos(), context);
+    }
+}
+
+void ProcessExplicitInstantiation(otava::ast::Node* node, Context* context)
+{
+    ExplicitInstantiationProcessor processor(context);
+    node->Accept(processor);
 }
 
 } // namespace otava::symbols

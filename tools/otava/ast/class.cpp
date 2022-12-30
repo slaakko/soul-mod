@@ -337,6 +337,18 @@ ConstructorInitializerNode::ConstructorInitializerNode(const soul::ast::SourcePo
 {
 }
 
+void ConstructorInitializerNode::Write(Writer& writer)
+{
+    CompoundNode::Write(writer);
+    writer.Write(memberInitializerListNode.get());
+}
+
+void ConstructorInitializerNode::Read(Reader& reader)
+{
+    CompoundNode::Read(reader);
+    memberInitializerListNode.reset(reader.ReadNode());
+}
+
 Node* ConstructorInitializerNode::Clone() const
 {
     ConstructorInitializerNode* clone = new ConstructorInitializerNode(GetSourcePos(), memberInitializerListNode->Clone());
