@@ -348,7 +348,7 @@ private:
     void grow(size_type min_res)
     {
         min_res = std::grow_size(min_res);
-        char* new_chars = static_cast<char*>(malloc(min_res));
+        charT* new_chars = static_cast<charT*>(malloc(min_res * sizeof(charT)));
         if (chars)
         {
             scpy(new_chars, chars);
@@ -451,5 +451,7 @@ double stod(const wstring& str, size_t* idx = nullptr);
 long double stold(const wstring& str, size_t* idx = nullptr);
 
 template class basic_string<char>; // explicit instantiation for char type
+template class basic_string<char16_t>; // explicit instantiation for char16_t type
+template class basic_string<char32_t>; // explicit instantiation for char32_t type
 
 } // namespace std
