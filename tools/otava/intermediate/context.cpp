@@ -701,6 +701,11 @@ Instruction* Context::CreatePtrDiff(Value* leftPtr, Value* rightPtr)
 Instruction* Context::CreateCall(Value* callee)
 {
     Type* type = callee->GetType();
+    if (type->IsFunctionPtrType())
+    {
+        PointerType* ptrType = static_cast<PointerType*>(type);
+        type = ptrType->BaseType();
+    }
     if (type->IsFunctionType())
     {
         FunctionType* functionType = static_cast<FunctionType*>(type);

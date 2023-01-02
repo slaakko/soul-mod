@@ -450,6 +450,13 @@ void ClassTypeSymbol::SetVTabVariable(otava::intermediate::Value* vtabVariable_)
     vtabVariable = vtabVariable_;
 }
 
+otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const
+{
+    otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
+    otava::intermediate::Type* vptrType = emitter.MakePtrType(emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType));
+    return vptrType;
+}
+
 otava::intermediate::Value* ClassTypeSymbol::GetVTabVariable(Emitter& emitter, Context* context)
 {
     if (!vtabVariable)

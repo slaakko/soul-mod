@@ -90,6 +90,7 @@ public:
     int32_t VPtrIndex() const { return vptrIndex; }
     void SetVPtrIndex(int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
     void SetVTabVariable(otava::intermediate::Value* vtabVariable_);
+    otava::intermediate::Type* VPtrType(Emitter& emitter) const;
     otava::intermediate::Value* GetVTabVariable(Emitter& emitter, Context* context);
     ClassTypeSymbol* VPtrHolderClass() const;
     const std::vector<ClassTypeSymbol*>& BaseClasses() const { return baseClasses; }

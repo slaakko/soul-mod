@@ -1090,6 +1090,10 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
     {
         arguments.push_back(arg.get());
     }
+    if (GetFlag(BoundExpressionFlags::virtualCall))
+    {
+        flags = flags | OperationFlags::virtualCall;
+    }
     functionSymbol->GenerateCode(emitter, arguments, flags, sourcePos, context);
     if ((flags & OperationFlags::deref) != OperationFlags::none)
     {

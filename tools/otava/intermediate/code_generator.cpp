@@ -539,14 +539,19 @@ void EmitElemAddr(ElemAddrInstruction& inst, CodeGenerator& codeGen)
         otava::assembly::Instruction* mulInst = new otava::assembly::Instruction(otava::assembly::OpCode::MUL);
         mulInst->AddOperand(indexReg);
         codeGen.Emit(mulInst);
+        otava::assembly::Instruction* leaPtrInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
+        otava::assembly::Register* rcx = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rcx);
+        leaPtrInst->AddOperand(rcx);
+        EmitPtrOperand(8, inst.Ptr(), leaPtrInst, codeGen);
+        codeGen.Emit(leaPtrInst);
         otava::assembly::RegisterGroup* regGroup = codeGen.RegAllocator()->GetRegisterGroup(&inst);
         if (regGroup)
         {
             otava::assembly::Register* resultReg = regGroup->GetReg(8);
-            otava::assembly::Instruction* movResultInst = new otava::assembly::Instruction(otava::assembly::OpCode::MOV);
-            movResultInst->AddOperand(resultReg);
-            movResultInst->AddOperand(rax);
-            codeGen.Emit(movResultInst);
+            otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
+            leaInst->AddOperand(resultReg);
+            leaInst->AddOperand(assemblyContext.MakeSizePrefix(8, assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rax, rcx, otava::assembly::Operator::add))));
+            codeGen.Emit(leaInst);
         }
         else
         {

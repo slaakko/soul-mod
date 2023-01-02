@@ -35,6 +35,19 @@ bool Type::IsBytePtrType() const
     return false;
 }
 
+bool Type::IsFunctionPtrType() const
+{
+    if (IsPointerType())
+    {
+        const PointerType* pointerType = static_cast<const PointerType*>(this);
+        if (pointerType->PointerCount() == 1 && pointerType->BaseType()->IsFunctionType())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Type::IsIntegerType() const
 {
     switch (id)

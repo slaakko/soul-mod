@@ -147,13 +147,14 @@ public:
     void Accept(Visitor& visitor) override;
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    void GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
-    bool IsVirtual() const;
+    virtual bool IsVirtual() const;
     void SetVirtual();
-    bool IsOverride() const;
+    virtual bool IsOverride() const;
     void SetOverride();
     ClassTypeSymbol* ParentClassType() const override;
     ParameterSymbol* ThisParam(Context* ciontext) const;
@@ -172,7 +173,7 @@ public:
     bool IsTrivialDestructor() const { return GetFlag(FunctionSymbolFlags::trivialDestructor); }
     std::u32string NextTemporaryName();
     void SetVTabIndex(int32_t vtabIndex_) { vtabIndex = vtabIndex_; }
-    int32_t VTabIndex() const { return vtabIndex; }
+    virtual int32_t VTabIndex() const { return vtabIndex; }
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -207,6 +208,9 @@ public:
     void Accept(Visitor& visitor) override;
     int32_t DefIndex() const { return defIndex; }
     void SetDefIndex(int32_t defIndex_) { defIndex = defIndex_; }
+    bool IsVirtual() const override;
+    bool IsOverride() const override;
+    int32_t VTabIndex() const override;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;

@@ -774,6 +774,10 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             ThrowException(ex);
         }
         FunctionSymbol* functionSymbol = functionCall->GetFunctionSymbol();
+        if (functionSymbol->IsVirtual())
+        {
+            functionCall->SetFlag(BoundExpressionFlags::virtualCall);
+        }
         VariableSymbol* classTemporary = nullptr;
         if (functionSymbol->ReturnsClass())
         {

@@ -580,7 +580,14 @@ void ProcedureCallInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(util::Format("call ", 8));
     formatter.Write(callee->GetType()->Name());
     formatter.Write(" ");
-    formatter.Write("@" + callee->ToString());
+    if (callee->GetType()->IsPointerType())
+    {
+        formatter.Write(callee->ToString());
+    }
+    else
+    {
+        formatter.Write("@" + callee->ToString());
+    }
     WriteMetadataRef(formatter);
 }
 
@@ -1472,7 +1479,14 @@ void FunctionCallInstruction::Write(util::CodeFormatter& formatter)
     formatter.Write(" = call ");
     formatter.Write(callee->GetType()->Name());
     formatter.Write(" ");
-    formatter.Write("@" + callee->ToString());
+    if (callee->GetType()->IsPointerType())
+    {
+        formatter.Write(callee->ToString());
+    }
+    else
+    {
+        formatter.Write("@" + callee->ToString());
+    }
     WriteMetadataRef(formatter);
 }
 

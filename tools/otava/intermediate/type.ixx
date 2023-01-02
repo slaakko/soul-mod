@@ -115,6 +115,7 @@ public:
     ArrayType* GetArrayPointeeType(const SourcePos& sourcePos, Context* context) const;
     bool IsArrayType() const { return kind == TypeKind::arrayType; }
     bool IsFunctionType() const { return kind == TypeKind::functionType; }
+    bool IsFunctionPtrType() const;
     bool IsBytePtrType() const;
     virtual bool IsWeakType() const { return true; }
     virtual void Add(Types* types, Context* context);

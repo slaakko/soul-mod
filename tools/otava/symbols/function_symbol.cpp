@@ -615,6 +615,11 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     if (IsTrivialDestructor()) return;
+    if ((flags & OperationFlags::virtualCall) != OperationFlags::none)
+    {
+        GenerateVirtualFunctionCall(emitter, args, sourcePos, context);
+        return;
+    }
     int n = args.size();
     for (int i = 0; i < n; ++i)
     {
@@ -645,6 +650,67 @@ void FunctionSymbol::GenerateCode(Emitter& emitter, std::vector<BoundExpressionN
     else
     {
         ThrowException("function type expected", sourcePos, context);
+    }
+}
+
+void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    TypeSymbol* thisPtrBaseType = args[0]->GetType()->GetBaseType();
+    otava::intermediate::Type* irType = IrType(emitter, sourcePos, context);
+    otava::intermediate::FunctionType* functionType = nullptr;
+    if (irType->IsFunctionType())
+    {
+        functionType = static_cast<otava::intermediate::FunctionType*>(irType);
+    }
+    else
+    {
+        ThrowException("function type expected", sourcePos, context);
+    }
+    ClassTypeSymbol* classType = nullptr;
+    if (thisPtrBaseType->IsClassTypeSymbol())
+    {
+        classType = static_cast<ClassTypeSymbol*>(thisPtrBaseType);
+    }
+    else
+    {
+        ThrowException("class type expected", sourcePos, context);
+    }
+    ClassTypeSymbol* vptrHolderClass = classType->VPtrHolderClass();
+    int na = args.size();
+    otava::intermediate::Value* callee = nullptr;
+    for (int i = 0; i < na; ++i)
+    {
+        args[i]->Load(emitter, OperationFlags::none, sourcePos, context);
+        if (i == 0)
+        {
+            emitter.Stack().Dup();
+            otava::intermediate::Value* thisPtr = emitter.Stack().Pop();
+            if (classType != vptrHolderClass)
+            {
+                thisPtr = emitter.EmitBitcast(thisPtr, vptrHolderClass->AddPointer(context)->IrType(emitter, sourcePos, context));
+            }
+            otava::intermediate::Value* vptrPtr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->VPtrIndex()));
+            otava::intermediate::Value* voidVPtr = emitter.EmitLoad(vptrPtr);
+            otava::intermediate::Value* vptr = emitter.EmitBitcast(voidVPtr, classType->VPtrType(emitter));
+            otava::intermediate::Value* functionPtrPtr = emitter.EmitElemAddr(vptr, emitter.EmitLong(vtabClassIdElementCount + 2 * VTabIndex()));
+            otava::intermediate::Value* voidFunctionPtr = emitter.EmitLoad(functionPtrPtr);
+            callee = emitter.EmitBitcast(voidFunctionPtr, emitter.MakePtrType(functionType));
+        }
+    }
+    std::vector<otava::intermediate::Value*> arguments;
+    arguments.resize(na);
+    for (int i = 0; i < na; ++i)
+    {
+        otava::intermediate::Value* arg = emitter.Stack().Pop();
+        arguments[na - i - 1] = arg;
+    }
+    if (!functionType->ReturnType() || functionType->ReturnType()->IsVoidType())
+    {
+        emitter.EmitCall(callee, arguments);
+    }
+    else
+    {
+        emitter.Stack().Push(emitter.EmitCall(callee, arguments));
     }
 }
 
@@ -829,6 +895,42 @@ std::string FunctionDefinitionSymbol::IrName(Context* context) const
     else
     {
         return FunctionSymbol::IrName(context);
+    }
+}
+
+bool FunctionDefinitionSymbol::IsVirtual() const
+{
+    if (declaration)
+    {
+        return declaration->IsVirtual();
+    }
+    else
+    {
+        return FunctionSymbol::IsVirtual();
+    }
+}
+
+bool FunctionDefinitionSymbol::IsOverride() const
+{
+    if (declaration)
+    {
+        return declaration->IsOverride();
+    }
+    else
+    {
+        return FunctionSymbol::IsOverride();
+    }
+}
+
+int32_t FunctionDefinitionSymbol::VTabIndex() const
+{
+    if (declaration)
+    {
+        return declaration->VTabIndex();
+    }
+    else
+    {
+        return FunctionSymbol::VTabIndex();
     }
 }
 
