@@ -26,6 +26,8 @@ import otava.symbols.argument.conversion.table;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.function.group.symbol;
 import otava.symbols.declaration;
+import util.unicode;
+import util.sha1;
 
 namespace otava::symbols {
 
@@ -98,9 +100,11 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     specialization(nullptr),
     level(0), 
     irType(nullptr),
-    vptrIndex(-1),
     currentFunctionIndex(1),
-    specializationId()
+    specializationId(),
+    vtabSize(0),
+    vptrIndex(-1),
+    vtabVariable(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -112,9 +116,11 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) 
     specialization(nullptr),
     level(0),
     irType(nullptr),
-    vptrIndex(-1),
     currentFunctionIndex(1),
-    specializationId()
+    specializationId(),
+    vtabSize(0),
+    vptrIndex(-1),
+    vtabVariable(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -134,13 +140,13 @@ bool ClassTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
     return false;
 }
 
-void ClassTypeSymbol::AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
+void ClassTypeSymbol::AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     baseClasses.push_back(baseClass);
     GetScope()->AddBaseScope(baseClass->GetScope(), sourcePos, context);
 }
 
-void ClassTypeSymbol::AddDerivedClass(TypeSymbol* derivedClass)
+void ClassTypeSymbol::AddDerivedClass(ClassTypeSymbol* derivedClass)
 {
     if (std::find(derivedClasses.begin(), derivedClasses.end(), derivedClass) == derivedClasses.end())
     {
@@ -165,6 +171,18 @@ bool ClassTypeSymbol::HasBaseClass(TypeSymbol* baseClass, int& distance) const
                 return true;
             }
             --distance;
+        }
+    }
+    return false;
+}
+
+bool ClassTypeSymbol::HasPolymorphicBaseClass() const
+{
+    for (const auto& baseCls : baseClasses)
+    {
+        if (baseCls->IsPolymorphic())
+        {
+            return true;
         }
     }
     return false;
@@ -205,6 +223,8 @@ void ClassTypeSymbol::Write(Writer& writer)
         writer.GetBinaryStreamWriter().Write(fn.first);
         writer.GetBinaryStreamWriter().Write(fn.second->Id());
     }
+    writer.GetBinaryStreamWriter().Write(vtabSize);
+    writer.GetBinaryStreamWriter().Write(vptrIndex);
 }
 
 void ClassTypeSymbol::Read(Reader& reader)
@@ -236,6 +256,8 @@ void ClassTypeSymbol::Read(Reader& reader)
         reader.GetBinaryStreamReader().ReadUuid(fnId);
         functionIdMap[fnIndex] = fnId;
     }
+    vtabSize = reader.GetBinaryStreamReader().ReadInt();
+    vptrIndex = reader.GetBinaryStreamReader().ReadInt();
 }
 
 void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
@@ -289,13 +311,14 @@ void ClassTypeSymbol::MakeObjectLayout(Context* context)
     SetObjectLayoutComputed();
     for (const auto& baseClass : baseClasses)
     {
+        baseClass->MakeObjectLayout(context);
         objectLayout.push_back(baseClass);
     }
     if (baseClasses.empty())
     {
         if (IsPolymorphic())
         {
-            vptrIndex = objectLayout.size();
+            SetVPtrIndex(objectLayout.size());
             objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context));
         }
         else if (memberVariables.empty())
@@ -324,6 +347,138 @@ TemplateDeclarationSymbol* ClassTypeSymbol::ParentTemplateDeclaration() const
 bool ClassTypeSymbol::IsTemplate() const
 {
     return ParentTemplateDeclaration() != nullptr;
+}
+
+void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos)
+{
+    if (baseClasses.size() > 1)
+    {
+        otava::symbols::SetExceptionThrown();
+        throw std::runtime_error("multiple inheritance not supported yet, class is '" + util::ToUtf8(Name()) + "'");
+    }
+    InitVTab(vtab, context, sourcePos);
+    vtabSize = vtab.size();
+}
+
+bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
+{
+    if (f->GroupName() == g->GroupName())
+    {
+        int n = f->Parameters().size();
+        if (n == g->Parameters().size())
+        {
+            for (int i = 0; i < n; ++i)
+            {
+                ParameterSymbol* p = f->Parameters()[i];
+                ParameterSymbol* q = g->Parameters()[i];
+                if (!TypesEqual(p->GetType(), q->GetType())) return false;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos)
+{
+    if (!IsPolymorphic()) return;
+    if (!baseClasses.empty())
+    {
+        ClassTypeSymbol* baseClass = baseClasses[0];
+        baseClass->InitVTab(vtab, context, sourcePos);
+    }
+    std::vector<FunctionSymbol*> virtualFunctions;
+    for (const auto& function : memberFunctions)
+    {
+        if (function->IsVirtual())
+        {
+            virtualFunctions.push_back(function);
+        }
+    }
+    int n = virtualFunctions.size();
+    for (int i = 0; i < n; ++i)
+    {
+        FunctionSymbol* f = virtualFunctions[i];
+        bool found = false;
+        int m = vtab.size();
+        for (int j = 0; j < m; ++j)
+        {
+            FunctionSymbol* v = vtab[j];
+            if (Overrides(f, v))
+            {
+                if (!f->IsOverride())
+                {
+                    ThrowException("overriding function should be declared with override specifier: (" + 
+                        util::ToUtf8(f->FullName()) + " overrides " + util::ToUtf8(v->FullName()) + ")", sourcePos, context);
+                }
+                f->SetVTabIndex(j);
+                vtab[j] = f;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            if (f->IsOverride())
+            {
+                ThrowException("no suitable function to override ('" + util::ToUtf8(f->FullName()) + "')", sourcePos, context);
+            }
+            f->SetVTabIndex(m);
+            vtab.push_back(f);
+        }
+    }
+}
+
+std::string ClassTypeSymbol::IrName(Context* context) const
+{
+    std::string irName;
+    irName.append("class_").append(util::ToUtf8(Name()));
+    std::string fullName = util::ToUtf8(FullName());
+    irName.append("_").append(util::GetSha1MessageDigest(fullName));
+    return irName;
+}
+
+std::string ClassTypeSymbol::VTabName(Context* context) const
+{
+    std::string vtabName;
+    vtabName.append("vtab_").append(IrName(context));
+    return vtabName;
+}
+
+void ClassTypeSymbol::SetVTabVariable(otava::intermediate::Value* vtabVariable_)
+{
+    vtabVariable = vtabVariable_;
+}
+
+otava::intermediate::Value* ClassTypeSymbol::GetVTabVariable(Emitter& emitter, Context* context)
+{
+    if (!vtabVariable)
+    {
+        otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
+        otava::intermediate::Type* arrayType = emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
+        vtabVariable = emitter.EmitGlobalVariable(arrayType, VTabName(context), nullptr);
+    }
+    return vtabVariable;
+}
+
+ClassTypeSymbol* ClassTypeSymbol::VPtrHolderClass() const
+{
+    if (vptrIndex != -1)
+    {
+        return const_cast<ClassTypeSymbol*>(this);
+    }
+    else
+    {
+        for (const auto& baseClass : baseClasses)
+        {
+            ClassTypeSymbol* vptrHolderBaseClass = baseClass->VPtrHolderClass();
+            if (vptrHolderBaseClass)
+            {
+                return vptrHolderBaseClass;
+            }
+        }
+    }
+    return nullptr;
 }
 
 int ClassTypeSymbol::Arity() 
@@ -597,8 +752,16 @@ BaseClassResolver::BaseClassResolver(Context* context_) : context(context_)
 
 void BaseClassResolver::Visit(otava::ast::BaseSpecifierNode& node)
 {
-    TypeSymbol* baseClass = ResolveType(node.ClassOrDeclType(), DeclarationFlags::none, context);
-    context->GetSymbolTable()->AddBaseClass(baseClass, node.GetSourcePos(), context);
+    TypeSymbol* baseClassType = ResolveType(node.ClassOrDeclType(), DeclarationFlags::none, context);
+    if (baseClassType->IsClassTypeSymbol())
+    {
+        ClassTypeSymbol* baseClass = static_cast<ClassTypeSymbol*>(baseClassType);
+        context->GetSymbolTable()->AddBaseClass(baseClass, node.GetSourcePos(), context);
+    }
+    else
+    {
+        ThrowException("class type symbol expected", node.GetSourcePos(), context);
+    }
 }
 
 void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context)
@@ -649,6 +812,10 @@ void EndClass(otava::ast::Node* node, otava::symbols::Context* context)
     if (classTypeSymbol->Level() == 0)
     {
         ParseInlineMemberFunctions(specNode, classTypeSymbol, context);
+    }
+    if (!classTypeSymbol->IsTemplate())
+    {
+        context->GetBoundCompileUnit()->AddBoundNode(new BoundClassNode(classTypeSymbol, node->GetSourcePos()));
     }
 }
 
@@ -873,8 +1040,50 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
     BoundFunctionNode* boundDestructor = new BoundFunctionNode(destructorSymbol.get(), sourcePos);
     FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
     functionGroup->AddFunction(destructorSymbol.get());
+    FunctionSymbol* destructor = destructorSymbol.get();
     classTypeSymbol->AddSymbol(destructorSymbol.release(), sourcePos, context);
     BoundCompoundStatementNode* body = new BoundCompoundStatementNode(sourcePos);
+    if (classTypeSymbol->IsPolymorphic())
+    {
+        if (classTypeSymbol->HasPolymorphicBaseClass())
+        {
+            destructor->SetOverride();
+        }
+        else
+        {
+            destructor->SetVirtual();
+        }
+        if (!classTypeSymbol->ObjectLayoutComputed())
+        {
+            classTypeSymbol->MakeObjectLayout(context);
+        }
+        BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
+        ClassTypeSymbol* vptrHolderClass = classTypeSymbol->VPtrHolderClass();
+        if (!vptrHolderClass)
+        {
+            ThrowException("vptr holder class not found", sourcePos, context);
+        }
+        if (vptrHolderClass != classTypeSymbol)
+        {
+            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+            if (conversion)
+            {
+                BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                body->AddStatement(setVPtrStatement);
+            }
+            else
+            {
+                ThrowException("vptr holder class conversion not found", sourcePos, context);
+            }
+        }
+        else
+        {
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            body->AddStatement(setVPtrStatement);
+        }
+    }
     boundDestructor->SetBody(body);
     boundDestructor->SetDtorTerminator(terminator.release());
     context->GetBoundCompileUnit()->AddBoundNode(boundDestructor);

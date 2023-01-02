@@ -12,6 +12,8 @@ public:
     exception& operator=(const exception&);
     virtual ~exception();
     virtual const char* what() const;
+private:
+    string str;
 };
 
 class logic_error : public exception

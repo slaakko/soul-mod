@@ -272,7 +272,8 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     flags(FunctionSymbolFlags::none),
     returnType(nullptr),
     returnTypeId(util::nil_uuid()),
-    nextTemporaryId(0)
+    nextTemporaryId(0),
+    vtabIndex(-1)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -287,7 +288,8 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     flags(FunctionSymbolFlags::none),
     returnType(nullptr),
     returnTypeId(util::nil_uuid()),
-    nextTemporaryId(0)
+    nextTemporaryId(0),
+    vtabIndex(-1)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -329,6 +331,21 @@ bool FunctionSymbol::IsVirtual() const
     if ((qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none) return true;
     if ((qualifiers & FunctionQualifiers::isFinal) != FunctionQualifiers::none) return true;
     return false;
+}
+
+void FunctionSymbol::SetVirtual()
+{
+    SetDeclarationFlags(GetDeclarationFlags() | DeclarationFlags::virtualFlag);
+}
+
+bool FunctionSymbol::IsOverride() const
+{
+    return (qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none;
+}
+
+void FunctionSymbol::SetOverride()
+{
+    qualifiers = qualifiers | FunctionQualifiers::isOverride;
 }
 
 ClassTypeSymbol* FunctionSymbol::ParentClassType() const
@@ -686,7 +703,20 @@ std::string FunctionSymbol::IrName(Context* context) const
             }
             else
             {
-                irName.append("function_" + util::ToUtf8(Name()));
+                if (kind == FunctionKind::constructor)
+                {
+                    ClassTypeSymbol* classType = ParentClassType();
+                    irName.append("ctor_").append(classType->IrName(context));
+                }
+                else if (kind == FunctionKind::destructor)
+                {
+                    ClassTypeSymbol* classType = ParentClassType();
+                    irName.append("dtor_").append(classType->IrName(context));
+                }
+                else
+                {
+                    irName.append("function_" + util::ToUtf8(Name()));
+                }
             }
         }
         std::string fullName = util::ToUtf8(FullName());

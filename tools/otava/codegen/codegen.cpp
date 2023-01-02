@@ -17,11 +17,13 @@ import otava.intermediate.verify;
 import otava.intermediate.code.generator;
 import otava.intermediate.instruction;
 import otava.intermediate.basic.block;
+import otava.intermediate.function;
 import otava.symbols.type.resolver;
 import otava.intermediate.simple.assembly.code.generator;
 import otava.assembly;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
+import otava.symbols.classes;
 import otava.symbols.exception;
 import otava.symbols.type.symbol;
 import otava.symbols.value;
@@ -147,6 +149,7 @@ public:
     void Reset();
     const std::string& GetAsmFileName() const { return asmFileName; }
     void Visit(otava::symbols::BoundCompileUnitNode& node) override;
+    void Visit(otava::symbols::BoundClassNode& node) override;
     void Visit(otava::symbols::BoundFunctionNode& node) override;
     void Visit(otava::symbols::BoundCompoundStatementNode& node) override;
     void Visit(otava::symbols::BoundIfStatementNode& node) override;
@@ -162,6 +165,7 @@ public:
     void Visit(otava::symbols::BoundContinueStatementNode& node) override;
     void Visit(otava::symbols::BoundConstructionStatementNode& node) override;
     void Visit(otava::symbols::BoundExpressionStatementNode& node) override;
+    void Visit(otava::symbols::BoundSetVPtrStatementNode& node) override;
     void Visit(otava::symbols::BoundLiteralNode& node) override;
     void Visit(otava::symbols::BoundStringLiteralNode& node) override;
     void Visit(otava::symbols::BoundVariableNode& node) override;
@@ -184,6 +188,7 @@ public:
 private:
     void StatementPrefix();
     void GenJumpingBoolCode();
+    void GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
     otava::symbols::Context& context;
     std::string config;
     bool verbose;
@@ -262,8 +267,60 @@ void CodeGenerator::GenJumpingBoolCode()
     emitter.EmitBranch(cond, trueBlock, falseBlock);
 }
 
+void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos)
+{
+    if (!cls->IsPolymorphic()) return;
+    cls->MakeVTab(&context, sourcePos);
+    otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
+    otava::intermediate::Type* arrayType = emitter.MakeArrayType(cls->VTab().size() * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
+    std::vector<otava::intermediate::Value*> elements;
+    util::uuid classId = cls->Id();
+    uint64_t classIdFirst;
+    uint64_t classIdSecond;
+    util::UuidToInts(classId, classIdFirst, classIdSecond);
+    otava::intermediate::Value* classIdFirstValue = emitter.EmitConversionValue(voidPtrIrType, emitter.EmitULong(classIdFirst));
+    elements.push_back(classIdFirstValue);
+    otava::intermediate::Value* classIdSecondValue = emitter.EmitConversionValue(voidPtrIrType, emitter.EmitULong(classIdSecond));
+    elements.push_back(classIdSecondValue);
+    for (otava::symbols::FunctionSymbol* functionSymbol : cls->VTab())
+    {
+        if (functionSymbol)
+        {
+            otava::intermediate::Type* irType = functionSymbol->IrType(emitter, sourcePos, &context);
+            if (irType->IsFunctionType())
+            {
+                otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(irType);
+                emitter.GetOrInsertFunction(functionSymbol->IrName(&context), functionType);
+                otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(functionType, "@" + functionSymbol->IrName(&context));
+                otava::intermediate::Value* deltaValue = emitter.EmitLong(0);
+                otava::intermediate::Value* element1Value = emitter.EmitConversionValue(voidPtrIrType, functionValue);
+                elements.push_back(element1Value);
+                otava::intermediate::Value* element2Value = emitter.EmitConversionValue(voidPtrIrType, deltaValue);
+                elements.push_back(element2Value);
+            }
+            else
+            {
+                ThrowException("function type expected", sourcePos, &context);
+            }
+        }
+        else
+        {
+            otava::intermediate::Value* element1Value = emitter.EmitNull(voidPtrIrType);
+            elements.push_back(element1Value);
+            otava::intermediate::Value* deltaValue = emitter.EmitLong(0);
+            otava::intermediate::Value* element2Value = emitter.EmitConversionValue(voidPtrIrType, deltaValue);
+            elements.push_back(element2Value);
+        }
+    }
+    otava::intermediate::Value* arrayValue = emitter.EmitArrayValue(elements);
+    std::string vtabName = cls->VTabName(&context);
+    otava::intermediate::Value* vtabVariable = emitter.EmitGlobalVariable(arrayType, vtabName, arrayValue);
+    cls->SetVTabVariable(vtabVariable);
+}
+
 void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 {
+    node.Sort();
     emitter.SetCompileUnitInfo(node.Id(), context.FileName());
     int n = node.BoundNodes().size();
     for (int i = 0; i < n; ++i)
@@ -284,6 +341,12 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     otava::intermediate::SimpleAssemblyCodeGenerator assemblyCodeGenerator(&intermediateContext, assemblyFilePath);
     otava::intermediate::GenerateCode(intermediateContext, assemblyCodeGenerator, verbose);
     asmFileName = util::Path::GetFileName(context.FileName()) + ".asm";
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundClassNode& node)
+{
+    otava::symbols::ClassTypeSymbol* cls = node.GetClass();
+    GenerateVTab(cls, node.GetSourcePos());
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
@@ -341,13 +404,13 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     otava::symbols::BoundCtorInitializerNode* ctorInitializer = node.CtorInitializer();
     if (ctorInitializer)
     {
-        ctorInitializer->GenerateCode(emitter, &context);
+        ctorInitializer->GenerateCode(*this, emitter, &context);
     }
     node.Body()->Accept(*this);
     otava::symbols::BoundDtorTerminatorNode* dtorTerminator = node.DtorTerminator();
     if (dtorTerminator)
     {
-        dtorTerminator->GenerateCode(emitter, &context);
+        dtorTerminator->GenerateCode(*this, emitter, &context);
     }
     StatementPrefix();
     otava::symbols::BoundStatementNode* lastStatement = nullptr;
@@ -676,6 +739,22 @@ void CodeGenerator::Visit(otava::symbols::BoundExpressionStatementNode& node)
     if (node.GetExpr()->HasValue())
     {
         emitter.Stack().Pop();
+    }
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
+{
+    StatementPrefix();
+    node.ThisPtr()->Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    otava::intermediate::Value* thisPtr = emitter.Stack().Pop();
+    otava::symbols::TypeSymbol* thisPtrType = node.ThisPtr()->GetType()->GetBaseType();
+    if (thisPtrType->IsClassTypeSymbol())
+    {
+        otava::symbols::ClassTypeSymbol* classType = static_cast<otava::symbols::ClassTypeSymbol*>(thisPtrType);
+        int32_t vptrIndex = classType->VPtrIndex();
+        otava::intermediate::Value* ptr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrIndex));
+        otava::intermediate::Value* vptr = emitter.EmitBitcast(classType->GetVTabVariable(emitter, &context), emitter.MakePtrType(emitter.GetVoidType()));
+        emitter.EmitStore(vptr, ptr);
     }
 }
 

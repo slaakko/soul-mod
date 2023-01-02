@@ -9,13 +9,13 @@ import otava.assembly.instruction;
 
 namespace otava::assembly {
 
-FunctionDeclaration::FunctionDeclaration(const std::string& name_) : name(name_)
+FunctionDeclaration::FunctionDeclaration(const std::string& name_) : Declaration(name_)
 {
 }
 
 void FunctionDeclaration::Write(util::CodeFormatter& formatter)
 {
-    formatter.WriteLine("EXTRN " + name + ":PROC");
+    formatter.WriteLine("EXTRN " + Name() + ":PROC");
 }
 
 Function::Function(const std::string& name_) : name(name_), activeFunctionPart(FunctionPart::body)

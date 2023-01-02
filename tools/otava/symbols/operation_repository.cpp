@@ -913,6 +913,35 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
             ThrowException("base class conversion not found", sourcePos, context);
         }
     }
+    if (classType->IsPolymorphic())
+    {
+        BoundExpressionNode* thisPtr = new BoundParameterNode(classDefaultCtor->ThisParam(context), sourcePos, classDefaultCtor->ThisParam(context)->GetReferredType(context));
+        ClassTypeSymbol* vptrHolderClass = classType->VPtrHolderClass();
+        if (!vptrHolderClass)
+        {
+            ThrowException("vptr holder class not found", sourcePos, context);
+        }
+        if (vptrHolderClass != classType)
+        {
+            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+            if (conversion)
+            {
+                BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                boundFunction->Body()->AddStatement(setVPtrStatement);
+            }
+            else
+            {
+                ThrowException("vptr holder class conversion not found", sourcePos, context);
+            }
+        }
+        else
+        {
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            boundFunction->Body()->AddStatement(setVPtrStatement);
+        }
+    }
     int n = classType->MemberVariables().size();
     for (int i = 0; i < n; ++i)
     {
@@ -1021,6 +1050,35 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         else
         {
             ThrowException("base class conversion not found", sourcePos, context);
+        }
+    }
+    if (classType->IsPolymorphic())
+    {
+        BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyCtor->ThisParam(context), sourcePos, classCopyCtor->ThisParam(context)->GetReferredType(context));
+        ClassTypeSymbol* vptrHolderClass = classType->VPtrHolderClass();
+        if (!vptrHolderClass)
+        {
+            ThrowException("vptr holder class not found", sourcePos, context);
+        }
+        if (vptrHolderClass != classType)
+        {
+            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+            if (conversion)
+            {
+                BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                boundFunction->Body()->AddStatement(setVPtrStatement);
+            }
+            else
+            {
+                ThrowException("vptr holder class conversion not found", sourcePos, context);
+            }
+        }
+        else
+        {
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            boundFunction->Body()->AddStatement(setVPtrStatement);
         }
     }
     int n = classType->MemberVariables().size();
@@ -1141,6 +1199,35 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         else
         {
             ThrowException("base class conversion not found", sourcePos, context);
+        }
+    }
+    if (classType->IsPolymorphic())
+    {
+        BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveCtor->ThisParam(context), sourcePos, classMoveCtor->ThisParam(context)->GetReferredType(context));
+        ClassTypeSymbol* vptrHolderClass = classType->VPtrHolderClass();
+        if (!vptrHolderClass)
+        {
+            ThrowException("vptr holder class not found", sourcePos, context);
+        }
+        if (vptrHolderClass != classType)
+        {
+            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+            if (conversion)
+            {
+                BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                boundFunction->Body()->AddStatement(setVPtrStatement);
+            }
+            else
+            {
+                ThrowException("vptr holder class conversion not found", sourcePos, context);
+            }
+        }
+        else
+        {
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            boundFunction->Body()->AddStatement(setVPtrStatement);
         }
     }
     int n = classType->MemberVariables().size();

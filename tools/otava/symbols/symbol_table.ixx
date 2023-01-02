@@ -113,7 +113,7 @@ public:
     void BeginNamespace(otava::ast::Node* node, Context* context);
     void EndNamespace(int level);
     void BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* spcialiation, otava::ast::Node* node, Context* context);
-    void AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     void EndClass();
     void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context);
     void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);

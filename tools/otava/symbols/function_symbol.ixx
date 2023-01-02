@@ -152,6 +152,9 @@ public:
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
     bool IsVirtual() const;
+    void SetVirtual();
+    bool IsOverride() const;
+    void SetOverride();
     ClassTypeSymbol* ParentClassType() const override;
     ParameterSymbol* ThisParam(Context* ciontext) const;
     bool IsMemberFunction() const;
@@ -168,6 +171,8 @@ public:
     void SetSpecialization() { SetFlag(FunctionSymbolFlags::specialization); }
     bool IsTrivialDestructor() const { return GetFlag(FunctionSymbolFlags::trivialDestructor); }
     std::u32string NextTemporaryName();
+    void SetVTabIndex(int32_t vtabIndex_) { vtabIndex = vtabIndex_; }
+    int32_t VTabIndex() const { return vtabIndex; }
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -183,6 +188,7 @@ private:
     mutable std::vector<ParameterSymbol*> memFunParameters;
     std::vector<VariableSymbol*> localVariables;
     int32_t nextTemporaryId;
+    int32_t vtabIndex;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol

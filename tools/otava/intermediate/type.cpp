@@ -377,6 +377,11 @@ ArrayType::ArrayType(const SourcePos& sourcePos_, int32_t typeId_, int64_t eleme
 {
 }
 
+otava::assembly::DataInst ArrayType::DataInstruction() const
+{
+    return ElementType()->DataInstruction();
+}
+
 void ArrayType::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);

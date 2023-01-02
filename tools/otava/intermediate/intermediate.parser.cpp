@@ -5286,7 +5286,34 @@ soul::parser::Match IntermediateCodeParser<Lexer>::FunctionDefinitions(Lexer& le
         {
             int64_t save = lexer.GetPos();
             {
-                soul::parser::Match match = IntermediateCodeParser<Lexer>::FunctionDefinition(lexer, context);
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch1 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch2 = &match;
+                    switch (*lexer)
+                    {
+                        case EXTERN:
+                        {
+                            soul::parser::Match match = IntermediateCodeParser<Lexer>::ExternalFunctionDeclaration(lexer, context);
+                            if (match.hit)
+                            {
+                                *parentMatch2 = match;
+                            }
+                            break;
+                        }
+                        case FUNCTION:
+                        {
+                            soul::parser::Match match = IntermediateCodeParser<Lexer>::FunctionDefinition(lexer, context);
+                            if (match.hit)
+                            {
+                                *parentMatch2 = match;
+                            }
+                            break;
+                        }
+                    }
+                    *parentMatch1 = match;
+                }
                 if (match.hit)
                 {
                     *parentMatch0 = match;
@@ -5314,6 +5341,145 @@ soul::parser::Match IntermediateCodeParser<Lexer>::FunctionDefinitions(Lexer& le
 }
 
 template<typename Lexer>
+soul::parser::Match IntermediateCodeParser<Lexer>::ExternalFunctionDeclaration(Lexer& lexer, otava::intermediate::Context* context)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "ExternalFunctionDeclaration");
+    }
+    #endif
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589481);
+    otava::intermediate::TypeRef functionTypeRef = otava::intermediate::TypeRef();
+    soul::ast::SourcePos sp = soul::ast::SourcePos();
+    std::string functionId = std::string();
+    std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        int64_t pos = lexer.GetPos();
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match(false);
+                            if (*lexer == EXTERN)
+                            {
+                                ++lexer;
+                                match.hit = true;
+                            }
+                            if (match.hit)
+                            {
+                                sp = lexer.GetSourcePos(pos);
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    if (match.hit)
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch6 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            if (*lexer == FUNCTION)
+                            {
+                                ++lexer;
+                                match.hit = true;
+                            }
+                            *parentMatch6 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch7 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch8 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = IntermediateCodeParser<Lexer>::TypeRef(lexer);
+                            typeRef.reset(static_cast<soul::parser::Value<otava::intermediate::TypeRef>*>(match.value));
+                            if (match.hit)
+                            {
+                                functionTypeRef = typeRef->value;
+                                context->ResolveType(functionTypeRef);
+                            }
+                            *parentMatch8 = match;
+                        }
+                        *parentMatch7 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                *parentMatch2 = match;
+            }
+            if (match.hit)
+            {
+                soul::parser::Match match(false);
+                soul::parser::Match* parentMatch9 = &match;
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch10 = &match;
+                    {
+                        int64_t pos = lexer.GetPos();
+                        soul::parser::Match match(false);
+                        if (*lexer == ID)
+                        {
+                            ++lexer;
+                            match.hit = true;
+                        }
+                        if (match.hit)
+                        {
+                            functionId = util::ToUtf8(lexer.GetToken(pos).ToString());
+                        }
+                        *parentMatch10 = match;
+                    }
+                    *parentMatch9 = match;
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            context->AddFunctionDeclaration(sp, functionTypeRef.GetType(), functionId);
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExternalFunctionDeclaration");
+        else soul::lexer::WriteFailureToLog(lexer, "ExternalFunctionDeclaration");
+    }
+    #endif
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
 soul::parser::Match IntermediateCodeParser<Lexer>::FunctionDefinition(Lexer& lexer, otava::intermediate::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -5325,7 +5491,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::FunctionDefinition(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589481);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589482);
     otava::intermediate::Function* function = nullptr;
     std::unique_ptr<otava::intermediate::Function> header;
     soul::parser::Match match(false);
@@ -5441,7 +5607,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::FunctionHeader(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionHeader");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589482);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589483);
     otava::intermediate::TypeRef functionTypeRef = otava::intermediate::TypeRef();
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     bool once = bool();
@@ -5644,7 +5810,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::BasicBlock(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "BasicBlock");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589483);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589484);
     otava::intermediate::BasicBlock* basicBlock = nullptr;
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<soul::parser::Value<int32_t>> id;
@@ -5702,7 +5868,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Label(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Label");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589484);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589485);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -5770,7 +5936,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Operand(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "Operand");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589485);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589486);
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
     std::unique_ptr<otava::intermediate::Value> value;
@@ -5844,7 +6010,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Instructions(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "Instructions");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589486);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589487);
     std::unique_ptr<otava::intermediate::Instruction> instruction;
     std::unique_ptr<otava::intermediate::MetadataRef> mdRef;
     soul::parser::Match match(false);
@@ -6000,7 +6166,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Instruction(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "Instruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589487);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589488);
     std::unique_ptr<otava::intermediate::Instruction> store;
     std::unique_ptr<otava::intermediate::Instruction> arg;
     std::unique_ptr<otava::intermediate::Instruction> jmp;
@@ -6278,7 +6444,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::StoreInstruction(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "StoreInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589488);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589489);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     otava::intermediate::TypeRef ptref = otava::intermediate::TypeRef();
@@ -6449,7 +6615,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ArgInstruction(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "ArgInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589489);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589490);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
@@ -6554,7 +6720,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::JmpInstruction(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "JmpInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589490);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589491);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<soul::parser::Value<int32_t>> target;
     soul::parser::Match match(false);
@@ -6630,7 +6796,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::BranchInstruction(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "BranchInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589491);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589492);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
@@ -6809,7 +6975,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ProcedureCallInstruction(Lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "ProcedureCallInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589492);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589493);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
@@ -6914,7 +7080,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::RetInstruction(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "RetInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589493);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589494);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
@@ -7119,7 +7285,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::SwitchInstruction(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "SwitchInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589494);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589495);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     otava::intermediate::TypeRef caseTref = otava::intermediate::TypeRef();
@@ -7553,7 +7719,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ValueInstruction(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "ValueInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589495);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589496);
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     otava::intermediate::RegValue* rslt = nullptr;
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
@@ -7675,7 +7841,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Operation(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "Operation");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589496);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589497);
     std::unique_ptr<otava::intermediate::Instruction> unaryInst;
     std::unique_ptr<otava::intermediate::Instruction> binaryInst;
     std::unique_ptr<otava::intermediate::Instruction> paramInst;
@@ -8013,7 +8179,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::UnaryInstruction(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "UnaryInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589497);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589498);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<otava::intermediate::Value> notOp;
     std::unique_ptr<otava::intermediate::Value> negOp;
@@ -8606,7 +8772,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::BinaryInstruction(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "BinaryInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589498);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589499);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<otava::intermediate::Value> leftAdd;
     std::unique_ptr<otava::intermediate::Value> rightAdd;
@@ -9815,7 +9981,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ParamInstruction(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "ParamInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589499);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589500);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -9865,7 +10031,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::LocalInstruction(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "LocalInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589500);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589501);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
@@ -9958,7 +10124,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::LoadInstruction(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "LoadInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589501);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589502);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<otava::intermediate::Value> ptr;
     soul::parser::Match match(false);
@@ -10034,7 +10200,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::ElemAddrInstruction(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "ElemAddrInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589502);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589503);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<otava::intermediate::Value> ptr;
     std::unique_ptr<otava::intermediate::Value> index;
@@ -10147,7 +10313,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::PtrOffsetInstruction(Lexer& l
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrOffsetInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589503);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589504);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<otava::intermediate::Value> ptr;
     std::unique_ptr<otava::intermediate::Value> offset;
@@ -10260,7 +10426,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::PtrDiffInstruction(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "PtrDiffInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589504);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589505);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<otava::intermediate::Value> leftPtr;
     std::unique_ptr<otava::intermediate::Value> rightPtr;
@@ -10373,7 +10539,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::FunctionCallInstruction(Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionCallInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589505);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589506);
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
@@ -10478,7 +10644,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::TrapInstruction(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "TrapInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589506);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589507);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     std::unique_ptr<otava::intermediate::Value> op1;
     std::unique_ptr<otava::intermediate::Value> op2;
@@ -10628,7 +10794,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::PhiInstruction(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "PhiInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589507);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589508);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     otava::intermediate::PhiInstruction* inst = nullptr;
     std::unique_ptr<soul::parser::Value<otava::intermediate::BlockValue>> first;
@@ -10810,7 +10976,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::BlockValue(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "BlockValue");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589508);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589509);
     std::unique_ptr<otava::intermediate::Value> operand;
     std::unique_ptr<soul::parser::Value<int32_t>> blockId;
     soul::parser::Match match(false);
@@ -10937,7 +11103,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::NoOperationInstruction(Lexer&
         soul::lexer::WriteBeginRuleToLog(lexer, "NoOperationInstruction");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589509);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589510);
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -10987,7 +11153,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::Metadata(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "Metadata");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589510);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589511);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -11104,7 +11270,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::MetadataStruct(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "MetadataStruct");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589511);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589512);
     otava::intermediate::MetadataStruct* value = nullptr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -11320,7 +11486,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::MetadataField(Lexer& lexer, o
         soul::lexer::WriteBeginRuleToLog(lexer, "MetadataField");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589512);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589513);
     std::string fieldName = std::string();
     std::unique_ptr<otava::intermediate::MetadataItem> item;
     soul::parser::Match match(false);
@@ -11411,7 +11577,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::MetadataItem(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "MetadataItem");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589513);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589514);
     std::unique_ptr<otava::intermediate::MetadataItem> mdBool;
     std::unique_ptr<otava::intermediate::MetadataItem> mdLong;
     std::unique_ptr<otava::intermediate::MetadataItem> mdString;
@@ -11548,7 +11714,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::MetadataBool(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "MetadataBool");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589514);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589515);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
@@ -11638,7 +11804,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::MetadataLong(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "MetadataLong");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589515);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589516);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -11686,7 +11852,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::MetadataString(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "MetadataString");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589516);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589517);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -11734,7 +11900,7 @@ soul::parser::Match IntermediateCodeParser<Lexer>::MetadataRef(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "MetadataRef");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589517);
+    soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589518);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

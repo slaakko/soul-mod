@@ -55,4 +55,26 @@ void Data::Write(util::CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
+PublicDataDeclaration::PublicDataDeclaration(const std::string& name_) : Declaration(name_)
+{
+}
+
+void PublicDataDeclaration::Write(util::CodeFormatter& formatter)
+{
+    formatter.Write("PUBLIC ");
+    formatter.WriteLine(Name());
+}
+
+ExternalDataDeclaration::ExternalDataDeclaration(const std::string& name_) : Declaration(name_)
+{
+}
+
+void ExternalDataDeclaration::Write(util::CodeFormatter& formatter)
+{
+    formatter.Write("EXTRN ");
+    formatter.Write(Name());
+    formatter.WriteLine(":BYTE");
+}
+
+
 } // namespace otava::assembly

@@ -1,8 +1,8 @@
 <parserFile>
  <grammar name="IntermediateCodeParser">
-  <rule first="{#, CU, DATA, FUNCTION, METADATA, TYPES}" name="IntermediateCodeFile">
-   <sequence first="{#, CU, DATA, FUNCTION, METADATA, TYPES}">
-    <sequence first="{#, CU, DATA, FUNCTION, TYPES}">
+  <rule first="{#, CU, DATA, EXTERN, FUNCTION, METADATA, TYPES}" name="IntermediateCodeFile">
+   <sequence first="{#, CU, DATA, EXTERN, FUNCTION, METADATA, TYPES}">
+    <sequence first="{#, CU, DATA, EXTERN, FUNCTION, TYPES}">
      <sequence first="{#, CU, DATA, TYPES}">
       <sequence first="{#, CU, TYPES}">
        <sequence first="{#, CU}">
@@ -19,8 +19,8 @@
        <nonterminal first="{DATA}" ruleName="DataDefinitions"/>
       </optional>
      </sequence>
-     <optional first="{#, FUNCTION}">
-      <nonterminal first="{#, FUNCTION}" ruleName="FunctionDefinitions"/>
+     <optional first="{#, EXTERN, FUNCTION}">
+      <nonterminal first="{#, EXTERN, FUNCTION}" ruleName="FunctionDefinitions"/>
      </optional>
     </sequence>
     <optional first="{#, METADATA}">
@@ -798,10 +798,41 @@
     </case>
    </switch>
   </rule>
-  <rule first="{#, FUNCTION}" name="FunctionDefinitions">
-   <kleene first="{#, FUNCTION}">
-    <nonterminal first="{FUNCTION}" ruleName="FunctionDefinition"/>
+  <rule first="{#, EXTERN, FUNCTION}" name="FunctionDefinitions">
+   <kleene first="{#, EXTERN, FUNCTION}">
+    <group first="{EXTERN, FUNCTION}">
+     <switch first="{EXTERN, FUNCTION}">
+      <case first="{EXTERN}">
+       <nonterminal first="{EXTERN}" ruleName="ExternalFunctionDeclaration"/>
+      </case>
+      <case first="{FUNCTION}">
+       <nonterminal first="{FUNCTION}" ruleName="FunctionDefinition"/>
+      </case>
+     </switch>
+    </group>
    </kleene>
+  </rule>
+  <rule first="{EXTERN}" name="ExternalFunctionDeclaration">
+   <action first="{EXTERN}">
+    <group first="{EXTERN}">
+     <sequence first="{EXTERN}">
+      <sequence first="{EXTERN}">
+       <sequence first="{EXTERN}">
+        <action first="{EXTERN}">
+         <token first="{EXTERN}" name="EXTERN"/>
+        </action>
+        <token first="{FUNCTION}" name="FUNCTION"/>
+       </sequence>
+       <action first="{BOOL, BYTE, DOUBLE, FLOAT, INT, LONG, SBYTE, SHORT, TYPEID, UINT, ULONG, USHORT, VOID}">
+        <nonterminal first="{BOOL, BYTE, DOUBLE, FLOAT, INT, LONG, SBYTE, SHORT, TYPEID, UINT, ULONG, USHORT, VOID}" ruleName="TypeRef"/>
+       </action>
+      </sequence>
+      <action first="{ID}">
+       <token first="{ID}" name="ID"/>
+      </action>
+     </sequence>
+    </group>
+   </action>
   </rule>
   <rule first="{FUNCTION}" name="FunctionDefinition">
    <sequence first="{FUNCTION}">

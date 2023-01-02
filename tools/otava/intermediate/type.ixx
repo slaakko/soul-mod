@@ -306,6 +306,7 @@ public:
     void Resolve(Types* types, Context* context) override;
     int64_t Size() const override;
     int64_t Alignment() const override { return 8; }
+    otava::assembly::DataInst DataInstruction() const override;
     std::string Name() const override { return "$T" + std::to_string(MakeUserTypeId(Id())); }
     bool IsWeakType() const override;
     int64_t ElementCount() const { return elementCount; }

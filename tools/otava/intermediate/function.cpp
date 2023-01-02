@@ -75,44 +75,51 @@ void Function::Finalize()
 
 bool Function::Write(util::CodeFormatter& formatter)
 {
-    if (!IsDefined()) return false;
-    Finalize();
-    std::string once;
-    if (Once())
+    if (!IsDefined())
     {
-        once = " once";
+        formatter.WriteLine("extern function " + type->Name() + " " + name);
+        return true;
     }
-    std::string mdIdStr;
-    if (metadataRef)
+    else
     {
-        mdIdStr = " !" + std::to_string(metadataRef->NodeId());
-    }
-    formatter.WriteLine("function " + type->Name() + once + " " + name + mdIdStr);
-    formatter.WriteLine("{");
-    formatter.IncIndent();
-    bool first = true;
-    BasicBlock* bb = FirstBasicBlock();
-    while (bb)
-    {
-        if (bb->IsEmpty())
+        Finalize();
+        std::string once;
+        if (Once())
         {
+            once = " once";
+        }
+        std::string mdIdStr;
+        if (metadataRef)
+        {
+            mdIdStr = " !" + std::to_string(metadataRef->NodeId());
+        }
+        formatter.WriteLine("function " + type->Name() + once + " " + name + mdIdStr);
+        formatter.WriteLine("{");
+        formatter.IncIndent();
+        bool first = true;
+        BasicBlock* bb = FirstBasicBlock();
+        while (bb)
+        {
+            if (bb->IsEmpty())
+            {
+                bb = bb->Next();
+                continue;
+            }
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                formatter.WriteLine();
+            }
+            bb->Write(formatter);
             bb = bb->Next();
-            continue;
         }
-        if (first)
-        {
-            first = false;
-        }
-        else
-        {
-            formatter.WriteLine();
-        }
-        bb->Write(formatter);
-        bb = bb->Next();
+        formatter.DecIndent();
+        formatter.WriteLine("}");
+        return true;
     }
-    formatter.DecIndent();
-    formatter.WriteLine("}");
-    return true;
 }
 
 void Function::Accept(Visitor& visitor)

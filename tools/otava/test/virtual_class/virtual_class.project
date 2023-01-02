@@ -1,0 +1,3 @@
+project virtual_class;
+target=program;
+source <virtual_class.cpp>;

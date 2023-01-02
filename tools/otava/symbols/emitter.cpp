@@ -279,6 +279,11 @@ otava::intermediate::Value* Emitter::EmitGlobalVariable(otava::intermediate::Typ
     return context->AddGlobalVariable(otava::intermediate::SourcePos(), type, variableName, initializer, false);
 }
 
+otava::intermediate::Value* Emitter::EmitSymbolValue(otava::intermediate::Type* type, const std::string& symbol)
+{
+    return context->MakeSymbolValue(otava::intermediate::SourcePos(), type, symbol);
+}
+
 otava::intermediate::Value* Emitter::EmitNot(otava::intermediate::Value* value)
 {
     return context->CreateNot(value);

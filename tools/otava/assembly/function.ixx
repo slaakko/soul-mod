@@ -5,18 +5,17 @@
 
 export module otava.assembly.function;
 
+import otava.assembly.declaration;
 import std.core;
 import util.code.formatter;
 
 export namespace otava::assembly {
 
-class FunctionDeclaration
+class FunctionDeclaration : public Declaration
 {
 public:
     FunctionDeclaration(const std::string& name_);
     void Write(util::CodeFormatter& formatter);
-private:
-    std::string name;
 };
 
 class Instruction;

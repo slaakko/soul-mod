@@ -8,6 +8,7 @@ module otava.intermediate.data_item_adder;
 import otava.assembly.literal;
 import otava.assembly.symbol;
 import otava.intermediate.data;
+import otava.intermediate.type;
 
 namespace otava::intermediate {
 
@@ -83,7 +84,10 @@ void DataItemAdder::Visit(AddressValue& value)
 
 void DataItemAdder::Visit(ArrayValue& value)
 {
-    // todo
+    for (const auto& element : value.Elements())
+    {
+        element->Accept(*this);
+    }
 }
 
 void DataItemAdder::Visit(StructureValue& value)
@@ -107,7 +111,7 @@ void DataItemAdder::Visit(StringArrayValue& value)
 
 void DataItemAdder::Visit(ConversionValue& value)
 {
-    // todo
+    value.From()->Accept(*this);
 }
 
 void DataItemAdder::Visit(ClsIdValue& value)

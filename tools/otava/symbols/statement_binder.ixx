@@ -22,6 +22,7 @@ class VariableSymbol;
 class BoundExpressionNode;
 class BoundFunctionCallNode;
 class BoundStatement;
+class BoundCompoundStatementNode;
 
 class StatementBinder : public otava::ast::DefaultVisitor
 {
@@ -65,6 +66,7 @@ private:
     void AddBaseTerminator(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
     void GenerateMemberTerminators(const soul::ast::SourcePos& sourcePos);
     void AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
+    void GenerateSetVPtrStatement(const soul::ast::SourcePos& sourcePos);
     Context* context;
     ClassTypeSymbol* currentClass; 
     BoundCtorInitializerNode* ctorInitializer;
@@ -77,9 +79,14 @@ private:
     bool resolveClass;
     bool resolveMemberVariable;
     bool resolveInitializerArguments;
+    bool setVPtrStatementGenerated;
+    std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> baseInitializers;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberInitializers;
+    std::unique_ptr<BoundStatementNode> setVPtrStatement;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberTerminators;
+    std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> baseTerminators;
     bool postfix;
+
 };
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);

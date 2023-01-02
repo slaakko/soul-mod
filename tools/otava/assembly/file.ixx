@@ -10,15 +10,20 @@ import util.code.formatter;
 
 export namespace otava::assembly {
 
+class Declaration;
 class FunctionDeclaration;
+class PublicDataDeclaration;
+class ExternalDataDeclaration;
 
 class DeclarationSection
 {
 public:
     void AddFunctionDeclaration(FunctionDeclaration* declaration);
+    void AddPublicDataDeclaration(PublicDataDeclaration* declaration);
+    void AddExternalDataDeclaration(ExternalDataDeclaration* declaration);
     void Write(util::CodeFormatter& formatter);
 private:
-    std::vector<std::unique_ptr<FunctionDeclaration>> declarations;
+    std::vector<std::unique_ptr<Declaration>> declarations;
 };
 
 class Data;

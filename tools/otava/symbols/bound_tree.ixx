@@ -64,14 +64,15 @@ class ClassTemplateRepository;
 
 enum class BoundNodeKind
 {
-    boundCompileUnitNode, boundFunctionNode, boundCompoundStatementNode, boundIfStatementNode, boundSwitchStatementNode, boundCaseStatementNode, boundDefaultStatementNode,
+    boundCompileUnitNode, boundClassNode, boundGlobalVariableDefinitionNode, boundFunctionNode,
+    boundCompoundStatementNode, boundIfStatementNode, boundSwitchStatementNode, boundCaseStatementNode, boundDefaultStatementNode,
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
-    boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode,
+    boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode, boundSetVPtrStatementNode,
     boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
     boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
-    boundTemporaryNode, boundConstructTemporaryNode, boundGlobalVariableDefinitionNode, boundCtorInitializerNode, boundDtorTerminatorNode
+    boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode,
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -93,8 +94,11 @@ public:
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
     bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
     bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
+    int Index() const { return index; }
+    void SetIndex(int index_) { index = index_; }
 private:
     BoundNodeKind kind;
+    int index;
     soul::ast::SourcePos sourcePos;
 };
 
@@ -144,6 +148,7 @@ class BoundCompileUnitNode : public BoundNode
 {
 public:
     BoundCompileUnitNode();
+    void Sort();
     OperationRepository* GetOperationRepository() const { return operationRepository.get(); }
     ArgumentConversionTable* GetArgumentConversionTable() const { return argumentConversionTable.get(); }
     FunctionTemplateRepository* GetFunctionTemplateRepository() const { return functionTemplateRepository.get(); }
@@ -163,14 +168,20 @@ private:
     std::unique_ptr<ClassTemplateRepository> classTemplateRepository;
 };
 
+class BoundStatementNode;
+
 class BoundCtorInitializerNode : public BoundNode
 {
 public:
     BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    void AddBaseInitializer(BoundFunctionCallNode* baseInitializer);
+    void SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_);
     void AddMemberInitializer(BoundFunctionCallNode* memberInitializer);
-    void GenerateCode(Emitter& emitter, Context* context);
+    void GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context);
 private:
+    std::vector<std::unique_ptr<BoundFunctionCallNode>> baseInitializers;
+    std::unique_ptr<BoundStatementNode> setVPtrStatement;
     std::vector<std::unique_ptr<BoundFunctionCallNode>> memberInitializers;
 };
 
@@ -179,10 +190,22 @@ class BoundDtorTerminatorNode : public BoundNode
 public:
     BoundDtorTerminatorNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    void SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_);
     void AddMemberTerminator(BoundFunctionCallNode* memberTerminator);
-    void GenerateCode(Emitter& emitter, Context* context);
+    void GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context);
 private:
+    std::unique_ptr<BoundStatementNode> setVPtrStatement;
     std::vector<std::unique_ptr<BoundFunctionCallNode>> memberTerminators;
+};
+
+class BoundClassNode : public BoundNode
+{
+public:
+    BoundClassNode(ClassTypeSymbol* cls_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    ClassTypeSymbol* GetClass() const { return cls; }
+private:
+    ClassTypeSymbol* cls;
 };
 
 class BoundCompoundStatementNode;
@@ -412,6 +435,16 @@ public:
     BoundExpressionNode* GetExpr() const { return expr.get(); }
 private:
     std::unique_ptr<BoundExpressionNode> expr;
+};
+
+class BoundSetVPtrStatementNode : public BoundStatementNode
+{
+public:
+    BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* ThisPtr() const { return thisPtr.get(); }
+private:
+    std::unique_ptr<BoundExpressionNode> thisPtr;
 };
 
 class BoundLiteralNode : public BoundExpressionNode

@@ -194,7 +194,6 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::classTemplateSpecializationSymbol:
         {
             ClassTemplateSpecializationSymbol* specialization = new ClassTemplateSpecializationSymbol(name);
-            //specialization->SetSymbolTable(symbolTable);
             return specialization;
         }
         case SymbolKind::aliasTypeTemplateSpecializationSymbol: 

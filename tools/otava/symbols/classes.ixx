@@ -22,6 +22,9 @@ const int32_t copyAssignmentIndex = -4;
 const int32_t moveAssignmentIndex = -5;
 const int32_t destructorIndex = -6;
 
+const int32_t vtabClassIdElementCount = 2;
+const int32_t vtabFunctionSectionOffset = 2;
+
 class FunctionDefinitionSymbol;
 
 enum class SpecialFunctionKind : int32_t;
@@ -79,11 +82,22 @@ public:
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
     bool IsTemplate() const;
-    const std::vector<TypeSymbol*>& BaseClasses() const { return baseClasses; }
-    void AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
-    const std::vector<TypeSymbol*>& DerivedClasses() const { return derivedClasses; }
-    void AddDerivedClass(TypeSymbol* derivedClass);
+    void MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos);
+    void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos);
+    const std::vector<FunctionSymbol*>& VTab() const { return vtab; }
+    std::string IrName(Context* context) const override;
+    std::string VTabName(Context* context) const;
+    int32_t VPtrIndex() const { return vptrIndex; }
+    void SetVPtrIndex(int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
+    void SetVTabVariable(otava::intermediate::Value* vtabVariable_);
+    otava::intermediate::Value* GetVTabVariable(Emitter& emitter, Context* context);
+    ClassTypeSymbol* VPtrHolderClass() const;
+    const std::vector<ClassTypeSymbol*>& BaseClasses() const { return baseClasses; }
+    void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
+    const std::vector<ClassTypeSymbol*>& DerivedClasses() const { return derivedClasses; }
+    void AddDerivedClass(ClassTypeSymbol* derivedClass);
     bool HasBaseClass(TypeSymbol* baseClass, int& distance) const override;
+    bool HasPolymorphicBaseClass() const;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -111,12 +125,12 @@ public:
     void SetHasUserDefinedConstructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
 private:
     ClassTypeSymbolFlags flags;
-    std::vector<TypeSymbol*> baseClasses;
+    std::vector<ClassTypeSymbol*> baseClasses;
     std::vector<util::uuid> baseClassIds;
     ClassKind classKind;
     TypeSymbol* specialization;
     util::uuid specializationId;
-    std::vector<TypeSymbol*> derivedClasses;
+    std::vector<ClassTypeSymbol*> derivedClasses;
     int32_t level;
     std::vector<VariableSymbol*> memberVariables;
     std::vector<VariableSymbol*> staticMemberVariables;
@@ -124,11 +138,14 @@ private:
     std::vector<FunctionDefinitionSymbol*> memFunDefSymbols;
     std::vector<TypeSymbol*> objectLayout;
     std::vector<util::uuid> objectLayoutIds;
-    int32_t vptrIndex;
     otava::intermediate::Type* irType;
     std::map<int32_t, FunctionSymbol*> functionMap;
     std::map<int32_t, util::uuid> functionIdMap;
     int32_t currentFunctionIndex;
+    std::vector<FunctionSymbol*> vtab;
+    int32_t vtabSize;
+    int32_t vptrIndex;
+    otava::intermediate::Value* vtabVariable;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

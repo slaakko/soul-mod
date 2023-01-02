@@ -23,6 +23,7 @@ import otava.symbols.visitor;
 import otava.symbols.namespaces;
 import otava.ast;
 import util.unicode;
+import util.sha1;
 
 namespace otava::symbols {
 

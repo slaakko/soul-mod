@@ -748,9 +748,10 @@ void DeclaratorProcessor::Visit(otava::ast::IdentifierNode& node)
             else
             {
                 FunctionKind kind = FunctionKind::function;
-                if (context->GetSymbolTable()->CurrentScope()->SymbolScope()->IsClassScope())
+                Scope* classScope = context->GetSymbolTable()->CurrentScope()->GetClassScope();
+                if (classScope)
                 {
-                    Symbol* symbol = context->GetSymbolTable()->CurrentScope()->SymbolScope()->GetSymbol();
+                    Symbol* symbol = classScope->GetSymbol();
                     if (symbol->IsClassTypeSymbol())
                     {
                         ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);

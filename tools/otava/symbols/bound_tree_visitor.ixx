@@ -11,6 +11,7 @@ export namespace otava::symbols {
 
 class BoundCompileUnitNode;
 class BoundFunctionNode;
+class BoundClassNode;
 class BoundCtorInitializerNode;
 class BoundDtorTerminatorNode;
 class BoundCompoundStatementNode;
@@ -28,6 +29,7 @@ class BoundReturnStatementNode;
 class BoundGotoStatementNode;
 class BoundConstructionStatementNode;
 class BoundExpressionStatementNode;
+class BoundSetVPtrStatementNode;
 class BoundLiteralNode;
 class BoundStringLiteralNode;
 class BoundVariableNode;
@@ -58,6 +60,7 @@ public:
     virtual ~BoundTreeVisitor();
     virtual void Visit(BoundCompileUnitNode& node) {}
     virtual void Visit(BoundFunctionNode& node) {}
+    virtual void Visit(BoundClassNode& node) {}
     virtual void Visit(BoundCtorInitializerNode& node) {}
     virtual void Visit(BoundDtorTerminatorNode& node) {}
     virtual void Visit(BoundCompoundStatementNode& node) {}
@@ -75,6 +78,7 @@ public:
     virtual void Visit(BoundGotoStatementNode& node) {}
     virtual void Visit(BoundConstructionStatementNode& node) {}
     virtual void Visit(BoundExpressionStatementNode& node) {}
+    virtual void Visit(BoundSetVPtrStatementNode& node) {}
     virtual void Visit(BoundLiteralNode& node) {}
     virtual void Visit(BoundStringLiteralNode& node) {}
     virtual void Visit(BoundVariableNode& node) {}

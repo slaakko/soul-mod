@@ -56,6 +56,7 @@ struct IntermediateCodeParser
     static soul::parser::Match SymbolValue(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
     static soul::parser::Match LiteralValue(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
     static soul::parser::Match FunctionDefinitions(Lexer& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ExternalFunctionDeclaration(Lexer& lexer, otava::intermediate::Context* context);
     static soul::parser::Match FunctionDefinition(Lexer& lexer, otava::intermediate::Context* context);
     static soul::parser::Match FunctionHeader(Lexer& lexer, otava::intermediate::Context* context);
     static soul::parser::Match BasicBlock(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Function* function);

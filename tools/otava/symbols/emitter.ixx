@@ -63,6 +63,7 @@ public:
     otava::intermediate::Value* EmitStringValue(const std::string& value);
     otava::intermediate::Value* EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from);
     otava::intermediate::Value* EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer);
+    otava::intermediate::Value* EmitSymbolValue(otava::intermediate::Type* type, const std::string& symbol);
     otava::intermediate::Value* EmitNot(otava::intermediate::Value* value);
     otava::intermediate::Value* EmitNeg(otava::intermediate::Value* value);
     otava::intermediate::Value* EmitAdd(otava::intermediate::Value* left, otava::intermediate::Value* right);

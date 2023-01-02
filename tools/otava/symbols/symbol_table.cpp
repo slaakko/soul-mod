@@ -986,7 +986,7 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, Ty
     }
 }
 
-void SymbolTable::AddBaseClass(TypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
+void SymbolTable::AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     Symbol* symbol = currentScope->GetSymbol();
     if (symbol->IsClassTypeSymbol())

@@ -96,6 +96,10 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         {
             return "boundSequenceStatementNode";
         }
+        case BoundNodeKind::boundSetVPtrStatementNode:
+        {
+            return "boundSetVPtrStatementNode";
+        }
         case BoundNodeKind::boundLiteralNode:
         {
             return "boundLiteralNode";
@@ -164,11 +168,27 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         {
             return "boundConstructExpressionNode";
         }
+        case BoundNodeKind::boundClassNode:
+        {
+            return "boundClassNode";
+        }
     }
     return "<unknown bound node>";
 }
 
-BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), sourcePos(sourcePos_)
+struct BoundNodeLess
+{
+    bool operator()(const std::unique_ptr<BoundNode>& left, const std::unique_ptr<BoundNode>& right) const;
+};
+
+bool BoundNodeLess::operator()(const std::unique_ptr<BoundNode>& left, const std::unique_ptr<BoundNode>& right) const
+{
+    if (left->Kind() < right->Kind()) return true;
+    if (left->Kind() > right->Kind()) return false;
+    return left->Index() < right->Index();
+}
+
+BoundNode::BoundNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : kind(kind_), index(-1), sourcePos(sourcePos_)
 {
 }
 
@@ -241,7 +261,13 @@ void BoundCompileUnitNode::Accept(BoundTreeVisitor& visitor)
 
 void BoundCompileUnitNode::AddBoundNode(BoundNode* node)
 {
+    node->SetIndex(boundNodes.size());
     boundNodes.push_back(std::unique_ptr<BoundNode>(node));
+}
+
+void BoundCompileUnitNode::Sort()
+{
+    std::sort(boundNodes.begin(), boundNodes.end(), BoundNodeLess());
 }
 
 otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
@@ -268,13 +294,31 @@ BoundCtorInitializerNode::BoundCtorInitializerNode(const soul::ast::SourcePos& s
 {
 }
 
+void BoundCtorInitializerNode::AddBaseInitializer(BoundFunctionCallNode* baseInitializer)
+{
+    baseInitializers.push_back(std::unique_ptr<BoundFunctionCallNode>(baseInitializer));
+}
+
+void BoundCtorInitializerNode::SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_)
+{
+    setVPtrStatement.reset(setVPtrStatement_);
+}
+
 void BoundCtorInitializerNode::AddMemberInitializer(BoundFunctionCallNode* memberInitializer)
 {
     memberInitializers.push_back(std::unique_ptr<BoundFunctionCallNode>(memberInitializer));
 }
 
-void BoundCtorInitializerNode::GenerateCode(Emitter& emitter, Context* context)
+void BoundCtorInitializerNode::GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context)
 {
+    for (const auto& baseInitializer : baseInitializers)
+    {
+        baseInitializer->Load(emitter, OperationFlags::defaultInit, GetSourcePos(), context);
+    }
+    if (setVPtrStatement)
+    {
+        setVPtrStatement->Accept(visitor);
+    }
     for (const auto& memberInitializer : memberInitializers)
     {
         memberInitializer->Load(emitter, OperationFlags::defaultInit, GetSourcePos(), context);
@@ -295,17 +339,35 @@ void BoundDtorTerminatorNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
+void BoundDtorTerminatorNode::SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_)
+{
+    setVPtrStatement.reset(setVPtrStatement_);
+}
+
 void BoundDtorTerminatorNode::AddMemberTerminator(BoundFunctionCallNode* memberTerminator)
 {
     memberTerminators.push_back(std::unique_ptr<BoundFunctionCallNode>(memberTerminator));
 }
 
-void BoundDtorTerminatorNode::GenerateCode(Emitter& emitter, Context* context)
+void BoundDtorTerminatorNode::GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context)
 {
+    if (setVPtrStatement)
+    {
+        setVPtrStatement->Accept(visitor);
+    }
     for (const auto& memberTerminator : memberTerminators)
     {
-        memberTerminator->Load(emitter, OperationFlags::defaultInit, GetSourcePos(), context);
+        memberTerminator->Load(emitter, OperationFlags::none, GetSourcePos(), context);
     }
+}
+
+BoundClassNode::BoundClassNode(ClassTypeSymbol* cls_, const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundClassNode, sourcePos_), cls(cls_)
+{
+}
+
+void BoundClassNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 BoundFunctionNode::BoundFunctionNode(FunctionDefinitionSymbol* functionDefinitionSymbol_, const soul::ast::SourcePos& sourcePos_) :
@@ -586,6 +648,16 @@ void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_)
     expr.reset(expr_);
 }
 
+BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, const soul::ast::SourcePos& sourcePos_) : 
+    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, sourcePos_), thisPtr(thisPtr_)
+{
+}
+
+void BoundSetVPtrStatementNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 BoundLiteralNode::BoundLiteralNode(Value* value_, const soul::ast::SourcePos& sourcePos_) : 
     BoundExpressionNode(BoundNodeKind::boundLiteralNode, sourcePos_, value_->GetType()), value(value_)
 {
@@ -827,7 +899,12 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
 
 BoundExpressionNode* BoundVariableNode::Clone() const
 {
-    return new BoundVariableNode(variable, GetSourcePos());
+    BoundVariableNode* clone = new BoundVariableNode(variable, GetSourcePos());
+    if (thisPtr)
+    {
+        clone->SetThisPtr(thisPtr->Clone());
+    }
+    return clone;
 }
 
 bool BoundVariableNode::IsBoundLocalVariable() const 

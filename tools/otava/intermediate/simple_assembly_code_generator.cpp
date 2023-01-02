@@ -66,22 +66,35 @@ void SimpleAssemblyCodeGenerator::Visit(GlobalVariable& globalVariable)
     Type* type = globalVariable.GetType(); 
     if (type->IsBytePtrType())
     {
-        PointerType* pointerType = static_cast<PointerType*>(type);
-        Type* baseType = pointerType->BaseType();
-        otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), baseType->DataInstruction());
-        DataItemAdder adder(context, variable);
-        globalVariable.Initializer()->Accept(adder);
-        file.GetDataSection().AddData(variable);
+        if (globalVariable.Initializer())
+        {
+            PointerType* pointerType = static_cast<PointerType*>(type);
+            Type* baseType = pointerType->BaseType();
+            otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), baseType->DataInstruction());
+            file.GetDeclarationSection().AddPublicDataDeclaration(new otava::assembly::PublicDataDeclaration(globalVariable.Name()));
+            DataItemAdder adder(context, variable);
+            globalVariable.Initializer()->Accept(adder);
+            file.GetDataSection().AddData(variable);
+        }
+        else
+        {
+            file.GetDeclarationSection().AddExternalDataDeclaration(new otava::assembly::ExternalDataDeclaration(globalVariable.Name()));
+        }
     }
     else
     {
-        otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), type->DataInstruction());
-        DataItemAdder adder(context, variable);
         if (globalVariable.Initializer())
         {
+            otava::assembly::Data* variable = new otava::assembly::Data(globalVariable.Name(), type->DataInstruction());
+            file.GetDeclarationSection().AddPublicDataDeclaration(new otava::assembly::PublicDataDeclaration(globalVariable.Name()));
+            DataItemAdder adder(context, variable);
             globalVariable.Initializer()->Accept(adder);
+            file.GetDataSection().AddData(variable);
         }
-        file.GetDataSection().AddData(variable);
+        else
+        {
+            file.GetDeclarationSection().AddExternalDataDeclaration(new otava::assembly::ExternalDataDeclaration(globalVariable.Name()));
+        }
     }
 }
 

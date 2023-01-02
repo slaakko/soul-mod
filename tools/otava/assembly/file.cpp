@@ -13,14 +13,24 @@ namespace otava::assembly {
 
 void DeclarationSection::AddFunctionDeclaration(FunctionDeclaration* declaration)
 {
-    declarations.push_back(std::unique_ptr<FunctionDeclaration>(declaration));
+    declarations.push_back(std::unique_ptr<Declaration>(declaration));
+}
+
+void DeclarationSection::AddPublicDataDeclaration(PublicDataDeclaration* declaration)
+{
+    declarations.push_back(std::unique_ptr<Declaration>(declaration));
+}
+
+void DeclarationSection::AddExternalDataDeclaration(ExternalDataDeclaration* declaration)
+{
+    declarations.push_back(std::unique_ptr<Declaration>(declaration));
 }
 
 void DeclarationSection::Write(util::CodeFormatter& formatter)
 {
-    for (const auto& functionDeclaration : declarations)
+    for (const auto& declaration : declarations)
     {
-        functionDeclaration->Write(formatter);
+        declaration->Write(formatter);
     }
     formatter.WriteLine();
 }
