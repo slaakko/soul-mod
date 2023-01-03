@@ -648,8 +648,8 @@ void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_)
     expr.reset(expr_);
 }
 
-BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, const soul::ast::SourcePos& sourcePos_) : 
-    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, sourcePos_), thisPtr(thisPtr_)
+BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, const soul::ast::SourcePos& sourcePos_) :
+    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, sourcePos_), thisPtr(thisPtr_), forClass(forClass_)
 {
 }
 

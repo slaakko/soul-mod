@@ -440,11 +440,13 @@ private:
 class BoundSetVPtrStatementNode : public BoundStatementNode
 {
 public:
-    BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, const soul::ast::SourcePos& sourcePos_);
+    BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* ThisPtr() const { return thisPtr.get(); }
+    ClassTypeSymbol* GetClass() const { return forClass; }
 private:
     std::unique_ptr<BoundExpressionNode> thisPtr;
+    ClassTypeSymbol* forClass;
 };
 
 class BoundLiteralNode : public BoundExpressionNode

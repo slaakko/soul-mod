@@ -911,7 +911,7 @@ Value* Data::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const st
     {
         GlobalVariable* globalVariable = it->second;
         Type* type = nullptr;
-        if (globalVariable->Initializer()->IsStringValue())
+        if (globalVariable->Initializer() && globalVariable->Initializer()->IsStringValue())
         {
             type = globalVariable->GetType();
         }

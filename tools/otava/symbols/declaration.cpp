@@ -647,12 +647,12 @@ Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context)
 int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, Context* context)
 {
     int scopes = 0;
-    DeclarationProcessor processor(context);
-    processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
     if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
         context->GetSymbolTable()->CurrentScope()->PopParentScope();
     }
+    DeclarationProcessor processor(context);
+    processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
     std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
     if (declarationList->declarations.size() == 1)
     {
@@ -662,99 +662,46 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
             FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declaration.declarator.get());
             FunctionQualifiers qualifiers = functionDeclarator->GetFunctionQualifiers();
             FunctionKind kind = functionDeclarator->GetFunctionKind();
-            Symbol* symbol = context->GetSymbolTable()->Lookup(functionDeclarator->Name(), SymbolGroupKind::functionSymbolGroup, declarator->GetSourcePos(), context, 
-                LookupFlags::dontResolveSingle);
-            if (symbol)
+            std::vector<TypeSymbol*> parameterTypes;
+            for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
             {
-                if (symbol->IsFunctionGroupSymbol())
-                {
-                    FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
-                    std::vector<TypeSymbol*> parameterTypes;
-                    for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
-                    {
-                        parameterTypes.push_back(parameterDeclaration.type);
-                    }
-                    FunctionSymbol* functionSymbol = functionGroup->ResolveFunction(parameterTypes, qualifiers);
-                    FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                        parameterTypes, qualifiers, kind, declarator, functionSymbol, context);
-                    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
-                    {
-                        context->SetSpecialization(definition);
-                    }
-                    for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
-                    {
-                        soul::ast::SourcePos sourcePos;
-                        std::u32string name;
-                        otava::ast::Node* node = nullptr;
-                        if (parameterDeclaration.declarator)
-                        {
-                            name = parameterDeclaration.declarator->Name();
-                            node = parameterDeclaration.declarator->Node();
-                            sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
-                        }
-                        TypeSymbol* parameterType = MapType(definition, parameterDeclaration.type, context);
-                        ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
-                        if (parameterDeclaration.value)
-                        {
-                            parameter->SetDefaultValue(parameterDeclaration.value);
-                        }
-                        definition->AddParameter(parameter, sourcePos, context);
-                    }
-                    TypeSymbol* returnType = MapType(definition, declaration.type, context);
-                    definition->SetReturnType(returnType, context);
-                    context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); 
-                    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
-                    {
-                        definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
-                    }
-                    ++scopes;
-                    BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
-                    context->PushBoundFunction(boundFunctionNode);
-                }
+                parameterTypes.push_back(parameterDeclaration.type);
             }
-            else
+            FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
+                parameterTypes, qualifiers, kind, declarator, context);
+            if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
             {
-                std::vector<TypeSymbol*> parameterTypes;
-                for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
-                {
-                    parameterTypes.push_back(parameterDeclaration.type);
-                }
-                FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                    parameterTypes, qualifiers, kind, declarator, nullptr, context);
-                if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
-                {
-                    context->SetSpecialization(definition);
-                }
-                for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
-                {
-                    soul::ast::SourcePos sourcePos;
-                    std::u32string name;
-                    otava::ast::Node* node = nullptr;
-                    if (parameterDeclaration.declarator)
-                    {
-                        name = parameterDeclaration.declarator->Name();
-                        node = parameterDeclaration.declarator->Node();
-                        sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
-                    }
-                    TypeSymbol* parameterType = MapType(definition, parameterDeclaration.type, context);
-                    ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
-                    if (parameterDeclaration.value)
-                    {
-                        parameter->SetDefaultValue(parameterDeclaration.value);
-                    }
-                    definition->AddParameter(parameter, sourcePos, context);
-                }
-                TypeSymbol* returnType = MapType(definition, declaration.type, context);
-                definition->SetReturnType(returnType, context);
-                context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context); 
-                if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
-                {
-                    definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
-                }
-                ++scopes;
-                BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
-                context->PushBoundFunction(boundFunctionNode);
+                context->SetSpecialization(definition);
             }
+            for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
+            {
+                soul::ast::SourcePos sourcePos;
+                std::u32string name;
+                otava::ast::Node* node = nullptr;
+                if (parameterDeclaration.declarator)
+                {
+                    name = parameterDeclaration.declarator->Name();
+                    node = parameterDeclaration.declarator->Node();
+                    sourcePos = parameterDeclaration.declarator->Node()->GetSourcePos();
+                }
+                TypeSymbol* parameterType = MapType(definition, parameterDeclaration.type, context);
+                ParameterSymbol* parameter = context->GetSymbolTable()->CreateParameter(name, node, parameterType, context);
+                if (parameterDeclaration.value)
+                {
+                    parameter->SetDefaultValue(parameterDeclaration.value);
+                }
+                definition->AddParameter(parameter, sourcePos, context);
+            }
+            TypeSymbol* returnType = MapType(definition, declaration.type, context);
+            definition->SetReturnType(returnType, context);
+            context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context);
+            if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
+            {
+                definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
+            }
+            ++scopes;
+            BoundFunctionNode* boundFunctionNode = new BoundFunctionNode(definition, declarator->GetSourcePos());
+            context->PushBoundFunction(boundFunctionNode);
         }
     }
     else
@@ -779,22 +726,6 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
             ClassTypeSymbol* classType = functionDefinitionSymbol->ParentClassType();
             if (classType)
             {
-                Symbol* sym = classType->GetScope()->Lookup(functionDefinitionSymbol->Name(), 
-                    SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
-                if (sym && sym->IsFunctionGroupSymbol())
-                {
-                    FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(sym);
-                    std::vector<TypeSymbol*> parameterTypes;
-                    for (const auto& param : functionDefinitionSymbol->Parameters())
-                    {
-                        parameterTypes.push_back(param->GetType());
-                    }
-                    FunctionSymbol* declaration = functionGroup->ResolveFunction(parameterTypes, functionDefinitionSymbol->Qualifiers());
-                    if (declaration)
-                    {
-                        functionDefinitionSymbol->SetDeclaration(declaration);
-                    }
-                }
                 int32_t functionIndex = 0;
                 SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
                 if (specialFunctionKind != SpecialFunctionKind::none)

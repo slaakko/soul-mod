@@ -1189,9 +1189,13 @@ void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol
 }
 
 FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes,
-    FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, FunctionSymbol* declaration, Context* context)
+    FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, Context* context)
 {
     std::u32string groupName = name;
+    if (scope->GetSymbol()->Name() == name)
+    {
+        kind = FunctionKind::constructor;
+    }
     if (kind == FunctionKind::constructor)
     {
         groupName = U"@constructor";
@@ -1215,9 +1219,10 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
     MapNode(node, functionDefinition, MapKind::nodeToSymbol);
     functionDefinition->SetFunctionKind(kind);
     functionDefinition->SetFunctionQualifiers(qualifiers);
-    functionDefinition->SetDeclaration(declaration);
+    FunctionSymbol* declaration = functionGroup->ResolveFunction(parameterTypes, qualifiers);
     if (declaration)
     {
+        functionDefinition->SetDeclaration(declaration);
         functionDefinition->SetAccess(declaration->GetAccess());
     }
     if (context->MemFunDefSymbolIndex() != -1)

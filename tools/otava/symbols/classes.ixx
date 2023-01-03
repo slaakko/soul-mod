@@ -146,7 +146,6 @@ private:
     std::vector<FunctionSymbol*> vtab;
     int32_t vtabSize;
     int32_t vptrIndex;
-    otava::intermediate::Value* vtabVariable;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

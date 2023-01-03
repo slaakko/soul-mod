@@ -315,7 +315,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
     otava::intermediate::Value* arrayValue = emitter.EmitArrayValue(elements);
     std::string vtabName = cls->VTabName(&context);
     otava::intermediate::Value* vtabVariable = emitter.EmitGlobalVariable(arrayType, vtabName, arrayValue);
-    cls->SetVTabVariable(vtabVariable);
+    emitter.SetVTabVariable(cls, vtabVariable);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
@@ -752,8 +752,9 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
     {
         otava::symbols::ClassTypeSymbol* classType = static_cast<otava::symbols::ClassTypeSymbol*>(thisPtrType);
         int32_t vptrIndex = classType->VPtrIndex();
+        otava::symbols::ClassTypeSymbol* forClass = node.GetClass();
         otava::intermediate::Value* ptr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrIndex));
-        otava::intermediate::Value* vptr = emitter.EmitBitcast(classType->GetVTabVariable(emitter, &context), emitter.MakePtrType(emitter.GetVoidType()));
+        otava::intermediate::Value* vptr = emitter.EmitBitcast(forClass->GetVTabVariable(emitter, &context), emitter.MakePtrType(emitter.GetVoidType()));
         emitter.EmitStore(vptr, ptr);
     }
 }

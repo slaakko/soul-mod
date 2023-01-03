@@ -103,8 +103,7 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     currentFunctionIndex(1),
     specializationId(),
     vtabSize(0),
-    vptrIndex(-1),
-    vtabVariable(nullptr)
+    vptrIndex(-1)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -119,8 +118,7 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) 
     currentFunctionIndex(1),
     specializationId(),
     vtabSize(0),
-    vptrIndex(-1),
-    vtabVariable(nullptr)
+    vptrIndex(-1)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -445,11 +443,6 @@ std::string ClassTypeSymbol::VTabName(Context* context) const
     return vtabName;
 }
 
-void ClassTypeSymbol::SetVTabVariable(otava::intermediate::Value* vtabVariable_)
-{
-    vtabVariable = vtabVariable_;
-}
-
 otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const
 {
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
@@ -459,11 +452,13 @@ otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const
 
 otava::intermediate::Value* ClassTypeSymbol::GetVTabVariable(Emitter& emitter, Context* context)
 {
+    otava::intermediate::Value* vtabVariable = emitter.GetVTabVariable(this);
     if (!vtabVariable)
     {
         otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
         otava::intermediate::Type* arrayType = emitter.MakeArrayType(vtabSize * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
         vtabVariable = emitter.EmitGlobalVariable(arrayType, VTabName(context), nullptr);
+        emitter.SetVTabVariable(this, vtabVariable);
     }
     return vtabVariable;
 }
@@ -1077,7 +1072,7 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
-                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classTypeSymbol, sourcePos);
                 body->AddStatement(setVPtrStatement);
             }
             else
@@ -1087,7 +1082,7 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
         }
         else
         {
-            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classTypeSymbol, sourcePos);
             body->AddStatement(setVPtrStatement);
         }
     }

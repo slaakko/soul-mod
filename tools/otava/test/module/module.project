@@ -1,0 +1,7 @@
+project module;
+target=program;
+interface <class.ixx>;
+source <class.cpp>;
+interface <derived.ixx>;
+source <derived.cpp>;
+source <user.cpp>;

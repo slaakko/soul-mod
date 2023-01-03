@@ -107,12 +107,15 @@ public:
     void SetType(const util::uuid& id, otava::intermediate::Type* type);
     otava::intermediate::Value* GetIrObject(void* symbol) const;
     void SetIrObject(void* symbol, otava::intermediate::Value* irObject);
+    otava::intermediate::Value* GetVTabVariable(void* cls) const;
+    void SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable);
     IrValueStack& Stack() { return *stack; }
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;
     std::map<util::uuid, otava::intermediate::Type*> typeMap;
     std::map<void*, otava::intermediate::Value*> irObjectMap;
+    std::map<void*, otava::intermediate::Value*> vtabVariableMap;
 };
 
 } // namespace otava::symbols

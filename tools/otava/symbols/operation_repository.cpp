@@ -928,7 +928,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
-                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classType, sourcePos);
                 boundFunction->Body()->AddStatement(setVPtrStatement);
             }
             else
@@ -938,7 +938,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         }
         else
         {
-            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, sourcePos);
             boundFunction->Body()->AddStatement(setVPtrStatement);
         }
     }
@@ -1067,7 +1067,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
-                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classType, sourcePos);
                 boundFunction->Body()->AddStatement(setVPtrStatement);
             }
             else
@@ -1077,7 +1077,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         }
         else
         {
-            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, sourcePos);
             boundFunction->Body()->AddStatement(setVPtrStatement);
         }
     }
@@ -1216,7 +1216,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
-                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos);
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classType, sourcePos);
                 boundFunction->Body()->AddStatement(setVPtrStatement);
             }
             else
@@ -1226,7 +1226,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         }
         else
         {
-            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, sourcePos);
+            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, sourcePos);
             boundFunction->Body()->AddStatement(setVPtrStatement);
         }
     }

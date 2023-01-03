@@ -248,14 +248,14 @@ void StatementBinder::GenerateSetVPtrStatement(const soul::ast::SourcePos& sourc
     {
         ThrowException("vptr holder class not found", sourcePos, context);
     }
-    if (vptrHolderClass != classTypeSymbol)
+    if (vptrHolderClass != currentClass)
     {
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
         if (conversion)
         {
             BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
-            setVPtrStatement.reset(new BoundSetVPtrStatementNode(thisPtrConverted, sourcePos));
+            setVPtrStatement.reset(new BoundSetVPtrStatementNode(thisPtrConverted, currentClass, sourcePos));
         }
         else
         {
@@ -264,7 +264,7 @@ void StatementBinder::GenerateSetVPtrStatement(const soul::ast::SourcePos& sourc
     }
     else
     {
-        setVPtrStatement.reset(new BoundSetVPtrStatementNode(thisPtr, sourcePos));
+        setVPtrStatement.reset(new BoundSetVPtrStatementNode(thisPtr, currentClass, sourcePos));
     }
 }
 

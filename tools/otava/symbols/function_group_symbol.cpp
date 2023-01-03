@@ -132,7 +132,7 @@ FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbo
     {
         if (function->Arity() == parameterTypes.size())
         {
-            bool found = qualifiers == function->Qualifiers();
+            bool found = (qualifiers & FunctionQualifiers::isConst) == (function->Qualifiers() & FunctionQualifiers::isConst);
             if (found)
             {
                 for (int i = 0; i < function->Arity(); ++i)

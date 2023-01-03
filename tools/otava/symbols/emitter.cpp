@@ -521,4 +521,22 @@ void Emitter::SetIrObject(void* symbol, otava::intermediate::Value* irObject)
     irObjectMap[symbol] = irObject;
 }
 
+otava::intermediate::Value* Emitter::GetVTabVariable(void* cls) const
+{
+    auto it = vtabVariableMap.find(cls);
+    if (it != vtabVariableMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+void Emitter::SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable)
+{
+    vtabVariableMap[cls] = vtabVariable;
+}
+
 } // namespace otava::symbols
