@@ -33,7 +33,7 @@ enum class Linkage : int32_t
 
 enum class FunctionQualifiers : int32_t
 {
-    none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isDefault = 1 << 4, isDeleted = 1 << 5
+    none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isPure = 1 << 4, isDefault = 1 << 5, isDeleted = 1 << 6
 };
 
 enum class ConversionKind : int32_t;
@@ -153,6 +153,7 @@ public:
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
     virtual bool IsVirtual() const;
+    virtual bool IsPure() const;
     void SetVirtual();
     virtual bool IsOverride() const;
     void SetOverride();
@@ -209,6 +210,7 @@ public:
     int32_t DefIndex() const { return defIndex; }
     void SetDefIndex(int32_t defIndex_) { defIndex = defIndex_; }
     bool IsVirtual() const override;
+    bool IsPure() const override;
     bool IsOverride() const override;
     int32_t VTabIndex() const override;
 private:

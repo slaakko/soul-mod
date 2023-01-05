@@ -26,6 +26,7 @@ public:
     std::string SymbolDocKindStr() const override { return "specialization"; }
     TypeSymbol* ClassTemplate() const { return classTemplate; }
     void SetClassTemplate(TypeSymbol* classTemplate_);
+    const std::u32string& SimpleName() const override { return ClassTemplate()->SimpleName(); }
     std::string IrName(Context* context) const override;
     const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
     void AddTemplateArgument(Symbol* templateArgument);

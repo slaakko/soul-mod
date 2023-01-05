@@ -48,7 +48,6 @@ void CompoundTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     baseType = symbolTable.GetType(baseTypeId);
-    //SetSymbolTable(&symbolTable);
 }
 
 void CompoundTypeSymbol::Accept(Visitor& visitor)
@@ -59,6 +58,44 @@ void CompoundTypeSymbol::Accept(Visitor& visitor)
 int CompoundTypeSymbol::PointerCount() const
 {
     return otava::symbols::PointerCount(GetDerivations());
+}
+
+std::string CompoundTypeSymbol::IrName(Context* context) const
+{
+    std::string irName = baseType->IrName(context);
+    irName.append(1, '_');
+    for (const auto& derivation : derivations.vec)
+    {
+        switch (derivation)
+        {
+            case Derivation::constDerivation:
+            {
+                irName.append(1, 'C');
+                break;
+            }
+            case Derivation::volatileDerivation:
+            {
+                irName.append(1, 'V');
+                break;
+            }
+            case Derivation::lvalueRefDerivation:
+            {
+                irName.append(1, 'L');
+                break;
+            }
+            case Derivation::rvalueRefDerivation:
+            {
+                irName.append(1, 'R');
+                break;
+            }
+            case Derivation::pointerDerivation:
+            {
+                irName.append(1, 'P');
+                break;
+            }
+        }
+    }
+    return irName;
 }
 
 TypeSymbol* CompoundTypeSymbol::RemoveDerivations(const Derivations& sourceDerivations, Context* context) 

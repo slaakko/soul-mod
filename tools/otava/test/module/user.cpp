@@ -4,7 +4,7 @@ import drv;
 
 void test()
 {
-    ns::Class* c = new ns::Derived(10);
+    ns::Class* c = new ns::Derived(10, 20);
     c->Foo();
     c->Bar();
 }

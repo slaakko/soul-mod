@@ -149,6 +149,11 @@ FunctionType* Context::GetFunctionType(const SourcePos& sourcePos, int32_t typeI
     return types->GetFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
 }
 
+FwdDeclaredStructureType* Context::GetFwdDeclaredStructureType(const util::uuid& id, int32_t typeId)
+{
+    return types->GetFwdDeclaredStructureType(id, typeId);
+}
+
 GlobalVariable* Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once)
 {
     return data->AddGlobalVariable(sourcePos, type, variableName, initializer, once, this);

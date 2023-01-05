@@ -1,4 +1,8 @@
-import std.core;
+export module std.rb_tree;
+
+import std.type.fundamental;
+
+export namespace std {
 
 enum class rb_node_color
 {
@@ -24,23 +28,4 @@ private:
     rb_node_color color;
 };
 
-rb_node_base::rb_node_base(rb_node_base* parent_) : parent(parent_), left(nullptr), right(nullptr), color(rb_node_color::black)
-{
-}
-
-rb_node_base::~rb_node_base()
-{
-    if (left && left != this)
-    {
-        delete left;
-    }
-    if (right && right != this)
-    {
-        delete right;
-    }
-}
-
-int main()
-{
-    return 0;
-}
+} // namespace std

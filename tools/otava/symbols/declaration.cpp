@@ -768,12 +768,12 @@ void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context)
 
 void Write(Writer& writer, DeclarationFlags flags)
 {
-    writer.GetBinaryStreamWriter().WriteULEB128UInt(static_cast<uint32_t>(flags));
+    writer.GetBinaryStreamWriter().Write(static_cast<int32_t>(flags));
 }
 
 void Read(Reader& reader, DeclarationFlags& flags)
 {
-    flags = static_cast<DeclarationFlags>(reader.GetBinaryStreamReader().ReadULEB128UInt());
+    flags = static_cast<DeclarationFlags>(reader.GetBinaryStreamReader().ReadInt());
 }
 
 void ThrowDeclarationParsingError(const soul::ast::SourcePos& sourcePos, Context* context)

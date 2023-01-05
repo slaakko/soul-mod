@@ -69,10 +69,10 @@ enum class BoundNodeKind
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode, boundSetVPtrStatementNode,
     boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
-    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundExpressionListNode,
+    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
-    boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode,
+    boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -94,6 +94,7 @@ public:
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
     bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
     bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
+    bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
     int Index() const { return index; }
     void SetIndex(int index_) { index = index_; }
 private:
@@ -191,6 +192,7 @@ public:
     BoundDtorTerminatorNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_);
+    BoundStatementNode* GetSetVPtrStatement() const { return setVPtrStatement.get(); }
     void AddMemberTerminator(BoundFunctionCallNode* memberTerminator);
     void GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context);
 private:
@@ -575,6 +577,15 @@ private:
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
 };
 
+class BoundEmptyFunctionCallNode : public BoundExpressionNode
+{
+public:
+    BoundEmptyFunctionCallNode(const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
+};
+
 class BoundExpressionSequenceNode : public BoundExpressionNode
 {
 public:
@@ -772,6 +783,15 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
 private:
     VariableSymbol* globalVariable;
+};
+
+class BoundEmptyDestructorNode : public BoundExpressionNode
+{
+public:
+    BoundEmptyDestructorNode(const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
 };
 
 } // namespace otava::symbols

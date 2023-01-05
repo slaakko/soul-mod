@@ -5207,7 +5207,12 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, ota
         }
         if (match.hit)
         {
+            bool virtualSeen = context->GetFlag(otava::symbols::ContextFlags::virtualSeen);
             context->PopFlags();
+            if (virtualSeen)
+            {
+                context->SetFlag(otava::symbols::ContextFlags::virtualSeen);
+            }
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DeclSpecifierSeq");
@@ -5796,6 +5801,7 @@ soul::parser::Match DeclarationParser<Lexer>::FunctionSpecifier(Lexer& lexer, ot
                 }
                 if (match.hit)
                 {
+                    context->SetFlag(otava::symbols::ContextFlags::virtualSeen);
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "FunctionSpecifier");

@@ -669,9 +669,10 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
     for (const auto& [scope, lookup] : scopeLookups)
     {
         Scope* scp = scope;
-        if (scp->IsClassScope())
+        Scope* classScope = scp->GetClassScope();
+        if (classScope)
         {
-            Symbol* symbol = scope->GetSymbol();
+            Symbol* symbol = classScope->GetSymbol();
             if (symbol->IsClassTemplateSpecializationSymbol())
             {
                 ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(symbol);
@@ -1154,10 +1155,6 @@ void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::N
 
 FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context)
 {
-    if (name == U"to_string")
-    {
-        int x = 0;
-    }
     std::u32string groupName = name;
     if (kind == FunctionKind::constructor)
     {
@@ -1192,7 +1189,8 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
     FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, Context* context)
 {
     std::u32string groupName = name;
-    if (scope->GetSymbol()->Name() == name)
+    Symbol* containerSymbol = scope->SymbolScope()->GetSymbol();
+    if (containerSymbol && containerSymbol->SimpleName() == name)
     {
         kind = FunctionKind::constructor;
     }

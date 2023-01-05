@@ -10,6 +10,7 @@ import soul.ast.source.pos;
 import soul.lexer.base;
 import soul.lexer.file.map;
 import otava.assembly.context;
+import util.uuid;
 
 export namespace otava::intermediate::context {}
 
@@ -28,6 +29,7 @@ class Function;
 class StructureType;
 class ArrayType;
 class FunctionType;
+class FwdDeclaredStructureType;
 class MetadataStruct;
 class MetadataBool;
 class MetadataLong;
@@ -72,6 +74,7 @@ public:
     StructureType* GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     ArrayType* GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
     FunctionType* GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id, int32_t typeId);
     GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once);
     GlobalVariable* GetGlobalVariableForString(otava::intermediate::Value* stringValue);
     void ResolveTypes();

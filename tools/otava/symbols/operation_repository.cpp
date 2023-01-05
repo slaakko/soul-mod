@@ -119,7 +119,12 @@ void PointerCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpression
     {
         emitter.Stack().Dup();
     }
-    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    OperationFlags storeFlags = OperationFlags::none;
+    if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+    {
+        storeFlags = storeFlags | OperationFlags::deref;
+    }
+    args[0]->Store(emitter, storeFlags, sourcePos, context);
 }
 
 class PointerCopyCtorOperation : public Operation
@@ -186,7 +191,12 @@ void PointerMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpression
     args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
     otava::intermediate::Value* rvalueRefValue = emitter.Stack().Pop();
     emitter.Stack().Push(emitter.EmitLoad(rvalueRefValue));
-    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    OperationFlags storeFlags = OperationFlags::none;
+    if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+    {
+        storeFlags = storeFlags | OperationFlags::deref;
+    }
+    args[0]->Store(emitter, storeFlags, sourcePos, context);
 }
 
 class PointerMoveCtorOperation : public Operation

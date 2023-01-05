@@ -769,6 +769,7 @@ void AddFundamentalTypeOperationsToSymbolTable(Context* context)
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveCtor(boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeCopyAssignment(boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeMoveAssignment(boolType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeEqualOperation(boolType, boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new TrivialDestructor(boolType, context), context);
     TypeSymbol* charType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::charType);
     TypeSymbol* signedCharType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::signedCharType);

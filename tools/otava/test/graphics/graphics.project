@@ -1,0 +1,3 @@
+project graphics;
+target=program;
+source <graphics.cpp>;

@@ -110,6 +110,11 @@ otava::intermediate::Type* Emitter::MakeArrayType(int64_t size, otava::intermedi
     return context->GetArrayType(soul::ast::SourcePos(), context->NextTypeId(), size, elementTypeRef);
 }
 
+otava::intermediate::Type* Emitter::MakeFwdDeclaredStructureType(const util::uuid& uuid)
+{
+    return context->GetFwdDeclaredStructureType(uuid, context->NextTypeId());
+}
+
 otava::intermediate::Type* Emitter::GetVoidType()
 {
     return context->GetVoidType();

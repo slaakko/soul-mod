@@ -126,6 +126,7 @@ public:
     void Visit(otava::ast::VolatileNode& node) override;
     void Visit(otava::ast::FinalNode& node) override;
     void Visit(otava::ast::OverrideNode& node) override;
+    void Visit(otava::ast::PureSpecifierNode& node) override;
     void Visit(otava::ast::LvalueRefNode& node) override;
     void Visit(otava::ast::RvalueRefNode& node) override;
     void Visit(otava::ast::PtrNode& node) override;
@@ -307,6 +308,12 @@ void DeclaratorProcessor::Visit(otava::ast::FinalNode& node)
 {
     if (!trailingQualifiers) return;
     qualifiers = qualifiers | FunctionQualifiers::isFinal;
+}
+
+void DeclaratorProcessor::Visit(otava::ast::PureSpecifierNode& node)
+{
+    if (!trailingQualifiers) return;
+    qualifiers = qualifiers | FunctionQualifiers::isPure;
 }
 
 void DeclaratorProcessor::Visit(otava::ast::OverrideNode& node)

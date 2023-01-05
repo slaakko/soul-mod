@@ -18,13 +18,15 @@ import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.value;
 import otava.symbols.visitor;
+import otava.symbols.function.group.symbol;
+import otava.symbols.fundamental.type.operation;
 import otava.symbols.evaluator;
 import otava.symbols.fundamental.type.symbol;
 
 namespace otava::symbols {
 
-EnumeratedTypeSymbol::EnumeratedTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::enumTypeSymbol, name_), underlyingType(nullptr), kind(EnumTypeKind::enum_),
-    underlyingTypeId()
+EnumeratedTypeSymbol::EnumeratedTypeSymbol(const std::u32string& name_) : 
+    TypeSymbol(SymbolKind::enumTypeSymbol, name_), bound(false), underlyingType(nullptr), kind(EnumTypeKind::enum_), underlyingTypeId()
 {
     GetScope()->SetKind(ScopeKind::enumerationScope);
 }
@@ -46,6 +48,7 @@ bool EnumeratedTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 void EnumeratedTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(bound);
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(kind));
     bool hasUnderlyingType = underlyingType != nullptr;
     writer.GetBinaryStreamWriter().Write(hasUnderlyingType);
@@ -58,6 +61,7 @@ void EnumeratedTypeSymbol::Write(Writer& writer)
 void EnumeratedTypeSymbol::Read(Reader& reader)
 {
     TypeSymbol::Read(reader);
+    bound = reader.GetBinaryStreamReader().ReadBool();
     kind = static_cast<EnumTypeKind>(reader.GetBinaryStreamReader().ReadByte());
     bool hasUnderlyingType = reader.GetBinaryStreamReader().ReadBool();
     if (hasUnderlyingType)
@@ -219,7 +223,7 @@ EnumeratedTypeSymbol* EnumConstantSymbol::GetType() const
     return nullptr;
 }
 
-bool EnumTypeLess::operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const
+bool EnumTypeLessFunctor::operator()(EnumeratedTypeSymbol* left, EnumeratedTypeSymbol* right) const
 {
     return left->Name() < right->Name();
 }
@@ -415,12 +419,15 @@ void AddEnumerators(otava::ast::Node* node, Context* context)
 
 void EndEnumType(otava::ast::Node* node, Context* context)
 {
-    if (!context->GetSymbolTable()->CurrentScope()->GetSymbol()->IsEnumeratedTypeSymbol())
+    Symbol* currentSymbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
+    if (!currentSymbol->IsEnumeratedTypeSymbol())
     {
         ThrowException("cpp20.symbols.enums: EndEnumeratedType(): enum scope expected", node->GetSourcePos(), context);
     }
+    EnumeratedTypeSymbol* enumType = static_cast<EnumeratedTypeSymbol*>(currentSymbol);
     context->GetSymbolTable()->EndEnumeratedType();
     context->GetSymbolTable()->EndScope();
+    BindEnumType(enumType, node->GetSourcePos(), context);
 }
 
 void ProcessEnumForwardDeclaration(otava::ast::Node* node, Context* context)
@@ -428,6 +435,395 @@ void ProcessEnumForwardDeclaration(otava::ast::Node* node, Context* context)
     EnumCreator creator(context, true, false);
     node->Accept(creator);
     context->GetSymbolTable()->EndScope();
+}
+
+EnumTypeDefaultCtor::EnumTypeDefaultCtor(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeDefaultCtor, name_), enumType(nullptr)
+{
+}
+
+EnumTypeDefaultCtor::EnumTypeDefaultCtor(EnumeratedTypeSymbol* enumType_, Context* context) : FunctionSymbol(SymbolKind::enumTypeDefaultCtor, U"@constructor"), enumType(enumType_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+}
+
+void EnumTypeDefaultCtor::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
+}
+
+void EnumTypeDefaultCtor::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
+}
+
+void EnumTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
+    else
+    { 
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.enums: enum type expected");
+    }
+}
+
+void EnumTypeDefaultCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    if ((flags & OperationFlags::defaultInit) != OperationFlags::none)
+    {
+        emitter.Stack().Push(enumType->IrType(emitter, sourcePos, context)->DefaultValue());
+        args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    }
+}
+
+EnumTypeCopyCtor::EnumTypeCopyCtor(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeCopyCtor, name_), enumType(nullptr)
+{
+}
+
+EnumTypeCopyCtor::EnumTypeCopyCtor(EnumeratedTypeSymbol* enumType_, Context* context) : FunctionSymbol(SymbolKind::enumTypeCopyCtor, U"@constructor"), enumType(enumType_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+}
+
+void EnumTypeCopyCtor::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
+}
+
+void EnumTypeCopyCtor::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
+}
+
+void EnumTypeCopyCtor::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.enums: enum type expected");
+    }
+}
+
+void EnumTypeCopyCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) 
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    OperationFlags storeFlags = OperationFlags::none;
+    if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+    {
+        storeFlags = storeFlags | OperationFlags::deref;
+    }
+    args[0]->Store(emitter, storeFlags, sourcePos, context);
+}
+
+EnumTypeMoveCtor::EnumTypeMoveCtor(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeMoveCtor, name_), enumType(nullptr)
+{
+}
+
+EnumTypeMoveCtor::EnumTypeMoveCtor(EnumeratedTypeSymbol* enumType_, Context* context) : FunctionSymbol(SymbolKind::enumTypeMoveCtor, U"@constructor"), enumType(enumType_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+}
+
+void EnumTypeMoveCtor::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
+}
+
+void EnumTypeMoveCtor::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
+}
+
+void EnumTypeMoveCtor::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.enums: enum type expected");
+    }
+}
+
+void EnumTypeMoveCtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) 
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* rvalueRefValue = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitLoad(rvalueRefValue));
+    OperationFlags storeFlags = OperationFlags::none;
+    if ((flags & OperationFlags::storeDeref) != OperationFlags::none)
+    {
+        storeFlags = storeFlags | OperationFlags::deref;
+    }
+    args[0]->Store(emitter, storeFlags, sourcePos, context);
+}
+
+EnumTypeCopyAssignment::EnumTypeCopyAssignment(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeCopyAssignment, name_), enumType(nullptr)
+{
+}
+
+EnumTypeCopyAssignment::EnumTypeCopyAssignment(EnumeratedTypeSymbol* enumType_, Context* context) : 
+    FunctionSymbol(SymbolKind::enumTypeCopyAssignment, U"operator="), enumType(enumType_)
+{
+    SetFunctionKind(FunctionKind::special);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType);
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+}
+
+void EnumTypeCopyAssignment::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
+}
+
+void EnumTypeCopyAssignment::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
+}
+
+void EnumTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.enums: enum type expected");
+    }
+}
+
+void EnumTypeCopyAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+    emitter.Stack().Push(context->Ptr());
+}
+
+EnumTypeMoveAssignment::EnumTypeMoveAssignment(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeMoveAssignment, name_), enumType(nullptr)
+{
+}
+
+EnumTypeMoveAssignment::EnumTypeMoveAssignment(EnumeratedTypeSymbol* enumType_, Context* context) : 
+    FunctionSymbol(SymbolKind::enumTypeMoveAssignment, U"operator="), enumType(enumType_)
+{
+    SetFunctionKind(FunctionKind::special);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", enumType->AddPointer(context));
+    AddParameter(thisParam, soul::ast::SourcePos(), context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", enumType->AddRValueRef(context));
+    AddParameter(thatParam, soul::ast::SourcePos(), context);
+}
+
+void EnumTypeMoveAssignment::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
+}
+
+void EnumTypeMoveAssignment::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
+}
+
+void EnumTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.enums: enum type expected");
+    }
+}
+
+void EnumTypeMoveAssignment::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* refValue = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitLoad(refValue));
+    args[0]->Store(emitter, OperationFlags::setPtr, sourcePos, context);
+    emitter.Stack().Push(context->Ptr());
+}
+
+EnumTypeEqual::EnumTypeEqual(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeEqual, name_), enumType(nullptr)
+{
+}
+
+EnumTypeEqual::EnumTypeEqual(EnumeratedTypeSymbol* enumType_, Context* context) : FunctionSymbol(SymbolKind::enumTypeEqual, U"operator=="), enumType(enumType_)
+{
+    SetFunctionKind(FunctionKind::function);
+    SetAccess(Access::public_);
+    ParameterSymbol* leftParam = new ParameterSymbol(U"left", enumType);
+    AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    ParameterSymbol* rightParam = new ParameterSymbol(U"right", enumType);
+    AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
+    SetReturnType(boolType, context);
+}
+
+void EnumTypeEqual::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
+}
+
+void EnumTypeEqual::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
+}
+
+void EnumTypeEqual::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.enums: enum type expected");
+    }
+}
+
+void EnumTypeEqual::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[0]->Load(emitter, flags, sourcePos, context);
+    otava::intermediate::Value* left = emitter.Stack().Pop();
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* right = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitEqual(left, right));
+}
+
+EnumTypeLess::EnumTypeLess(const std::u32string& name_) : FunctionSymbol(SymbolKind::enumTypeLess, name_), enumType(nullptr)
+{
+}
+
+EnumTypeLess::EnumTypeLess(EnumeratedTypeSymbol* enumType_, Context* context) : FunctionSymbol(SymbolKind::enumTypeLess, U"operator<"), enumType(enumType_)
+{
+}
+
+void EnumTypeLess::Write(Writer& writer)
+{
+    FunctionSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(enumType->Id());
+}
+
+void EnumTypeLess::Read(Reader& reader)
+{
+    FunctionSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(enumTypeId);
+}
+
+void EnumTypeLess::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol* type = symbolTable.GetType(enumTypeId);
+    if (type->IsEnumeratedTypeSymbol())
+    {
+        enumType = static_cast<EnumeratedTypeSymbol*>(type);
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("otava.symbols.enums: enum type expected");
+    }
+}
+
+void EnumTypeLess::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[0]->Load(emitter, flags, sourcePos, context);
+    otava::intermediate::Value* left = emitter.Stack().Pop();
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    otava::intermediate::Value* right = emitter.Stack().Pop();
+    emitter.Stack().Push(emitter.EmitLess(left, right));
+}
+
+void BindEnumType(EnumeratedTypeSymbol* enumType, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (enumType->IsBound()) return;
+    enumType->SetBound();
+    FunctionGroupSymbol* constructorGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"@constructor", sourcePos, context);
+    EnumTypeDefaultCtor* enumTypeDefaultCtor = new EnumTypeDefaultCtor(enumType, context);
+    enumType->GetScope()->AddSymbol(enumTypeDefaultCtor, sourcePos, context);
+    constructorGroup->AddFunction(enumTypeDefaultCtor);
+    EnumTypeCopyCtor* enumTypeCopyCtor = new EnumTypeCopyCtor(enumType, context);
+    enumType->GetScope()->AddSymbol(enumTypeCopyCtor, sourcePos, context);
+    constructorGroup->AddFunction(enumTypeCopyCtor);
+    EnumTypeMoveCtor* enumTypeMoveCtor = new EnumTypeMoveCtor(enumType, context);
+    enumType->GetScope()->AddSymbol(enumTypeMoveCtor, sourcePos, context);
+    constructorGroup->AddFunction(enumTypeMoveCtor);
+
+    FunctionGroupSymbol* destructorGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+    TrivialDestructor* trivialDestructor = new TrivialDestructor(enumType, context);
+    enumType->GetScope()->AddSymbol(trivialDestructor, sourcePos, context);
+    destructorGroup->AddFunction(trivialDestructor);
+
+    FunctionGroupSymbol* assignmentGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"operator=", sourcePos, context);
+    EnumTypeCopyAssignment* enumTypeCopyAssignment = new EnumTypeCopyAssignment(enumType, context);
+    enumType->GetScope()->AddSymbol(enumTypeCopyAssignment, sourcePos, context);
+    assignmentGroup->AddFunction(enumTypeCopyAssignment);
+    EnumTypeMoveAssignment* enumTypeMoveAssignment = new EnumTypeMoveAssignment(enumType, context);
+    enumType->GetScope()->AddSymbol(enumTypeMoveAssignment, sourcePos, context);
+    assignmentGroup->AddFunction(enumTypeMoveAssignment);
+
+    FunctionGroupSymbol* equalGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"operator==", sourcePos, context);
+    EnumTypeEqual* enumTypeEqual = new EnumTypeEqual(enumType, context);
+    enumType->GetScope()->AddSymbol(enumTypeEqual, sourcePos, context);
+    equalGroup->AddFunction(enumTypeEqual);
+
+    FunctionGroupSymbol* lessGroup = enumType->GetScope()->GetOrInsertFunctionGroup(U"operator<", sourcePos, context);
+    EnumTypeLess* enumTypeLess = new EnumTypeLess(enumType, context);
+    enumType->GetScope()->AddSymbol(enumTypeLess, sourcePos, context);
+    lessGroup->AddFunction(enumTypeLess);
 }
 
 } // namespace otava::symbols

@@ -540,15 +540,23 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
     otava::intermediate::Type* irType = emitter.GetType(Id());
     if (!irType)
     {
+        irType = emitter.MakeFwdDeclaredStructureType(Id());
+        emitter.SetType(Id(), irType);
         MakeObjectLayout(context);
-        std::vector<otava::intermediate::Type*> elementTypes;
         int n = objectLayout.size();
+        std::vector<otava::intermediate::Type*> elementTypes;
         for (int i = 0; i < n; ++i)
         {
             TypeSymbol* type = objectLayout[i];
             elementTypes.push_back(type->IrType(emitter, sourcePos, context));
         }
-        irType = emitter.MakeStructureType(elementTypes);
+        otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes);
+        if (type->IsStructureType())
+        {
+            otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
+            structureType->ResolveForwardReferences(Id(), emitter.GetIntermediateContext());
+        }
+        irType = type;
         emitter.SetType(Id(), irType);
     }
     return irType;

@@ -39,6 +39,7 @@ class BoundFunctionGroupNode;
 class BoundTypeNode;
 class BoundMemberExprNode;
 class BoundFunctionCallNode;
+class BoundEmptyFunctionCallNode;
 class BoundExpressionSequenceNode;
 class BoundExpressionListNode;
 class BoundConjunctionNode;
@@ -53,6 +54,7 @@ class BoundTemporaryNode;
 class BoundConstructExpressionNode;
 class BoundConstructTemporaryNode;
 class BoundGlobalVariableDefinitionNode;
+class BoundEmptyDestructorNode;
 
 class BoundTreeVisitor
 {
@@ -88,6 +90,7 @@ public:
     virtual void Visit(BoundTypeNode& node) {}
     virtual void Visit(BoundMemberExprNode& node) {}
     virtual void Visit(BoundFunctionCallNode& node) {}
+    virtual void Visit(BoundEmptyFunctionCallNode& node) {}
     virtual void Visit(BoundExpressionSequenceNode& node) {}
     virtual void Visit(BoundExpressionListNode& node) {}
     virtual void Visit(BoundConjunctionNode& node) {}
@@ -102,6 +105,7 @@ public:
     virtual void Visit(BoundConstructTemporaryNode& node) {}
     virtual void Visit(BoundConstructExpressionNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
+    virtual void Visit(BoundEmptyDestructorNode& node) {}
 };
 
 class DefaultBoundTreeVisitor : public BoundTreeVisitor

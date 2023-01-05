@@ -82,8 +82,8 @@ enum class SymbolKind : int32_t
     fundamentalTypeModAssign, fundamentalTypeAndAssign, fundamentalTypeOrAssign, fundamentalTypeXorAssign, fundamentalTypeShlAssign, fundamentalTypeShrAssign,
     fundamentalTypeEqual, fundamentalTypeLess, fundamentalTypeBoolean,
     fundamentalTypeSignExtension, fundamentalTypeZeroExtension, fundamentalTypeTruncate, fundamentalTypeBitcast, fundamentalTypeIntToFloat, fundamentalTypeFloatToInt,
-
     fundamentalTypeDefaultCtor, fundamentalTypeCopyCtor, fundamentalTypeCopyCtorLiteral, fundamentalTypeMoveCtor, fundamentalTypeCopyAssignment, fundamentalTypeMoveAssignment,
+    enumTypeDefaultCtor, enumTypeCopyCtor, enumTypeMoveCtor, enumTypeCopyAssignment, enumTypeMoveAssignment, enumTypeEqual, enumTypeLess,
 
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
@@ -107,6 +107,7 @@ public:
     void SetAccess(Access access_) { access = access_; }
     void SetDeclarationFlags(DeclarationFlags declarationFlags_) { declarationFlags = declarationFlags_; }
     DeclarationFlags GetDeclarationFlags() const { return declarationFlags; }
+    virtual const std::u32string& SimpleName() const { return Name(); }
     virtual int PtrIndex() const { return -1; }
     virtual Scope* GetScope() { return nullptr; }
     virtual Scope* GetGroupScope() { return nullptr; }

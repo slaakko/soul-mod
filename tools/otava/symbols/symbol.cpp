@@ -269,6 +269,13 @@ bool Symbol::CanInstall() const
         case SymbolKind::fundamentalTypeMoveCtor:
         case SymbolKind::fundamentalTypeCopyAssignment:
         case SymbolKind::fundamentalTypeMoveAssignment:
+        case SymbolKind::enumTypeDefaultCtor:
+        case SymbolKind::enumTypeCopyCtor:
+        case SymbolKind::enumTypeMoveCtor:
+        case SymbolKind::enumTypeCopyAssignment:
+        case SymbolKind::enumTypeMoveAssignment:
+        case SymbolKind::enumTypeEqual:
+        case SymbolKind::enumTypeLess:
         case SymbolKind::templateDeclarationSymbol:
         case SymbolKind::typenameConstraintSymbol:
         case SymbolKind::forwardClassDeclarationSymbol:
@@ -363,6 +370,13 @@ bool Symbol::IsFunctionSymbol() const
         case SymbolKind::fundamentalTypeMoveCtor:
         case SymbolKind::fundamentalTypeCopyAssignment:
         case SymbolKind::fundamentalTypeMoveAssignment:
+        case SymbolKind::enumTypeDefaultCtor:
+        case SymbolKind::enumTypeCopyCtor:
+        case SymbolKind::enumTypeMoveCtor:
+        case SymbolKind::enumTypeCopyAssignment:
+        case SymbolKind::enumTypeMoveAssignment:
+        case SymbolKind::enumTypeEqual:
+        case SymbolKind::enumTypeLess:
         {
             return true;
         }

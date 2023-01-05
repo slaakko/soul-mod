@@ -118,6 +118,10 @@ bool Type::IsAggregateType() const
     return false;
 }
 
+void Type::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
+{
+}
+
 Type* Type::AddPointer(Context* context) const
 {
     if (IsPointerType())
@@ -385,6 +389,27 @@ void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
     formatter.Write(" }");
 }
 
+void StructureType::ResolveForwardReferences(const util::uuid& uuid, Context* context)
+{
+    FwdDeclaredStructureType* fwdDeclaredType = context->GetFwdDeclaredStructureType(uuid, -1);
+    int n = FieldCount();
+    for (int i = 0; i < n; ++i)
+    {
+        Type* fieldType = FieldType(i);
+        fieldType->ReplaceForwardReference(fwdDeclaredType, this, context);
+    }
+}
+
+FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& uuid_, int32_t typeId_) :
+    Type(soul::ast::SourcePos(), TypeKind::fwdDeclaredStructureType, typeId_), uuid(uuid_)
+{
+}
+
+void FwdDeclaredStructureType::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 ArrayType::ArrayType(const SourcePos& sourcePos_, int32_t typeId_, int64_t elementCount_, const TypeRef& elementTypeRef_) :
     Type(sourcePos_, TypeKind::arrayType, typeId_), elementCount(elementCount_), elementTypeRef(elementTypeRef_)
 {
@@ -510,6 +535,15 @@ std::string PointerType::Name() const
     return baseTypeRef.GetType()->Name() + "*";
 }
 
+void PointerType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
+{
+    if (BaseType() == fwdDeclaredType)
+    {
+        baseTypeRef = TypeRef(SourcePos(), structureType->Id());
+        context->GetTypes().ResolveType(baseTypeRef, context);
+    }
+}
+
 Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context* context)
 {
     Type* type = ptr->GetType();
@@ -574,6 +608,7 @@ void Types::Write(util::CodeFormatter& formatter)
     formatter.IncIndent();
     for (const auto& type : types)
     {
+        if (type->IsFwdDeclaredStructureType()) continue;
         if (type->IsAggregateType())
         {
             type->WriteDeclaration(formatter);
@@ -644,6 +679,23 @@ FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, int32_t typeId,
     functionTypeMap[key] = functionType;
     Map(functionType);
     return functionType;
+}
+
+FwdDeclaredStructureType* Types::GetFwdDeclaredStructureType(const util::uuid& uuid, int32_t typeId)
+{
+    auto it = fwdDeclaredStructureTypes.find(uuid);
+    if (it != fwdDeclaredStructureTypes.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        FwdDeclaredStructureType* fwdDeclaredType = new FwdDeclaredStructureType(uuid, typeId);
+        fwdDeclaredStructureTypes[uuid] = fwdDeclaredType;
+        types.push_back(std::unique_ptr<Type>(fwdDeclaredType));
+        Map(fwdDeclaredType);
+        return fwdDeclaredType;
+    }
 }
 
 void Types::Add(Type* type, Context* context)

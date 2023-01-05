@@ -676,6 +676,19 @@ ClassTemplateSpecializationSymbol* InstantiationScope::GetClassTemplateSpecializ
     return nullptr;
 }
 
+Scope* InstantiationScope::GetClassScope() const
+{
+    for (Scope* parentScope : parentScopes)
+    {
+        Scope* classScope = parentScope->GetClassScope();
+        if (classScope)
+        {
+            return classScope;
+        }
+    }
+    return nullptr;
+}
+
 Scope* InstantiationScope::GetNamespaceScope() const
 {
     for (Scope* parentScope : parentScopes)

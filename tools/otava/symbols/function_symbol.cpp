@@ -333,6 +333,12 @@ bool FunctionSymbol::IsVirtual() const
     return false;
 }
 
+bool FunctionSymbol::IsPure() const
+{
+    if ((qualifiers & FunctionQualifiers::isPure) != FunctionQualifiers::none) return true;
+    return false;
+}
+
 void FunctionSymbol::SetVirtual()
 {
     SetDeclarationFlags(GetDeclarationFlags() | DeclarationFlags::virtualFlag);
@@ -907,6 +913,18 @@ bool FunctionDefinitionSymbol::IsVirtual() const
     else
     {
         return FunctionSymbol::IsVirtual();
+    }
+}
+
+bool FunctionDefinitionSymbol::IsPure() const
+{
+    if (declaration)
+    {
+        return declaration->IsPure();
+    }
+    else
+    {
+        return FunctionSymbol::IsPure();
     }
 }
 

@@ -373,6 +373,34 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new FundamentalTypeMoveAssignment();
         }
+        case SymbolKind::enumTypeDefaultCtor:
+        {
+            return new EnumTypeDefaultCtor(name);
+        }
+        case SymbolKind::enumTypeCopyCtor:
+        {
+            return new EnumTypeCopyCtor(name);
+        }
+        case SymbolKind::enumTypeMoveCtor:
+        {
+            return new EnumTypeMoveCtor(name);
+        }
+        case SymbolKind::enumTypeCopyAssignment:
+        {
+            return new EnumTypeCopyAssignment(name);
+        }
+        case SymbolKind::enumTypeMoveAssignment:
+        {
+            return new EnumTypeMoveAssignment(name);
+        }
+        case SymbolKind::enumTypeEqual:
+        {
+            return new EnumTypeEqual(name);
+        }
+        case SymbolKind::enumTypeLess:
+        {
+            return new EnumTypeLess(name);
+        }
     }
     otava::ast::SetExceptionThrown();
     throw std::runtime_error("not implemented");

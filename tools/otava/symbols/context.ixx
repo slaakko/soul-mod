@@ -41,7 +41,9 @@ enum class ContextFlags : int32_t
     dontBind = 1 << 16,
     parseSavedCtorInitializer = 1 << 17,
     skipFunctionDefinitions = 1 << 18,
-    returnRef = 1 << 19
+    returnRef = 1 << 19,
+    virtualSeen = 1 << 20,
+    bindBooleanExpr = 1 << 21
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

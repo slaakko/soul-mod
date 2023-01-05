@@ -392,6 +392,9 @@ void StatementBinder::AddDefaultBaseInitializer(TypeSymbol* baseClass, int index
 
 void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
 {
+    initializerArgs.clear();
+    classTypeSymbol = nullptr;
+    memberVariableSymbol = nullptr;
     int index = -1;
     resolveClass = true;
     node.Left()->Accept(*this);
@@ -740,10 +743,6 @@ void StatementBinder::Visit(otava::ast::ContinueStatementNode& node)
 
 void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
 {
-    if (functionDefinitionSymbol->Name() == U"what")
-    {
-        int x = 0;
-    }
     BoundReturnStatementNode* boundReturnStatement = new BoundReturnStatementNode(node.GetSourcePos());
     if (node.ReturnValue())
     {

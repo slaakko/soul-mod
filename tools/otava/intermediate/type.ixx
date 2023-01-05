@@ -9,6 +9,7 @@ import otava.assembly.data;
 import std.core;
 import soul.ast.source.pos;
 import util.code.formatter;
+import util.uuid;
 
 export namespace otava::intermediate::type {}
 
@@ -21,6 +22,7 @@ class Types;
 class Visitor;
 class ArrayType;
 class StructureType;
+class FwdDeclaredStructureType;
 class TypeRef;
 class Value;
 
@@ -81,7 +83,7 @@ constexpr int8_t GetPointerCount(int32_t typeId)
 
 enum class TypeKind : int
 {
-    fundamentalType, structureType, arrayType, functionType, pointerType
+    fundamentalType, structureType, arrayType, functionType, pointerType, fwdDeclaredStructureType
 };
 
 class Type
@@ -107,6 +109,8 @@ public:
     bool IsDoubleType() const { return id == doubleTypeId; }
     bool IsPointerType() const { return kind == TypeKind::pointerType; }
     bool IsAggregateType() const;
+    bool IsFwdDeclaredStructureType() const { return kind == TypeKind::fwdDeclaredStructureType; }
+    virtual void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context);
     Type* AddPointer(Context* context) const;
     Type* RemovePointer(const SourcePos& sourcePos, Context* context) const;
     virtual std::string Name() const = 0;
@@ -290,12 +294,25 @@ public:
     Type* FieldType(int i) const { return fieldTypeRefs[i].GetType(); }
     int64_t GetFieldOffset(int64_t index) const;
     void WriteDeclaration(util::CodeFormatter& formatter) override;
+    void ResolveForwardReferences(const util::uuid& uuid, Context* context);
 private:
     void ComputeSizeAndOffsets() const;
     std::vector<TypeRef> fieldTypeRefs;
     mutable bool sizeAndOffsetsComputed;
     mutable int64_t size;
     mutable std::vector<int64_t> fieldOffsets;
+};
+
+class FwdDeclaredStructureType : public Type
+{
+public:
+    FwdDeclaredStructureType(const util::uuid& uuid_, int32_t typeId_);
+    void Accept(Visitor& visitor) override;
+    int64_t Size() const override { return -1; }
+    int64_t Alignment() const override { return -1; }
+    std::string Name() const override { return "FWD_DECLARED_STRUCTURE_TYPE"; }
+private:
+    util::uuid uuid;
 };
 
 class ArrayType : public Type
@@ -353,6 +370,7 @@ public:
     TypeRef& BaseTypeRef() { return baseTypeRef; }
     Type* BaseType() const { return baseTypeRef.GetType(); }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
 private:
     int8_t pointerCount;
     TypeRef baseTypeRef;
@@ -371,6 +389,7 @@ public:
     StructureType* GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     ArrayType* GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
     FunctionType* GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id, int32_t typeId);
     void Resolve(Context* context);
     void ResolveType(TypeRef& typeRef, Context* context);
     void Add(Type* type, Context* context);
@@ -401,6 +420,7 @@ private:
     std::map<std::vector<int32_t>, StructureType*> structureTypeMap;
     std::map<std::pair<int64_t, int32_t>, ArrayType*> arrayTypeMap;
     std::map<std::pair<int32_t, std::vector<int32_t>>, FunctionType*> functionTypeMap;
+    std::map<util::uuid, FwdDeclaredStructureType*> fwdDeclaredStructureTypes;
     VoidType voidType;
     BoolType boolType;
     SByteType sbyteType;

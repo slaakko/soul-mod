@@ -31,6 +31,7 @@ public:
     otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
     otava::intermediate::Type* MakeArrayType(int64_t size, otava::intermediate::Type* elementType);
+    otava::intermediate::Type* MakeFwdDeclaredStructureType(const util::uuid& id);
     otava::intermediate::Type* GetVoidType();
     otava::intermediate::Type* GetBoolType();
     otava::intermediate::Type* GetSByteType();

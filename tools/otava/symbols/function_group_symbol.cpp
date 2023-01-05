@@ -25,6 +25,7 @@ bool FunctionGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
         case ScopeKind::namespaceScope: 
         case ScopeKind::templateDeclarationScope: 
         case ScopeKind::classScope: 
+        case ScopeKind::enumerationScope:
         {
             return true;
         }

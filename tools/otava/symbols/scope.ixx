@@ -152,6 +152,7 @@ public:
     std::string FullName() const override;
     Scope* GroupScope() override;
     Scope* SymbolScope() override;
+    Scope* GetClassScope() const override;
     Scope* GetNamespaceScope() const override;
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const override;
     void Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 

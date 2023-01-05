@@ -496,7 +496,12 @@ parser DeclarationParser
             )?
         )
         {
+            bool virtualSeen = context->GetFlag(otava::symbols::ContextFlags::virtualSeen);
             context->PopFlags();
+            if (virtualSeen)
+            {
+                context->SetFlag(otava::symbols::ContextFlags::virtualSeen);
+            }
             return sequence.release();
         }
         /
@@ -529,7 +534,7 @@ parser DeclarationParser
         ;
 
     FunctionSpecifier(otava::symbols::Context* context) : otava::ast::Node*
-        ::= VIRTUAL{ return new otava::ast::VirtualNode(lexer.GetSourcePos(pos)); }
+        ::= VIRTUAL{ context->SetFlag(otava::symbols::ContextFlags::virtualSeen); return new otava::ast::VirtualNode(lexer.GetSourcePos(pos)); }
         |   ExplicitSpecifier(context):explicitSpecifier{ return explicitSpecifier; }
         ;
 

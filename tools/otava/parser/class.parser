@@ -223,9 +223,13 @@ parser ClassParser
                 otava::symbols::SetCurrentAccess(accessSpecifierNode.get(), context);
                 container->AddNode(new otava::ast::BeginAccessGroupNode(sourcePos, accessSpecifierNode.release(), colonPos)); 
             }
-        |   MemberDeclaration(context):memberDeclaration1{ container->AddNode(memberDeclaration1); }
-        |   MemberDeclaration(context):memberDeclaration2{ container->AddNode(memberDeclaration2); }
+        |   MemberDeclarationReset(context):memberDeclaration{ container->AddNode(memberDeclaration); }
         )+
+        ;
+
+    MemberDeclarationReset(otava::symbols::Context* context) : otava::ast::Node*
+        ::= empty{ context->PushResetFlag(otava::symbols::ContextFlags::virtualSeen); }
+            MemberDeclaration(context):memberDeclaration{ context->PopFlags(); return memberDeclaration; } / { context->PopFlags(); }
         ;
 
     MemberDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> declSpecifiersNode, 
@@ -338,7 +342,8 @@ parser ClassParser
         (
             Declarator(context):declarator{ sourcePos = lexer.GetSourcePos(pos); } 
             (   RequiresClause(context):requiresClause{ return new otava::ast::InitDeclaratorNode(sourcePos, declarator, requiresClause); }
-            |   BraceOrEqualInitializer(context):initializer{ return new otava::ast::InitDeclaratorNode(sourcePos, declarator, initializer); }
+            |   empty{ pass = !context->GetFlag(otava::symbols::ContextFlags::virtualSeen); } 
+                BraceOrEqualInitializer(context):initializer{ return new otava::ast::InitDeclaratorNode(sourcePos, declarator, initializer); }
             |   empty{ trailingQualifiersNode.reset(new otava::ast::TrailingQualifiersNode(sourcePos, declarator)); }
             )
             (VirtSpecifierSeq(context):virtSpecifierSeq{ trailingQualifiersNode->AddNode(virtSpecifierSeq); })?

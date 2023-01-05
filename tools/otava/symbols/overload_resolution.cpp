@@ -386,36 +386,36 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
                 functionMatch.argumentMatches.push_back(argumentMatch);
                 return true;
             }
-            else
+        }
+        else
+        {
+            FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
+            if (conversionFun)
             {
-                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
-                if (conversionFun)
+                ++functionMatch.numConversions;
+                argumentMatch.conversionFun = conversionFun;
+                if (argumentMatch.preConversionFlags == OperationFlags::none)
                 {
-                    ++functionMatch.numConversions;
-                    argumentMatch.conversionFun = conversionFun;
-                    if (argumentMatch.preConversionFlags == OperationFlags::none)
+                    if (FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch))
                     {
-                        if (FindQualificationConversion(argType, paramType, arg, functionMatch, argumentMatch))
-                        {
-                            functionMatch.argumentMatches.push_back(argumentMatch);
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        functionMatch.argumentMatches.push_back(argumentMatch);
+                        return true;
                     }
                     else
                     {
-                        if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
-                        {
-                            functionMatch.argumentMatches.push_back(argumentMatch);
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
+                    {
+                        functionMatch.argumentMatches.push_back(argumentMatch);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
                     }
                 }
             }
@@ -704,6 +704,10 @@ void AddArgumentScopes(std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
 {
+    if (groupName == U"destroy")
+    {
+        int x = 0;
+    }
     std::vector<FunctionSymbol*> viableFunctions;
     FunctionSymbol* operation = context->GetOperationRepository()->GetOperation(groupName, args, sourcePos, context);
     if (operation)

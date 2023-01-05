@@ -32,6 +32,7 @@ struct ClassParser
     static soul::parser::Match BaseSpecifier(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match ClassOrDeclType(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match MemberSpecification(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* container);
+    static soul::parser::Match MemberDeclarationReset(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match MemberDeclaration(Lexer& lexer, otava::symbols::Context* context);
     static soul::parser::Match RBraceNext(Lexer& lexer);
     static soul::parser::Match MemberDeclSpecifiers(Lexer& lexer, otava::symbols::Context* context);

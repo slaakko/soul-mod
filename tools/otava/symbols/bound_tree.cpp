@@ -132,6 +132,10 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         {
             return "boundFunctionCallNode";
         }
+        case BoundNodeKind::boundEmptyFunctionCallNode:
+        {
+            return "boundEmptyFunctionCallNode";
+        }
         case BoundNodeKind::boundExpressionSequenceNode:
         {
             return "boundExpressionSequenceNode";
@@ -171,6 +175,10 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         case BoundNodeKind::boundClassNode:
         {
             return "boundClassNode";
+        }
+        case BoundNodeKind::boundEmptyDestructorNode:
+        {
+            return "boundEmptyDestructorNode";
         }
     }
     return "<unknown bound node>";
@@ -351,10 +359,6 @@ void BoundDtorTerminatorNode::AddMemberTerminator(BoundFunctionCallNode* memberT
 
 void BoundDtorTerminatorNode::GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context)
 {
-    if (setVPtrStatement)
-    {
-        setVPtrStatement->Accept(visitor);
-    }
     for (const auto& memberTerminator : memberTerminators)
     {
         memberTerminator->Load(emitter, OperationFlags::none, GetSourcePos(), context);
@@ -1173,6 +1177,26 @@ BoundExpressionNode* BoundFunctionCallNode::Clone() const
     return clone;
 }
 
+BoundEmptyFunctionCallNode::BoundEmptyFunctionCallNode(const soul::ast::SourcePos& sourcePos_) :
+    BoundExpressionNode(BoundNodeKind::boundEmptyFunctionCallNode, sourcePos_, nullptr)
+{
+}
+
+void BoundEmptyFunctionCallNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void BoundEmptyFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+}
+
+BoundExpressionNode* BoundEmptyFunctionCallNode::Clone() const
+{
+    return new BoundEmptyFunctionCallNode(GetSourcePos());
+}
+
+
 BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::SourcePos& sourcePos_, BoundExpressionNode* left_, BoundExpressionNode* right_) : 
     BoundExpressionNode(BoundNodeKind::boundExpressionSequenceNode, sourcePos_, right_->GetType()), left(left_), right(right_)
 {
@@ -1654,6 +1678,24 @@ BoundGlobalVariableDefinitionNode::BoundGlobalVariableDefinitionNode(VariableSym
 void BoundGlobalVariableDefinitionNode::Accept(BoundTreeVisitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+BoundEmptyDestructorNode::BoundEmptyDestructorNode(const soul::ast::SourcePos& sourcePos_) : BoundExpressionNode(BoundNodeKind::boundEmptyDestructorNode, sourcePos_, nullptr)
+{
+}
+
+void BoundEmptyDestructorNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundEmptyDestructorNode::Clone() const
+{
+    return new BoundEmptyDestructorNode(GetSourcePos());
+}
+
+void BoundEmptyDestructorNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
 }
 
 } // namespace otava::symbols

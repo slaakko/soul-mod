@@ -11,6 +11,7 @@ class Context;
 class StructureType;
 class ArrayType;
 class FunctionType;
+class FwdDeclaredStructureType;
 class GlobalVariable;
 class Function;
 class BasicBlock;
@@ -83,6 +84,7 @@ public:
     virtual void Visit(StructureType& structureType) {}
     virtual void Visit(ArrayType& arrayType) {}
     virtual void Visit(FunctionType& functionType) {}
+    virtual void Visit(FwdDeclaredStructureType& fwdDeclaredStructureType) {}
     virtual void Visit(GlobalVariable& globalVariable) {}
     virtual void Visit(Function& function) {}
     virtual void Visit(BasicBlock& basicBlock) {}

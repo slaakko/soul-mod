@@ -226,7 +226,6 @@ public:
     iterator insert(const_iterator position, size_type n, const T& x);
     iterator erase(const_iterator position);
     iterator erase(const_iterator first, const_iterator last);
-    // void swap(vector& x);
     void clear()
     {
         destroy();
@@ -242,7 +241,7 @@ private:
         if (res > 0)
         {
             free(elements);
-            elements = nullptr;
+            elements = static_cast<T*>(nullptr);
             res = 0;
         }
     }

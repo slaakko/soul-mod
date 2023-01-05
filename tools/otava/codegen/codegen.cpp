@@ -289,14 +289,26 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
             otava::intermediate::Type* irType = functionSymbol->IrType(emitter, sourcePos, &context);
             if (irType->IsFunctionType())
             {
-                otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(irType);
-                emitter.GetOrInsertFunction(functionSymbol->IrName(&context), functionType);
-                otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(functionType, "@" + functionSymbol->IrName(&context));
-                otava::intermediate::Value* deltaValue = emitter.EmitLong(0);
-                otava::intermediate::Value* element1Value = emitter.EmitConversionValue(voidPtrIrType, functionValue);
-                elements.push_back(element1Value);
-                otava::intermediate::Value* element2Value = emitter.EmitConversionValue(voidPtrIrType, deltaValue);
-                elements.push_back(element2Value);
+                if (functionSymbol->IsPure())
+                {
+                    otava::intermediate::Value* functionValue = emitter.EmitNull(voidPtrIrType);
+                    otava::intermediate::Value* deltaValue = emitter.EmitLong(0);
+                    otava::intermediate::Value* element1Value = emitter.EmitConversionValue(voidPtrIrType, functionValue);
+                    elements.push_back(element1Value);
+                    otava::intermediate::Value* element2Value = emitter.EmitConversionValue(voidPtrIrType, deltaValue);
+                    elements.push_back(element2Value);
+                }
+                else
+                {
+                    otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(irType);
+                    emitter.GetOrInsertFunction(functionSymbol->IrName(&context), functionType);
+                    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(functionType, "@" + functionSymbol->IrName(&context));
+                    otava::intermediate::Value* deltaValue = emitter.EmitLong(0);
+                    otava::intermediate::Value* element1Value = emitter.EmitConversionValue(voidPtrIrType, functionValue);
+                    elements.push_back(element1Value);
+                    otava::intermediate::Value* element2Value = emitter.EmitConversionValue(voidPtrIrType, deltaValue);
+                    elements.push_back(element2Value);
+                }
             }
             else
             {
@@ -406,8 +418,16 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         ctorInitializer->GenerateCode(*this, emitter, &context);
     }
-    node.Body()->Accept(*this);
     otava::symbols::BoundDtorTerminatorNode* dtorTerminator = node.DtorTerminator();
+    if (dtorTerminator)
+    {
+        otava::symbols::BoundStatementNode* setVPtrStatement = dtorTerminator->GetSetVPtrStatement();
+        if (setVPtrStatement)
+        {
+            setVPtrStatement->Accept(*this);
+        }
+    }
+    node.Body()->Accept(*this);
     if (dtorTerminator)
     {
         dtorTerminator->GenerateCode(*this, emitter, &context);
