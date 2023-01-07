@@ -1,0 +1,5 @@
+project rb_tree;
+target=program;
+interface <rb_tree.ixx>;
+source <rb_tree.cpp>;
+source <main.cpp>;

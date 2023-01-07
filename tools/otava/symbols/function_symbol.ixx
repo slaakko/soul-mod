@@ -16,7 +16,7 @@ export namespace otava::symbols {
 
 enum class FunctionKind
 {
-    function, constructor, destructor, special, conversion
+    function, constructor, destructor, special, conversion, conversionMemFn
 };
 
 enum class SpecialFunctionKind

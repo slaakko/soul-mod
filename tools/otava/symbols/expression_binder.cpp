@@ -454,7 +454,8 @@ void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
     TypeSymbol* resultType = ResolveType(node.TypeId(), DeclarationFlags::none, context);
     resultType = resultType->DirectType(context);
     node.Child()->Accept(*this);
-    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(resultType, boundExpression->GetType(), context);
+    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+        resultType, boundExpression->GetType(), node.GetSourcePos(), context);
     if (conversion)
     {
         boundExpression = new BoundConversionNode(boundExpression, conversion, node.GetSourcePos());
@@ -831,6 +832,12 @@ void ExpressionBinder::Visit(otava::ast::BinaryExprNode& node)
             flagsPushed = true;
             break;
         }
+        default:
+        {
+            context->PushResetFlag(ContextFlags::bindBooleanExpr);
+            flagsPushed = true;
+            break;
+        }
     }
     std::unique_ptr<BoundExpressionNode> left(BindExpression(node.Left(), context));
     std::unique_ptr<BoundExpressionNode> right(BindExpression(node.Right(), context));
@@ -1081,7 +1088,8 @@ void ExpressionBinder::Visit(otava::ast::NewExprNode& node)
     std::unique_ptr<BoundVariableNode> tempVar(new BoundVariableNode(tempVarSymbol, node.GetSourcePos()));
     TypeSymbol* tempVarPtrType = tempVar->GetType()->AddPointer(context);
     ctorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(tempVar.release(), node.GetSourcePos(), tempVarPtrType)));
-    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(type->AddPointer(context), voidPtrType, context);
+    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+        type->AddPointer(context), voidPtrType, node.GetSourcePos(), context);
     if (conversion)
     {
         BoundConversionNode* boundConversion = new BoundConversionNode(opNewCall.release(), conversion, node.GetSourcePos());
@@ -1116,7 +1124,7 @@ void ExpressionBinder::Visit(otava::ast::DeletePtrNode& node)
     {
         dtor->SetFlag(BoundExpressionFlags::virtualCall);
     }
-    std::unique_ptr<BoundFunctionCallNode> opDeleteCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"operator delete", 
+    std::unique_ptr<BoundFunctionCallNode> opDeleteCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope(), U"operator delete",
         opDeleteArgs, node.GetSourcePos(), context);
     if (!dtor->GetFunctionSymbol()->IsTrivialDestructor())
     {
@@ -1243,7 +1251,7 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context)
     if (context->GetFlag(ContextFlags::bindBooleanExpr) && !expr->GetType()->IsBoolType())
     {
         FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), expr->GetType(), context);
+            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), expr->GetType(), node->GetSourcePos(), context);
         if (!conversionFunction)
         {
             ThrowException("expression must be convertible to Boolean type value", expr->GetSourcePos(), context);

@@ -401,11 +401,13 @@ void BoundFunctionNode::SetDtorTerminator(BoundDtorTerminatorNode* dtorTerminato
     dtorTerminator.reset(dtorTerminator_);
 }
 
-BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : BoundNode(kind_, sourcePos_), generated(false), postfix(false)
+BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : 
+    BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false)
 {
 }
 
-BoundCompoundStatementNode::BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundCompoundStatementNode, sourcePos_)
+BoundCompoundStatementNode::BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : 
+    BoundStatementNode(BoundNodeKind::boundCompoundStatementNode, sourcePos_)
 {
 }
 
@@ -416,6 +418,7 @@ void BoundCompoundStatementNode::Accept(BoundTreeVisitor& visitor)
 
 void BoundCompoundStatementNode::AddStatement(BoundStatementNode* statement)
 {
+    statement->SetParent(this);
     statements.push_back(std::unique_ptr<BoundStatementNode>(statement));
 }
 
@@ -1421,7 +1424,7 @@ BoundExpressionNode* BoundConversionNode::Clone() const
 }
 
 BoundAddressOfNode::BoundAddressOfNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
-    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->AddPointer()
+    BoundExpressionNode(BoundNodeKind::boundAddressOfNode, sourcePos_, type_), subject(subject_) 
 {
 }
 
@@ -1462,7 +1465,7 @@ BoundExpressionNode* BoundAddressOfNode::Clone() const
 }
 
 BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
-    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->RemoveRefOrPtr()
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_) 
 {
 }
 
@@ -1510,7 +1513,7 @@ BoundExpressionNode* BoundDereferenceNode::Clone() const
 }
 
 BoundRefToPtrNode::BoundRefToPtrNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) : 
-    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->RemoveReference()->AddPointer()
+    BoundExpressionNode(BoundNodeKind::boundRefToPtrNode, sourcePos_, type_), subject(subject_) 
 {
 }
 
@@ -1535,7 +1538,7 @@ BoundExpressionNode* BoundRefToPtrNode::Clone() const
 }
 
 BoundPtrToRefNode::BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
-    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, sourcePos_, type_), subject(subject_) // type: subject_->GetType()->RemovePointer()->AddLValueRef()
+    BoundExpressionNode(BoundNodeKind::boundPtrToRefNode, sourcePos_, type_), subject(subject_) 
 {
 }
 

@@ -89,7 +89,6 @@ public:
     std::string VTabName(Context* context) const;
     int32_t VPtrIndex() const { return vptrIndex; }
     void SetVPtrIndex(int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
-    void SetVTabVariable(otava::intermediate::Value* vtabVariable_);
     otava::intermediate::Type* VPtrType(Emitter& emitter) const;
     otava::intermediate::Value* GetVTabVariable(Emitter& emitter, Context* context);
     ClassTypeSymbol* VPtrHolderClass() const;
@@ -124,6 +123,8 @@ public:
     void SetHasUserDefinedDestructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
     bool HasUserDefinedConstructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
     void SetHasUserDefinedConstructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
+    const std::vector<FunctionSymbol*>& ConversionFunctions() const { return conversionFunctions; }
+    FunctionSymbol* GetConversionFunction(TypeSymbol* type) const;
 private:
     ClassTypeSymbolFlags flags;
     std::vector<ClassTypeSymbol*> baseClasses;
@@ -146,6 +147,7 @@ private:
     std::vector<FunctionSymbol*> vtab;
     int32_t vtabSize;
     int32_t vptrIndex;
+    std::vector<FunctionSymbol*> conversionFunctions;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

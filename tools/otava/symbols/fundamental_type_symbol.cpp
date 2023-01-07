@@ -99,17 +99,17 @@ std::u32string MakeFundamentalTypeName(FundamentalTypeKind kind)
     return util::ToUtf32(fundamentalTypeNames[static_cast<int32_t>(kind)]);
 }
 
-FundamentalTypeSymbol::FundamentalTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::fundamentalTypeSymbol, name_), kind()
+FundamentalTypeSymbol::FundamentalTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::fundamentalTypeSymbol, name_), fundamentalTypeKind()
 {
 }
 
-FundamentalTypeSymbol::FundamentalTypeSymbol(FundamentalTypeKind kind_) : TypeSymbol(SymbolKind::fundamentalTypeSymbol, MakeFundamentalTypeName(kind_)), kind(kind_)
+FundamentalTypeSymbol::FundamentalTypeSymbol(FundamentalTypeKind kind_) : TypeSymbol(SymbolKind::fundamentalTypeSymbol, MakeFundamentalTypeName(kind_)), fundamentalTypeKind(kind_)
 {
 }
 
 bool FundamentalTypeSymbol::IsIntegralType() const
 {
-    switch (kind)
+    switch (fundamentalTypeKind)
     {
         case FundamentalTypeKind::charType:
         case FundamentalTypeKind::signedCharType:
@@ -137,13 +137,13 @@ void FundamentalTypeSymbol::Write(Writer& writer)
 {
     static_assert(static_cast<int32_t>(FundamentalTypeKind::max) < 256);
     TypeSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(kind));
+    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(fundamentalTypeKind));
 }
 
 void FundamentalTypeSymbol::Read(Reader& reader)
 {
     TypeSymbol::Read(reader);
-    kind = static_cast<FundamentalTypeKind>(reader.GetBinaryStreamReader().ReadByte());
+    fundamentalTypeKind = static_cast<FundamentalTypeKind>(reader.GetBinaryStreamReader().ReadByte());
 }
 
 void FundamentalTypeSymbol::Accept(Visitor& visitor)
@@ -153,7 +153,7 @@ void FundamentalTypeSymbol::Accept(Visitor& visitor)
 
 otava::intermediate::Type* FundamentalTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    switch (kind)
+    switch (fundamentalTypeKind)
     {
         case FundamentalTypeKind::charType:
         case FundamentalTypeKind::unsignedCharType:

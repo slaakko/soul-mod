@@ -17,7 +17,9 @@ import otava.symbols.scope;
 import otava.symbols.scope.resolver;
 import otava.symbols.symbol;
 import otava.symbols.symbol.table;
+import otava.symbols.type.resolver;
 import otava.symbols.value;
+import util.unicode;
 
 namespace otava::symbols {
 
@@ -118,6 +120,7 @@ public:
     void Visit(otava::ast::ParameterNode& node) override;
     void Visit(otava::ast::DestructorIdNode& node) override;
     void Visit(otava::ast::ConversionFunctionIdNode& node) override;
+    void Visit(otava::ast::ConversionTypeIdNode& node) override;
     void Visit(otava::ast::OperatorFunctionIdNode& node) override;
     void Visit(otava::ast::QualifiedIdNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
@@ -364,9 +367,18 @@ void DeclaratorProcessor::Visit(otava::ast::DestructorIdNode& node)
 
 void DeclaratorProcessor::Visit(otava::ast::ConversionFunctionIdNode& node)
 {
-    skipIdFunctionDeclarator = true;
     node.Right()->Accept(*this);
-    skipIdFunctionDeclarator = false;
+    functionDeclarator = new FunctionDeclarator(U"operator_" + util::ToUtf32(baseType->IrName(context)), &node, FunctionKind::conversionMemFn, qualifiers, scope);
+    declaration = Declaration(flags, baseType, functionDeclarator);
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ConversionTypeIdNode& node)
+{
+    baseType = ResolveType(node.TypeSpecifierSeq(), DeclarationFlags::none, context);
+    if (node.ConversionDeclarator())
+    {
+        node.ConversionDeclarator()->Accept(*this);
+    }
 }
 
 void DeclaratorProcessor::Visit(otava::ast::OperatorFunctionIdNode& node)

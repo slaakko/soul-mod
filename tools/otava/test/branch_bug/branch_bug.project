@@ -1,0 +1,3 @@
+project branch_bug;
+target=program;
+source <branch_bug.cpp>;

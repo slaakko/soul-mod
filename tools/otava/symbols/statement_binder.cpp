@@ -51,6 +51,33 @@ bool TerminatorGreater::operator()(const std::pair<int, std::unique_ptr<BoundFun
 
 constexpr int maxBaseInitializers = 10000;
 
+BoundExpressionNode* MakeBoundBooleanConversionNode(BoundExpressionNode* condition, Context* context)
+{
+    soul::ast::SourcePos sourcePos = condition->GetSourcePos();
+    FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+        context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), sourcePos, context);
+    if (!conversionFunction)
+    {
+        ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
+    }
+    if (conversionFunction->GetFunctionKind() == FunctionKind::conversionMemFn && condition->GetType()->PlainType(context)->IsClassTypeSymbol())
+    {
+        TypeSymbol* conditionType = condition->GetType();
+        if (conditionType->IsReferenceType())
+        {
+            condition = new BoundRefToPtrNode(condition, sourcePos, conditionType->RemoveReference(context)->AddPointer(context));
+        }
+        else
+        {
+            condition = new BoundAddressOfNode(condition, sourcePos, conditionType->GetBaseType()->AddPointer(context));
+        }
+        BoundFunctionCallNode* functionCall = new BoundFunctionCallNode(conversionFunction, sourcePos, conversionFunction->ReturnType());
+        functionCall->AddArgument(condition);
+        return functionCall;
+    }
+    return new BoundConversionNode(condition, conversionFunction, sourcePos);
+}
+
 StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) : 
     context(context_), 
     currentClass(nullptr),
@@ -194,7 +221,7 @@ void StatementBinder::AddBaseTerminator(TypeSymbol* baseClass, int index, const 
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-        baseClass->AddPointer(context), thisPtr->GetType(), context);
+        baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
     if (conversion)
     {
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
@@ -251,7 +278,7 @@ void StatementBinder::GenerateSetVPtrStatement(const soul::ast::SourcePos& sourc
     if (vptrHolderClass != currentClass)
     {
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+            vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
             BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
@@ -376,7 +403,7 @@ void StatementBinder::AddDefaultBaseInitializer(TypeSymbol* baseClass, int index
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-        baseClass->AddPointer(context), thisPtr->GetType(), context);
+        baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
     if (conversion)
     {
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
@@ -403,7 +430,7 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
     {
         BoundExpressionNode* thisPtr = context->GetThisPtr(node.GetSourcePos());
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            classTypeSymbol->AddPointer(context), thisPtr->GetType(), context);
+            classTypeSymbol->AddPointer(context), thisPtr->GetType(), node.GetSourcePos(), context);
         if (conversion)
         {
             initializerArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, node.GetSourcePos())));
@@ -541,13 +568,7 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition->GetType()->IsBoolType())
     {
-        FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context); 
-        if (!conversionFunction)
-        {
-            ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
-        }
-        condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
+        condition = MakeBoundBooleanConversionNode(condition, context);
     }
     boundIfStatement->SetCondition(condition);
     BoundStatementNode* boundThenStatement = BindStatement(node.ThenStatement(), functionDefinitionSymbol, context);
@@ -625,13 +646,7 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition->GetType()->IsBoolType())
     {
-        FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context);
-        if (!conversionFunction)
-        {
-            ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
-        }
-        condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
+        condition = MakeBoundBooleanConversionNode(condition, context);
     }
     boundWhileStatement->SetCondition(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
@@ -649,13 +664,7 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     BoundExpressionNode* condition = BindExpression(node.Expression(), context);
     if (!condition->GetType()->IsBoolType())
     {
-        FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context);
-        if (!conversionFunction)
-        {
-            ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
-        }
-        condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
+        condition = MakeBoundBooleanConversionNode(condition, context);
     }
     boundDoStatement->SetExpr(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
@@ -705,13 +714,7 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
         BoundExpressionNode* condition = BindExpression(node.Condition(), context);
         if (!condition->GetType()->IsBoolType())
         {
-            FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), condition->GetType(), context);
-            if (!conversionFunction)
-            {
-                ThrowException("condition must be convertible to Boolean type value", condition->GetSourcePos(), context);
-            }
-            condition = new BoundConversionNode(condition, conversionFunction, condition->GetSourcePos());
+            condition = MakeBoundBooleanConversionNode(condition, context);
         }
         boundForStatement->SetCondition(condition);
     }
@@ -780,7 +783,7 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
             if (returnValueExpr->GetType() != returnType)
             {
                 FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(returnType->DirectType(context), 
-                    returnValueExpr->GetType(), context);
+                    returnValueExpr->GetType(), node.GetSourcePos(), context);
                 if (conversion)
                 {
                     returnValueExpr = new BoundConversionNode(returnValueExpr, conversion, node.GetSourcePos());

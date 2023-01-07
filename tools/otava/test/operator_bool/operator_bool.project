@@ -1,0 +1,4 @@
+project operator_bool;
+target=program;
+interface <operator_bool.ixx>;
+source <main.cpp>;

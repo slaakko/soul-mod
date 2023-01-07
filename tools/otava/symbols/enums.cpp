@@ -749,6 +749,14 @@ EnumTypeLess::EnumTypeLess(const std::u32string& name_) : FunctionSymbol(SymbolK
 
 EnumTypeLess::EnumTypeLess(EnumeratedTypeSymbol* enumType_, Context* context) : FunctionSymbol(SymbolKind::enumTypeLess, U"operator<"), enumType(enumType_)
 {
+    SetFunctionKind(FunctionKind::function);
+    SetAccess(Access::public_);
+    ParameterSymbol* leftParam = new ParameterSymbol(U"left", enumType);
+    AddParameter(leftParam, soul::ast::SourcePos(), nullptr);
+    ParameterSymbol* rightParam = new ParameterSymbol(U"right", enumType);
+    AddParameter(rightParam, soul::ast::SourcePos(), nullptr);
+    TypeSymbol* boolType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType);
+    SetReturnType(boolType, context);
 }
 
 void EnumTypeLess::Write(Writer& writer)

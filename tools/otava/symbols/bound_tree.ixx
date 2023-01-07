@@ -93,6 +93,7 @@ public:
     bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
     bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
+    bool IsBoundEnumConstant() const { return kind == BoundNodeKind::boundEnumConstantNode; }
     bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
     bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
     int Index() const { return index; }
@@ -238,11 +239,14 @@ public:
     BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     virtual bool EndsWithTerminator() const { return IsTerminator(); }
     virtual bool IsTerminator() const { return false; }
+    BoundStatementNode* Parent() const { return parent; }
+    void SetParent(BoundStatementNode* parent_) { parent = parent_; }
     bool Generated() const { return generated; }
     void SetGenerated() { generated = true; }
     bool Postfix() const { return postfix; }
     void SetPostfix() { postfix = true; }
 private:
+    BoundStatementNode* parent;
     bool generated;
     bool postfix;
 };

@@ -121,7 +121,7 @@ private:
     otava::symbols::Context& context;
 };
 
-ConstantExpressionEvaluator::ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::SourcePos& sourcePos_, otava::symbols::Context& context_) : 
+ConstantExpressionEvaluator::ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::SourcePos& sourcePos_, otava::symbols::Context& context_) :
     emitter(emitter_), sourcePos(sourcePos_), context(context_)
 {
 }
@@ -131,7 +131,7 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundLiteralNode& node)
     emitter.Stack().Push(node.GetValue()->IrValue(emitter, sourcePos, &context));
 }
 
-void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context& context, 
+void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context& context,
     otava::symbols::BoundExpressionNode* constantExpr)
 {
     ConstantExpressionEvaluator evaluator(emitter, sourcePos, context);
@@ -211,7 +211,7 @@ private:
 
 CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_) :
     context(context_), config(config_), verbose(verbose_), mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
-    entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), nextBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr), continueBlock(nullptr), 
+    entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), nextBlock(nullptr), defaultBlock(nullptr), breakBlock(nullptr), continueBlock(nullptr),
     genJumpingBoolCode(false), prevWasTerminator(false), sequenceSecond(nullptr), lastLocal(nullptr)
 {
     std::string intermediateCodeFilePath = util::GetFullPath(
@@ -930,4 +930,4 @@ std::string GenerateCode(otava::symbols::Context& context, const std::string& co
     return codeGenerator.GetAsmFileName();
 }
 
-} // namespace otava::ast
+} // namespace otava::codegen

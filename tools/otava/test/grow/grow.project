@@ -1,0 +1,3 @@
+project grow;
+target=program;
+source <grow.cpp>;

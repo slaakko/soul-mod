@@ -7,6 +7,8 @@ module otava.symbols.argument.conversion.table;
 
 import otava.symbols.context;
 import otava.symbols.symbol.table;
+import otava.symbols.classes;
+import otava.symbols.class_templates;
 import otava.symbols.conversion.table;
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;
@@ -416,12 +418,39 @@ void ArgumentConversionTable::AddArgumentConversion(ArgumentConversion* argument
     argumentConversions.push_back(std::unique_ptr<ArgumentConversion>(argumentConversion));
 }
 
-FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
+FunctionSymbol* ArgumentConversionTable::GetArgumentConversion(TypeSymbol* paramType, TypeSymbol* argType, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     FunctionSymbol* conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(paramType, argType, context);
     if (conversion)
     {
         return conversion;
+    }
+    if (argType->PlainType(context)->IsClassTypeSymbol())
+    {
+        ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(argType->GetBaseType());
+        if (classType->IsClassTemplateSpecializationSymbol())
+        {
+            ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(classType);
+            TypeSymbol* classTemplateSymbol = specialization->ClassTemplate();
+            if (classTemplateSymbol->IsClassTypeSymbol())
+            {
+                ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(classTemplateSymbol);
+                FunctionSymbol* conversionFunction = classTemplate->GetConversionFunction(paramType);
+                if (conversionFunction)
+                {
+                    FunctionSymbol* instantiatedConversionFunction = InstantiateMemFnOfClassTemplate(conversionFunction, specialization, sourcePos, context);
+                    return instantiatedConversionFunction;
+                }
+            }
+        }
+        else
+        {
+            FunctionSymbol* conversionFunction = classType->GetConversionFunction(paramType);
+            if (conversionFunction)
+            {
+                return conversionFunction;
+            }
+        }
     }
     for (const auto& argumentConversion : argumentConversions)
     {

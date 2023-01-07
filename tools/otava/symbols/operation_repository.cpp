@@ -422,7 +422,7 @@ FunctionSymbol* PointerPlusOffsetOperation::Get(std::vector<std::unique_ptr<Boun
     if (!rightType->PlainType(context)->IsIntegralType())
     {
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), context))
+            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
         {
             return nullptr;
         }
@@ -492,7 +492,7 @@ FunctionSymbol* OffsetPlusPointerOperation::Get(std::vector<std::unique_ptr<Boun
     if (!leftType->PlainType(context)->IsIntegralType())
     {
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            leftType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), context))
+            leftType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
         {
             return nullptr;
         }
@@ -567,7 +567,7 @@ FunctionSymbol* PointerMinusOffsetOperation::Get(std::vector<std::unique_ptr<Bou
     if (!rightType->PlainType(context)->IsIntegralType())
     {
         if (!context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), context))
+            rightType, context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType), sourcePos, context))
         {
             return nullptr;
         }
@@ -698,9 +698,9 @@ PointerEqualOperation::PointerEqualOperation() : Operation(U"operator==", 2)
 FunctionSymbol* PointerEqualOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     TypeSymbol* leftType = args[0]->GetType();
-    if (!leftType->IsPointerType()) return nullptr;
+    if (!leftType->IsPointerType() && !leftType->IsNullPtrType()) return nullptr;
     TypeSymbol* rightType = args[1]->GetType();
-    if (!rightType->IsPointerType()) return nullptr;
+    if (!rightType->IsPointerType() && !rightType->IsNullPtrType()) return nullptr;
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
     {
@@ -908,7 +908,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         BoundExpressionNode* thisPtr = new BoundParameterNode(classDefaultCtor->ThisParam(context), sourcePos, classDefaultCtor->ThisParam(context)->GetReferredType(context));
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), context);
+            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
@@ -934,7 +934,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         if (vptrHolderClass != classType)
         {
             FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
@@ -1045,7 +1045,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyCtor->ThisParam(context), sourcePos, classCopyCtor->ThisParam(context)->GetReferredType(context));
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), context);
+            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
@@ -1073,7 +1073,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         if (vptrHolderClass != classType)
         {
             FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
@@ -1189,7 +1189,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveCtor->ThisParam(context), sourcePos, classMoveCtor->ThisParam(context)->GetReferredType(context));
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), context);
+            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
@@ -1222,7 +1222,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         if (vptrHolderClass != classType)
         {
             FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
@@ -1343,7 +1343,7 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         BoundExpressionNode* thisPtr = new BoundParameterNode(classCopyAssignment->ThisParam(context), sourcePos, classCopyAssignment->ThisParam(context)->GetReferredType(context));
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), context);
+            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
@@ -1464,7 +1464,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         BoundExpressionNode* thisPtr = new BoundParameterNode(classMoveAssignment->ThisParam(context), sourcePos, classMoveAssignment->ThisParam(context)->GetReferredType(context));
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), context);
+            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));

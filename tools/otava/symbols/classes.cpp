@@ -514,7 +514,12 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     }
     else if (symbol->IsFunctionSymbol())
     {
-        memberFunctions.push_back(static_cast<FunctionSymbol*>(symbol));
+        FunctionSymbol* functionSymbol = static_cast<FunctionSymbol*>(symbol);
+        memberFunctions.push_back(functionSymbol);
+        if (functionSymbol->GetFunctionKind() == FunctionKind::conversionMemFn)
+        {
+            conversionFunctions.push_back(functionSymbol);
+        }
     }
     if (symbol->IsFunctionDefinitionSymbol())
     {
@@ -583,6 +588,18 @@ FunctionSymbol* ClassTypeSymbol::GetFunction(int32_t functionIndex) const
     {
         return nullptr;
     }
+}
+
+FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type) const
+{
+    for (const auto& conversionFunction : conversionFunctions)
+    {
+        if (TypesEqual(conversionFunction->ReturnType(), type))
+        {
+            return conversionFunction;
+        }
+    }
+    return nullptr;
 }
 
 ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32string& name_) : 
@@ -1023,7 +1040,7 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
         ParameterSymbol* thisParam = destructorSymbol->ThisParam(context);
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
         FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            baseClass->AddPointer(context), thisPtr->GetType(), context);
+            baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
@@ -1076,7 +1093,7 @@ void GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::Sourc
         if (vptrHolderClass != classTypeSymbol)
         {
             FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                vptrHolderClass->AddPointer(context), thisPtr->GetType(), context);
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
             if (conversion)
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);

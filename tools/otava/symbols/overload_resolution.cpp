@@ -342,7 +342,8 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
     return false;
 }
 
-bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, Context* context)
+bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, 
+    Context* context)
 {
     if (!paramType->GetBaseType()->IsTemplateParameterSymbol()) return false;
     TemplateParameterSymbol* templateParameter = static_cast<TemplateParameterSymbol*>(paramType->GetBaseType());
@@ -389,7 +390,8 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
         }
         else
         {
-            FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
+            FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                paramType, argType, sourcePos, context);
             if (conversionFun)
             {
                 ++functionMatch.numConversions;
@@ -424,7 +426,8 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
     return false;
 }
 
-bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, Context* context)
+bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, 
+    Context* context)
 {
     if (!paramType->GetBaseType()->IsClassTypeSymbol()) return false;
     ClassTypeSymbol* paramClassType = static_cast<ClassTypeSymbol*>(paramType->GetBaseType());
@@ -459,11 +462,11 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
             {
                 return false;
             }
-            if (FindTemplateParameterMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, context))
+            if (FindTemplateParameterMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, sourcePos, context))
             {
                 continue;
             }
-            else if (FindClassTemplateSpecializationMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, context))
+            else if (FindClassTemplateSpecializationMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, sourcePos, context))
             {
                 continue;
             }
@@ -518,7 +521,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
             }
             else
             {
-                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
+                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, sourcePos, context);
                 if (conversionFun)
                 {
                     ++functionMatch.numConversions;
@@ -554,7 +557,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
     return false;
 }
 
-bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, Context* context)
+bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     int arity = args.size();
     int n = std::min(arity, functionMatch.function->MemFunArity(context));
@@ -582,7 +585,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             }
             if (!qualificationConversionMatch)
             {
-                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, context);
+                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, sourcePos, context);
                 if (conversionFun)
                 {
                     argumentMatch.conversionFun = conversionFun;
@@ -616,14 +619,14 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
                 {
                     if (functionMatch.function->IsTemplate() || functionMatch.function->IsMemFnOfClassTemplate())
                     {
-                        if (FindTemplateParameterMatch(argType, paramType, arg, functionMatch, context))
+                        if (FindTemplateParameterMatch(argType, paramType, arg, functionMatch, sourcePos, context))
                         {
                             continue;
                         }
                     }
                     if (functionMatch.function->IsMemFnOfClassTemplate())
                     {
-                        if (FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, context))
+                        if (FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, sourcePos, context))
                         {
                             continue;
                         }
@@ -643,13 +646,9 @@ FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& via
     int n = viableFunctions.size();
     for (int i = 0; i < n; ++i)
     {
-        if (i == 37)
-        {
-            int x = 0;
-        }
         FunctionSymbol* viableFunction = viableFunctions[i];
         FunctionMatch functionMatch(viableFunction);
-        if (FindConversions(functionMatch, args, context))
+        if (FindConversions(functionMatch, args, sourcePos, context))
         {
             functionMatches.push_back(functionMatch);
         }
@@ -704,10 +703,6 @@ void AddArgumentScopes(std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
 {
-    if (groupName == U"destroy")
-    {
-        int x = 0;
-    }
     std::vector<FunctionSymbol*> viableFunctions;
     FunctionSymbol* operation = context->GetOperationRepository()->GetOperation(groupName, args, sourcePos, context);
     if (operation)
