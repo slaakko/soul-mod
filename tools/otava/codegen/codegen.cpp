@@ -368,6 +368,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         return;
     }
+    if (functionDefinition->Name() == U"is_header_node")
+    {
+        int x = 0;
+    }
     if (functionDefinition->Name() == U"main")
     {
         mainIrName = functionDefinition->IrName(&context);
@@ -887,6 +891,10 @@ void CodeGenerator::Visit(otava::symbols::BoundConjunctionNode& boundConjunction
         emitter.SetCurrentBasicBlock(rightBlock);
         boundConjunction.Right()->Accept(*this);
     }
+    else
+    {
+        boundConjunction.Load(emitter, otava::symbols::OperationFlags::none, boundConjunction.GetSourcePos(), &context);
+    }
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction)
@@ -900,6 +908,10 @@ void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction
         emitter.SetCurrentBasicBlock(rightBlock);
         falseBlock = prevFalseBlock;
         boundDisjunction.Right()->Accept(*this);
+    }
+    else
+    {
+        boundDisjunction.Load(emitter, otava::symbols::OperationFlags::none, boundDisjunction.GetSourcePos(), &context);
     }
 }
 
