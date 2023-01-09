@@ -20,6 +20,7 @@ import otava.symbols.fundamental.type.conversion;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.function.templates;
 import otava.symbols.class_templates;
+import otava.symbols.class_group.symbol;
 import util.unicode;
 
 namespace otava::symbols {
@@ -233,7 +234,26 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
         }
         if (argumentMatch.conversionFun)
         {
-            arg = new BoundConversionNode(arg, argumentMatch.conversionFun, sourcePos);
+            TypeSymbol* argType = arg->GetType();
+            FunctionSymbol* conversionFun = argumentMatch.conversionFun;
+            if (conversionFun->GetFunctionKind() == FunctionKind::conversionMemFn && argType->PlainType(context)->IsClassTypeSymbol())
+            {
+                if (argType->IsReferenceType())
+                {
+                    arg = new BoundRefToPtrNode(arg, sourcePos, argType->RemoveReference(context)->AddPointer(context));
+                }
+                else
+                {
+                    arg = new BoundAddressOfNode(arg, sourcePos, argType->GetBaseType()->AddPointer(context));
+                }
+                BoundFunctionCallNode* functionCall = new BoundFunctionCallNode(conversionFun, sourcePos, conversionFun->ReturnType());
+                functionCall->AddArgument(arg);
+                arg = functionCall;
+            }
+            else
+            {
+                arg = new BoundConversionNode(arg, conversionFun, sourcePos);
+            }
         }
         if (argumentMatch.postConversionFlags == OperationFlags::addr)
         {
@@ -431,6 +451,11 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
 {
     if (!paramType->GetBaseType()->IsClassTypeSymbol()) return false;
     ClassTypeSymbol* paramClassType = static_cast<ClassTypeSymbol*>(paramType->GetBaseType());
+    if (paramClassType->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* paramSpecializationType = static_cast<ClassTemplateSpecializationSymbol*>(paramClassType);
+        paramClassType = paramSpecializationType->ClassTemplate();
+    }
     if (!paramClassType->IsTemplate()) return false;
     TemplateDeclarationSymbol* paramTemplateDeclaration = paramClassType->ParentTemplateDeclaration();
     int n = paramTemplateDeclaration->Arity();
@@ -521,7 +546,8 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
             }
             else
             {
-                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, sourcePos, context);
+                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                    paramType, argType, sourcePos, context);
                 if (conversionFun)
                 {
                     ++functionMatch.numConversions;
@@ -585,7 +611,8 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             }
             if (!qualificationConversionMatch)
             {
-                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(paramType, argType, sourcePos, context);
+                FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                    paramType, argType, sourcePos, context);
                 if (conversionFun)
                 {
                     argumentMatch.conversionFun = conversionFun;
@@ -604,7 +631,12 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
                     }
                     else
                     {
-                        if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
+                        TypeSymbol* conversionArgType = conversionFun->ConversionArgType();
+                        if (!conversionArgType)
+                        {
+                            conversionArgType = argType;
+                        }
+                        if (FindQualificationConversion(conversionArgType, paramType, arg, functionMatch, argumentMatch))
                         {
                             functionMatch.argumentMatches.push_back(argumentMatch);
                             continue;
@@ -704,7 +736,9 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
 {
     std::vector<FunctionSymbol*> viableFunctions;
+    context->PushSetFlag(ContextFlags::ignoreClassTemplateSpecializations);
     FunctionSymbol* operation = context->GetOperationRepository()->GetOperation(groupName, args, sourcePos, context);
+    context->PopFlags();
     if (operation)
     {
         viableFunctions.push_back(operation);
@@ -724,7 +758,20 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, args.size(), viableFunctions, context);
     }
     FunctionMatch bestMatch = SelectBestMatchingFunction(viableFunctions, args, groupName, sourcePos, context, ex);
-    if (!bestMatch.function) return std::unique_ptr<BoundFunctionCallNode>();
+    if (!bestMatch.function)
+    {
+        FunctionSymbol* operation = context->GetOperationRepository()->GetOperation(groupName, args, sourcePos, context);
+        if (operation)
+        {
+            viableFunctions.clear();
+            viableFunctions.push_back(operation);
+            bestMatch = SelectBestMatchingFunction(viableFunctions, args, groupName, sourcePos, context, ex);
+        }
+        if (!bestMatch.function)
+        {
+            return std::unique_ptr<BoundFunctionCallNode>();
+        }
+    }
     if ((bestMatch.function->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
     {
         ex = Exception("attempt to call a deleted function", sourcePos, context);

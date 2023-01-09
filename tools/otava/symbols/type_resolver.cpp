@@ -399,6 +399,7 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
             }
         }
         TypeSymbol* templateArg = otava::symbols::ResolveType(argItem, DeclarationFlags::none, context);
+        templateArg = templateArg->DirectType(context);
         templateArgs.push_back(templateArg);
     }
     if (typeSymbol->IsClassGroupSymbol())
@@ -432,7 +433,8 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
         }
         else if (typeSymbol->IsClassTypeSymbol())
         {
-            TypeSymbol* specialization = InstantiateClassTemplate(typeSymbol, templateArgs, &node, context);
+            ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
+            TypeSymbol* specialization = InstantiateClassTemplate(classTemplate, templateArgs, &node, context);
             type = specialization;
         }
         else if (typeSymbol->IsForwardClassDeclarationSymbol())
@@ -446,8 +448,16 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
     }
     else
     {
-        ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(typeSymbol, templateArgs);
-        type = specialization;
+        if (typeSymbol->IsClassTypeSymbol())
+        {
+            ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
+            ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
+            type = specialization;
+        }
+        else
+        {
+            ThrowException("alias type or class type expected", node.GetSourcePos(), context);
+        }
     }
 }
 

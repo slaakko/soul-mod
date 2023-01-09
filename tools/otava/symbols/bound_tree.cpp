@@ -273,6 +273,17 @@ void BoundCompileUnitNode::AddBoundNode(BoundNode* node)
     boundNodes.push_back(std::unique_ptr<BoundNode>(node));
 }
 
+void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos)
+{
+    if (cls->IsTemplateParameterInstantiation()) return;
+    for (const auto& prev : boundClasses)
+    {
+        if (TypesEqual(prev, cls)) return;
+    }
+    boundClasses.push_back(cls);
+    AddBoundNode(new BoundClassNode(cls, sourcePos));
+}
+
 void BoundCompileUnitNode::Sort()
 {
     std::sort(boundNodes.begin(), boundNodes.end(), BoundNodeLess());
@@ -728,7 +739,7 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
 {
     if (variable->IsLocalVariable())
     {
-        if ((flags & OperationFlags::addr) != OperationFlags::none)
+        if ((flags & OperationFlags::addr) != OperationFlags::none || variable->GetType()->IsClassTypeSymbol())
         {
             emitter.Stack().Push(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
         }

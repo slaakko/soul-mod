@@ -157,6 +157,7 @@ public:
     ClassTemplateRepository* GetClassTemplateRepository() const { return classTemplateRepository.get(); }
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(BoundNode* node);
+    void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
     void SetId(const std::string& id_) { id = id_; }
     const std::string& Id() const { return id; }
@@ -168,6 +169,7 @@ private:
     std::unique_ptr<ArgumentConversionTable> argumentConversionTable;
     std::unique_ptr<FunctionTemplateRepository> functionTemplateRepository;
     std::unique_ptr<ClassTemplateRepository> classTemplateRepository;
+    std::vector<ClassTypeSymbol*> boundClasses;
 };
 
 class BoundStatementNode;

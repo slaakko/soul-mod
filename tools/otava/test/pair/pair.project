@@ -1,0 +1,3 @@
+project pair;
+target=program;
+source <pair.cpp>;

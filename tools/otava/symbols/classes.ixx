@@ -26,6 +26,7 @@ const int32_t vtabClassIdElementCount = 2;
 const int32_t vtabFunctionSectionOffset = 2;
 
 class FunctionDefinitionSymbol;
+class ClassGroupSymbol;
 
 enum class SpecialFunctionKind : int32_t;
 
@@ -81,6 +82,7 @@ public:
     std::string SymbolDocKindStr() const override { return "class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
+    virtual bool IsTemplateParameterInstantiation() const { return false; }
     bool IsTemplate() const;
     void MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos);
     void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos);
@@ -125,6 +127,8 @@ public:
     void SetHasUserDefinedConstructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
     const std::vector<FunctionSymbol*>& ConversionFunctions() const { return conversionFunctions; }
     FunctionSymbol* GetConversionFunction(TypeSymbol* type) const;
+    ClassGroupSymbol* Group() const { return group; }
+    void SetGroup(ClassGroupSymbol* group_) { group = group_; }
 private:
     ClassTypeSymbolFlags flags;
     std::vector<ClassTypeSymbol*> baseClasses;
@@ -148,6 +152,7 @@ private:
     int32_t vtabSize;
     int32_t vptrIndex;
     std::vector<FunctionSymbol*> conversionFunctions;
+    ClassGroupSymbol* group;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol
@@ -181,6 +186,7 @@ void EndClass(otava::ast::Node* node, otava::symbols::Context* context);
 void AddForwardClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
 void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);
+std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context* context);
 void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context);
 void ThrowMemberDeclarationParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 void ThrowStatementParsingError(const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);

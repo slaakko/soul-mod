@@ -10,6 +10,7 @@ import soul.ast.source.pos;
 
 export namespace otava::symbols {
 
+class BoundExpressionNode;
 class Context;
 class FunctionSymbol;
 class TypeSymbol;

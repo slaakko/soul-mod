@@ -10,6 +10,7 @@ import otava.ast.visitor;
 
 export namespace otava::symbols {
 
+class ClassTypeSymbol;
 class Context;
 class InstantiationScope;
 
@@ -17,6 +18,7 @@ class Instantiator : public otava::ast::DefaultVisitor
 {
 public:
     Instantiator(Context* context_, InstantiationScope* instantiationScope_);
+    std::vector<ClassTypeSymbol*> GetBaseClasses() { return std::move(baseClasses); }
     void Visit(otava::ast::ClassSpecifierNode& node) override;
     void Visit(otava::ast::BeginAccessGroupNode& node) override;
     void Visit(otava::ast::AliasDeclarationNode& node) override;
@@ -40,6 +42,7 @@ private:
     bool innerClass;
     int index;
     InstantiationScope* instantiationScope;
+    std::vector<ClassTypeSymbol*> baseClasses;
 };
 
 } // namespace otava::symbols

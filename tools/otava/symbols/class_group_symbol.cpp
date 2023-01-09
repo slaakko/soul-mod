@@ -36,6 +36,7 @@ bool ClassGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 
 void ClassGroupSymbol::AddClass(ClassTypeSymbol* classTypeSymbol)
 {
+    classTypeSymbol->SetGroup(this);
     classes.push_back(classTypeSymbol);
 }
 

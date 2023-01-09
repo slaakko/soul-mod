@@ -98,6 +98,10 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 {
     Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
+    if (symbol->Name() == U"insert")
+    {
+        int x = 0;
+    }
     SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
     switch (specialFunctionKind)
     {
@@ -220,6 +224,7 @@ void StatementBinder::AddBaseTerminator(TypeSymbol* baseClass, int index, const 
 {
     std::vector<std::unique_ptr<BoundExpressionNode>> args;
     BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
+    OperationFlags preConversionFlags = OperationFlags::none;
     FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
         baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
     if (conversion)
@@ -780,17 +785,31 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 context->PushSetFlag(ContextFlags::returnRef);
             }
             BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
-            if (returnValueExpr->GetType() != returnType)
+            if (!TypesEqual(returnValueExpr->GetType(), returnType))
             {
-                FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(returnType->DirectType(context), 
-                    returnValueExpr->GetType(), node.GetSourcePos(), context);
-                if (conversion)
+                if (TypesEqual(returnValueExpr->GetType()->PlainType(context), returnType->PlainType(context)))
                 {
-                    returnValueExpr = new BoundConversionNode(returnValueExpr, conversion, node.GetSourcePos());
+                    if (returnType->IsReferenceType())
+                    {
+                        returnValueExpr = new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddLValueRef(context));
+                    }
+                    else if (returnValueExpr->GetType()->IsReferenceType())
+                    {
+                        returnValueExpr = new BoundDereferenceNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->RemoveReference(context));
+                    }
                 }
                 else
                 {
-                    ThrowException("no conversion found", node.GetSourcePos(), context);
+                    FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                        returnType->DirectType(context), returnValueExpr->GetType(), node.GetSourcePos(), context);
+                    if (conversion)
+                    {
+                        returnValueExpr = new BoundConversionNode(returnValueExpr, conversion, node.GetSourcePos());
+                    }
+                    else
+                    {
+                        ThrowException("no conversion found", node.GetSourcePos(), context);
+                    }
                 }
             }
             boundReturnStatement->SetExpr(returnValueExpr);

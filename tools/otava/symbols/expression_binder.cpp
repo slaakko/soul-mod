@@ -131,6 +131,7 @@ public:
     GroupNameResolver();
     const std::u32string& GetGroupName() const { return groupName; }
     void Visit(BoundFunctionGroupNode& node) override;
+    void Visit(BoundVariableNode& node) override;
 private:
     std::u32string groupName;
 };
@@ -142,6 +143,11 @@ GroupNameResolver::GroupNameResolver()
 void GroupNameResolver::Visit(BoundFunctionGroupNode& node)
 {
     groupName = node.GetFunctionGroupSymbol()->Name();
+}
+
+void GroupNameResolver::Visit(BoundVariableNode& node)
+{
+    groupName = U"operator()";
 }
 
 std::u32string GetGroupName(BoundNode* node)
@@ -729,7 +735,8 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
     {
         resolutionFlags = resolutionFlags | OverloadResolutionFlags::dontSearchArgumentScopes;
     }
-    std::unique_ptr<BoundExpressionNode> subject(BindExpression(node.Subject(), context, SymbolGroupKind::functionSymbolGroup | SymbolGroupKind::typeSymbolGroup, subjectScope));
+    std::unique_ptr<BoundExpressionNode> subject(BindExpression(node.Subject(), context, 
+        SymbolGroupKind::functionSymbolGroup | SymbolGroupKind::typeSymbolGroup | SymbolGroupKind::variableSymbolGroup, subjectScope));
     if (subject)
     {
         if (subject->IsBoundEmptyDestructorNode())
@@ -783,7 +790,8 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         if (!functionCall && thisPtrAdded)
         {
             args.erase(args.begin());
-            functionCall = ResolveOverloadThrow(subjectScope, groupName, args, node.GetSourcePos(), context, resolutionFlags);
+            Exception ex2;
+            functionCall = ResolveOverload(subjectScope, groupName, args, node.GetSourcePos(), context, ex2, resolutionFlags);
         }
         if (!functionCall)
         {

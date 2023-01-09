@@ -276,9 +276,4 @@ bool operator==(const vector<T>& x, const vector<T>& y)
     return true;
 }
 
-// template<class T>
-// void swap(vector<T>& x, vector<T>& y);
-
-template class vector<int>;
-
 } // namespace std

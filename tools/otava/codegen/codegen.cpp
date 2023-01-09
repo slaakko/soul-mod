@@ -368,10 +368,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         return;
     }
-    if (functionDefinition->Name() == U"is_header_node")
-    {
-        int x = 0;
-    }
     if (functionDefinition->Name() == U"main")
     {
         mainIrName = functionDefinition->IrName(&context);
@@ -466,6 +462,10 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
         otava::symbols::BoundStatementNode* statement = node.Statements()[i].get();
         statement->Accept(*this);
         prevWasTerminator = statement->IsTerminator();
+    }
+    if (nextBlock && !prevWasTerminator)
+    {
+        StatementPrefix();
     }
 }
 

@@ -1325,7 +1325,7 @@ ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::N
     return conceptSymbol;
 }
 
-ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(TypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
+ClassTemplateSpecializationSymbol* SymbolTable::MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments)
 {
     std::unique_ptr<ClassTemplateSpecializationSymbol> symbol(new ClassTemplateSpecializationSymbol(MakeSpecializationName(classTemplate, templateArguments)));
     symbol->SetClassTemplate(classTemplate);

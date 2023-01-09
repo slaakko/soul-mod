@@ -103,7 +103,8 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     currentFunctionIndex(1),
     specializationId(),
     vtabSize(0),
-    vptrIndex(-1)
+    vptrIndex(-1),
+    group(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -118,7 +119,8 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) 
     currentFunctionIndex(1),
     specializationId(),
     vtabSize(0),
-    vptrIndex(-1)
+    vptrIndex(-1),
+    group(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -440,6 +442,10 @@ std::string ClassTypeSymbol::VTabName(Context* context) const
 {
     std::string vtabName;
     vtabName.append("vtab_").append(IrName(context));
+    if (IsClassTemplateSpecializationSymbol())
+    {
+        vtabName.append("_").append(context->GetBoundCompileUnit()->Id());
+    }
     return vtabName;
 }
 
@@ -769,8 +775,10 @@ class BaseClassResolver : public otava::ast::DefaultVisitor
 public:
     BaseClassResolver(Context* context_);
     void Visit(otava::ast::BaseSpecifierNode& node) override;
+    std::vector<ClassTypeSymbol*> BaseClasses() const { return std::move(baseClasses); }
 private:
     Context* context;
+    std::vector<ClassTypeSymbol*> baseClasses;
 };
 
 BaseClassResolver::BaseClassResolver(Context* context_) : context(context_)
@@ -783,7 +791,7 @@ void BaseClassResolver::Visit(otava::ast::BaseSpecifierNode& node)
     if (baseClassType->IsClassTypeSymbol())
     {
         ClassTypeSymbol* baseClass = static_cast<ClassTypeSymbol*>(baseClassType);
-        context->GetSymbolTable()->AddBaseClass(baseClass, node.GetSourcePos(), context);
+        baseClasses.push_back(baseClass);
     }
     else
     {
@@ -800,6 +808,13 @@ void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::sym
     specialization = resolver.Specialization();
 }
 
+std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context* context)
+{
+    BaseClassResolver resolver(context);
+    node->Accept(resolver);
+    return resolver.BaseClasses();
+}
+
 void BeginClass(otava::ast::Node* node, otava::symbols::Context* context)
 {
     std::u32string name;
@@ -807,8 +822,11 @@ void BeginClass(otava::ast::Node* node, otava::symbols::Context* context)
     TypeSymbol* specialization = nullptr;
     GetClassAttributes(node, name, kind, specialization, context);
     context->GetSymbolTable()->BeginClass(name, kind, specialization, node, context);
-    BaseClassResolver resolver(context);
-    node->Accept(resolver);
+    std::vector<ClassTypeSymbol*> baseClasses = ResolveBaseClasses(node, context);
+    for (const auto& baseClass : baseClasses)
+    {
+        context->GetSymbolTable()->AddBaseClass(baseClass, node->GetSourcePos(), context);
+    }
     context->PushSetFlag(ContextFlags::parseMemberFunction);
 }
 
@@ -842,7 +860,7 @@ void EndClass(otava::ast::Node* node, otava::symbols::Context* context)
     }
     if (!classTypeSymbol->IsTemplate())
     {
-        context->GetBoundCompileUnit()->AddBoundNode(new BoundClassNode(classTypeSymbol, node->GetSourcePos()));
+        context->GetBoundCompileUnit()->AddBoundNodeForClass(classTypeSymbol, node->GetSourcePos());
     }
 }
 

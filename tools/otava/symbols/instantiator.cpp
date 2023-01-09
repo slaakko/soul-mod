@@ -38,6 +38,7 @@ void Instantiator::Visit(otava::ast::ClassSpecifierNode& node)
         ClassKind kind;
         TypeSymbol* specialization = nullptr;
         GetClassAttributes(&node, name, kind, specialization, context);
+        baseClasses = ResolveBaseClasses(&node, context);
         switch (kind)
         {
             case ClassKind::class_:

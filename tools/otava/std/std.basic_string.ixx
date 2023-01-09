@@ -24,8 +24,8 @@ public:
     using const_reference = const value_type&;
     using iterator = pointer;
     using const_iterator = const_pointer;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    //using reverse_iterator = std::reverse_iterator<iterator>;
+    //using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     
     static const size_type npos = -1;
     
@@ -152,10 +152,10 @@ public:
             return nullptr;
         }
     }
-    reverse_iterator rbegin();
-    const_reverse_iterator rbegin() const;
-    reverse_iterator rend();
-    const_reverse_iterator rend() const;
+    //reverse_iterator rbegin();
+    //const_reverse_iterator rbegin() const;
+    //reverse_iterator rend();
+    //const_reverse_iterator rend() const;
     const_iterator cbegin() const { return chars; }
     const_iterator cend() const
     {
@@ -168,8 +168,8 @@ public:
             return nullptr;
         }
     }
-    const_reverse_iterator crbegin() const;
-    const_reverse_iterator crend() const;
+    //const_reverse_iterator crbegin() const;
+    //const_reverse_iterator crend() const;
     
     size_type size() const { return len; }
     size_type length() const { return len; }

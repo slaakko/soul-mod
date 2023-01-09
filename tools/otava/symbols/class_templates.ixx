@@ -24,8 +24,8 @@ public:
     void SetInstantiated() { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
     std::string SymbolDocKindStr() const override { return "specialization"; }
-    TypeSymbol* ClassTemplate() const { return classTemplate; }
-    void SetClassTemplate(TypeSymbol* classTemplate_);
+    ClassTypeSymbol* ClassTemplate() const { return classTemplate; }
+    void SetClassTemplate(ClassTypeSymbol* classTemplate_);
     const std::u32string& SimpleName() const override { return ClassTemplate()->SimpleName(); }
     std::string IrName(Context* context) const override;
     const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
@@ -35,8 +35,9 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) override;
+    bool IsTemplateParameterInstantiation() const override;
 private:
-    TypeSymbol* classTemplate;
+    ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;
     std::vector<std::pair<util::uuid, bool>> ids;
     bool instantiated;
@@ -69,7 +70,7 @@ std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vec
 
 CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int index);
 
-TypeSymbol* InstantiateClassTemplate(TypeSymbol* typeSymbol, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node, Context* context);
+TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node, Context* context);
 
 FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     ClassTemplateSpecializationSymbol* classTemplateSpecialization, const soul::ast::SourcePos& sourcePos, Context* context);

@@ -852,7 +852,7 @@ ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast:
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "default_ctor_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "default_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
 }
 
 class ClassDefaultCtorOperation : public Operation
@@ -875,7 +875,7 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
     TypeSymbol* type = args[0]->GetType();
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
-    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
+    if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     FunctionSymbol* defaultCtor = classType->GetFunction(defaultCtorIndex);
     if (defaultCtor)
     {
@@ -988,7 +988,7 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "copy_ctor_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "copy_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
 }
 
 class ClassCopyCtorOperation : public Operation
@@ -1012,7 +1012,7 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
-    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
+    if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* copyCtor = classType->GetFunction(copyCtorIndex);
     if (copyCtor)
@@ -1132,7 +1132,7 @@ ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "move_ctor_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "move_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
 }
 
 class ClassMoveCtorOperation : public Operation
@@ -1156,7 +1156,7 @@ FunctionSymbol* ClassMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
-    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
+    if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* moveCtor = classType->GetFunction(moveCtorIndex);
     if (moveCtor)
@@ -1286,7 +1286,7 @@ ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(classType->AddLValueRef(context), context);
-    irName = "copy_assignment_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "copy_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
 }
 
 class ClassCopyAssignmentOperation : public Operation
@@ -1310,7 +1310,7 @@ FunctionSymbol* ClassCopyAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
-    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
+    if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* copyAssignment = classType->GetFunction(copyAssignmentIndex);
     if (copyAssignment)
@@ -1407,7 +1407,7 @@ ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(classType->AddLValueRef(context), context);
-    irName = "move_assignment_" + util::ToUtf8(classType->Name()) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "move_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
 }
 
 class ClassMoveAssignmentOperation : public Operation
@@ -1431,7 +1431,7 @@ FunctionSymbol* ClassMoveAssignmentOperation::Get(std::vector<std::unique_ptr<Bo
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
-    if (classType->IsClassTemplateSpecializationSymbol()) return nullptr;
+    if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
     FunctionSymbol* moveAssignment = classType->GetFunction(moveAssignmentIndex);
     if (moveAssignment)
