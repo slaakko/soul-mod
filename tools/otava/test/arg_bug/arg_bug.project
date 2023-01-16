@@ -1,0 +1,3 @@
+project arg_bug;
+target=program;
+source <arg_bug.cpp>;

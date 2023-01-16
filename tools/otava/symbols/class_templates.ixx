@@ -70,7 +70,7 @@ std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vec
 
 CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int index);
 
-TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, otava::ast::TemplateIdNode* node, Context* context);
+TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, Context* context);
 
 FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     ClassTemplateSpecializationSymbol* classTemplateSpecialization, const soul::ast::SourcePos& sourcePos, Context* context);

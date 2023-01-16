@@ -1,4 +1,6 @@
-module rb_tree;
+module std.container.rb_tree;
+
+namespace std {
 
 rb_node_base::rb_node_base(rb_node_base* parent_) : parent(parent_), left(nullptr), right(nullptr), color(rb_node_color::black)
 {
@@ -410,3 +412,5 @@ rb_node_base* rebalance_for_remove(rb_node_base* z, rb_node_base** root_ptr, rb_
     }
     return y;
 }
+
+} // namespace std

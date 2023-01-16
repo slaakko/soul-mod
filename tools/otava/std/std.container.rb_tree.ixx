@@ -1,6 +1,12 @@
-export module rb_tree;
+export module std.container.rb_tree;
 
-import std.core;
+import std.type.fundamental;
+import std.utilities.pair;
+import std.utilities.utility;
+import std.utilities.unique_ptr;
+import std.new_delete_op;
+
+export namespace std {
 
 enum class rb_node_color
 {
@@ -49,6 +55,7 @@ public:
     rb_node(const value_type& value_, rb_node_base* parent_) : rb_node_base(parent_), val(value_) {}
     const value_type& value() const { return val; }
     value_type& value() { return val; }
+    value_type* value_ptr() { return &val; }
 private:
     value_type val;
 };
@@ -65,7 +72,7 @@ public:
     rb_node_iterator() : n(nullptr) {}
     rb_node_iterator(node_type* node_) : n(node_) {}
     reference_type operator*() { return n->value(); }
-    pointer_type operator->() { return &(n->value()); }
+    pointer_type operator->() { return n->value_ptr(); }
     rb_node_iterator& operator++() { n = static_cast<node_type*>(next(n)); return *this; }
     rb_node_iterator operator++(int) { rb_node_iterator p = *this; n = static_cast<node_type*>(next(n)); return p; }
     rb_node_iterator& operator--() { n = static_cast<node_type*>(prev(n)); return *this; }
@@ -258,6 +265,30 @@ public:
         }
         return cend();
     }
+    const_iterator cfind(const key_type& key) const
+    {
+        if (empty()) return cend();
+        node_type* x = root();
+        while (x)
+        {
+            if (comp(key, key_of(x->value())))
+            {
+                x = static_cast<node_type*>(x->get_left());
+            }
+            else
+            {
+                if (comp(key_of(x->value()), key))
+                {
+                    x = static_cast<node_type*>(x->get_right());
+                }
+                else
+                {
+                    return const_iterator(x);
+                }
+            }
+        }
+        return cend();
+    }
     void erase(const iterator& position)
     {
         node_type* r = static_cast<node_type*>(rebalance_for_remove(position.node(), root_ptr(), leftmost_ptr(), rightmost_ptr()));
@@ -382,3 +413,5 @@ private:
     key_of_value key_of;
     compare comp;
 };
+
+} // namespace std

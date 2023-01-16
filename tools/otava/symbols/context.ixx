@@ -43,8 +43,7 @@ enum class ContextFlags : int32_t
     skipFunctionDefinitions = 1 << 18,
     returnRef = 1 << 19,
     virtualSeen = 1 << 20,
-    bindBooleanExpr = 1 << 21,
-    ignoreClassTemplateSpecializations = 1 << 22
+    ignoreClassTemplateSpecializations = 1 << 21
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

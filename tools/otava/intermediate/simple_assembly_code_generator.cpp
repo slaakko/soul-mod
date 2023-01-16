@@ -123,6 +123,7 @@ void SimpleAssemblyCodeGenerator::Visit(Function& function)
 
 void SimpleAssemblyCodeGenerator::PatchFrameLocations()
 {
+/*
     Frame& frame = registerAllocator->GetFrame();
     int64_t frameSize = frame.Size();
     for (auto& frameLoc : frameLocations)
@@ -131,6 +132,7 @@ void SimpleAssemblyCodeGenerator::PatchFrameLocations()
         int64_t newOffset = frameSize - offset;
         frameLoc->SetValue(newOffset);
     }
+*/
 }
 
 void SimpleAssemblyCodeGenerator::Visit(BasicBlock& basicBlock)

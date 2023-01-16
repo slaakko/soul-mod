@@ -26,6 +26,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.type.symbol;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.variable.symbol;
+import otava.symbols.class_templates;
 
 namespace otava::symbols {
 
@@ -78,6 +79,19 @@ BoundExpressionNode* MakeBoundBooleanConversionNode(BoundExpressionNode* conditi
     return new BoundConversionNode(condition, conversionFunction, sourcePos);
 }
 
+BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    Symbol* dtorSymbol = GenerateDestructor(cls, sourcePos, context);
+    if (dtorSymbol && dtorSymbol->IsFunctionDefinitionSymbol())
+    {
+        FunctionDefinitionSymbol* dtorFunctionSymbol = static_cast<FunctionDefinitionSymbol*>(dtorSymbol);
+        std::unique_ptr<BoundFunctionCallNode> destructorCall(new BoundFunctionCallNode(dtorFunctionSymbol, sourcePos, cls));
+        destructorCall->AddArgument(arg->Clone());
+        return destructorCall.release();
+    }
+    return nullptr;
+}
+
 StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_) : 
     context(context_), 
     currentClass(nullptr),
@@ -98,10 +112,6 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 {
     Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
-    if (symbol->Name() == U"insert")
-    {
-        int x = 0;
-    }
     SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
     switch (specialFunctionKind)
     {
@@ -260,9 +270,13 @@ void StatementBinder::AddMemberTerminator(VariableSymbol* memberVar, const soul:
     BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
     boundVariableNode->SetThisPtr(thisPtr);
     args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, boundVariableNode->GetType()->AddPointer(context))));
-    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-        context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context);
-    memberTerminators.push_back(std::make_pair(memberVar->Index(), std::move(boundFunctionCall)));
+    Exception ex;
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(
+        context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context, ex);
+    if (boundFunctionCall)
+    {
+        memberTerminators.push_back(std::make_pair(memberVar->Index(), std::move(boundFunctionCall)));
+    }
 }
 
 void StatementBinder::GenerateSetVPtrStatement(const soul::ast::SourcePos& sourcePos)
@@ -789,13 +803,19 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
             {
                 if (TypesEqual(returnValueExpr->GetType()->PlainType(context), returnType->PlainType(context)))
                 {
-                    if (returnType->IsReferenceType())
+                    if (!(
+                        returnType->IsLValueRefType() && returnValueExpr->GetType()->IsRValueRefType() || 
+                        returnType->IsRValueRefType() && returnValueExpr->GetType()->IsLValueRefType()))
                     {
-                        returnValueExpr = new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddLValueRef(context));
-                    }
-                    else if (returnValueExpr->GetType()->IsReferenceType())
-                    {
-                        returnValueExpr = new BoundDereferenceNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->RemoveReference(context));
+
+                        if (returnType->IsLValueRefType())
+                        {
+                            returnValueExpr = new BoundAddressOfNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->AddLValueRef(context));
+                        }
+                        else if (returnValueExpr->GetType()->IsLValueRefType())
+                        {
+                            returnValueExpr = new BoundDereferenceNode(returnValueExpr, node.GetSourcePos(), returnValueExpr->GetType()->RemoveReference(context));
+                        }
                     }
                 }
                 else
@@ -874,7 +894,22 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
             }
             std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", arguments,
                 node.GetSourcePos(), context);
-            BoundConstructionStatementNode* boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
+            BoundConstructionStatementNode* boundConstructionStatement = nullptr;
+            otava::symbols::ClassTypeSymbol* cls = nullptr;
+            BoundExpressionNode* firstArg = nullptr;
+            if (constructorCall->CallsClassConstructor(cls, firstArg))
+            {
+                boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
+                otava::symbols::BoundFunctionCallNode* destructorCall = MakeDestructorCall(cls, firstArg, node.GetSourcePos(), context);
+                if (destructorCall)
+                {
+                    boundConstructionStatement->SetDestructorCall(destructorCall);
+                }
+            }
+            else
+            {
+                boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
+            }
             boundCompoundStatement->AddStatement(boundConstructionStatement);
             functionDefinitionSymbol->AddLocalVariable(variable);
         }

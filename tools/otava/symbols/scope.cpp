@@ -276,7 +276,10 @@ ContainerScope::ContainerScope() : Scope(), parentScopes(), usingDeclarationScop
 
 void ContainerScope::AddParentScope(Scope* parentScope)
 {
-    parentScopes.push_back(parentScope);
+    if (std::find(parentScopes.begin(), parentScopes.end(), parentScope) == parentScopes.end())
+    {
+        parentScopes.push_back(parentScope);
+    }
 }
 
 void ContainerScope::PushParentScope(Scope* parentScope)

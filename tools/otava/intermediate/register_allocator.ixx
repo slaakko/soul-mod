@@ -39,6 +39,7 @@ struct FrameLocation
     FrameLocation() : index(-1), offset(0), size(0) {}
     FrameLocation(int index_, int64_t offset_, int64_t size_) : index(index_), offset(offset_), size(size_) {}
     bool Valid() const { return index != -1; }
+    int64_t ItemOffset() const { return offset + size; }
     int index;
     int64_t offset;
     int64_t size;
@@ -47,6 +48,7 @@ struct FrameLocation
 struct ArgLocation
 {
     ArgLocation(int index_, int64_t offset_, int64_t size_);
+    int64_t ItemOffset() const { return offset + size; }
     int index;
     int64_t offset;
     int64_t size;

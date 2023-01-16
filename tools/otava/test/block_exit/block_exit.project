@@ -1,0 +1,3 @@
+project block_exit;
+target=program;
+source <block_exit.cpp>;

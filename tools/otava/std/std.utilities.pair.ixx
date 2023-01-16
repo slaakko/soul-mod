@@ -1,6 +1,7 @@
 export module std.utilities.pair;
 
 import std.type.fundamental;
+import std.utilities.utility;
 
 export namespace std {
 

@@ -327,7 +327,11 @@ void TypeResolver::Visit(otava::ast::IdentifierNode& node)
         }
         else
         {
-            ThrowException("symbol '" + util::ToUtf8(symbol->Name()) + "' is not a type symbol", node.GetSourcePos(), context);
+            if ((resolverFlags & TypeResolverFlags::dontThrow) == TypeResolverFlags::none)
+            {
+                ThrowException("symbol '" + util::ToUtf8(symbol->Name()) + "' is not a type symbol", node.GetSourcePos(), context);
+                type = nullptr;
+            }
         }
     }
     else if (createTypeSymbol)
@@ -367,14 +371,22 @@ void TypeResolver::Visit(otava::ast::IdentifierNode& node)
     }
     else
     {
-        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
-        type = context->GetSymbolTable()->GetErrorTypeSymbol();
+        if ((resolverFlags & TypeResolverFlags::dontThrow) == TypeResolverFlags::none)
+        {
+            ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
+        }
+        type = nullptr;
     }
 }
 
 void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
 {
-    TypeSymbol* typeSymbol = otava::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context);
+    TypeSymbol* typeSymbol = otava::symbols::ResolveType(node.TemplateName(), DeclarationFlags::none, context, resolverFlags);
+    if (!typeSymbol)
+    {
+        type = nullptr;
+        return;
+    }
     TemplateDeclarationSymbol* templateDeclaration = nullptr;
     if (typeSymbol->IsClassTypeSymbol())
     {
@@ -434,7 +446,7 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
         else if (typeSymbol->IsClassTypeSymbol())
         {
             ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(typeSymbol);
-            TypeSymbol* specialization = InstantiateClassTemplate(classTemplate, templateArgs, &node, context);
+            TypeSymbol* specialization = InstantiateClassTemplate(classTemplate, templateArgs, node.GetSourcePos(), context);
             type = specialization;
         }
         else if (typeSymbol->IsForwardClassDeclarationSymbol())

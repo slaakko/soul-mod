@@ -43,7 +43,8 @@ void EmitFrameLocationOperand(int64_t size, const FrameLocation& frameLocation, 
 {
     otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
     otava::assembly::Register* rbp = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbp);
-    otava::assembly::UniqueLiteral* frameLoc = assemblyContext.MakeUniqueLiteral(frameLocation.offset, 8);
+    //otava::assembly::UniqueLiteral* frameLoc = assemblyContext.MakeUniqueLiteral(frameLocation.offset, 8);
+    otava::assembly::UniqueLiteral* frameLoc = assemblyContext.MakeUniqueLiteral(frameLocation.ItemOffset(), 8);
     codeGen.AddFrameLocation(frameLoc);
     instruction->AddOperand(assemblyContext.MakeSizePrefix(size, assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rbp, frameLoc, otava::assembly::Operator::sub))));
 // NOTE: frameLocation changed
@@ -53,9 +54,11 @@ void EmitArgLocationOperand(int64_t size, const ArgLocation& argLocation, otava:
 {
     otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
     otava::assembly::Register* rsp = assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rsp);
+    //instruction->AddOperand(assemblyContext.MakeSizePrefix(size,
+        //assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rsp, assemblyContext.MakeLiteral(argLocation.offset, 8), otava::assembly::Operator::sub))));
     instruction->AddOperand(assemblyContext.MakeSizePrefix(size,
-        assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rsp, assemblyContext.MakeLiteral(argLocation.offset, 8), otava::assembly::Operator::sub))));
-// NOTE: argLocation changed
+        assemblyContext.MakeContent(assemblyContext.MakeBinaryExpr(rsp, assemblyContext.MakeLiteral(argLocation.ItemOffset(), 8), otava::assembly::Operator::sub))));
+    // NOTE: argLocation changed
 }
 
 int64_t GetIndex(Value* index, CodeGenerator& codeGen)

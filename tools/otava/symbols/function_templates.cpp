@@ -58,6 +58,11 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
 FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    std::map<std::pair<int, std::u32string>, TypeSymbol*> templateParamMap;
+    for (const auto& templateParamTypePair : templateParameterMap)
+    {
+        templateParamMap[std::make_pair(templateParamTypePair.first->Index(), templateParamTypePair.first->Name())] = templateParamTypePair.second;
+    }
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
     TemplateDeclarationSymbol* templateDeclaration = functionTemplate->ParentTemplateDeclaration();
@@ -69,9 +74,18 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
             TypeSymbol* templateArgumentType = it->second;
             templateArgumentTypes.push_back(templateArgumentType);
         }
-        else
+        else 
         {
-            ThrowException("template parameter type not found", sourcePos, context);
+            auto it = templateParamMap.find(std::make_pair(templateParameter->Index(), templateParameter->Name()));
+            if (it != templateParamMap.cend())
+            {
+                TypeSymbol* templateArgumentType = it->second;
+                templateArgumentTypes.push_back(templateArgumentType);
+            }
+            else
+            {
+                ThrowException("template parameter type not found", sourcePos, context);
+            }
         }
     }
     FunctionTemplateKey key(functionTemplate, templateArgumentTypes);

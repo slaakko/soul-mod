@@ -628,6 +628,11 @@ void ExpressionBinder::Visit(otava::ast::DestructorIdNode& node)
     }
     else
     {
+        if (s->IsClassTemplateSpecializationSymbol())
+        {
+            ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(s);
+            s = sp->ClassTemplate();
+        }
         scope = s->GetScope();
     }
     Symbol* symbol = scope->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
@@ -716,12 +721,18 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
         }
         else
         {
-            boundExpression = new BoundMemberExprNode(subject, member.release(), node->Op()->Kind(), node->GetSourcePos());
+            boundExpression = new BoundMemberExprNode(subject, member.release(), node->Op()->Kind(), node->GetSourcePos(), nullptr);
         }
+    }
+    else if (subject->IsBoundFunctionCallNode() && member->IsBoundMemberVariable())
+    {
+        BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+        memberVar->SetThisPtr(subject->Clone());
+        boundExpression = memberVar;
     }
     else
     {
-        boundExpression = new BoundMemberExprNode(subject, member.release(), node->Op()->Kind(), node->GetSourcePos());
+        boundExpression = new BoundMemberExprNode(subject, member.release(), node->Op()->Kind(), node->GetSourcePos(), nullptr);
     }
 }
 
@@ -829,30 +840,19 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
 
 void ExpressionBinder::Visit(otava::ast::BinaryExprNode& node)
 {
-    bool flagsPushed = false;
+    bool booleanChild = false;
     otava::ast::NodeKind op = node.Op()->Kind();
     switch (op)
     {
         case otava::ast::NodeKind::disjunctionNode:
         case otava::ast::NodeKind::conjunctionNode:
         {
-            context->PushSetFlag(ContextFlags::bindBooleanExpr);
-            flagsPushed = true;
-            break;
-        }
-        default:
-        {
-            context->PushResetFlag(ContextFlags::bindBooleanExpr);
-            flagsPushed = true;
+            booleanChild = true;
             break;
         }
     }
-    std::unique_ptr<BoundExpressionNode> left(BindExpression(node.Left(), context));
-    std::unique_ptr<BoundExpressionNode> right(BindExpression(node.Right(), context));
-    if (flagsPushed)
-    {
-        context->PopFlags();
-    }
+    std::unique_ptr<BoundExpressionNode> left(BindExpression(node.Left(), context, booleanChild));
+    std::unique_ptr<BoundExpressionNode> right(BindExpression(node.Right(), context, booleanChild));
     switch (op)
     {
         case otava::ast::NodeKind::assignNode:
@@ -1254,9 +1254,14 @@ BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, Sy
 
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context)
 {
+    return BindExpression(node, context, false);
+}
+
+BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bool booleanChild)
+{
     Scope* scope = nullptr;
     BoundExpressionNode* expr = BindExpression(node, context, SymbolGroupKind::all, scope);
-    if (context->GetFlag(ContextFlags::bindBooleanExpr) && !expr->GetType()->IsBoolType())
+    if (booleanChild && !expr->GetType()->IsBoolType())
     {
         FunctionSymbol* conversionFunction = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
             context->GetSymbolTable()->GetFundamentalType(otava::symbols::FundamentalTypeKind::boolType), expr->GetType(), node->GetSourcePos(), context);

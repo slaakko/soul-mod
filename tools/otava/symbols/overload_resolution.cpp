@@ -21,6 +21,8 @@ import otava.symbols.argument.conversion.table;
 import otava.symbols.function.templates;
 import otava.symbols.class_templates;
 import otava.symbols.class_group.symbol;
+import otava.symbols.declaration;
+import otava.symbols.type.resolver;
 import util.unicode;
 
 namespace otava::symbols {
@@ -58,6 +60,7 @@ struct FunctionMatch
     int numConversions;
     int numQualifyingConversions;
     std::map<TemplateParameterSymbol*, TypeSymbol*> templateParameterMap;
+    ClassTemplateSpecializationSymbol* specialization;
 };
 
 ArgumentMatch::ArgumentMatch() : 
@@ -85,7 +88,7 @@ bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMa
     return false;
 }
 
-FunctionMatch::FunctionMatch(FunctionSymbol* function_) : function(function_), numConversions(0), numQualifyingConversions(0)
+FunctionMatch::FunctionMatch(FunctionSymbol* function_) : function(function_), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
 {
 }
 
@@ -226,7 +229,17 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(const FunctionMat
         const ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
         if (argumentMatch.preConversionFlags == OperationFlags::addr)
         {
-            arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos, arg->GetType()->AddPointer(context));
+            arg = MakeLvalueExpression(arg, sourcePos, context);
+            TypeSymbol* type = nullptr;
+            if (arg->GetType()->IsClassTypeSymbol() && arg->GetFlag(BoundExpressionFlags::bindToRvalueRef))
+            {
+                type = arg->GetType()->AddRValueRef(context);
+            }
+            else
+            {
+                type = arg->GetType()->AddLValueRef(context);
+            }
+            arg = new BoundAddressOfNode(arg, sourcePos, type); 
         }
         else if (argumentMatch.preConversionFlags == OperationFlags::deref)
         {
@@ -446,8 +459,8 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
     return false;
 }
 
-bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, const soul::ast::SourcePos& sourcePos, 
-    Context* context)
+bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch, 
+    const soul::ast::SourcePos& sourcePos, Context* context, bool dontResolveDefaultTemplateArguments)
 {
     if (!paramType->GetBaseType()->IsClassTypeSymbol()) return false;
     ClassTypeSymbol* paramClassType = static_cast<ClassTypeSymbol*>(paramType->GetBaseType());
@@ -463,20 +476,67 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
     if (argType->GetBaseType()->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* sourceClassTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(argType->GetBaseType());
+        sourceClassTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+        std::vector<Symbol*> allTemplateArguments;
         int m = sourceClassTemplateSpecialization->TemplateArguments().size();
-        if (n != m) return false;
-        for (int i = 0; i < n; ++i)
+        if (m > n)
         {
-            Symbol* sourceArgumentSymbol = sourceClassTemplateSpecialization->TemplateArguments()[i];
-            TypeSymbol* sourceArgumentType = nullptr;
-            if (sourceArgumentSymbol->IsTypeSymbol())
-            {
-                sourceArgumentType = static_cast<TypeSymbol*>(sourceArgumentSymbol);
-            }
-            else
+            return false;
+        }
+        else if (n > m)
+        {
+            if (dontResolveDefaultTemplateArguments)
             {
                 return false;
             }
+        }
+        InstantiationScope instantiationScope(sourceClassTemplateSpecialization->GetScope());
+        sourceClassTemplateSpecialization->GetScope()->AddParentScope(sourceClassTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+        std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
+        for (int i = 0; i < n; ++i)
+        {
+            TemplateParameterSymbol* templateParameter = paramTemplateDeclaration->TemplateParameters()[i];
+            TypeSymbol* sourceArgumentType = nullptr;
+            if (i >= m)
+            {
+                otava::ast::Node* defaultTemplateArgNode = templateParameter->DefaultTemplateArg();
+                if (defaultTemplateArgNode)
+                {
+                    context->GetSymbolTable()->BeginScope(&instantiationScope);
+                    sourceArgumentType = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context, TypeResolverFlags::dontThrow | TypeResolverFlags::dontInstantiate);
+                    context->GetSymbolTable()->EndScope();
+                    if (sourceArgumentType)
+                    {
+                        allTemplateArguments.push_back(sourceArgumentType);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                Symbol* sourceArgumentSymbol = sourceClassTemplateSpecialization->TemplateArguments()[i];
+                if (sourceArgumentSymbol->IsTypeSymbol())
+                {
+                    sourceArgumentType = static_cast<TypeSymbol*>(sourceArgumentSymbol);
+                }
+                else
+                {
+                    return false;
+                }
+                allTemplateArguments.push_back(sourceArgumentType);
+            }
+            BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+            boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
+            boundTemplateParameter->SetBoundSymbol(sourceArgumentType);
+            boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
+            instantiationScope.Install(boundTemplateParameter);
             Symbol* targetArgumentSymbol = paramTemplateDeclaration->TemplateParameters()[i];
             TypeSymbol* targetArgumentType = nullptr;
             if (targetArgumentSymbol->IsTypeSymbol())
@@ -491,7 +551,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
             {
                 continue;
             }
-            else if (FindClassTemplateSpecializationMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, sourcePos, context))
+            else if (FindClassTemplateSpecializationMatch(sourceArgumentType, targetArgumentType, arg, functionMatch, sourcePos, context, true))
             {
                 continue;
             }
@@ -499,6 +559,12 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
             {
                 return false;
             }
+        }
+        if (n > m)
+        {
+            sourceClassTemplateSpecialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(sourceClassTemplateSpecialization->ClassTemplate(), allTemplateArguments);
+            functionMatch.specialization = sourceClassTemplateSpecialization;
+            argType = context->GetSymbolTable()->MakeCompoundType(sourceClassTemplateSpecialization, argType->GetDerivations());
         }
         functionMatch.argumentMatches.resize(numArgumentMatches);
         std::vector<Symbol*> targetTemplateArguments;
@@ -583,7 +649,8 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
     return false;
 }
 
-bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context)
+bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context,
+    bool constructor)
 {
     int arity = args.size();
     int n = std::min(arity, functionMatch.function->MemFunArity(context));
@@ -655,10 +722,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
                         {
                             continue;
                         }
-                    }
-                    if (functionMatch.function->IsMemFnOfClassTemplate())
-                    {
-                        if (FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, sourcePos, context))
+                        if (FindClassTemplateSpecializationMatch(argType, paramType, arg, functionMatch, sourcePos, context, constructor))
                         {
                             continue;
                         }
@@ -674,13 +738,14 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
 FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
     const std::u32string& groupName, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
+    bool constructor = groupName == U"@constructor";
     std::vector<FunctionMatch> functionMatches;
     int n = viableFunctions.size();
     for (int i = 0; i < n; ++i)
     {
         FunctionSymbol* viableFunction = viableFunctions[i];
         FunctionMatch functionMatch(viableFunction);
-        if (FindConversions(functionMatch, args, sourcePos, context))
+        if (FindConversions(functionMatch, args, sourcePos, context, constructor))
         {
             functionMatches.push_back(functionMatch);
         }
@@ -710,18 +775,27 @@ FunctionMatch SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& via
     }
 }
 
-Scope* GetArgumentScope(BoundExpressionNode* arg)
+std::vector<Scope*> GetArgumentScopes(BoundExpressionNode* arg)
 {
+    std::vector<Scope*> scopes;
     TypeSymbol* type = arg->GetType();
-    return type->GetBaseType()->GetScope();
+    Scope* first = type->GetBaseType()->GetScope();
+    scopes.push_back(first);
+    if (type->GetBaseType()->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(type->GetBaseType());
+        Scope* second = sp->ClassTemplate()->GetScope()->GetNamespaceScope();
+        scopes.push_back(second);
+    }
+    return scopes;
 }
 
 void AddArgumentScopes(std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::vector<std::unique_ptr<BoundExpressionNode>>& args)
 {
     for (const auto& arg : args)
     {
-        Scope* scope = GetArgumentScope(arg.get());
-        if (scope)
+        std::vector<Scope*> scopes = GetArgumentScopes(arg.get());
+        for (auto scope : scopes)
         {
             std::pair<Scope*, ScopeLookup> scopeLookup = std::make_pair(scope, ScopeLookup::thisAndBaseScopes);
             if (std::find(scopeLookups.begin(), scopeLookups.end(), scopeLookup) == scopeLookups.end())
@@ -787,15 +861,22 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         else if (bestMatch.function->IsMemFnOfClassTemplate())
         {
             ClassTemplateSpecializationSymbol* classTemplateSpecialization = nullptr;
-            TypeSymbol* arg0Type = args[0]->GetType()->GetBaseType();
-            if (arg0Type->IsClassTemplateSpecializationSymbol())
+            if (bestMatch.specialization)
             {
-                classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(arg0Type);
+                classTemplateSpecialization = bestMatch.specialization;
             }
             else
             {
-                ex = Exception("function argument 0 is expected to be a class template specialization", sourcePos, context);
-                return std::unique_ptr<BoundFunctionCallNode>();
+                TypeSymbol* arg0Type = args[0]->GetType()->GetBaseType();
+                if (arg0Type->IsClassTemplateSpecializationSymbol())
+                {
+                    classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(arg0Type);
+                }
+                else
+                {
+                    ex = Exception("function argument 0 is expected to be a class template specialization", sourcePos, context);
+                    return std::unique_ptr<BoundFunctionCallNode>();
+                }
             }
             bestMatch.function = InstantiateMemFnOfClassTemplate(bestMatch.function, classTemplateSpecialization, sourcePos, context);
         }

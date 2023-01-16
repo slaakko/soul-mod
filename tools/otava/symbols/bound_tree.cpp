@@ -652,6 +652,11 @@ void BoundConstructionStatementNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
+void BoundConstructionStatementNode::SetDestructorCall(BoundFunctionCallNode* destructorCall_)
+{
+    destructorCall.reset(destructorCall_);
+}
+
 BoundExpressionStatementNode::BoundExpressionStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundExpressionStatementNode, sourcePos_)
 {
 }
@@ -763,6 +768,10 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         if (!thisPtr)
         {
             ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+        }
+        if (thisPtr->IsBoundFunctionCallNode())
+        {
+            int x = 0;
         }
         thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
@@ -1066,8 +1075,9 @@ BoundExpressionNode* BoundTypeNode::Clone() const
     return new BoundTypeNode(GetType(), GetSourcePos());
 }
 
-BoundMemberExprNode::BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, otava::ast::NodeKind op_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, sourcePos_, nullptr), subject(subject_), member(member_), op(op_)
+BoundMemberExprNode::BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, otava::ast::NodeKind op_, const soul::ast::SourcePos& sourcePos_, 
+    TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundMemberExprNode, sourcePos_, type_), subject(subject_), member(member_), op(op_)
 {
 }
 
@@ -1078,7 +1088,7 @@ void BoundMemberExprNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundMemberExprNode::Clone() const
 {
-    return new BoundMemberExprNode(subject->Clone(), member->Clone(), op, GetSourcePos());
+    return new BoundMemberExprNode(subject->Clone(), member->Clone(), op, GetSourcePos(), GetType());
 }
 
 BoundFunctionCallNode::BoundFunctionCallNode(FunctionSymbol* functionSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
@@ -1189,6 +1199,19 @@ BoundExpressionNode* BoundFunctionCallNode::Clone() const
         clone->AddArgument(arg->Clone());
     }
     return clone;
+}
+
+bool BoundFunctionCallNode::CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg) const
+{
+    if (functionSymbol->GetFunctionKind() != otava::symbols::FunctionKind::constructor) return false;
+    if (args.empty()) return false;
+    firstArg = args[0].get();
+    if (!firstArg->IsBoundAddressOfNode()) return false;
+    BoundAddressOfNode* addrOf = static_cast<BoundAddressOfNode*>(firstArg);
+    TypeSymbol* subjectType = addrOf->Subject()->GetType();
+    if (!subjectType->IsClassTypeSymbol()) return false;
+    cls = static_cast<ClassTypeSymbol*>(subjectType);
+    return true;
 }
 
 BoundEmptyFunctionCallNode::BoundEmptyFunctionCallNode(const soul::ast::SourcePos& sourcePos_) :

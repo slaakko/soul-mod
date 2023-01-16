@@ -14,7 +14,7 @@ ArgLocation::ArgLocation(int index_, int64_t offset_, int64_t size_) : index(ind
 {
 }
 
-CallFrame::CallFrame() : top(48)
+CallFrame::CallFrame() : top(56)
 {
 }
 

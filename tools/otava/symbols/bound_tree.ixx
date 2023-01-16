@@ -383,6 +383,7 @@ public:
     BoundStatementNode* First() const { return first.get(); }
     BoundStatementNode* Second() const { return second.get(); }
     bool IsReturnStatementNode() const override { return second->IsReturnStatementNode(); }
+    bool IsTerminator() const override { return second->IsTerminator(); }
 private:
     std::unique_ptr<BoundStatementNode> first;
     std::unique_ptr<BoundStatementNode> second;
@@ -430,8 +431,12 @@ public:
     BoundConstructionStatementNode(const soul::ast::SourcePos& sourcePos_, BoundFunctionCallNode* constructorCall_);
     void Accept(BoundTreeVisitor& visitor) override;
     BoundFunctionCallNode* ConstructorCall() const { return constructorCall.get(); }
+    void SetDestructorCall(BoundFunctionCallNode* destructorCall_);
+    BoundFunctionCallNode* DestructorCall() const { return destructorCall.get(); }
+    BoundFunctionCallNode* ReleaseDestructorCall() { return destructorCall.release(); }
 private:
     std::unique_ptr<BoundFunctionCallNode> constructorCall;
+    std::unique_ptr<BoundFunctionCallNode> destructorCall;
 };
     
 class BoundExpressionStatementNode : public BoundStatementNode
@@ -491,6 +496,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     bool HasValue() const override { return true; }
     VariableSymbol* GetVariable() const { return variable; }
+    BoundExpressionNode* ThisPtr() const { return thisPtr.get(); }
     void SetThisPtr(BoundExpressionNode* thisPtr_);
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -553,7 +559,7 @@ public:
 class BoundMemberExprNode : public BoundExpressionNode
 {
 public:
-    BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, otava::ast::NodeKind op_, const soul::ast::SourcePos& sourcePos_);
+    BoundMemberExprNode(BoundExpressionNode* subject_, BoundExpressionNode* member_, otava::ast::NodeKind op_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* Subject() const { return subject.get(); }
     BoundExpressionNode* Member() const { return member.get(); }
@@ -578,6 +584,7 @@ public:
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override;
     BoundExpressionNode* Clone() const override;
+    bool CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg) const;
 private:
     FunctionSymbol* functionSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> args;

@@ -19,7 +19,7 @@ void CheckDuplicateSpecifier(DeclarationFlags flags, DeclarationFlags flag, cons
 
 enum class TypeResolverFlags : int32_t
 {
-    none = 0, dontInstantiate = 1 << 0
+    none = 0, dontInstantiate = 1 << 0, dontThrow = 1 << 1
 };
 
 constexpr TypeResolverFlags operator|(TypeResolverFlags left, TypeResolverFlags right)
