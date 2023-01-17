@@ -33,7 +33,7 @@ enum class Linkage : int32_t
 
 enum class FunctionQualifiers : int32_t
 {
-    none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isPure = 1 << 4, isDefault = 1 << 5, isDeleted = 1 << 6
+    none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isPure = 1 << 4, isDefault = 1 << 5, isDeleted = 1 << 6, noreturn = 1 << 7
 };
 
 enum class ConversionKind : int32_t;
@@ -175,6 +175,8 @@ public:
     std::u32string NextTemporaryName();
     void SetVTabIndex(int32_t vtabIndex_) { vtabIndex = vtabIndex_; }
     virtual int32_t VTabIndex() const { return vtabIndex; }
+    FunctionDefinitionSymbol* Destructor() const { return destructor; }
+    void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -191,6 +193,7 @@ private:
     std::vector<VariableSymbol*> localVariables;
     int32_t nextTemporaryId;
     int32_t vtabIndex;
+    FunctionDefinitionSymbol* destructor;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol

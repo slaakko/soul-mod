@@ -1,0 +1,73 @@
+SimpleDeclarationNode
+	declarationSpecifiers:
+		DeclSpecifierSequenceNode
+			PlaceholderTypeSpecifierNode
+	initDeclaratorList:
+		InitDeclaratorListNode
+			InitDeclaratorNode
+				left: IdentifierNode
+					str: "@end"
+				right: AssignmentInitNode
+					InvokeExprNode
+						subject: MemberExprNode
+							IdentifierNode
+								str: "@container"
+						op: DotNode
+						id: "@end"
+ForStatementNode
+	initStmt:
+		SimpleDeclarationNode					
+			declarationSpecifiers:
+				DeclSpecifierSequenceNode
+					PlaceholderTypeSpecifierNode
+			initDeclaratorList:
+				InitDeclaratorListNode
+					InitDeclaratorNode
+						left: IdentifierNode
+							str: "@it"
+						right: AssignmentInitNode
+							InvokeExprNode
+								subject: MemberExprNode
+									IdentifierNode
+										str: "@container"
+									op: DotNode
+									id: "begin"
+	cond:
+		BinaryExprNode
+			left:
+				IdentifierNode
+					str: "@it"
+			right:
+				IdentifierNode
+					str: "@end"
+			op:
+				NotEqualNode
+	
+	loopExpr:
+		UnaryExprNode
+			child:
+				IdentifierNode
+					str: "@it"
+			op:
+				PrefixIncNode
+	stmt:
+		CompoundStatementNode
+			DeclarationStatementNode
+				declaration:
+					SimpleDeclarationNode
+						declarationSpecifiers:
+							DeclSpecifierSequenceNode
+								PlaceholderTypeSpecifierNode
+						initDeclaratorList:
+							InitDeclaratorListNode
+								InitDeclaratorNode
+									left:
+										IdentifierNode
+											str: "@c"
+									right:
+										AssignmentInitNode
+											UnaryExprNode
+												IdentifierNode
+													str: "@it"
+												op
+													DerefNode

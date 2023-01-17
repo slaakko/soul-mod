@@ -438,6 +438,11 @@ bool BoundCompoundStatementNode::EndsWithTerminator() const
     return !statements.empty() && statements.back()->IsTerminator();
 }
 
+bool BoundCompoundStatementNode::ContainsSingleIfStatement() const
+{
+    return statements.size() == 1 && statements.front()->IsIfStatementNode();
+}
+
 BoundIfStatementNode::BoundIfStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundIfStatementNode, sourcePos_)
 {
 }
@@ -669,6 +674,11 @@ void BoundExpressionStatementNode::Accept(BoundTreeVisitor& visitor)
 void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_)
 {
     expr.reset(expr_);
+}
+
+bool BoundExpressionStatementNode::IsTerminator() const
+{
+    return expr && expr->IsNoreturnFunctionCall();
 }
 
 BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, const soul::ast::SourcePos& sourcePos_) :
@@ -1201,7 +1211,7 @@ BoundExpressionNode* BoundFunctionCallNode::Clone() const
     return clone;
 }
 
-bool BoundFunctionCallNode::CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg) const
+bool BoundFunctionCallNode::CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg, FunctionDefinitionSymbol*& destructor) const
 {
     if (functionSymbol->GetFunctionKind() != otava::symbols::FunctionKind::constructor) return false;
     if (args.empty()) return false;
@@ -1211,7 +1221,17 @@ bool BoundFunctionCallNode::CallsClassConstructor(ClassTypeSymbol*& cls, BoundEx
     TypeSymbol* subjectType = addrOf->Subject()->GetType();
     if (!subjectType->IsClassTypeSymbol()) return false;
     cls = static_cast<ClassTypeSymbol*>(subjectType);
+    destructor = functionSymbol->Destructor();
     return true;
+}
+
+bool BoundFunctionCallNode::IsNoreturnFunctionCall() const
+{
+    if ((functionSymbol->Qualifiers() & FunctionQualifiers::noreturn) != FunctionQualifiers::none)
+    {
+        return true;
+    }
+    return false;
 }
 
 BoundEmptyFunctionCallNode::BoundEmptyFunctionCallNode(const soul::ast::SourcePos& sourcePos_) :

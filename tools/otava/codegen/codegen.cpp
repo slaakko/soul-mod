@@ -221,6 +221,7 @@ private:
     void StatementPrefix();
     void GenJumpingBoolCode();
     void GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
+    void EmitReturn(const soul::ast::SourcePos& sourcePos);
     void ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::SourcePos& sourcePos);
     otava::symbols::Context& context;
     std::string config;
@@ -403,6 +404,19 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
                 }
             }
         }
+    }
+}
+
+void CodeGenerator::EmitReturn(const soul::ast::SourcePos& sourcePos)
+{
+    if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
+    {
+        otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->IrType(emitter, sourcePos, &context)->DefaultValue();
+        emitter.EmitRet(returnValue);
+    }
+    else
+    {
+        emitter.EmitRetVoid();
     }
 }
 
@@ -593,7 +607,7 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
         nextBlock = nullptr;
         node.ElseStatement()->Accept(*this);
         nextBlock = prevNextBlock;
-        if (!node.ElseStatement()->EndsWithTerminator())
+        if (!node.ElseStatement()->EndsWithTerminator() && !node.ElseStatement()->ContainsSingleIfStatement())
         {
             emitter.EmitJump(nextBlock);
         }
@@ -939,6 +953,10 @@ void CodeGenerator::Visit(otava::symbols::BoundMemberExprNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundFunctionCallNode& node)
 {
     node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
+    if (node.IsNoreturnFunctionCall())
+    {
+        EmitReturn(node.GetSourcePos());
+    }
     GenJumpingBoolCode();
 }
 

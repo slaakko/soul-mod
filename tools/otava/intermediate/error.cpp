@@ -16,6 +16,7 @@ bool ExceptionThrown()
     return exceptionThrown;
 }
 
+[[noreturn]]
 void Error(const std::string& message, const SourcePos& sourcePos, Context* context)
 {
     exceptionThrown = true;
@@ -23,6 +24,7 @@ void Error(const std::string& message, const SourcePos& sourcePos, Context* cont
         context->ErrorLines(sourcePos));
 }
 
+[[noreturn]]
 void Error(const std::string& message, const SourcePos& sourcePos, Context* context, const SourcePos& refSourcePos)
 {
     exceptionThrown = true;

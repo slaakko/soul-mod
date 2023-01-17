@@ -24,9 +24,51 @@ import otava.symbols.templates;
 import otava.symbols.variable.symbol;
 import otava.symbols.class_templates;
 import otava.ast.error;
+import otava.ast.attribute;
+import otava.ast.visitor;
 import util;
 
 namespace otava::symbols {
+
+class NoreturnAttributeMatcher : public otava::ast::DefaultVisitor
+{
+public:
+    NoreturnAttributeMatcher();
+    void Visit(otava::ast::AttributeNode& node);
+    void Visit(otava::ast::IdentifierNode& node);
+    bool Value() const { return value; }
+private:
+    bool matchId;
+    bool value;
+};
+
+NoreturnAttributeMatcher::NoreturnAttributeMatcher() : matchId(false), value(false)
+{
+}
+
+void NoreturnAttributeMatcher::Visit(otava::ast::AttributeNode& node)
+{
+    matchId = true;
+    node.AttributeToken()->Accept(*this);
+    matchId = false;
+}
+
+void NoreturnAttributeMatcher::Visit(otava::ast::IdentifierNode& node)
+{
+    if (!matchId) return;
+    if (node.Str() == U"noreturn")
+    {
+        value = true;
+    }
+}
+
+bool HashNoreturnAttribute(otava::ast::Node* attributes)
+{
+    if (!attributes) return false;
+    NoreturnAttributeMatcher noreturnAttributeMatcher;
+    attributes->Accept(noreturnAttributeMatcher);
+    return noreturnAttributeMatcher.Value();
+}
 
 std::string DeclarationFlagStr(DeclarationFlags flags)
 {
@@ -722,6 +764,10 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         if (symbol && symbol->IsFunctionDefinitionSymbol())
         {
             functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+            if (HashNoreturnAttribute(functionDefinitionNode->Attributes()))
+            {
+                functionDefinitionSymbol->SetFunctionQualifiers(functionDefinitionSymbol->Qualifiers() | FunctionQualifiers::noreturn);
+            }
             context->GetSymbolTable()->MapNode(functionDefinitionNode, functionDefinitionSymbol);
             ClassTypeSymbol* classType = functionDefinitionSymbol->ParentClassType();
             if (classType)

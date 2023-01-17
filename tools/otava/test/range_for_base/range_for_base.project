@@ -1,0 +1,3 @@
+project range_for_base;
+target=program;
+source <range_for_base.cpp>;

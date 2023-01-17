@@ -141,6 +141,7 @@ public:
     virtual bool IsBoundLocalVariable() const { return false; }
     virtual bool IsBoundMemberVariable() const { return false; }
     virtual bool IsLvalueExpression() const { return false; }
+    virtual bool IsNoreturnFunctionCall() const { return false; }
 private:
     BoundExpressionFlags flags;
     TypeSymbol* type;
@@ -247,6 +248,8 @@ public:
     void SetGenerated() { generated = true; }
     bool Postfix() const { return postfix; }
     void SetPostfix() { postfix = true; }
+    virtual bool ContainsSingleIfStatement() const { return false; }
+    virtual bool IsIfStatementNode() const { return false; }
 private:
     BoundStatementNode* parent;
     bool generated;
@@ -261,6 +264,7 @@ public:
     void AddStatement(BoundStatementNode* statement);
     const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
     bool EndsWithTerminator() const override;
+    bool ContainsSingleIfStatement() const override;
 private:
     std::vector<std::unique_ptr<BoundStatementNode>> statements;
 };
@@ -278,6 +282,8 @@ public:
     void SetThenStatement(BoundStatementNode* thenStatement_);
     BoundStatementNode* ElseStatement() const { return elseStatement.get(); }
     void SetElseStatement(BoundStatementNode* elseStatement_);
+    bool ContainsSingleIfStatement() const override { return true; }
+    bool IsIfStatementNode() const override { return true; }
 private:
     std::unique_ptr<BoundStatementNode> initStatement;
     std::unique_ptr<BoundExpressionNode> condition;
@@ -446,6 +452,7 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     void SetExpr(BoundExpressionNode* expr_);
     BoundExpressionNode* GetExpr() const { return expr.get(); }
+    bool IsTerminator() const override;
 private:
     std::unique_ptr<BoundExpressionNode> expr;
 };
@@ -584,7 +591,8 @@ public:
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override;
     BoundExpressionNode* Clone() const override;
-    bool CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg) const;
+    bool CallsClassConstructor(ClassTypeSymbol*& cls, BoundExpressionNode*& firstArg, FunctionDefinitionSymbol*& destructor) const;
+    bool IsNoreturnFunctionCall() const override;
 private:
     FunctionSymbol* functionSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> args;

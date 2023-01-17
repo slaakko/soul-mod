@@ -286,23 +286,28 @@ bool TemplateArgCanBeTypeId(otava::ast::Node* templateIdNode, int index)
 }
 
 ExplicitInstantiationSymbol::ExplicitInstantiationSymbol() : 
-    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(nullptr)
+    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(nullptr), destructor(nullptr)
 {
 }
 
 ExplicitInstantiationSymbol::ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_) : 
-    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(specialization_)
+    Symbol(SymbolKind::explicitInstantiationSymbol, U""), specialization(specialization_), destructor(nullptr)
 {
 }
 
 void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(functionDefinitionSymbol, sourcePos, context);
+    explicitlyInstantiatedSymbol->SetFunctionKind(functionDefinitionSymbol->GetFunctionKind());
     while (functionDefinitionSymbol->DefIndex() >= functionDefinitionSymbols.size())
     {
         functionDefinitionSymbols.push_back(nullptr);
     }
     functionDefinitionSymbols[functionDefinitionSymbol->DefIndex()] = std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>(explicitlyInstantiatedSymbol);
+    if (explicitlyInstantiatedSymbol->GetFunctionKind() == FunctionKind::destructor)
+    {
+        destructor = explicitlyInstantiatedSymbol;
+    }
 }
 
 FunctionDefinitionSymbol* ExplicitInstantiationSymbol::GetFunctionDefinitionSymbol(int index)  const
@@ -310,6 +315,15 @@ FunctionDefinitionSymbol* ExplicitInstantiationSymbol::GetFunctionDefinitionSymb
     FunctionDefinitionSymbol* functionDefinitionSymbol = functionDefinitionSymbols[index].get();
     functionDefinitionSymbol->SetParent(specialization);
     return functionDefinitionSymbol;
+}
+
+FunctionDefinitionSymbol* ExplicitInstantiationSymbol::Destructor() const
+{
+    if (destructor)
+    {
+        destructor->SetParent(specialization);
+    }
+    return destructor;
 }
 
 void ExplicitInstantiationSymbol::Write(Writer& writer)
@@ -340,6 +354,10 @@ void ExplicitInstantiationSymbol::Read(Reader& reader)
                 functionDefinitionSymbols.push_back(nullptr);
             }
             functionDefinitionSymbols[explicitlyInstantiatedSymbol->DefIndex()].reset(explicitlyInstantiatedSymbol);
+            if (explicitlyInstantiatedSymbol->GetFunctionKind() == FunctionKind::destructor)
+            {
+                destructor = explicitlyInstantiatedSymbol;
+            }
         }
         else
         {

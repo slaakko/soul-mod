@@ -380,6 +380,7 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
         {
             FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
             FunctionDefinitionSymbol* functionDefinitionSymbol = explicitInstantiation->GetFunctionDefinitionSymbol(memFnDefSymbol->DefIndex());
+            functionDefinitionSymbol->SetDestructor(explicitInstantiation->Destructor());
             return functionDefinitionSymbol;
         }
         else 

@@ -273,7 +273,8 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     returnType(nullptr),
     returnTypeId(util::nil_uuid()),
     nextTemporaryId(0),
-    vtabIndex(-1)
+    vtabIndex(-1),
+    destructor(nullptr)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -289,7 +290,8 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     returnType(nullptr),
     returnTypeId(util::nil_uuid()),
     nextTemporaryId(0),
-    vtabIndex(-1)
+    vtabIndex(-1),
+    destructor(nullptr)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }

@@ -37,6 +37,8 @@ interface <std.thread.condition_variable.ixx>;
 interface <std.thread.mutex.ixx>;
 interface <std.type.fundamental.ixx>;
 interface <std.type_traits.ixx>;
+interface <std.utf.ixx>;
+source <std.utf.cpp>;
 interface <std.utilities.pair.ixx>;
 interface <std.utilities.ratio.ixx>;
 interface <std.utilities.unique_ptr.ixx>;

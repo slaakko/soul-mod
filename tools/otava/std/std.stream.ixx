@@ -1,48 +1,103 @@
 export module std.stream;
 
 import std.type.fundamental;
+import std.basic_string;
+import std.utf;
 
 export namespace std {
 
-template<class charT>
+template<typename charT>
 class basic_ios;
-template<class charT>
+template<typename charT>
 class basic_streambuf;
-template<class charT>
+template<typename charT>
 class basic_istream;
 
-template<class charT>
+template<typename charT>
 class basic_ostream
 {
 public:
     basic_ostream<charT>& flush();
+    void write(const char* s)
+    {
+        prints(s);
+    }
+    void write(const string& s)
+    {
+        write(s.c_str());
+    }
 };
 
-template<class charT>
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, char c)
+{
+    basic_string<charT> str(1, c);
+    s.write(to_utf8(str));
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int x)
+{
+    string str = std::to_string(x);
+    s.write(str);
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int64_t x)
+{
+    string str = std::to_string(x);
+    s.write(str);
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const string& str)
+{
+    s.write(str);
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const u16string& str)
+{
+    s.write(to_utf8(str));
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const u32string& str)
+{
+    s.write(to_utf8(str));
+    return s;
+}
+
+template<typename charT>
 class basic_iostream;
-template<class charT>
+template<typename charT>
 class basic_stringbuf;
-template<class charT>
+template<typename charT>
 class basic_istringstream;
-template<class charT>
+template<typename charT>
 class basic_ostringstream;
-template<class charT>
+template<typename charT>
 class basic_stringstream;
-template<class charT>
+template<typename charT>
 class basic_filebuf;
-template<class charT>
+template<typename charT>
 class basic_ifstream;
-template<class charT>
+template<typename charT>
 class basic_ofstream;
-template<class charT>
+template<typename charT>
 class basic_fstream;
-template<class charT>
+template<typename charT>
 class basic_syncbuf;
-template<class charT>
+template<typename charT>
 class basic_osyncstream;
-template<class charT>
+template<typename charT>
 class istreambuf_iterator;
-template<class charT>
+template<typename charT>
 class ostreambuf_iterator;
 using ios = basic_ios<char>;
 using wios = basic_ios<wchar_t>;
@@ -88,6 +143,8 @@ public:
 // ostream cout;
 // ostream cerr;
 // ostream clog;
-// ostream& endl(ostream& os);
+
+
+template class basic_ostream<char>;
 
 } // namespace std

@@ -27,6 +27,7 @@ import otava.symbols.type.symbol;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.variable.symbol;
 import otava.symbols.class_templates;
+import otava.symbols.instantiator;
 
 namespace otava::symbols {
 
@@ -79,10 +80,19 @@ BoundExpressionNode* MakeBoundBooleanConversionNode(BoundExpressionNode* conditi
     return new BoundConversionNode(condition, conversionFunction, sourcePos);
 }
 
-BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, Context* context)
+BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionNode* arg, FunctionDefinitionSymbol* destructor, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    Symbol* dtorSymbol = GenerateDestructor(cls, sourcePos, context);
-    if (dtorSymbol && dtorSymbol->IsFunctionDefinitionSymbol())
+    Symbol* dtorSymbol = nullptr;
+    if (destructor)
+    {
+        dtorSymbol = destructor;
+    }
+    else
+    {
+        dtorSymbol = GenerateDestructor(cls, sourcePos, context);
+    }
+    if (dtorSymbol && (dtorSymbol->IsFunctionDefinitionSymbol() || dtorSymbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol()))
     {
         FunctionDefinitionSymbol* dtorFunctionSymbol = static_cast<FunctionDefinitionSymbol*>(dtorSymbol);
         std::unique_ptr<BoundFunctionCallNode> destructorCall(new BoundFunctionCallNode(dtorFunctionSymbol, sourcePos, cls));
@@ -694,24 +704,93 @@ void StatementBinder::Visit(otava::ast::DoStatementNode& node)
     SetStatement(boundDoStatement);
 }
 
+class RangeForDeclarationExtractor : public otava::ast::DefaultVisitor
+{
+public:
+    RangeForDeclarationExtractor();
+    otava::ast::DeclSpecifierSequenceNode* GetDeclSpecifierSequence() { return declSpecifierSequence; }
+    otava::ast::Node* GetDeclarator() const { return declarator; }
+    void Visit(otava::ast::ForRangeDeclarationNode& node) override;
+    void Visit(otava::ast::DeclSpecifierSequenceNode& node) override;
+private:
+    otava::ast::DeclSpecifierSequenceNode* declSpecifierSequence;
+    otava::ast::Node* declarator;
+};
+
+RangeForDeclarationExtractor::RangeForDeclarationExtractor() : declSpecifierSequence(nullptr), declarator(nullptr)
+{
+}
+
+void RangeForDeclarationExtractor::Visit(otava::ast::ForRangeDeclarationNode& node)
+{
+    node.Left()->Accept(*this);
+    declarator = node.Right();
+}
+
+void RangeForDeclarationExtractor::Visit(otava::ast::DeclSpecifierSequenceNode& node)
+{
+    declSpecifierSequence = &node;
+}
+
 void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
 {
-    //auto initializer = node.Initializer()->Clone();
-/*  int x = 0;
     soul::ast::SourcePos sourcePos = node.GetSourcePos();
-    otava::ast::SimpleDeclarationNode* declaration = new otava::ast::SimpleDeclarationNode(sourcePos);
-    otava::ast::DeclarationStatementNode* it = new otava::ast::DeclarationStatementNode(sourcePos, declaration);
-    declaration->Add(new otava::ast::PlaceholderTypeSpecifierNode(sourcePos, nullptr, nullptr, nullptr, nullptr, nullptr));
-    otava::ast::InitDeclaratorListNode* initDeclList = new otava::ast::InitDeclaratorListNode(sourcePos);
-    otava::ast::IdentifierNode* begin = new otava::ast::IdentifierNode(sourcePos, U"begin");
-    otava::ast::InvokeExprNode* invoke = new otava::ast::InvokeExprNode(sourcePos, begin);
-    invoke->AddNode(node.Initializer()->Clone());
-    otava::ast::AssignInitNode* assignInit = new otava::ast::AssignInitNode(sourcePos, invoke);
-    otava::ast::InitializerNode* initializer = new otava::ast::InitializerNode(sourcePos, assignInit);
-    otava::ast::InitDeclaratorNode* initDeclarator = new otava::ast::InitDeclaratorNode(sourcePos, U"it", initializer);
-    initDeclList->Add(initDeclarator);
-    it.SetInitDeclaratorList(initDeclList);
-*/
+    otava::ast::CompoundStatementNode* rangeForCompound = new otava::ast::CompoundStatementNode(sourcePos);
+    if (node.InitStatement())
+    {
+        rangeForCompound->AddNode(node.InitStatement()->Clone());
+    }
+    otava::ast::DeclSpecifierSequenceNode* endIteratorDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
+    endIteratorDeclSpecifiers->AddNode(new otava::ast::PlaceholderTypeSpecifierNode(sourcePos));
+    otava::ast::InitDeclaratorListNode* endIteratorDeclarators = new otava::ast::InitDeclaratorListNode(sourcePos);
+    otava::ast::IdentifierNode* endIteratorDeclarator = new otava::ast::IdentifierNode(sourcePos, U"@end");
+    otava::ast::Node* invokeChild = node.Initializer()->Clone();
+    otava::ast::IdentifierNode* invokeId = new otava::ast::IdentifierNode(sourcePos, U"end");
+    otava::ast::MemberExprNode* invokeSubject = new otava::ast::MemberExprNode(sourcePos, invokeChild, new otava::ast::DotNode(sourcePos), invokeId);
+    otava::ast::InvokeExprNode* endIteratorInitializer = new otava::ast::InvokeExprNode(sourcePos, invokeSubject);
+    otava::ast::AssignmentInitNode* endIteratorAssignmentInitializer = new otava::ast::AssignmentInitNode(sourcePos, endIteratorInitializer);
+    otava::ast::InitDeclaratorNode* endIteratorInitDeclarator = new otava::ast::InitDeclaratorNode(sourcePos, endIteratorDeclarator, endIteratorAssignmentInitializer);
+    endIteratorDeclarators->AddNode(endIteratorInitDeclarator);
+    otava::ast::SimpleDeclarationNode* endIteratorDeclaration = new otava::ast::SimpleDeclarationNode(sourcePos, endIteratorDeclSpecifiers, endIteratorDeclarators, nullptr, nullptr);
+    rangeForCompound->AddNode(endIteratorDeclaration);
+    otava::ast::DeclSpecifierSequenceNode* forInitDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
+    forInitDeclSpecifiers->AddNode(new otava::ast::PlaceholderTypeSpecifierNode(sourcePos));
+    otava::ast::InitDeclaratorListNode* forInitDeclarators = new otava::ast::InitDeclaratorListNode(sourcePos);
+    otava::ast::Node* forInitInvokeChild = node.Initializer()->Clone();
+    otava::ast::MemberExprNode* forInitInvokeSubject = new otava::ast::MemberExprNode(sourcePos, forInitInvokeChild, new otava::ast::DotNode(sourcePos), 
+        new otava::ast::IdentifierNode(sourcePos, U"begin"));
+    otava::ast::InvokeExprNode* forInitInitializer = new otava::ast::InvokeExprNode(sourcePos, forInitInvokeSubject);
+    otava::ast::AssignmentInitNode* forInitAssignmentInitializer = new otava::ast::AssignmentInitNode(sourcePos, forInitInitializer);
+    otava::ast::IdentifierNode* forInitDeclarator = new otava::ast::IdentifierNode(sourcePos, U"@it");
+    otava::ast::InitDeclaratorNode* forInitInitDeclarator = new otava::ast::InitDeclaratorNode(sourcePos, forInitDeclarator, forInitAssignmentInitializer);
+    forInitDeclarators->AddNode(forInitInitDeclarator);
+    otava::ast::SimpleDeclarationNode* forInitStmt = new otava::ast::SimpleDeclarationNode(sourcePos, forInitDeclSpecifiers, forInitDeclarators, nullptr, nullptr);
+    otava::ast::BinaryExprNode* forCond = new otava::ast::BinaryExprNode(sourcePos, new otava::ast::NotEqualNode(sourcePos), new otava::ast::IdentifierNode(sourcePos, U"@it"),
+        new otava::ast::IdentifierNode(sourcePos, U"@end"));
+    otava::ast::UnaryExprNode* forLoopExpr = new otava::ast::UnaryExprNode(sourcePos, new otava::ast::PrefixIncNode(sourcePos), new otava::ast::IdentifierNode(sourcePos, U"@it"));
+    otava::ast::CompoundStatementNode* forActionStmt = new otava::ast::CompoundStatementNode(sourcePos);
+    RangeForDeclarationExtractor extractor;
+    node.Declaration()->Accept(extractor);
+    otava::ast::DeclSpecifierSequenceNode* forActionDeclSpecifiers = extractor.GetDeclSpecifierSequence();
+    otava::ast::Node* declarator = extractor.GetDeclarator();
+    otava::ast::AssignmentInitNode* forActionAssignmentInit = new otava::ast::AssignmentInitNode(sourcePos, new otava::ast::UnaryExprNode(sourcePos, 
+        new otava::ast::DerefNode(sourcePos), new otava::ast::IdentifierNode(sourcePos, U"@it")));
+    otava::ast::InitDeclaratorNode* forActionInitDeclarator = new otava::ast::InitDeclaratorNode(sourcePos, declarator->Clone(), forActionAssignmentInit);
+    otava::ast::InitDeclaratorListNode* forActionInitDeclaratorList = new otava::ast::InitDeclaratorListNode(sourcePos);
+    forActionInitDeclaratorList->AddNode(forActionInitDeclarator);
+    otava::ast::SimpleDeclarationNode* forActionDeclaration = new otava::ast::SimpleDeclarationNode(sourcePos, forActionDeclSpecifiers, forActionInitDeclaratorList, nullptr, nullptr);
+    otava::ast::DeclarationStatementNode* forActionDeclarationStmt = new otava::ast::DeclarationStatementNode(sourcePos, forActionDeclaration);
+    forActionStmt->AddNode(forActionDeclarationStmt);
+    forActionStmt->AddNode(node.Statement()->Clone());
+    otava::ast::ForStatementNode* forStmt = new otava::ast::ForStatementNode(sourcePos, forInitStmt, forCond, forLoopExpr, forActionStmt, nullptr, nullptr,
+        sourcePos, sourcePos, sourcePos);
+    rangeForCompound->AddNode(forStmt);
+    InstantiationScope instantiationScope(context->GetSymbolTable()->CurrentScope());
+    Instantiator instantiator(context, &instantiationScope);
+    context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
+    rangeForCompound->Accept(instantiator);
+    context->PopFlags();
+    rangeForCompound->Accept(*this);
 }
 
 void StatementBinder::Visit(otava::ast::ForStatementNode& node)
@@ -897,10 +976,11 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
             BoundConstructionStatementNode* boundConstructionStatement = nullptr;
             otava::symbols::ClassTypeSymbol* cls = nullptr;
             BoundExpressionNode* firstArg = nullptr;
-            if (constructorCall->CallsClassConstructor(cls, firstArg))
+            FunctionDefinitionSymbol* destructor = nullptr;
+            if (constructorCall->CallsClassConstructor(cls, firstArg, destructor))
             {
                 boundConstructionStatement = new BoundConstructionStatementNode(node.GetSourcePos(), constructorCall.release());
-                otava::symbols::BoundFunctionCallNode* destructorCall = MakeDestructorCall(cls, firstArg, node.GetSourcePos(), context);
+                otava::symbols::BoundFunctionCallNode* destructorCall = MakeDestructorCall(cls, firstArg, destructor, node.GetSourcePos(), context);
                 if (destructorCall)
                 {
                     boundConstructionStatement->SetDestructorCall(destructorCall);

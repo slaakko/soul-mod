@@ -1,0 +1,4 @@
+project utf;
+target=library;
+interface <utf.ixx>;
+source <utf.cpp>;

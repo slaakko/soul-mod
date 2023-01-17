@@ -93,6 +93,7 @@ public:
     ClassTemplateSpecializationSymbol* Specialization() const { return specialization; }
     void AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
     FunctionDefinitionSymbol* GetFunctionDefinitionSymbol(int index)  const;
+    FunctionDefinitionSymbol* Destructor() const;
     std::string SymbolKindStr() const override { return "explicit instantiation symbol"; }
     std::string SymbolDocKindStr() const override { return "explicit_instantiation"; }
     void Write(Writer& writer) override;
@@ -103,6 +104,7 @@ private:
     ClassTemplateSpecializationSymbol* specialization;
     util::uuid specializationId;
     std::vector<std::unique_ptr<ExplicitlyInstantiatedFunctionDefinitionSymbol>> functionDefinitionSymbols;
+    FunctionDefinitionSymbol* destructor;
 };
 
 void BeginTemplateDeclaration(otava::ast::Node* node, Context* context);
