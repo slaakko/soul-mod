@@ -413,13 +413,14 @@ void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode
             if (classTemplateType->IsClassTypeSymbol())
             {
                 ClassTypeSymbol* classTemplate = static_cast<ClassTypeSymbol*>(classTemplateType);
+                bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
                 for (const auto& memFunDefSymbol : classTemplate->MemFunDefSymbols())
                 {
                     FunctionDefinitionSymbol* instantiatedMemFunDefSymbol = InstantiateMemFnOfClassTemplate(memFunDefSymbol, specialization, node.GetSourcePos(), context);
                     explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFunDefSymbol, node.GetSourcePos(), context);
                 }
-                context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(false);
+                context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
             }
             else
             {

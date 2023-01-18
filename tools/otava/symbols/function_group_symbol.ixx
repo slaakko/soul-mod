@@ -25,6 +25,7 @@ public:
     std::string SymbolDocKindStr() const override { return "function_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
+    FunctionDefinitionSymbol* GetSingleDefinition();
     void AddFunction(FunctionSymbol* function);
     const std::vector<FunctionSymbol*>& Functions() const { return functions; }
     FunctionSymbol* ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const;

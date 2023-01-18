@@ -215,6 +215,7 @@ class NodeIdFactory
 public:
     NodeIdFactory();
     void SetInternallyMapped(bool internallyMapped_);
+    bool IsInternallyMapped() const;
     void SetModuleId(int32_t moduleId_) { moduleId = moduleId_; }
     int64_t GetNextNodeId();
 private:

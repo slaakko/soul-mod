@@ -13,7 +13,6 @@ public:
     using period = typename Period::type;
     
     duration();
-    ~duration();
     duration(const duration&);
     duration& operator=(const duration&);
     constexpr rep count() const;

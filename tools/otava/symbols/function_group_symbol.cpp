@@ -45,6 +45,18 @@ Symbol* FunctionGroupSymbol::GetSingleSymbol()
     }
 }
 
+FunctionDefinitionSymbol* FunctionGroupSymbol::GetSingleDefinition()
+{
+    if (definitions.size() == 1)
+    {
+        return definitions.front();
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 void FunctionGroupSymbol::AddFunction(FunctionSymbol* function)
 {
     functions.push_back(function);

@@ -36,10 +36,14 @@ public:
     void Accept(Visitor& visitor) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) override;
     bool IsTemplateParameterInstantiation() const override;
+    FunctionDefinitionSymbol* Destructor() const { return destructor; }
+    void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
 private:
     ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;
     std::vector<std::pair<util::uuid, bool>> ids;
+    FunctionDefinitionSymbol* destructor;
+    util::uuid destructorId;
     bool instantiated;
 };
 

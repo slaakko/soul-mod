@@ -1,0 +1,3 @@
+project print_int_vec;
+target=program;
+source <print_int_vec.cpp>;

@@ -40,6 +40,7 @@ public:
 private:
     Context* context;
     otava::assembly::Data* data;
+
 };
 
 } // otava::intermediate

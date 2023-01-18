@@ -53,6 +53,13 @@ basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int64_t x)
 }
 
 template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const char* str)
+{
+    s.write(str);
+    return s;
+}
+
+template<typename charT>
 basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const string& str)
 {
     s.write(str);
@@ -140,7 +147,7 @@ public:
 };
 
 // istream cin;
-// ostream cout;
+ostream cout;
 // ostream cerr;
 // ostream clog;
 

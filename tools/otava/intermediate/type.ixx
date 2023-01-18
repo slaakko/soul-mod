@@ -130,6 +130,7 @@ public:
     virtual void WriteDeclaration(util::CodeFormatter& formatter);
     Value* DefaultValue() { return defaultValue; }
     void SetDefaultValue(Value* defaultValue_);
+    virtual Value* MakeDefaultValue(Context& context) const { return nullptr; }
 private:
     Value* defaultValue;
     SourcePos sourcePos;
@@ -145,6 +146,7 @@ public:
     int64_t Size() const override { return -1; }
     int64_t Alignment() const override { return -1; }
 };
+
 class BoolType : public Type
 {
 public:
@@ -153,6 +155,7 @@ public:
     int64_t Size() const override { return 1; }
     int64_t Alignment() const override { return 1; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class SByteType : public Type
@@ -163,6 +166,7 @@ public:
     int64_t Size() const override { return 1; }
     int64_t Alignment() const override { return 1; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class ByteType : public Type
@@ -173,6 +177,7 @@ public:
     int64_t Size() const override { return 1; }
     int64_t Alignment() const override { return 1; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class ShortType : public Type
@@ -183,6 +188,7 @@ public:
     int64_t Size() const override { return 2; }
     int64_t Alignment() const override { return 2; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DW; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class UShortType : public Type
@@ -193,6 +199,7 @@ public:
     int64_t Size() const override { return 2; }
     int64_t Alignment() const override { return 2; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DW; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class IntType : public Type
@@ -203,6 +210,7 @@ public:
     int64_t Size() const override { return 4; }
     int64_t Alignment() const override { return 4; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class UIntType : public Type
@@ -213,6 +221,7 @@ public:
     int64_t Size() const override { return 4; }
     int64_t Alignment() const override { return 4; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class LongType : public Type
@@ -223,6 +232,7 @@ public:
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class ULongType : public Type
@@ -233,6 +243,7 @@ public:
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class FloatType : public Type
@@ -243,6 +254,7 @@ public:
     int64_t Size() const override { return 4; }
     int64_t Alignment() const override { return 4; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class DoubleType : public Type
@@ -253,6 +265,7 @@ public:
     int64_t Size() const override { return 8; }
     int64_t Alignment() const override { return 8; }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    Value* MakeDefaultValue(Context& context) const override;
 };
 
 class TypeRef
@@ -295,6 +308,7 @@ public:
     int64_t GetFieldOffset(int64_t index) const;
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     void ResolveForwardReferences(const util::uuid& uuid, Context* context);
+    Value* MakeDefaultValue(Context& context) const override;
 private:
     void ComputeSizeAndOffsets() const;
     std::vector<TypeRef> fieldTypeRefs;
@@ -331,6 +345,7 @@ public:
     const TypeRef& ElementTypeRef() const { return elementTypeRef; }
     Type* ElementType() const { return elementTypeRef.GetType(); }
     void WriteDeclaration(util::CodeFormatter& formatter) override;
+    Value* MakeDefaultValue(Context& context) const override;
 private:
     int64_t elementCount;
     TypeRef elementTypeRef;

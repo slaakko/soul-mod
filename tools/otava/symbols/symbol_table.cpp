@@ -849,7 +849,7 @@ VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast:
     variableSymbol->SetDeclarationFlags(flags);
     currentScope->SymbolScope()->AddSymbol(variableSymbol, node->GetSourcePos(), context);
     variableGroup->AddVariable(variableSymbol);
-    MapNode(node, variableSymbol);
+    // MapNode(node, variableSymbol);
     return variableSymbol;
 }
 

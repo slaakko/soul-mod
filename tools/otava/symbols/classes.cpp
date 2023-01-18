@@ -23,6 +23,7 @@ import otava.symbols.variable.symbol;
 import otava.symbols.function.symbol;
 import otava.symbols.overload.resolution;
 import otava.symbols.argument.conversion.table;
+import otava.symbols.class_templates;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.function.group.symbol;
 import otava.symbols.declaration;
@@ -1015,17 +1016,37 @@ void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressio
 
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    Symbol* dtorSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, LookupFlags::none);
-    if (dtorSymbol) return dtorSymbol;
+    Symbol* dtorFunctionGroupSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, 
+        LookupFlags::dontResolveSingle);
+    FunctionDefinitionSymbol* destructorFn = nullptr;
+    if (dtorFunctionGroupSymbol && dtorFunctionGroupSymbol->IsFunctionGroupSymbol())
+    {
+        FunctionGroupSymbol* destructorGroup = static_cast<FunctionGroupSymbol*>(dtorFunctionGroupSymbol);
+        destructorFn = destructorGroup->GetSingleDefinition();
+        if (destructorFn)
+        {
+            return destructorFn;
+        }
+    }
+    if (classTypeSymbol->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(classTypeSymbol);
+        destructorFn = sp->Destructor();
+        if (destructorFn)
+        {
+            return destructorFn;
+        }
+    }
     std::unique_ptr<TrivialClassDtor> trivialClassDestructor(new TrivialClassDtor());
     int nm = classTypeSymbol->MemberVariables().size();
     int nb = classTypeSymbol->BaseClasses().size();
     if (nm == 0 && nb == 0)
     {
         FunctionGroupSymbol* functionGroup = classTypeSymbol->GetScope()->GroupScope()->GetOrInsertFunctionGroup(U"@destructor", sourcePos, context);
+        Symbol* destructorSymbol = trivialClassDestructor.get();
         functionGroup->AddFunction(trivialClassDestructor.get());
         classTypeSymbol->AddSymbol(trivialClassDestructor.release(), sourcePos, context);
-        return dtorSymbol;
+        return destructorSymbol;
     }
     bool hasNonTrivialDestructor = false;
     std::unique_ptr<FunctionDefinitionSymbol> destructorSymbol(new FunctionDefinitionSymbol(U"@destructor"));

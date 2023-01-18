@@ -21,12 +21,13 @@ std::string DataInstStr(DataInst inst)
     return std::string();
 }
 
-Data::Data(const std::string& label_, DataInst inst_) : label(label_), inst(inst_)
+Data::Data(const std::string& label_, DataInst commonInst_) : useCommonInst(false), label(label_), commonInst(commonInst_), insts()
 {
 }
 
-void Data::AddItem(Value* item)
+void Data::AddItem(DataInst inst, Value* item)
 {
+    insts.push_back(inst);
     items.push_back(item);
 }
 
@@ -37,20 +38,31 @@ void Data::Write(util::CodeFormatter& formatter)
         formatter.Write(label);
         formatter.Write(" ");
     }
-    formatter.Write(DataInstStr(inst));
-    formatter.Write(" ");
-    bool first = true;
-    for (Value* item : items)
+    if (useCommonInst)
     {
-        if (first)
+        formatter.Write(DataInstStr(commonInst));
+        formatter.Write(" ");
+    }
+    int n = items.size();
+    for (int i = 0; i < n; ++i)
+    {
+        if (!useCommonInst)
         {
-            first = false;
+            if (i > 0)
+            {
+                formatter.Write(" ");
+            }
+            formatter.Write(DataInstStr(insts[i]));
+            formatter.Write(" ");
         }
         else
         {
-            formatter.Write(", ");
+            if (i > 0)
+            {
+                formatter.Write(", ");
+            }
         }
-        formatter.Write(item->ToString());
+        formatter.Write(items[i]->ToString());
     }
     formatter.WriteLine();
 }

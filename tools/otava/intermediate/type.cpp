@@ -225,44 +225,99 @@ BoolType::BoolType() : Type(SourcePos(), TypeKind::fundamentalType, boolTypeId)
 {
 }
 
+Value* BoolType::MakeDefaultValue(Context& context) const
+{
+    return context.GetFalseValue();
+}
+
 SByteType::SByteType() : Type(SourcePos(), TypeKind::fundamentalType, sbyteTypeId)
 {
+}
+
+Value* SByteType::MakeDefaultValue(Context& context) const
+{
+    return context.GetSByteValue(0);
 }
 
 ByteType::ByteType() : Type(SourcePos(), TypeKind::fundamentalType, byteTypeId)
 {
 }
 
+Value* ByteType::MakeDefaultValue(Context& context) const
+{
+    return context.GetByteValue(0);
+}
+
 ShortType::ShortType() : Type(SourcePos(), TypeKind::fundamentalType, shortTypeId)
 {
+}
+
+Value* ShortType::MakeDefaultValue(Context& context) const
+{
+    return context.GetShortValue(0);
 }
 
 UShortType::UShortType() : Type(SourcePos(), TypeKind::fundamentalType, ushortTypeId)
 {
 }
 
+Value* UShortType::MakeDefaultValue(Context& context) const
+{
+    return context.GetUShortValue(0);
+}
+
 IntType::IntType() : Type(SourcePos(), TypeKind::fundamentalType, intTypeId)
 {
+}
+
+Value* IntType::MakeDefaultValue(Context& context) const
+{
+    return context.GetIntValue(0);
 }
 
 UIntType::UIntType() : Type(SourcePos(), TypeKind::fundamentalType, uintTypeId)
 {
 }
 
+Value* UIntType::MakeDefaultValue(Context& context) const
+{
+    return context.GetUIntValue(0);
+}
+
 LongType::LongType() : Type(SourcePos(), TypeKind::fundamentalType, longTypeId)
 {
+}
+
+Value* LongType::MakeDefaultValue(Context& context) const
+{
+    return context.GetLongValue(0);
 }
 
 ULongType::ULongType() : Type(SourcePos(), TypeKind::fundamentalType, ulongTypeId)
 {
 }
 
+Value* ULongType::MakeDefaultValue(Context& context) const
+{
+    return context.GetULongValue(0);
+}
+
 FloatType::FloatType() : Type(SourcePos(), TypeKind::fundamentalType, floatTypeId)
 {
 }
 
+Value* FloatType::MakeDefaultValue(Context& context) const
+{
+    return context.GetFloatValue(0.0f);
+}
+
 DoubleType::DoubleType() : Type(SourcePos(), TypeKind::fundamentalType, doubleTypeId)
 {
+}
+
+Value* DoubleType::MakeDefaultValue(Context& context) const
+{
+    return context.GetDoubleValue(0.0);
 }
 
 TypeRef::TypeRef() : sourcePos(), id(-1), type(nullptr)
@@ -400,6 +455,18 @@ void StructureType::ResolveForwardReferences(const util::uuid& uuid, Context* co
     }
 }
 
+Value* StructureType::MakeDefaultValue(Context& context) const
+{
+    std::vector<Value*> fieldValues;
+    int n = FieldCount();
+    for (int i = 0; i < n; ++i)
+    {
+        Type* type = FieldType(i);
+        fieldValues.push_back(type->MakeDefaultValue(context));
+    }
+    return context.MakeStructureValue(soul::ast::SourcePos(), fieldValues);
+}
+
 FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& uuid_, int32_t typeId_) :
     Type(soul::ast::SourcePos(), TypeKind::fwdDeclaredStructureType, typeId_), uuid(uuid_)
 {
@@ -458,6 +525,12 @@ void ArrayType::WriteDeclaration(util::CodeFormatter& formatter)
     formatter.Write(" x ");
     elementTypeRef.Write(formatter);
     formatter.Write("]");
+}
+
+Value* ArrayType::MakeDefaultValue(Context& context) const
+{
+    std::vector<Value*> elements;
+    return context.MakeArrayValue(soul::ast::SourcePos(), elements);
 }
 
 FunctionType::FunctionType(const SourcePos& sourcePos_, int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_) :

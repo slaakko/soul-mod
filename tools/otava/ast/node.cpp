@@ -709,6 +709,11 @@ void NodeIdFactory::SetInternallyMapped(bool internallyMapped_)
     }
 }
 
+bool NodeIdFactory::IsInternallyMapped() const
+{
+    return internallyMappedBit != 0;
+}
+
 int64_t NodeIdFactory::GetNextNodeId()
 {
     int64_t nextNodeId = (static_cast<int64_t>(moduleId) << 32) | static_cast<int64_t>(nodeId) | static_cast<int64_t>(internallyMappedBit);

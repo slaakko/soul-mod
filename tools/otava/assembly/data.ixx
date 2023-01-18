@@ -23,12 +23,15 @@ std::string DataInstStr(DataInst inst);
 class Data
 {
 public:
-    Data(const std::string& label_, DataInst inst_);
-    void AddItem(Value* item);
+    Data(const std::string& label_, DataInst commonInst_);
+    void AddItem(DataInst inst, Value* item);
     void Write(util::CodeFormatter& formatter);
+    void UseCommonInst(bool useCommonInst_) { useCommonInst = useCommonInst_; }
 private:
     std::string label;
-    DataInst inst;
+    bool useCommonInst;
+    DataInst commonInst;
+    std::vector<DataInst> insts;
     std::vector<Value*> items;
 };
 

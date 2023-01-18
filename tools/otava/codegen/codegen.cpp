@@ -1053,6 +1053,10 @@ void CodeGenerator::Visit(otava::symbols::BoundDisjunctionNode& boundDisjunction
 void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& node)
 {
     otava::symbols::VariableSymbol* variable = node.GetGlobalVariable();
+    if (variable->Name() == U"cout")
+    {
+        int x = 0;
+    }
     otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(variable->GetType(), node.GetSourcePos(), &context);
     if (type->IsForwardClassDeclarationSymbol()) return;
     variable->SetDeclaredType(type);
@@ -1064,7 +1068,7 @@ void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& nod
     }
     else
     {
-        initializer = irType->DefaultValue();
+        initializer = irType->MakeDefaultValue(*emitter.GetIntermediateContext());
     }
     otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, variable->IrName(), initializer);
     emitter.SetIrObject(variable, irVariable);

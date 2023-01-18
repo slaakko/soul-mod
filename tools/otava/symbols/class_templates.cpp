@@ -21,6 +21,7 @@ import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.visitor;
 import otava.symbols.namespaces;
+import otava.symbols.function.group.symbol;
 import otava.ast;
 import util.unicode;
 import util.sha1;
@@ -28,7 +29,7 @@ import util.sha1;
 namespace otava::symbols {
 
 ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const std::u32string& name_) : 
-    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_), classTemplate(nullptr), instantiated(false)
+    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_), classTemplate(nullptr), instantiated(false), destructor(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -74,6 +75,14 @@ void ClassTemplateSpecializationSymbol::Write(Writer& writer)
             writer.GetBinaryStreamWriter().Write(templateArg->Id());
         }
     }
+    if (destructor)
+    {
+        writer.GetBinaryStreamWriter().Write(destructor->Id());
+    }
+    else
+    {
+        writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+    }
 }
 
 void ClassTemplateSpecializationSymbol::Read(Reader& reader)
@@ -91,7 +100,7 @@ void ClassTemplateSpecializationSymbol::Read(Reader& reader)
         reader.GetBinaryStreamReader().ReadUuid(id);
         ids.push_back(std::make_pair(id, isType));
     }
-    
+    reader.GetBinaryStreamReader().ReadUuid(destructorId);
 }
 
 void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
@@ -112,6 +121,10 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
             Value* value = evaluationContext->GetValue(idType.first);
             templateArguments.push_back(value);
         }
+    }
+    if (destructorId != util::nil_uuid())
+    {
+        destructor = symbolTable.GetFunctionDefinition(destructorId);
     }
 }
 
@@ -200,6 +213,27 @@ CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int ind
         }
     }
     return nullptr;
+}
+
+void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (specialization->IsTemplateParameterInstantiation()) return;
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
+    ClassTypeSymbol* classTemplate = specialization->ClassTemplate();
+    Symbol* destructor = classTemplate->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, 
+        LookupFlags::dontResolveSingle);
+    if (destructor && destructor->IsFunctionGroupSymbol())
+    {
+        FunctionGroupSymbol* destructorGroup = static_cast<FunctionGroupSymbol*>(destructor);
+        FunctionDefinitionSymbol* destructorFn = destructorGroup->GetSingleDefinition();
+        if (destructorFn)
+        {
+            FunctionDefinitionSymbol* instantiatedDestructor = InstantiateMemFnOfClassTemplate(destructorFn, specialization, sourcePos, context);
+            specialization->SetDestructor(instantiatedDestructor);
+        }
+    }
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
 }
 
 TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -294,6 +328,7 @@ TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::
                 specialization->AddBaseClass(baseClass, sourcePos, context);
             }
             context->PopFlags();
+            InstantiateDestructor(specialization, sourcePos, context);
         }
         catch (const std::exception& ex)
         {
@@ -349,10 +384,6 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::string specializationName = util::ToUtf8(memFn->Name());
-    if (specializationName == "insert")
-    {
-        int x = 0;
-    }
     InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), classTemplateSpecialization->TemplateArguments(), sourcePos, context);
     context->GetBoundCompileUnit()->AddBoundNodeForClass(classTemplateSpecialization, sourcePos);
     ClassTemplateRepository* classTemplateRepository = context->GetBoundCompileUnit()->GetClassTemplateRepository();
