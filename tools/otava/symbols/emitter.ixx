@@ -12,10 +12,17 @@ import util.uuid;
 
 export namespace otava::symbols {
 
+class CodeGenerator
+{
+public:
+    virtual ~CodeGenerator();
+    virtual void SetNextBlock(otava::intermediate::BasicBlock* nextBlock_) = 0;
+};
+
 class Emitter
 {
 public:
-    Emitter();
+    Emitter(CodeGenerator* codeGen_);
     ~Emitter();
     void SetFilePath(const std::string& filePath);
     const std::string& FilePath() const;
@@ -89,6 +96,7 @@ public:
     otava::intermediate::Value* EmitPtrToInt(otava::intermediate::Value* value, otava::intermediate::Type* destType);
     otava::intermediate::Value* EmitParam(otava::intermediate::Type* type);
     otava::intermediate::Value* EmitLocal(otava::intermediate::Type* type);
+    otava::intermediate::Value* EmitLocalInEntryBlock(otava::intermediate::Type* type);
     otava::intermediate::Value* EmitLoad(otava::intermediate::Value* value);
     void EmitStore(otava::intermediate::Value* value, otava::intermediate::Value* ptr);
     otava::intermediate::Value* EmitArg(otava::intermediate::Value* value);
@@ -111,12 +119,20 @@ public:
     otava::intermediate::Value* GetVTabVariable(void* cls) const;
     void SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable);
     IrValueStack& Stack() { return *stack; }
+    otava::intermediate::BasicBlock* NextBlock() const { return nextBlock; }
+    void SetNextBlock(otava::intermediate::BasicBlock* nextBlock_) { nextBlock = nextBlock_; }
+    otava::intermediate::Value* RetValue() const { return retValue; }
+    void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
+    void SetCodeGenNextBlock(otava::intermediate::BasicBlock* nextBlock_);
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;
     std::map<util::uuid, otava::intermediate::Type*> typeMap;
     std::map<void*, otava::intermediate::Value*> irObjectMap;
     std::map<void*, otava::intermediate::Value*> vtabVariableMap;
+    otava::intermediate::BasicBlock* nextBlock;
+    otava::intermediate::Value* retValue;
+    CodeGenerator* codeGen;
 };
 
 } // namespace otava::symbols

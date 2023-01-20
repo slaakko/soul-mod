@@ -19,6 +19,7 @@ import otava.symbols.symbol;
 import otava.symbols.symbol.table;
 import otava.symbols.type.resolver;
 import otava.symbols.value;
+import otava.symbols.exception;
 import util.unicode;
 
 namespace otava::symbols {
@@ -48,6 +49,10 @@ void FunctionDeclarator::AddParameterDeclaration(Declaration&& parameterDeclarat
 void FunctionDeclarator::AddQualifier(FunctionQualifiers qualifier)
 {
     qualifiers = qualifiers | qualifier;
+}
+
+ArrayDeclarator::ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, int64_t size_) : Declarator(DeclaratorKind::arrayDeclarator, name_, node_), size(size_)
+{
 }
 
 Declaration::Declaration() : flags(DeclarationFlags::none), type(nullptr), declarator(nullptr), value(nullptr), initializer(nullptr), variable(nullptr)
@@ -125,6 +130,7 @@ public:
     void Visit(otava::ast::QualifiedIdNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
     void Visit(otava::ast::AbstractDeclaratorNode& node) override;
+    void Visit(otava::ast::ArrayDeclaratorNode& node) override;
     void Visit(otava::ast::ConstNode& node) override;
     void Visit(otava::ast::VolatileNode& node) override;
     void Visit(otava::ast::FinalNode& node) override;
@@ -189,9 +195,11 @@ private:
     bool operatorFunctionId;
     bool trailingQualifiers;
     bool processTrailingQualifiers;
+    bool processArrayId;
     FunctionQualifiers qualifiers;
     FunctionDeclarator* functionDeclarator;
     Scope* scope;
+    std::u32string arrayName;
 };
 
 DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_) :
@@ -205,6 +213,7 @@ DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags fla
     operatorFunctionId(false), 
     trailingQualifiers(false),
     processTrailingQualifiers(false),
+    processArrayId(false),
     scope(context->GetSymbolTable()->CurrentScope()),
     functionDeclarator(),
     qualifiers()
@@ -756,37 +765,44 @@ void DeclaratorProcessor::Visit(otava::ast::QualifiedIdNode& node)
 void DeclaratorProcessor::Visit(otava::ast::IdentifierNode& node)
 {
     if (processTrailingQualifiers) return;
-    if (!skipIdFunctionDeclarator)
+    if (processArrayId)
     {
-        if (isFunctionDeclarator)
+        arrayName = node.Str();
+    }
+    else
+    {
+        if (!skipIdFunctionDeclarator)
         {
-            if (isDestructorDeclarator)
+            if (isFunctionDeclarator)
             {
-                functionDeclarator = new FunctionDeclarator(U"~" + node.Str(), &node, FunctionKind::destructor, qualifiers, scope);
+                if (isDestructorDeclarator)
+                {
+                    functionDeclarator = new FunctionDeclarator(U"~" + node.Str(), &node, FunctionKind::destructor, qualifiers, scope);
+                }
+                else
+                {
+                    FunctionKind kind = FunctionKind::function;
+                    Scope* classScope = context->GetSymbolTable()->CurrentScope()->GetClassScope();
+                    if (classScope)
+                    {
+                        Symbol* symbol = classScope->GetSymbol();
+                        if (symbol->IsClassTypeSymbol())
+                        {
+                            ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
+                            if (node.Str() == classTypeSymbol->Name())
+                            {
+                                kind = FunctionKind::constructor;
+                            }
+                        }
+                    }
+                    functionDeclarator = new FunctionDeclarator(node.Str(), &node, kind, qualifiers, scope);
+                }
+                declaration = Declaration(flags, baseType, functionDeclarator);
             }
             else
             {
-                FunctionKind kind = FunctionKind::function;
-                Scope* classScope = context->GetSymbolTable()->CurrentScope()->GetClassScope();
-                if (classScope)
-                {
-                    Symbol* symbol = classScope->GetSymbol();
-                    if (symbol->IsClassTypeSymbol())
-                    {
-                        ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
-                        if (node.Str() == classTypeSymbol->Name())
-                        {
-                            kind = FunctionKind::constructor;
-                        }
-                    }
-                }
-                functionDeclarator = new FunctionDeclarator(node.Str(), &node, kind, qualifiers, scope);
+                declaration = Declaration(flags, baseType, new SimpleDeclarator(node.Str(), &node));
             }
-            declaration = Declaration(flags, baseType, functionDeclarator);
-        }
-        else
-        {
-            declaration = Declaration(flags, baseType, new SimpleDeclarator(node.Str(), &node));
         }
     }
 }
@@ -794,6 +810,28 @@ void DeclaratorProcessor::Visit(otava::ast::IdentifierNode& node)
 void DeclaratorProcessor::Visit(otava::ast::AbstractDeclaratorNode& node)
 {
     declaration = Declaration(flags, baseType, new SimpleDeclarator(std::u32string(), &node));
+}
+
+void DeclaratorProcessor::Visit(otava::ast::ArrayDeclaratorNode& node)
+{
+    processArrayId = true;
+    node.Child()->Accept(*this);
+    processArrayId = false;
+    int64_t size = -1;
+    if (node.Dimension())
+    {
+        Value* sizeValue = Evaluate(node.Dimension(), context);
+        if (sizeValue->IsIntegerValue())
+        {
+            IntegerValue* integerValue = static_cast<IntegerValue*>(sizeValue);
+            size = integerValue->GetValue();
+        }
+        else
+        {
+            ThrowException("integer value expected", node.GetSourcePos(), context);
+        }
+    }
+    declaration = Declaration(flags, baseType, new ArrayDeclarator(arrayName, &node, size));
 }
 
 std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)

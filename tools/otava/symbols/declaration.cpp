@@ -23,6 +23,7 @@ import otava.symbols.alias.type.symbol;
 import otava.symbols.templates;
 import otava.symbols.variable.symbol;
 import otava.symbols.class_templates;
+import otava.symbols.array.type.symbol;
 import otava.ast.error;
 import otava.ast.attribute;
 import otava.ast.visitor;
@@ -560,6 +561,14 @@ VariableSymbol* ProcessSimpleDeclarator(SimpleDeclarator* simpleDeclarator, Type
     return variable;
 }
 
+VariableSymbol* ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSymbol* elementType, DeclarationFlags flags, Context* context)
+{
+    ArrayTypeSymbol* arrayTypeSymbol = context->GetSymbolTable()->MakeArrayType(elementType, arrayDeclarator->Size());
+    arrayTypeSymbol->Bind(arrayDeclarator->Node()->GetSourcePos(), context);
+    VariableSymbol* variable = context->GetSymbolTable()->AddVariable(arrayDeclarator->Name(), arrayDeclarator->Node(), arrayTypeSymbol, nullptr, nullptr, flags, context);
+    return variable;
+}
+
 void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbol* type, DeclarationFlags flags, Context* context)
 {
     FunctionSymbol* functionSymbol = context->GetSymbolTable()->AddFunction(
@@ -639,6 +648,17 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
             {
                 FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declarator);
                 ProcessFunctionDeclarator(functionDeclarator, declaration.type, declaration.flags, context);
+                break;
+            }
+            case DeclaratorKind::arrayDeclarator:
+            {
+                ArrayDeclarator* arrayDeclarator = static_cast<ArrayDeclarator*>(declarator);
+                VariableSymbol* variable = ProcessArrayDeclarator(arrayDeclarator, declaration.type, declaration.flags, context);
+                if (variable->IsGlobalVariable())
+                {
+                    context->GetBoundCompileUnit()->AddBoundNode(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos()));
+                }
+                declaration.variable = variable;
                 break;
             }
         }

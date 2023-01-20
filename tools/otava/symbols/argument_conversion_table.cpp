@@ -15,6 +15,7 @@ import otava.symbols.type.symbol;
 import otava.symbols.fundamental.type.conversion;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.emitter;
+import otava.symbols.array.type.symbol;
 import otava.intermediate.value;
 
 namespace otava::symbols {
@@ -450,6 +451,59 @@ FunctionSymbol* PtrToBooleanArgumentConversion::Get(TypeSymbol* paramType, TypeS
     return nullptr;
 }
 
+class ArrayToPtrConversion : public FunctionSymbol
+{
+public:
+    ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    TypeSymbol* ConversionParamType() const override { return elementPtrType; }
+    TypeSymbol* ConversionArgType() const override { return arrayPtrType; }
+    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
+    int32_t ConversionDistance() const override { return 1; }
+private:
+    ArrayTypeSymbol* arrayType;
+    TypeSymbol* arrayPtrType;
+    TypeSymbol* elementPtrType;
+};
+
+ArrayToPtrConversion::ArrayToPtrConversion(ArrayTypeSymbol* arrayType_, Context* context) : 
+    FunctionSymbol(U"@conversion"), arrayType(arrayType_), arrayPtrType(arrayType->AddPointer(context)), elementPtrType(arrayType->ElementType()->AddPointer(context))
+{
+    SetConversion();
+    SetAccess(Access::public_);
+    ParameterSymbol* arg = new ParameterSymbol(U"arg", arrayType->AddPointer(context));
+    AddParameter(arg, soul::ast::SourcePos(), nullptr);
+    SetReturnType(elementPtrType, context);
+}
+
+void ArrayToPtrConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    otava::intermediate::Value* arrayPtr = emitter.Stack().Pop();
+    otava::intermediate::Value* elemAddr = emitter.EmitElemAddr(arrayPtr, emitter.EmitLong(0));
+    emitter.Stack().Push(elemAddr);
+}
+
+class ArrayToPtrArgumentConversion : public ArgumentConversion
+{
+public:
+    FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context) override;
+};
+
+FunctionSymbol* ArrayToPtrArgumentConversion::Get(TypeSymbol* paramType, TypeSymbol* argType, Context* context)
+{
+    if (argType->RemovePointer(context)->IsArrayTypeSymbol())
+    {
+        ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(argType->RemovePointer(context));
+        if (TypesEqual(paramType, arrayType->ElementType()->AddPointer(context)))
+        {
+            return new ArrayToPtrConversion(arrayType, context);
+        }
+    }
+    return nullptr;
+}
+
 ArgumentConversionTable::ArgumentConversionTable()
 {
     AddArgumentConversion(new IdentityArgumentConversion());
@@ -461,6 +515,7 @@ ArgumentConversionTable::ArgumentConversionTable()
     AddArgumentConversion(new VoidPtrToUInt64ArgumentConversion());
     AddArgumentConversion(new UInt64ToVoidPtrArgumentConversion());
     AddArgumentConversion(new PtrToBooleanArgumentConversion());
+    AddArgumentConversion(new ArrayToPtrArgumentConversion());
 }
 
 void ArgumentConversionTable::AddArgumentConversion(ArgumentConversion* argumentConversion)

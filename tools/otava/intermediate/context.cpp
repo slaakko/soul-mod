@@ -655,6 +655,16 @@ Instruction* Context::CreateLocal(Type* type)
     return inst;
 }
 
+Instruction* Context::CreateLocalInEntryBlock(Type* type)
+{
+    Type* ptrType = MakePtrType(type);
+    Instruction* inst = new LocalInstruction(SourcePos(), MakeRegValue(ptrType), type);
+    AddLineInfo(inst);
+    BasicBlock* entryBlock = code->CurrentFunction()->GetBasicBlock(0);
+    entryBlock->AddInstruction(inst);
+    return inst;
+}
+
 Instruction* Context::CreateLoad(Value* ptr)
 {
     Instruction* inst = new LoadInstruction(SourcePos(), MakeRegValue(ptr->GetType()->RemovePointer(SourcePos(), this)), ptr);

@@ -21,6 +21,7 @@ import otava.symbols.function.type.symbol;
 import otava.symbols.exception;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.alias.type.templates;
+import otava.symbols.array.type.symbol;
 import otava.symbols.block;
 import otava.symbols.classes;
 import otava.symbols.compound.type.symbol;
@@ -400,6 +401,34 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::enumTypeLess:
         {
             return new EnumTypeLess(name);
+        }
+        case SymbolKind::arrayTypeDefaultCtor:
+        {
+            return new ArrayTypeDefaultCtor(name);
+        }
+        case SymbolKind::arrayTypeCopyCtor:
+        {
+            return new ArrayTypeCopyCtor(name);
+        }
+        case SymbolKind::arrayTypeMoveCtor:
+        {
+            return new ArrayTypeMoveCtor(name);
+        }
+        case SymbolKind::arrayTypeCopyAssignment:
+        {
+            return new ArrayTypeCopyAssignment(name);
+        }
+        case SymbolKind::arrayTypeMoveAssignment:
+        {
+            return new ArrayTypeMoveAssignment(name);
+        }
+        case SymbolKind::arrayTypeBegin:
+        {
+            return new ArrayTypeBegin(name);
+        }
+        case SymbolKind::arrayTypeEnd:
+        {
+            return new ArrayTypeEnd(name);
         }
     }
     otava::ast::SetExceptionThrown();

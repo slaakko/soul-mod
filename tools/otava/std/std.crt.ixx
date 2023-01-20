@@ -9,6 +9,6 @@ export {
 
 extern "C" void* malloc(ssize_t size);
 extern "C" void free(void* ptr);
-extern "C" void prints(const char* s);
+extern "C" void prints(const char* s, int handle);
 
 }

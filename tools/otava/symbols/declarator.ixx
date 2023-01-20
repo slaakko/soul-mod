@@ -20,7 +20,7 @@ enum class DeclarationFlags : int32_t;
 
 enum class DeclaratorKind
 {
-    simpleDeclarator = 0, functionDeclarator = 1
+    simpleDeclarator = 0, functionDeclarator = 1, arrayDeclarator = 2
 };
 
 class Value;
@@ -32,6 +32,7 @@ public:
     virtual ~Declarator();
     bool IsSimpleDeclarator() const { return kind == DeclaratorKind::simpleDeclarator; }
     bool IsFunctionDeclarator() const { return kind == DeclaratorKind::functionDeclarator;  }
+    bool IsArrayDeclarator() const { return kind == DeclaratorKind::arrayDeclarator; }
     DeclaratorKind Kind() const { return kind; }
     const std::u32string& Name() const { return name; }
     otava::ast::Node* Node() const { return node; }
@@ -79,6 +80,15 @@ private:
     FunctionQualifiers qualifiers;
     std::vector<Declaration> parameterDeclarations;
     Scope* scope;
+};
+
+class ArrayDeclarator : public Declarator
+{
+public:
+    ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, int64_t size_);
+    int64_t Size() const { return size; }
+private:
+    int64_t size;
 };
 
 class Context;

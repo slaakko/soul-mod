@@ -5,12 +5,30 @@
 
 module;
 #include <stdio.h>
+#include <csetjmp>
 
 module ort;
 
-void prints(const char* s)
+void prints(const char* s, int handle)
 {
-    fwrite(s, strlen(s), 1, stdout);
+    switch (handle)
+    {
+        case 1:
+        {
+            fwrite(s, strlen(s), 1, stdout);
+            break;
+        }
+        case 2:
+        {
+            fwrite(s, strlen(s), 1, stderr);
+            break;
+        }
+        default:
+        {
+            fwrite(s, strlen(s), 1, stdout);
+            break;
+        }
+    }
 }
 
 class Rng
@@ -65,4 +83,10 @@ uint8_t get_random_byte()
         rng = new Rng(init_seed);
     }
     return rng->Get();
+}
+
+void throw_exception(void* ex)
+{
+    std::cerr << "exception occurrred" << std::endl;
+    std::abort();
 }

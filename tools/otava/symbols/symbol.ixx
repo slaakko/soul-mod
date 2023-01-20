@@ -84,7 +84,8 @@ enum class SymbolKind : int32_t
     fundamentalTypeSignExtension, fundamentalTypeZeroExtension, fundamentalTypeTruncate, fundamentalTypeBitcast, fundamentalTypeIntToFloat, fundamentalTypeFloatToInt,
     fundamentalTypeDefaultCtor, fundamentalTypeCopyCtor, fundamentalTypeCopyCtorLiteral, fundamentalTypeMoveCtor, fundamentalTypeCopyAssignment, fundamentalTypeMoveAssignment,
     enumTypeDefaultCtor, enumTypeCopyCtor, enumTypeMoveCtor, enumTypeCopyAssignment, enumTypeMoveAssignment, enumTypeEqual, enumTypeLess,
-
+    arrayTypeDefaultCtor, arrayTypeCopyCtor, arrayTypeMoveCtor, arrayTypeCopyAssignment, arrayTypeMoveAssignment,
+    arrayTypeBegin, arrayTypeEnd,
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
     max
@@ -136,6 +137,7 @@ public:
     bool IsGlobalNamespace() const { return kind == SymbolKind::namespaceSymbol && parent == nullptr; }
     bool IsClassTemplateSpecializationSymbol() const { return kind == SymbolKind::classTemplateSpecializationSymbol;  }
     bool IsAliasTypeTemplateSpecializationSymbol() const { return kind == SymbolKind::aliasTypeTemplateSpecializationSymbol; }
+    bool IsArrayTypeSymbol() const { return kind == SymbolKind::arrayTypeSymbol; }
     bool IsCompoundTypeSymbol() const { return kind == SymbolKind::compoundTypeSymbol; }
     bool IsExplicitInstantiationSymbol() const { return kind == SymbolKind::explicitInstantiationSymbol; }
     bool IsIntegerValueSymbol() const { return kind == SymbolKind::integerValueSymbol; }

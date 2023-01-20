@@ -159,6 +159,10 @@
     <ClCompile Include="alias_type_templates.ixx" />
     <ClCompile Include="argument_conversion_table.ixx" />
     <ClCompile Include="argument_conversion_table.cpp" />
+    <ClCompile Include="array_type_compare.cpp" />
+    <ClCompile Include="array_type_compare.ixx" />
+    <ClCompile Include="array_type_symbol.cpp" />
+    <ClCompile Include="array_type_symbol.ixx" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="block.ixx" />
     <ClCompile Include="bound_tree.cpp" />

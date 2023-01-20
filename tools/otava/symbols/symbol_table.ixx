@@ -12,6 +12,7 @@ import otava.symbols.derivations;
 import otava.symbols.lookup;
 import otava.symbols.specialization.compare;
 import otava.symbols.symbol_map;
+import otava.symbols.array.type.compare;
 import util.uuid;
 
 export namespace otava::symbols {
@@ -52,6 +53,7 @@ class Symbol;
 class BlockSymbol;
 class Scope;
 class AliasTypeSymbol;
+class ArrayTypeSymbol;
 class BoundExpressionNode;
 class ClassTypeSymbol;
 class ConceptSymbol;
@@ -147,6 +149,7 @@ public:
     ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
     ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
+    ArrayTypeSymbol* MakeArrayType(TypeSymbol* elementType, int64_t size);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
@@ -208,6 +211,7 @@ private:
     void CreateCoreSymbols();
     void AddFundamentalTypeOperations();
     void ImportSpecializations(const SymbolTable& that);
+    void ImportArrayTypes(const SymbolTable& that);
     void ImportCompoundTypeMap(const SymbolTable& that);
     void ImportFundamentalTypeMap(const SymbolTable& that);
     void ImportNodeSymbolMap(const SymbolTable& that);
@@ -227,6 +231,8 @@ private:
     std::vector<std::unique_ptr<Symbol>> aliasTypeTemplateSpecializations;
     std::set<ClassTemplateSpecializationSymbol*, ClassTemplateSpecializationLess> classTemplateSpecializationSet;
     std::set<AliasTypeTemplateSpecializationSymbol*, AliasTypeTemplateSpecializationLess> aliasTypeTemplateSpecializationSet;
+    std::vector<std::unique_ptr<Symbol>> arrayTypes;
+    std::set<ArrayTypeSymbol*, ArrayTypeLess> arrayTypeSet;
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
     std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
     std::vector<std::unique_ptr<ExplicitInstantiationSymbol>> explicitInstantiations;

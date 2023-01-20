@@ -52,6 +52,7 @@ class BoundPtrToRefNode;
 class BoundDefaultInitNode;
 class BoundTemporaryNode;
 class BoundConstructExpressionNode;
+class BoundThrowExpressionNode;
 class BoundConstructTemporaryNode;
 class BoundGlobalVariableDefinitionNode;
 class BoundEmptyDestructorNode;
@@ -104,6 +105,7 @@ public:
     virtual void Visit(BoundTemporaryNode& node) {}
     virtual void Visit(BoundConstructTemporaryNode& node) {}
     virtual void Visit(BoundConstructExpressionNode& node) {}
+    virtual void Visit(BoundThrowExpressionNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
     virtual void Visit(BoundEmptyDestructorNode& node) {}
 };

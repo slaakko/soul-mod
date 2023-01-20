@@ -28,7 +28,7 @@ class ClassTemplateSpecializationSymbol;
 
 enum class ScopeKind : int32_t
 {
-    none, namespaceScope, templateDeclarationScope, classScope, enumerationScope, functionScope, blockScope, usingDeclarationScope, usingDirectiveScope, instantiationScope
+    none, namespaceScope, templateDeclarationScope, classScope, enumerationScope, functionScope, arrayScope, blockScope, usingDeclarationScope, usingDirectiveScope, instantiationScope
 };
 
 enum class SymbolGroupKind : int32_t;

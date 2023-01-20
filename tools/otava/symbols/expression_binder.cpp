@@ -32,6 +32,7 @@ import otava.symbols.statement.binder;
 import otava.symbols.class_templates;
 import otava.symbols.value;
 import otava.symbols.namespaces;
+import otava.symbols.array.type.symbol;
 import otava.ast.identifier;
 import otava.ast.punctuation;
 import otava.ast.expression;
@@ -255,6 +256,7 @@ public:
     void Visit(otava::ast::PostfixIncExprNode& node) override;
     void Visit(otava::ast::PostfixDecExprNode& node) override;
     void Visit(otava::ast::CppCastExprNode& node) override;
+    void Visit(otava::ast::ThrowExprNode& node) override;
     void Visit(otava::ast::ExpressionListNode& node) override;
     void Visit(otava::ast::SizeOfTypeExprNode& node) override;
     void Visit(otava::ast::SizeOfUnaryExprNode& node) override;
@@ -470,6 +472,17 @@ void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
     {
         ThrowException("no conversion found", node.GetSourcePos(), context);
     }
+}
+
+void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
+{
+    BoundExpressionNode* exception = nullptr;
+    if (node.Exception())
+    {
+        node.Exception()->Accept(*this);
+        exception = boundExpression;
+    }
+    boundExpression = new BoundThrowExpressionNode(exception, node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::IntegerLiteralNode& node) 
@@ -985,7 +998,21 @@ void ExpressionBinder::Visit(otava::ast::SubscriptExprNode& node)
     }
     else if (plainSubjectType->IsArrayType())
     {
-        // todo
+        ArrayTypeSymbol* arrayType = static_cast<ArrayTypeSymbol*>(plainSubjectType->GetBaseType());
+        TypeSymbol* arrayPtrType = arrayType->AddPointer(context);
+        std::unique_ptr<BoundExpressionNode> arrayPtr(new BoundAddressOfNode(subject->Clone(), node.GetSourcePos(), arrayPtrType));
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            arrayType->ElementType()->AddPointer(context), arrayPtrType, node.GetSourcePos(), context);
+        if (conversion)
+        {
+            BoundConversionNode* boundConversion = new BoundConversionNode(arrayPtr.release(), conversion, node.GetSourcePos());
+            BindBinaryOp(otava::ast::NodeKind::plusNode, node.GetSourcePos(), boundConversion, index.release());
+            BindDeref(node.GetSourcePos(), boundExpression);
+        }
+        else
+        {
+            ThrowException("no conversion found", node.GetSourcePos(), context);
+        }
     }
     else
     {
@@ -1009,7 +1036,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfTypeExprNode& node)
 {
     TypeSymbol* type = ResolveType(node.Child(), DeclarationFlags::none, context);
     type = type->DirectType(context);
-    Emitter emitter;
+    Emitter emitter(nullptr);
     otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
     int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"ssize_t");
@@ -1027,7 +1054,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfUnaryExprNode& node)
     boundExpression = BindExpression(node.Child(), context);
     TypeSymbol* type = boundExpression->GetType();
     type = type->DirectType(context);
-    Emitter emitter;
+    Emitter emitter(nullptr);
     otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
     int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"size_t");

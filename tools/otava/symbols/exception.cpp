@@ -47,12 +47,14 @@ Exception::Exception(const std::string& title_, const std::string& message_, con
 {
 }
 
+[[noreturn]]
 void ThrowException(const std::string& message, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     exception_thrown = true;
     throw Exception(message, sourcePos, context);
  }
 
+[[noreturn]]
 void ThrowException(const Exception& ex)
 {
     exception_thrown = true;

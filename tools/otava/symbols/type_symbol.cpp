@@ -44,7 +44,7 @@ bool TypeSymbol::IsPointerType() const
 
 bool TypeSymbol::IsArrayType() const
 {
-    return false; // TODO!!!
+    return Kind() == SymbolKind::arrayTypeSymbol;
 }
 
 bool TypeSymbol::IsConstType() const

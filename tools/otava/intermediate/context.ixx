@@ -144,6 +144,7 @@ public:
     Instruction* CreatePtrToInt(Value* arg, Type* destType);
     Instruction* CreateParam(Type* type);
     Instruction* CreateLocal(Type* type);
+    Instruction* CreateLocalInEntryBlock(Type* type);
     Instruction* CreateLoad(Value* ptr);
     Instruction* CreateStore(Value* value, Value* ptr);
     Instruction* CreateArg(Value* arg);

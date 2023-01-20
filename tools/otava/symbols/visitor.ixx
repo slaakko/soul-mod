@@ -24,6 +24,7 @@ class InvokeValue;
 class AliasGroupSymbol;
 class AliasTypeSymbol;
 class AliasTypeTemplateSpecializationSymbol;
+class ArrayTypeSymbol;
 class BlockSymbol;
 class ClassGroupSymbol;
 class ClassTypeSymbol;
@@ -76,6 +77,7 @@ public:
     virtual void Visit(AliasGroupSymbol& symbol) {}
     virtual void Visit(AliasTypeSymbol& symbol) {}
     virtual void Visit(AliasTypeTemplateSpecializationSymbol& symbol) {}
+    virtual void Visit(ArrayTypeSymbol& symbol) {}
     virtual void Visit(BlockSymbol& symbol) {}
     virtual void Visit(ClassGroupSymbol& symbol) {}
     virtual void Visit(ClassTypeSymbol& symbol) {}

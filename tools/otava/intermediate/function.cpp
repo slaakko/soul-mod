@@ -143,6 +143,7 @@ BasicBlock* Function::CreateBasicBlock()
     {
         BasicBlock* eb = entryBlock.release();
         AddBasicBlock(eb);
+        basicBlockMap[eb->Id()] = eb;
         return eb;
     }
     BasicBlock* bb = new BasicBlock(SourcePos(), nextBasicBlockId++);

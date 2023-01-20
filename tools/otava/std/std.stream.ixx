@@ -17,15 +17,23 @@ template<typename charT>
 class basic_ostream
 {
 public:
+    basic_ostream() : handle(1)
+    {
+    }
+    basic_ostream(int handle_) : handle(handle_)
+    {
+    }
     basic_ostream<charT>& flush();
     void write(const char* s)
     {
-        prints(s);
+        prints(s, handle);
     }
     void write(const string& s)
     {
         write(s.c_str());
     }
+private:
+    int handle;
 };
 
 template<typename charT>
@@ -147,8 +155,8 @@ public:
 };
 
 // istream cin;
-ostream cout;
-// ostream cerr;
+ostream cout(1);
+ostream cerr(2);
 // ostream clog;
 
 

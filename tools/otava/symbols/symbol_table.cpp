@@ -13,6 +13,7 @@ import otava.intermediate.error;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.alias.group.symbol;
 import otava.symbols.alias.type.templates;
+import otava.symbols.array.type.symbol;
 import otava.symbols.bound.tree;
 import otava.symbols.class_group.symbol;
 import otava.symbols.class_templates;
@@ -200,6 +201,7 @@ void SymbolTable::Import(const SymbolTable& that)
     context.SetSymbolTable(this);
     globalNs->Import(that.globalNs.get(), &context);
     ImportSpecializations(that);
+    ImportArrayTypes(that);
     ImportCompoundTypeMap(that);
     ImportFundamentalTypeMap(that);
     ImportNodeSymbolMap(that);
@@ -228,6 +230,14 @@ void SymbolTable::ImportSpecializations(const SymbolTable& that)
     for (const auto& a : that.aliasTypeTemplateSpecializationSet)
     {
         aliasTypeTemplateSpecializationSet.insert(a);
+    }
+}
+
+void SymbolTable::ImportArrayTypes(const SymbolTable& that)
+{
+    for (const auto& s : that.arrayTypeSet)
+    {
+        arrayTypeSet.insert(s);
     }
 }
 
@@ -470,6 +480,12 @@ void SymbolTable::Write(Writer& writer)
     {
         writer.Write(specialization.get());
     }
+    uint32_t arrayCount = arrayTypes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(arrayCount);
+    for (const auto& arrayType : arrayTypes)
+    {
+        writer.Write(arrayType.get());
+    }
     uint32_t ccount = compoundTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(ccount);
     for (const auto& compoundType : compoundTypes)
@@ -520,6 +536,21 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: alias type template specialization expected");
         }
     }
+    uint32_t arrayCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < arrayCount; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsArrayTypeSymbol())
+        {
+            ArrayTypeSymbol* arrayTypeSymbol = static_cast<ArrayTypeSymbol*>(symbol);
+            arrayTypes.push_back(std::unique_ptr<Symbol>(arrayTypeSymbol));
+        }
+        else
+        {
+            otava::ast::SetExceptionThrown();
+            throw std::runtime_error("otava.symbols.symbol_table: array type expected");
+        }
+    }
     uint32_t ccount = reader.GetBinaryStreamReader().ReadULEB128UInt();
     for (uint32_t i = 0; i < ccount; ++i)
     {
@@ -562,6 +593,10 @@ void SymbolTable::Resolve()
     {
         MapType(static_cast<TypeSymbol*>(specialization.get()));
     }
+    for (auto& arrayType : arrayTypes)
+    {
+        MapType(static_cast<TypeSymbol*>(arrayType.get()));
+    }
     for (auto& compoundType : compoundTypes)
     {
         MapType(compoundType.get());
@@ -591,6 +626,11 @@ void SymbolTable::Resolve()
     {
         AliasTypeTemplateSpecializationSymbol* s = static_cast<AliasTypeTemplateSpecializationSymbol*>(specialization.get());
         s->Resolve(*this);
+    }
+    for (const auto& arrayType : arrayTypes)
+    {
+        ArrayTypeSymbol* a = static_cast<ArrayTypeSymbol*>(arrayType.get());
+        a->Resolve(*this);
     }
     for (const auto& instantiation : explicitInstantiations)
     {
@@ -849,7 +889,6 @@ VariableSymbol* SymbolTable::AddVariable(const std::u32string& name, otava::ast:
     variableSymbol->SetDeclarationFlags(flags);
     currentScope->SymbolScope()->AddSymbol(variableSymbol, node->GetSourcePos(), context);
     variableGroup->AddVariable(variableSymbol);
-    // MapNode(node, variableSymbol);
     return variableSymbol;
 }
 
@@ -1361,6 +1400,21 @@ AliasTypeTemplateSpecializationSymbol* SymbolTable::MakeAliasTypeTemplateSpecial
     AliasTypeTemplateSpecializationSymbol* sym = symbol.get();
     aliasTypeTemplateSpecializationSet.insert(sym);
     aliasTypeTemplateSpecializations.push_back(std::move(symbol));
+    MapType(sym);
+    return sym;
+}
+
+ArrayTypeSymbol* SymbolTable::MakeArrayType(TypeSymbol* elementType, int64_t size)
+{
+    std::unique_ptr< ArrayTypeSymbol> symbol(new ArrayTypeSymbol(elementType, size));
+    auto it = arrayTypeSet.find(symbol.get());
+    if (it != arrayTypeSet.cend())
+    {
+        return *it;
+    }
+    ArrayTypeSymbol* sym = symbol.get();
+    arrayTypeSet.insert(sym);
+    arrayTypes.push_back(std::move(symbol));
     MapType(sym);
     return sym;
 }

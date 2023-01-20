@@ -72,7 +72,8 @@ enum class BoundNodeKind
     boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
-    boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode
+    boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
+    boundThrowExpressionNode
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -142,6 +143,7 @@ public:
     virtual bool IsBoundMemberVariable() const { return false; }
     virtual bool IsLvalueExpression() const { return false; }
     virtual bool IsNoreturnFunctionCall() const { return false; }
+    virtual bool IsBoundThrowExpression() const { return false; }
 private:
     BoundExpressionFlags flags;
     TypeSymbol* type;
@@ -794,6 +796,19 @@ private:
     std::unique_ptr<BoundExpressionNode> allocation;
     std::unique_ptr<BoundExpressionNode> constructObjectCall;
     bool hasPlacement;
+};
+
+class BoundThrowExpressionNode : public BoundExpressionNode
+{
+public:
+    BoundThrowExpressionNode(BoundExpressionNode* exception_, const soul::ast::SourcePos& sourcePos_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Exception() const { return exception.get(); }
+    BoundExpressionNode* Clone() const override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    bool IsBoundThrowExpression() const override { return true; }
+private:
+    std::unique_ptr<BoundExpressionNode> exception;
 };
 
 class BoundGlobalVariableDefinitionNode : public BoundNode

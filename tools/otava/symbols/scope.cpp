@@ -32,6 +32,7 @@ std::string ScopeKindStr(ScopeKind kind)
         case ScopeKind::classScope: return "class scope";
         case ScopeKind::enumerationScope: return "enumeration scope";
         case ScopeKind::functionScope: return "function scope";
+        case ScopeKind::arrayScope: return "array scope";
         case ScopeKind::blockScope: return "block scope";
         case ScopeKind::usingDeclarationScope: return "using declaration scope";
         case ScopeKind::usingDirectiveScope: return "using directive scope";

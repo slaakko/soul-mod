@@ -42,7 +42,6 @@ bool EnumeratedTypeSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
         }
     }
     return false;
-
 }
 
 void EnumeratedTypeSymbol::Write(Writer& writer)

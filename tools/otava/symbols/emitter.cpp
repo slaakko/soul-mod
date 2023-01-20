@@ -14,10 +14,15 @@ import otava.intermediate.function;
 import otava.intermediate.type;
 import otava.intermediate.data;
 import otava.intermediate.reference_resolver;
+import otava.symbols.bound.tree;
 
 namespace otava::symbols {
 
-Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack())
+CodeGenerator::~CodeGenerator()
+{
+}
+
+Emitter::Emitter(CodeGenerator* codeGen_) : context(new otava::intermediate::Context()), stack(new IrValueStack()), nextBlock(nullptr), retValue(nullptr), codeGen(codeGen_)
 {
 }
 
@@ -409,6 +414,11 @@ otava::intermediate::Value* Emitter::EmitLocal(otava::intermediate::Type* type)
     return context->CreateLocal(type);
 }
 
+otava::intermediate::Value* Emitter::EmitLocalInEntryBlock(otava::intermediate::Type* type)
+{
+    return context->CreateLocalInEntryBlock(type);
+}
+
 otava::intermediate::Value* Emitter::EmitLoad(otava::intermediate::Value* value)
 {
     return context->CreateLoad(value);
@@ -542,6 +552,11 @@ otava::intermediate::Value* Emitter::GetVTabVariable(void* cls) const
 void Emitter::SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable)
 {
     vtabVariableMap[cls] = vtabVariable;
+}
+
+void Emitter::SetCodeGenNextBlock(otava::intermediate::BasicBlock* nextBlock_)
+{
+    codeGen->SetNextBlock(nextBlock_);
 }
 
 } // namespace otava::symbols

@@ -21,6 +21,7 @@ import otava.symbols.bound.tree.visitor;
 import otava.symbols.function.templates;
 import otava.symbols.class_templates;
 import otava.symbols.type.symbol;
+import otava.intermediate.function;
 
 namespace otava::symbols {
 
@@ -179,6 +180,10 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         case BoundNodeKind::boundEmptyDestructorNode:
         {
             return "boundEmptyDestructorNode";
+        }
+        case BoundNodeKind::boundThrowExpressionNode:
+        {
+            return "boundThrowExpressionNode";
         }
     }
     return "<unknown bound node>";
@@ -678,7 +683,7 @@ void BoundExpressionStatementNode::SetExpr(BoundExpressionNode* expr_)
 
 bool BoundExpressionStatementNode::IsTerminator() const
 {
-    return expr && expr->IsNoreturnFunctionCall();
+    return expr && (expr->IsNoreturnFunctionCall() || expr->IsBoundThrowExpression());
 }
 
 BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, const soul::ast::SourcePos& sourcePos_) :
@@ -778,10 +783,6 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         if (!thisPtr)
         {
             ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
-        }
-        if (thisPtr->IsBoundFunctionCallNode())
-        {
-            int x = 0;
         }
         thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
@@ -1725,6 +1726,36 @@ void BoundConstructExpressionNode::Accept(BoundTreeVisitor& visitor)
 BoundExpressionNode* BoundConstructExpressionNode::Clone() const
 {
     return new BoundConstructExpressionNode(allocation->Clone(), constructObjectCall->Clone(), GetType(), hasPlacement, GetSourcePos());
+}
+
+BoundThrowExpressionNode::BoundThrowExpressionNode(BoundExpressionNode* exception_, const soul::ast::SourcePos& sourcePos_) : 
+    BoundExpressionNode(BoundNodeKind::boundThrowExpressionNode, sourcePos_, nullptr), exception(exception_)
+{
+}
+
+void BoundThrowExpressionNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundThrowExpressionNode::Clone() const
+{
+    BoundExpressionNode* clonedException = nullptr;
+    if (exception)
+    {
+        clonedException = exception->Clone();
+    }
+    return new BoundThrowExpressionNode(clonedException, GetSourcePos());
+}
+
+void BoundThrowExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    otava::intermediate::FunctionType* throwFunctionType(static_cast<otava::intermediate::FunctionType*>(
+        emitter.MakeFunctionType(emitter.GetVoidType(), std::vector<otava::intermediate::Type*>(1, emitter.MakePtrType(emitter.GetVoidType())))));
+    otava::intermediate::Function* throwFunction(emitter.GetOrInsertFunction("throw_exception", throwFunctionType));
+    otava::intermediate::Value* exceptionValue = emitter.EmitNull(emitter.MakePtrType(emitter.GetVoidType()));
+    emitter.EmitCall(throwFunction, std::vector<otava::intermediate::Value*>(1, exceptionValue));
+    emitter.EmitRet(emitter.RetValue());
 }
 
 BoundGlobalVariableDefinitionNode::BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::SourcePos& sourcePos_) : 
