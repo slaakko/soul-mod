@@ -1,0 +1,3 @@
+project ref;
+target=program;
+source <ref.cpp>;

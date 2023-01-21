@@ -835,6 +835,70 @@ FunctionSymbol* PointerArrowOperation::Get(std::vector<std::unique_ptr<BoundExpr
     return function;
 }
 
+class CopyRef: public FunctionSymbol
+{
+public:
+    CopyRef(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+    bool IsCtorAssignmentOrArrow() const override { return true; }
+private:
+    TypeSymbol* type;
+};
+
+CopyRef::CopyRef(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) :
+    FunctionSymbol(U"@constructor"), type(type_)
+{
+    SetFunctionKind(FunctionKind::constructor);
+    SetAccess(Access::public_);
+    ParameterSymbol* thisParam = new ParameterSymbol(U"this", type->AddPointer(context));
+    AddParameter(thisParam, sourcePos, context);
+    ParameterSymbol* thatParam = new ParameterSymbol(U"that", type);
+    AddParameter(thatParam, sourcePos, context);
+}
+
+void CopyRef::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    args[1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    args[0]->Store(emitter, OperationFlags::none, sourcePos, context);
+}
+
+class CopyRefOperation : public Operation
+{
+public:
+    CopyRefOperation();
+    FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    std::map<TypeSymbol*, FunctionSymbol*> functionMap;
+    std::vector<std::unique_ptr<FunctionSymbol>> functions;
+};
+
+CopyRefOperation::CopyRefOperation() : Operation(U"@constructor", 2)
+{
+}
+
+FunctionSymbol* CopyRefOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    TypeSymbol* arg0Type = args[0]->GetType();
+    if (arg0Type->PointerCount() != 1) return nullptr;
+    TypeSymbol* type = arg0Type->RemovePointer(context);
+    if (!type->IsReferenceType()) return nullptr;
+    TypeSymbol* argType = args[1]->GetType();
+    if (!argType->IsReferenceType()) return nullptr;
+    if (!TypesEqual(type, argType)) return nullptr;
+    auto it = functionMap.find(type);
+    if (it != functionMap.cend())
+    {
+        FunctionSymbol* function = it->second;
+        return function;
+    }
+    CopyRef* copyRef = new CopyRef(type, sourcePos, context);
+    functionMap[type] = copyRef;
+    functions.push_back(std::unique_ptr<FunctionSymbol>(copyRef));
+    return copyRef;
+}
+
 class ClassDefaultCtor : public FunctionDefinitionSymbol
 {
 public:
@@ -1563,6 +1627,7 @@ OperationRepository::OperationRepository()
     AddOperation(new ClassMoveCtorOperation());
     AddOperation(new ClassCopyAssignmentOperation());
     AddOperation(new ClassMoveAssignmentOperation());
+    AddOperation(new CopyRefOperation());
 }
 
 OperationGroup* OperationRepository::GetOrInsertOperationGroup(const std::u32string& operationGroupName)

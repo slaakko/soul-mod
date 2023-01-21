@@ -1,0 +1,3 @@
+project modify_array;
+target=program;
+source <modify_array.cpp>;

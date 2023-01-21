@@ -790,7 +790,9 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
     context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
     rangeForCompound->Accept(instantiator);
     context->PopFlags();
+    context->PushSetFlag(ContextFlags::returnRef);
     rangeForCompound->Accept(*this);
+    context->PopFlags();
 }
 
 void StatementBinder::Visit(otava::ast::ForStatementNode& node)

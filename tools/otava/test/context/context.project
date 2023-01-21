@@ -1,0 +1,3 @@
+project context;
+target=program;
+source <context.cpp>;

@@ -1,0 +1,3 @@
+project print_stderr;
+target=program;
+source <print_stderr.cpp>;
