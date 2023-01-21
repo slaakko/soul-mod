@@ -8,7 +8,7 @@ int main()
     {
         t.append(1, c);
     }
-    prints(t.c_str());
-    prints("\n");
+    prints(t.c_str(), 1);
+    prints("\n", 1);
     return 0;
 }

@@ -108,7 +108,7 @@ void VariableSymbol::SetInitializerType(TypeSymbol* initializerType_)
 
 TypeSymbol* VariableSymbol::GetType() const
 {
-    if (declaredType->IsAutoTypeSymbol())
+    if (declaredType->GetBaseType()->IsAutoTypeSymbol())
     {
         return initializerType;
     }

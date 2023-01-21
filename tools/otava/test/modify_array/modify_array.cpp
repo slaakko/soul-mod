@@ -3,11 +3,11 @@ import std.core;
 int main()
 {
     int a[3];
-    for (int& x : a)
+    for (auto& x : a)
     {
         x = 1;
     }
-    for (int x : a)
+    for (auto x : a)
     {
         std::cout << x << "\n";
     }

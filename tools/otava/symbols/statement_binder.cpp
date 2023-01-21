@@ -790,9 +790,7 @@ void StatementBinder::Visit(otava::ast::RangeForStatementNode& node)
     context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
     rangeForCompound->Accept(instantiator);
     context->PopFlags();
-    context->PushSetFlag(ContextFlags::returnRef);
     rangeForCompound->Accept(*this);
-    context->PopFlags();
 }
 
 void StatementBinder::Visit(otava::ast::ForStatementNode& node)
@@ -944,15 +942,30 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
     {
         for (auto& declaration : declarationList->declarations)
         {
+            VariableSymbol* variable = declaration.variable;
             BoundExpressionNode* initializer = nullptr;
             if (declaration.initializer)
             {
+                bool flagsPushed = false;
+                if (variable->GetDeclaredType()->IsReferenceType())
+                {
+                    context->PushSetFlag(ContextFlags::returnRef);
+                    flagsPushed = true;
+                }
                 initializer = BindExpression(declaration.initializer, context);
+                if (flagsPushed)
+                {
+                    context->PopFlags();
+                }
             }
-            VariableSymbol* variable = declaration.variable;
             if (initializer && initializer->GetType())
             {
-                variable->SetInitializerType(initializer->GetType()->DirectType(context));
+                TypeSymbol* initializerType = initializer->GetType()->DirectType(context);
+                if (variable->GetDeclaredType()->GetBaseType()->IsAutoTypeSymbol() && !variable->GetDeclaredType()->GetDerivations().IsEmpty())
+                {
+                    initializerType = context->GetSymbolTable()->MakeCompoundType(initializerType->GetBaseType(), variable->GetDeclaredType()->GetDerivations());
+                }
+                variable->SetInitializerType(initializerType);
             }
             BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
             std::vector<std::unique_ptr<BoundExpressionNode>> arguments;
