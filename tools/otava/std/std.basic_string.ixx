@@ -420,6 +420,52 @@ string to_string(float val);
 string to_string(double val);
 string to_string(long double val);
 
+char hex_char(int nibble);
+
+template<typename T>
+string to_hex(const T& x)
+{
+    string s;
+    int n = sizeof(x);
+    for (int i = 0; i < n; ++i)
+    {
+        uint8_t b = x & 0xFF;
+        s.append(1, hex_char(b & 0x0F));
+        s.append(1, hex_char(b >> 4));
+        x = x >> 8;
+    }
+    std::reverse(s.begin(), s.end());
+}
+
+string to_hexstring(uint8_t x);
+string to_hexstring(uint16_t x);
+string to_hexstring(uint32_t x);
+string to_hexstring(uint64_t x);
+
+template<typename T>
+string to_oct(const T& x)
+{
+    uint8_t zero = 0;
+    string s;
+    do
+    {
+        uint8_t b = x;
+        s.append(1, static_cast<char>(static_cast<int>(b & 7) + static_cast<int>('0')));
+        x = x >> 3;
+    } while (x != 0);
+    if (s[s.length() - 1] != '0')
+    {
+        s.append(1, '0');
+    }
+    std::reverse(s.begin(), s.end());
+    return s;
+}
+
+string to_octstring(uint8_t x);
+string to_octstring(uint16_t x);
+string to_octstring(uint32_t x);
+string to_octstring(uint64_t x);
+
 /*
 wstring to_wstring(int val);
 wstring to_wstring(unsigned val);

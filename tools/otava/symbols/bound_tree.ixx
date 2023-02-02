@@ -73,7 +73,7 @@ enum class BoundNodeKind
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
-    boundThrowExpressionNode
+    boundThrowExpressionNode, boundTryStatementNode, boundHandlerNode
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -149,6 +149,8 @@ private:
     TypeSymbol* type;
 };
 
+class BoundFunctionNode;
+
 class BoundCompileUnitNode : public BoundNode
 {
 public:
@@ -158,13 +160,16 @@ public:
     ArgumentConversionTable* GetArgumentConversionTable() const { return argumentConversionTable.get(); }
     FunctionTemplateRepository* GetFunctionTemplateRepository() const { return functionTemplateRepository.get(); }
     ClassTemplateRepository* GetClassTemplateRepository() const { return classTemplateRepository.get(); }
+    BoundFunctionNode* GetCompileUnitInitializationFunction() { return compileUnitInitializationFunction.get(); }
+    void AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, const soul::ast::SourcePos& sourcePos, Context* context);
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(BoundNode* node);
     void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
     void SetId(const std::string& id_) { id = id_; }
     const std::string& Id() const { return id; }
-    otava::intermediate::Value* CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
+    otava::intermediate::Value* CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context,
+        bool definition);
 private:
     std::string id;
     std::vector<std::unique_ptr<BoundNode>> boundNodes;
@@ -173,6 +178,7 @@ private:
     std::unique_ptr<FunctionTemplateRepository> functionTemplateRepository;
     std::unique_ptr<ClassTemplateRepository> classTemplateRepository;
     std::vector<ClassTypeSymbol*> boundClasses;
+    std::unique_ptr<BoundFunctionNode> compileUnitInitializationFunction;
 };
 
 class BoundStatementNode;
@@ -471,6 +477,35 @@ private:
     ClassTypeSymbol* forClass;
 };
 
+class BoundHandlerNode;
+
+class BoundTryStatementNode : public BoundStatementNode
+{
+public:
+    BoundTryStatementNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* tryBlock_);
+    BoundCompoundStatementNode* TryBlock() const { return tryBlock.get(); }
+    void AddHandler(BoundHandlerNode* handler);
+    const std::vector<std::unique_ptr<BoundHandlerNode>>& Handlers() const { return handlers; }
+    void Accept(BoundTreeVisitor& visitor) override;
+private:
+    std::unique_ptr<BoundCompoundStatementNode> tryBlock;
+    std::vector<std::unique_ptr<BoundHandlerNode>> handlers;
+};
+
+class BoundHandlerNode : public BoundStatementNode
+{
+public:
+    BoundHandlerNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* catchBlock_, const std::u32string& exceptionParamName_, const util::uuid& exceptionTypeId_);
+    BoundCompoundStatementNode* CatchBlock() const { return catchBlock.get(); }
+    const std::u32string& ExceptionParamName() const { return exceptionParamName; }
+    const util::uuid& ExceptionTypeId() const { return exceptionTypeId; }
+    void Accept(BoundTreeVisitor& visitor) override;
+private:
+    std::unique_ptr<BoundCompoundStatementNode> catchBlock;
+    std::u32string exceptionParamName;
+    util::uuid exceptionTypeId;
+};
+
 class BoundLiteralNode : public BoundExpressionNode
 {
 public:
@@ -549,7 +584,7 @@ private:
 class BoundFunctionGroupNode : public BoundExpressionNode
 {
 public:
-    BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_);
+    BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
     void Accept(BoundTreeVisitor& visitor) override;
     FunctionGroupSymbol* GetFunctionGroupSymbol() const { return functionGroupSymbol; }
     BoundExpressionNode* Clone() const override;

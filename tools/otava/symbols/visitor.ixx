@@ -37,6 +37,7 @@ class EnumeratedTypeSymbol;
 class ForwardEnumDeclarationSymbol;
 class EnumConstantSymbol;
 class FunctionGroupSymbol;
+class FunctionGroupTypeSymbol;
 class ParameterSymbol;
 class FunctionSymbol;
 class FunctionTypeSymbol;
@@ -90,6 +91,7 @@ public:
     virtual void Visit(ForwardEnumDeclarationSymbol& symbol) {}
     virtual void Visit(EnumConstantSymbol& symbol) {}
     virtual void Visit(FunctionGroupSymbol& symbol) {}
+    virtual void Visit(FunctionGroupTypeSymbol& symbol) {}
     virtual void Visit(ParameterSymbol& symbol) {}
     virtual void Visit(FunctionSymbol& symbol) {}
     virtual void Visit(FunctionTypeSymbol& symbol) {}

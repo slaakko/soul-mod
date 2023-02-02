@@ -886,7 +886,6 @@ FunctionSymbol* CopyRefOperation::Get(std::vector<std::unique_ptr<BoundExpressio
     if (!type->IsReferenceType()) return nullptr;
     TypeSymbol* argType = args[1]->GetType();
     if (!argType->IsReferenceType()) return nullptr;
-    if (!TypesEqual(type, argType)) return nullptr;
     auto it = functionMap.find(type);
     if (it != functionMap.cend())
     {
@@ -965,6 +964,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
     ClassTypeSymbol* classType = classDefaultCtor->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classDefaultCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos)); 
+    context->PushBoundFunction(boundFunction.release());
     int nb = classType->BaseClasses().size();
     for (int i = 0; i < nb; ++i)
     {
@@ -980,7 +980,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
                 context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release());
-            boundFunction->Body()->AddStatement(expressionStatement);
+            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
         {
@@ -1003,7 +1003,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classType, sourcePos);
-                boundFunction->Body()->AddStatement(setVPtrStatement);
+                context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
             }
             else
             {
@@ -1013,7 +1013,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         else
         {
             BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, sourcePos);
-            boundFunction->Body()->AddStatement(setVPtrStatement);
+            context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
         }
     }
     int n = classType->MemberVariables().size();
@@ -1027,9 +1027,10 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release());
-        boundFunction->Body()->AddStatement(expressionStatement);
+        context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->PopBoundFunction();
 }
 
 class ClassCopyCtor : public FunctionDefinitionSymbol
@@ -1073,11 +1074,13 @@ ClassCopyCtorOperation::ClassCopyCtorOperation() : Operation(U"@constructor", 2)
 FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
+    if (type->PointerCount() != 1 || !type->RemovePointer(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) || args[1]->BindToRvalueRef()) return nullptr;
+    int distance = 0;
+    if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance)) return nullptr;
     FunctionSymbol* copyCtor = classType->GetFunction(copyCtorIndex);
     if (copyCtor)
     {
@@ -1102,6 +1105,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
     ClassTypeSymbol* classType = classCopyCtor->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classCopyCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    context->PushBoundFunction(boundFunction.release());
     int nb = classType->BaseClasses().size();
     for (int i = 0; i < nb; ++i)
     {
@@ -1119,7 +1123,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
                 context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release());
-            boundFunction->Body()->AddStatement(expressionStatement);
+            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
         {
@@ -1142,7 +1146,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classType, sourcePos);
-                boundFunction->Body()->AddStatement(setVPtrStatement);
+                context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
             }
             else
             {
@@ -1152,7 +1156,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         else
         {
             BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, sourcePos);
-            boundFunction->Body()->AddStatement(setVPtrStatement);
+            context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
         }
     }
     int n = classType->MemberVariables().size();
@@ -1171,9 +1175,10 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release());
-        boundFunction->Body()->AddStatement(expressionStatement);
+        context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->PopBoundFunction();
 }
 
 class ClassMoveCtor : public FunctionDefinitionSymbol
@@ -1217,11 +1222,13 @@ ClassMoveCtorOperation::ClassMoveCtorOperation() : Operation(U"@constructor", 2)
 FunctionSymbol* ClassMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
+    if (type->PointerCount() != 1 || !type->RemovePointer(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
     if (!TypesEqual(args[1]->GetType(), classType->AddRValueRef(context)) && !args[1]->BindToRvalueRef()) return nullptr;
+    int distance = 0;
+    if (!TypesEqual(args[1]->GetType()->GetBaseType(), classType) && !args[1]->GetType()->GetBaseType()->HasBaseClass(classType, distance)) return nullptr;
     FunctionSymbol* moveCtor = classType->GetFunction(moveCtorIndex);
     if (moveCtor)
     {
@@ -1246,6 +1253,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
     ClassTypeSymbol* classType = classMoveCtor->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classMoveCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    context->PushBoundFunction(boundFunction.release());
     int nb = classType->BaseClasses().size();
     for (int i = 0; i < nb; ++i)
     {
@@ -1268,7 +1276,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
                 context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release());
-            boundFunction->Body()->AddStatement(expressionStatement);
+            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
         {
@@ -1291,7 +1299,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
             {
                 BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
                 BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classType, sourcePos);
-                boundFunction->Body()->AddStatement(setVPtrStatement);
+                context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
             }
             else
             {
@@ -1301,7 +1309,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         else
         {
             BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classType, sourcePos);
-            boundFunction->Body()->AddStatement(setVPtrStatement);
+            context->GetBoundFunction()->Body()->AddStatement(setVPtrStatement);
         }
     }
     int n = classType->MemberVariables().size();
@@ -1325,9 +1333,10 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release());
-        boundFunction->Body()->AddStatement(expressionStatement);
+        context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->PopBoundFunction();
 }
 
 class ClassCopyAssignment: public FunctionDefinitionSymbol
@@ -1400,6 +1409,7 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
     ClassTypeSymbol* classType = classCopyAssignment->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classCopyAssignment, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    context->PushBoundFunction(boundFunction.release());
     int nb = classType->BaseClasses().size();
     for (int i = 0; i < nb; ++i)
     {
@@ -1417,7 +1427,7 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
                 context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release());
-            boundFunction->Body()->AddStatement(expressionStatement);
+            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
         {
@@ -1440,15 +1450,16 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
         std::unique_ptr<BoundFunctionCallNode> memberAssignmentrCall = ResolveOverloadThrow(classType->GetScope(), U"operator=", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberAssignmentrCall.release());
-        boundFunction->Body()->AddStatement(expressionStatement);
+        context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
     otava::ast::ThisNode* thisNode(new otava::ast::ThisNode(sourcePos));
     otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr);
-    boundFunction->Body()->AddStatement(returnStatement);
-    context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
+    context->GetBoundFunction()->Body()->AddStatement(returnStatement);
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->PopBoundFunction();
 }
 
 class ClassMoveAssignment : public FunctionDefinitionSymbol
@@ -1521,6 +1532,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
     ClassTypeSymbol* classType = classMoveAssignment->ClassType();
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classMoveAssignment, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    context->PushBoundFunction(boundFunction.release());
     int nb = classType->BaseClasses().size();
     for (int i = 0; i < nb; ++i)
     {
@@ -1543,7 +1555,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
                 context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release());
-            boundFunction->Body()->AddStatement(expressionStatement);
+            context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
         {
@@ -1567,9 +1579,16 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(stdScope, U"swap", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release());
-        boundFunction->Body()->AddStatement(expressionStatement);
+        context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(boundFunction.release());
+    BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
+    otava::ast::ThisNode* thisNode(new otava::ast::ThisNode(sourcePos));
+    otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
+    BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
+    returnStatement->SetExpr(derefThisExpr);
+    context->GetBoundFunction()->Body()->AddStatement(returnStatement);
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->PopBoundFunction();
 }
 
 Operation::Operation(const std::u32string& groupName_, int arity_) : groupName(groupName_), arity(arity_)

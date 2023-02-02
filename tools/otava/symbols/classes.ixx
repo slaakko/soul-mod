@@ -181,8 +181,9 @@ private:
     util::uuid classTypeSymbolId;
 };
 
-void BeginClass(otava::ast::Node* node, otava::symbols::Context* context);
-void EndClass(otava::ast::Node* node, otava::symbols::Context* context);
+void BeginClass(otava::ast::Node* node, Context* context);
+void EndClass(otava::ast::Node* node, Context* context);
+void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context);
 void AddForwardClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
 void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);

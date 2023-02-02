@@ -14,6 +14,7 @@ import otava.symbols.context;
 import otava.symbols.symbol.table;
 import otava.symbols.variable.symbol;
 import otava.symbols.conversion.table;
+import otava.symbols.function.group.symbol;
 
 namespace otava::symbols {
 
@@ -67,6 +68,11 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     {
         VariableSymbol* variable = static_cast<VariableSymbol*>(symbol);
         context->GetSymbolTable()->MapVariable(variable);
+    }
+    if (symbol->IsFunctionGroupSymbol())
+    {
+        FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
+        context->GetSymbolTable()->MapFunctionGroup(functionGroup);
     }
     if (symbol->IsTypenameConstraintSymbol())
     {

@@ -119,7 +119,7 @@ const char* nodeKindStr[] =
     "attributeSpecifierSequenceNode", "attributeSpecifierNode", "attributeUsingPrefixNode", "attrbuteNode", "attributeScopedTokenNode", "attributeArgumentsNode", 
     "balancedTokenSequenceNode",
     "tokenNode",
-    "lparenNode", "rparenNode", "lbracketNode", "rbracketNode", "lbraceNode", "rbraceNode", "alignmentSpecifierNode"
+    "lparenNode", "rparenNode", "lbracketNode", "rbracketNode", "lbraceNode", "rbraceNode", "alignmentSpecifierNode", "pragmaNode", "boundStatementNode"
 };
 
 std::string NodeKindStr(NodeKind nodeKind)

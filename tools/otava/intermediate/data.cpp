@@ -879,12 +879,8 @@ Value* Data::MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const st
     }
     case ulongTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<int64_t>::min() || value > std::numeric_limits<int64_t>::max())
-        {
-            Error("error making literal: range error: ulong value expected", sourcePos, context);
-        }
-        return GetULongValue(static_cast<int64_t>(value), types);
+        uint64_t value = std::stoull(strValue);
+        return GetULongValue(value, types);
     }
     case floatTypeId:
     {

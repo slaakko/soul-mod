@@ -218,6 +218,7 @@ CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int ind
 void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (specialization->IsTemplateParameterInstantiation()) return;
+    context->PushResetFlag(ContextFlags::skipFunctionDefinitions);
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     ClassTypeSymbol* classTemplate = specialization->ClassTemplate();
@@ -234,6 +235,7 @@ void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, co
         }
     }
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    context->PopFlags();
 }
 
 TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -328,6 +330,10 @@ TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::
                 specialization->AddBaseClass(baseClass, sourcePos, context);
             }
             context->PopFlags();
+            if (!specialization->IsTemplateParameterInstantiation())
+            {
+                AddClassInfo(specialization, context);
+            }
             InstantiateDestructor(specialization, sourcePos, context);
         }
         catch (const std::exception& ex)

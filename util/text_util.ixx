@@ -24,6 +24,7 @@ std::string TrimAll(const std::string& s);
 std::u32string Trim(const std::u32string& s);
 std::u32string TrimAll(const std::u32string& s);
 std::vector<std::string> Split(const std::string& s, char c);
+std::vector<std::string> Split(const std::string& s, const std::string& subString);
 std::string Replace(const std::string& s, char oldChar, char newChar);
 std::string Replace(const std::string& s, const std::string& oldString, const std::string& newString);
 std::string HexEscape(char c);
@@ -56,7 +57,9 @@ int32_t ParseOctal(const std::string& octalDigitStr);
 std::string ToOctalString(int32_t value, int numDigits);
 int Log10(int n);
 std::u32string FormatNumber(int n, int numDigits);
+#ifndef OTAVA
 std::string CurrentThreadIdStr();
+#endif 
 std::string Format(const std::string& s, int width);
 std::string Format(const std::string& s, int width, FormatJustify justify);
 std::string Format(const std::string& s, int width, FormatWidth fw);
@@ -77,6 +80,28 @@ std::vector<StringT> Split(const StringT& s, typename StringT::value_type c)
         {
             v.push_back(s.substr(start, i - start));
             start = i + 1;
+        }
+    }
+    if (start < n)
+    {
+        v.push_back(s.substr(start, n - start));
+    }
+    return v;
+}
+
+template<typename StringT>
+std::vector<StringT> Split(const StringT& s, const StringT& subString)
+{
+    std::vector<StringT> v;
+    int start = 0;
+    int n = int(s.length());
+    for (int i = 0; i < n; ++i)
+    {
+        if (s.substr(i, subString.length()) == subString)
+        {
+            v.push_back(s.substr(start, i - start));
+            start = i + subString.length();
+            i += subString.length() - 1;
         }
     }
     if (start < n)

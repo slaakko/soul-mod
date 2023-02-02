@@ -1,11 +1,14 @@
 module std.utf;
 
+import std.exception;
+import std.new_delete_op;
+
 namespace std {
 
 [[noreturn]]
 void throw_utf_exception(const char* msg)
 {
-    // todo
+    throw utf_exception(msg);
 }
 
 [[noreturn]]

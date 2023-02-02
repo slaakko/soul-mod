@@ -535,4 +535,15 @@ private:
     std::unique_ptr<Node> attributes;
 };
 
+class BoundStatementNode : public Node
+{
+public:
+    BoundStatementNode(void* boundStatementNode_, const soul::ast::SourcePos& sourcePos_);
+    void* GetBoundStatementNode() const { return boundStatementNode; }
+    Node* Clone() const override;
+    void Accept(Visitor& visitor) override;
+private:
+    void* boundStatementNode;
+};
+
 } // namespace otava::ast

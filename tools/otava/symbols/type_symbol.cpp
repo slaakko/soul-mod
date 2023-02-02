@@ -12,9 +12,12 @@ import otava.symbols.compound.type.symbol;
 import otava.symbols.derivations;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.symbol;
+import otava.symbols.function.group.symbol;
 import otava.symbols.exception;
 import otava.symbols.context;
 import otava.symbols.class_templates;
+import otava.symbols.writer;
+import otava.symbols.reader;
 
 namespace otava::symbols {
 
@@ -289,6 +292,39 @@ bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
         if (TypesEqual(leftCompound->BaseType(), rightCompound->BaseType()) && leftCompound->GetDerivations() == rightCompound->GetDerivations()) return true;
     }
     return false;
+}
+
+FunctionGroupTypeSymbol::FunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroupSymbol_) :
+    TypeSymbol(SymbolKind::functionGroupTypeSymbol, U"@function_group_type"), functionGroupSymbol(functionGroupSymbol_)
+{
+}
+
+FunctionGroupTypeSymbol::FunctionGroupTypeSymbol(const std::u32string& name_) :
+    TypeSymbol(SymbolKind::functionGroupTypeSymbol, name_), functionGroupSymbol(nullptr)
+{
+}
+
+void FunctionGroupTypeSymbol::Write(Writer& writer)
+{
+    TypeSymbol::Write(writer);
+    writer.GetBinaryStreamWriter().Write(functionGroupSymbol->Id());
+}
+
+void FunctionGroupTypeSymbol::Read(Reader& reader)
+{
+    TypeSymbol::Read(reader);
+    reader.GetBinaryStreamReader().ReadUuid(functionGroupSymbolId);
+}
+
+void FunctionGroupTypeSymbol::Resolve(SymbolTable& symbolTable)
+{
+    TypeSymbol::Resolve(symbolTable);
+    functionGroupSymbol = symbolTable.GetFunctionGroup(functionGroupSymbolId);
+}
+
+void FunctionGroupTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
 }
 
 } // namespace otava::symbols

@@ -1163,4 +1163,19 @@ void InitConditionNode::Read(Reader& reader)
     attributes.reset(reader.ReadNode());
 }
 
+BoundStatementNode::BoundStatementNode(void* boundStatementNode_, const soul::ast::SourcePos& sourcePos_) :
+    Node(NodeKind::boundStatementNode, sourcePos_), boundStatementNode(boundStatementNode_)
+{
+}
+
+Node* BoundStatementNode::Clone() const
+{
+    return new BoundStatementNode(boundStatementNode, GetSourcePos());
+}
+
+void BoundStatementNode::Accept(Visitor& visitor) 
+{
+    visitor.Visit(*this);
+}
+
 } // namespace otava::ast

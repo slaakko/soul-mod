@@ -7,8 +7,8 @@ public:
     void foo() 
     {
         std::string s = std::to_string(x);
-        prints(s.c_str());
-        prints("\n");
+        prints(s.c_str(), 1);
+        prints("\n", 1);
     }
 private:
     int x;

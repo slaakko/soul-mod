@@ -24,16 +24,27 @@ import otava.symbols.namespaces;
 import otava.symbols.conversion.table;
 import otava.symbols.symbol.table;
 import otava.symbols.exception;
+import otava.symbols.function.symbol;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
 import soul.lexer.xml.parsing.log;
+import class_info_index;
 import util.path;
 import util.unicode;
 import util.file.stream;
 import util.sha1;
+import util.buffered.stream;
 
 namespace otava::build {
+
+void WriteClassIndex(const std::string& classIndexFilePath, info::class_index& index)
+{
+    util::FileStream fileStream(classIndexFilePath, util::OpenMode::write | util::OpenMode::binary);
+    util::BufferedStream bufferedStream(fileStream);
+    util::BinaryStreamWriter writer(bufferedStream);
+    index.write(writer, true);
+}
 
 void Visit(int file, Project* project, std::vector<int>& topologicalOrder, std::set<int>& visited)
 {
@@ -212,6 +223,8 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     std::string projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
     std::vector<std::string> asmFileNames;
     std::vector<std::string> cppFileNames;
+    std::vector<std::string> compileUnitInitFunctionNames;
+    std::vector<std::string> allCompileUnitInitFunctionNames;
     std::string libraryDirs;
     std::string mainFunctionIrName;
     int mainFunctionParams = 0;
@@ -219,7 +232,8 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     if (project->GetTarget() == Target::program)
     {
         cppFileNames.push_back(cppFileName);
-        libraryDirs = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config));
+        libraryDirs = util::GetFullPath(util::Path::Combine(util::SoulRoot(), "lib"));
+        libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::Path::Combine(util::SoulRoot(), "tools/otava/std"), config)));
         libraryDirs.append(";").append(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "tools/otava/lib")));
     }
     project->AddRoots(moduleMapper);
@@ -245,6 +259,28 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         }
     }
     project->LoadModules(moduleMapper);
+    if (project->GetTarget() == Target::program)
+    {
+        std::vector<std::string> referenceFilePaths;
+        otava::symbols::Module* stdModule = moduleMapper.GetModule("std");
+        referenceFilePaths.push_back(stdModule->FilePath());
+        for (const auto& referenceFilePath : project->ReferenceFilePaths())
+        {
+            referenceFilePaths.push_back(referenceFilePath);
+        }
+        for (const auto& referenceFilePath : referenceFilePaths)
+        {
+            std::string cuInitFileName = util::Path::Combine(util::Path::GetDirectoryName(referenceFilePath), "cu.init");
+            util::FileStream cuInitFile(cuInitFileName, util::OpenMode::read | util::OpenMode::binary);
+            util::BinaryStreamReader reader(cuInitFile);
+            int n = reader.ReadInt();
+            for (int i = 0; i < n; ++i)
+            {
+                std::string compileUnitInitFunctionName = reader.ReadUtf8String();
+                allCompileUnitInitFunctionNames.push_back(compileUnitInitFunctionName);
+            }
+        }
+    }
     std::vector<int32_t> topologicalOrder = MakeTopologicalOrder(project->InterfaceFiles(), project);
     for (int32_t file : topologicalOrder)
     {
@@ -289,13 +325,20 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->SetImplementationUnitNames(implementationNameMap[module->Name()]);
         projectModule.Import(module, moduleMapper);
         module->Write(project->Root());
+        project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         moduleMapper.AddModule(project->ReleaseModule(file));
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
             std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
         }
-        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams);
+        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false,
+            std::vector<std::string>()); 
         asmFileNames.push_back(asmFileName);
+        otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
+        if (initFn)
+        {
+            compileUnitInitFunctionNames.push_back(initFn->GetFunctionDefinitionSymbol()->IrName(&context));
+        }
     }
     for (int32_t file : project->SourceFiles())
     {
@@ -332,6 +375,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         }
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
         module->Write(project->Root());
+        project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if (!interfaceUnitName.empty())
         {
             otava::symbols::Module* interfaceUnitModule = moduleMapper.GetModule(interfaceUnitName);
@@ -342,12 +386,19 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         {
             std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
         }
-        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams);
+        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, 
+            std::vector<std::string>());
         asmFileNames.push_back(asmFileName);
+        otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
+        if (initFn)
+        {
+            compileUnitInitFunctionNames.push_back(initFn->GetFunctionDefinitionSymbol()->IrName(&context));
+        }
     }
     projectModule.ResolveForwardDeclarations();
     projectModule.AddDerivedClasses();
     ProjectTarget projectTarget = ProjectTarget::library;
+    std::string classIndexFilePath;
     if (project->GetTarget() == Target::program)
     {
         if (mainFunctionIrName.empty())
@@ -355,10 +406,30 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             otava::symbols::SetExceptionThrown();
             throw std::runtime_error("program has no main function");
         }
-        GenerateMainUnit(util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), cppFileName), mainFunctionIrName, mainFunctionParams);
+        for (const auto& fileName : compileUnitInitFunctionNames)
+        {
+            allCompileUnitInitFunctionNames.push_back(fileName);
+        }
+        std::string mainAsmFileName = GenerateMainUnit(moduleMapper, util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), cppFileName), 
+            mainFunctionIrName, mainFunctionParams, allCompileUnitInitFunctionNames, config);
+        asmFileNames.push_back(mainAsmFileName);
         projectTarget = ProjectTarget::program;
+        classIndexFilePath = util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "class_index.bin");
+        WriteClassIndex(classIndexFilePath, project->Index());
     }
-    MakeProjectFile(projectFilePath, project->Name(), asmFileNames, cppFileNames, libraryDirs, projectTarget, (flags & BuildFlags::verbose) != BuildFlags::none);
+    else
+    {
+        std::string compileUnitInitFileName = util::Path::Combine(project->Root(), "cu.init");
+        util::FileStream compileUnitInitFile(compileUnitInitFileName, util::OpenMode::write | util::OpenMode::binary);
+        util::BinaryStreamWriter writer(compileUnitInitFile);
+        int32_t n = compileUnitInitFunctionNames.size();
+        writer.Write(n);
+        for (const auto& fileName : compileUnitInitFunctionNames)
+        {
+            writer.Write(fileName);
+        }
+    }
+    MakeProjectFile(projectFilePath, project->Name(), asmFileNames, cppFileNames, libraryDirs, classIndexFilePath, projectTarget, (flags & BuildFlags::verbose) != BuildFlags::none);
     MSBuild(projectFilePath, config);
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {

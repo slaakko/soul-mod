@@ -20,7 +20,7 @@ struct Z
 {
     ~Z()
     {
-        prints("~Z");
+        prints("~Z", 1);
     }
 };
 
@@ -28,7 +28,7 @@ struct Q
 {
     ~Q()
     {
-        prints("~Q");
+        prints("~Q", 1);
     }
     std::string s;
 };

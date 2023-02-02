@@ -6,15 +6,57 @@ import std.utf;
 
 export namespace std {
 
+enum class fmtflags
+{
+    none = 0, dec = 1 << 0, oct = 1 << 1, hex = 1 << 2, basefield = dec | oct | hex
+};
+
+constexpr fmtflags operator|(fmtflags left, fmtflags right)
+{
+    return fmtflags(int(left) | int(right));
+}
+
+constexpr fmtflags operator&(fmtflags left, fmtflags right)
+{
+    return fmtflags(int(left) & int(right));
+}
+
+constexpr fmtflags operator~(fmtflags f)
+{
+    return fmtflags(~int(f));
+}
+
+class ios_base
+{
+public:
+    ios_base();
+    virtual ~ios_base();
+    enum class openmode
+    {
+        app, ate, binary, in, out, trunc
+    };
+    fmtflags flags() const { return fl; }
+    void flags(fmtflags f_) { fl = f_; }
+    void setf(fmtflags f_) { fl = fl | f_; }
+    void unsetf(fmtflags f_) { fl = fl & ~f_; }
+private:
+    fmtflags fl;
+};
+
 template<typename charT>
-class basic_ios;
+class basic_ios : public ios_base
+{
+public:
+    virtual void write(const char* s) = 0;
+};
+
 template<typename charT>
 class basic_streambuf;
 template<typename charT>
 class basic_istream;
 
 template<typename charT>
-class basic_ostream
+class basic_ostream : public basic_ios<charT>
 {
 public:
     basic_ostream() : handle(1)
@@ -23,12 +65,15 @@ public:
     basic_ostream(int handle_) : handle(handle_)
     {
     }
-    basic_ostream<charT>& flush();
-    void write(const char* s)
+    basic_ostream<charT>& flush()
+    {
+        flush_file(handle);
+    }
+    void write(const char* s) override
     {
         prints(s, handle);
     }
-    void write(const string& s)
+    void write(const string& s) 
     {
         write(s.c_str());
     }
@@ -47,16 +92,44 @@ basic_ostream<charT>& operator<<(basic_ostream<charT>& s, char c)
 template<typename charT>
 basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int x)
 {
-    string str = std::to_string(x);
-    s.write(str);
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = std::to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = std::to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = std::to_hexstring(x);
+        s.write(str);
+    }
     return s;
 }
 
 template<typename charT>
 basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int64_t x)
 {
-    string str = std::to_string(x);
-    s.write(str);
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = std::to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = std::to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = std::to_hexstring(x);
+        s.write(str);
+    }
     return s;
 }
 
@@ -88,16 +161,44 @@ basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const u32string& str)
     return s;
 }
 
+ios_base& dec(std::ios_base& strm);
+ios_base& hex(std::ios_base& strm);
+ios_base& oct(std::ios_base& strm);
+
+template<typename charT>
+basic_ostream<charT>& endl(basic_ostream<charT>& strm)
+{
+    strm << "\n";
+    strm.flush();
+}
+
 template<typename charT>
 class basic_iostream;
 template<typename charT>
 class basic_stringbuf;
 template<typename charT>
 class basic_istringstream;
+
 template<typename charT>
-class basic_ostringstream;
+class basic_ostringstream : public basic_ostream<charT>
+{
+public:
+    void write(const char* s_) override
+    {
+        s.append(s_);
+    }
+    std::basic_string<charT> str() const { return s; }
+    void str(std::basic_string<charT>&& s_) { s = std::move(s_); }
+private:
+    std::basic_string<charT> s;
+};
+
 template<typename charT>
-class basic_stringstream;
+class basic_stringstream : public basic_ostringstream<charT>
+{
+public:
+};
+
 template<typename charT>
 class basic_filebuf;
 template<typename charT>
@@ -145,21 +246,14 @@ using wfstream = basic_fstream<wchar_t>;
 using wsyncbuf = basic_syncbuf<wchar_t>;
 using wosyncstream = basic_osyncstream<wchar_t>;
 
-class ios_base
-{
-public:
-    enum class openmode
-    {
-        app, ate, binary, in, out, trunc
-    };
-};
-
 // istream cin;
 ostream cout(1);
 ostream cerr(2);
 // ostream clog;
 
-
+/*
 template class basic_ostream<char>;
+template class basic_stringstream<char>;
+*/
 
 } // namespace std

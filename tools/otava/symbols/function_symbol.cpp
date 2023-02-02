@@ -184,8 +184,8 @@ ParameterSymbol::ParameterSymbol(const std::u32string& name_) :
     Symbol(SymbolKind::parameterSymbol, name_), 
     type(nullptr), 
     typeId(util::nil_uuid()), 
-    defaultValue(nullptr), 
-    defaultValueId(util::nil_uuid())
+    defaultValue(nullptr),
+    defaultValueNodeId(-1)
 {
 }
 
@@ -194,7 +194,7 @@ ParameterSymbol::ParameterSymbol(const std::u32string& name_, TypeSymbol* type_)
     type(type_), 
     typeId(util::nil_uuid()), 
     defaultValue(nullptr),
-    defaultValueId(util::nil_uuid())
+    defaultValueNodeId(-1)
 {
 }
 
@@ -217,7 +217,7 @@ void ParameterSymbol::Read(Reader& reader)
     bool hasDefaultValue = reader.GetBinaryStreamReader().ReadBool();
     if (hasDefaultValue)
     {
-        reader.GetBinaryStreamReader().ReadUuid(defaultValueId);
+        defaultValueNodeId = reader.GetBinaryStreamReader().ReadLong();
     }
 }
 
@@ -225,10 +225,10 @@ void ParameterSymbol::Resolve(SymbolTable& symbolTable)
 {
     Symbol::Resolve(symbolTable);
     type = symbolTable.GetType(typeId);
-    if (defaultValueId != util::nil_uuid())
+    if (defaultValueNodeId != -1)
     {
-        EvaluationContext* evaluationContext = symbolTable.GetModule()->GetEvaluationContext();
-        defaultValue = evaluationContext->GetValue(defaultValueId);
+        otava::ast::NodeMap* nodeMap = symbolTable.GetNodeMap();
+        defaultValue = nodeMap->GetNode(defaultValueNodeId);
     }
 }
 
@@ -320,6 +320,42 @@ int FunctionSymbol::Arity() const
 int FunctionSymbol::MemFunArity(Context* context) const
 {
     return MemFunParameters(context).size();
+}
+
+int FunctionSymbol::MinArity() const
+{
+    int minArity = Arity();
+    for (int i = parameters.size() - 1; i >= 0; --i)
+    {
+        ParameterSymbol* parameter = parameters[i];
+        if (parameter->DefaultValue())
+        {
+            --minArity;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return minArity;
+}
+
+int FunctionSymbol::MinMemFunArity(Context* context) const
+{
+    int minMemFunArity = MemFunArity(context);
+    for (int i = parameters.size() - 1; i >= 0; --i)
+    {
+        ParameterSymbol* parameter = parameters[i];
+        if (parameter->DefaultValue())
+        {
+            --minMemFunArity;
+        }
+        else
+        {
+            break;
+        }
+    }
+    return minMemFunArity;
 }
 
 ConversionKind FunctionSymbol::GetConversionKind() const

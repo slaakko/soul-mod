@@ -215,10 +215,12 @@ void SymbolTable::Import(const SymbolTable& that)
     ImportSpecifierMap(that);
     ImportClasses(that);
     ImportExplicitInstantiations(that);
+    ImportFunctionGroupTypes(that);
     typenameConstraintSymbol = that.typenameConstraintSymbol;
     errorTypeSymbol = that.errorTypeSymbol;
     MapConstraint(typenameConstraintSymbol);
     conversionTable->Import(that.GetConversionTable());
+    ImportClassIndex(that);
 }
 
 void SymbolTable::ImportSpecializations(const SymbolTable& that)
@@ -342,6 +344,22 @@ void SymbolTable::ImportExplicitInstantiations(const SymbolTable& that)
     for (const auto& instantiation : that.explicitInstantiationMap)
     {
         explicitInstantiationMap.insert(instantiation);
+    }
+}
+
+void SymbolTable::ImportFunctionGroupTypes(const SymbolTable& that)
+{
+    for (const auto& functionGroupType : that.functionGroupTypeMap)
+    {
+        functionGroupTypeMap.insert(functionGroupType);
+    }
+}
+
+void SymbolTable::ImportClassIndex(const SymbolTable& that)
+{
+    for (const auto& id_info : that.ClassIndex().get_map())
+    {
+        ClassIndex().map_class(id_info.second);
     }
 }
 
@@ -498,6 +516,13 @@ void SymbolTable::Write(Writer& writer)
     {
         writer.Write(explicitInstantiation.get());
     }
+    uint32_t fcount = functionGroupTypes.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(fcount);
+    for (const auto& functionGroupType : functionGroupTypes)
+    {
+        writer.Write(functionGroupType.get());
+    }
+    index.write(writer.GetBinaryStreamWriter());
 }
 
 void SymbolTable::Read(Reader& reader)
@@ -581,6 +606,22 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: explicit instantiation symbol expected");
         }
     }
+    uint32_t fcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < fcount; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        if (symbol->IsFunctionGroupTypeSymbol())
+        {
+            FunctionGroupTypeSymbol* functionGroupType = static_cast<FunctionGroupTypeSymbol*>(symbol);
+            functionGroupTypes.push_back(std::unique_ptr<FunctionGroupTypeSymbol>(functionGroupType));
+        }
+        else
+        {
+            otava::ast::SetExceptionThrown();
+            throw std::runtime_error("otava.symbols.symbol_table: function group type symbol expected");
+        }
+    }
+    index.read(reader.GetBinaryStreamReader());
 }
 
 void SymbolTable::Resolve()
@@ -978,26 +1019,6 @@ void SymbolTable::EndNamespace(int level)
 void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context)
 {
     Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
-/*
-    if (symbol && symbol->IsClassGroupSymbol())
-    {
-        ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
-        int arity = 0;
-        Symbol* symbol = currentScope->GetSymbol();
-        if (symbol && symbol->IsTemplateDeclarationSymbol())
-        {
-            TemplateDeclarationSymbol* templateDeclarationSymbol = static_cast<TemplateDeclarationSymbol*>(symbol);
-            arity = templateDeclarationSymbol->Arity();
-        }
-        ClassTypeSymbol* classTypeSymbol = classGroup->GetClass(arity);
-        if (classTypeSymbol)
-        {
-            classTypeSymbol->SetClassKind(classKind);
-            BeginScope(classTypeSymbol->GetScope());
-            return;
-        }
-    }
-*/
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
     ClassTypeSymbol* classTypeSymbol = new ClassTypeSymbol(name);
     classTypeSymbol->SetLevel(classLevel++);
@@ -1354,6 +1375,19 @@ TypeSymbol* SymbolTable::MakeConstWCharPtrType()
     return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::wcharType), derivations);
 }
 
+FunctionGroupTypeSymbol* SymbolTable::MakeFunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroup)
+{
+    auto it = functionGroupTypeMap.find(functionGroup);
+    if (it != functionGroupTypeMap.cend())
+    {
+        return it->second;
+    }
+    FunctionGroupTypeSymbol* functionGroupType = new FunctionGroupTypeSymbol(functionGroup);
+    functionGroupTypeMap[functionGroup] = functionGroupType;
+    functionGroupTypes.push_back(std::unique_ptr<FunctionGroupTypeSymbol>(functionGroupType));
+    return functionGroupType;
+}
+
 ConceptSymbol* SymbolTable::AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context)
 {
     ConceptGroupSymbol* conceptGroup = currentScope->GroupScope()->GetOrInsertConceptGroup(name, node->GetSourcePos(), context);
@@ -1501,6 +1535,11 @@ void SymbolTable::MapConstraint(Symbol* constraint)
     constraintMap[constraint->Id()] = constraint;
 }
 
+void SymbolTable::MapFunctionGroup(FunctionGroupSymbol* functionGroup)
+{
+    functionGroupMap[functionGroup->Id()] = functionGroup;
+}
+
 FunctionSymbol* SymbolTable::GetFunction(const util::uuid& id) const
 {
     auto it = functionMap.find(id);
@@ -1583,6 +1622,20 @@ Symbol* SymbolTable::GetConstraint(const util::uuid& id) const
     {
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("constraint for id '" + util::ToString(id) + "' not found");
+    }
+}
+
+FunctionGroupSymbol* SymbolTable::GetFunctionGroup(const util::uuid& id) const
+{
+    auto it = functionGroupMap.find(id);
+    if (it != functionGroupMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("function group for id '" + util::ToString(id) + "' not found");
     }
 }
 

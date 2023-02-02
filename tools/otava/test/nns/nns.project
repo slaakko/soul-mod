@@ -1,0 +1,3 @@
+project nns;
+target=program;
+source <nns.cpp>;

@@ -27,6 +27,10 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
             module->AddImportedModule(projectModule);
             module->AddDependsOnModule(projectModule);
             LoadImportedModules(project, module, projectModule, moduleMapper);
+            if (project->GetTarget() == Target::program)
+            {
+                project->Index().imp(projectModule->GetSymbolTable()->ClassIndex(), true);
+            }
         }
         else
         {
@@ -35,6 +39,10 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
             module->AddDependsOnModule(childModule);
             module->Import(childModule, moduleMapper);
             LoadImportedModules(project, module, childModule, moduleMapper);
+            if (project->GetTarget() == Target::program)
+            {
+                project->Index().imp(childModule->GetSymbolTable()->ClassIndex(), true);
+            }
         }
     }
 }
@@ -133,6 +141,10 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper)
                 for (otava::symbols::Module* exportedModule : importedModule->ExportedModules())
                 {
                     module->Import(exportedModule, moduleMapper);
+                    if (GetTarget() == Target::program)
+                    {
+                        index.imp(module->GetSymbolTable()->ClassIndex(), true);
+                    }
                 }
             }
         }

@@ -386,6 +386,7 @@ public:
     Type* BaseType() const { return baseTypeRef.GetType(); }
     otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
     void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
+    Value* MakeDefaultValue(Context& context) const override;
 private:
     int8_t pointerCount;
     TypeRef baseTypeRef;

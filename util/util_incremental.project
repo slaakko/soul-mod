@@ -1,0 +1,9 @@
+project util;
+interface <rand.ixx>;
+source <rand.cpp>;
+interface <text_util.ixx>;
+source <text_util.cpp>;
+interface <unicode.ixx>;
+source <unicode.cpp>;
+interface <uuid.ixx>;
+source <uuid.cpp>;

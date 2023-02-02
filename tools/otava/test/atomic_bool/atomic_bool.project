@@ -1,0 +1,3 @@
+project atomic_bool;
+target=program;
+source <atomic_bool.cpp>;

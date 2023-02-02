@@ -5,9 +5,11 @@
 
 module;
 #include <stdio.h>
-#include <csetjmp>
 
 module ort;
+
+import class_info_index;
+import context_stack;
 
 void prints(const char* s, int handle)
 {
@@ -26,6 +28,28 @@ void prints(const char* s, int handle)
         default:
         {
             fwrite(s, strlen(s), 1, stdout);
+            break;
+        }
+    }
+}
+
+void flush_file(int handle)
+{
+    switch (handle)
+    {
+        case 1:
+        {
+            std::fflush(stdout);
+            break;
+        }
+        case 2:
+        {
+            std::fflush(stderr);
+            break;
+        }
+        default:
+        {
+            std::fflush(nullptr);
             break;
         }
     }
@@ -85,8 +109,59 @@ uint8_t get_random_byte()
     return rng->Get();
 }
 
-void throw_exception(void* ex)
+void* current_exception = nullptr;
+uint64_t currentExceptionTypeIdHigh = 0;
+uint64_t currentExceptionTypeIdLow = 0;
+
+void set_exception(void* ex, uint64_t eth, uint64_t etl)
 {
-    std::cerr << "exception occurrred" << std::endl;
-    std::abort();
+    current_exception = ex;
+    currentExceptionTypeIdHigh = eth;
+    currentExceptionTypeIdLow = etl;
+}
+
+void* get_exception()
+{
+    return current_exception;
+}
+
+void throw_exception()
+{
+    void* ctx = pop_context();
+    if (ctx)
+    {
+        restore_context(ctx, 1);
+    }
+    else
+    {
+        std::cerr << "could not throw exception: no context" << std::endl;
+        std::abort();
+    }
+}
+
+bool handle_exception(uint64_t hth, uint64_t htl)
+{
+    if (hth == 0 && htl == 0)
+    {
+        return true; 
+    }
+    else if (info::is_same_or_has_base(currentExceptionTypeIdHigh, currentExceptionTypeIdLow, hth, htl))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool is_space(int c)
+{
+    return std::isspace(c);
+}
+
+const char* get_env(const char* env)
+{
+#pragma warning(suppress : 4996)
+    return std::getenv(env);
 }

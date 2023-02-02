@@ -36,6 +36,7 @@ public:
     bool IsLocalVariable() const;
     bool IsMemberVariable() const;
     bool IsGlobalVariable() const;
+    bool IsStatic() const;
     int32_t LayoutIndex() const { return layoutIndex; }
     void SetLayoutIndex(int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
     std::string IrName() const;

@@ -89,8 +89,8 @@ public:
     TypeSymbol* GetReferredType(Context* context) const;
     void SetType(TypeSymbol* type_) { type = type_; }
     ParameterSymbol* Copy() const;
-    Value* DefaultValue() const { return defaultValue; }
-    void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
+    otava::ast::Node* DefaultValue() const { return defaultValue; }
+    void SetDefaultValue(otava::ast::Node* defaultValue_) { defaultValue = defaultValue_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -98,8 +98,8 @@ public:
 private:
     TypeSymbol* type;
     util::uuid typeId;
-    Value* defaultValue;
-    util::uuid defaultValueId;
+    otava::ast::Node* defaultValue;
+    int64_t defaultValueNodeId;
 };
 
 class FunctionSymbol : public ContainerSymbol
@@ -110,6 +110,8 @@ public:
     std::u32string GroupName() const;
     int Arity() const;
     int MemFunArity(Context* context) const;
+    int MinArity() const;
+    int MinMemFunArity(Context* context) const;
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
     FunctionKind GetFunctionKind() const { return kind; }
@@ -133,6 +135,7 @@ public:
     virtual int32_t ConversionDistance() const { return 0; }
     virtual bool IsCtorAssignmentOrArrow() const { return false; }
     virtual bool IsIdentityConversion() const { return false; }
+    virtual bool IsDerivedToBaseConversion() const { return false; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<ParameterSymbol*>& Parameters() const { return parameters; }
     const std::vector<ParameterSymbol*>& MemFunParameters(Context* context) const;

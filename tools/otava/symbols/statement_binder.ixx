@@ -12,6 +12,7 @@ import otava.ast.visitor;
 export namespace otava::symbols {
 
 class BoundStatementNode;
+class BoundExpressionStatementNode;
 class Context;
 class FunctionDefinitionSymbol;
 class BoundCtorInitializerNode;
@@ -23,6 +24,7 @@ class BoundExpressionNode;
 class BoundFunctionCallNode;
 class BoundStatement;
 class BoundCompoundStatementNode;
+class BoundTryStatementNode;
 
 class StatementBinder : public otava::ast::DefaultVisitor
 {
@@ -52,6 +54,9 @@ public:
     void Visit(otava::ast::ExpressionStatementNode& node) override;
     void Visit(otava::ast::DeclarationStatementNode& node) override;
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
+    void Visit(otava::ast::TryStatementNode& node) override;
+    void Visit(otava::ast::HandlerNode& node) override;
+    void Visit(otava::ast::BoundStatementNode& node) override;
 private:
     void SetStatement(BoundStatementNode* statement);
     bool HasThisInitializer() const;
@@ -67,6 +72,7 @@ private:
     void GenerateMemberTerminators(const soul::ast::SourcePos& sourcePos);
     void AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
     void GenerateSetVPtrStatement(const soul::ast::SourcePos& sourcePos);
+    void BindStaticLocalVariable(VariableSymbol* variable, otava::ast::Node* initializer, otava::ast::SimpleDeclarationNode* declarationNode);
     Context* context;
     ClassTypeSymbol* currentClass; 
     BoundCtorInitializerNode* ctorInitializer;
@@ -76,6 +82,7 @@ private:
     ClassTypeSymbol* classTypeSymbol;
     VariableSymbol* memberVariableSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> initializerArgs;
+    BoundTryStatementNode* boundTryStatementNode;
     bool resolveClass;
     bool resolveMemberVariable;
     bool resolveInitializerArguments;
@@ -86,7 +93,8 @@ private:
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberTerminators;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> baseTerminators;
     bool postfix;
-
+    std::unique_ptr<BoundExpressionStatementNode> constructFunctionStaticStatement;
+    VariableSymbol* globalStaticVariableSymbol;
 };
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context);

@@ -175,6 +175,8 @@
     <ClCompile Include="class_group_symbol.ixx" />
     <ClCompile Include="class_templates.cpp" />
     <ClCompile Include="class_templates.ixx" />
+    <ClCompile Include="cleanup_list.cpp" />
+    <ClCompile Include="cleanup_list.ixx" />
     <ClCompile Include="compound_type_symbol.cpp" />
     <ClCompile Include="compound_type_symbol.ixx" />
     <ClCompile Include="concepts.cpp" />
@@ -193,6 +195,8 @@
     <ClCompile Include="declarator.ixx" />
     <ClCompile Include="derivations.cpp" />
     <ClCompile Include="derivations.ixx" />
+    <ClCompile Include="eh.cpp" />
+    <ClCompile Include="eh.ixx" />
     <ClCompile Include="emitter.cpp" />
     <ClCompile Include="emitter.ixx" />
     <ClCompile Include="enums.cpp" />
@@ -287,6 +291,9 @@
     </ProjectReference>
     <ProjectReference Include="..\intermediate\intermediate.vcxproj">
       <Project>{7c7341ee-deca-40a1-a050-e731482f91af}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ort\ort.vcxproj">
+      <Project>{04fc18fe-00b6-4b0c-9898-7db04c5b54a8}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

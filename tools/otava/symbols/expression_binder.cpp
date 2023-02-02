@@ -40,7 +40,9 @@ import otava.ast.literal;
 import otava.ast.visitor;
 import otava.ast.templates;
 import otava.ast.statement;
+import otava.ast.simple.type;
 import util.unicode;
+import util.text.util;
 import std.core;
 
 namespace otava::symbols {
@@ -243,6 +245,19 @@ public:
     void Visit(otava::ast::RawStringLiteralNode& node) override;
     void Visit(otava::ast::BooleanLiteralNode& node) override;
     void Visit(otava::ast::NullPtrLiteralNode& node) override;
+    void Visit(otava::ast::CharNode& node) override;
+    void Visit(otava::ast::Char8Node& node) override;
+    void Visit(otava::ast::Char16Node& node) override;
+    void Visit(otava::ast::Char32Node& node) override;
+    void Visit(otava::ast::WCharNode& node) override;
+    void Visit(otava::ast::BoolNode& node) override;
+    void Visit(otava::ast::ShortNode& node) override;
+    void Visit(otava::ast::IntNode& node) override;
+    void Visit(otava::ast::LongNode& node) override;
+    void Visit(otava::ast::SignedNode& node) override;
+    void Visit(otava::ast::UnsignedNode& node) override;
+    void Visit(otava::ast::FloatNode& node) override;
+    void Visit(otava::ast::DoubleNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
     void Visit(otava::ast::QualifiedIdNode& node) override;
     void Visit(otava::ast::DestructorIdNode& node) override;
@@ -277,6 +292,7 @@ private:
     SymbolGroupKind symbolGroups;
     bool inhibitCompile;
     bool emptyDestructor;
+    bool qualifiedScope;
 };
 
 ExpressionBinder::ExpressionBinder(Context* context_, SymbolGroupKind symbolGroups_) :
@@ -285,7 +301,8 @@ ExpressionBinder::ExpressionBinder(Context* context_, SymbolGroupKind symbolGrou
     scope(context->GetSymbolTable()->CurrentScope()),
     symbolGroups(symbolGroups_),
     inhibitCompile(false),
-    emptyDestructor(false)
+    emptyDestructor(false), 
+    qualifiedScope(false)
 {
 }
 
@@ -474,15 +491,76 @@ void ExpressionBinder::Visit(otava::ast::CppCastExprNode& node)
     }
 }
 
+otava::ast::Node* MakeTypeNameNodes(const soul::ast::SourcePos& sourcePos, const std::u32string& fullTypeName)
+{
+    otava::ast::Node* node = nullptr;
+    std::vector<std::u32string> components = util::Split(fullTypeName, std::u32string(U"::"));
+    int n = components.size();
+    for (int i = n - 1; i >= 0; --i)
+    {
+        otava::ast::Node* identifierNode = new otava::ast::IdentifierNode(sourcePos, components[i]);
+        if (node)
+        {
+            otava::ast::Node* nnsNode = new otava::ast::NestedNameSpecifierNode(sourcePos);
+            nnsNode->AddNode(identifierNode);
+            nnsNode->AddNode(new otava::ast::ColonColonNode(sourcePos));
+            node = new otava::ast::QualifiedIdNode(sourcePos, nnsNode, node);
+        }
+        else
+        {
+            node = identifierNode;
+        }
+    }
+    return node;
+}
+
+class NewInitializerMaker : public otava::ast::DefaultVisitor
+{
+public:
+    NewInitializerMaker(const soul::ast::SourcePos& sourcePos_);
+    void Visit(otava::ast::InvokeExprNode& node) override;
+    otava::ast::NewInitializerNode* GetNewInitializer() const { return newInitializer; }
+private:
+    otava::ast::NewInitializerNode* newInitializer;
+    soul::ast::SourcePos sourcePos;
+};
+
+NewInitializerMaker::NewInitializerMaker(const soul::ast::SourcePos& sourcePos_)  : newInitializer(new otava::ast::NewInitializerNode(sourcePos_)), sourcePos(sourcePos_)
+{
+}
+
+void NewInitializerMaker::Visit(otava::ast::InvokeExprNode& node)
+{
+    int n = node.Items().size();
+    for (int i = 0; i < n; ++i)
+    {
+        otava::ast::Node* arg = node.Items()[i]->Clone();
+        newInitializer->AddNode(arg);
+    }
+}
+
+otava::ast::NewInitializerNode* MakeNewInitializer(otava::ast::ThrowExprNode& node)
+{
+    NewInitializerMaker maker(node.GetSourcePos());
+    node.Accept(maker);
+    return maker.GetNewInitializer();
+}
+
 void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
 {
-    BoundExpressionNode* exception = nullptr;
     if (node.Exception())
     {
         node.Exception()->Accept(*this);
-        exception = boundExpression;
+        otava::ast::NewInitializerNode* initializer = MakeNewInitializer(node);
+        otava::ast::NewExprNode* newNode = new otava::ast::NewExprNode(node.GetSourcePos(), nullptr,
+           MakeTypeNameNodes(node.GetSourcePos(), boundExpression->GetType()->FullName()), initializer, nullptr, node.GetSourcePos());
+        newNode->Accept(*this);
     }
-    boundExpression = new BoundThrowExpressionNode(exception, node.GetSourcePos());
+    else
+    {
+        boundExpression = nullptr;
+    }
+    boundExpression = new BoundThrowExpressionNode(boundExpression, node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::IntegerLiteralNode& node) 
@@ -520,9 +598,82 @@ void ExpressionBinder::Visit(otava::ast::NullPtrLiteralNode& node)
     boundExpression = new BoundLiteralNode(Evaluate(&node, context), node.GetSourcePos());
 }
 
+void ExpressionBinder::Visit(otava::ast::CharNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::charType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::Char8Node& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::char8Type), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::Char16Node& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::char16Type), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::Char32Node& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::char32Type), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::WCharNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::wcharType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::BoolNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::boolType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::ShortNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::shortIntType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::IntNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::intType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::LongNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longIntType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::SignedNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::intType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::UnsignedNode& node) 
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedIntType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::FloatNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::floatType), node.GetSourcePos());
+}
+
+void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
+{
+    boundExpression = new BoundTypeNode(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::doubleType), node.GetSourcePos());
+}
+
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
-    Symbol* symbol = scope->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+    Symbol* symbol = nullptr;
+    if (qualifiedScope)
+    {
+        symbol = scope->Lookup(node.Str(), symbolGroups, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+    }
+    if (!symbol)
+    {
+        symbol = scope->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
+    }
     if (!symbol)
     {
         ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(scope->GetClassTemplateSpecialization());
@@ -606,7 +757,8 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             case SymbolKind::functionGroupSymbol:
             {
                 FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
-                boundExpression = new BoundFunctionGroupNode(functionGroupSymbol, node.GetSourcePos());
+                FunctionGroupTypeSymbol* functionGroupType = context->GetSymbolTable()->MakeFunctionGroupTypeSymbol(functionGroupSymbol);
+                boundExpression = new BoundFunctionGroupNode(functionGroupSymbol, node.GetSourcePos(), functionGroupType);
                 break;
             }
             case SymbolKind::fundamentalTypeSymbol:
@@ -629,7 +781,10 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 void ExpressionBinder::Visit(otava::ast::QualifiedIdNode& node)
 {
     scope = ResolveScope(node.Left(), context);
+    bool prevQualifiedScope = qualifiedScope;
+    qualifiedScope = true;
     node.Right()->Accept(*this);
+    qualifiedScope = prevQualifiedScope;
 }
 
 void ExpressionBinder::Visit(otava::ast::DestructorIdNode& node)
@@ -651,7 +806,9 @@ void ExpressionBinder::Visit(otava::ast::DestructorIdNode& node)
     Symbol* symbol = scope->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
     if (symbol && symbol->IsFunctionGroupSymbol())
     {
-        boundExpression = new BoundFunctionGroupNode(static_cast<FunctionGroupSymbol*>(symbol), node.GetSourcePos());
+        FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
+        FunctionGroupTypeSymbol* functionGroupType = context->GetSymbolTable()->MakeFunctionGroupTypeSymbol(functionGroupSymbol);
+        boundExpression = new BoundFunctionGroupNode(static_cast<FunctionGroupSymbol*>(symbol), node.GetSourcePos(), functionGroupType);
     }
     else
     {
@@ -775,6 +932,7 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
             BoundAddressOfNode* boundAddrOfNode = new BoundAddressOfNode(new BoundVariableNode(temporary, node.GetSourcePos()), node.GetSourcePos(), 
                 temporary->GetType()->AddPointer(context));
             args.push_back(std::unique_ptr<BoundExpressionNode>(boundAddrOfNode));
+            resolutionFlags = resolutionFlags & ~OverloadResolutionFlags::dontSearchArgumentScopes;
         }
         else
         {

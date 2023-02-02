@@ -88,6 +88,7 @@ enum class SymbolKind : int32_t
     arrayTypeBegin, arrayTypeEnd,
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
+    functionGroupTypeSymbol,
     max
 };
 
@@ -174,6 +175,7 @@ public:
     bool IsConstraintExprSymbol() const { return kind == SymbolKind::constraintExprSymbol; }
     bool IsValueSymbol() const;
     bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
+    bool IsFunctionGroupTypeSymbol() const { return kind == SymbolKind::functionGroupTypeSymbol; }
     bool IsDefaultCtor() const;
     bool IsCopyCtor() const;
     bool IsMoveCtor() const;

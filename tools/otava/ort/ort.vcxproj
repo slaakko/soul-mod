@@ -148,8 +148,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="class_info.cpp" />
+    <ClCompile Include="class_info.ixx" />
+    <ClCompile Include="context_stack.cpp" />
+    <ClCompile Include="context_stack.ixx" />
     <ClCompile Include="ort.cpp" />
     <ClCompile Include="ort.ixx" />
+    <ClCompile Include="threading.cpp" />
+    <ClCompile Include="threading.ixx" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="context.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
+      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

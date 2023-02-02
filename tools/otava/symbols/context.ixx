@@ -43,7 +43,9 @@ enum class ContextFlags : int32_t
     skipFunctionDefinitions = 1 << 18,
     returnRef = 1 << 19,
     virtualSeen = 1 << 20,
-    ignoreClassTemplateSpecializations = 1 << 21
+    ignoreClassTemplateSpecializations = 1 << 21,
+    generateMainWrapper = 1 << 22,
+    noDynamicInit = 1 << 23
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -90,6 +92,7 @@ public:
     BoundExpressionNode* GetThisPtr(const soul::ast::SourcePos& sourcePos);
     EvaluationContext* GetEvaluationContext();
     std::string FileName() const;
+    void SetFileName(const std::string& fileName_);
     void PushFlags();
     void PopFlags();
     void PushSetFlag(ContextFlags flag);
@@ -134,6 +137,7 @@ private:
     AliasTypeSymbol* aliasType;
     otava::intermediate::Value* ptr;
     int memFunDefSymbolIndex;
+    std::string fileName;
 };
 
 } // namespace otava::symbols

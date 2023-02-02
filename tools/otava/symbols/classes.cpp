@@ -816,7 +816,7 @@ std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context
     return resolver.BaseClasses();
 }
 
-void BeginClass(otava::ast::Node* node, otava::symbols::Context* context)
+void BeginClass(otava::ast::Node* node, Context* context)
 {
     std::u32string name;
     otava::symbols::ClassKind kind;
@@ -831,7 +831,7 @@ void BeginClass(otava::ast::Node* node, otava::symbols::Context* context)
     context->PushSetFlag(ContextFlags::parseMemberFunction);
 }
 
-void EndClass(otava::ast::Node* node, otava::symbols::Context* context)
+void EndClass(otava::ast::Node* node, Context* context)
 {
     Symbol* symbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
     if (!symbol->IsClassTypeSymbol())
@@ -839,6 +839,7 @@ void EndClass(otava::ast::Node* node, otava::symbols::Context* context)
         ThrowException("cpp20.symbols.classes: EndClass(): class scope expected", node->GetSourcePos(), context);
     }
     ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(symbol);
+    AddClassInfo(classTypeSymbol, context);
     otava::ast::Node* specNode = context->GetSymbolTable()->GetSpecifierNode(classTypeSymbol);
     if (specNode && specNode->IsClassSpecifierNode())
     {
@@ -1163,6 +1164,31 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     boundDestructor->SetDtorTerminator(terminator.release());
     context->GetBoundCompileUnit()->AddBoundNode(boundDestructor);
     return destructor;
+}
+
+void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)
+{
+    uint64_t clsidh = 0;
+    uint64_t clsidl = 0;
+    util::UuidToInts(classTypeSymbol->Id(), clsidh, clsidl);
+    ClassKind kind = classTypeSymbol->GetClassKind();
+    info::class_id id = std::make_pair(clsidh, clsidl);
+    info::class_key key = info::class_key::cls;
+    switch (kind)
+    {
+        case ClassKind::class_: key = info::class_key::cls; break;
+        case ClassKind::struct_: key = info::class_key::strct; break;
+        case ClassKind::union_: key = info::class_key::uni; break;
+    }
+    info::class_info info(id, key, util::ToUtf8(classTypeSymbol->FullName()));
+    for (const auto& base : classTypeSymbol->BaseClasses())
+    {
+        uint64_t h = 0;
+        uint64_t l = 0;
+        util::UuidToInts(base->Id(), h, l);
+        info.add_base(std::make_pair(h, l));
+    }
+    context->GetSymbolTable()->ClassIndex().add_class(info);
 }
 
 } // namespace otava::symbols

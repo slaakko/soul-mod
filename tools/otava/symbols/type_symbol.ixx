@@ -74,6 +74,23 @@ public:
     void Accept(Visitor& visitor) override;
 };
 
+class FunctionGroupTypeSymbol : public TypeSymbol
+{
+public:
+    FunctionGroupTypeSymbol(const std::u32string& name_);
+    FunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroupSymbol_);
+    std::string SymbolKindStr() const override { return "function group type symbol"; }
+    std::string SymbolDocKindStr() const override { return "function_group_type"; }
+    FunctionGroupSymbol* FunctionGroup() const { return functionGroupSymbol; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Resolve(SymbolTable& symbolTable) override;
+    void Accept(Visitor& visitor) override;
+private:
+    FunctionGroupSymbol* functionGroupSymbol;
+    util::uuid functionGroupSymbolId;
+};
+
 bool TypesEqual(TypeSymbol* left, TypeSymbol* right);
 
 } // namespace otava::symbols

@@ -784,22 +784,26 @@ void EmitSignExtend(SignExtendInstruction& inst, CodeGenerator& codeGen)
 void EmitZeroExtend(ZeroExtendInstruction& inst, CodeGenerator& codeGen)
 {
     int64_t operandSize = inst.Operand()->GetType()->Size();
-    if (operandSize > 2)
-    {
-        codeGen.Error("error emitting zero extend instruction: byte or word sized operand expected");
-    }
     int64_t resultSize = inst.Result()->GetType()->Size();
     otava::assembly::Context& assemblyContext = codeGen.Ctx()->AssemblyContext();
-    otava::assembly::OpCode opCode = otava::assembly::OpCode::MOVZX;
-    otava::assembly::Instruction* movzxInst = new otava::assembly::Instruction(opCode);
+    otava::assembly::OpCode opCode = otava::assembly::OpCode::MOV;
+    if (operandSize <= 2)
+    {
+        opCode = otava::assembly::OpCode::MOVZX;
+    }
+    else if (resultSize == 8)
+    {
+        resultSize = 4;
+    }
+    otava::assembly::Instruction* movInst = new otava::assembly::Instruction(opCode);
     otava::assembly::RegisterGroup* regGroup = codeGen.RegAllocator()->GetRegisterGroup(&inst);
     if (regGroup)
     {
         otava::assembly::Register* reg = regGroup->GetReg(resultSize);
-        movzxInst->AddOperand(reg);
+        movInst->AddOperand(reg);
         otava::assembly::Register* sourceReg = MakeRegOperand(inst.Operand(), assemblyContext.GetGlobalReg(operandSize, otava::assembly::RegisterGroupKind::rax), codeGen);
-        movzxInst->AddOperand(sourceReg);
-        codeGen.Emit(movzxInst);
+        movInst->AddOperand(sourceReg);
+        codeGen.Emit(movInst);
     }
     else
     {

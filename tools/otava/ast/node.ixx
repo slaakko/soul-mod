@@ -84,7 +84,7 @@ enum class NodeKind : uint16_t
     attributeSpecifierSequenceNode, attributeSpecifierNode, attributeUsingPrefixNode, attrbuteNode, attributeScopedTokenNode, attributeArgumentsNode, balancedTokenSequenceNode, 
     tokenNode,
     lparenNode, rparenNode, lbracketNode, rbracketNode, lbraceNode, rbraceNode, alignmentSpecifierNode,
-    pragmaNode,
+    pragmaNode, boundStatementNode,
     max
 };
 
@@ -121,6 +121,7 @@ public:
     bool IsCtorInitializerNode() const { return kind == NodeKind::constructorInitializerNode; }
     bool IsFunctionBodyNode() const { return kind == NodeKind::functionBodyNode; }
     bool IsConstructorNode() const { return kind == NodeKind::constructorNode; }
+    bool IsIdentifierNode() const { return kind == NodeKind::identifierNode; }
     bool IsQualifiedIdNode() const { return kind == NodeKind::qualifiedIdNode; }
     bool IsArrowNode() const { return kind == NodeKind::arrowNode; }
     bool IsDotNode() const { return kind == NodeKind::dotNode; }
@@ -130,6 +131,9 @@ public:
     bool IsFunctionDefinitionNode() const { return kind == NodeKind::functionDefinitionNode; }
     bool IsNewPlacementNode() const { return kind == NodeKind::newPlacementNode; }
     bool IsCommaNode() const { return kind == NodeKind::commaNode; }
+    bool IsStaticNode() const { return kind == NodeKind::staticNode; }
+    bool IsBoundStatementNode() const { return kind == NodeKind::boundStatementNode; }
+    bool IsInitDeclaratorNode() const { return kind == NodeKind::initDeclaratorNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

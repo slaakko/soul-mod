@@ -10,6 +10,7 @@ import otava.symbols.context;
 
 export namespace otava::codegen {
 
-std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams);
+std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams, bool globalMain,
+    const std::vector<std::string>& compileUnitInitFnNames);
 
 } // namespace otava::codegen

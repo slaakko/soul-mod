@@ -203,7 +203,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<Function
 {
     for (const auto& function : functions)
     {
-        if (function->MemFunArity(context) == arity)
+        if (arity >= function->MinMemFunArity(context) && arity <= function->MemFunArity(context))
         {
             if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
             {
@@ -213,7 +213,7 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<Function
     }
     for (const auto& functionDefinition : definitions)
     {
-        if (functionDefinition->MemFunArity(context) == arity)
+        if (arity >= functionDefinition->MinMemFunArity(context) && arity <= functionDefinition->MemFunArity(context))
         {
             if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())
             {

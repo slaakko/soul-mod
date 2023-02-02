@@ -1,0 +1,5 @@
+project default_arg;
+target=program;
+interface <foo.ixx>;
+source <foo.cpp>;
+source <main.cpp>;

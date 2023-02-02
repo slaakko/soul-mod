@@ -319,6 +319,7 @@ class ExceptionDeclarationNode;
 class ExpressionStatementNode;
 class DeclarationStatementNode;
 class InitConditionNode;
+class BoundStatementNode;
 // Template:
 class TemplateDeclarationNode;
 class TemplateHeadNode;
@@ -680,6 +681,7 @@ public:
     virtual void Visit(ExpressionStatementNode& node) {}
     virtual void Visit(DeclarationStatementNode& node) {}
     virtual void Visit(InitConditionNode& node) {}
+    virtual void Visit(BoundStatementNode& node) {}
     // Template:
     virtual void Visit(TemplateDeclarationNode& node) {}
     virtual void Visit(TemplateHeadNode& node) {}

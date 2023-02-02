@@ -11,8 +11,8 @@ void print(node* n)
 {
     int x = n->get_x();
     std::string s = std::to_string(x);
-    prints(s.c_str());
-    prints("\n");
+    prints(s.c_str(), 1);
+    prints("\n", 1);
 }
 
 void foo(node* a, node* b, node* c, node* d, node* e, node* f, node* g, node* h)

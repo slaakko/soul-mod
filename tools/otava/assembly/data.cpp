@@ -50,7 +50,7 @@ void Data::Write(util::CodeFormatter& formatter)
         {
             if (i > 0)
             {
-                formatter.Write(" ");
+                formatter.WriteLine();
             }
             formatter.Write(DataInstStr(insts[i]));
             formatter.Write(" ");

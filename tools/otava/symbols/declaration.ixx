@@ -81,12 +81,14 @@ std::string DeclarationFlagStr(DeclarationFlags flags);
 void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context);
+Declaration ProcessExceptionDeclaration(otava::ast::Node* node, Context* context);
 void ProcessMemberDeclaration(otava::ast::Node* node, Context* context);
 int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, Context* context);
 void EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes, Context* context);
 void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context);
 TypeSymbol* ProcessExplicitInstantiationDeclaration(otava::ast::Node* node, Context* context);
 TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* context);
+void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context);
 
 void Write(Writer& writer, DeclarationFlags flags);
 void Read(Reader& reader, DeclarationFlags& flags);

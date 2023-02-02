@@ -14,6 +14,7 @@ import otava.symbols.writer;
 import otava.symbols.value;
 import otava.symbols.visitor;
 import otava.symbols.context;
+import otava.symbols.declaration;
 import util.unicode;
 import util.sha1;
 
@@ -134,6 +135,11 @@ std::string VariableSymbol::IrName() const
     std::string irName = "variable_";
     irName.append(util::ToUtf8(Name())).append("_").append(util::GetSha1MessageDigest(util::ToUtf8(FullName())));
     return irName;
+}
+
+bool VariableSymbol::IsStatic() const
+{
+    return (GetDeclarationFlags() & DeclarationFlags::staticFlag) != DeclarationFlags::none;
 }
 
 bool VariableLess::operator()(VariableSymbol* left, VariableSymbol* right) const

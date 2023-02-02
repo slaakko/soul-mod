@@ -1,0 +1,3 @@
+project dynamic_init;
+target=program;
+source <dynamic_init.cpp>;

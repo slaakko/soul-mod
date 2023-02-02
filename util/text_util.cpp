@@ -148,6 +148,27 @@ std::vector<std::string> Split(const std::string& s, char c)
     return v;
 }
 
+std::vector<std::string> Split(const std::string& s, const std::string& subString)
+{
+    std::vector<std::string> v;
+    int start = 0;
+    int n = int(s.length());
+    for (int i = 0; i < n; ++i)
+    {
+        if (s.substr(i, subString.length()) == subString)
+        {
+            v.push_back(s.substr(start, i - start));
+            start = i + subString.length();
+            i += subString.length() - 1;
+        }
+    }
+    if (start < n)
+    {
+        v.push_back(s.substr(start, n - start));
+    }
+    return v;
+}
+
 std::string Replace(const std::string& s, char oldChar, char newChar)
 {
     std::string t(s);
@@ -346,7 +367,7 @@ bool EndsWith(const std::u32string& s, const std::u32string& suffix)
 
 std::string NarrowString(const char* str, int length)
 {
-#if defined(__linux) || defined(__posix) || defined(__unix)
+#if defined(__linux) || defined(__posix) || defined(__unix) || defined(OTAVA)
     return std::string(str, length);
 #elif defined(_WIN32)
     std::string narrow;
@@ -436,7 +457,7 @@ std::string ToString(double x, int minNumDecimals, int maxNumDecimals)
 
 inline char HexNibble(uint8_t n)
 {
-    static const char* h = "0123456789ABCDEF";
+    const char* h = "0123456789ABCDEF";
     return h[n];
 }
 
@@ -481,53 +502,17 @@ std::string ToHexString(uint64_t x)
 
 uint8_t ParseHexByte(const std::string& hexByteStr)
 {
-    std::string hex;
-    if (StartsWith(hexByteStr, "0x") || StartsWith(hexByteStr, "0X"))
-    {
-        hex = hexByteStr;
-    }
-    else
-    {
-        hex = "0x" + hexByteStr;
-    }
-    std::stringstream s;
-    s.str(hex);
-    uint64_t value = 0;
-    s >> std::hex >> value;
-    return static_cast<uint8_t>(value);
+    return static_cast<uint8_t>(std::stoi(hexByteStr, nullptr, 16));
 }
 
 uint64_t ParseHexULong(const std::string& hexByteStr)
 {
-    std::string hex;
-    if (StartsWith(hexByteStr, "0x") || StartsWith(hexByteStr, "0X"))
-    {
-        hex = hexByteStr;
-    }
-    else
-    {
-        hex = "0x" + hexByteStr;
-    }
-    std::stringstream s;
-    s.str(hex);
-    uint64_t value = 0;
-    s >> std::hex >> value;
-    return value;
+    return std::stoull(hexByteStr, nullptr, 16);
 }
 
 int32_t ParseOctal(const std::string& octalDigitStr)
 {
-    if (octalDigitStr.empty())
-    {
-        return -1;
-    }
-    int32_t value = 0;
-    for (char o : octalDigitStr)
-    {
-        if (o < '0' || o > '7') return -1;
-        value = (value << 3) | (o - '0');
-    }
-    return value;
+    return std::stoi(octalDigitStr, nullptr, 8);
 }
 
 std::string ToOctalString(int32_t value, int numDigits)
@@ -573,12 +558,16 @@ std::u32string FormatNumber(int n, int numDigits)
     return s;
 }
 
+#ifndef OTAVA
+
 std::string CurrentThreadIdStr()
 {
     std::stringstream s;
     s << std::this_thread::get_id();
     return s.str();
 }
+
+#endif 
 
 std::string Format(const std::string& s, int width)
 {

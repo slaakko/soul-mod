@@ -70,9 +70,21 @@ BoundExpressionNode* Context::GetThisPtr(const soul::ast::SourcePos& sourcePos)
     }
 }
 
+void Context::SetFileName(const std::string& fileName_)
+{
+    fileName = fileName_;
+}
+
 std::string Context::FileName() const
 {
-    return lexer->FileName();
+    if (lexer)
+    {
+        return lexer->FileName();
+    }
+    else
+    {
+        return fileName;
+    }
 }
 
 void Context::PushFlags()

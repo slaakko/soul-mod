@@ -1,5 +1,8 @@
 module std.basic_string;
 
+import std.exception;
+import std.new_delete_op;
+
 namespace std {
 
 template<typename T>
@@ -70,6 +73,460 @@ string to_string(long long val)
 string to_string(unsigned long long val)
 {
     return to_string_unsigned(val);
+}
+
+char hex_char(int nibble)
+{
+    const char* hex_chars = "0123456789ABCDEF";
+    return hex_chars[nibble];
+}
+
+string to_hexstring(uint8_t x)
+{
+    string s;
+    s.append(1, hex_char(x >> 4));
+    s.append(1, hex_char(x & 0x0F));
+    return s;
+}
+
+string to_hexstring(uint16_t x)
+{
+    return to_hex(x);
+}
+
+string to_hexstring(uint32_t x)
+{
+    return to_hex(x);
+}
+
+string to_hexstring(uint64_t x)
+{
+    return to_hex(x);
+}
+
+string to_octstring(uint8_t x)
+{
+    return to_oct(x);
+}
+
+string to_octstring(uint16_t x)
+{
+    return to_oct(x);
+}
+
+string to_octstring(uint32_t x)
+{
+    return to_oct(x);
+}
+
+string to_octstring(uint64_t x)
+{
+    return to_oct(x);
+}
+
+template<typename T>
+void parse_decimal(T& x, const string& s, size_t* idx)
+{
+    x = 0;
+    bool negative = false;
+    int state = 0;
+    size_t index = 0;
+    for (char c : s)
+    {
+        switch (state)
+        {
+            case 0:
+            {
+                if (!std::isspace(c))
+                {
+                    if (c == '+')
+                    {
+                        state = 1;
+                    }
+                    else if (c == '-')
+                    {
+                        negative = true;
+                        state = 1;
+                    }
+                    else if (c >= '0' && c <= '9')
+                    {
+                        x = c - '0';
+                        state = 1;
+                    }
+                    else
+                    {
+                        if (idx)
+                        {
+                            *idx = index;
+                        }
+                        return;
+                    }
+                }
+                break;
+            }
+            case 1:
+            {
+                if (c >= '0' && c <= '9')
+                {
+                    x = 10 * x + (c - '0');
+                }
+                else
+                {
+                    if (idx)
+                    {
+                        *idx = index;
+                    }
+                    if (negative)
+                    {
+                        x = -x;
+                    }
+                    return;
+                }
+                break;
+            }
+        }
+        ++index;
+    }
+    if (negative)
+    {
+        x = -x;
+    }
+    if (idx)
+    {
+        *idx = index;
+    }
+}
+
+template<typename T>
+void parse_hexadecimal(T& x, const string& s, size_t* idx)
+{
+    x = 0;
+    bool negative = false;
+    int state = 0;
+    size_t index = 0;
+    for (char c : s)
+    {
+        switch (state)
+        {
+        case 0:
+        {
+            if (!std::isspace(c))
+            {
+                if (c == '+')
+                {
+                    state = 1;
+                }
+                else if (c == '-')
+                {
+                    negative = true;
+                    state = 1;
+                }
+                else if (c >= '0' && c <= '9')
+                {
+                    x = c - '0';
+                    state = 1;
+                }
+                else if (c >= 'a' && c <= 'f')
+                {
+                    x = 10 + c - 'a';
+                }
+                else if (c >= 'A' && c <= 'F')
+                {
+                    x = 10 + c - 'A';
+                }
+                else
+                {
+                    if (idx)
+                    {
+                        *idx = index;
+                    }
+                    return;
+                }
+            }
+            break;
+        }
+        case 1:
+        {
+            if (c >= '0' && c <= '9')
+            {
+                x = 16 * x + c - '0';
+            }
+            else if (c >= 'a' && c <= 'f')
+            {
+                x = 16 * x + 10 + c - 'a';
+            }
+            else if (c >= 'A' && c <= 'F')
+            {
+                x = 16 * x + 10 + c - 'A';
+            }
+            else
+            {
+                if (idx)
+                {
+                    *idx = index;
+                }
+                if (negative)
+                {
+                    x = -x;
+                }
+                return;
+            }
+            break;
+        }
+        }
+        ++index;
+    }
+    if (negative)
+    {
+        x = -x;
+    }
+    if (idx)
+    {
+        *idx = index;
+    }
+}
+
+template<typename T>
+void parse_octal(T& x, const string& s, size_t* idx)
+{
+    x = 0;
+    bool negative = false;
+    int state = 0;
+    size_t index = 0;
+    for (char c : s)
+    {
+        switch (state)
+        {
+            case 0:
+            {
+                if (!std::isspace(c))
+                {
+                    if (c == '+')
+                    {
+                        state = 1;
+                    }
+                    else if (c == '-')
+                    {
+                        negative = true;
+                        state = 1;
+                    }
+                    else if (c >= '0' && c <= '7')
+                    {
+                        x = c - '0';
+                        state = 1;
+                    }
+                    else
+                    {
+                        if (idx)
+                        {
+                            *idx = index;
+                        }
+                        return;
+                    }
+                }
+                break;
+            }
+            case 1:
+            {
+                if (c >= '0' && c <= '7')
+                {
+                    x = 8 * x + c - '0';
+                }
+                else
+                {
+                    if (idx)
+                    {
+                        *idx = index;
+                    }
+                    if (negative)
+                    {
+                        x = -x;
+                    }
+                    return;
+                }
+                break;
+            }
+        }
+        ++index;
+    }
+    if (negative)
+    {
+        x = -x;
+    }
+    if (idx)
+    {
+        *idx = index;
+    }
+}
+
+int stoi(const string& str, size_t* idx, int base)
+{
+    switch (base)
+    {
+        case 10:
+        {
+            int x = 0;
+            parse_decimal(x, str, idx);
+            return x;
+        }
+        case 16:
+        {
+            int x = 0;
+            parse_hexadecimal(x, str, idx);
+            return x;
+        }
+        case 8:
+        {
+            int x = 0;
+            parse_octal(x, str, idx);
+            return x;
+        }
+        default:
+        {
+            throw std::runtime_error("stoi: unsupported base");
+        }
+    }
+    if (idx)
+    {
+        *idx = 0;
+    }
+    return 0;
+}
+
+long stol(const string& str, size_t* idx, int base)
+{
+    switch (base)
+    {
+        case 10:
+        {
+            long x = 0;
+            parse_decimal(x, str, idx);
+            return x;
+        }
+        case 16:
+        {
+            long x = 0;
+            parse_hexadecimal(x, str, idx);
+            return x;
+        }
+        case 8:
+        {
+            long x = 0;
+            parse_octal(x, str, idx);
+            return x;
+        }
+        default:
+        {
+            throw std::runtime_error("stol: unsupported base");
+        }
+    }
+    if (idx)
+    {
+        *idx = 0;
+    }
+    return 0;
+}
+
+unsigned long stoul(const string& str, size_t* idx, int base)
+{
+    switch (base)
+    {
+        case 10:
+        {
+            unsigned long x = 0;
+            parse_decimal(x, str, idx);
+            return x;
+        }
+        case 16:
+        {
+            unsigned long x = 0;
+            parse_hexadecimal(x, str, idx);
+            return x;
+        }
+        case 8:
+        {
+            unsigned long x = 0;
+            parse_octal(x, str, idx);
+            return x;
+        }
+        default:
+        {
+            throw std::runtime_error("stoul: unsupported base");
+        }
+    }
+    if (idx)
+    {
+        *idx = 0;
+    }
+    return 0;
+}
+
+long long stoll(const string& str, size_t* idx, int base)
+{
+    switch (base)
+    {
+        case 10:
+        {
+            long long x = 0;
+            parse_decimal(x, str, idx);
+            return x;
+        }
+        case 16:
+        {
+            long long x = 0;
+            parse_hexadecimal(x, str, idx);
+            return x;
+        }
+        case 8:
+        {
+            long long x = 0;
+            parse_octal(x, str, idx);
+            return x;
+        }
+        default:
+        {
+            throw std::runtime_error("stoul: unsupported base");
+        }
+    }
+    if (idx)
+    {
+        *idx = 0;
+    }
+    return 0;
+}
+
+unsigned long long stoull(const string& str, size_t* idx, int base)
+{
+    switch (base)
+    {
+        case 10:
+        {
+            unsigned long long x = 0;
+            parse_decimal(x, str, idx);
+            return x;
+        }
+        case 16:
+        {
+            unsigned long long x = 0;
+            parse_hexadecimal(x, str, idx);
+            return x;
+        }
+        case 8:
+        {
+            unsigned long long x = 0;
+            parse_octal(x, str, idx);
+            return x;
+        }
+        default:
+        {
+            throw std::runtime_error("stoull: unsupported base");
+        }
+    }
+    if (idx)
+    {
+        *idx = 0;
+    }
+    return 0;
 }
 
 } // namespace std

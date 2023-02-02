@@ -15,6 +15,6 @@ enum class ProjectTarget
 };
 
 void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles,
-    const std::string& libraryDirs, ProjectTarget target, bool verbose);
+    const std::string& libraryDirs, const std::string& classIndexFilePath, ProjectTarget target, bool verbose);
 
 } // namespace otava::build

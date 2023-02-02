@@ -16,6 +16,8 @@ class Context;
 class Scope;
 class StatementBinder;
     
+otava::ast::Node* MakeTypeNameNodes(const soul::ast::SourcePos& sourcePos, const std::u32string& fullTypeName);
+
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context);
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, bool booleanChild);
 BoundExpressionNode* BindExpression(otava::ast::Node* node, Context* context, SymbolGroupKind symbolGroups, Scope*& scope);

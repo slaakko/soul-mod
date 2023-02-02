@@ -14,6 +14,7 @@ import otava.symbols.specialization.compare;
 import otava.symbols.symbol_map;
 import otava.symbols.array.type.compare;
 import util.uuid;
+import class_info_index;
 
 export namespace otava::symbols {
 
@@ -58,6 +59,8 @@ class BoundExpressionNode;
 class ClassTypeSymbol;
 class ConceptSymbol;
 class EnumeratedTypeSymbol;
+class FunctionGroupSymbol;
+class FunctionGroupTypeSymbol;
 class ClassTemplateSpecializationSymbol;
 class AliasTypeTemplateSpecializationSymbol;
 class CompoundTypeSymbol;
@@ -146,6 +149,7 @@ public:
     TypeSymbol* MakeConstChar16PtrType();
     TypeSymbol* MakeConstChar32PtrType();
     TypeSymbol* MakeConstWCharPtrType();
+    FunctionGroupTypeSymbol* MakeFunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroup);
     ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
     ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
@@ -174,12 +178,14 @@ public:
     void MapFunctionDefinition(FunctionDefinitionSymbol* functionDefinition);
     void MapVariable(VariableSymbol* variable);
     void MapConstraint(Symbol* constraint);
+    void MapFunctionGroup(FunctionGroupSymbol* functionGroup);
     FunctionSymbol* GetFunction(const util::uuid& id) const;
     FunctionDefinitionSymbol* GetFunctionDefinition(const util::uuid& id) const;
     AliasTypeSymbol* GetAliasType(const util::uuid& id) const;
     ClassTypeSymbol* GetClass(const util::uuid& id) const;
     VariableSymbol* GetVariable(const util::uuid& id) const;
     Symbol* GetConstraint(const util::uuid& id) const;
+    FunctionGroupSymbol* GetFunctionGroup(const util::uuid& id) const;
     TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const;
     void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
     bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
@@ -205,6 +211,8 @@ public:
     ExplicitInstantiationSymbol* GetExplicitInstantiation(ClassTemplateSpecializationSymbol* classTemplateSpecialization) const;
     void AddExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
     void MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
+    const info::class_index& ClassIndex() const { return index; }
+    info::class_index& ClassIndex() { return index; }
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -225,6 +233,8 @@ private:
     void ImportSpecifierMap(const SymbolTable& that);
     void ImportClasses(const SymbolTable& that);
     void ImportExplicitInstantiations(const SymbolTable& that);
+    void ImportFunctionGroupTypes(const SymbolTable& that);
+    void ImportClassIndex(const SymbolTable& that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
     std::vector<std::unique_ptr<Symbol>> classTemplateSpecializations;
@@ -237,6 +247,8 @@ private:
     std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
     std::vector<std::unique_ptr<ExplicitInstantiationSymbol>> explicitInstantiations;
     std::map<ClassTemplateSpecializationSymbol*, ExplicitInstantiationSymbol*> explicitInstantiationMap;
+    std::vector<std::unique_ptr<FunctionGroupTypeSymbol>> functionGroupTypes;
+    std::map<FunctionGroupSymbol*, FunctionGroupTypeSymbol*> functionGroupTypeMap;
     std::map<int32_t, TypeSymbol*> fundamentalTypeMap;
     std::vector<Scope*> scopeStack;
     Scope* currentScope;
@@ -251,6 +263,7 @@ private:
     std::map<util::uuid, FunctionDefinitionSymbol*> functionDefinitionMap;
     std::map<util::uuid, VariableSymbol*> variableMap;
     std::map<util::uuid, Symbol*> constraintMap;
+    std::map<util::uuid, FunctionGroupSymbol*> functionGroupMap;
     Symbol* typenameConstraintSymbol;
     TypeSymbol* errorTypeSymbol;
     int topScopeIndex;
@@ -270,6 +283,7 @@ private:
     Linkage currentLinkage;
     std::stack<Linkage> linkageStack;
     std::vector<ParameterSymbol*> returnValueParametersToResolve;
+    info::class_index index;
 };
 
 } // namespace otava::symbols

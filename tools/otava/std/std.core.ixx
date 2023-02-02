@@ -5,7 +5,9 @@
 
 export module std.core;
 
+export import std.init;
 export import std.algorithm;
+export import std.atomic;
 export import std.type.fundamental;
 export import std.basic_string;
 export import std.c;

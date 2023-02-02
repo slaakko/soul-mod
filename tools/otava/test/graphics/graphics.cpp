@@ -24,7 +24,7 @@ public:
 
 void Circle::Draw()
 {
-    prints("circle::draw\n");
+    prints("circle::draw\n", 1);
 }
 
 class Square : public Shape
@@ -35,7 +35,7 @@ public:
 
 void Square::Draw()
 {
-    prints("square::draw\n");
+    prints("square::draw\n", 1);
 }
 
 class Triangle : public Shape
@@ -46,7 +46,7 @@ public:
 
 void Triangle::Draw()
 {
-    prints("triangle::draw\n");
+    prints("triangle::draw\n", 1);
 }
 
 int main()

@@ -151,7 +151,7 @@ public:
     bool IsEmpty() const { return destructorCalls.empty(); }
     int Size() const { return destructorCalls.size(); }
     void AddDestructorCall(otava::symbols::BoundFunctionCallNode* destructorCall);
-    void Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    void Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context, bool reset);
 private:
     std::vector<std::unique_ptr<otava::symbols::BoundFunctionCallNode>> destructorCalls;
 };
@@ -165,7 +165,7 @@ void BlockExit::AddDestructorCall(otava::symbols::BoundFunctionCallNode* destruc
     destructorCalls.push_back(std::unique_ptr<otava::symbols::BoundFunctionCallNode>(destructorCall));
 }
 
-void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context, bool reset)
 {
     int n = destructorCalls.size();
     for (int i = n - 1; i >= 0; --i)
@@ -173,12 +173,18 @@ void BlockExit::Execute(otava::symbols::Emitter& emitter, const soul::ast::Sourc
         otava::symbols::BoundFunctionCallNode* destructorCall = destructorCalls[i].get();
         destructorCall->Load(emitter, otava::symbols::OperationFlags::none, sourcePos, context);
     }
+    if (n > 0)
+    {
+        emitter.GetCleanupList().Remove(n);
+        emitter.GetCleanupList().GeneratePopContext(emitter, reset);
+    }
 }
 
 class CodeGenerator : public otava::symbols::DefaultBoundTreeVisitor, public otava::symbols::CodeGenerator
 {
 public:
-    CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_);
+    CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_, bool globalMain,
+        const std::vector<std::string>& compileUnitInitFnNames_);
     void Reset();
     const std::string& GetAsmFileName() const { return asmFileName; }
     void Visit(otava::symbols::BoundCompileUnitNode& node) override;
@@ -199,6 +205,8 @@ public:
     void Visit(otava::symbols::BoundConstructionStatementNode& node) override;
     void Visit(otava::symbols::BoundExpressionStatementNode& node) override;
     void Visit(otava::symbols::BoundSetVPtrStatementNode& node) override;
+    void Visit(otava::symbols::BoundTryStatementNode& node) override;
+    void Visit(otava::symbols::BoundHandlerNode& node) override;
     void Visit(otava::symbols::BoundLiteralNode& node) override;
     void Visit(otava::symbols::BoundStringLiteralNode& node) override;
     void Visit(otava::symbols::BoundVariableNode& node) override;
@@ -226,6 +234,8 @@ private:
     void GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
     void EmitReturn(const soul::ast::SourcePos& sourcePos);
     void ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::SourcePos& sourcePos);
+    void GenerateGlobalInitializationFunction();
+    void GenerateMainWrapper();
     otava::symbols::Context& context;
     std::string config;
     bool verbose;
@@ -239,6 +249,7 @@ private:
     otava::intermediate::BasicBlock* nextBlock;
     otava::intermediate::BasicBlock* defaultBlock;
     otava::intermediate::BasicBlock* breakBlock;
+    otava::intermediate::BasicBlock* continueAfterTryBlock;
     int breakBlockId;
     otava::intermediate::BasicBlock* continueBlock;
     int continueBlockId;
@@ -248,13 +259,16 @@ private:
     bool prevWasTerminator;
     otava::symbols::BoundStatementNode* sequenceSecond;
     std::string asmFileName;
+    bool globalMain;
+    std::vector<std::string> compileUnitInitFnNames;
 };
 
-CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_) :
+CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_, bool globalMain_,
+    const std::vector<std::string>& compileUnitInitFnNames_) :
     context(context_), emitter(this), config(config_), verbose(verbose_), mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
     functionDefinition(nullptr), entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), nextBlock(nullptr), defaultBlock(nullptr), 
-    breakBlock(nullptr), breakBlockId(-1), continueBlock(nullptr), continueBlockId(-1), genJumpingBoolCode(false), prevWasTerminator(false), 
-    sequenceSecond(nullptr), currentBlockId(-1)
+    breakBlock(nullptr), breakBlockId(-1), continueBlock(nullptr), continueBlockId(-1), continueAfterTryBlock(nullptr), genJumpingBoolCode(false), prevWasTerminator(false),
+    sequenceSecond(nullptr), currentBlockId(-1), globalMain(globalMain_), compileUnitInitFnNames(compileUnitInitFnNames_)
 {
     std::string intermediateCodeFilePath = util::GetFullPath(
         util::Path::Combine(
@@ -287,6 +301,7 @@ void CodeGenerator::Reset()
     sequenceSecond = nullptr;
     currentBlockId = -1;
     blockExits.clear();
+    emitter.GetCleanupList().Clear();
     emitter.SetNextBlock(nullptr);
     emitter.SetRetValue(nullptr);
 }
@@ -397,7 +412,7 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
                 BlockExit* exit = blockExits[i].get();
                 if (exit)
                 {
-                    exit->Execute(emitter, sourcePos, &context);
+                    exit->Execute(emitter, sourcePos, &context, false);
                 }
             }
         }
@@ -411,7 +426,7 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
                 BlockExit* exit = blockExits[i].get();
                 if (exit)
                 {
-                    exit->Execute(emitter, sourcePos, &context);
+                    exit->Execute(emitter, sourcePos, &context, true);
                 }
             }
         }
@@ -431,8 +446,29 @@ void CodeGenerator::EmitReturn(const soul::ast::SourcePos& sourcePos)
     }
 }
 
+void CodeGenerator::GenerateGlobalInitializationFunction()
+{
+    Reset();
+    emitter.CreateFunction("__global_init__", emitter.MakeFunctionType(emitter.GetVoidType(), std::vector<otava::intermediate::Type*>()), false);
+    otava::intermediate::BasicBlock* initBlock = emitter.CreateBasicBlock();
+    emitter.SetCurrentBasicBlock(initBlock);
+    otava::intermediate::FunctionType* initFunctionType = static_cast<otava::intermediate::FunctionType*>(emitter.MakeFunctionType(emitter.GetVoidType(),
+        std::vector<otava::intermediate::Type*>()));
+    int n = compileUnitInitFnNames.size();
+    for (int i = 0; i < n; ++i)
+    {
+        otava::intermediate::Function* initFn = emitter.GetOrInsertFunction(compileUnitInitFnNames[i], initFunctionType);
+        emitter.EmitCall(initFn, std::vector<otava::intermediate::Value*>());
+    }
+    emitter.EmitRetVoid();
+}
+
 void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 {
+    if (globalMain)
+    {
+        GenerateGlobalInitializationFunction();
+    }
     node.Sort();
     emitter.SetCompileUnitInfo(node.Id(), context.FileName());
     int n = node.BoundNodes().size();
@@ -441,6 +477,12 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
         otava::symbols::BoundNode* boundNode = node.BoundNodes()[i].get();
         Reset();
         boundNode->Accept(*this);
+    }
+    otava::symbols::BoundFunctionNode* initFunction = node.GetCompileUnitInitializationFunction();
+    if (initFunction)
+    {
+        Reset();
+        initFunction->Accept(*this);
     }
     emitter.ResolveReferences();
     emitter.Emit();
@@ -740,6 +782,10 @@ void CodeGenerator::Visit(otava::symbols::BoundWhileStatementNode& node)
     falseBlock = emitter.CreateBasicBlock();
     breakBlock = falseBlock;
     breakBlockId = currentBlockId;
+    if (emitter.GetCleanupList().IsDirty())
+    {
+        emitter.GetCleanupList().GenerateCleanup(emitter, node.GetSourcePos(), &context);
+    }
     otava::intermediate::BasicBlock* condBlock = emitter.CreateBasicBlock();
     emitter.EmitJump(condBlock);
     emitter.SetCurrentBasicBlock(condBlock);
@@ -778,6 +824,10 @@ void CodeGenerator::Visit(otava::symbols::BoundDoStatementNode& node)
     breakBlockId = currentBlockId;
     continueBlock = condBlock;
     continueBlockId = currentBlockId;
+    if (emitter.GetCleanupList().IsDirty())
+    {
+        emitter.GetCleanupList().GenerateCleanup(emitter, node.GetSourcePos(), &context);
+    }
     emitter.EmitJump(doBlock);
     emitter.SetCurrentBasicBlock(doBlock);
     node.Statement()->Accept(*this);
@@ -809,6 +859,10 @@ void CodeGenerator::Visit(otava::symbols::BoundForStatementNode& node)
     if (node.InitStatement())
     {
         node.InitStatement()->Accept(*this);
+    }
+    if (emitter.GetCleanupList().IsDirty())
+    {
+        emitter.GetCleanupList().GenerateCleanup(emitter, node.GetSourcePos(), &context);
     }
     otava::intermediate::BasicBlock* condBlock = emitter.CreateBasicBlock();
     otava::intermediate::BasicBlock* actionBlock = emitter.CreateBasicBlock();
@@ -877,11 +931,13 @@ void CodeGenerator::Visit(otava::symbols::BoundReturnStatementNode& node)
             sequenceSecond->SetGenerated();
             sequenceSecond->Accept(*this);
         }
+        emitter.GetCleanupList().GeneratePopContext(emitter, false);
         ExitBlocks(currentBlockId, -1, node.GetSourcePos());
         emitter.EmitRet(returnValue);
     }
     else
     {
+        emitter.GetCleanupList().GeneratePopContext(emitter, false);
         ExitBlocks(currentBlockId, -1, node.GetSourcePos());
         emitter.EmitRetVoid();
     }
@@ -909,6 +965,7 @@ void CodeGenerator::Visit(otava::symbols::BoundConstructionStatementNode& node)
     {
         if (node.DestructorCall())
         {
+            emitter.GetCleanupList().Add(static_cast<otava::symbols::BoundFunctionCallNode*>(node.DestructorCall()->Clone()));
             blockExits[currentBlockId - 1]->AddDestructorCall(node.ReleaseDestructorCall());
         }
     }
@@ -939,6 +996,62 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
         otava::intermediate::Value* vptr = emitter.EmitBitcast(forClass->GetVTabVariable(emitter, &context), emitter.MakePtrType(emitter.GetVoidType()));
         emitter.EmitStore(vptr, ptr);
     }
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundTryStatementNode& node)
+{
+    StatementPrefix();
+    otava::intermediate::BasicBlock* tryBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* handlerBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* prevContinueAfterTryBlock = continueAfterTryBlock;
+    continueAfterTryBlock = emitter.CreateBasicBlock();
+    otava::intermediate::Value* ctx = emitter.EmitCall(emitter.EhFunctions().PushContextFunction(), std::vector<otava::intermediate::Value*>());
+    otava::intermediate::Value* intValue = emitter.EmitCall(emitter.EhFunctions().SaveContextFunction(), std::vector<otava::intermediate::Value*>(1, ctx));
+    otava::intermediate::Value* boolValue = emitter.EmitEqual(intValue, emitter.EmitInt(0));
+    emitter.EmitBranch(boolValue, tryBlock, handlerBlock);
+    emitter.SetCurrentBasicBlock(tryBlock);
+    node.TryBlock()->Accept(*this);
+    if (!node.TryBlock()->EndsWithTerminator())
+    {
+        emitter.EmitJump(continueAfterTryBlock);
+    }
+    emitter.SetCurrentBasicBlock(handlerBlock);
+    int n = node.Handlers().size();
+    for (int i = 0; i < n; ++i)
+    {
+        otava::symbols::BoundHandlerNode* handler = node.Handlers()[i].get();
+        handler->Accept(*this);
+    }
+    StatementPrefix();
+    otava::intermediate::Value* nextCtx = emitter.EmitCall(emitter.EhFunctions().PopContextFunction(), std::vector<otava::intermediate::Value*>());
+    std::vector<otava::intermediate::Value*> restoreContextArgs;
+    restoreContextArgs.push_back(nextCtx);
+    restoreContextArgs.push_back(emitter.EmitInt(1));
+    emitter.EmitCall(emitter.EhFunctions().RestoreContextFunction(), restoreContextArgs);
+    emitter.EmitJump(continueAfterTryBlock);
+    nextBlock = continueAfterTryBlock;
+    emitter.SetNextBlock(nextBlock);
+    continueAfterTryBlock = prevContinueAfterTryBlock;
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundHandlerNode& node)
+{
+    StatementPrefix();
+    uint64_t hth = 0;
+    uint64_t htl = 0;
+    util::UuidToInts(node.ExceptionTypeId(), hth, htl);
+    std::vector<otava::intermediate::Value*> handleExceptionArgs;
+    handleExceptionArgs.push_back(emitter.EmitULong(hth));
+    handleExceptionArgs.push_back(emitter.EmitULong(htl));
+    otava::intermediate::Value* handleValue = emitter.EmitCall(emitter.EhFunctions().HandleExceptionFunction(), handleExceptionArgs);
+    otava::intermediate::BasicBlock* catchBlock = emitter.CreateBasicBlock();
+    otava::intermediate::BasicBlock* nextCatchBlock = emitter.CreateBasicBlock();
+    emitter.EmitBranch(handleValue, catchBlock, nextCatchBlock);
+    emitter.SetCurrentBasicBlock(catchBlock);
+    node.CatchBlock()->Accept(*this);
+    emitter.EmitJump(continueAfterTryBlock);
+    nextBlock = nextCatchBlock;
+    emitter.SetNextBlock(nextBlock);
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundLiteralNode& node)
@@ -1091,7 +1204,7 @@ void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& nod
     variable->SetDeclaredType(type);
     otava::intermediate::Value* initializer = nullptr;
     otava::intermediate::Type* irType = variable->GetType()->IrType(emitter, node.GetSourcePos(), &context);
-    if (variable->GetValue())
+    if (variable->GetValue() && !variable->GetType()->IsClassTypeSymbol())
     {
         initializer = variable->GetValue()->IrValue(emitter, node.GetSourcePos(), &context);
     }
@@ -1103,9 +1216,10 @@ void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& nod
     emitter.SetIrObject(variable, irVariable);
 }
 
-std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams)
+std::string GenerateCode(otava::symbols::Context& context, const std::string& config, bool verbose, std::string& mainIrName, int& mainFunctionParams, bool globalMain,
+    const std::vector<std::string>& compileUnitInitFnNames)
 {
-    CodeGenerator codeGenerator(context, config, verbose, mainIrName, mainFunctionParams);
+    CodeGenerator codeGenerator(context, config, verbose, mainIrName, mainFunctionParams, globalMain, compileUnitInitFnNames);
     context.GetBoundCompileUnit()->Accept(codeGenerator);
     return codeGenerator.GetAsmFileName();
 }

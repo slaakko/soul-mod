@@ -430,6 +430,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new ArrayTypeEnd(name);
         }
+        case SymbolKind::functionGroupTypeSymbol:
+        {
+            return new FunctionGroupTypeSymbol(name);
+        }
     }
     otava::ast::SetExceptionThrown();
     throw std::runtime_error("not implemented");

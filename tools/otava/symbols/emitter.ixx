@@ -7,6 +7,8 @@ export module otava.symbols.emitter;
 
 import std.core;
 import otava.symbols.ir_value_stack;
+import otava.symbols.eh;
+import otava.symbols.cleanup_list;
 import otava.intermediate.context;
 import util.uuid;
 
@@ -124,6 +126,8 @@ public:
     otava::intermediate::Value* RetValue() const { return retValue; }
     void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
     void SetCodeGenNextBlock(otava::intermediate::BasicBlock* nextBlock_);
+    ExceptionHandlingFunctions& EhFunctions() { return exceptionHandlingFunctions; }
+    CleanupList& GetCleanupList() { return cleanupList; }
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;
@@ -133,6 +137,8 @@ private:
     otava::intermediate::BasicBlock* nextBlock;
     otava::intermediate::Value* retValue;
     CodeGenerator* codeGen;
+    ExceptionHandlingFunctions exceptionHandlingFunctions;
+    CleanupList cleanupList;
 };
 
 } // namespace otava::symbols

@@ -21,7 +21,9 @@ import otava.symbols.bound.tree.visitor;
 import otava.symbols.function.templates;
 import otava.symbols.class_templates;
 import otava.symbols.type.symbol;
+import otava.symbols.namespaces;
 import otava.intermediate.function;
+import util.unicode;
 
 namespace otava::symbols {
 
@@ -100,6 +102,10 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         case BoundNodeKind::boundSetVPtrStatementNode:
         {
             return "boundSetVPtrStatementNode";
+        }
+        case BoundNodeKind::boundTryStatementNode:
+        {
+            return "boundTryStatementNode";
         }
         case BoundNodeKind::boundLiteralNode:
         {
@@ -295,23 +301,41 @@ void BoundCompileUnitNode::Sort()
 }
 
 otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(VariableSymbol* globalVariableSymbol, Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
-    Context* context)
+    Context* context, bool definition)
 {
     otava::symbols::TypeSymbol* type = otava::symbols::ResolveFwdDeclaredType(globalVariableSymbol->GetType(), sourcePos, context);
     globalVariableSymbol->SetDeclaredType(type);
     otava::intermediate::Value* initializer = nullptr;
     otava::intermediate::Type* irType = globalVariableSymbol->GetType()->IrType(emitter, sourcePos, context);
-    if (globalVariableSymbol->GetValue())
+    if (definition)
     {
-        initializer = globalVariableSymbol->GetValue()->IrValue(emitter, sourcePos, context);
-    }
-    else
-    {
-        initializer = irType->DefaultValue();
-    }
+        if (globalVariableSymbol->GetValue())
+        {
+            initializer = globalVariableSymbol->GetValue()->IrValue(emitter, sourcePos, context);
+        }
+        else
+        {
+            initializer = irType->DefaultValue();
+        }
+        }
     otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, globalVariableSymbol->IrName(), initializer);
     emitter.SetIrObject(globalVariableSymbol, irVariable);
     return irVariable;
+}
+
+void BoundCompileUnitNode::AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!compileUnitInitializationFunction)
+    {
+        FunctionDefinitionSymbol* compileUnitInitializationFunctionSymbol = new FunctionDefinitionSymbol(U"@dynamic_init_" + util::ToUtf32(id));
+        context->GetSymbolTable()->GlobalNs()->AddSymbol(compileUnitInitializationFunctionSymbol, sourcePos, context);
+        compileUnitInitializationFunction.reset(new BoundFunctionNode(compileUnitInitializationFunctionSymbol, sourcePos));
+        compileUnitInitializationFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
+    }
+    BoundCompoundStatementNode* body = compileUnitInitializationFunction->Body();
+    BoundExpressionStatementNode* initExprStmt = new BoundExpressionStatementNode(sourcePos);
+    initExprStmt->SetExpr(dynamicInitialization);
+    body->AddStatement(initExprStmt);
 }
 
 BoundCtorInitializerNode::BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundCtorInitializerNode, sourcePos_)
@@ -598,7 +622,7 @@ void BoundForStatementNode::SetLoopExpr(BoundExpressionNode* loopExpr_)
 
 void BoundForStatementNode::SetStatement(BoundStatementNode* statement_)
 {
-    statement.reset(statement_);
+statement.reset(statement_);
 }
 
 BoundSequenceStatementNode::BoundSequenceStatementNode(const soul::ast::SourcePos& sourcePos_, BoundStatementNode* first_, BoundStatementNode* second_) :
@@ -692,6 +716,32 @@ BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPt
 }
 
 void BoundSetVPtrStatementNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundTryStatementNode::BoundTryStatementNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* tryBlock_) :
+    BoundStatementNode(BoundNodeKind::boundTryStatementNode, sourcePos_), tryBlock(tryBlock_)
+{
+}
+
+void BoundTryStatementNode::AddHandler(BoundHandlerNode* handler)
+{
+    handlers.push_back(std::unique_ptr<BoundHandlerNode>(handler));
+}
+
+void BoundTryStatementNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundHandlerNode::BoundHandlerNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* catchBlock_, const std::u32string& exceptionParamName_, 
+    const util::uuid& exceptionTypeId_) :
+    BoundStatementNode(BoundNodeKind::boundHandlerNode, sourcePos_), catchBlock(catchBlock_), exceptionParamName(exceptionParamName_), exceptionTypeId(exceptionTypeId_)
+{
+}
+
+void BoundHandlerNode::Accept(BoundTreeVisitor& visitor)
 {
     visitor.Visit(*this);
 }
@@ -812,7 +862,7 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
         if (!ptr)
         {
-            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context);
+            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context, false);
         }
         if ((flags & OperationFlags::addr) != OperationFlags::none)
         {
@@ -908,7 +958,7 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
         otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
         if (!ptr)
         {
-            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context);
+            ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context, false);
         }
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
@@ -1056,8 +1106,8 @@ BoundExpressionNode* BoundEnumConstant::Clone() const
     return new BoundEnumConstant(enumConstant, GetSourcePos());
 }
 
-BoundFunctionGroupNode::BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_) :
-    BoundExpressionNode(BoundNodeKind::boundFunctionGroupNode, sourcePos_, nullptr), functionGroupSymbol(functionGroupSymbol_)
+BoundFunctionGroupNode::BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundFunctionGroupNode, sourcePos_, type_), functionGroupSymbol(functionGroupSymbol_)
 {
 }
 
@@ -1068,7 +1118,7 @@ void BoundFunctionGroupNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundFunctionGroupNode::Clone() const
 {
-    return new BoundFunctionGroupNode(functionGroupSymbol, GetSourcePos());
+    return new BoundFunctionGroupNode(functionGroupSymbol, GetSourcePos(), GetType());
 }
 
 BoundTypeNode::BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_) : 
@@ -1124,6 +1174,10 @@ void BoundFunctionCallNode::AddArgument(BoundExpressionNode* arg)
 
 void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (emitter.GetCleanupList().IsDirty())
+    {
+        emitter.GetCleanupList().GenerateCleanup(emitter, sourcePos, context);
+    }
     std::vector<BoundExpressionNode*> arguments;
     for (const auto& arg : args)
     {
@@ -1750,11 +1804,20 @@ BoundExpressionNode* BoundThrowExpressionNode::Clone() const
 
 void BoundThrowExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    otava::intermediate::FunctionType* throwFunctionType(static_cast<otava::intermediate::FunctionType*>(
-        emitter.MakeFunctionType(emitter.GetVoidType(), std::vector<otava::intermediate::Type*>(1, emitter.MakePtrType(emitter.GetVoidType())))));
-    otava::intermediate::Function* throwFunction(emitter.GetOrInsertFunction("throw_exception", throwFunctionType));
-    otava::intermediate::Value* exceptionValue = emitter.EmitNull(emitter.MakePtrType(emitter.GetVoidType()));
-    emitter.EmitCall(throwFunction, std::vector<otava::intermediate::Value*>(1, exceptionValue));
+    if (exception)
+    {
+        exception->Load(emitter, flags, sourcePos, context);
+        otava::intermediate::Value* exceptionValue = emitter.Stack().Pop();
+        uint64_t eth = 0;
+        uint64_t etl = 0;
+        util::UuidToInts(exception->GetType()->GetBaseType()->Id(), eth, etl);
+        std::vector<otava::intermediate::Value*> setExceptionArgs;
+        setExceptionArgs.push_back(exceptionValue);
+        setExceptionArgs.push_back(emitter.EmitULong(eth));
+        setExceptionArgs.push_back(emitter.EmitULong(etl));
+        emitter.EmitCall(emitter.EhFunctions().SetExceptionFunction(), setExceptionArgs);
+    }
+    emitter.EmitCall(emitter.EhFunctions().ThrowExceptionFunction(), std::vector<otava::intermediate::Value*>());
     emitter.EmitRet(emitter.RetValue());
 }
 

@@ -61,6 +61,7 @@ public:
     void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper);
     void SetTarget(Target target_) { target = target_; }
     Target GetTarget() const { return target; }
+    info::class_index& Index() { return index; }
 private:
     std::string filePath;
     std::string root;
@@ -79,6 +80,7 @@ private:
     bool loaded;
     std::vector<std::string> moduleNames;
     std::vector<Define> defines;
+    info::class_index index;
 };
 
 } // namespace otava::build

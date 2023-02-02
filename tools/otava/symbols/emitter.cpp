@@ -22,7 +22,8 @@ CodeGenerator::~CodeGenerator()
 {
 }
 
-Emitter::Emitter(CodeGenerator* codeGen_) : context(new otava::intermediate::Context()), stack(new IrValueStack()), nextBlock(nullptr), retValue(nullptr), codeGen(codeGen_)
+Emitter::Emitter(CodeGenerator* codeGen_) : context(new otava::intermediate::Context()), stack(new IrValueStack()), nextBlock(nullptr), retValue(nullptr), codeGen(codeGen_),
+    exceptionHandlingFunctions(*this), cleanupList(*this)
 {
 }
 

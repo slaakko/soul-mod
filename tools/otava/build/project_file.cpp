@@ -8,12 +8,24 @@ module otava.build.project_file;
 import soul.xml.dom;
 import util.code.formatter;
 import util.uuid;
+import util.path;
 
 namespace otava::build {
 
-void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles, 
-    const std::string& libraryDirs, ProjectTarget target, bool verbose)
+void MakeResourceFile(const std::string& resourceFilePath, const std::string& classIndexFilePath)
 {
+    std::ofstream resourceFile(resourceFilePath);
+    util::CodeFormatter formatter(resourceFile);
+    formatter.WriteLine("CLASS_INDEX RCDATA \"" + classIndexFilePath + "\"");
+}
+
+void MakeProjectFile(const std::string& projectFilePath, const std::string& projectName, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles, 
+    const std::string& libraryDirs, const std::string& classIndexFilePath, ProjectTarget target, bool verbose)
+{
+    if (target == ProjectTarget::program && !classIndexFilePath.empty())
+    {
+        MakeResourceFile(util::Path::Combine(util::Path::GetDirectoryName(projectFilePath), "class_index.rc"), classIndexFilePath);
+    }
     util::uuid projectUuid = util::random_uuid();
 
     soul::xml::Document projectDoc;
@@ -237,7 +249,7 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
         debugLibraryDirs->AppendChild(debugLibraryDirsText);
         debugLink->AppendChild(debugLibraryDirs);
         soul::xml::Element* debugDependencies = soul::xml::MakeElement("AdditionalDependencies");
-        soul::xml::Text* debugDependenciesText = soul::xml::MakeText("std.lib;ortd.lib");
+        soul::xml::Text* debugDependenciesText = soul::xml::MakeText("std.lib;ortd.lib;utild.lib");
         debugDependencies->AppendChild(debugDependenciesText);
         debugLink->AppendChild(debugDependencies);
     }
@@ -300,7 +312,7 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
         releaseLibraryDirs->AppendChild(releaseLibraryDirsText);
         releaseLink->AppendChild(releaseLibraryDirs);
         soul::xml::Element* releaseDependencies = soul::xml::MakeElement("AdditionalDependencies");
-        soul::xml::Text* releaseDepenciesText = soul::xml::MakeText("std.lib;ort.lib");
+        soul::xml::Text* releaseDepenciesText = soul::xml::MakeText("std.lib;ort.lib;util.lib");
         releaseDependencies->AppendChild(releaseDepenciesText);
         releaseLink->AppendChild(releaseDependencies);
     }
@@ -325,6 +337,15 @@ void MakeProjectFile(const std::string& projectFilePath, const std::string& proj
         clItemGroup->AppendChild(clCompile);
     }
     rootElement->AppendChild(clItemGroup);
+
+    if (target == ProjectTarget::program && !classIndexFilePath.empty())
+    {
+        soul::xml::Element* rcItemGroup = soul::xml::MakeElement("ItemGroup");
+        soul::xml::Element* rcCompile = soul::xml::MakeElement("ResourceCompile");
+        rcCompile->SetAttribute("Include", "class_index.rc");
+        rcItemGroup->AppendChild(rcCompile);
+        rootElement->AppendChild(rcItemGroup);
+    }
 
     soul::xml::Element* cppTargets = soul::xml::MakeElement("Import");
     cppTargets->SetAttribute("Project", "$(VCTargetsPath)\\Microsoft.Cpp.targets");

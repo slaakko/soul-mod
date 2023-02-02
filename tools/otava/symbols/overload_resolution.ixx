@@ -36,6 +36,21 @@ constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
     return OverloadResolutionFlags(~int32_t(flags));
 }
 
+class FunctionSymbol;
+enum class ConversionKind : int32_t;
+enum class OperationFlags : int32_t;
+
+struct ArgumentMatch
+{
+    ArgumentMatch();
+    FunctionSymbol* conversionFun;
+    ConversionKind conversionKind;
+    int32_t distance;
+    int32_t fundamentalTypeDistance;
+    OperationFlags preConversionFlags;
+    OperationFlags postConversionFlags;
+};
+
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags);
 

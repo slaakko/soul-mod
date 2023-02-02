@@ -617,6 +617,11 @@ void PointerType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredT
     }
 }
 
+Value* PointerType::MakeDefaultValue(Context& context) const
+{
+    return context.GetNullValue(soul::ast::SourcePos(), const_cast<PointerType*>(this));
+}
+
 Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context* context)
 {
     Type* type = ptr->GetType();

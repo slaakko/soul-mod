@@ -257,7 +257,7 @@ void TemplateParameterCreator::Visit(otava::ast::ParameterNode& node)
             value = Evaluate(node.Initializer(), context);
         }
         ParameterSymbol* parameter = new ParameterSymbol(templateParamName, type);
-        parameter->SetDefaultValue(value);
+        parameter->SetDefaultValue(node.Initializer());
         context->GetSymbolTable()->AddTemplateParameter(templateParamName, &node, nullptr, index, parameter, nullptr, context);
     }
     else 

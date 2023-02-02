@@ -1,0 +1,3 @@
+project cleanup;
+target=program;
+source <cleanup.cpp>;
