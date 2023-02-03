@@ -417,6 +417,7 @@ ClassTypeSymbol* FunctionSymbol::ParentClassType() const
 
 ParameterSymbol* FunctionSymbol::ThisParam(Context* context) const
 {
+    if (IsStatic()) return nullptr;
     if (!thisParam)
     {
         ClassTypeSymbol* classType = ParentClassType();
@@ -879,6 +880,11 @@ VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
     return temporary;
 }
 
+bool FunctionSymbol::IsStatic() const
+{
+    return (GetDeclarationFlags() & DeclarationFlags::staticFlag) != DeclarationFlags::none;
+}
+
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : 
     FunctionSymbol(SymbolKind::functionDefinitionSymbol, name_), 
     declaration(), 
@@ -987,6 +993,18 @@ int32_t FunctionDefinitionSymbol::VTabIndex() const
     else
     {
         return FunctionSymbol::VTabIndex();
+    }
+}
+
+bool FunctionDefinitionSymbol::IsStatic() const
+{
+    if (declaration)
+    {
+        return declaration->IsStatic();
+    }
+    else
+    {
+        return FunctionSymbol::IsStatic();
     }
 }
 

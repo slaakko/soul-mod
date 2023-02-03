@@ -1355,6 +1355,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     BoundStatementNode* boundIfStmt = BindStatement(ifStmt.get(), functionDefinitionSymbol, context);
     SetStatement(boundIfStmt);
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+    variable->SetGlobal(globalStaticVariableSymbol);
 }
 
 BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)

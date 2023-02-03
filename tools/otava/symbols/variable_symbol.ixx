@@ -42,6 +42,8 @@ public:
     std::string IrName() const;
     int32_t Index() const { return index; }
     void SetIndex(int32_t index_) { index = index_; }
+    VariableSymbol* Final() { if (global) return global; else return this; }
+    void SetGlobal(VariableSymbol* global_) { global = global_; }
 private:
     TypeSymbol* declaredType;
     util::uuid declaredTypeId;
@@ -51,6 +53,7 @@ private:
     util::uuid valueId;
     int32_t layoutIndex;
     int32_t index;
+    VariableSymbol* global;
 };
 
 struct VariableLess

@@ -462,6 +462,7 @@ void EnumTypeDefaultCtor::Read(Reader& reader)
 
 void EnumTypeDefaultCtor::Resolve(SymbolTable& symbolTable)
 {
+    FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type->IsEnumeratedTypeSymbol())
     {
@@ -512,6 +513,7 @@ void EnumTypeCopyCtor::Read(Reader& reader)
 
 void EnumTypeCopyCtor::Resolve(SymbolTable& symbolTable)
 {
+    FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type->IsEnumeratedTypeSymbol())
     {
@@ -564,6 +566,7 @@ void EnumTypeMoveCtor::Read(Reader& reader)
 
 void EnumTypeMoveCtor::Resolve(SymbolTable& symbolTable)
 {
+    FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type->IsEnumeratedTypeSymbol())
     {
@@ -619,6 +622,7 @@ void EnumTypeCopyAssignment::Read(Reader& reader)
 
 void EnumTypeCopyAssignment::Resolve(SymbolTable& symbolTable)
 {
+    FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type->IsEnumeratedTypeSymbol())
     {
@@ -668,6 +672,7 @@ void EnumTypeMoveAssignment::Read(Reader& reader)
 
 void EnumTypeMoveAssignment::Resolve(SymbolTable& symbolTable)
 {
+    FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type->IsEnumeratedTypeSymbol())
     {
@@ -720,6 +725,7 @@ void EnumTypeEqual::Read(Reader& reader)
 
 void EnumTypeEqual::Resolve(SymbolTable& symbolTable)
 {
+    FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type->IsEnumeratedTypeSymbol())
     {
@@ -772,6 +778,7 @@ void EnumTypeLess::Read(Reader& reader)
 
 void EnumTypeLess::Resolve(SymbolTable& symbolTable)
 {
+    FunctionSymbol::Resolve(symbolTable);
     TypeSymbol* type = symbolTable.GetType(enumTypeId);
     if (type->IsEnumeratedTypeSymbol())
     {

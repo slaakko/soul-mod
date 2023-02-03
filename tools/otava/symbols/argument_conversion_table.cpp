@@ -525,7 +525,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return underlyingType; }
     TypeSymbol* ConversionArgType() const override { return enumType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 1; }
+    int32_t ConversionDistance() const override { return 100; }
 private:
     EnumeratedTypeSymbol* enumType;
     TypeSymbol* underlyingType;
@@ -581,7 +581,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return enumType; }
     TypeSymbol* ConversionArgType() const override { return underlyingType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 1; }
+    int32_t ConversionDistance() const override { return 255; }
 private:
     EnumeratedTypeSymbol* enumType;
     TypeSymbol* underlyingType;

@@ -180,6 +180,7 @@ public:
     virtual int32_t VTabIndex() const { return vtabIndex; }
     FunctionDefinitionSymbol* Destructor() const { return destructor; }
     void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
+    virtual bool IsStatic() const;
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -219,6 +220,7 @@ public:
     bool IsPure() const override;
     bool IsOverride() const override;
     int32_t VTabIndex() const override;
+    bool IsStatic() const override;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;

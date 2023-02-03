@@ -223,6 +223,10 @@ void FirstArgResolver::Visit(BoundFunctionCallNode& node)
     {
         firstArg = node.Clone();
     }
+    else if (op == otava::ast::NodeKind::dotNode && node.GetType()->IsReferenceType())
+    {
+        firstArg = new BoundRefToPtrNode(node.Clone(), node.GetSourcePos(), node.GetType()->RemoveReference(context)->AddPointer(context));
+    }
 }
 
 BoundExpressionNode* GetFirstArg(BoundNode* node, Context* context)
@@ -682,6 +686,10 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
         }
     }
+    if (symbol && symbol->Name() == U"foo")
+    {
+        int x = 0;
+    }
     if (symbol)
     {
         switch (symbol->Kind())
@@ -692,7 +700,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 Symbol* sym = variableGroup->GetSingleSymbol();
                 if (sym->IsVariableSymbol())
                 {
-                    VariableSymbol* variable = static_cast<VariableSymbol*>(sym);
+                    VariableSymbol* variable = static_cast<VariableSymbol*>(sym)->Final();
                     BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
                     if (variable->IsMemberVariable())
                     {
