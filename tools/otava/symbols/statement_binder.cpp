@@ -100,9 +100,9 @@ BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionN
     {
         dtorSymbol = GenerateDestructor(cls, sourcePos, context);
     }
-    if (dtorSymbol && (dtorSymbol->IsFunctionDefinitionSymbol() || dtorSymbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol()))
+    if (dtorSymbol && (dtorSymbol->IsFunctionSymbol() || dtorSymbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol()))
     {
-        FunctionDefinitionSymbol* dtorFunctionSymbol = static_cast<FunctionDefinitionSymbol*>(dtorSymbol);
+        FunctionSymbol* dtorFunctionSymbol = static_cast<FunctionSymbol*>(dtorSymbol);
         std::unique_ptr<BoundFunctionCallNode> destructorCall(new BoundFunctionCallNode(dtorFunctionSymbol, sourcePos, cls));
         destructorCall->AddArgument(arg->Clone());
         return destructorCall.release();

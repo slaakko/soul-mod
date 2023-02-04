@@ -235,7 +235,6 @@ private:
     void EmitReturn(const soul::ast::SourcePos& sourcePos);
     void ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::SourcePos& sourcePos);
     void GenerateGlobalInitializationFunction();
-    void GenerateMainWrapper();
     otava::symbols::Context& context;
     std::string config;
     bool verbose;
@@ -1021,8 +1020,8 @@ void CodeGenerator::Visit(otava::symbols::BoundTryStatementNode& node)
     {
         otava::symbols::BoundHandlerNode* handler = node.Handlers()[i].get();
         handler->Accept(*this);
+        StatementPrefix();
     }
-    StatementPrefix();
     otava::intermediate::Value* nextCtx = emitter.EmitCall(emitter.EhFunctions().PopContextFunction(), std::vector<otava::intermediate::Value*>());
     std::vector<otava::intermediate::Value*> restoreContextArgs;
     restoreContextArgs.push_back(nextCtx);
@@ -1036,7 +1035,6 @@ void CodeGenerator::Visit(otava::symbols::BoundTryStatementNode& node)
 
 void CodeGenerator::Visit(otava::symbols::BoundHandlerNode& node)
 {
-    StatementPrefix();
     uint64_t hth = 0;
     uint64_t htl = 0;
     util::UuidToInts(node.ExceptionTypeId(), hth, htl);
@@ -1048,10 +1046,15 @@ void CodeGenerator::Visit(otava::symbols::BoundHandlerNode& node)
     otava::intermediate::BasicBlock* nextCatchBlock = emitter.CreateBasicBlock();
     emitter.EmitBranch(handleValue, catchBlock, nextCatchBlock);
     emitter.SetCurrentBasicBlock(catchBlock);
+    prevWasTerminator = false;
     node.CatchBlock()->Accept(*this);
-    emitter.EmitJump(continueAfterTryBlock);
+    if (!node.CatchBlock()->EndsWithTerminator())
+    {
+        emitter.EmitJump(continueAfterTryBlock);
+    }
     nextBlock = nextCatchBlock;
     emitter.SetNextBlock(nextBlock);
+    prevWasTerminator = false;
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundLiteralNode& node)

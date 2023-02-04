@@ -686,10 +686,6 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             symbol = sp->ClassTemplate()->GetScope()->Lookup(node.Str(), symbolGroups, ScopeLookup::allScopes, node.GetSourcePos(), context, LookupFlags::dontResolveSingle);
         }
     }
-    if (symbol && symbol->Name() == U"foo")
-    {
-        int x = 0;
-    }
     if (symbol)
     {
         switch (symbol->Kind())

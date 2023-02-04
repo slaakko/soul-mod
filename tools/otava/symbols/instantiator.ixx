@@ -37,6 +37,7 @@ public:
     void Visit(otava::ast::ForStatementNode& node) override;
     void Visit(otava::ast::ExpressionStatementNode& node) override;
     void Visit(otava::ast::ReturnStatementNode& node) override;
+    void Visit(otava::ast::ExceptionDeclarationNode& node) override;
 private:
     Context* context;
     bool innerClass;

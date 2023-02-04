@@ -700,6 +700,10 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
         {
             arg = args[i].get();
             argType = arg->GetType();
+            if (!argType)
+            {
+                int x = 0;
+            }
         }
         ParameterSymbol* parameter = functionMatch.function->MemFunParameters(context)[i];
         TypeSymbol* paramType = parameter->GetReferredType(context);

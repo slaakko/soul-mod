@@ -198,4 +198,9 @@ void Instantiator::Visit(otava::ast::ReturnStatementNode& node)
 {
 }
 
+void Instantiator::Visit(otava::ast::ExceptionDeclarationNode& node)
+{
+    ProcessExceptionDeclaration(&node, context);
+}
+
 } // namespace otava::symbols

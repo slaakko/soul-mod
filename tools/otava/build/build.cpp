@@ -324,15 +324,15 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
         module->SetImplementationUnitNames(implementationNameMap[module->Name()]);
         projectModule.Import(module, moduleMapper);
-        module->Write(project->Root());
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         moduleMapper.AddModule(project->ReleaseModule(file));
+        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false,
+            std::vector<std::string>()); 
+        module->Write(project->Root());
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
             std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
         }
-        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false,
-            std::vector<std::string>()); 
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
         if (initFn)
@@ -374,7 +374,6 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             otava::ast::WriteXml(node.get(), xmlFilePath);
         }
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
-        module->Write(project->Root());
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if (!interfaceUnitName.empty())
         {
@@ -382,12 +381,13 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             interfaceUnitModule->AddImplementationUnit(module);
             moduleMapper.AddModule(project->ReleaseModule(file));
         }
+        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, 
+            std::vector<std::string>());
+        module->Write(project->Root());
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
             std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
         }
-        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, 
-            std::vector<std::string>());
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
         if (initFn)

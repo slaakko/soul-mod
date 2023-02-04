@@ -617,6 +617,7 @@ void FunctionSymbol::Write(Writer& writer)
     {
         writer.Write(ReturnValueParam());
     }
+    writer.GetBinaryStreamWriter().Write(vtabIndex);
 }
 
 void FunctionSymbol::Read(Reader& reader)
@@ -636,6 +637,7 @@ void FunctionSymbol::Read(Reader& reader)
             returnValueParam.reset(static_cast<ParameterSymbol*>(returnValueParamSymbol));
         }
     }
+    vtabIndex = reader.GetBinaryStreamReader().ReadInt();
 }
 
 void FunctionSymbol::Resolve(SymbolTable& symbolTable)
