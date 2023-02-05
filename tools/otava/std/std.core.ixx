@@ -6,6 +6,7 @@
 export module std.core;
 
 export import std.init;
+// export import std.atexit;
 export import std.algorithm;
 export import std.atomic;
 export import std.type.fundamental;

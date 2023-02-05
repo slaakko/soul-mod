@@ -26,7 +26,7 @@ void Error(const std::string& message, const SourcePos& sourcePos, Context* cont
 
 [[noreturn]]
 void Error(const std::string& message, const SourcePos& sourcePos, Context* context, const SourcePos& refSourcePos)
-{
+{  
     exceptionThrown = true;
     throw std::runtime_error(message + " at\n'" + context->FilePath() + "':" + std::to_string(sourcePos.line) + ":\n" +
         context->ErrorLines(sourcePos) + ": see reference line " + std::to_string(refSourcePos.line) + ":\n" +

@@ -1,5 +1,7 @@
 project std;
 target=library;
+// interface <std.atexit.ixx>;
+// source <std.atexit.cpp>;
 interface <std.init.ixx>;
 source <std.init.cpp>;
 interface <std.ixx>;

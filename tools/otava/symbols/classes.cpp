@@ -196,10 +196,6 @@ void ClassTypeSymbol::Accept(Visitor& visitor)
 
 void ClassTypeSymbol::Write(Writer& writer)
 {
-    if (Name() == U"exception")
-    {
-        int x = 0;
-    }
     TypeSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(flags));
     uint32_t nb = baseClasses.size();
@@ -356,10 +352,6 @@ bool ClassTypeSymbol::IsTemplate() const
 
 void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos)
 {
-    if (Name() == U"exception")
-    {
-        int x = 0;
-    }
     if (baseClasses.size() > 1)
     {
         otava::symbols::SetExceptionThrown();
@@ -408,7 +400,6 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
             {
                 fn = declaration;
             }
-            int x = 0;
         }
         if (fn->IsVirtual())
         {
@@ -1036,10 +1027,6 @@ void TrivialClassDtor::GenerateCode(Emitter& emitter, std::vector<BoundExpressio
 
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    if (classTypeSymbol->Name() == U"runtime_error")
-    {
-        int x = 0;
-    }
     Symbol* dtorFunctionGroupSymbol = classTypeSymbol->GetScope()->Lookup(U"@destructor", SymbolGroupKind::functionSymbolGroup, ScopeLookup::thisScope, sourcePos, context, 
         LookupFlags::dontResolveSingle);
     Symbol* destructorFn = nullptr;

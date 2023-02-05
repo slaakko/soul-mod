@@ -38,6 +38,7 @@ public:
 private:
     std::u32string name;
     std::map<int, std::vector<Operation*>> arityOperationsMap;
+    std::vector<Operation*> anyArityOperations;
 };
 
 class OperationRepository

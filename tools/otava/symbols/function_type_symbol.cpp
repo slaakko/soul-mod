@@ -9,6 +9,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
+import otava.symbols.emitter;
 
 namespace otava::symbols {
 
@@ -87,6 +88,16 @@ void FunctionTypeSymbol::Resolve(SymbolTable& symbolTable)
 void FunctionTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
+}
+
+otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    std::vector<otava::intermediate::Type*> paramTypes;
+    for (const auto& paramType : parameterTypes)
+    {
+        paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
+    }
+    return emitter.MakePtrType(emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes));
 }
 
 } // namespace otava::symbols

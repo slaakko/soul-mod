@@ -257,6 +257,7 @@ public:
     Value* Initializer() const { return initializer; }
     bool Once() const { return once; }
     std::string ToString() const override { return name; }
+    Type* PtrType(Context& context) const;
 private:
     std::string name;
     Value* initializer;

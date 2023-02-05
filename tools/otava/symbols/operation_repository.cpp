@@ -9,6 +9,7 @@ import otava.symbols.type.symbol;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.function.symbol;
+import otava.symbols.function.type.symbol;
 import otava.symbols.context;
 import otava.symbols.emitter;
 import otava.symbols.argument.conversion.table;
@@ -1591,6 +1592,63 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
     context->PopBoundFunction();
 }
 
+class FunctionPtrApply : public FunctionSymbol
+{
+public:
+    FunctionPtrApply(FunctionTypeSymbol* type_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+        const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+private:
+    FunctionTypeSymbol* functionType;
+};
+
+FunctionPtrApply::FunctionPtrApply(FunctionTypeSymbol* functionType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) : 
+    FunctionSymbol(U"operator()"), functionType(functionType_)
+{
+    SetFunctionKind(FunctionKind::function);
+    SetAccess(Access::public_);
+    ParameterSymbol* parameter = new ParameterSymbol(U"this", functionType->AddPointer(context)->AddPointer(context));
+    AddSymbol(parameter, sourcePos, context);
+    for (const auto& parameterType : functionType->ParameterTypes())
+    {
+        ParameterSymbol* parameter = new ParameterSymbol(U"@param", parameterType);
+        AddSymbol(parameter, sourcePos, context);
+    }
+    SetReturnType(functionType->ReturnType(), context);
+}
+
+void FunctionPtrApply::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
+    const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    // todo
+}
+
+class FunctionPtrApplyOperation : public Operation
+{
+public:
+    FunctionPtrApplyOperation();
+    FunctionSymbol* Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
+private:
+    std::vector<std::unique_ptr<FunctionSymbol>> functions;
+};
+
+FunctionPtrApplyOperation::FunctionPtrApplyOperation() : Operation(U"operator()", -1)
+{
+}
+
+FunctionSymbol* FunctionPtrApplyOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
+{
+    if (args.size() < 1) return nullptr;
+    TypeSymbol* type = args[0]->GetType();
+    if (type->PointerCount() != 2) return nullptr;
+    TypeSymbol* pointeeType = type->RemovePointer(context)->RemovePointer(context);
+    if (!pointeeType->IsFunctionTypeSymbol()) return nullptr;
+    FunctionTypeSymbol* functionType = static_cast<FunctionTypeSymbol*>(pointeeType);
+    FunctionPtrApply* apply = new FunctionPtrApply(functionType, sourcePos, context);
+    functions.push_back(std::unique_ptr<FunctionSymbol>(apply));
+    return apply;
+}
+
 Operation::Operation(const std::u32string& groupName_, int arity_) : groupName(groupName_), arity(arity_)
 {
 }
@@ -1605,7 +1663,14 @@ OperationGroup::OperationGroup(const std::u32string& name_) : name(name_)
 
 void OperationGroup::AddOperation(Operation* operation)
 {
-    arityOperationsMap[operation->Arity()].push_back(operation);
+    if (operation->Arity() == -1)
+    {
+        anyArityOperations.push_back(operation);
+    }
+    else
+    {
+        arityOperationsMap[operation->Arity()].push_back(operation);
+    }
 }
 
 FunctionSymbol* OperationGroup::GetOperation(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos,
@@ -1622,6 +1687,14 @@ FunctionSymbol* OperationGroup::GetOperation(std::vector<std::unique_ptr<BoundEx
             {
                 return op;
             }
+        }
+    }
+    for (const auto& operation : anyArityOperations)
+    {
+        FunctionSymbol* op = operation->Get(args, sourcePos, context);
+        if (op)
+        {
+            return op;
         }
     }
     return nullptr;
@@ -1647,6 +1720,7 @@ OperationRepository::OperationRepository()
     AddOperation(new ClassCopyAssignmentOperation());
     AddOperation(new ClassMoveAssignmentOperation());
     AddOperation(new CopyRefOperation());
+    AddOperation(new FunctionPtrApplyOperation());
 }
 
 OperationGroup* OperationRepository::GetOrInsertOperationGroup(const std::u32string& operationGroupName)

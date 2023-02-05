@@ -343,6 +343,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
     cls->MakeVTab(&context, sourcePos);
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Type* arrayType = emitter.MakeArrayType(cls->VTab().size() * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
+    otava::intermediate::Type* arrayPtrType = emitter.MakePtrType(arrayType);
     std::vector<otava::intermediate::Value*> elements;
     util::uuid classId = cls->Id();
     uint64_t classIdFirst;

@@ -307,6 +307,7 @@ otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(Vari
     globalVariableSymbol->SetDeclaredType(type);
     otava::intermediate::Value* initializer = nullptr;
     otava::intermediate::Type* irType = globalVariableSymbol->GetType()->IrType(emitter, sourcePos, context);
+    otava::intermediate::Type* ptrIrType = emitter.MakePtrType(irType);
     if (definition)
     {
         if (globalVariableSymbol->GetValue())
@@ -317,7 +318,7 @@ otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(Vari
         {
             initializer = irType->DefaultValue();
         }
-        }
+    }
     otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, globalVariableSymbol->IrName(), initializer);
     emitter.SetIrObject(globalVariableSymbol, irVariable);
     return irVariable;
@@ -877,6 +878,10 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
                 value = emitter.EmitLoad(value);
             }
             emitter.Stack().Push(value);
+        }
+        else if (ptr->GetType()->IsPointerType() && ptr->GetType()->RemovePointer(soul::ast::SourcePos(), emitter.GetIntermediateContext())->IsAggregateType())
+        {
+            emitter.Stack().Push(ptr);
         }
         else
         {

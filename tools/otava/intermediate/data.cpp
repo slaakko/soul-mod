@@ -443,6 +443,11 @@ GlobalVariable::GlobalVariable(const SourcePos& sourcePos_, Type* type_, const s
     }
 }
 
+Type* GlobalVariable::PtrType(Context& context) const
+{
+    return context.MakePtrType(GetType());
+}
+
 void GlobalVariable::Write(util::CodeFormatter& formatter)
 {
     formatter.Write(GetType()->Name());
@@ -913,7 +918,7 @@ Value* Data::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const st
         }
         else
         {
-            type = globalVariable->GetType()->AddPointer(context);
+            type = globalVariable->GetType()->AddPointer(context); 
         }
         AddressValue* addressValue = new AddressValue(sourcePos, globalVariable, type);
         values.push_back(std::unique_ptr<Value>(addressValue));

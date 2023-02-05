@@ -39,7 +39,7 @@ void PrintHelp()
     std::cout << "--xml | -x" << std::endl;
     std::cout << "  Write ASTs as XML." << std::endl;
     std::cout << "--seed | -s" << std::endl;
-    std::cout << "  Initialize uuid seed to 0" << std::endl;
+    std::cout << "  Initialize uuid seed to 0." << std::endl;
 }
 
 int main(int argc, const char** argv)

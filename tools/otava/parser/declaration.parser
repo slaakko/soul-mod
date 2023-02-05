@@ -407,7 +407,6 @@ parser DeclarationParser
         )
         {
             otava::ast::Node* node = new otava::ast::UsingEnumDeclarationNode(sourcePos, usng, ees, semicolon);
-            // sngcpp::symbols::AddUsingEnumDeclaration(node, ctx); TODO
             return node;
         }
         ;

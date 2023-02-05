@@ -669,6 +669,10 @@ void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
+    if (node.Str() == U"invoke_fn")
+    {
+        int x = 0;
+    }
     Symbol* symbol = nullptr;
     if (qualifiedScope)
     {
