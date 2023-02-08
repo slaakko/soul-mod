@@ -1,5 +1,8 @@
 module std.init;
 
+import std.thread.mutex;
+import std.atexit;
+
 namespace std {
 
 std::recursive_mutex init_lock;

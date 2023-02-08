@@ -154,9 +154,9 @@ FwdDeclaredStructureType* Context::GetFwdDeclaredStructureType(const util::uuid&
     return types->GetFwdDeclaredStructureType(id, typeId);
 }
 
-GlobalVariable* Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once)
+GlobalVariable* Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, Type* globalType, const std::string& variableName, Value* initializer, bool once)
 {
-    return data->AddGlobalVariable(sourcePos, type, variableName, initializer, once, this);
+    return data->AddGlobalVariable(sourcePos, type, globalType, variableName, initializer, once, this);
 }
 
 GlobalVariable* Context::GetGlobalVariableForString(otava::intermediate::Value* stringValue)
@@ -742,6 +742,7 @@ Instruction* Context::CreateCall(Value* callee)
     }
     else
     {
+
         throw std::runtime_error("invalid call");
     }
 }

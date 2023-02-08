@@ -132,10 +132,12 @@ parser IntermediateCodeParser
         ;
 
     DataDefinition(otava::intermediate::Context* context, 
-        var otava::intermediate::TypeRef tref, var soul::ast::SourcePos sp, var bool once, var std::string variableName) 
-        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } (ONCE{ once = true; })? ID{ sp = lexer.GetSourcePos(pos); variableName = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
-        (   SEMICOLON{ context->AddGlobalVariable(sp, tref.GetType(), variableName, nullptr, once); }
-        |   ASSIGN Constant(context):initializer{ context->AddGlobalVariable(sp, tref.GetType(), variableName, initializer, once); }
+        var otava::intermediate::TypeRef tref, var otava::intermediate::TypeRef globalTref, var soul::ast::SourcePos sp, var bool once, var std::string variableName) 
+        ::= TypeRef:typeRef{ tref = typeRef; context->ResolveType(tref); } GLOBAL  
+            TypeRef:globalTypeRef { globalTref = globalTypeRef; context->ResolveType(globalTref); }
+            (ONCE{ once = true; })? ID{ sp = lexer.GetSourcePos(pos); variableName = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
+        (   SEMICOLON{ context->AddGlobalVariable(sp, tref.GetType(), globalTref.GetType(), variableName, nullptr, once); }
+        |   ASSIGN Constant(context):initializer{ context->AddGlobalVariable(sp, tref.GetType(), globalTref.GetType(), variableName, initializer, once); }
         )
         ;
 

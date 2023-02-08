@@ -1607,7 +1607,7 @@ FunctionPtrApply::FunctionPtrApply(FunctionTypeSymbol* functionType_, const soul
 {
     SetFunctionKind(FunctionKind::function);
     SetAccess(Access::public_);
-    ParameterSymbol* parameter = new ParameterSymbol(U"this", functionType->AddPointer(context)->AddPointer(context));
+    ParameterSymbol* parameter = new ParameterSymbol(U"fn", functionType->AddPointer(context));
     AddSymbol(parameter, sourcePos, context);
     for (const auto& parameterType : functionType->ParameterTypes())
     {
@@ -1620,7 +1620,22 @@ FunctionPtrApply::FunctionPtrApply(FunctionTypeSymbol* functionType_, const soul
 void FunctionPtrApply::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    // todo
+    otava::intermediate::Value* callee = nullptr;
+    args[0]->Load(emitter, OperationFlags::none, sourcePos, context);
+    callee = emitter.Stack().Pop();
+    int na = args.size() - 1;
+    for (int i = 0; i < na; ++i)
+    {
+        args[i + 1]->Load(emitter, OperationFlags::none, sourcePos, context);
+    }
+    std::vector<otava::intermediate::Value*> arguments;
+    arguments.resize(na);
+    for (int i = 0; i < na; ++i)
+    {
+        otava::intermediate::Value* arg = emitter.Stack().Pop();
+        arguments[na - i - 1] = arg;
+    }
+    emitter.EmitCall(callee, arguments);
 }
 
 class FunctionPtrApplyOperation : public Operation
@@ -1640,8 +1655,8 @@ FunctionSymbol* FunctionPtrApplyOperation::Get(std::vector<std::unique_ptr<Bound
 {
     if (args.size() < 1) return nullptr;
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 2) return nullptr;
-    TypeSymbol* pointeeType = type->RemovePointer(context)->RemovePointer(context);
+    if (type->PointerCount() != 1) return nullptr;
+    TypeSymbol* pointeeType = type->RemovePointer(context);
     if (!pointeeType->IsFunctionTypeSymbol()) return nullptr;
     FunctionTypeSymbol* functionType = static_cast<FunctionTypeSymbol*>(pointeeType);
     FunctionPtrApply* apply = new FunctionPtrApply(functionType, sourcePos, context);

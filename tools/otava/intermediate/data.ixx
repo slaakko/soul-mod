@@ -250,15 +250,16 @@ private:
 class GlobalVariable : public Value
 {
 public:
-    GlobalVariable(const SourcePos& sourcePos_, Type* type_, const std::string& name_, Value* initializer_, bool once_);
+    GlobalVariable(const SourcePos& sourcePos_, Type* type_, Type* globalType_, const std::string& name_, Value* initializer_, bool once_);
     void Write(util::CodeFormatter& formatter);
     virtual void Accept(Visitor& visitor);
     const std::string& Name() const { return name; }
     Value* Initializer() const { return initializer; }
     bool Once() const { return once; }
     std::string ToString() const override { return name; }
-    Type* PtrType(Context& context) const;
+    Type* GlobalType() const { return globalType; }
 private:
+    Type* globalType;
     std::string name;
     Value* initializer;
     bool once;
@@ -281,7 +282,7 @@ public:
     void Write(util::CodeFormatter& formatter);
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
-    GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context);
+    GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, Type* globalType, const std::string& variableName, Value* initializer, bool once, Context* context);
     GlobalVariable* GetGlobalVariableForString(Value* stringValue);
     Value* GetTrueValue(const Types& types);
     Value* GetFalseValue(const Types& types);

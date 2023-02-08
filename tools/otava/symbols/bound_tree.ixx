@@ -73,7 +73,7 @@ enum class BoundNodeKind
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
-    boundThrowExpressionNode, boundTryStatementNode, boundHandlerNode
+    boundThrowExpressionNode, boundTryStatementNode, boundHandlerNode, boundFunctionValueNode, boundVariableAsVoidPtrNode
 };
 
 std::string BoundNodeKindStr(BoundNodeKind nodeKind);
@@ -161,7 +161,7 @@ public:
     FunctionTemplateRepository* GetFunctionTemplateRepository() const { return functionTemplateRepository.get(); }
     ClassTemplateRepository* GetClassTemplateRepository() const { return classTemplateRepository.get(); }
     BoundFunctionNode* GetCompileUnitInitializationFunction() { return compileUnitInitializationFunction.get(); }
-    void AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, BoundExpressionNode* atExitCall, const soul::ast::SourcePos& sourcePos, Context* context);
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(BoundNode* node);
     void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
@@ -863,6 +863,28 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     BoundExpressionNode* Clone() const override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+};
+
+class BoundFunctionValueNode : public BoundExpressionNode
+{
+public:
+    BoundFunctionValueNode(FunctionSymbol* function_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    FunctionSymbol* function;
+};
+
+class BoundVariableAsVoidPtrNode : public BoundExpressionNode
+{
+public:
+    BoundVariableAsVoidPtrNode(BoundExpressionNode* addrOfBoundVariable_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    std::unique_ptr<BoundExpressionNode> addrOfBoundVariable;
 };
 
 } // namespace otava::symbols

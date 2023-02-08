@@ -1,6 +1,7 @@
 module std.atomic;
 
 import std.crt;
+import std.atexit;
 
 namespace std {
 

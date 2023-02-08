@@ -2043,10 +2043,12 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
     #endif
     soul::lexer::RuleGuard ruleGuard(lexer, 9185574142806589453);
     otava::intermediate::TypeRef tref = otava::intermediate::TypeRef();
+    otava::intermediate::TypeRef globalTref = otava::intermediate::TypeRef();
     soul::ast::SourcePos sp = soul::ast::SourcePos();
     bool once = bool();
     std::string variableName = std::string();
     std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> typeRef;
+    std::unique_ptr<soul::parser::Value<otava::intermediate::TypeRef>> globalTypeRef;
     std::unique_ptr<otava::intermediate::Value> initializer;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2060,13 +2062,60 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = IntermediateCodeParser<Lexer>::TypeRef(lexer);
-                    typeRef.reset(static_cast<soul::parser::Value<otava::intermediate::TypeRef>*>(match.value));
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch4 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch5 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = IntermediateCodeParser<Lexer>::TypeRef(lexer);
+                            typeRef.reset(static_cast<soul::parser::Value<otava::intermediate::TypeRef>*>(match.value));
+                            if (match.hit)
+                            {
+                                tref = typeRef->value;
+                                context->ResolveType(tref);
+                            }
+                            *parentMatch5 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
                     if (match.hit)
                     {
-                        tref = typeRef->value;
-                        context->ResolveType(tref);
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch6 = &match;
+                        {
+                            soul::parser::Match match(false);
+                            if (*lexer == GLOBAL)
+                            {
+                                ++lexer;
+                                match.hit = true;
+                            }
+                            *parentMatch6 = match;
+                        }
+                        *parentMatch4 = match;
+                    }
+                    *parentMatch3 = match;
+                }
+                if (match.hit)
+                {
+                    soul::parser::Match match(false);
+                    soul::parser::Match* parentMatch7 = &match;
+                    {
+                        soul::parser::Match match(false);
+                        soul::parser::Match* parentMatch8 = &match;
+                        {
+                            int64_t pos = lexer.GetPos();
+                            soul::parser::Match match = IntermediateCodeParser<Lexer>::TypeRef(lexer);
+                            globalTypeRef.reset(static_cast<soul::parser::Value<otava::intermediate::TypeRef>*>(match.value));
+                            if (match.hit)
+                            {
+                                globalTref = globalTypeRef->value;
+                                context->ResolveType(globalTref);
+                            }
+                            *parentMatch8 = match;
+                        }
+                        *parentMatch7 = match;
                     }
                     *parentMatch3 = match;
                 }
@@ -2075,17 +2124,17 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
             if (match.hit)
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch4 = &match;
+                soul::parser::Match* parentMatch9 = &match;
                 {
                     soul::parser::Match match(true);
                     int64_t save = lexer.GetPos();
-                    soul::parser::Match* parentMatch5 = &match;
+                    soul::parser::Match* parentMatch10 = &match;
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch6 = &match;
+                        soul::parser::Match* parentMatch11 = &match;
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch7 = &match;
+                            soul::parser::Match* parentMatch12 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
@@ -2098,20 +2147,20 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
                                 {
                                     once = true;
                                 }
-                                *parentMatch7 = match;
+                                *parentMatch12 = match;
                             }
-                            *parentMatch6 = match;
+                            *parentMatch11 = match;
                         }
                         if (match.hit)
                         {
-                            *parentMatch5 = match;
+                            *parentMatch10 = match;
                         }
                         else
                         {
                             lexer.SetPos(save);
                         }
                     }
-                    *parentMatch4 = match;
+                    *parentMatch9 = match;
                 }
                 *parentMatch2 = match;
             }
@@ -2120,10 +2169,10 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
         if (match.hit)
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch8 = &match;
+            soul::parser::Match* parentMatch13 = &match;
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch9 = &match;
+                soul::parser::Match* parentMatch14 = &match;
                 {
                     int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
@@ -2137,9 +2186,9 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
                         sp = lexer.GetSourcePos(pos);
                         variableName = util::ToUtf8(lexer.GetToken(pos).ToString());
                     }
-                    *parentMatch9 = match;
+                    *parentMatch14 = match;
                 }
-                *parentMatch8 = match;
+                *parentMatch13 = match;
             }
             *parentMatch1 = match;
         }
@@ -2148,19 +2197,19 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
     if (match.hit)
     {
         soul::parser::Match match(false);
-        soul::parser::Match* parentMatch10 = &match;
+        soul::parser::Match* parentMatch15 = &match;
         {
             soul::parser::Match match(false);
-            soul::parser::Match* parentMatch11 = &match;
+            soul::parser::Match* parentMatch16 = &match;
             {
                 soul::parser::Match match(false);
-                soul::parser::Match* parentMatch12 = &match;
+                soul::parser::Match* parentMatch17 = &match;
                 switch (*lexer)
                 {
                     case SEMICOLON:
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch13 = &match;
+                        soul::parser::Match* parentMatch18 = &match;
                         {
                             int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
@@ -2171,20 +2220,20 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
                             }
                             if (match.hit)
                             {
-                                context->AddGlobalVariable(sp, tref.GetType(), variableName, nullptr, once);
+                                context->AddGlobalVariable(sp, tref.GetType(), globalTref.GetType(), variableName, nullptr, once);
                             }
-                            *parentMatch13 = match;
+                            *parentMatch18 = match;
                         }
                         if (match.hit)
                         {
-                            *parentMatch12 = match;
+                            *parentMatch17 = match;
                         }
                         break;
                     }
                     case ASSIGN:
                     {
                         soul::parser::Match match(false);
-                        soul::parser::Match* parentMatch14 = &match;
+                        soul::parser::Match* parentMatch19 = &match;
                         {
                             soul::parser::Match match(false);
                             if (*lexer == ASSIGN)
@@ -2192,39 +2241,39 @@ soul::parser::Match IntermediateCodeParser<Lexer>::DataDefinition(Lexer& lexer, 
                                 ++lexer;
                                 match.hit = true;
                             }
-                            *parentMatch14 = match;
+                            *parentMatch19 = match;
                         }
                         if (match.hit)
                         {
                             soul::parser::Match match(false);
-                            soul::parser::Match* parentMatch15 = &match;
+                            soul::parser::Match* parentMatch20 = &match;
                             {
                                 soul::parser::Match match(false);
-                                soul::parser::Match* parentMatch16 = &match;
+                                soul::parser::Match* parentMatch21 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = IntermediateCodeParser<Lexer>::Constant(lexer, context);
                                     initializer.reset(static_cast<otava::intermediate::Value*>(match.value));
                                     if (match.hit)
                                     {
-                                        context->AddGlobalVariable(sp, tref.GetType(), variableName, initializer.release(), once);
+                                        context->AddGlobalVariable(sp, tref.GetType(), globalTref.GetType(), variableName, initializer.release(), once);
                                     }
-                                    *parentMatch16 = match;
+                                    *parentMatch21 = match;
                                 }
-                                *parentMatch15 = match;
+                                *parentMatch20 = match;
                             }
-                            *parentMatch14 = match;
+                            *parentMatch19 = match;
                         }
                         if (match.hit)
                         {
-                            *parentMatch12 = match;
+                            *parentMatch17 = match;
                         }
                         break;
                     }
                 }
-                *parentMatch11 = match;
+                *parentMatch16 = match;
             }
-            *parentMatch10 = match;
+            *parentMatch15 = match;
         }
         *parentMatch0 = match;
     }

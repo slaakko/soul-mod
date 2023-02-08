@@ -43,6 +43,40 @@ namespace otava::build {
 
 std::string GenerateMainWrapper(otava::symbols::Context* context)
 {
+/*  int __main_wrapper(int argc, const char** argv)
+*   {
+*       try
+*       {
+*           __global_init__();
+*           @retval = main(argc, argv);
+*           std::run_at_exits();
+*           return @retval;
+*       }
+*       catch (const std::exception& ex)
+*       {
+*           std::cerr << "unhandled exception escaped from main:";
+*           std::cerr << ex.what();
+*           std::cerr << "\n";
+*           return 1;
+*       }
+*       catch (...)
+*       {
+*           std::cerr << "unhandled unknown exception escaped from main.";
+*           std::cerr << "\n";
+*           return 1;
+*       }
+*   }
+*/
+    otava::ast::IdentifierNode* mainFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"main");
+    otava::ast::InvokeExprNode* mainFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), mainFn);
+    otava::ast::IdentifierNode* retValDeclarator = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@retval");
+    otava::ast::DeclSpecifierSequenceNode* retValDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
+    retValDeclSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::SourcePos()));
+    otava::ast::InitDeclaratorListNode* retValInitDeclarators = new otava::ast::InitDeclaratorListNode(soul::ast::SourcePos());
+    otava::ast::InitDeclaratorNode* retValInitDeclarator = new otava::ast::InitDeclaratorNode(soul::ast::SourcePos(), retValDeclarator, mainFnCall);
+    retValInitDeclarators->AddNode(retValInitDeclarator);
+    otava::ast::SimpleDeclarationNode* retValDeclaration = new otava::ast::SimpleDeclarationNode(
+        soul::ast::SourcePos(), retValDeclSpecifiers, retValInitDeclarators, nullptr, new otava::ast::SemicolonNode(soul::ast::SourcePos()));
     otava::ast::DeclSpecifierSequenceNode* declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
     declSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::SourcePos()));
     otava::ast::CompoundStatementNode* body = new otava::ast::CompoundStatementNode(soul::ast::SourcePos());
@@ -52,10 +86,15 @@ std::string GenerateMainWrapper(otava::symbols::Context* context)
     otava::ast::ExpressionStatementNode* globalInitStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), globalInitFnCall, nullptr, 
         new otava::ast::SemicolonNode(soul::ast::SourcePos()));
     tryBlock->AddNode(globalInitStmt);
-    otava::ast::IdentifierNode* mainFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"main");
-    otava::ast::InvokeExprNode* mainFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), mainFn);
-    otava::ast::ReturnStatementNode* mainCallStmt = new otava::ast::ReturnStatementNode(soul::ast::SourcePos(), mainFnCall, nullptr, nullptr, soul::ast::SourcePos());
-    tryBlock->AddNode(mainCallStmt);
+    tryBlock->AddNode(retValDeclaration);
+    otava::ast::Node* runAtExitsFn = otava::symbols::MakeTypeNameNodes(soul::ast::SourcePos(), U"std::run_at_exits");
+    otava::ast::InvokeExprNode* runAtExitsFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), runAtExitsFn);
+    otava::ast::ExpressionStatementNode* runAtExitsStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), runAtExitsFnCall, nullptr,
+        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
+    tryBlock->AddNode(runAtExitsStmt);
+    otava::ast::IdentifierNode* retValVarId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@retval");
+    otava::ast::ReturnStatementNode* returnRetValStmt = new otava::ast::ReturnStatementNode(soul::ast::SourcePos(), retValVarId, nullptr, nullptr, soul::ast::SourcePos());
+    tryBlock->AddNode(returnRetValStmt);
     otava::ast::HandlerSequenceNode* handlers = new otava::ast::HandlerSequenceNode(soul::ast::SourcePos());
     otava::ast::CompoundStatementNode* catchStdExceptionBlock = new otava::ast::CompoundStatementNode(soul::ast::SourcePos());
     otava::ast::Node* stdCerr = otava::symbols::MakeTypeNameNodes(soul::ast::SourcePos(), U"std::cerr");

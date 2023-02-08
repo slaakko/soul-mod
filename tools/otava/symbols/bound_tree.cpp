@@ -324,7 +324,8 @@ otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(Vari
     return irVariable;
 }
 
-void BoundCompileUnitNode::AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, const soul::ast::SourcePos& sourcePos, Context* context)
+void BoundCompileUnitNode::AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, BoundExpressionNode* atExitCall, 
+    const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (!compileUnitInitializationFunction)
     {
@@ -337,6 +338,12 @@ void BoundCompileUnitNode::AddDynamicInitialization(BoundExpressionNode* dynamic
     BoundExpressionStatementNode* initExprStmt = new BoundExpressionStatementNode(sourcePos);
     initExprStmt->SetExpr(dynamicInitialization);
     body->AddStatement(initExprStmt);
+    if (atExitCall)
+    {
+        BoundExpressionStatementNode* atExitStmt = new BoundExpressionStatementNode(sourcePos);
+        atExitStmt->SetExpr(atExitCall);
+        body->AddStatement(atExitStmt);
+    }
 }
 
 BoundCtorInitializerNode::BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundCtorInitializerNode, sourcePos_)
@@ -878,10 +885,6 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
                 value = emitter.EmitLoad(value);
             }
             emitter.Stack().Push(value);
-        }
-        else if (ptr->GetType()->IsPointerType() && ptr->GetType()->RemovePointer(soul::ast::SourcePos(), emitter.GetIntermediateContext())->IsAggregateType())
-        {
-            emitter.Stack().Push(ptr);
         }
         else
         {
@@ -1852,6 +1855,54 @@ BoundExpressionNode* BoundEmptyDestructorNode::Clone() const
 
 void BoundEmptyDestructorNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+}
+
+BoundFunctionValueNode::BoundFunctionValueNode(FunctionSymbol* function_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundFunctionValueNode, sourcePos_, type_), function(function_)
+{
+}
+
+void BoundFunctionValueNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundFunctionValueNode::Clone() const
+{
+    return new BoundFunctionValueNode(function, GetSourcePos(), GetType());
+}
+
+void BoundFunctionValueNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    emitter.GetOrInsertFunction(function->IrName(context), static_cast<otava::intermediate::FunctionType*>(function->IrType(emitter, sourcePos, context)));
+    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(function->IrType(emitter, sourcePos, context), "@" + function->IrName(context));
+    otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
+    otava::intermediate::Value* functionValueAsVoidPtr = emitter.EmitBitcast(functionValue, voidPtrIrType);
+    emitter.Stack().Push(functionValueAsVoidPtr);
+}
+
+BoundVariableAsVoidPtrNode::BoundVariableAsVoidPtrNode(BoundExpressionNode* addrOfBoundVariable_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundVariableAsVoidPtrNode, sourcePos_, type_), addrOfBoundVariable(addrOfBoundVariable_)
+{
+}
+
+void BoundVariableAsVoidPtrNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundVariableAsVoidPtrNode::Clone() const
+{
+    return new BoundVariableAsVoidPtrNode(addrOfBoundVariable->Clone(), GetSourcePos(), GetType());
+}
+
+void BoundVariableAsVoidPtrNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    addrOfBoundVariable->Load(emitter, flags, sourcePos, context);
+    otava::intermediate::Value* variableValue = emitter.Stack().Pop();
+    otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
+    otava::intermediate::Value* variableAsVoidPtr = emitter.EmitBitcast(variableValue, voidPtrIrType);
+    emitter.Stack().Push(variableAsVoidPtr);
 }
 
 } // namespace otava::symbols

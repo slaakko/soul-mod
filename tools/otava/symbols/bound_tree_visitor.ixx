@@ -58,6 +58,8 @@ class BoundThrowExpressionNode;
 class BoundConstructTemporaryNode;
 class BoundGlobalVariableDefinitionNode;
 class BoundEmptyDestructorNode;
+class BoundFunctionValueNode;
+class BoundVariableAsVoidPtrNode;
 
 class BoundTreeVisitor
 {
@@ -112,6 +114,8 @@ public:
     virtual void Visit(BoundThrowExpressionNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
     virtual void Visit(BoundEmptyDestructorNode& node) {}
+    virtual void Visit(BoundFunctionValueNode& node) {}
+    virtual void Visit(BoundVariableAsVoidPtrNode& node) {}
 };
 
 class DefaultBoundTreeVisitor : public BoundTreeVisitor

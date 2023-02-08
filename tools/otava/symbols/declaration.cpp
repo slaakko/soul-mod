@@ -1013,9 +1013,33 @@ void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode
     std::unique_ptr<BoundFunctionCallNode> constructorCall = ResolveOverload(context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context, ex);
     if (constructorCall)
     {
-        context->GetBoundCompileUnit()->AddDynamicInitialization(constructorCall.release(), sourcePos, context);
+        std::unique_ptr<BoundFunctionCallNode> atExitCall = MakeAtExitForVariable(variable, sourcePos, context);
+        context->GetBoundCompileUnit()->AddDynamicInitialization(constructorCall.release(), atExitCall.release(), sourcePos, context);
     }
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+}
+
+std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::vector<std::unique_ptr<BoundExpressionNode>> dtorArgs;
+    BoundVariableNode* boundGlobalVariable(new BoundVariableNode(variable, sourcePos));
+    dtorArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundGlobalVariable, sourcePos, variable->GetType()->AddPointer(context))));
+    Exception ex;
+    std::unique_ptr<BoundFunctionCallNode> destructorCall = ResolveOverload(context->GetSymbolTable()->CurrentScope(), U"@destructor", dtorArgs, sourcePos, context, ex);
+    std::unique_ptr<BoundFunctionCallNode> atExitCall;
+    if (destructorCall && !destructorCall->GetFunctionSymbol()->IsTrivialDestructor())
+    {
+        TypeSymbol* voidPtrType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context);
+        std::vector<std::unique_ptr<BoundExpressionNode>> atExitArgs;
+        atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundFunctionValueNode(destructorCall->GetFunctionSymbol(), sourcePos, voidPtrType)));
+        BoundVariableNode* boundGlobalVariable(new BoundVariableNode(variable, sourcePos));
+        atExitArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableAsVoidPtrNode(new BoundAddressOfNode(
+            boundGlobalVariable, sourcePos, boundGlobalVariable->GetType()->AddPointer(context)), sourcePos, voidPtrType)));
+        Exception ex;
+        Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        atExitCall = ResolveOverload(stdScope, U"at_exit", atExitArgs, sourcePos, context, ex);
+    }
+    return atExitCall;
 }
 
 } // namespace otava::symbols

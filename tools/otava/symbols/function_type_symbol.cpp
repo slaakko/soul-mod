@@ -97,7 +97,7 @@ otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const so
     {
         paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
     }
-    return emitter.MakePtrType(emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes));
+    return emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes);
 }
 
 } // namespace otava::symbols

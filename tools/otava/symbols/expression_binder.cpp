@@ -195,6 +195,10 @@ void FirstArgResolver::Visit(BoundVariableNode& node)
     {
         firstArg = node.Clone();
     }
+    else if (op == otava::ast::NodeKind::nullNode)
+    {
+        firstArg = node.Clone();
+    }
     else
     {
         firstArg = new BoundAddressOfNode(node.Clone(), node.GetSourcePos(), node.GetType()->AddPointer(context));
@@ -669,10 +673,6 @@ void ExpressionBinder::Visit(otava::ast::DoubleNode& node)
 
 void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
 {
-    if (node.Str() == U"invoke_fn")
-    {
-        int x = 0;
-    }
     Symbol* symbol = nullptr;
     if (qualifiedScope)
     {
@@ -876,7 +876,14 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
     {
         BoundVariableNode* localVar = static_cast<BoundVariableNode*>(subject);
         BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
-        memberVar->SetThisPtr(new BoundAddressOfNode(localVar, node->GetSourcePos(), localVar->GetType()->AddPointer(context)));
+        if (node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
+        {
+            memberVar->SetThisPtr(localVar->Clone());
+        }
+        else
+        {
+            memberVar->SetThisPtr(new BoundAddressOfNode(localVar, node->GetSourcePos(), localVar->GetType()->AddPointer(context)));
+        }
         boundExpression = memberVar;
     }
     else if (subject->IsBoundParameterNode() && member->IsBoundMemberVariable())

@@ -1338,6 +1338,14 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     constructFunctionStaticStatement->SetExpr(constructorCall.release());
     otava::ast::BoundStatementNode* boundStatement = new otava::ast::BoundStatementNode(constructFunctionStaticStatement.release(), sourcePos);
     compound2->AddNode(boundStatement);
+    std::unique_ptr<BoundFunctionCallNode> atExitCall = MakeAtExitForVariable(globalStaticVariableSymbol, sourcePos, context);
+    if (atExitCall)
+    {
+        atExitStatement.reset(new BoundExpressionStatementNode(sourcePos));
+        atExitStatement->SetExpr(atExitCall.release());
+        otava::ast::BoundStatementNode* boundStatement = new otava::ast::BoundStatementNode(atExitStatement.release(), sourcePos);
+        compound2->AddNode(boundStatement);
+    }
     otava::ast::BinaryExprNode* setInitializedToTrueExpr = new otava::ast::BinaryExprNode(sourcePos, new otava::ast::AssignNode(sourcePos), initializedVarName->Clone(),
         new otava::ast::BooleanLiteralNode(sourcePos, true, U"true"));
     std::unique_ptr<otava::ast::ExpressionStatementNode> setInitializedToTrueStmt(new otava::ast::ExpressionStatementNode(sourcePos, setInitializedToTrueExpr, nullptr, nullptr));

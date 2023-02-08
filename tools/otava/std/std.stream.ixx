@@ -3,6 +3,7 @@ export module std.stream;
 import std.type.fundamental;
 import std.basic_string;
 import std.utf;
+import std.atexit;
 
 export namespace std {
 

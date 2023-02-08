@@ -5,7 +5,7 @@
 
 keywords otava.intermediate.keyword
 {
-    ("cu", CU), ("types", TYPES), ("data", DATA), ("function", FUNCTION), ("once", ONCE), ("extern", EXTERN),
+    ("cu", CU), ("types", TYPES), ("data", DATA), ("function", FUNCTION), ("once", ONCE), ("extern", EXTERN), ("global", GLOBAL),
     ("store", STORE), ("arg", ARG), ("jmp", JMP), ("branch", BRANCH), ("call", CALL), ("ret", RET), ("switch", SWITCH), ("nop", NOP), ("save", SAVE),
     ("not", NOT), ("neg", NEG), ("signextend", SIGNEXTEND), ("zeroextend", ZEROEXTEND), ("truncate", TRUNCATE), ("bitcast", BITCAST),
     ("inttofloat", INTTOFLOAT), ("floattoint", FLOATTOINT), ("inttoptr", INTTOPTR), ("ptrtoint", PTRTOINT),

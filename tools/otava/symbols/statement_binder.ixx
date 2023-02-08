@@ -94,6 +94,7 @@ private:
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> baseTerminators;
     bool postfix;
     std::unique_ptr<BoundExpressionStatementNode> constructFunctionStaticStatement;
+    std::unique_ptr<BoundExpressionStatementNode> atExitStatement;
     VariableSymbol* globalStaticVariableSymbol;
 };
 

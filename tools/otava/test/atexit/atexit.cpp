@@ -24,17 +24,16 @@ void at_exit(void* fn, void* arg)
 
 void run_at_exits()
 {
-/*
     at_exit_entry* entry = at_exit_list;
     while (entry)
     {
         at_exit_list = entry->next;
-        at_exit_fn invoke_fn = static_cast<at_exit_fn>(entry->fn);
+        void* fn = entry->fn;
+        at_exit_fn invoke_fn = static_cast<at_exit_fn>(fn);
         void* arg = entry->arg;
         invoke_fn(arg);
         entry = at_exit_list;
     }
-*/
 }
 
 int main()

@@ -107,6 +107,10 @@ void SimpleAssemblyCodeGenerator::Visit(Function& function)
     else
     {
         currentFunction = &function;
+        if (function.Name() == "function_at_exit_C9BEA9595A9D38519FE079C77FB3EDD26BB88DE6")
+        {
+            int x = 0;
+        }
         Ctx()->AssemblyContext().ResetRegisterPool();
         frameLocations.clear();
         std::unique_ptr<RegisterAllocator> linearScanRregisterAllocator = LinearScanRegisterAllocation(function, Ctx());

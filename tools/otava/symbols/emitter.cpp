@@ -287,7 +287,7 @@ otava::intermediate::Value* Emitter::EmitConversionValue(otava::intermediate::Ty
 
 otava::intermediate::Value* Emitter::EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer)
 {
-    return context->AddGlobalVariable(otava::intermediate::SourcePos(), type, variableName, initializer, false);
+    return context->AddGlobalVariable(otava::intermediate::SourcePos(), context->MakePtrType(type), type, variableName, initializer, false);
 }
 
 otava::intermediate::Value* Emitter::EmitSymbolValue(otava::intermediate::Type* type, const std::string& symbol)

@@ -434,29 +434,27 @@ void Populate(otava::assembly::Data* data)
 
 }
 
-GlobalVariable::GlobalVariable(const SourcePos& sourcePos_, Type* type_, const std::string& name_, Value* initializer_, bool once_) :
-    Value(sourcePos_, ValueKind::globalVariable, type_), name(name_), initializer(initializer_), once(once_)
+GlobalVariable::GlobalVariable(const SourcePos& sourcePos_, Type* type_, Type* globalType_, const std::string& name_, Value* initializer_, bool once_) :
+    Value(sourcePos_, ValueKind::globalVariable, type_), globalType(globalType_), name(name_), initializer(initializer_), once(once_)
 {
     if (initializer)
     {
-        initializer->SetType(GetType());
+        initializer->SetType(GlobalType());
     }
-}
-
-Type* GlobalVariable::PtrType(Context& context) const
-{
-    return context.MakePtrType(GetType());
 }
 
 void GlobalVariable::Write(util::CodeFormatter& formatter)
 {
     formatter.Write(GetType()->Name());
+    formatter.Write(" global ");
+    formatter.Write(globalType->Name());
     if (once)
     {
         formatter.Write(" once");
     }
     formatter.Write(" ");
     formatter.Write(name);
+    formatter.Write(" ");
     if (initializer)
     {
         formatter.Write(" = ");
@@ -502,11 +500,11 @@ void Data::Write(util::CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
-GlobalVariable* Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, const std::string& variableName, Value* initializer, bool once, Context* context)
+GlobalVariable* Data::AddGlobalVariable(const SourcePos& sourcePos, Type* type, Type* globalType, const std::string& variableName, Value* initializer, bool once, Context* context)
 {
     try
     {
-        GlobalVariable* globalVariable = new GlobalVariable(sourcePos, type, variableName, initializer, once);
+        GlobalVariable* globalVariable = new GlobalVariable(sourcePos, type, globalType, variableName, initializer, once);
         values.push_back(std::unique_ptr<Value>(globalVariable));
         globalVariableMap[variableName] = globalVariable;
         globalVariables.push_back(globalVariable);
@@ -527,7 +525,7 @@ GlobalVariable* Data::GetGlobalVariableForString(Value* stringValue)
         return it->second;
     }
     GlobalVariable* globalVariable = context->AddGlobalVariable(otava::intermediate::SourcePos(), 
-        context->MakePtrType(context->GetByteType()), context->GetNextStringValueId(), stringValue, false);
+        context->MakePtrType(context->GetByteType()), context->GetByteType(), context->GetNextStringValueId(), stringValue, false);
     globalStringVariableMap[stringValue] = globalVariable;
     return globalVariable;
 }
@@ -918,7 +916,8 @@ Value* Data::MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const st
         }
         else
         {
-            type = globalVariable->GetType()->AddPointer(context); 
+            // type = globalVariable->GetType()->AddPointer(context); 
+            type = globalVariable->GetType();
         }
         AddressValue* addressValue = new AddressValue(sourcePos, globalVariable, type);
         values.push_back(std::unique_ptr<Value>(addressValue));
