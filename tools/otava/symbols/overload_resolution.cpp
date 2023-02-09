@@ -175,11 +175,11 @@ bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left,
     {
         return false;
     }
-    if (left->function->IsSpecialization() && !right->function->IsSpecialization())
+    if (!left->function->IsSpecialization() && right->function->IsSpecialization())
     {
         return true;
     }
-    if (!left->function->IsSpecialization() && right->function->IsSpecialization())
+    if (left->function->IsSpecialization() && !right->function->IsSpecialization())
     {
         return false;
     }
