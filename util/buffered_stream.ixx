@@ -28,7 +28,7 @@ private:
     void FillBuf();
     Stream& baseStream;
     int64_t bufferSize;
-    std::unique_ptr<uint8_t[]> buffer;
+    std::unique_ptr<uint8_t> buffer;
     int64_t pos;
     int64_t bytesAvailable;
     int64_t end;

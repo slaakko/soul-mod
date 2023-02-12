@@ -175,6 +175,30 @@ bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation() const
     return false;
 }
 
+TypeSymbol* ClassTemplateSpecializationSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context) 
+{
+    std::vector<Symbol*> templateArgs;
+    for (const auto& templateArg : templateArguments)
+    {
+        if (templateArg->IsTypeSymbol())
+        {
+            TypeSymbol* typeTemplateArg = static_cast<TypeSymbol*>(templateArg);
+            typeTemplateArg = typeTemplateArg->FinalType(sourcePos, context)->DirectType(context);
+            templateArgs.push_back(typeTemplateArg);
+        }
+        else
+        {
+            templateArgs.push_back(templateArg);
+        }
+    }
+    ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
+    if (specialization != this)
+    {
+        InstantiateClassTemplate(classTemplate, templateArgs, sourcePos, context);
+    }
+    return specialization;
+}
+
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments)
 {
     std::u32string specializationName;
@@ -333,6 +357,7 @@ TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::
             if (!specialization->IsTemplateParameterInstantiation())
             {
                 AddClassInfo(specialization, context);
+                //specialization->MakeObjectLayout(sourcePos, context);
             }
             InstantiateDestructor(specialization, sourcePos, context);
         }
@@ -422,7 +447,7 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
         }
         else 
         { 
-            ThrowException("otava.symbols.class_templates: function definition symbol expected", sourcePos, context);
+            ThrowException(util::ToUtf8(memFn->Name())  + ": otava.symbols.class_templates: function definition symbol expected", sourcePos, context);
         }
     }
     otava::ast::Node* node = context->GetSymbolTable()->GetNode(memFn)->Clone();

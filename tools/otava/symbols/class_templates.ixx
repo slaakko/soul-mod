@@ -38,6 +38,7 @@ public:
     bool IsTemplateParameterInstantiation() const override;
     FunctionDefinitionSymbol* Destructor() const { return destructor; }
     void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
+    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;

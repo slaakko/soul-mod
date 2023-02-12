@@ -34,11 +34,11 @@ bool ClassTemplateSpecializationLess::operator()(ClassTemplateSpecializationSymb
     {
         Symbol* leftArg = left->TemplateArguments()[i];
         Symbol* rightArg = right->TemplateArguments()[i];
-        if (leftArg < rightArg)
+        if (leftArg->Id() < rightArg->Id())
         {
             return true;
         }
-        else if (leftArg > rightArg)
+        else if (rightArg->Id() < leftArg->Id())
         {
             return false;
         }

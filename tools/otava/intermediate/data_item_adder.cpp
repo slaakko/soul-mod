@@ -84,7 +84,7 @@ void DataItemAdder::Visit(AddressValue& value)
 
 void DataItemAdder::Visit(ArrayValue& value)
 {
-    data->UseCommonInst(true);
+    //data->UseCommonInst(true);
     for (const auto& element : value.Elements())
     {
         element->Accept(*this);

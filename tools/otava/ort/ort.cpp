@@ -4,7 +4,8 @@
 // =================================
 
 module;
-#include <stdio.h>
+#include <cstdio>
+#include <cstring>
 
 module ort;
 
@@ -17,23 +18,23 @@ void prints(const char* s, int handle)
     {
         case 1:
         {
-            fwrite(s, strlen(s), 1, stdout);
+            std::fwrite(s, strlen(s), 1, stdout);
             break;
         }
         case 2:
         {
-            fwrite(s, strlen(s), 1, stderr);
+            std::fwrite(s, strlen(s), 1, stderr);
             break;
         }
         default:
         {
-            fwrite(s, strlen(s), 1, stdout);
+            std::fwrite(s, strlen(s), 1, stdout);
             break;
         }
     }
 }
 
-void flush_file(int handle)
+void flush_handle(int handle)
 {
     switch (handle)
     {
@@ -164,4 +165,71 @@ const char* get_env(const char* env)
 {
 #pragma warning(suppress : 4996)
     return std::getenv(env);
+}
+
+void* open_file(const char* path, const char* mode)
+{
+#pragma warning(suppress : 4996)
+    return std::fopen(path, mode);
+}
+
+int close_file(void* stream)
+{
+    return std::fclose(static_cast<FILE*>(stream));
+}
+
+int get_char(void* stream)
+{
+    return std::fgetc(static_cast<FILE*>(stream));
+}
+
+int put_char(int character, void* stream)
+{
+    return std::fputc(character, static_cast<FILE*>(stream));
+}
+
+int read_file(void* ptr, size_t size, size_t count, void* stream)
+{
+    return std::fread(ptr, size, count, static_cast<FILE*>(stream));
+}
+
+int write_file(void* ptr, size_t size, size_t count, void* stream)
+{
+    return std::fwrite(ptr, size, count, static_cast<FILE*>(stream));
+}
+
+int eof_file(void* stream)
+{
+    return std::feof(static_cast<FILE*>(stream));
+}
+
+int error_file(void* stream)
+{
+    return std::ferror(static_cast<FILE*>(stream));
+}
+
+int seek_file(void* stream, int offset, int origin)
+{
+    return std::fseek(static_cast<FILE*>(stream), offset, origin);
+}
+
+int tell_file(void* stream)
+{
+    return std::ftell(static_cast<FILE*>(stream));
+}
+
+char* str_error(int errnum)
+{
+#pragma warning(suppress : 4996)
+    return std::strerror(errnum);
+}
+
+int error_number()
+{
+    return errno;
+}
+
+void destroy_str(const char* str)
+{
+    delete str;
 }

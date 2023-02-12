@@ -59,7 +59,7 @@ void Stream::CopyTo(Stream& destination)
 
 void Stream::CopyTo(Stream& destination, int64_t bufferSize)
 {
-    std::unique_ptr<uint8_t[]> buf(new uint8_t[bufferSize]);
+    std::unique_ptr<uint8_t> buf(static_cast<uint8_t*>(malloc(bufferSize)));
     int64_t bytesRead = Read(buf.get(), bufferSize);
     while (bytesRead > 0)
     {

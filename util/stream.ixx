@@ -14,15 +14,7 @@ enum class Origin
     seekSet, seekCur, seekEnd
 };
 
-class Stream;
-
-class StreamObserver
-{
-public:
-    StreamObserver();
-    virtual ~StreamObserver();
-    virtual void PositionChanged(Stream* stream) {}
-};
+class StreamObserver;
 
 class Stream
 {
@@ -45,6 +37,14 @@ public:
 private:
     int64_t position;
     std::vector<StreamObserver*> observers;
+};
+
+class StreamObserver
+{
+public:
+    StreamObserver();
+    virtual ~StreamObserver();
+    virtual void PositionChanged(Stream* stream) {}
 };
 
 class Streams

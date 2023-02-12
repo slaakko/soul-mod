@@ -113,14 +113,16 @@ public:
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
-    void MakeObjectLayout(Context* context);
+    void MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context);
     void MapFunction(FunctionSymbol* function);
     FunctionSymbol* GetFunction(int32_t functionIndex) const;
     int32_t NextFunctionIndex();
     bool GetFlag(ClassTypeSymbolFlags flag) const { return (flags & flag) != ClassTypeSymbolFlags::none; }
     void SetFlag(ClassTypeSymbolFlags flag) { flags = flags | flag; }
+    void ResetFlag(ClassTypeSymbolFlags flag) { flags = flags & ~flag; }
     bool ObjectLayoutComputed() const { return GetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
     void SetObjectLayoutComputed() { SetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
+    void ResetObjectLayoutComputed() { ResetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
     bool HasUserDefinedDestructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
     void SetHasUserDefinedDestructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
     bool HasUserDefinedConstructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
@@ -174,6 +176,8 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
+    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     ClassKind classKind;
     TypeSymbol* specialization;

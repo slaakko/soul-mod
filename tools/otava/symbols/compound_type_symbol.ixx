@@ -32,6 +32,8 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
+    TypeSymbol* DirectType(Context* context) override;
 private:
     TypeSymbol* baseType;
     Derivations derivations;

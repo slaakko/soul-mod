@@ -152,6 +152,8 @@
     <ClCompile Include="class_info.ixx" />
     <ClCompile Include="context_stack.cpp" />
     <ClCompile Include="context_stack.ixx" />
+    <ClCompile Include="filesystem.cpp" />
+    <ClCompile Include="filesystem.ixx" />
     <ClCompile Include="ort.cpp" />
     <ClCompile Include="ort.ixx" />
     <ClCompile Include="threading.cpp" />

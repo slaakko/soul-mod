@@ -411,7 +411,7 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
             }
         }
         TypeSymbol* templateArg = otava::symbols::ResolveType(argItem, DeclarationFlags::none, context);
-        templateArg = templateArg->DirectType(context);
+        templateArg = templateArg->DirectType(context)->FinalType(node.GetSourcePos(), context);
         templateArgs.push_back(templateArg);
     }
     if (typeSymbol->IsClassGroupSymbol())
@@ -513,6 +513,13 @@ TypeSymbol* ResolveType(otava::ast::Node* node, DeclarationFlags flags, Context*
 
 TypeSymbol* ResolveFwdDeclaredType(TypeSymbol* type, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (type->IsCompoundTypeSymbol())
+    {
+        CompoundTypeSymbol* compoundTypeSymbol = static_cast<CompoundTypeSymbol*>(type);
+        TypeSymbol* resolvedType = context->GetSymbolTable()->MakeCompoundType(ResolveFwdDeclaredType(compoundTypeSymbol->GetBaseType(), sourcePos, context),
+            compoundTypeSymbol->GetDerivations());
+        return resolvedType;
+    }
     if (type->IsForwardClassDeclarationSymbol())
     {
         ForwardClassDeclarationSymbol* fwdClassDeclarationSymbol = static_cast<ForwardClassDeclarationSymbol*>(type);

@@ -29,4 +29,19 @@ WindowsException::WindowsException(uint64_t errorCode_) : std::runtime_error(Win
 {
 }
 
+#if defined(_WIN32) || defined(__linux) || defined(__unix) || defined(__posix)
+
+int ErrorNumber()
+{
+    return errno;
+}
+
+#elif defined(OTAVA)
+
+int ErrorNumber()
+{
+    return error_number();
+}
+
+#endif
 } // util

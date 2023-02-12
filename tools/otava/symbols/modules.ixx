@@ -35,6 +35,7 @@ public:
     void Import(ModuleMapper& moduleMapper);
     void Import(Module* that, ModuleMapper& moduleMapper);
     void ResolveForwardDeclarations();
+    void ResolveAllForwardDeclarations();
     void AddDerivedClasses();
     void Write(const std::string& root);
     void Write(Writer& writer);

@@ -38,6 +38,11 @@ void ClassGroupSymbol::AddClass(ClassTypeSymbol* classTypeSymbol)
 {
     classTypeSymbol->SetGroup(this);
     classes.push_back(classTypeSymbol);
+    ForwardClassDeclarationSymbol* fwdDeclaration = GetForwardDeclaration(classTypeSymbol->Arity());
+    if (fwdDeclaration)
+    {
+        fwdDeclaration->SetClassTypeSymbol(classTypeSymbol);
+    }
 }
 
 Symbol* ClassGroupSymbol::GetSingleSymbol() 
@@ -71,6 +76,11 @@ ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const
 void ClassGroupSymbol::AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration)
 {
     forwardDeclarations.push_back(forwardDeclaration);
+    ClassTypeSymbol* cls = GetClass(forwardDeclaration->Arity());
+    if (cls)
+    {
+        forwardDeclaration->SetClassTypeSymbol(cls);
+    }
 }
 
 ForwardClassDeclarationSymbol* ClassGroupSymbol::GetForwardDeclaration(int arity) const

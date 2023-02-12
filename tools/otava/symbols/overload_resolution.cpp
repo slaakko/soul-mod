@@ -54,18 +54,6 @@ int32_t ArgumentConversionValue(const ArgumentMatch& match)
     return argumentConversionValue;
 }
 
-struct FunctionMatch
-{
-    FunctionMatch(FunctionSymbol* function_);
-    FunctionSymbol* function;
-    std::vector<ArgumentMatch> argumentMatches;
-    int numConversions;
-    int numQualifyingConversions;
-    std::map<TemplateParameterSymbol*, TypeSymbol*> templateParameterMap;
-    ClassTemplateSpecializationSymbol* specialization;
-    std::vector<std::unique_ptr<BoundExpressionNode>> defaultArgs;
-};
-
 struct BetterArgumentMatch
 {
     bool operator()(const ArgumentMatch& left, const ArgumentMatch& right) const;
@@ -82,32 +70,42 @@ bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMa
     return false;
 }
 
+FunctionMatch::FunctionMatch() : function(nullptr), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
+{
+}
+
 FunctionMatch::FunctionMatch(FunctionSymbol* function_) : function(function_), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
 {
 }
 
-struct BetterFunctionMatch
+FunctionMatch& FunctionMatch::operator=(const FunctionMatch& that)
 {
-    bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const;
-};
+    function = that.function;
+    argumentMatches = that.argumentMatches;
+    numConversions = that.numConversions;
+    numQualifyingConversions = that.numQualifyingConversions;
+    templateParameterMap = that.templateParameterMap;
+    specialization = that.specialization;
+    return *this;
+}
 
-bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const
+bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMatch& right) const
 {
     BetterArgumentMatch betterArgumentMatch;
     int leftBetterArgumentMatches = 0;
     int rightBetterArgumentMatches = 0;
-    int n = std::max(int(left->argumentMatches.size()), int(right->argumentMatches.size()));
+    int n = std::max(int(left.argumentMatches.size()), int(right.argumentMatches.size()));
     for (int i = 0; i < n; ++i)
     {
         ArgumentMatch leftMatch;
-        if (i < int(left->argumentMatches.size()))
+        if (i < int(left.argumentMatches.size()))
         {
-            leftMatch = left->argumentMatches[i];
+            leftMatch = left.argumentMatches[i];
         }
         ArgumentMatch rightMatch;
-        if (i < int(right->argumentMatches.size()))
+        if (i < int(right.argumentMatches.size()))
         {
-            rightMatch = right->argumentMatches[i];
+            rightMatch = right.argumentMatches[i];
         }
         if (betterArgumentMatch(leftMatch, rightMatch))
         {
@@ -131,14 +129,14 @@ bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left,
     for (int i = 0; i < n; ++i)
     {
         ArgumentMatch leftMatch;
-        if (i < int(left->argumentMatches.size()))
+        if (i < int(left.argumentMatches.size()))
         {
-            leftMatch = left->argumentMatches[i];
+            leftMatch = left.argumentMatches[i];
         }
         ArgumentMatch rightMatch;
-        if (i < int(right->argumentMatches.size()))
+        if (i < int(right.argumentMatches.size()))
         {
-            rightMatch = right->argumentMatches[i];
+            rightMatch = right.argumentMatches[i];
         }
         leftValue += ArgumentConversionValue(leftMatch);
         rightValue += ArgumentConversionValue(rightMatch);
@@ -151,35 +149,35 @@ bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left,
     {
         return false;
     }
-    if (left->numConversions < right->numConversions)
+    if (left.numConversions < right.numConversions)
     {
         return true;
     }
-    if (left->numConversions > right->numConversions)
+    if (left.numConversions > right.numConversions)
     {
         return false;
     }
-    if (left->numQualifyingConversions < right->numQualifyingConversions)
+    if (left.numQualifyingConversions < right.numQualifyingConversions)
     {
         return true;
     }
-    if (left->numQualifyingConversions > right->numQualifyingConversions)
+    if (left.numQualifyingConversions > right.numQualifyingConversions)
     {
         return false;
     }
-    if (left->function->IsFunctionDefinitionSymbol() && !right->function->IsFunctionDefinitionSymbol())
+    if (left.function->IsFunctionDefinitionSymbol() && !right.function->IsFunctionDefinitionSymbol())
     {
         return true;
     }
-    if (!left->function->IsFunctionDefinitionSymbol() && right->function->IsFunctionDefinitionSymbol())
+    if (!left.function->IsFunctionDefinitionSymbol() && right.function->IsFunctionDefinitionSymbol())
     {
         return false;
     }
-    if (!left->function->IsSpecialization() && right->function->IsSpecialization())
+    if (!left.function->IsSpecialization() && right.function->IsSpecialization())
     {
         return true;
     }
-    if (left->function->IsSpecialization() && !right->function->IsSpecialization())
+    if (left.function->IsSpecialization() && !right.function->IsSpecialization())
     {
         return false;
     }
@@ -187,8 +185,8 @@ bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left,
     int rightFundamentalTypeDistance = 0;
     for (int i = 0; i < n; ++i)
     {
-        leftFundamentalTypeDistance += left->argumentMatches[i].fundamentalTypeDistance;
-        rightFundamentalTypeDistance += right->argumentMatches[i].fundamentalTypeDistance;
+        leftFundamentalTypeDistance += left.argumentMatches[i].fundamentalTypeDistance;
+        rightFundamentalTypeDistance += right.argumentMatches[i].fundamentalTypeDistance;
     }
     if (leftFundamentalTypeDistance < rightFundamentalTypeDistance)
     {
@@ -199,6 +197,11 @@ bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left,
         return false;
     }
     return false;
+}
+
+bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const
+{
+    return operator()(*left, *right);
 }
 
 BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -218,7 +221,7 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
     TypeSymbol* type = functionMatch.function->ReturnType();
     if (type)
     {
-        type = type->DirectType(context);
+        type = type->DirectType(context)->FinalType(sourcePos, context);
     }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall(new BoundFunctionCallNode(functionMatch.function, sourcePos, type));
     int n = args.size();
@@ -870,9 +873,18 @@ std::unique_ptr<BoundFunctionCallNode> ResolveIOManipFn(Scope* scope, const std:
     return std::unique_ptr<BoundFunctionCallNode>();
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
+void MakeFinalDirectArgs(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    for (auto& arg : args)
+    {
+        arg->ModifyTypes(sourcePos, context);
+    }
+}
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, OverloadResolutionFlags flags)
+{
+    MakeFinalDirectArgs(args, sourcePos, context);
     std::unique_ptr<BoundFunctionCallNode> ioManipFn = ResolveIOManipFn(scope, groupName, args, sourcePos, context, ex, flags);
     if (ioManipFn)
     {
@@ -920,6 +932,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         ex = Exception("attempt to call a deleted function", sourcePos, context);
         return std::unique_ptr<BoundFunctionCallNode>();
     }
+    functionMatch = *bestMatch;
     bool instantiate = (flags & OverloadResolutionFlags::dontInstantiate) == OverloadResolutionFlags::none;
     if (instantiate)
     {
@@ -955,9 +968,23 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
 }
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
+{
+    FunctionMatch functionMatch;
+    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, functionMatch, flags);
+}
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch)
+{
+    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, functionMatch, OverloadResolutionFlags::none);
+}
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
-    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, OverloadResolutionFlags::none);
+    FunctionMatch functionMatch;
+    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, functionMatch, OverloadResolutionFlags::none);
 }
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,

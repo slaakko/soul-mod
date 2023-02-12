@@ -1,0 +1,3 @@
+project fs;
+target=program;
+source <fs.cpp>;

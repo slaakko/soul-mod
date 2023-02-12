@@ -21,12 +21,14 @@ public:
     int Arity();
     void SetReferredType(TypeSymbol* referredType_) { referredType = referredType_; }
     TypeSymbol* ReferredType() const { return referredType; }
+    TypeSymbol* DirectType(Context* context) override;
     std::string SymbolKindStr() const override { return "alias type symbol"; }
     std::string SymbolDocKindStr() const override { return "alias_type"; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
+    otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     TypeSymbol* referredType;
     util::uuid referredTypeId;

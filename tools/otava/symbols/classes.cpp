@@ -306,13 +306,24 @@ bool ClassTypeSymbol::IsPolymorphic() const
     return false;
 }
 
-void ClassTypeSymbol::MakeObjectLayout(Context* context)
+void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    if (ObjectLayoutComputed())
+    {
+        for (const auto& memberVar : memberVariables)
+        {
+            if (memberVar->LayoutIndex() == -1)
+            {
+                ResetObjectLayoutComputed();
+                break;
+            }
+        }
+    }
     if (ObjectLayoutComputed()) return;
     SetObjectLayoutComputed();
     for (const auto& baseClass : baseClasses)
     {
-        baseClass->MakeObjectLayout(context);
+        baseClass->MakeObjectLayout(sourcePos, context);
         objectLayout.push_back(baseClass);
     }
     if (baseClasses.empty())
@@ -331,7 +342,7 @@ void ClassTypeSymbol::MakeObjectLayout(Context* context)
     {
         int32_t layoutIndex = objectLayout.size();
         memberVar->SetLayoutIndex(layoutIndex);
-        objectLayout.push_back(memberVar->GetType());
+        objectLayout.push_back(memberVar->GetType()->FinalType(sourcePos, context));
     }
 }
 
@@ -564,7 +575,7 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
     {
         irType = emitter.MakeFwdDeclaredStructureType(Id());
         emitter.SetType(Id(), irType);
-        MakeObjectLayout(context);
+        MakeObjectLayout(sourcePos, context);
         int n = objectLayout.size();
         std::vector<otava::intermediate::Type*> elementTypes;
         for (int i = 0; i < n; ++i)
@@ -710,6 +721,27 @@ int ForwardClassDeclarationSymbol::Arity()
     {
         return 0;
     }
+}
+
+TypeSymbol* ForwardClassDeclarationSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (classTypeSymbol)
+    {
+        return classTypeSymbol;
+    }
+    else if (context->GetFlag(ContextFlags::requireForwardResolved))
+    {
+        ThrowException("forward declaration '" + util::ToUtf8(FullName()) + "' not resolved", sourcePos, context);
+    }
+    else
+    {
+        return this;
+    }
+}
+
+otava::intermediate::Type* ForwardClassDeclarationSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    return FinalType(sourcePos, context)->IrType(emitter, sourcePos, context);
 }
 
 class ClassResolver : public otava::ast::DefaultVisitor
@@ -1146,7 +1178,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
         }
         if (!classTypeSymbol->ObjectLayoutComputed())
         {
-            classTypeSymbol->MakeObjectLayout(context);
+            classTypeSymbol->MakeObjectLayout(sourcePos, context);
         }
         BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
         ClassTypeSymbol* vptrHolderClass = classTypeSymbol->VPtrHolderClass();

@@ -190,31 +190,6 @@ TypeSymbol* TypeSymbol::RemoveRefOrPtr(Context* context)
     return this;
 }
 
-TypeSymbol* TypeSymbol::DirectType(Context* context)
-{
-    if (IsCompoundTypeSymbol())
-    {
-        SymbolTable* symbolTable = context->GetSymbolTable();
-        CompoundTypeSymbol* compoundType = static_cast<CompoundTypeSymbol*>(this);
-        return symbolTable->MakeCompoundType(GetBaseType()->DirectType(context), compoundType->GetDerivations());
-    }
-    else if (IsAliasTypeSymbol())
-    {
-        AliasTypeSymbol* aliasTypeSymbol = static_cast<AliasTypeSymbol*>(this);
-        TypeSymbol* referredType = aliasTypeSymbol->ReferredType();
-        while (referredType->IsAliasTypeSymbol())
-        {
-            aliasTypeSymbol = static_cast<AliasTypeSymbol*>(referredType);
-            referredType = aliasTypeSymbol->ReferredType();
-        }
-        return referredType;
-    }
-    else
-    {
-        return this;
-    }
-}
-
 const Derivations& TypeSymbol::GetDerivations() const
 {
     static Derivations emptyDerivations;

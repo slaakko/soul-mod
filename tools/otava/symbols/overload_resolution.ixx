@@ -37,6 +37,9 @@ constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
 }
 
 class FunctionSymbol;
+class TemplateParameterSymbol;
+class TypeSymbol;
+class ClassTemplateSpecializationSymbol;
 enum class ConversionKind : int32_t;
 enum class OperationFlags : int32_t;
 
@@ -51,10 +54,36 @@ struct ArgumentMatch
     OperationFlags postConversionFlags;
 };
 
+struct FunctionMatch
+{
+    FunctionMatch();
+    FunctionMatch(FunctionSymbol* function_);
+    FunctionMatch& operator=(const FunctionMatch& that);
+    FunctionSymbol* function;
+    std::vector<ArgumentMatch> argumentMatches;
+    int numConversions;
+    int numQualifyingConversions;
+    std::map<TemplateParameterSymbol*, TypeSymbol*> templateParameterMap;
+    ClassTemplateSpecializationSymbol* specialization;
+    std::vector<std::unique_ptr<BoundExpressionNode>> defaultArgs;
+};
+
+struct BetterFunctionMatch
+{
+    bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const;
+    bool operator()(const FunctionMatch& left, const FunctionMatch& right) const;
+};
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, OverloadResolutionFlags flags);
+
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags);
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
+    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch);
+
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex);
 
 std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,

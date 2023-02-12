@@ -45,7 +45,9 @@ enum class ContextFlags : int32_t
     virtualSeen = 1 << 20,
     ignoreClassTemplateSpecializations = 1 << 21,
     generateMainWrapper = 1 << 22,
-    noDynamicInit = 1 << 23
+    noDynamicInit = 1 << 23,
+    requireForwardResolved = 1 << 24,
+    noPtrOps = 1 << 25
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)

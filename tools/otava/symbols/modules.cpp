@@ -85,6 +85,53 @@ void Module::Import(Module* that, ModuleMapper& moduleMapper)
 
 void Module::ResolveForwardDeclarations()
 {
+    for (const auto& fwdSymbol : symbolTable.ForwardDeclarations())
+    {
+        if (fwdSymbol->IsForwardClassDeclarationSymbol())
+        {
+            ForwardClassDeclarationSymbol* fwd = static_cast<ForwardClassDeclarationSymbol*>(fwdSymbol);
+            if (fwd->GetClassTypeSymbol() == nullptr)
+            {
+                Symbol* group = symbolTable.LookupSymbol(fwd);
+                if (group)
+                {
+                    if (group->IsClassGroupSymbol())
+                    {
+                        ClassGroupSymbol* classGroupSymbol = static_cast<ClassGroupSymbol*>(group);
+                        ClassTypeSymbol* classTypeSymbol = classGroupSymbol->GetClass(fwd->Arity());
+                        if (classTypeSymbol)
+                        {
+                            fwd->SetClassTypeSymbol(classTypeSymbol);
+                        }
+                    }
+                }
+            }
+        }
+        else if (fwdSymbol->IsForwardEnumDeclarationSymbol())
+        {
+            ForwardEnumDeclarationSymbol* fwd = static_cast<ForwardEnumDeclarationSymbol*>(fwdSymbol);
+            if (fwd->GetEnumeratedTypeSymbol() == nullptr)
+            {
+                Symbol* group = symbolTable.LookupSymbol(fwd);
+                if (group)
+                {
+                    if (group->IsEnumGroupSymbol())
+                    {
+                        EnumGroupSymbol* enumGroupSymbol = static_cast<EnumGroupSymbol*>(group);
+                        EnumeratedTypeSymbol* enumTypeSymbol = enumGroupSymbol->GetEnumType();
+                        if (enumTypeSymbol)
+                        {
+                            fwd->SetEnumeratedTypeSymbol(enumTypeSymbol);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Module::ResolveAllForwardDeclarations()
+{
     for (const auto& fwdSymbol : symbolTable.AllForwardDeclarations())
     {
         if (fwdSymbol->IsForwardClassDeclarationSymbol())

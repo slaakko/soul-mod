@@ -28,6 +28,7 @@ import otava.symbols.exception;
 import otava.symbols.type.symbol;
 import otava.symbols.value;
 import otava.symbols.variable.symbol;
+import otava.symbols.modules;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol.table;
 import std.core;
@@ -437,7 +438,8 @@ void CodeGenerator::EmitReturn(const soul::ast::SourcePos& sourcePos)
 {
     if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
     {
-        otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->IrType(emitter, sourcePos, &context)->DefaultValue();
+        otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(sourcePos, &context)->IrType(
+            emitter, sourcePos, &context)->DefaultValue();
         emitter.EmitRet(returnValue);
     }
     else
@@ -465,6 +467,8 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
 
 void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 {
+    // context.GetModule()->ResolveForwardDeclarations();
+    context.PushSetFlag(otava::symbols::ContextFlags::requireForwardResolved);
     if (globalMain)
     {
         GenerateGlobalInitializationFunction();
@@ -496,6 +500,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     otava::intermediate::SimpleAssemblyCodeGenerator assemblyCodeGenerator(&intermediateContext, assemblyFilePath);
     otava::intermediate::GenerateCode(intermediateContext, assemblyCodeGenerator, verbose);
     asmFileName = util::Path::GetFileName(context.FileName()) + ".asm";
+    context.PopFlags();
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundClassNode& node)
@@ -510,7 +515,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     otava::intermediate::Value* retValue = nullptr;
     if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
     {
-        retValue = functionDefinition->ReturnType()->DirectType(&context)->IrType(emitter, node.GetSourcePos(), &context)->DefaultValue();
+        retValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(node.GetSourcePos(), &context)->IrType(emitter, node.GetSourcePos(), &context)->DefaultValue();
     }
     emitter.SetRetValue(retValue);
     if ((functionDefinition->Qualifiers() & otava::symbols::FunctionQualifiers::isDeleted) != otava::symbols::FunctionQualifiers::none)
@@ -588,7 +593,8 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         if (functionDefinition->ReturnType() && !functionDefinition->ReturnType()->IsVoidType() && !functionDefinition->ReturnsClass())
         {
-            otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->IrType(emitter, node.GetSourcePos(), &context)->DefaultValue();
+            otava::intermediate::Value* returnValue = functionDefinition->ReturnType()->DirectType(&context)->FinalType(node.GetSourcePos(), &context)->IrType(
+                emitter, node.GetSourcePos(), &context)->DefaultValue();
             emitter.EmitRet(returnValue);
         }
         else

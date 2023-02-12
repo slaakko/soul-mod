@@ -154,6 +154,18 @@ otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const so
     return type;
 }
 
+TypeSymbol* CompoundTypeSymbol::FinalType(const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    TypeSymbol* finalBaseType = baseType->FinalType(sourcePos, context);
+    return context->GetSymbolTable()->MakeCompoundType(finalBaseType, derivations);
+}
+
+TypeSymbol* CompoundTypeSymbol::DirectType(Context* context)
+{
+    TypeSymbol* directBaseType = baseType->DirectType(context);
+    return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations);
+}
+
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations)
 {
     std::u32string name;

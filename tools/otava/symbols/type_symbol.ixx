@@ -29,6 +29,8 @@ public:
     bool IsRValueRefType() const;
     bool IsReferenceType() const;
     virtual TypeSymbol* PlainType(Context* context) { return this; }
+    virtual TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) { return this; }
+    virtual TypeSymbol* DirectType(Context* context) { return this; }
     virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance) const { return false; }
     virtual bool IsVoidType() const { return false; }
     virtual bool IsBoolType() const { return false; }
@@ -51,7 +53,6 @@ public:
     TypeSymbol* RemoveRValueRef(Context* context);
     TypeSymbol* RemoveReference(Context* context);
     TypeSymbol* RemoveRefOrPtr(Context* context);
-    TypeSymbol* DirectType(Context* context);
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     virtual otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
 };

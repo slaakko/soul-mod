@@ -19,4 +19,6 @@ private:
     uint64_t errorCode;
 };
 
+int ErrorNumber();
+
 } // util

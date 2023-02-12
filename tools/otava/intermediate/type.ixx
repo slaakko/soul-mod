@@ -368,6 +368,7 @@ public:
     const std::vector<TypeRef>& ParamTypeRefs() const { return paramTypeRefs; }
     Type* ParamType(int index) const { return paramTypeRefs[index].GetType(); }
     void WriteDeclaration(util::CodeFormatter& formatter) override;
+    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
 private:
     TypeRef returnTypeRef;
     std::vector<TypeRef> paramTypeRefs;

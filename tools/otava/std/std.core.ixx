@@ -11,7 +11,6 @@ export import std.algorithm;
 export import std.atomic;
 export import std.type.fundamental;
 export import std.basic_string;
-export import std.c;
 export import std.crt;
 export import std.chrono;
 export import std.chrono.clock;

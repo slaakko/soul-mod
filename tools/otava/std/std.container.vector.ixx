@@ -224,8 +224,21 @@ public:
     iterator insert(const_iterator position, const T& x);
     iterator insert(const_iterator position, T&& x);
     iterator insert(const_iterator position, size_type n, const T& x);
-    iterator erase(const_iterator position);
-    iterator erase(const_iterator first, const_iterator last);
+    iterator erase(const_iterator position)
+    {
+        erase(position, position + 1);
+    }
+    iterator erase(const_iterator first, const_iterator last)
+    {
+        size_type n = last - first;
+        for (const_iterator i = first; i != last; ++i)
+        { 
+            i->T::~T();
+        }
+        size_type m = cend() - last;
+        constructive_move(first, last, m);
+        sz -= n;
+    }
     void clear()
     {
         destroy();

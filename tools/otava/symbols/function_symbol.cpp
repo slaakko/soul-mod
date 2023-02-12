@@ -769,7 +769,7 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
         otava::intermediate::Type* returnIrType = nullptr;
         if (returnType && !ReturnsClass())
         {
-            returnIrType = returnType->DirectType(context)->IrType(emitter, sourcePos, context);
+            returnIrType = returnType->DirectType(context)->FinalType(sourcePos, context)->IrType(emitter, sourcePos, context);
         }
         else
         {

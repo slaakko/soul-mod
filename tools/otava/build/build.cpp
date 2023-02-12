@@ -367,6 +367,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
+        // module->ResolveForwardDeclarations();
         std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
@@ -395,7 +396,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             compileUnitInitFunctionNames.push_back(initFn->GetFunctionDefinitionSymbol()->IrName(&context));
         }
     }
-    projectModule.ResolveForwardDeclarations();
+    // projectModule.ResolveForwardDeclarations();
     projectModule.AddDerivedClasses();
     ProjectTarget projectTarget = ProjectTarget::library;
     std::string classIndexFilePath;
@@ -403,7 +404,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     {
         if (mainFunctionIrName.empty())
         {
-            otava::symbols::SetExceptionThrown();
+            otava::symbols::SetExceptionThrown(); 
             throw std::runtime_error("program has no main function");
         }
         for (const auto& fileName : compileUnitInitFunctionNames)

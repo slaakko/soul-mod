@@ -68,7 +68,7 @@ public:
     }
     basic_ostream<charT>& flush()
     {
-        flush_file(handle);
+        flush_handle(handle);
     }
     void write(const char* s) override
     {

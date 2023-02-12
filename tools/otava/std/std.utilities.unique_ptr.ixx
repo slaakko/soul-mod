@@ -16,8 +16,8 @@ public:
     unique_ptr(unique_ptr&& u) : ptr(u.ptr) { u.ptr = nullptr; }
     unique_ptr(nullptr_t) : ptr(nullptr) {}
     ~unique_ptr() { if (ptr) delete ptr; }
-    unique_ptr& operator=(unique_ptr&& u) { std::swap(ptr, u.ptr); }
-    unique_ptr operator=(nullptr_t) { if (ptr) delete ptr; ptr = nullptr; }
+    unique_ptr& operator=(unique_ptr&& u) { std::swap(ptr, u.ptr); return *this; }
+    unique_ptr& operator=(nullptr_t) { if (ptr) delete ptr; ptr = nullptr; return *this; }
     T& operator*() const { return *ptr; }
     pointer operator->() const { return ptr; }
     pointer get() const { return ptr; }

@@ -417,7 +417,8 @@ PointerPlusOffsetOperation::PointerPlusOffsetOperation() : Operation(U"operator+
 
 FunctionSymbol* PointerPlusOffsetOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType();
+    if (context->GetFlag(ContextFlags::noPtrOps)) return nullptr;
+    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
     if (!leftType->IsPointerType()) return nullptr;
     TypeSymbol* rightType = args[1]->GetType();
     if (!rightType->PlainType(context)->IsIntegralType())
@@ -498,7 +499,7 @@ FunctionSymbol* OffsetPlusPointerOperation::Get(std::vector<std::unique_ptr<Boun
             return nullptr;
         }
     }
-    TypeSymbol* rightType = args[1]->GetType();
+    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
     if (!rightType->IsPointerType()) return nullptr;
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -562,7 +563,8 @@ PointerMinusOffsetOperation::PointerMinusOffsetOperation() : Operation(U"operato
 
 FunctionSymbol* PointerMinusOffsetOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType();
+    if (context->GetFlag(ContextFlags::noPtrOps)) return nullptr;
+    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
     if (!leftType->IsPointerType()) return nullptr;
     TypeSymbol* rightType = args[1]->GetType();
     if (!rightType->PlainType(context)->IsIntegralType())
@@ -634,9 +636,9 @@ PointerMinusPointerOperation::PointerMinusPointerOperation() : Operation(U"opera
 
 FunctionSymbol* PointerMinusPointerOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType();
+    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
     if (!leftType->IsPointerType()) return nullptr;
-    TypeSymbol* rightType = args[1]->GetType();
+    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
     if (!rightType->IsPointerType()) return nullptr;
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -698,9 +700,9 @@ PointerEqualOperation::PointerEqualOperation() : Operation(U"operator==", 2)
 
 FunctionSymbol* PointerEqualOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType();
+    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
     if (!leftType->IsPointerType() && !leftType->IsNullPtrType()) return nullptr;
-    TypeSymbol* rightType = args[1]->GetType();
+    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
     if (!rightType->IsPointerType() && !rightType->IsNullPtrType()) return nullptr;
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -762,9 +764,9 @@ PointerLessOperation::PointerLessOperation() : Operation(U"operator<", 2)
 
 FunctionSymbol* PointerLessOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    TypeSymbol* leftType = args[0]->GetType();
+    TypeSymbol* leftType = args[0]->GetType()->PlainType(context);
     if (!leftType->IsPointerType()) return nullptr;
-    TypeSymbol* rightType = args[1]->GetType();
+    TypeSymbol* rightType = args[1]->GetType()->PlainType(context);
     if (!rightType->IsPointerType()) return nullptr;
     auto it = functionMap.find(leftType);
     if (it != functionMap.cend())
@@ -980,7 +982,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
                 context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release());
+            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
@@ -1027,7 +1029,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-        expressionStatement->SetExpr(memberConstructorCall.release());
+        expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
@@ -1123,7 +1125,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
                 context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release());
+            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
@@ -1175,7 +1177,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-        expressionStatement->SetExpr(memberConstructorCall.release());
+        expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
@@ -1276,7 +1278,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
                 context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release());
+            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
@@ -1333,7 +1335,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-        expressionStatement->SetExpr(memberConstructorCall.release());
+        expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
@@ -1427,7 +1429,7 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
                 context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release());
+            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
@@ -1450,14 +1452,14 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
         std::unique_ptr<BoundFunctionCallNode> memberAssignmentrCall = ResolveOverloadThrow(classType->GetScope(), U"operator=", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-        expressionStatement->SetExpr(memberAssignmentrCall.release());
+        expressionStatement->SetExpr(memberAssignmentrCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
     otava::ast::ThisNode* thisNode(new otava::ast::ThisNode(sourcePos));
     otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
-    returnStatement->SetExpr(derefThisExpr);
+    returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
     context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
     context->PopBoundFunction();
@@ -1555,7 +1557,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
                 context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-            expressionStatement->SetExpr(boundFunctionCall.release());
+            expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
         }
         else
@@ -1579,14 +1581,14 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
         Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
         std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(stdScope, U"swap", args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
-        expressionStatement->SetExpr(memberConstructorCall.release());
+        expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
     BoundReturnStatementNode* returnStatement = new BoundReturnStatementNode(sourcePos);
     otava::ast::ThisNode* thisNode(new otava::ast::ThisNode(sourcePos));
     otava::ast::UnaryExprNode derefNode(sourcePos, new otava::ast::DerefNode(sourcePos), thisNode);
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
-    returnStatement->SetExpr(derefThisExpr);
+    returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
     context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
     context->PopBoundFunction();
