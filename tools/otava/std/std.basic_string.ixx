@@ -1,7 +1,6 @@
 export module std.basic_string;
 
 import std.type.fundamental;
-import std.iterator.reverse;
 import std.utilities.utility;
 import std.type_traits;
 import std.crt;
@@ -11,7 +10,7 @@ export namespace std {
 
 char32_t nul = 0;
 
-template<class charT>
+template<typename charT>
 class basic_string
 {
 public:
@@ -24,8 +23,6 @@ public:
     using const_reference = const value_type&;
     using iterator = pointer;
     using const_iterator = const_pointer;
-    //using reverse_iterator = std::reverse_iterator<iterator>;
-    //using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     
     static const size_type npos = -1;
     
@@ -116,7 +113,8 @@ public:
     basic_string& operator=(const charT* s)
     {
         deallocate();
-        reserve(slen(s));
+        len = slen(s);
+        reserve(len);
         scpy(chars, s);
         return *this;
     }
@@ -152,10 +150,6 @@ public:
             return nullptr;
         }
     }
-    //reverse_iterator rbegin();
-    //const_reverse_iterator rbegin() const;
-    //reverse_iterator rend();
-    //const_reverse_iterator rend() const;
     const_iterator cbegin() const { return chars; }
     const_iterator cend() const
     {
@@ -168,8 +162,6 @@ public:
             return nullptr;
         }
     }
-    //const_reverse_iterator crbegin() const;
-    //const_reverse_iterator crend() const;
     
     size_type size() const { return len; }
     size_type length() const { return len; }
@@ -200,14 +192,8 @@ public:
     {
         return chars[pos];
     }
-    const_reference at(size_type n) const
-    {
-        return chars[n];
-    }
-    reference at(size_type n)
-    {
-        return chars[n];
-    }
+    const_reference at(size_type n) const;
+    reference at(size_type n);
     const charT& front() const
     {
         return chars[0];
@@ -225,13 +211,42 @@ public:
         return chars[len - 1];
     }
     
-    basic_string& operator+=(const basic_string& str);
-    basic_string& operator+=(const charT* s);
-    basic_string& operator+=(charT c);
-    basic_string& append(const basic_string& str);
-    basic_string& append(const basic_string& str, size_type pos, size_type n = npos);
-    basic_string& append(const charT* s, size_type n);
-    basic_string& append(const charT* s);
+    basic_string& operator+=(const basic_string& str)
+    {
+        return append(str);
+    }
+    basic_string& operator+=(const charT* s)
+    {
+        return append(s);
+    }
+    basic_string& operator+=(charT c)
+    {
+        return append(1, c);
+    }
+    basic_string& append(const basic_string& str) 
+    {
+        append_from(str.c_str(), str.length());
+        return *this;
+    }
+    basic_string& append(const basic_string& str, size_type pos)
+    {
+        append_from(str.c_str() + pos, str.length() - pos);
+        return *this;
+    }
+    basic_string& append(const basic_string& str, size_type pos, size_type n)
+    {
+        append_from(str.c_str() + pos, n);
+    }
+    basic_string& append(const charT* s, size_type n)
+    {
+        append_from(s, n);
+        return *this;
+    }
+    basic_string& append(const charT* s)
+    {
+        append_from(s, slen(s));
+        return *this;
+    }
     basic_string& append(size_type n, charT c)
     {
         if (n > 0)
@@ -300,15 +315,158 @@ public:
     const charT* data() const { return chars; }
     charT* data() { return chars; }
     
-    size_type find(const basic_string& str, size_type pos = 0) const;
-    size_type find(const charT* s, size_type n, size_type pos) const;
-    size_type find(const charT* s, size_type pos) const;
-    size_type find(charT c, size_type pos = 0) const;
-    size_type rfind(const basic_string& str, size_type pos = npos) const;
-    size_type rfind(const charT* s, size_type n, size_type pos) const;
-    size_type rfind(const charT* s, size_type pos = npos) const;
-    size_type rfind(charT c, size_type pos = npos) const;
-    
+    size_type find(const basic_string& str) const
+    {
+        return find(str, 0);
+    }
+    size_type find(const basic_string& str, size_type pos) const
+    {
+        if (str.empty()) return pos;
+        size_type p = find(str[0], pos);
+        while (p != npos)
+        {
+            bool found = true;
+            for (size_type i = 1; i < str.length(); ++i)
+            {
+                if (chars[i + p] != str[i])
+                {
+                    found = false;
+                    break;
+                }
+            }
+            if (found)
+            {
+                return p;
+            }
+            p = find(str[0], p + 1);
+        }
+        return npos;
+    }
+    size_type find(const charT* s) const
+    {
+        return find(s, 0);
+    }
+    size_type find(const charT* s, size_type pos) const
+    {
+        return find(s, slen(s), pos);
+    }
+    size_type find(const charT* s, size_type n, size_type pos) const
+    {
+        if (n == 0) return pos;
+        size_type p = find(s[0], pos);
+        while (p != npos)
+        {
+            bool found = true;
+            for (size_type i = 1; i < n; ++i)
+            {
+                if (chars[i + p] != s[i])
+                {
+                    found = false;
+                    break;
+                }
+            }
+            if (found)
+            {
+                return p;
+            }
+            p = find(s[0], p + 1);
+        }
+        return npos;
+    }
+    size_type find(charT c) const
+    {
+        return find(c, 0);
+    }
+    size_type find(charT c, size_type pos) const
+    {
+        if (!chars) return npos;
+        for (size_type i = pos; i < len; ++i)
+        {
+            if (chars[i] == c)
+            {
+                return i;
+            }
+        }
+        return npos;
+    }
+    size_type rfind(const basic_string& str) const
+    {
+        return rfind(str, npos);
+    }
+    size_type rfind(const basic_string& str, size_type pos) const
+    {
+        if (str.empty()) return pos;
+        size_type p = rfind(str[0], pos);
+        while (p != npos)
+        {
+            bool found = true;
+            for (size_type i = 1; i < str.length(); ++i)
+            {
+                if (chars[i + p] != str[i])
+                {
+                    found = false;
+                    break;
+                }
+            }
+            if (found)
+            {
+                return p;
+            }
+            p = rfind(str[0], p - 1);
+        }
+        return npos;
+    }
+    size_type rfind(const charT* s) const
+    {
+        return rfind(s, slen(s));
+    }
+    size_type rfind(const charT* s, size_type n) const
+    {
+        return rfind(s, n, npos);
+    }
+    size_type rfind(const charT* s, size_type n, size_type pos) const
+    {
+        if (n == 0) return pos;
+        size_type p = rfind(s[0], pos);
+        while (p != npos)
+        {
+            bool found = true;
+            for (size_type i = 1; i < n; ++i)
+            {
+                if (chars[i + p] != s[i])
+                {
+                    found = false;
+                    break;
+                }
+            }
+            if (found)
+            {
+                return p;
+            }
+            p = rfind(s[0], p - 1);
+        }
+        return npos;
+    }
+    size_type rfind(charT c) const
+    {
+        return rfind(c, npos);
+    }
+    size_type rfind(charT c, size_type pos) const
+    {
+        if (!chars) return npos;
+        if (pos == npos)
+        {
+            pos = len - 1;
+        }
+        for (size_type i = pos; i >= 0; --i)
+        {
+            if (chars[i] == c)
+            {
+                return i;
+            }
+        }
+        return npos;
+    }
     size_type find_first_of(const basic_string& str, size_type pos = 0) const;
     size_type find_first_of(const charT* s, size_type pos, size_type n) const;
     size_type find_first_of(const charT* s, size_type pos = 0) const;
@@ -329,7 +487,41 @@ public:
     size_type find_last_not_of(const charT* s, size_type pos = npos) const;
     size_type find_last_not_of(charT c, size_type pos = npos) const;
     
-    basic_string substr(size_type pos = 0, size_type n = npos) const;
+    basic_string substr() const
+    {
+        if (chars)
+        {
+            return std::basic_string<charT>(chars);
+        }
+        else
+        {
+            return std::basic_string<charT>();
+        }
+    }
+
+    basic_string substr(size_type pos) const
+    {
+        if (pos >= 0 && pos < len)
+        {
+            return std::basic_string<charT>(chars + pos);
+        }
+        else
+        {
+            return std::basic_string<charT>();
+        }
+    }
+
+    basic_string substr(size_type pos, size_type n) const
+    {
+        if (pos >= 0 && pos < len)
+        {
+            return std::basic_string<charT>(chars + pos, n);
+        }
+        else
+        {
+            return std::basic_string<charT>();
+        }
+    }
     
     int compare(const basic_string& str) const;
     int compare(size_type pos1, size_type n1, const basic_string& str) const;
@@ -345,6 +537,16 @@ public:
     bool contains(charT x) const;
     bool contains(const charT* s) const;
 private:
+    void append_from(const charT* s, size_type n)
+    {
+        size_type newlen = len + n;
+        if (newlen > 0)
+        {
+            reserve(newlen);
+            newlen = len + slencpy(chars + len, s, n);
+        }
+        len = newlen;
+    }
     void grow(size_type min_res)
     {
         min_res = std::grow_size(min_res);
@@ -372,37 +574,93 @@ private:
     size_type res;
 };
 
-template<class charT>
-basic_string<charT> operator+(const basic_string& lhs, const basic_string& rhs);
-template<class charT>
-basic_string<charT> operator+(basic_string&& lhs, const basic_string& rhs);
-template<class charT>
-basic_string<charT> operator+(const basic_string& lhs, basic_string&& rhs);
-template<class charT>
-basic_string<charT> operator+(basic_string&& lhs, basic_string&& rhs);
-template<class charT>
-basic_string<charT> operator+(const charT* lhs, const basic_string& rhs);
-template<class charT>
-basic_string<charT> operator+(const charT* lhs, basic_string&& rhs);
-template<class charT>
-basic_string<charT> operator+(charT lhs, const basic_string& rhs);
-template<class charT>
-basic_string<charT> operator+(charT lhs, basic_string&& rhs);
-template<class charT>
-basic_string<charT> operator+(const basic_string& lhs, const charT* rhs);
-template<class charT>
-basic_string<charT> operator+(basic_string&& lhs, const charT* rhs);
-template<class charT>
-basic_string<charT> operator+(const basic_string& lhs, charT rhs);
-template<class charT>
-basic_string<charT> operator+(basic_string&& lhs, charT rhs);
+template<typename charT>
+basic_string<charT> operator+(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
+{
+    basic_string<charT> result(lhs);
+    result.append(rhs);
+    return result;
+}
 
-template<class charT>
-bool operator==(const basic_string& lhs, const basic_string& rhs);
-template<class charT>
-bool operator==(const basic_string& lhs, const charT* rhs);
-template<class charT>
-bool operator==(const charT* lhs, const basic_string& rhs);
+template<typename charT>
+basic_string<charT> operator+(const charT* lhs, const basic_string<charT>& rhs)
+{
+    basic_string<charT> result(lhs);
+    result.append(rhs);
+    return result;
+}
+
+template<typename charT>
+basic_string<charT> operator+(const basic_string<charT>& lhs, const charT* rhs)
+{
+    basic_string<charT> result(lhs);
+    result.append(rhs);
+    return result;
+}
+
+template<typename charT>
+bool operator==(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
+{
+    ssize_t len = lhs.length();
+    if (len != rhs.length()) return false;
+    for (ssize_t i = 0; i < len; ++i)
+    {
+        if (lhs[i] != rhs[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<typename charT>
+bool operator==(const basic_string<charT>& lhs, const charT* rhs)
+{
+    ssize_t len = lhs.length();
+    if (len != slen(rhs)) return false;
+    for (ssize_t i = 0; i < len; ++i)
+    {
+        if (lhs[i] != rhs[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<typename charT>
+bool operator==(const charT* lhs, const basic_string<charT>& rhs)
+{
+    ssize_t len = slen(lhs);
+    if (len != rhs.length()) return false;
+    for (ssize_t i = 0; i < len; ++i)
+    {
+        if (lhs[i] != rhs[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+template<typename charT>
+bool operator<(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
+{
+    ssize_t leftLen = lhs.length();
+    ssize_t rightLen = rhs.length();
+    if (leftLen == 0 && rightLen > 0) return true;
+    if (leftLen > 0 && rightLen == 0) return false;
+    ssize_t n = min(leftLen, rightLen);
+    for (ssize_t i = 0; i < n; ++i)
+    {
+        charT l = lhs[i];
+        charT r = rhs[i];
+        if (l < r) return true;
+        if (l > r) return false;
+    }
+    if (leftLen < rightLen) return true;
+    return false;
+}
 
 using string = basic_string<char>;
 using u8string = basic_string<char8_t>;

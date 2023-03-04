@@ -31,6 +31,8 @@ void Data::AddItem(DataInst inst, Value* item)
     items.push_back(item);
 }
 
+const int maxItemsPerLine = 16;
+
 void Data::Write(util::CodeFormatter& formatter)
 {
     if (!label.empty())
@@ -57,9 +59,18 @@ void Data::Write(util::CodeFormatter& formatter)
         }
         else
         {
-            if (i > 0)
+            if ((i % maxItemsPerLine) == maxItemsPerLine - 1)
             {
-                formatter.Write(", ");
+                formatter.WriteLine();
+                formatter.Write(DataInstStr(insts[i]));
+                formatter.Write(" ");
+            }
+            else
+            {
+                if (i > 0)
+                {
+                    formatter.Write(", ");
+                }
             }
         }
         formatter.Write(items[i]->ToString());

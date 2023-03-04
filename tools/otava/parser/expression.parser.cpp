@@ -1234,6 +1234,7 @@ soul::parser::Match ExpressionParser<Lexer>::LogicalOrExpression(Lexer& lexer, o
                                             if (match.hit)
                                             {
                                                 opPos = lexer.GetSourcePos(pos);
+                                                if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId();
                                             }
                                             *parentMatch8 = match;
                                         }
@@ -1379,6 +1380,7 @@ soul::parser::Match ExpressionParser<Lexer>::LogicalAndExpression(Lexer& lexer, 
                                             if (match.hit)
                                             {
                                                 opPos = lexer.GetSourcePos(pos);
+                                                if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId();
                                             }
                                             *parentMatch8 = match;
                                         }

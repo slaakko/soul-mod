@@ -31,6 +31,7 @@ import otava.symbols.variable.symbol;
 import otava.symbols.modules;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol.table;
+import otava.symbols.enums;
 import std.core;
 import std.filesystem;
 import util;
@@ -118,6 +119,7 @@ class ConstantExpressionEvaluator : public otava::symbols::DefaultBoundTreeVisit
 public:
     ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::SourcePos& sourcePos_, otava::symbols::Context& context_);
     void Visit(otava::symbols::BoundLiteralNode& node) override;
+    void Visit(otava::symbols::BoundEnumConstant& node) override;
 private:
     otava::symbols::Emitter& emitter;
     soul::ast::SourcePos sourcePos;
@@ -132,6 +134,11 @@ ConstantExpressionEvaluator::ConstantExpressionEvaluator(otava::symbols::Emitter
 void ConstantExpressionEvaluator::Visit(otava::symbols::BoundLiteralNode& node)
 {
     emitter.Stack().Push(node.GetValue()->IrValue(emitter, sourcePos, &context));
+}
+
+void ConstantExpressionEvaluator::Visit(otava::symbols::BoundEnumConstant& node)
+{
+    emitter.Stack().Push(node.EnumConstant()->GetValue()->IrValue(emitter, sourcePos, &context));
 }
 
 void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context& context,
@@ -261,6 +268,7 @@ private:
     std::string asmFileName;
     bool globalMain;
     std::vector<std::string> compileUnitInitFnNames;
+    bool elseEndsWithTerminator;
 };
 
 CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::string& config_, bool verbose_, std::string& mainIrName_, int& mainFunctionParams_, bool globalMain_,
@@ -268,7 +276,7 @@ CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::strin
     context(context_), emitter(this), config(config_), verbose(verbose_), mainIrName(mainIrName_), mainFunctionParams(mainFunctionParams_),
     functionDefinition(nullptr), entryBlock(nullptr), trueBlock(nullptr), falseBlock(nullptr), nextBlock(nullptr), defaultBlock(nullptr), 
     breakBlock(nullptr), breakBlockId(-1), continueBlock(nullptr), continueBlockId(-1), continueAfterTryBlock(nullptr), genJumpingBoolCode(false), prevWasTerminator(false),
-    sequenceSecond(nullptr), currentBlockId(-1), globalMain(globalMain_), compileUnitInitFnNames(compileUnitInitFnNames_)
+    sequenceSecond(nullptr), currentBlockId(-1), globalMain(globalMain_), compileUnitInitFnNames(compileUnitInitFnNames_), elseEndsWithTerminator(false)
 {
     std::string intermediateCodeFilePath = util::GetFullPath(
         util::Path::Combine(
@@ -341,6 +349,9 @@ void CodeGenerator::GenJumpingBoolCode()
 void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos)
 {
     if (!cls->IsPolymorphic()) return;
+    if (cls->VTabInitialized()) return;
+    cls->SetVTabInitialized();
+    cls->ComputeVTabName(&context);
     cls->MakeVTab(&context, sourcePos);
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Type* arrayType = emitter.MakeArrayType(cls->VTab().size() * 2 + otava::symbols::vtabClassIdElementCount, voidPtrIrType);
@@ -467,7 +478,6 @@ void CodeGenerator::GenerateGlobalInitializationFunction()
 
 void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 {
-    // context.GetModule()->ResolveForwardDeclarations();
     context.PushSetFlag(otava::symbols::ContextFlags::requireForwardResolved);
     if (globalMain)
     {
@@ -633,6 +643,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
 {
     StatementPrefix();
+    elseEndsWithTerminator = false;
     otava::intermediate::BasicBlock* prevTrueBlock = trueBlock;
     otava::intermediate::BasicBlock* prevFalseBlock = falseBlock;
     trueBlock = emitter.CreateBasicBlock();
@@ -658,6 +669,7 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
     otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
     nextBlock = nullptr;
     emitter.SetNextBlock(nextBlock);
+    prevWasTerminator = false;
     node.ThenStatement()->Accept(*this);
     nextBlock = prevNextBlock;
     emitter.SetNextBlock(nextBlock);
@@ -671,12 +683,21 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
         otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
         nextBlock = nullptr;
         emitter.SetNextBlock(nextBlock);
+        prevWasTerminator = false; 
         node.ElseStatement()->Accept(*this);
         nextBlock = prevNextBlock;
         emitter.SetNextBlock(nextBlock);
-        if (!node.ElseStatement()->EndsWithTerminator() && !node.ElseStatement()->ContainsSingleIfStatement())
+        if (!node.ElseStatement()->EndsWithTerminator())
         {
-            emitter.EmitJump(nextBlock);
+            if (!elseEndsWithTerminator)
+            {
+                emitter.EmitJump(nextBlock);
+                emitter.SetCurrentBasicBlock(nextBlock);
+            }
+        }
+        else
+        {
+            elseEndsWithTerminator = true;
         }
     }
     else
@@ -980,6 +1001,7 @@ void CodeGenerator::Visit(otava::symbols::BoundConstructionStatementNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundExpressionStatementNode& node)
 {
     StatementPrefix();
+    if (!node.GetExpr()) return;
     node.GetExpr()->Accept(*this);
     if (node.GetExpr()->HasValue())
     {
@@ -1216,13 +1238,14 @@ void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& nod
     otava::intermediate::Type* irType = variable->GetType()->IrType(emitter, node.GetSourcePos(), &context);
     if (variable->GetValue() && !variable->GetType()->IsClassTypeSymbol())
     {
+        variable->GetValue()->SetType(variable->GetType());
         initializer = variable->GetValue()->IrValue(emitter, node.GetSourcePos(), &context);
     }
     else
     {
         initializer = irType->MakeDefaultValue(*emitter.GetIntermediateContext());
     }
-    otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, variable->IrName(), initializer);
+    otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, variable->IrName(&context), initializer);
     emitter.SetIrObject(variable, irVariable);
 }
 

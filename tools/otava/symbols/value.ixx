@@ -173,6 +173,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Resolve(SymbolTable& symbolTable) override;
     std::u32string ToString() const override;
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     Symbol* symbol;
     util::uuid symbolId;

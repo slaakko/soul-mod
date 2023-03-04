@@ -1,7 +1,6 @@
 export module std.container.vector;
 
 import std.type.fundamental;
-import std.iterator.reverse;
 import std.utilities.utility;
 import std.type_traits;
 import std.crt;
@@ -55,8 +54,6 @@ public:
     using difference_type = int64_t;
     using iterator = value_type*;
     using const_iterator = const value_type*;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     vector() : elements(nullptr), sz(0), res(0) {}
     explicit vector(size_type n) : elements(nullptr), sz(n), res(0)
@@ -134,10 +131,6 @@ public:
             return nullptr;
         }
     }
-    reverse_iterator rbegin();
-    const_reverse_iterator rbegin() const;
-    reverse_iterator rend();
-    const_reverse_iterator rend() const;
     const_iterator cbegin() const { return elements; }
     const_iterator cend() const
     {
@@ -150,15 +143,57 @@ public:
             return nullptr;
         }
     }
-    const_reverse_iterator crbegin() const;
-    const_reverse_iterator crend() const;
 
     bool empty() const { return sz == 0; }
     size_type size() const { return sz; }
     size_type max_size() const;
     size_type capacity() const { return res; }
-    void resize(size_type new_sz);
-    void resize(size_type sz, const T& c);
+    void resize(size_type new_sz)
+    {
+        if (new_sz != sz)
+        {
+            if (new_sz < sz)
+            {
+                for (size_type i = new_sz; i < sz; ++i)
+                {
+                    T* p = elements + i;
+                    p->T::~T();
+                }
+            }
+            else if (new_sz > sz)
+            {
+                reserve(new_sz);
+                for (size_type i = sz; i < new_sz; ++i)
+                {
+                    new (elements + i) T();
+                }
+            }
+            sz = new_sz;
+        }
+    }
+    void resize(size_type new_sz, const T& c)
+    {
+        if (new_sz != sz)
+        {
+            if (new_sz < sz)
+            {
+                for (size_type i = new_sz; i < sz; ++i)
+                {
+                    T* p = elements + i;
+                    p->T::~T();
+                }
+            }
+            else if (new_sz > sz)
+            {
+                reserve(new_sz);
+                for (size_type i = sz; i < new_sz; ++i)
+                {
+                    new (elements + i) T(c);
+                }
+            }
+            sz = new_sz;
+        }
+    }
     void reserve(size_type n)
     {
         if (n > res)
@@ -176,14 +211,8 @@ public:
     {
         return elements[n];
     }
-    reference at(size_type n)
-    {
-        return elements[n];
-    }
-    const_reference at(size_type n) const
-    {
-        return elements[n];
-    }
+    reference at(size_type n);
+    const_reference at(size_type n) const;
     reference front()
     {
         return elements[0];

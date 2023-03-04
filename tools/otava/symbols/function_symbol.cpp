@@ -12,6 +12,7 @@ import otava.symbols.emitter;
 import otava.symbols.exception;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.type.symbol;
+import otava.symbols.type_compare;
 import otava.symbols.symbol.table;
 import otava.symbols.reader;
 import otava.symbols.writer;
@@ -274,7 +275,11 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     returnTypeId(util::nil_uuid()),
     nextTemporaryId(0),
     vtabIndex(-1),
-    destructor(nullptr)
+    destructor(nullptr),
+    conversionKind(ConversionKind::implicitConversion),
+    conversionParamType(nullptr), 
+    conversionArgType(nullptr),
+    conversionDistance(0)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -291,7 +296,11 @@ FunctionSymbol::FunctionSymbol(SymbolKind kind_, const std::u32string& name_) :
     returnTypeId(util::nil_uuid()),
     nextTemporaryId(0),
     vtabIndex(-1),
-    destructor(nullptr)
+    destructor(nullptr),
+    conversionKind(ConversionKind::implicitConversion),
+    conversionParamType(nullptr),
+    conversionArgType(nullptr),
+    conversionDistance(0)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -358,16 +367,17 @@ int FunctionSymbol::MinMemFunArity(Context* context) const
     return minMemFunArity;
 }
 
-ConversionKind FunctionSymbol::GetConversionKind() const
-{
-    return ConversionKind::implicitConversion;
-}
-
 bool FunctionSymbol::IsVirtual() const
 {
     if ((GetDeclarationFlags() & DeclarationFlags::virtualFlag) != DeclarationFlags::none) return true;
     if ((qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none) return true;
     if ((qualifiers & FunctionQualifiers::isFinal) != FunctionQualifiers::none) return true;
+    return false;
+}
+
+bool FunctionSymbol::IsConst() const
+{
+    if ((qualifiers & FunctionQualifiers::isConst) != FunctionQualifiers::none) return true;
     return false;
 }
 
@@ -527,6 +537,12 @@ bool FunctionSymbol::IsTemplate() const
     return ParentTemplateDeclaration() != nullptr && !IsSpecialization();
 }
 
+int FunctionSymbol::TemplateArity() const
+{
+    TemplateDeclarationSymbol* templateDecl = ParentTemplateDeclaration();
+    return templateDecl->Arity();
+}
+
 bool FunctionSymbol::IsMemFnOfClassTemplate() const
 {
     if (IsSpecialization()) return false;
@@ -536,6 +552,26 @@ bool FunctionSymbol::IsMemFnOfClassTemplate() const
         return true;
     }
     return false;
+}
+
+void FunctionSymbol::SetConversionParamType(TypeSymbol* conversionParamType_)
+{
+    conversionParamType = conversionParamType_;
+}
+
+void FunctionSymbol::SetConversionArgType(TypeSymbol* conversionArgType_)
+{
+    conversionArgType = conversionArgType_;
+}
+
+void FunctionSymbol::SetConversionKind(ConversionKind conversionKind_)
+{
+    conversionKind = conversionKind_;
+}
+
+void FunctionSymbol::SetConversionDistance(int32_t conversionDistance_)
+{
+    conversionDistance = conversionDistance_;
 }
 
 std::u32string FunctionSymbol::FullName() const
@@ -618,6 +654,33 @@ void FunctionSymbol::Write(Writer& writer)
         writer.Write(ReturnValueParam());
     }
     writer.GetBinaryStreamWriter().Write(vtabIndex);
+    if (IsConversion())
+    {
+        writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(GetConversionKind()));
+        TypeSymbol* convParamType = ConversionParamType();
+        if (convParamType)
+        {
+            writer.GetBinaryStreamWriter().Write(convParamType->Id());
+        }
+        else
+        {
+            writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+        }
+        TypeSymbol* convArgType = ConversionArgType();
+        if (convArgType)
+        {
+            writer.GetBinaryStreamWriter().Write(convArgType->Id());
+        }
+        else
+        {
+            writer.GetBinaryStreamWriter().Write(util::nil_uuid());
+        }
+        writer.GetBinaryStreamWriter().Write(ConversionDistance());
+    }
+    if (GetFlag(FunctionSymbolFlags::fixedIrName))
+    {
+        writer.GetBinaryStreamWriter().Write(fixedIrName);
+    }
 }
 
 void FunctionSymbol::Read(Reader& reader)
@@ -638,6 +701,17 @@ void FunctionSymbol::Read(Reader& reader)
         }
     }
     vtabIndex = reader.GetBinaryStreamReader().ReadInt();
+    if (IsConversion())
+    {
+        conversionKind = static_cast<ConversionKind>(reader.GetBinaryStreamReader().ReadByte());
+        reader.GetBinaryStreamReader().ReadUuid(conversionParamTypeId);
+        reader.GetBinaryStreamReader().ReadUuid(conversionArgTypeId);
+        conversionDistance = reader.GetBinaryStreamReader().ReadInt();
+    }
+    if (GetFlag(FunctionSymbolFlags::fixedIrName))
+    {
+        fixedIrName = reader.GetBinaryStreamReader().ReadUtf8String();
+    }
 }
 
 void FunctionSymbol::Resolve(SymbolTable& symbolTable)
@@ -649,6 +723,17 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
         if (ReturnsClass())
         {
             returnValueParam->Resolve(symbolTable);
+        }
+    }
+    if (IsConversion())
+    {
+        if (conversionParamTypeId != util::nil_uuid())
+        {
+            conversionParamType = symbolTable.GetType(conversionParamTypeId);
+        }
+        if (conversionArgTypeId != util::nil_uuid())
+        {
+            conversionArgType = symbolTable.GetType(conversionArgTypeId);
         }
     }
 }
@@ -792,6 +877,10 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
 
 std::string FunctionSymbol::IrName(Context* context) const
 {
+    if (GetFlag(FunctionSymbolFlags::fixedIrName) && !fixedIrName.empty())
+    {
+        return fixedIrName;
+    }
     if (linkage == Linkage::cpp_linkage)
     {
         std::string irName;
@@ -837,6 +926,11 @@ std::string FunctionSymbol::IrName(Context* context) const
         if (IsSpecialization())
         {
             irName.append("_").append(context->GetBoundCompileUnit()->Id());
+        }
+        if (GetFlag(FunctionSymbolFlags::fixedIrName))
+        {
+            fixedIrName = irName;
+            return fixedIrName;
         }
         return irName;
     }
@@ -885,6 +979,11 @@ VariableSymbol* FunctionSymbol::CreateTemporary(TypeSymbol* type)
 bool FunctionSymbol::IsStatic() const
 {
     return (GetDeclarationFlags() & DeclarationFlags::staticFlag) != DeclarationFlags::none;
+}
+
+bool FunctionSymbol::IsExplicit() const
+{
+    return (GetDeclarationFlags() & DeclarationFlags::explicitFlag) != DeclarationFlags::none;
 }
 
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : 
@@ -950,6 +1049,18 @@ std::string FunctionDefinitionSymbol::IrName(Context* context) const
     }
 }
 
+FunctionKind FunctionDefinitionSymbol::GetFunctionKind() const
+{
+    if (declaration)
+    {
+        return declaration->GetFunctionKind();
+    }
+    else
+    {
+        return FunctionSymbol::GetFunctionKind();
+    }
+}
+
 bool FunctionDefinitionSymbol::IsVirtual() const
 {
     if (declaration)
@@ -959,6 +1070,18 @@ bool FunctionDefinitionSymbol::IsVirtual() const
     else
     {
         return FunctionSymbol::IsVirtual();
+    }
+}
+
+bool FunctionDefinitionSymbol::IsConst() const
+{
+    if (declaration)
+    {
+        return declaration->IsConst();
+    }
+    else
+    {
+        return FunctionSymbol::IsConst();
     }
 }
 
@@ -1007,6 +1130,54 @@ bool FunctionDefinitionSymbol::IsStatic() const
     else
     {
         return FunctionSymbol::IsStatic();
+    }
+}
+
+bool FunctionDefinitionSymbol::IsExplicit() const
+{
+    if (declaration)
+    {
+        return declaration->IsExplicit();
+    }
+    else
+    {
+        return FunctionSymbol::IsExplicit();
+    }
+}
+
+TypeSymbol* FunctionDefinitionSymbol::ConversionParamType() const
+{
+    if (declaration)
+    {
+        return declaration->ConversionParamType();
+    }
+    else
+    {
+        return FunctionSymbol::ConversionParamType();
+    }
+}
+
+TypeSymbol* FunctionDefinitionSymbol::ConversionArgType() const
+{
+    if (declaration)
+    {
+        return declaration->ConversionArgType();
+    }
+    else
+    {
+        return FunctionSymbol::ConversionArgType();
+    }
+}
+
+int32_t FunctionDefinitionSymbol::ConversionDistance() const
+{
+    if (declaration)
+    {
+        return declaration->ConversionDistance();
+    }
+    else
+    {
+        return FunctionSymbol::ConversionDistance();
     }
 }
 

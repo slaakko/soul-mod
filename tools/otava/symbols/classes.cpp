@@ -27,6 +27,7 @@ import otava.symbols.class_templates;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.function.group.symbol;
 import otava.symbols.declaration;
+import otava.symbols.type_compare;
 import util.unicode;
 import util.sha1;
 
@@ -65,7 +66,6 @@ int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
     }
     return 0;
 }
-
 
 RecordedParseCompoundStatementFn recordedParseCompoundStatementFn = nullptr;
 
@@ -226,6 +226,7 @@ void ClassTypeSymbol::Write(Writer& writer)
     }
     writer.GetBinaryStreamWriter().Write(vtabSize);
     writer.GetBinaryStreamWriter().Write(vptrIndex);
+    writer.GetBinaryStreamWriter().Write(vtabName);
 }
 
 void ClassTypeSymbol::Read(Reader& reader)
@@ -259,6 +260,7 @@ void ClassTypeSymbol::Read(Reader& reader)
     }
     vtabSize = reader.GetBinaryStreamReader().ReadInt();
     vptrIndex = reader.GetBinaryStreamReader().ReadInt();
+    vtabName = reader.GetBinaryStreamReader().ReadUtf8String();
 }
 
 void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
@@ -460,15 +462,13 @@ std::string ClassTypeSymbol::IrName(Context* context) const
     return irName;
 }
 
-std::string ClassTypeSymbol::VTabName(Context* context) const
+void ClassTypeSymbol::ComputeVTabName(Context* context)
 {
-    std::string vtabName;
     vtabName.append("vtab_").append(IrName(context));
     if (IsClassTemplateSpecializationSymbol())
     {
         vtabName.append("_").append(context->GetBoundCompileUnit()->Id());
     }
-    return vtabName;
 }
 
 otava::intermediate::Type* ClassTypeSymbol::VPtrType(Emitter& emitter) const
@@ -543,8 +543,11 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     else if (symbol->IsFunctionSymbol())
     {
         FunctionSymbol* functionSymbol = static_cast<FunctionSymbol*>(symbol);
-        memberFunctions.push_back(functionSymbol);
-        if (functionSymbol->GetFunctionKind() == FunctionKind::conversionMemFn)
+        if (!functionSymbol->IsFunctionDefinitionSymbol())
+        {
+            memberFunctions.push_back(functionSymbol);
+        }
+        if (functionSymbol->IsConversionMemFn())
         {
             conversionFunctions.push_back(functionSymbol);
         }
@@ -1107,6 +1110,11 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
         VariableSymbol* memberVar = classTypeSymbol->MemberVariables()[i];
         if (memberVar->GetType()->IsPointerType() || memberVar->GetType()->IsReferenceType()) continue;
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        if (memberVar->GetType()->IsClassTypeSymbol())
+        {
+            ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(memberVar->GetType());
+            GenerateDestructor(classType, sourcePos, context);
+        }
         BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVar, sourcePos);
         ParameterSymbol* thisParam = destructorSymbol->ThisParam(context);
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetReferredType(context));
@@ -1120,13 +1128,13 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
             {
                 hasNonTrivialDestructor = true;
+                terminator->AddMemberTerminator(boundFunctionCall.release());
             }
-            terminator->AddMemberTerminator(boundFunctionCall.release());
         }
     }
     for (int i = nb - 1; i >= 0; --i)
     {
-        TypeSymbol* baseClass = classTypeSymbol->BaseClasses()[i];
+        ClassTypeSymbol* baseClass = classTypeSymbol->BaseClasses()[i];
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
         ParameterSymbol* thisParam = destructorSymbol->ThisParam(context);
         BoundExpressionNode* thisPtr = new BoundParameterNode(thisParam, sourcePos, thisParam->GetType());
@@ -1134,6 +1142,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
+            GenerateDestructor(baseClass, sourcePos, context);
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             Exception ex;
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(
@@ -1143,8 +1152,8 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
                 if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
                 {
                     hasNonTrivialDestructor = true;
+                    terminator->AddMemberTerminator(boundFunctionCall.release());
                 }
-                terminator->AddMemberTerminator(boundFunctionCall.release());
             }
         }
         else

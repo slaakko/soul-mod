@@ -47,7 +47,9 @@ enum class ContextFlags : int32_t
     generateMainWrapper = 1 << 22,
     noDynamicInit = 1 << 23,
     requireForwardResolved = 1 << 24,
-    noPtrOps = 1 << 25
+    noPtrOps = 1 << 25,
+    reinterpretCast = 1 << 26,
+    derefAfterConv = 1 << 27
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -122,6 +124,9 @@ public:
     otava::intermediate::Value* Ptr() const { return ptr; }
     int MemFunDefSymbolIndex() const { return memFunDefSymbolIndex; }
     void SetMemFunDefSymbolIndex(int index) { memFunDefSymbolIndex = index; }
+    void ResetRejectTemplateId() { rejectTemplateId = false; }
+    void SetRejectTemplateId() { rejectTemplateId = true; }
+    bool RejectTemplateId() const { return rejectTemplateId; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -140,6 +145,7 @@ private:
     otava::intermediate::Value* ptr;
     int memFunDefSymbolIndex;
     std::string fileName;
+    bool rejectTemplateId;
 };
 
 } // namespace otava::symbols

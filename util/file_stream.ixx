@@ -12,11 +12,11 @@ export namespace util {
 
 enum class OpenMode : int
 {
-    none = 0u,
-    read = 1u << 0u,
-    write = 1u << 1u,
-    append = 1u << 2u,
-    binary = 1u << 3u
+    none = 0,
+    read = 1 << 0,
+    write = 1 << 1,
+    append = 1 << 2,
+    binary = 1 << 3
 };
 
 inline constexpr OpenMode operator|(OpenMode left, OpenMode right)
@@ -37,7 +37,7 @@ inline constexpr OpenMode operator~(OpenMode mode)
 class FileStream : public Stream
 {
 public:
-    FileStream(int handle);
+    explicit FileStream(int handle);
     FileStream(const std::string& filePath_, OpenMode openMode);
     ~FileStream() override;
     int ReadByte() override;

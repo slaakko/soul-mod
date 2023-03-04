@@ -117,6 +117,10 @@ path::path(path&& that) : handle(that.handle)
     that.handle = nullptr;
 }
 
+path::path(const path::string_type& s) : handle(fs_path_string_ctor(s.c_str()))
+{
+}
+
 path::path(const char* source) : handle(fs_path_string_ctor(source))
 {
 }
@@ -219,16 +223,6 @@ path& path::replace_extension()
 {
     fs_path_remove_extension(handle);
     return *this;
-}
-
-bool operator==(const path& lhs, const path& rhs)
-{
-    return fs_path_equal(lhs.handle, rhs.handle);
-}
-
-path operator/(const path& lhs, const path& rhs)
-{
-    return path(fs_path_cat2(lhs.handle, rhs.handle));
 }
 
 std::string path::string() const
@@ -374,6 +368,16 @@ bool path::is_absolute() const
 bool path::is_relative() const
 {
     return fs_path_is_relative(handle);
+}
+
+bool operator==(const path& lhs, const path& rhs)
+{
+    return fs_path_equal(lhs.get_handle(), rhs.get_handle());
+}
+
+path operator/(const path& lhs, const path& rhs)
+{
+    return path(fs_path_cat2(lhs.get_handle(), rhs.get_handle()));
 }
 
 path absolute(const path& p)

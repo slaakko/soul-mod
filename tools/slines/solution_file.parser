@@ -1,0 +1,189 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module solution_file.parser;
+
+[interface]import solution_file.ast;
+[interface]import project_file.ast;
+[implementation]import solution_file.token;
+[implementation]import solution_file.lexer;
+
+parser solution_file_parser
+{
+    lexer solution_file::lexer::solution_file_lexer<char32_t>;
+
+    main;
+
+    file(var solution_file::ast::Solution* solution) : solution_file::ast::Solution*
+        ::= 
+        (   header:hdr{ solution = new solution_file::ast::Solution(lexer.FileName()); }
+            projects(solution):prjcts
+            global:glbl
+        )
+        {
+            return solution;
+        }
+        ;
+
+    header
+        ::= MICROSOFT VISUAL STUDIO SOLUTION FILE_ COMMA FORMAT VERSION NUMBER 
+            visual_studio_version:vsver
+            minimum_visual_studio_version:minimumver
+        ;
+
+    visual_studio_version
+        ::= VISUAL_STUDIO_VERSION ASSIGN NUMBER 
+        ;
+
+    minimum_visual_studio_version
+        ::= MINIMUM_VERSION ASSIGN NUMBER 
+        ;
+
+    projects(solution_file::ast::Solution* solution)
+        ::= (project_(solution->Root()):prj{ solution->AddProject(prj); })*
+        ;
+
+    project_(std::string root, var std::string typeGuid, var std::string projectName, var std::string projectFilePath, var std::string projectId) : project_file::ast::Project*
+        ::= PROJECT LPAREN STRING{ typeGuid = solution_file::ast::ParseString(lexer.GetToken(pos).ToString()); }  RPAREN
+            ASSIGN STRING{ projectName = solution_file::ast::ParseString(lexer.GetToken(pos).ToString()); } 
+            COMMA STRING{ projectFilePath = solution_file::ast::ParseString(lexer.GetToken(pos).ToString()); } 
+            COMMA STRING{ projectId = solution_file::ast::ParseString(lexer.GetToken(pos).ToString()); } 
+            project_sections:prjsecs
+            END_PROJECT{ return new project_file::ast::Project(root, typeGuid, projectName, projectFilePath, projectId); }
+        ; 
+
+    project_sections
+        ::= project_section:prjsec*
+        ;
+
+    project_section
+        ::= solution_items_section:solution_sec
+        |   project_dependencies_section:project_dep_sec
+        ;
+            
+    solution_items_section
+        ::= PROJECT_SECTION LPAREN SOLUTION_ITEMS{ vars->inSolutionItems = true; } RPAREN ASSIGN PREPROJECT
+            path_lines:pl
+            END_PROJECT_SECTION{ vars->inSolutionItems = false; }
+        ;
+
+    path_lines
+        ::= path_line:pl*
+        ;
+
+    path_line
+        ::= PATH ASSIGN PATH 
+        ;
+
+    project_dependencies_section
+        ::= PROJECT_SECTION LPAREN PROJECT_DEPENDENCIES RPAREN ASSIGN POSTPROJECT 
+            guid_lines:gl
+            END_PROJECT_SECTION 
+        ;
+
+    guid_lines
+        ::= guid_line:gl*
+        ;
+
+    guid_line
+        ::= GUID ASSIGN GUID 
+        ;
+
+    global
+        ::= GLOBAL 
+            global_sections:g_secs
+            END_GLOBAL 
+        ;
+
+    global_sections
+        ::= global_section:gsec*
+        ;
+
+    global_section
+        ::= solution_configuration_platform_section:spfs
+        |   project_configuration_platform_section:ppfs
+        |   solution_properties_section:sps
+        |   nested_project_section:nps
+        |   extensibility_globals_section:egs
+        ;
+
+    solution_configuration_platform_section
+        ::= GLOBAL_SECTION LPAREN SOLUTION_CONFIGURATION_PLATFORMS{ vars->inSolutionConfigurationPlatforms = true; } RPAREN ASSIGN PRESOLUTION 
+            config_lines:cl
+            END_GLOBAL_SECTION{ vars->inSolutionConfigurationPlatforms = false; } / { vars->inSolutionConfigurationPlatforms = false; }
+        ;
+
+    config_lines
+        ::= config_line:cl*
+        ;
+
+    config_line
+        ::= config:cfg ASSIGN config:cfg2 
+        ;
+
+    config
+        ::= CONFIG 
+        ;
+
+    project_configuration_platform_section
+        ::= GLOBAL_SECTION LPAREN PROJECT_CONFIGURATION_PLATFORMS{ vars->inProjectConfigurationPlatforms = true; } RPAREN ASSIGN POSTSOLUTION 
+            guid_config_lines:gl
+            END_GLOBAL_SECTION{ vars->inProjectConfigurationPlatforms = false; } / { vars->inProjectConfigurationPlatforms = false; }
+        ;
+
+    guid_config_lines
+        ::= guid_config_line:gcl*
+        ;
+
+    guid_config_line
+        ::= guid_config:cfg1 ASSIGN guid_config:cfg2
+        ;
+
+    guid_config
+        ::= GUID_CONFIG | ID (DOT ID)* PIPE ID (DOT ID)*
+        ;
+
+    solution_properties_section
+        ::= GLOBAL_SECTION LPAREN SOLUTION_PROPERTIES RPAREN ASSIGN PRESOLUTION 
+            hide_solution_node_lines:hl
+            END_GLOBAL_SECTION 
+        ;
+
+    hide_solution_node_lines
+        ::= hide_solution_node_line:hl*
+        ;
+
+    hide_solution_node_line
+        ::= HIDE_SOLUTION_NODE ASSIGN ID
+        ;
+
+    nested_project_section
+        ::= GLOBAL_SECTION LPAREN NESTED_PROJECTS RPAREN ASSIGN PRESOLUTION 
+            nested_projects:nps
+            END_GLOBAL_SECTION 
+        ;
+
+    nested_projects
+        ::= nested_project:np*
+        ;
+
+    nested_project
+        ::= GUID ASSIGN GUID 
+        ;
+
+    extensibility_globals_section
+        ::= GLOBAL_SECTION LPAREN EXTENSIBILITY_GLOBALS RPAREN ASSIGN POSTSOLUTION 
+            solution_guids:sg
+            END_GLOBAL_SECTION 
+        ;
+
+    solution_guids
+        ::= solution_guid:sg*
+        ;
+
+    solution_guid
+        ::= SOLUTION_GUID ASSIGN GUID
+        ;
+}

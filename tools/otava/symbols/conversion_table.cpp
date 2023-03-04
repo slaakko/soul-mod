@@ -7,11 +7,18 @@ module otava.symbols.conversion.table;
 
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;
+import otava.symbols.type_compare;
+import otava.symbols.symbol.table;
+import otava.symbols.modules;
+import util.unicode;
 
 namespace otava::symbols {
 
-ConversionTableEntry::ConversionTableEntry(TypeSymbol* paramType_, TypeSymbol* argType_) : paramType(paramType_), argType(argType_)
+ConversionTableEntry::ConversionTableEntry(TypeSymbol* paramType_, TypeSymbol* argType_) : key(), paramType(paramType_), argType(argType_)
 {
+    std::u32string combinedName = paramType->FullName();
+    combinedName.append(1, '.').append(argType->FullName());
+    key = combinedName;
 }
 
 bool ConversionTableEntryEqual::operator()(const ConversionTableEntry& left, const ConversionTableEntry& right) const
@@ -21,13 +28,12 @@ bool ConversionTableEntryEqual::operator()(const ConversionTableEntry& left, con
 
 size_t ConversionTableEntryHash::operator()(const ConversionTableEntry& entry) const
 {
-    uint64_t xp;
-    uint64_t yp;
-    util::UuidToInts(entry.paramType->Id(), xp, yp);
-    uint64_t xa;
-    uint64_t ya;
-    util::UuidToInts(entry.argType->Id(), xa, ya);
-    return xp ^ yp ^ xa ^ ya;
+    size_t hashCode = std::hash<std::u32string>()(entry.key);
+    return hashCode;
+}
+
+ConversionTable::ConversionTable(SymbolTable* symbolTable_) : symbolTable(symbolTable_)
+{
 }
 
 void ConversionTable::Import(const ConversionTable& that)

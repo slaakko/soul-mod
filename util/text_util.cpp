@@ -158,8 +158,8 @@ std::vector<std::string> Split(const std::string& s, const std::string& subStrin
         if (s.substr(i, subString.length()) == subString)
         {
             v.push_back(s.substr(start, i - start));
-            start = i + subString.length();
-            i += subString.length() - 1;
+            start = static_cast<int>(i + subString.length());
+            i += static_cast<int>(subString.length() - 1);
         }
     }
     if (start < n)
@@ -201,23 +201,23 @@ std::string Replace(const std::string& s, const std::string& oldString, const st
 
 std::string HexEscape(char c)
 {
-    std::stringstream s;
-    s << "\\x" << std::hex << int(static_cast<unsigned char>(c));
-    return s.str();
+    std::string s = "\\x";
+    s.append(ToHexString(static_cast<unsigned char>(c)));
+    return s;
 }
 
 std::u32string HexEscape(uint32_t c)
 {
-    std::stringstream s;
-    s << "\\x" << std::hex << c;
-    return ToUtf32(s.str());
+    std::string s = "\\x";
+    s.append(ToHexString(c));
+    return ToUtf32(s);
 }
 
 std::u32string CharHexEscape(char32_t c)
 {
-    std::stringstream s;
-    s << "\\U" << ToHexString(static_cast<uint32_t>(c));
-    return ToUtf32(s.str());
+    std::string s = "\\U";
+    s.append(ToHexString(static_cast<uint32_t>(c)));
+    return ToUtf32(s);
 }
 
 std::string CharStr(char c)
@@ -253,17 +253,17 @@ std::u32string CharStr(char32_t c)
 {
     switch (c)
     {
-    case '\'': return U"\\'";
-    case '\"': return U"\\\"";
-    case '\\': return U"\\\\";
-    case '\a': return U"\\a";
-    case '\b': return U"\\b";
-    case '\f': return U"\\f";
-    case '\n': return U"\\n";
-    case '\r': return U"\\r";
-    case '\t': return U"\\t";
-    case '\v': return U"\\v";
-    case '\0': return U"\\0";
+    case U'\'': return U"\\'";
+    case U'\"': return U"\\\"";
+    case U'\\': return U"\\\\";
+    case U'\a': return U"\\a";
+    case U'\b': return U"\\b";
+    case U'\f': return U"\\f";
+    case U'\n': return U"\\n";
+    case U'\r': return U"\\r";
+    case U'\t': return U"\\t";
+    case U'\v': return U"\\v";
+    case U'\0': return U"\\0";
     default:
     {
         if (c >= 32 && c <= 126)
@@ -320,7 +320,9 @@ std::string QuotedPath(const std::string& path)
 {
     if (path.find(' ') != std::string::npos)
     {
-        return std::string("\"") + path + "\"";
+        std::string p("\"");
+        p.append(path).append("\"");
+        return p;
     }
     return path;
 }
@@ -397,7 +399,7 @@ std::string NarrowString(const char* str, int length)
 #endif
 }
 
-std::string ToUpper(const std::string& s)
+std::string ToUpperNarrow(const std::string& s)
 {
     std::string result;
     int n = int(s.size());
@@ -409,7 +411,7 @@ std::string ToUpper(const std::string& s)
     return result;
 }
 
-std::string ToLower(const std::string& s)
+std::string ToLowerNarrow(const std::string& s)
 {
     std::string result;
     int n = int(s.size());

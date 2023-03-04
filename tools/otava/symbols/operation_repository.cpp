@@ -19,6 +19,7 @@ import otava.symbols.classes;
 import otava.symbols.overload.resolution;
 import otava.symbols.exception;
 import otava.symbols.expression.binder;
+import otava.symbols.type_compare;
 import otava.ast.expression;
 import util.unicode;
 import util.sha1;
@@ -244,6 +245,7 @@ public:
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override;
     bool IsCtorAssignmentOrArrow() const override { return true; }
+    bool IsPointerCopyAssignment() const override { return true; }
 private:
     TypeSymbol* type;
 };

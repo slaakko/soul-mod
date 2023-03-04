@@ -49,15 +49,32 @@ extern "C" int flush_file(void* stream);
 extern "C" int seek_file(void* stream, int offset, int origin);
 extern "C" int tell_file(void* stream);
 extern "C" char* str_error(int errnum);
+extern "C" void* mem_set(void* dest, int c, size_t count);
+extern "C" char* get_cwd(char* buffer, int maxlen);
+extern "C" bool file_exists(const char* path);
+extern "C" bool dir_exists(const char* path);
+extern "C" bool path_exists(const char* path);
+extern "C" int to_lower(int c);
+extern "C" int to_upper(int c);
+extern "C" bool is_alpha(int c);
+extern "C" bool is_digit(int c);
+extern "C" int error_number();
+
+using FILE = void;
+int stdin_ = 0;
+int stdout_ = 1;
+int stderr_ = 2;
+FILE* stdin;
+FILE* stdout;
+FILE* stderr;
+int SEEK_SET = 0;
+int SEEK_CUR = 1;
+int SEEK_END = 2;
+int EOF = -1;
 
 }
 
 export namespace std {
-
-using FILE = void;
-int SEEK_SET = 0;
-int SEEK_CUR = 1;
-int SEEK_END = 2;
 
 bool isspace(int c);
 const char* getenv(const char* env);
@@ -73,6 +90,20 @@ int fflush(FILE* stream);
 int fseek(FILE* stream, long int offset, int origin);
 long int ftell(FILE* stream);
 char* strerror(int errnum);
+void* memset(void* dest, int c, size_t count);
+char* getcwd(char* buffer, int maxlen);
+bool fexists(const char* path);
+bool dexists(const char* path);
+bool exists(const char* path);
+int tolower(int c);
+int toupper(int c);
+bool isalpha(int c);
+bool isdigit(int c);
 
+struct crt_init
+{
+    crt_init();
+};
 
 } // namespace std
+

@@ -11,9 +11,6 @@ import otava.symbols.bound.tree;
 
 export namespace otava::symbols {
 
-class Scope;
-class TypeSymbol;
-
 enum class FunctionKind;
 enum class FunctionQualifiers;
 enum class DeclarationFlags : int32_t;

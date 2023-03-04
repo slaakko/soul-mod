@@ -147,7 +147,7 @@ parser ExpressionParser
         (
             LogicalAndExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
             (
-                OR_OR{ opPos = lexer.GetSourcePos(pos); } 
+                OR_OR{ opPos = lexer.GetSourcePos(pos); if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId(); } 
                 LogicalAndExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::DisjunctionNode(opPos), expr.release(), right)); }
             )*
         )
@@ -162,7 +162,7 @@ parser ExpressionParser
         (
             InclusiveOrExpression(context):left{ expr.reset(left); sourcePos = lexer.GetSourcePos(pos); } 
             (
-                AMP_AMP{ opPos = lexer.GetSourcePos(pos); } 
+                AMP_AMP{ opPos = lexer.GetSourcePos(pos); if (context->GetFlag(otava::symbols::ContextFlags::parsingTemplateId)) context->SetRejectTemplateId(); } 
                 InclusiveOrExpression(context):right{ expr.reset(new otava::ast::BinaryExprNode(sourcePos, new otava::ast::ConjunctionNode(opPos), expr.release(), right)); }
             )*
         )

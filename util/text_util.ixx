@@ -6,6 +6,7 @@
 export module util.text.util;
 
 import std.core;
+import util.stream;
 
 export namespace util {
 
@@ -42,8 +43,8 @@ bool StartsWith(const std::u32string& s, const std::u32string& prefix);
 bool EndsWith(const std::string& s, const std::string& suffix);
 bool EndsWith(const std::u32string& s, const std::u32string& suffix);
 std::string NarrowString(const char* str, int length);
-std::string ToUpper(const std::string& s);
-std::string ToLower(const std::string& s);
+std::string ToUpperNarrow(const std::string& s);
+std::string ToLowerNarrow(const std::string& s);
 std::string ToString(double x);
 std::string ToString(double x, int maxNumDecimals);
 std::string ToString(double x, int minNumDecimals, int maxNumDecimals);

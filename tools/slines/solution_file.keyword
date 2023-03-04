@@ -1,0 +1,19 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+import solution_file.token;
+
+keywords solution_file.keyword
+{
+    ("Microsoft", MICROSOFT), ("Visual", VISUAL), ("Studio", STUDIO), ("Solution", SOLUTION), ("File", FILE_),
+    ("Format", FORMAT), ("Version", VERSION), ("VisualStudioVersion", VISUAL_STUDIO_VERSION), ("MinimumVisualStudioVersion", MINIMUM_VERSION),
+    ("Project", PROJECT), ("EndProject", END_PROJECT), ("ProjectSection", PROJECT_SECTION), ("EndProjectSection", END_PROJECT_SECTION),
+    ("SolutionItems", SOLUTION_ITEMS), ("preProject", PREPROJECT), ("postProject", POSTPROJECT), ("ProjectDependencies", PROJECT_DEPENDENCIES),
+    ("Global", GLOBAL), ("EndGlobal", END_GLOBAL), ("GlobalSection", GLOBAL_SECTION), ("EndGlobalSection", END_GLOBAL_SECTION),
+    ("SolutionConfigurationPlatforms", SOLUTION_CONFIGURATION_PLATFORMS), ("ProjectConfigurationPlatforms", PROJECT_CONFIGURATION_PLATFORMS), 
+    ("SolutionProperties", SOLUTION_PROPERTIES),
+    ("HideSolutionNode", HIDE_SOLUTION_NODE), ("preSolution", PRESOLUTION), ("postSolution", POSTSOLUTION), ("SolutionGuid", SOLUTION_GUID),
+    ("ExtensibilityGlobals", EXTENSIBILITY_GLOBALS), ("NestedProjects", NESTED_PROJECTS)
+}

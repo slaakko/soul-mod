@@ -1560,6 +1560,7 @@ soul::parser::Match TemplateParser<Lexer>::SimpleTemplateId(Lexer& lexer, otava:
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
+        bool pass = true;
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1607,6 +1608,7 @@ soul::parser::Match TemplateParser<Lexer>::SimpleTemplateId(Lexer& lexer, otava:
                                     laPos = lexer.GetSourcePos(pos);
                                     ++vars->langleCount;
                                     context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId);
+                                    context->ResetRejectTemplateId();
                                     node.reset(new otava::ast::TemplateIdNode(sourcePos, templateName.release()));
                                 }
                                 *parentMatch7 = match;
@@ -1679,14 +1681,25 @@ soul::parser::Match TemplateParser<Lexer>::SimpleTemplateId(Lexer& lexer, otava:
         }
         if (match.hit)
         {
-            node->SetLAnglePos(laPos);
-            node->SetRAnglePos(raPos);
+            if (context->RejectTemplateId())
             {
-                #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTemplateId");
-                #endif
-                return soul::parser::Match(true, node.release());
+                pass = false;
             }
+            else
+            {
+                node->SetLAnglePos(laPos);
+                node->SetRAnglePos(raPos);
+                {
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "SimpleTemplateId");
+                    #endif
+                    return soul::parser::Match(true, node.release());
+                }
+            }
+        }
+        if (match.hit && !pass)
+        {
+            match = soul::parser::Match(false);
         }
         *parentMatch0 = match;
     }

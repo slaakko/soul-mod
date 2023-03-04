@@ -219,6 +219,7 @@ parser TemplateParser
                 laPos = lexer.GetSourcePos(pos); 
                 ++vars->langleCount; 
                 context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateId); 
+                context->ResetRejectTemplateId();
                 node.reset(new otava::ast::TemplateIdNode(sourcePos, templateName)); 
             }
             TemplateArgumentList(context, node.get()):templateArgs?
@@ -235,9 +236,16 @@ parser TemplateParser
             }
         )
         {
-            node->SetLAnglePos(laPos);
-            node->SetRAnglePos(raPos);
-            return node.release();
+            if (context->RejectTemplateId())
+            {
+                pass = false;
+            }
+            else
+            {
+                node->SetLAnglePos(laPos);
+                node->SetRAnglePos(raPos);
+                return node.release();
+            }
         }
         ;
 

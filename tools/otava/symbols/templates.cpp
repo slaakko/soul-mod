@@ -115,7 +115,7 @@ TypeSymbol* TemplateParameterSymbol::Unify(TypeSymbol* argType, Context* context
     return argType;
 }
 
-TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context)
+TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
 {
     auto it = templateParameterMap.find(this);
     if (it != templateParameterMap.cend())
@@ -297,6 +297,12 @@ ExplicitInstantiationSymbol::ExplicitInstantiationSymbol(ClassTemplateSpecializa
 
 void ExplicitInstantiationSymbol::AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    functionDefinitionSymbol->SetFlag(FunctionSymbolFlags::fixedIrName);
+    if (functionDefinitionSymbol->Declaration())
+    {
+        FunctionSymbol* declaration = functionDefinitionSymbol->Declaration();
+        declaration->SetFlag(FunctionSymbolFlags::fixedIrName);
+    }
     ExplicitlyInstantiatedFunctionDefinitionSymbol* explicitlyInstantiatedSymbol = new ExplicitlyInstantiatedFunctionDefinitionSymbol(functionDefinitionSymbol, sourcePos, context);
     explicitlyInstantiatedSymbol->SetFunctionKind(functionDefinitionSymbol->GetFunctionKind());
     while (functionDefinitionSymbol->DefIndex() >= functionDefinitionSymbols.size())

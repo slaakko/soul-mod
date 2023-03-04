@@ -55,14 +55,9 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
     functionDefinitionNodes.push_back(std::unique_ptr<otava::ast::Node>(functionDefinitionNode));
 }
 
-FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap,
+FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    std::map<std::pair<int, std::u32string>, TypeSymbol*> templateParamMap;
-    for (const auto& templateParamTypePair : templateParameterMap)
-    {
-        templateParamMap[std::make_pair(templateParamTypePair.first->Index(), templateParamTypePair.first->Name())] = templateParamTypePair.second;
-    }
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
     TemplateDeclarationSymbol* templateDeclaration = functionTemplate->ParentTemplateDeclaration();
@@ -76,16 +71,7 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
         }
         else 
         {
-            auto it = templateParamMap.find(std::make_pair(templateParameter->Index(), templateParameter->Name()));
-            if (it != templateParamMap.cend())
-            {
-                TypeSymbol* templateArgumentType = it->second;
-                templateArgumentTypes.push_back(templateArgumentType);
-            }
-            else
-            {
-                ThrowException("template parameter type not found", sourcePos, context);
-            }
+            ThrowException("template parameter type not found", sourcePos, context);
         }
     }
     FunctionTemplateKey key(functionTemplate, templateArgumentTypes);
@@ -158,8 +144,13 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
         }
         catch (const std::exception& ex)
         {
-            ThrowException("otava.symbols.function_templates: error instantiating specialization '" +
-                util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), node->GetSourcePos(), context);
+            std::string specializationFullName;
+            if (specialization)
+            {
+                specializationFullName = util::ToUtf8(specialization->FullName());
+            }
+            ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationFullName + 
+                "': " + std::string(ex.what()), node->GetSourcePos(), context);
         }
         context->GetSymbolTable()->EndScope();
         functionTemplateRepository->AddFunctionDefinition(key, specialization, node);

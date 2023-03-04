@@ -5,8 +5,6 @@
 
 module util.memory.stream;
 
-import util.stream;
-
 namespace util {
 
 MemoryStream::MemoryStream() : Stream(), data(), size(), readPos(0)

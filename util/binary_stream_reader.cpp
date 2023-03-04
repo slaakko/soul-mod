@@ -81,6 +81,8 @@ int64_t BinaryStreamReader::ReadLong()
     return static_cast<int64_t>(x);
 }
 
+#ifndef OTAVA
+
 float BinaryStreamReader::ReadFloat()
 {
     uint32_t x = ReadUInt();
@@ -92,6 +94,8 @@ double BinaryStreamReader::ReadDouble()
     uint64_t x = ReadULong();
     return *reinterpret_cast<double*>(&x);
 }
+
+#endif
 
 char BinaryStreamReader::ReadChar()
 {
@@ -148,9 +152,9 @@ uint32_t BinaryStreamReader::ReadULEB128UInt()
     while (true)
     {
         uint8_t b = ReadByte();
-        result |= ((b & 0x7F) << shift);
+        result |= static_cast<uint32_t>(((b & 0x7F) << shift));
         if ((b & 0x80) == 0) break;
-        shift += 7;
+        shift += static_cast<uint32_t>(7);
     }
     return result;
 }
@@ -205,9 +209,9 @@ int64_t BinaryStreamReader::ReadSLEB128Long()
     return result;
 }
 
-void BinaryStreamReader::ReadUuid(uuid& uuid)
+void BinaryStreamReader::ReadUuid(uuid& id)
 {
-    for (uuid::value_type& x : uuid)
+    for (uuid::value_type& x : id)
     {
         x = ReadByte();
     }

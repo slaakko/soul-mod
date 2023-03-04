@@ -63,7 +63,7 @@ public:
     basic_ostream() : handle(1)
     {
     }
-    basic_ostream(int handle_) : handle(handle_)
+    explicit basic_ostream(int handle_) : handle(handle_)
     {
     }
     basic_ostream<charT>& flush()
@@ -145,20 +145,6 @@ template<typename charT>
 basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const string& str)
 {
     s.write(str);
-    return s;
-}
-
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const u16string& str)
-{
-    s.write(to_utf8(str));
-    return s;
-}
-
-template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const u32string& str)
-{
-    s.write(to_utf8(str));
     return s;
 }
 

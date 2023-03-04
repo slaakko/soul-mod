@@ -259,6 +259,10 @@
     <ClCompile Include="symbol_table.ixx" />
     <ClCompile Include="templates.cpp" />
     <ClCompile Include="templates.ixx" />
+    <ClCompile Include="template_param_compare.cpp" />
+    <ClCompile Include="template_param_compare.ixx" />
+    <ClCompile Include="type_compare.cpp" />
+    <ClCompile Include="type_compare.ixx" />
     <ClCompile Include="type_resolver.cpp" />
     <ClCompile Include="type_resolver.ixx" />
     <ClCompile Include="type_symbol.cpp" />

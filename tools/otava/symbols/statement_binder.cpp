@@ -34,6 +34,8 @@ import otava.symbols.instantiator;
 import otava.symbols.declaration;
 import otava.symbols.modules;
 import otava.symbols.namespaces;
+import otava.symbols.conversion.table;
+import otava.symbols.type_compare;
 import util.sha1;
 import util.unicode;
 
@@ -103,6 +105,11 @@ BoundFunctionCallNode* MakeDestructorCall(ClassTypeSymbol* cls, BoundExpressionN
     if (dtorSymbol && (dtorSymbol->IsFunctionSymbol() || dtorSymbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol()))
     {
         FunctionSymbol* dtorFunctionSymbol = static_cast<FunctionSymbol*>(dtorSymbol);
+        if (dtorFunctionSymbol->GetFlag(FunctionSymbolFlags::trivialDestructor))
+        {
+            return nullptr;
+        }
+        std::string dtorIrName = dtorSymbol->IrName(context);
         std::unique_ptr<BoundFunctionCallNode> destructorCall(new BoundFunctionCallNode(dtorFunctionSymbol, sourcePos, cls));
         destructorCall->AddArgument(arg->Clone());
         return destructorCall.release();
@@ -132,6 +139,10 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 {
     Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
+    if (symbol->IrName(context) == "op_eq_111C89C19AC3711BF520A0354A3F0697D888E7D6_compile_unit_2530D28A2915F7A69558611F6C87946CAFED88A9")
+    {
+        int x = 0;
+    }
     SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
     switch (specialFunctionKind)
     {
@@ -189,6 +200,7 @@ void StatementBinder::Visit(otava::ast::ConstructorNode& node)
     }
     node.Right()->Accept(*this);
     context->GetBoundFunction()->SetBody(static_cast<BoundCompoundStatementNode*>(boundStatement));
+    AddConvertingConstructorToConversionTable(functionDefinitionSymbol, node.GetSourcePos(), context);
 }
 
 void StatementBinder::Visit(otava::ast::ConstructorInitializerNode& node)
@@ -303,6 +315,7 @@ void StatementBinder::GenerateSetVPtrStatement(const soul::ast::SourcePos& sourc
 {
     if (!currentClass || !currentClass->IsPolymorphic() || setVPtrStatementGenerated) return;
     if (HasThisInitializer()) return;
+    context->GetBoundCompileUnit()->AddBoundNodeForClass(currentClass, sourcePos);
     setVPtrStatementGenerated = true;
     if (!currentClass->ObjectLayoutComputed())
     {
@@ -937,8 +950,11 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
 void StatementBinder::Visit(otava::ast::ExpressionStatementNode& node)
 {
     BoundExpressionStatementNode* boundExpressionStatement = new BoundExpressionStatementNode(node.GetSourcePos());
-    BoundExpressionNode* expr = BindExpression(node.Expression(), context);
-    boundExpressionStatement->SetExpr(expr, node.GetSourcePos(), context);
+    if (node.Expression())
+    {
+        BoundExpressionNode* expr = BindExpression(node.Expression(), context);
+        boundExpressionStatement->SetExpr(expr, node.GetSourcePos(), context);
+    }
     SetStatement(boundExpressionStatement);
 }
 

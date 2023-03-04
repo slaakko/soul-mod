@@ -44,10 +44,12 @@ template<class Mutex>
 class unique_lock
 {
 public:
-    explicit unique_lock(Mutex& mtx) { mtx.lock(); }
+    explicit unique_lock(Mutex& mtx_) : mtx(mtx_) { mtx.lock(); }
     unique_lock(const unique_lock&) = delete;
     unique_lock& operator=(const unique_lock&) = delete;
     ~unique_lock() { mtx.unlock(); }
+private:
+    Mutex& mtx;
 };
 
 } // namespace std

@@ -40,7 +40,7 @@ public:
 private:
     Context* context;
     otava::assembly::Data* data;
-
+    int64_t offset;
 };
 
 } // otava::intermediate

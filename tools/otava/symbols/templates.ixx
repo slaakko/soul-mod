@@ -43,7 +43,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
-    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) override;
+    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
 private:
     Symbol* constraint;
     util::uuid constraintId;

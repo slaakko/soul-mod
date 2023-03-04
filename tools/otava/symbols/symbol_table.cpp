@@ -58,6 +58,11 @@ void SetProjectReady(bool projectReady_)
     projectReady = projectReady_;
 }
 
+bool ClassTemplateNameLess::operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const
+{
+    return left->FullName() < right->FullName();
+}
+
 SymbolTable::SymbolTable() : 
     module(nullptr), 
     globalNs(new NamespaceSymbol(std::u32string())), 
@@ -70,7 +75,7 @@ SymbolTable::SymbolTable() :
     nodeMap(nullptr),
     symbolMap(nullptr),
     classLevel(0),
-    conversionTable(new ConversionTable()),
+    conversionTable(new ConversionTable(this)),
     currentLinkage(Linkage::cpp_linkage)
 {
 }
@@ -785,6 +790,8 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol)
 
 void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
 {
+    if (!node) return;
+    if (!symbol) return;
     if ((kind & MapKind::nodeToSymbol) != MapKind::none)
     {
         nodeSymbolMap[node] = symbol;
@@ -1246,7 +1253,7 @@ void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol
 }
 
 FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes,
-    FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, Context* context)
+    FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, otava::ast::Node* node, Context* context)
 {
     std::u32string groupName = name;
     Symbol* containerSymbol = scope->SymbolScope()->GetSymbol();
@@ -1266,9 +1273,10 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
     FunctionDefinitionSymbol* prev = functionGroup->GetFunctionDefinition(parameterTypes, qualifiers);
     if (prev)
     {
-        PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
+        // PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
     }
     FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
+    functionDefinition->SetDeclarationFlags(declarationFlags);
     if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
         functionDefinition->SetSpecialization();

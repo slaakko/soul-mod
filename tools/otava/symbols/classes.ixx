@@ -50,7 +50,7 @@ enum class ClassKind
 
 enum class ClassTypeSymbolFlags : int32_t
 {
-    none = 0, objectLayoutComputed = 1 << 0, hasUserDefinedDestructor = 1 << 1, hasUserDefinedConstructor = 1 << 2
+    none = 0, objectLayoutComputed = 1 << 0, hasUserDefinedDestructor = 1 << 1, hasUserDefinedConstructor = 1 << 2, vtabInitialized = 1 << 3
 };
 
 constexpr ClassTypeSymbolFlags operator|(ClassTypeSymbolFlags left, ClassTypeSymbolFlags right)
@@ -88,7 +88,8 @@ public:
     void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos);
     const std::vector<FunctionSymbol*>& VTab() const { return vtab; }
     std::string IrName(Context* context) const override;
-    std::string VTabName(Context* context) const;
+    const std::string& VTabName(Context* context) const { return vtabName; }
+    void ComputeVTabName(Context* context);
     int32_t VPtrIndex() const { return vptrIndex; }
     void SetVPtrIndex(int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
     otava::intermediate::Type* VPtrType(Emitter& emitter) const;
@@ -127,6 +128,8 @@ public:
     void SetHasUserDefinedDestructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
     bool HasUserDefinedConstructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
     void SetHasUserDefinedConstructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
+    bool VTabInitialized() const { return GetFlag(ClassTypeSymbolFlags::vtabInitialized); }
+    void SetVTabInitialized() { SetFlag(ClassTypeSymbolFlags::vtabInitialized); }
     const std::vector<FunctionSymbol*>& ConversionFunctions() const { return conversionFunctions; }
     FunctionSymbol* GetConversionFunction(TypeSymbol* type) const;
     ClassGroupSymbol* Group() const { return group; }
@@ -155,6 +158,7 @@ private:
     int32_t vptrIndex;
     std::vector<FunctionSymbol*> conversionFunctions;
     ClassGroupSymbol* group;
+    std::string vtabName;
 };
 
 class ForwardClassDeclarationSymbol : public TypeSymbol

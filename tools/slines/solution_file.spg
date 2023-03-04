@@ -1,0 +1,2 @@
+project solution_file;
+parser <solution_file.parser>;

@@ -25,6 +25,8 @@ import otava.symbols.declaration;
 import otava.symbols.type.resolver;
 import otava.symbols.expression.binder;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.variable.symbol;
+import otava.symbols.type_compare;
 import util.unicode;
 
 namespace otava::symbols {
@@ -91,6 +93,14 @@ FunctionMatch& FunctionMatch::operator=(const FunctionMatch& that)
 
 bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMatch& right) const
 {
+    if (left.function->IsPointerCopyAssignment() && !right.function->IsPointerCopyAssignment())
+    {
+        return true;
+    }
+    if (!left.function->IsPointerCopyAssignment() && right.function->IsPointerCopyAssignment())
+    {
+        return false;
+    }
     BetterArgumentMatch betterArgumentMatch;
     int leftBetterArgumentMatches = 0;
     int rightBetterArgumentMatches = 0;
@@ -196,6 +206,14 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
     {
         return false;
     }
+    if (left.function->IsConst() && !right.function->IsConst())
+    {
+        return true;
+    }
+    if (!left.function->IsConst() && right.function->IsConst())
+    {
+        return false;
+    }
     return false;
 }
 
@@ -238,7 +256,7 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
                 arg = args[i].release();
             }
         }
-        const ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
+        ArgumentMatch& argumentMatch = functionMatch.argumentMatches[i];
         if (argumentMatch.preConversionFlags == OperationFlags::addr)
         {
             arg = MakeLvalueExpression(arg, sourcePos, context);
@@ -274,6 +292,35 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
                 BoundFunctionCallNode* functionCall = new BoundFunctionCallNode(conversionFun, sourcePos, conversionFun->ReturnType());
                 functionCall->AddArgument(arg);
                 arg = functionCall;
+            }
+            else if (conversionFun->GetFunctionKind() == FunctionKind::constructor)
+            {
+                VariableSymbol* temporary = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->CreateTemporary(conversionFun->ConversionParamType());
+                BoundVariableNode* boundTemporary = new BoundVariableNode(temporary, sourcePos);
+                BoundFunctionCallNode* constructorCall = new BoundFunctionCallNode(conversionFun, sourcePos, nullptr);
+                BoundAddressOfNode* temporaryArg = new BoundAddressOfNode(boundTemporary, sourcePos, temporary->GetType()->AddPointer(context));
+                constructorCall->AddArgument(temporaryArg);
+                if (argumentMatch.preConversionFlags == OperationFlags::addr)
+                {
+                    arg = new BoundAddressOfNode(MakeLvalueExpression(arg, sourcePos, context), sourcePos, arg->GetType()->AddPointer(context));
+                }
+                else if (argumentMatch.preConversionFlags == OperationFlags::deref)
+                {
+                    arg = new BoundDereferenceNode(arg, sourcePos, arg->GetType()->RemoveReference(context));
+                }
+                constructorCall->AddArgument(arg);
+                BoundExpressionNode* boundTemporary2 = new BoundVariableNode(temporary, sourcePos);
+                if (argumentMatch.postConversionFlags == OperationFlags::addr)
+                {
+                    boundTemporary2 = new BoundAddressOfNode(MakeLvalueExpression(boundTemporary2, sourcePos, context), sourcePos, boundTemporary2->GetType()->AddPointer(context));
+                }
+                else if (argumentMatch.postConversionFlags == OperationFlags::deref)
+                {
+                    boundTemporary2 = new BoundDereferenceNode(boundTemporary2, sourcePos, boundTemporary2->GetType()->RemoveReference(context));
+                }
+                argumentMatch.postConversionFlags = OperationFlags::none;
+                BoundConstructTemporaryNode* constructTemporary = new BoundConstructTemporaryNode(constructorCall, boundTemporary2, sourcePos);
+                arg = constructTemporary;
             }
             else
             {
@@ -314,9 +361,12 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
         argumentMatch.conversionKind = argumentMatch.conversionFun->GetConversionKind();
         distance = argumentMatch.conversionFun->ConversionDistance();
     }
-    if (paramType->IsRValueRefType() && !argType->IsRValueRefType())
+    if (paramType->IsRValueRefType())
     {
-        ++functionMatch.numQualifyingConversions;
+        if (!argType->IsRValueRefType())
+        {
+            ++functionMatch.numQualifyingConversions;
+        }
     }
     if (argType->IsConstType())
     {
@@ -335,7 +385,7 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
         {
             distance += 2;
         }
-        else
+        else if (!paramType->IsRValueRefType())
         {
             distance += 3;
         }
@@ -350,6 +400,11 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
     else if (!argType->IsReferenceType() && paramType->IsReferenceType())
     {
         argumentMatch.postConversionFlags = OperationFlags::addr;
+        if (paramType->IsRValueRefType() && arg->BindToRvalueRef())
+        {
+            argumentMatch.distance = 0;
+            return true;
+        }
         argumentMatch.distance = distance;
         ++functionMatch.numQualifyingConversions;
         return true;
@@ -657,7 +712,8 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                     }
                     else
                     {
-                        if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
+                        //if (FindQualificationConversion(conversionFun->ConversionArgType(), paramType, arg, functionMatch, argumentMatch))
+                        if (FindQualificationConversion(conversionFun->ConversionParamType(), paramType, arg, functionMatch, argumentMatch))
                         {
                             functionMatch.argumentMatches.push_back(argumentMatch);
                             return true;
@@ -744,12 +800,9 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
                     }
                     else
                     {
-                        TypeSymbol* conversionArgType = conversionFun->ConversionArgType();
-                        if (!conversionArgType)
-                        {
-                            conversionArgType = argType;
-                        }
-                        if (FindQualificationConversion(conversionArgType, paramType, arg, functionMatch, argumentMatch))
+                        //TypeSymbol* conversionArgType = conversionFun->ConversionArgType();
+                        TypeSymbol* conversionParamType = conversionFun->ConversionParamType();
+                        if (FindQualificationConversion(conversionParamType, paramType, arg, functionMatch, argumentMatch))
                         {
                             functionMatch.argumentMatches.push_back(argumentMatch);
                             continue;
@@ -810,6 +863,10 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         else
         {
             ex = Exception("ambiguous function call, " + std::to_string(viableFunctions.size()) + " viable functions examined.", sourcePos, context);
+            for (const auto& functionMatch : functionMatches)
+            {
+                std::cout << util::ToUtf8(functionMatch->function->FullName()) << std::endl;
+            }
             return std::unique_ptr<FunctionMatch>(nullptr);
         }
     }
@@ -884,6 +941,10 @@ void MakeFinalDirectArgs(std::vector<std::unique_ptr<BoundExpressionNode>>& args
 std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
     const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, OverloadResolutionFlags flags)
 {
+    if (groupName == U"foo")
+    {
+        int x = 0;
+    }
     MakeFinalDirectArgs(args, sourcePos, context);
     std::unique_ptr<BoundFunctionCallNode> ioManipFn = ResolveIOManipFn(scope, groupName, args, sourcePos, context, ex, flags);
     if (ioManipFn)
@@ -932,6 +993,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         ex = Exception("attempt to call a deleted function", sourcePos, context);
         return std::unique_ptr<BoundFunctionCallNode>();
     }
+    context->ResetFlag(ContextFlags::noPtrOps);
     functionMatch = *bestMatch;
     bool instantiate = (flags & OverloadResolutionFlags::dontInstantiate) == OverloadResolutionFlags::none;
     if (instantiate)

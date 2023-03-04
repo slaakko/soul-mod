@@ -20,7 +20,7 @@ struct ArgumentMatch;
 class ArgumentConversion
 {
 public:
-    virtual FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, ArgumentMatch& argumentMatch, Context* context) = 0;
+    virtual FunctionSymbol* Get(TypeSymbol* paramType, TypeSymbol* argType, ArgumentMatch& argumentMatch, const soul::ast::SourcePos& sourcePos, Context* context) = 0;
 };
 
 class ArgumentConversionTable

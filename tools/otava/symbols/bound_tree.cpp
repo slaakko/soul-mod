@@ -1,4 +1,5 @@
 // =================================
+// =================================
 // Copyright (c) 2022 Seppo Laakko
 // Distributed under the MIT license
 // =================================
@@ -22,6 +23,7 @@ import otava.symbols.function.templates;
 import otava.symbols.class_templates;
 import otava.symbols.type.symbol;
 import otava.symbols.namespaces;
+import otava.symbols.fundamental.type.symbol;
 import otava.intermediate.function;
 import util.unicode;
 
@@ -107,6 +109,10 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         {
             return "boundTryStatementNode";
         }
+        case BoundNodeKind::boundHandlerNode:
+        {
+            return "boundHandlerNode";
+        }
         case BoundNodeKind::boundLiteralNode:
         {
             return "boundLiteralNode";
@@ -171,6 +177,18 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         {
             return "boundDereferenceNode";
         }
+        case BoundNodeKind::boundRefToPtrNode:
+        {
+            return "boundRefToPtrNode";
+        }
+        case BoundNodeKind::boundPtrToRefNode:
+        {
+            return "boundPtrToRefNode";
+        }
+        case BoundNodeKind::boundDefaultInitNode:
+        {
+            return "boundDefaultInitNode";
+        }
         case BoundNodeKind::boundConstructTemporaryNode:
         {
             return "boundConstructTemporaryNode";
@@ -190,6 +208,14 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         case BoundNodeKind::boundThrowExpressionNode:
         {
             return "boundThrowExpressionNode";
+        }
+        case BoundNodeKind::boundFunctionValueNode:
+        {
+            return "boundFunctionValueNode";
+        }
+        case BoundNodeKind::boundVariableAsVoidPtrNode:
+        {
+            return "boundVariableAsVoidPtrNode";
         }
     }
     return "<unknown bound node>";
@@ -297,7 +323,7 @@ void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul
     if (cls->IsTemplateParameterInstantiation()) return;
     for (const auto& prev : boundClasses)
     {
-        if (TypesEqual(prev, cls)) return;
+        if (prev == cls) return;
     }
     boundClasses.push_back(cls);
     AddBoundNode(new BoundClassNode(cls, sourcePos));
@@ -327,7 +353,7 @@ otava::intermediate::Value* BoundCompileUnitNode::CreateBoundGlobalVariable(Vari
             initializer = irType->DefaultValue();
         }
     }
-    otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, globalVariableSymbol->IrName(), initializer);
+    otava::intermediate::Value* irVariable = emitter.EmitGlobalVariable(irType, globalVariableSymbol->IrName(context), initializer);
     emitter.SetIrObject(globalVariableSymbol, irVariable);
     return irVariable;
 }
@@ -481,11 +507,6 @@ void BoundCompoundStatementNode::AddStatement(BoundStatementNode* statement)
 bool BoundCompoundStatementNode::EndsWithTerminator() const
 {
     return !statements.empty() && statements.back()->IsTerminator();
-}
-
-bool BoundCompoundStatementNode::ContainsSingleIfStatement() const
-{
-    return statements.size() == 1 && statements.front()->IsIfStatementNode();
 }
 
 BoundIfStatementNode::BoundIfStatementNode(const soul::ast::SourcePos& sourcePos_) : BoundStatementNode(BoundNodeKind::boundIfStatementNode, sourcePos_)
@@ -848,31 +869,60 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
     }
     else if (variable->IsMemberVariable())
     {
-        if (!thisPtr)
+        if (variable->IsStatic())
         {
-            ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
-        }
-        thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
-        otava::intermediate::Value* ptr = emitter.Stack().Pop();
-        int32_t layoutIndex = variable->LayoutIndex();
-        otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
-        if ((flags & OperationFlags::addr) != OperationFlags::none)
-        {
-            emitter.Stack().Push(elementPtr);
-        }
-        else if ((flags & OperationFlags::deref) != OperationFlags::none)
-        {
-            otava::intermediate::Value* value = emitter.EmitLoad(elementPtr);
-            uint8_t n = GetDerefCount(flags);
-            for (uint8_t i = 0; i < n; ++i)
+            otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context));
+            if (!ptr)
             {
-                value = emitter.EmitLoad(value);
+                ptr = context->GetBoundCompileUnit()->CreateBoundGlobalVariable(variable, emitter, sourcePos, context, true);
             }
-            emitter.Stack().Push(value);
+            if ((flags & OperationFlags::addr) != OperationFlags::none)
+            {
+                emitter.Stack().Push(ptr);
+            }
+            else if ((flags & OperationFlags::deref) != OperationFlags::none)
+            {
+                otava::intermediate::Value* value = emitter.EmitLoad(ptr);
+                uint8_t n = GetDerefCount(flags);
+                for (uint8_t i = 0; i < n; ++i)
+                {
+                    value = emitter.EmitLoad(value);
+                }
+                emitter.Stack().Push(value);
+            }
+            else
+            {
+                emitter.Stack().Push(emitter.EmitLoad(ptr));
+            }
         }
         else
         {
-            emitter.Stack().Push(emitter.EmitLoad(elementPtr));
+            if (!thisPtr)
+            {
+                ThrowException("'this ptr' of bound member variable not set", sourcePos, context);
+            }
+            thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
+            otava::intermediate::Value* ptr = emitter.Stack().Pop();
+            int32_t layoutIndex = variable->LayoutIndex();
+            otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
+            if ((flags & OperationFlags::addr) != OperationFlags::none)
+            {
+                emitter.Stack().Push(elementPtr);
+            }
+            else if ((flags & OperationFlags::deref) != OperationFlags::none)
+            {
+                otava::intermediate::Value* value = emitter.EmitLoad(elementPtr);
+                uint8_t n = GetDerefCount(flags);
+                for (uint8_t i = 0; i < n; ++i)
+                {
+                    value = emitter.EmitLoad(value);
+                }
+                emitter.Stack().Push(value);
+            }
+            else
+            {
+                emitter.Stack().Push(emitter.EmitLoad(elementPtr));
+            }
         }
     }
     else if (variable->IsGlobalVariable())
@@ -1595,6 +1645,16 @@ void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const sou
     subject->Load(emitter, flags, sourcePos, context);
     std::vector<BoundExpressionNode*> args;
     conversionFunction->GenerateCode(emitter, args, flags, sourcePos, context);
+    if ((flags & OperationFlags::derefAfterConv) != OperationFlags::none)
+    {
+        otava::intermediate::Value* value = emitter.Stack().Pop();
+        uint8_t derefCount = GetDerefCount(flags);
+        for (uint8_t i = 0; i < derefCount; ++i)
+        {
+            value = emitter.EmitLoad(value);
+        }
+        emitter.Stack().Push(value);
+    }
 }
 
 void BoundConversionNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1666,8 +1726,13 @@ void BoundAddressOfNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Cont
     subject->ModifyTypes(sourcePos, context);
 }
 
-BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
-    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_) 
+BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) : 
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_), kind(OperationFlags::deref)
+{
+}
+
+BoundDereferenceNode::BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_, OperationFlags kind_) :
+    BoundExpressionNode(BoundNodeKind::boundDereferenceNode, sourcePos_, type_), subject(subject_), kind(kind_)
 {
 }
 
@@ -1686,7 +1751,7 @@ void BoundDereferenceNode::Load(Emitter& emitter, OperationFlags flags, const so
         }
         else
         {
-            subject->Load(emitter, SetDerefCount(OperationFlags::deref, GetDerefCount(flags) + 1), sourcePos, context);
+            subject->Load(emitter, SetDerefCount(kind, GetDerefCount(flags) + 1), sourcePos, context);
         }
     }
     else
@@ -1711,7 +1776,7 @@ void BoundDereferenceNode::Store(Emitter& emitter, OperationFlags flags, const s
 
 BoundExpressionNode* BoundDereferenceNode::Clone() const
 {
-    return new BoundDereferenceNode(subject->Clone(), GetSourcePos(), GetType());
+    return new BoundDereferenceNode(subject->Clone(), GetSourcePos(), GetType(), kind);
 }
 
 void BoundDereferenceNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1769,6 +1834,11 @@ BoundExpressionNode* BoundPtrToRefNode::Clone() const
 void BoundPtrToRefNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     subject->Load(emitter, flags, sourcePos, context);
+}
+
+void BoundPtrToRefNode::Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    subject->Store(emitter, flags, sourcePos, context);
 }
 
 void BoundPtrToRefNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)

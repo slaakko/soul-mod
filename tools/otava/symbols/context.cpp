@@ -27,7 +27,8 @@ Context::Context() :
     functionDefinitionNode(nullptr),
     aliasType(nullptr),
     ptr(nullptr),
-    memFunDefSymbolIndex(-1)
+    memFunDefSymbolIndex(-1),
+    rejectTemplateId(false)
 {
 }
 

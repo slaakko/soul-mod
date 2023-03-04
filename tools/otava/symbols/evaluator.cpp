@@ -16,6 +16,9 @@ import otava.symbols.scope.resolver;
 import otava.symbols.symbol.table;
 import otava.symbols.value;
 import otava.symbols.fundamental.type.symbol;
+import otava.symbols.type.resolver;
+import otava.symbols.emitter;
+import otava.symbols.variable.symbol;
 import util.unicode;
 
 namespace otava::symbols {
@@ -122,6 +125,7 @@ public:
     void Visit(otava::ast::UnaryExprNode& node) override;
     void Visit(otava::ast::BinaryExprNode& node) override;
     void Visit(otava::ast::InvokeExprNode& node) override;
+    void Visit(otava::ast::SizeOfTypeExprNode& node) override;
 private:
     Context* context;
     Value* value;
@@ -182,7 +186,22 @@ void Evaluator::Visit(otava::ast::IdentifierNode& node)
         LookupFlags::none);
     if (symbol)
     {
-        value = context->GetEvaluationContext()->GetSymbolValue(symbol);
+        if (symbol->IsGlobalVariableSymbol())
+        {
+            VariableSymbol* variableSymbol = static_cast<VariableSymbol*>(symbol);
+            if (variableSymbol->GetValue())
+            {
+                value = variableSymbol->GetValue();
+            }
+            else
+            {
+                value = context->GetEvaluationContext()->GetSymbolValue(symbol);
+            }
+        }
+        else
+        {
+            value = context->GetEvaluationContext()->GetSymbolValue(symbol);
+        }
     }
 }
 
@@ -463,6 +482,17 @@ void Evaluator::Visit(otava::ast::InvokeExprNode& node)
         EvaluationContext* evaluationContext = context->GetEvaluationContext();
         value = evaluationContext->GetInvokeValue(value);
     }
+}
+
+void Evaluator::Visit(otava::ast::SizeOfTypeExprNode& node)
+{
+    TypeSymbol* type = ResolveType(node.Child(), DeclarationFlags::none, context);
+    type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
+    Emitter emitter(nullptr);
+    otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
+    int64_t size = irType->Size();
+    value = context->GetEvaluationContext()->GetIntegerValue(size, util::ToUtf32(std::to_string(size)), 
+        context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType));
 }
 
 Value* Evaluate(otava::ast::Node* node, Context* context)

@@ -23,10 +23,14 @@ void BinaryStreamWriter::Write(uint8_t x)
     stream.Write(x);
 }
 
+#ifndef OTAVA
+
 void BinaryStreamWriter::Write(int8_t x)
 {
     Write(static_cast<uint8_t>(x));
 }
+
+#endif
 
 void BinaryStreamWriter::Write(uint16_t x)
 {
@@ -83,6 +87,8 @@ void BinaryStreamWriter::Write(int64_t x)
     Write(static_cast<uint64_t>(x));
 }
 
+#ifndef OTAVA
+
 void BinaryStreamWriter::Write(float x)
 {
     uint32_t* u = reinterpret_cast<uint32_t*>(&x);
@@ -99,6 +105,8 @@ void BinaryStreamWriter::Write(char x)
 {
     Write(static_cast<uint8_t>(x));
 }
+
+#endif
 
 void BinaryStreamWriter::Write(char8_t x)
 {
@@ -150,10 +158,10 @@ void BinaryStreamWriter::WriteULEB128UInt(uint32_t x)
     do
     {
         uint8_t b = x & 0x7F;
-        x >>= 7;
+        x >>= 7u;
         if (x != 0)
         {
-            b |= 0x80;
+            b |= static_cast<uint8_t>(0x80);
         }
         Write(b);
     } while (x != 0);
@@ -167,7 +175,7 @@ void BinaryStreamWriter::WriteULEB128ULong(uint64_t x)
         x >>= 7;
         if (x != 0)
         {
-            b |= 0x80;
+            b |= static_cast<uint8_t>(0x80);
         }
         Write(b);
     } while (x != 0);
@@ -191,7 +199,7 @@ void BinaryStreamWriter::WriteSLEB128Int(int32_t x)
         }
         else
         {
-            b |= 0x80;
+            b |= static_cast<uint8_t>(0x80);
         }
         Write(b);
     }
@@ -215,7 +223,7 @@ void BinaryStreamWriter::WriteSLEB128Long(int64_t x)
         }
         else
         {
-            b |= 0x80;
+            b |= static_cast<uint8_t>(0x80);
         }
         Write(b);
     }

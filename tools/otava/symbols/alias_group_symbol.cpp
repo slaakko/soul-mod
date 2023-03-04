@@ -10,6 +10,7 @@ import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
+import otava.symbols.type_compare;
 
 namespace otava::symbols {
 

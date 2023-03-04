@@ -46,7 +46,10 @@ Symbol* VariableGroupSymbol::GetSingleSymbol()
 
 void VariableGroupSymbol::AddVariable(VariableSymbol* variableSymbol)
 {
-    variables.push_back(variableSymbol);
+    if (std::find(variables.begin(), variables.end(), variableSymbol) == variables.end())
+    {
+        variables.push_back(variableSymbol);
+    }
 }
 
 VariableSymbol* VariableGroupSymbol::GetVariable(int arity) const
@@ -90,7 +93,7 @@ void VariableGroupSymbol::Resolve(SymbolTable& symbolTable)
     for (const auto& variableId : variableIds)
     {
         VariableSymbol* variable = symbolTable.GetVariable(variableId);
-        variables.push_back(variable);
+        AddVariable(variable);
     }
 }
 

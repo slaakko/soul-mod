@@ -104,8 +104,7 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         }
         case SymbolKind::arrayTypeSymbol:
         {
-            otava::ast::SetExceptionThrown();
-            throw std::runtime_error("not implemented");
+            return new ArrayTypeSymbol(name);
         }
         case SymbolKind::blockSymbol:
         {

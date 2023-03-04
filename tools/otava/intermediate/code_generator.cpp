@@ -323,11 +323,11 @@ void EmitPtrOperand(int64_t size, Value* value, otava::assembly::Instruction* in
         AddressValue* addressValue = static_cast<AddressValue*>(value);
         GlobalVariable* globalVar = addressValue->GetValue();
         otava::assembly::Instruction* leaInst = new otava::assembly::Instruction(otava::assembly::OpCode::LEA);
-        leaInst->AddOperand(assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rbx));
+        leaInst->AddOperand(assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbx));
         leaInst->AddOperand(assemblyContext.MakeSymbol(globalVar->Name()));
         codeGen.Emit(leaInst);
         //instruction->AddOperand(assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rax));
-        instruction->AddOperand(assemblyContext.MakeSizePrefix(size, assemblyContext.MakeContent(assemblyContext.GetGlobalReg(size, otava::assembly::RegisterGroupKind::rbx))));
+        instruction->AddOperand(assemblyContext.MakeSizePrefix(size, assemblyContext.MakeContent(assemblyContext.GetGlobalReg(8, otava::assembly::RegisterGroupKind::rbx))));
         return;
     }
     if (inst)

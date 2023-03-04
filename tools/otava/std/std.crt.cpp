@@ -7,6 +7,13 @@ module std.crt;
 
 namespace std {
 
+crt_init::crt_init()
+{
+    stdin = static_cast<void*>(&stdin_);
+    stdout = static_cast<void*>(&stdout_);
+    stderr = static_cast<void*>(&stderr_);
+}
+
 bool isspace(int c)
 {
     return is_space(c);
@@ -75,6 +82,51 @@ long int ftell(FILE* stream)
 char* strerror(int errnum)
 {
     return str_error(errnum);
+}
+
+void* memset(void* dest, int c, size_t count)
+{
+    return mem_set(dest, c, count);
+}
+
+char* getcwd(char* buffer, int maxlen)
+{
+    return get_cwd(buffer, maxlen);
+}
+
+bool fexists(const char* path)
+{
+    return file_exists(path);
+}
+
+bool dexists(const char* path)
+{
+    return dir_exists(path);
+}
+
+bool exists(const char* path)
+{
+    return path_exists(path);
+}
+
+int tolower(int c)
+{
+    return to_lower(c);
+}
+
+int toupper(int c)
+{
+    return to_upper(c);
+}
+
+bool isalpha(int c)
+{
+    return is_alpha(c);
+}
+
+bool isdigit(int c)
+{
+    return is_digit(c);
 }
 
 } // namespace std

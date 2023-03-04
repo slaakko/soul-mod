@@ -14,6 +14,13 @@ import std.filesystem;
 
 namespace util {
 
+bool ex = false;
+
+void SetEx()
+{
+    ex = true;
+}
+
 std::string SoulVersionStr()
 {
     return "4.1.0";
@@ -37,7 +44,10 @@ std::string SoulRoot()
 
 std::string SoulUcdFilePath()
 {
-    return (std::filesystem::path(SoulRoot()) / std::filesystem::path("unicode") / std::filesystem::path("soul_ucd.bin")).generic_string();
+    std::filesystem::path p(SoulRoot());
+    p /= std::filesystem::path("unicode");
+    p /= std::filesystem::path("soul_ucd.bin");
+    return p.generic_string();
 }
 
 std::u32string ToUpper(const std::u32string& s)
@@ -50,6 +60,16 @@ std::u32string ToUpper(const std::u32string& s)
     return upper;
 }
 
+std::u16string ToUpper(const std::u16string& s)
+{
+    return ToUtf16(ToUpper(ToUtf32(s)));
+}
+
+std::string ToUpper(const std::string& s)
+{
+    return ToUtf8(ToUpper(ToUtf32(s)));
+}
+
 std::u32string ToLower(const std::u32string& s)
 {
     std::u32string lower;
@@ -58,6 +78,16 @@ std::u32string ToLower(const std::u32string& s)
         lower.append(1, ToLower(c));
     }
     return lower;
+}
+
+std::u16string ToLower(const std::u16string& s)
+{
+    return ToUtf16(ToLower(ToUtf32(s)));
+}
+
+std::string ToLower(const std::string& s)
+{
+    return ToUtf8(ToLower(ToUtf32(s)));
 }
 
 std::string MakeCanonicalPropertyName(const std::string& s)
@@ -77,17 +107,11 @@ BinaryProperty::BinaryProperty(BinaryPropertyId id_, const std::string& shortNam
 {
 }
 
-void BinaryPropertyTable::Init()
+BinaryPropertyTable& BinaryPropertyTable::Instance()
 {
-    instance.reset(new BinaryPropertyTable());
+    static BinaryPropertyTable instance;
+    return instance;
 }
-
-void BinaryPropertyTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<BinaryPropertyTable> BinaryPropertyTable::instance;
 
 BinaryPropertyTable::BinaryPropertyTable()
 {
@@ -163,44 +187,53 @@ BinaryPropertyTable::BinaryPropertyTable()
 const BinaryProperty& BinaryPropertyTable::GetBinaryProperty(BinaryPropertyId binaryPropertyId) const
 {
     auto it = binaryPropertyIdMap.find(binaryPropertyId);
-    if (it != binaryPropertyIdMap.cend())
+    if (it != binaryPropertyIdMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("binary property " + std::to_string(static_cast<int>(binaryPropertyId)) + " not found");
+        std::string msg("binary property ");
+        msg.append(std::to_string(static_cast<uint8_t>(binaryPropertyId)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 bool BinaryPropertyTable::IsBinaryProperty(const std::string& shortName) const
 {
-    return shortNameMap.find(MakeCanonicalPropertyName(shortName)) != shortNameMap.cend();
+    return shortNameMap.find(MakeCanonicalPropertyName(shortName)) != shortNameMap.end();
 }
 
 const BinaryProperty& BinaryPropertyTable::GetBinaryPropertyByShortName(const std::string& shortName) const
 {
     auto it = shortNameMap.find(MakeCanonicalPropertyName(shortName));
-    if (it != shortNameMap.cend())
+    if (it != shortNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("binary property '" + shortName + "' not found");
+        std::string msg("binary property '");
+        msg.append(shortName);
+        msg.append("' not found");
+        throw UnicodeException(msg);
     }
 }
 
 const BinaryProperty& BinaryPropertyTable::GetBinaryPropertyByLongName(const std::string& longName) const
 {
     auto it = longNameMap.find(MakeCanonicalPropertyName(longName));
-    if (it != longNameMap.cend())
+    if (it != longNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("binary property '" + longName + "' not found");
+        std::string msg("binary property '");
+        msg.append(longName);
+        msg.append("' not found");
+        throw UnicodeException(msg);
     }
 }
 
@@ -208,16 +241,10 @@ Block::Block(BlockId id_, const std::string& shortName_, const std::string& long
 {
 }
 
-std::unique_ptr<BlockTable> BlockTable::instance;
-
-void BlockTable::Init()
+BlockTable& BlockTable::Instance()
 {
-    instance.reset(new BlockTable());
-}
-
-void BlockTable::Done()
-{
-    instance.reset();
+    static BlockTable instance;
+    return instance;
 }
 
 BlockTable::BlockTable()
@@ -534,39 +561,48 @@ BlockTable::BlockTable()
 const Block& BlockTable::GetBlock(BlockId blockId) const
 {
     auto it = blockIdMap.find(blockId);
-    if (it != blockIdMap.cend())
+    if (it != blockIdMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("block id " + std::to_string(static_cast<int>(blockId)) + " not found");
+        std::string msg("block id ");
+        msg.append(std::to_string(static_cast<uint16_t>(blockId)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const Block& BlockTable::GetBlockByShortName(const std::string& shortName) const
 {
     auto it = shortNameMap.find(MakeCanonicalPropertyName(shortName));
-    if (it != shortNameMap.cend())
+    if (it != shortNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("block '" + shortName + "' not found");
+        std::string msg("block id ");
+        msg.append(shortName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const Block& BlockTable::GetBlockByLongName(const std::string& longName) const
 {
     auto it = longNameMap.find(MakeCanonicalPropertyName(longName));
-    if (it != longNameMap.cend())
+    if (it != longNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("block '" + longName + "' not found");
+        std::string msg("block id ");
+        msg.append(longName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
@@ -574,17 +610,11 @@ GeneralCategory::GeneralCategory(GeneralCategoryId id_, const std::string& short
 {
 }
 
-void GeneralCategoryTable::Init()
+GeneralCategoryTable& GeneralCategoryTable::Instance()
 {
-    instance.reset(new GeneralCategoryTable());
+    static GeneralCategoryTable instance;
+    return instance;
 }
-
-void GeneralCategoryTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<GeneralCategoryTable> GeneralCategoryTable::instance;
 
 GeneralCategoryTable::GeneralCategoryTable()
 {
@@ -639,39 +669,48 @@ GeneralCategoryTable::GeneralCategoryTable()
 const GeneralCategory& GeneralCategoryTable::GetGeneralCategory(GeneralCategoryId generalCategoryId) const
 {
     auto it = generalCategoryIdMap.find(generalCategoryId);
-    if (it != generalCategoryIdMap.cend())
+    if (it != generalCategoryIdMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("general category " + std::to_string(static_cast<int>(generalCategoryId)) + " not found");
+        std::string msg("general category ");
+        msg.append(std::to_string(static_cast<int32_t>(generalCategoryId)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const GeneralCategory& GeneralCategoryTable::GetGeneralCategoryByShortName(const std::string& shortName) const
 {
     auto it = shortNameMap.find(MakeCanonicalPropertyName(shortName));
-    if (it != shortNameMap.cend())
+    if (it != shortNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("general category '" + shortName + "' not found");
+        std::string msg("general category ");
+        msg.append(shortName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const GeneralCategory& GeneralCategoryTable::GetGeneralCategoryByLongName(const std::string& longName) const
 {
     auto it = longNameMap.find(MakeCanonicalPropertyName(longName));
-    if (it != longNameMap.cend())
+    if (it != longNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("general category '" + longName + "' not found");
+        std::string msg("general category ");
+        msg.append(longName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
@@ -679,17 +718,11 @@ Age::Age(AgeId id_, const std::string& version_) : id(id_), version(version_)
 {
 }
 
-void AgeTable::Init()
+AgeTable& AgeTable::Instance()
 {
-    instance.reset(new AgeTable());
+    static AgeTable instance;
+    return instance;
 }
-
-void AgeTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<AgeTable> AgeTable::instance;
 
 AgeTable::AgeTable()
 {
@@ -725,26 +758,32 @@ AgeTable::AgeTable()
 const Age& AgeTable::GetAge(AgeId id) const
 {
     auto it = ageIdMap.find(id);
-    if (it != ageIdMap.cend())
+    if (it != ageIdMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("Unicode age " + std::to_string(static_cast<int>(id)) + " not found");
+        std::string msg("Unicode age ");
+        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const Age& AgeTable::GetAge(const std::string& version) const
 {
     auto it = versionMap.find(version);
-    if (it != versionMap.cend())
+    if (it != versionMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("Unicode age '" + version + "' not found");
+        std::string msg("Unicode age ");
+        msg.append(version);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
@@ -752,17 +791,11 @@ Script::Script(ScriptId id_, const std::string& shortName_, const std::string& l
 {
 }
 
-void ScriptTable::Init()
+ScriptTable& ScriptTable::Instance()
 {
-    instance.reset(new ScriptTable());
+    static ScriptTable instance;
+    return instance;
 }
-
-void ScriptTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<ScriptTable> ScriptTable::instance;
 
 ScriptTable::ScriptTable()
 {
@@ -932,51 +965,68 @@ ScriptTable::ScriptTable()
 const Script& ScriptTable::GetScript(ScriptId id) const
 {
     auto it = scriptIdMap.find(id);
-    if (it != scriptIdMap.cend())
+    if (it != scriptIdMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("script id " + std::to_string(static_cast<int>(id)) + " not found");
+        std::string msg("script id ");
+        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const Script& ScriptTable::GetScriptByShortName(const std::string& shortName) const
 {
     auto it = shortNameMap.find(MakeCanonicalPropertyName(shortName));
-    if (it != shortNameMap.cend())
+    if (it != shortNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("script '" + shortName + "' not found");
+        std::string msg("script ");
+        msg.append(shortName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const Script& ScriptTable::GetScriptByLongName(const std::string& longName) const
 {
     auto it = longNameMap.find(MakeCanonicalPropertyName(longName));
-    if (it != longNameMap.cend())
+    if (it != longNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("script '" + longName + "' not found");
+        std::string msg("script ");
+        msg.append(longName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 CharacterInfo::CharacterInfo() :
-    binaryProperties(0), generalCategory(GeneralCategoryId::none), upper(0), lower(0), title(0), folding(0), block(BlockId::none), age(AgeId::age_unassigned), script(ScriptId::none)
+    binaryProperties(0), 
+    generalCategory(GeneralCategoryId::none), 
+    upper(static_cast<char32_t>(0)), 
+    lower(static_cast<char32_t>(0)), 
+    title(static_cast<char32_t>(0)), 
+    folding(static_cast<char32_t>(0)), 
+    block(), 
+    age(),
+    script()
 {
 }
 
 void CharacterInfo::Write(BinaryStreamWriter& writer)
 {
     writer.Write(binaryProperties);
-    writer.Write(static_cast<uint32_t>(generalCategory));
+    writer.Write(static_cast<int32_t>(generalCategory));
     writer.Write(upper);
     writer.Write(lower);
     writer.Write(title);
@@ -989,7 +1039,7 @@ void CharacterInfo::Write(BinaryStreamWriter& writer)
 void CharacterInfo::Read(BinaryStreamReader& reader)
 {
     binaryProperties = reader.ReadULong();
-    generalCategory = static_cast<GeneralCategoryId>(reader.ReadUInt());
+    generalCategory = static_cast<GeneralCategoryId>(reader.ReadInt());
     upper = reader.ReadUChar();
     lower = reader.ReadUChar();
     title = reader.ReadUChar();
@@ -1003,17 +1053,11 @@ NumericType::NumericType(NumericTypeId id_, const std::string& shortName_, const
 {
 }
 
-void NumericTypeTable::Init()
+NumericTypeTable& NumericTypeTable::Instance()
 {
-    instance.reset(new NumericTypeTable());
+    static NumericTypeTable instance;
+    return instance;
 }
-
-void NumericTypeTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<NumericTypeTable> NumericTypeTable::instance;
 
 NumericTypeTable::NumericTypeTable()
 {
@@ -1032,39 +1076,48 @@ NumericTypeTable::NumericTypeTable()
 const NumericType& NumericTypeTable::GetNumericType(NumericTypeId id) const
 {
     auto it = numericTypeMap.find(id);
-    if (it != numericTypeMap.cend())
+    if (it != numericTypeMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("numeric type " + std::to_string(static_cast<int>(id)) + " not found");
+        std::string msg("numeric type ");
+        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const NumericType& NumericTypeTable::GetNumericTypeByShortName(const std::string& shortName) const
 {
     auto it = shortNameMap.find(MakeCanonicalPropertyName(shortName));
-    if (it != shortNameMap.cend())
+    if (it != shortNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("numeric type '" + shortName + "' not found");
+        std::string msg("numeric type ");
+        msg.append(shortName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const NumericType& NumericTypeTable::GetNumericTypeByLongName(const std::string& longName) const
 {
     auto it = longNameMap.find(MakeCanonicalPropertyName(longName));
-    if (it != longNameMap.cend())
+    if (it != longNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("numeric type '" + longName + "' not found");
+        std::string msg("numeric type ");
+        msg.append(longName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
@@ -1072,17 +1125,11 @@ BidiClass::BidiClass(BidiClassId id_, const std::string& shortName_, const std::
 {
 }
 
-void BidiClassTable::Init()
+BidiClassTable& BidiClassTable::Instance()
 {
-    instance.reset(new BidiClassTable());
+    static BidiClassTable instance;
+    return instance;
 }
-
-void BidiClassTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<BidiClassTable> BidiClassTable::instance;
 
 BidiClassTable::BidiClassTable()
 {
@@ -1121,39 +1168,48 @@ BidiClassTable::BidiClassTable()
 const BidiClass& BidiClassTable::GetBidiClass(BidiClassId id) const
 {
     auto it = bidiClassMap.find(id);
-    if (it != bidiClassMap.cend())
+    if (it != bidiClassMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("bidi class " + std::to_string(static_cast<int>(id)) + " not found");
+        std::string msg("bidi class ");
+        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const BidiClass& BidiClassTable::GetBidiClassByShortName(const std::string& shortName) const
 {
     auto it = shortNameMap.find(MakeCanonicalPropertyName(shortName));
-    if (it != shortNameMap.cend())
+    if (it != shortNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("bidi class '" + shortName + "' not found");
+        std::string msg("bidi class ");
+        msg.append(shortName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const BidiClass& BidiClassTable::GetBidiClassByLongName(const std::string& longName) const
 {
     auto it = longNameMap.find(MakeCanonicalPropertyName(longName));
-    if (it != longNameMap.cend())
+    if (it != longNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("bidi class '" + longName + "' not found");
+        std::string msg("bidi class ");
+        msg.append(longName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
@@ -1161,17 +1217,11 @@ BidiPairedBracketType::BidiPairedBracketType(BidiPairedBracketTypeId id_, const 
 {
 }
 
-void BidiPairedBracketTypeTable::Init()
+BidiPairedBracketTypeTable& BidiPairedBracketTypeTable::Instance()
 {
-    instance.reset(new BidiPairedBracketTypeTable());
+    static BidiPairedBracketTypeTable instance;
+    return instance;
 }
-
-void BidiPairedBracketTypeTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<BidiPairedBracketTypeTable> BidiPairedBracketTypeTable::instance;
 
 BidiPairedBracketTypeTable::BidiPairedBracketTypeTable()
 {
@@ -1189,39 +1239,48 @@ BidiPairedBracketTypeTable::BidiPairedBracketTypeTable()
 const BidiPairedBracketType& BidiPairedBracketTypeTable::GetBidiPairedBracketType(BidiPairedBracketTypeId id) const
 {
     auto it = typeMap.find(id);
-    if (it != typeMap.cend())
+    if (it != typeMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("Bidi paired bracket type " + std::to_string(static_cast<int>(id)) + " not found");
+        std::string msg("Bidi paired bracket type ");
+        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const BidiPairedBracketType& BidiPairedBracketTypeTable::GetBidiPairedBracketTypeByShortName(const std::string& shortName) const
 {
     auto it = shortNameMap.find(MakeCanonicalPropertyName(shortName));
-    if (it != shortNameMap.cend())
+    if (it != shortNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("Bidi paired bracket type '" + shortName + "' not found");
+        std::string msg("Bidi paired bracket type ");
+        msg.append(shortName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const BidiPairedBracketType& BidiPairedBracketTypeTable::GetBidiPairedBracketTypeByLongName(const std::string& longName) const
 {
     auto it = longNameMap.find(MakeCanonicalPropertyName(longName));
-    if (it != longNameMap.cend())
+    if (it != longNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("Bidi paired bracket type '" + longName + "' not found");
+        std::string msg("Bidi paired bracket type ");
+        msg.append(longName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
@@ -1229,17 +1288,11 @@ AliasType::AliasType(AliasTypeId id_, const std::string& name_) : id(id_), name(
 {
 }
 
-void AliasTypeTable::Init()
+AliasTypeTable& AliasTypeTable::Instance()
 {
-    instance.reset(new AliasTypeTable());
+    static AliasTypeTable instance;
+    return instance;
 }
-
-void AliasTypeTable::Done()
-{
-    instance.reset();
-}
-
-std::unique_ptr<AliasTypeTable> AliasTypeTable::instance;
 
 AliasTypeTable::AliasTypeTable()
 {
@@ -1258,30 +1311,36 @@ AliasTypeTable::AliasTypeTable()
 const AliasType& AliasTypeTable::GetAliasType(AliasTypeId id) const
 {
     auto it = aliasTypeMap.find(id);
-    if (it != aliasTypeMap.cend())
+    if (it != aliasTypeMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("alias type " + std::to_string(static_cast<int>(id)) + " not found");
+        std::string msg("alias type ");
+        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
 const AliasType& AliasTypeTable::GetAliasType(const std::string& typeName) const
 {
     auto it = typeNameMap.find(MakeCanonicalPropertyName(typeName));
-    if (it != typeNameMap.cend())
+    if (it != typeNameMap.end())
     {
         return *it->second;
     }
     else
     {
-        throw UnicodeException("alias type '" + typeName + "' not found");
+        std::string msg("alias type ");
+        msg.append(typeName);
+        msg.append(" not found");
+        throw UnicodeException(msg);
     }
 }
 
-Alias::Alias() : typeId(AliasTypeId::none), name()
+Alias::Alias() : typeId(), name()
 {
 }
 
@@ -1301,8 +1360,9 @@ void Alias::Read(BinaryStreamReader& reader)
     name = reader.ReadUtf8String();
 }
 
-ExtendedCharacterInfo::ExtendedCharacterInfo() : characterName(), unicode1Name(), canonicalCombiningClass(0), fullUpper(), fullLower(), fullTitle(), fullFolding(), bidiClass(BidiClassId::none),
-numericType(NumericTypeId::none), numericValue(), bidiPairedBracketType(BidiPairedBracketTypeId::none), bidiMirroringGlyph(0), bidiPairedBracket(0)
+ExtendedCharacterInfo::ExtendedCharacterInfo() : 
+    characterName(), unicode1Name(), canonicalCombiningClass(0), fullUpper(), fullLower(), fullTitle(), fullFolding(), bidiClass(),
+    numericType(), numericValue(), bidiPairedBracketType(), bidiMirroringGlyph(0), bidiPairedBracket(0)
 {
 }
 
@@ -1406,6 +1466,11 @@ CharacterInfoPage::CharacterInfoPage()
 
 CharacterInfo& CharacterInfoPage::GetCharacterInfo(int index)
 {
+    if (ex)
+    {
+        ex = false;
+        throw UnicodeException("invalid character info index");
+    }
     if (index < 0 || index > characterInfos.size())
     {
         throw UnicodeException("invalid character info index");
@@ -1510,7 +1575,9 @@ uint32_t ExtendedCharacterInfoHeader::GetPageStart(int pageIndex) const
 {
     if (pageIndex < 0 || pageIndex >= extendedPageStarts.size())
     {
-        throw UnicodeException("invalid extended page index" + std::to_string(pageIndex));
+        std::string msg("invalid extended page index");
+        msg.append(std::to_string(pageIndex));
+        throw UnicodeException(msg);
     }
     return extendedPageStarts[pageIndex];
 }
@@ -1519,30 +1586,44 @@ void ExtendedCharacterInfoHeader::SetPageStart(int pageIndex, uint32_t extendedP
 {
     if (pageIndex < 0 || pageIndex >= extendedPageStarts.size())
     {
-        throw UnicodeException("invalid extended page index" + std::to_string(pageIndex));
+        std::string msg("invalid extended page index");
+        msg.append(std::to_string(pageIndex));
+        throw UnicodeException(msg);
     }
     extendedPageStarts[pageIndex] = extendedPageStart;
 }
 
-void CharacterTable::Init()
-{
-    instance.reset(new CharacterTable());
-}
+std::vector<uint8_t> headerMagic;
 
-void CharacterTable::Done()
+struct InitHeaderMagic
 {
-    instance.reset();
-}
-
-std::unique_ptr<CharacterTable> CharacterTable::instance;
-
-const uint8_t headerMagic[8] =
-{
-    static_cast<uint8_t>('S'), static_cast<uint8_t>('O'), static_cast<uint8_t>('U'), static_cast<uint8_t>('L'),
-    static_cast<uint8_t>('U'), static_cast<uint8_t>('C'), static_cast<uint8_t>('D'), current_soul_ucd_version
+    InitHeaderMagic();
 };
 
-CharacterTable::CharacterTable() : dataSource(CharacterTableDataSource::file), data(nullptr), size(0), headerRead(false), extendedHeaderStart(0), extendedHeaderEnd(0), extendedHeaderRead(false)
+InitHeaderMagic::InitHeaderMagic()
+{
+    headerMagic.resize(8);
+    headerMagic[0] = 'S';
+    headerMagic[1] = 'O';
+    headerMagic[2] = 'U';
+    headerMagic[3] = 'L';
+    headerMagic[4] = 'U';
+    headerMagic[5] = 'C';
+    headerMagic[6] = 'D';
+    int version = current_soul_ucd_version;
+    headerMagic[7] = static_cast<char>('0' + version);
+}
+
+InitHeaderMagic initHeaderMagic;
+
+CharacterTable& CharacterTable::Instance()
+{
+    static CharacterTable instance;
+    return instance;
+}
+
+CharacterTable::CharacterTable() : 
+    dataSource(CharacterTableDataSource::file), data(nullptr), size(0), headerRead(false), extendedHeaderStart(0), extendedHeaderEnd(0), extendedHeaderRead(false), headerSize(4096)
 {
 }
 
@@ -1644,7 +1725,12 @@ void CharacterTable::ReadHeader(BinaryStreamReader& reader)
     }
     if (magic[7] != headerMagic[7])
     {
-        throw UnicodeException("invalid soul_ucd.bin version: version " + std::string(1, headerMagic[7]) + " expected, version " + std::string(1, magic[7]) + " read");
+        std::string msg("invalid soul_ucd.bin version: version ");
+        msg.append(std::string(1, headerMagic[7]));
+        msg.append(" expected, version ");
+        msg.append(std::string(1, magic[7]));
+        msg.append(" read");
+        throw UnicodeException(msg);
     }
     extendedHeaderStart = reader.ReadUInt();
     extendedHeaderEnd = reader.ReadUInt();
@@ -1662,7 +1748,9 @@ const CharacterInfo& CharacterTable::GetCharacterInfo(char32_t codePoint)
 {
     if (codePoint > 0x10FFFF)
     {
-        throw UnicodeException("invalid Unicode code point " + std::to_string(codePoint));
+        std::string msg("invalid Unicode code point ");
+        msg.append(std::to_string(codePoint));
+        throw UnicodeException(msg);
     }
     int pageIndex = codePoint / numInfosInPage;
     if (pages.size() <= pageIndex)
@@ -1700,7 +1788,9 @@ CharacterInfo& CharacterTable::CreateCharacterInfo(char32_t codePoint)
 {
     if (codePoint > 0x10FFFF)
     {
-        throw UnicodeException("invalid Unicode code point " + std::to_string(codePoint));
+        std::string msg("invalid Unicode code point ");
+        msg.append(std::to_string(codePoint));
+        throw UnicodeException(msg);
     }
     int pageIndex = codePoint / numInfosInPage;
     while (pages.size() <= pageIndex)
@@ -1716,7 +1806,9 @@ const ExtendedCharacterInfo& CharacterTable::GetExtendedCharacterInfo(char32_t c
 {
     if (codePoint > 0x10FFFF)
     {
-        throw UnicodeException("invalid Unicode code point " + std::to_string(codePoint));
+        std::string msg("invalid Unicode code point ");
+        msg.append(std::to_string(codePoint));
+        throw UnicodeException(msg);
     }
     int pageIndex = codePoint / numInfosInPage;
     if (extendedPages.size() <= pageIndex)
@@ -1759,7 +1851,9 @@ ExtendedCharacterInfo& CharacterTable::CreateExtendedCharacterInfo(char32_t code
 {
     if (codePoint > 0x10FFFF)
     {
-        throw UnicodeException("invalid Unicode code point " + std::to_string(codePoint));
+        std::string msg("invalid Unicode code point ");
+        msg.append(std::to_string(codePoint));
+        throw UnicodeException(msg);
     }
     int pageIndex = codePoint / numInfosInPage;
     while (extendedPages.size() <= pageIndex)
@@ -1775,37 +1869,9 @@ bool IsAsciiDigit(char32_t c)
 {
     if (c < 256)
     {
-        return std::isdigit((unsigned char)c);
+        return std::isdigit(static_cast<int>(static_cast<unsigned char>(c)));
     }
     return false;
-}
-
-void UnicodeInit()
-{
-    CharacterTable::Init();
-    BinaryPropertyTable::Init();
-    GeneralCategoryTable::Init();
-    AgeTable::Init();
-    ScriptTable::Init();
-    BlockTable::Init();
-    BidiClassTable::Init();
-    BidiPairedBracketTypeTable::Init();
-    NumericTypeTable::Init();
-    AliasTypeTable::Init();
-}
-
-void UnicodeDone()
-{
-    AliasTypeTable::Done();
-    NumericTypeTable::Done();
-    BidiPairedBracketTypeTable::Done();
-    BidiClassTable::Done();
-    BlockTable::Done();
-    ScriptTable::Done();
-    AgeTable::Done();
-    GeneralCategoryTable::Done();
-    BinaryPropertyTable::Done();
-    CharacterTable::Done();
 }
 
 } // util

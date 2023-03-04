@@ -10,6 +10,7 @@ import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
+import otava.symbols.classes;
 import otava.symbols.context;
 
 namespace otava::symbols {
@@ -19,7 +20,7 @@ CompoundTypeSymbol::CompoundTypeSymbol(const std::u32string& name_) :
 {
 }
 
-CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_) : 
+CompoundTypeSymbol::CompoundTypeSymbol(TypeSymbol* baseType_, const Derivations& derivations_) :
     TypeSymbol(SymbolKind::compoundTypeSymbol, MakeCompoundTypeName(baseType_, derivations_)), baseType(baseType_), derivations(derivations_), baseTypeId(util::nil_uuid())
 {
 }
@@ -29,10 +30,18 @@ TypeSymbol* CompoundTypeSymbol::PlainType(Context* context)
     Derivations plainDerivations = Plain(derivations);
     return context->GetSymbolTable()->MakeCompoundType(BaseType(), plainDerivations);
 }
-    
+
 void CompoundTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
+    if (baseType->IsForwardClassDeclarationSymbol())
+    {
+        ForwardClassDeclarationSymbol* fwdSymbol = static_cast<ForwardClassDeclarationSymbol*>(baseType);
+        if (fwdSymbol->GetClassTypeSymbol())
+        {
+            baseType = fwdSymbol->GetClassTypeSymbol();
+        }
+    }
     writer.GetBinaryStreamWriter().Write(baseType->Id());
     otava::symbols::Write(writer, derivations);
 }

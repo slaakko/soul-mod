@@ -8,7 +8,9 @@ export module otava.symbols.type.symbol;
 import std.core;
 import otava.symbols.container.symbol;
 import otava.symbols.derivations;
+import otava.symbols.template_param_compare;
 import otava.intermediate.type;
+import util.uuid;
 
 export namespace otava::symbols {
 
@@ -42,7 +44,7 @@ public:
     virtual const Derivations& GetDerivations() const;
     virtual TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context);
     virtual TypeSymbol* Unify(TypeSymbol* argType, Context* context);
-    virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) { return nullptr; }
+    virtual TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) { return nullptr; }
     TypeSymbol* AddConst(Context* context);
     TypeSymbol* RemoveConst(Context* context);
     TypeSymbol* AddPointer(Context* context);
@@ -91,7 +93,5 @@ private:
     FunctionGroupSymbol* functionGroupSymbol;
     util::uuid functionGroupSymbolId;
 };
-
-bool TypesEqual(TypeSymbol* left, TypeSymbol* right);
 
 } // namespace otava::symbols

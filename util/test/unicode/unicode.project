@@ -1,0 +1,4 @@
+project unicode;
+reference <../../util_incremental.project>;
+target=program;
+source <unicode.cpp>;

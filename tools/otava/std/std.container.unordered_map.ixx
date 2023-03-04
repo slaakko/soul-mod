@@ -3,7 +3,6 @@ export module std.container.unordered_map;
 import std.type.fundamental;
 import std.functional;
 import std.iterator.unordered_map;
-import std.iterator.reverse;
 import std.utilities.pair;
 
 export namespace std {
@@ -25,8 +24,6 @@ public:
     using difference_type = int64_t;
     using iterator = std::unordered_map_iterator<value_type>;
     using const_iterator = const iterator;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     using local_iterator = iterator;
     using const_local_iterator = const_iterator;
 
@@ -41,14 +38,8 @@ public:
     const_iterator begin() const;
     iterator end();
     const_iterator end() const;
-    reverse_iterator rbegin();
-    const_reverse_iterator rbegin() const;
-    reverse_iterator rend();
-    const_reverse_iterator rend() const;
     const_iterator cbegin() const;
     const_iterator cend() const;
-    const_reverse_iterator crbegin() const;
-    const_reverse_iterator crend() const;
 
     bool empty() const;
     size_type size() const;

@@ -1,0 +1,4 @@
+project reader_writer;
+reference <../../util_incremental.project>;
+target=program;
+source <reader_writer.cpp>;

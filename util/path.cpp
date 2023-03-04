@@ -24,6 +24,8 @@ std::string GetCurrentWorkingDirectory()
     char* wd = _getcwd(buf, 4096);
 #elif defined(__linux) || defined(__unix) || defined(__posix)
     char* wd = getcwd(buf, 4096);
+#elif defined(OTAVA)
+    char* wd = std::getcwd(buf, 4096);
 #else
 #error unknown platform
 #endif
@@ -61,6 +63,8 @@ bool FileExists(const std::string& filePath)
     {
         return 0;
     }
+#elif defined(OTAVA)
+    return std::fexists(filePath.c_str());
 #else
 #error unknown platform
 #endif
@@ -90,6 +94,8 @@ bool DirectoryExists(const std::string& directoryPath)
     {
         return false;
     }
+#elif defined(OTAVA)
+    return std::dexists(directoryPath.c_str());
 #else
 #error unknown platform
 #endif
@@ -103,6 +109,8 @@ bool PathExists(const std::string& path)
 #elif defined(__linux) || defined(__unix) || defined(__posix)
     struct stat statBuf;
     return stat(path.c_str(), &statBuf) == 0 ? true : false;
+#elif defined(OTAVA)
+    return std::exists(path.c_str());
 #else
 #error unknown platform
 #endif
@@ -187,26 +195,32 @@ std::string Path::ChangeExtension(const std::string& path, const std::string& ex
     }
     else
     {
-        if (lastDotPos == std::string::npos || (lastSlashPos != std::string::npos && lastDotPos < lastSlashPos))
+        if ((lastDotPos == std::string::npos) || (lastSlashPos != std::string::npos) && (lastDotPos < lastSlashPos))
         {
             if (extension[0] == '.')
             {
-                return p + extension;
+                p.append(extension);
+                return p;
             }
             else
             {
-                return p + "." + extension;
+                p.append(".").append(extension);
+                return p;
             }
         }
         else
         {
             if (extension[0] == '.')
             {
-                return p.substr(0, lastDotPos) + extension;
+                p = p.substr(0, lastDotPos);
+                p.append(extension);
+                return p;
             }
             else
             {
-                return p.substr(0, lastDotPos + 1) + extension;
+                p = p.substr(0, lastDotPos + 1);
+                p.append(extension);
+                return p;
             }
         }
     }
@@ -313,7 +327,6 @@ std::string Path::GetFileNameWithoutExtension(const std::string& path)
         return fileName;
     }
 }
-
 
 std::string Path::GetDirectoryName(const std::string& path)
 {
@@ -430,7 +443,10 @@ std::string GetFullPath(const std::string& path)
                 --w;
                 if (w < 0)
                 {
-                    throw InvalidPathException("path '" + path + "' is invalid");
+                    std::string msg("path '");
+                    msg.append(path);
+                    msg.append("' is invalid");
+                    throw InvalidPathException(msg);
                 }
             }
             else
@@ -449,10 +465,11 @@ std::string GetFullPath(const std::string& path)
     }
     else if (w == 1)
     {
-        const std::string& p = components[0];
+        std::string p = components[0];
         if (p.length() == 2 && std::isalpha(p[0]) && p[1] == ':')
         {
-            return p + "/";
+            p.append("/");
+            return p;
         }
     }
     std::string result;

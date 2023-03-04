@@ -259,6 +259,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         }
     }
     project->LoadModules(moduleMapper);
+    std::vector<std::unique_ptr<Project>> references;
     if (project->GetTarget() == Target::program)
     {
         std::vector<std::string> referenceFilePaths;
@@ -267,10 +268,11 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         for (const auto& referenceFilePath : project->ReferenceFilePaths())
         {
             referenceFilePaths.push_back(referenceFilePath);
+            references.push_back(ParseProjectFile(util::Path::Combine(project->Root(), referenceFilePath)));
         }
         for (const auto& referenceFilePath : referenceFilePaths)
         {
-            std::string cuInitFileName = util::Path::Combine(util::Path::GetDirectoryName(referenceFilePath), "cu.init");
+            std::string cuInitFileName = util::GetFullPath(util::Path::Combine(project->Root(), util::Path::Combine(util::Path::GetDirectoryName(referenceFilePath), "cu.init")));
             util::FileStream cuInitFile(cuInitFileName, util::OpenMode::read | util::OpenMode::binary);
             util::BinaryStreamReader reader(cuInitFile);
             int n = reader.ReadInt();
@@ -367,7 +369,6 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
-        // module->ResolveForwardDeclarations();
         std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
@@ -396,7 +397,6 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             compileUnitInitFunctionNames.push_back(initFn->GetFunctionDefinitionSymbol()->IrName(&context));
         }
     }
-    // projectModule.ResolveForwardDeclarations();
     projectModule.AddDerivedClasses();
     ProjectTarget projectTarget = ProjectTarget::library;
     std::string classIndexFilePath;
@@ -430,7 +430,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             writer.Write(fileName);
         }
     }
-    MakeProjectFile(projectFilePath, project->Name(), asmFileNames, cppFileNames, libraryDirs, classIndexFilePath, projectTarget, (flags & BuildFlags::verbose) != BuildFlags::none);
+    MakeProjectFile(project, projectFilePath, asmFileNames, cppFileNames, libraryDirs, references, config, classIndexFilePath, projectTarget, (flags & BuildFlags::verbose) != BuildFlags::none);
     MSBuild(projectFilePath, config);
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {

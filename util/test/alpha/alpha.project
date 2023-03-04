@@ -1,0 +1,4 @@
+project alpha;
+target=program;
+reference <../../util_incremental.project>;
+source <alpha.cpp>;

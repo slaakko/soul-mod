@@ -103,7 +103,7 @@ FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion() : FunctionS
 FundamentalTypeBooleanConversion::FundamentalTypeBooleanConversion(TypeSymbol* type_, TypeSymbol* boolType, Context* context) : 
     FunctionSymbol(SymbolKind::fundamentalTypeBoolean, U"@conversion"), paramType(boolType), argType(type_), argTypeId(), paramTypeId()
 {
-    SetFunctionKind(FunctionKind::conversion);
+    SetConversion();
     SetAccess(Access::public_);
     ParameterSymbol* param = new ParameterSymbol(U"param", argType);
     AddParameter(param, soul::ast::SourcePos(), context);

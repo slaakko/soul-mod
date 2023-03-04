@@ -16,7 +16,7 @@ enum class rb_node_color
 class rb_node_base
 {
 public:
-    rb_node_base(rb_node_base* parent_);
+    explicit rb_node_base(rb_node_base* parent_);
     virtual ~rb_node_base();
     rb_node_color get_color() const { return color; }
     void set_color(rb_node_color color_) { color = color_; }

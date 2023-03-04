@@ -101,6 +101,7 @@ Streams::~Streams()
     {
         streams[i].reset();
     }
+    streams.clear();
 }
 
 void Streams::Add(Stream* stream)

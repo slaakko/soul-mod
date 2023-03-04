@@ -8,8 +8,8 @@ class exception
 {
 public:
     exception();
-    exception(const string& str_);
-    exception(const char* str_);
+    explicit exception(const string& str_);
+    explicit exception(const char* str_);
     virtual ~exception();
     virtual const char* what() const;
 private:

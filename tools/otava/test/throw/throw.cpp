@@ -1,7 +1,20 @@
 import std.core;
 
+class Foo
+{
+public:
+    ~Foo();
+};
+
+Foo::~Foo()
+{
+    std::cout << "Foo::~Foo() called" << std::endl;
+}
+
+
 void foo()
 {
+    Foo f;
     throw std::runtime_error("foo");
 }
 

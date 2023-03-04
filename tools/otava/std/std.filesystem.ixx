@@ -13,10 +13,12 @@ public:
     using value_type = char;
     using string_type = basic_string<value_type>;
     path();
-    path(void* handle_);
+    explicit path(void* handle_);
+    void* get_handle() const { return handle; }
     bool valid() const;
     path(const path& p);
     path(path&& that);
+    path(const path::string_type& s);
     path(const char* source);
     ~path();
     path& operator=(const path& p);
@@ -33,8 +35,6 @@ public:
     path& replace_filename(const path& p);
     path& replace_extension(const path& ext);
     path& replace_extension();
-    friend bool operator==(const path& lhs, const path& rhs);
-    friend path operator/(const path& lhs, const path& rhs);
     std::string string() const;
     std::wstring wstring() const;
     std::u8string u8string() const;
@@ -67,6 +67,9 @@ public:
 private:
     void* handle;
 };
+
+bool operator==(const path& lhs, const path& rhs);
+path operator/(const path& lhs, const path& rhs);
 
 class filesystem_error;
 class directory_entry;

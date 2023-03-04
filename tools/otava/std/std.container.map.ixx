@@ -3,7 +3,6 @@ export module std.container.map;
 import std.type.fundamental;
 import std.functional;
 import std.utilities.pair;
-import std.iterator.reverse;
 import std.container.rb_tree;
 
 export namespace std {
@@ -25,8 +24,6 @@ public:
     using tree_type = std::rb_tree<key_type, value_type, std::select_first<key_type, mapped_type>, key_compare>;
     using iterator = tree_type::iterator;
     using const_iterator = tree_type::const_iterator;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
     
     map() : tree() {}
     map(const map& x) : tree(x.tree) {}
@@ -38,14 +35,8 @@ public:
     const_iterator begin() const { return tree.cbegin(); }
     iterator end() { return tree.end(); }
     const_iterator end() const { return tree.cend(); }
-    reverse_iterator rbegin();
-    const_reverse_iterator rbegin() const;
-    reverse_iterator rend();
-    const_reverse_iterator rend() const;
     const_iterator cbegin() const { return tree.cbegin(); }
     const_iterator cend() const { return tree.cend(); }
-    const_reverse_iterator crbegin() const;
-    const_reverse_iterator crend() const;
     
     bool empty() const { return tree.empty(); }
     size_type size() const { return tree.size(); }
@@ -58,7 +49,15 @@ public:
         iterator it = ib.first;
         return it->second;
     }
-    mapped_type& operator[](key_type&& x);
+/*
+    mapped_type& operator[](key_type&& x)
+    {
+        value_type value(std::move(x), mapped_type());
+        std::pair<iterator, bool> ib = insert(value);
+        iterator it = ib.first;
+        return it->second;
+    }
+*/
     mapped_type& at(const key_type& x);
     const mapped_type& at(const key_type& x) const;
     
@@ -66,7 +65,12 @@ public:
     {
         return tree.insert(x);
     }
-    pair<iterator, bool> insert(value_type&& x);
+/*
+    pair<iterator, bool> insert(value_type&& x)
+    {
+        return tree.insert(std::move(x));
+    }
+*/
     iterator insert(const_iterator position, const value_type& x);
     iterator insert(const_iterator position, value_type&& x);
     

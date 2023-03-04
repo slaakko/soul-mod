@@ -1,0 +1,24 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+expressions solution_file.expr
+{
+    ws = "[\n\r\t ]";
+    newline = "\r\n|\n|\r";
+    comment = "#[^\n\r]*{newline}";
+    separators = "({ws}|{comment})+";
+    hexchar = "[0-9a-fA-F]";
+    letter = "[a-zA-Z_]";
+    digit = "[0-9]";
+    guid = "\{({hexchar}|-)+\}";
+    string = "\"[^\"]*\"";
+    digit_sequence = "[0-9]+";
+    id = "{letter}({letter}|{digit})*";
+    number = "{digit_sequence}(\.{digit_sequence})*";
+    filename = "({letter}|{digit}|\.)+";
+    path = "({filename}|\\)*";
+    guid_config = "{guid}({id}|{number}|\.|\|)+";
+    config = "{id}(\.{id})*\|{id}(\.{id})*";
+}

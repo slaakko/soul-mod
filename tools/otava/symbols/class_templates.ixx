@@ -9,7 +9,7 @@ import std.core;
 import otava.ast.node;
 import otava.ast.templates;
 import otava.symbols.classes;
-import otava.symbols.type.symbol;
+import otava.symbols.templates;
 
 export namespace otava::symbols {
 
@@ -34,7 +34,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
-    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*>& templateParameterMap, Context* context) override;
+    TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     bool IsTemplateParameterInstantiation() const override;
     FunctionDefinitionSymbol* Destructor() const { return destructor; }
     void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }

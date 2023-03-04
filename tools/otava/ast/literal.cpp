@@ -11,7 +11,7 @@ import otava.ast.writer;
 
 namespace otava::ast {
 
-LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)
+LiteralNode::LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_), rep()
 {
 }
 
@@ -244,7 +244,7 @@ void BooleanLiteralNode::Write(Writer& writer)
 void BooleanLiteralNode::Read(Reader& reader)
 {
     LiteralNode::Read(reader);
-    reader.ReadBool();
+    value = reader.ReadBool();
 }
 
 NullPtrLiteralNode::NullPtrLiteralNode(const soul::ast::SourcePos& sourcePos_) : LiteralNode(NodeKind::nullPtrLiteralNode, sourcePos_)

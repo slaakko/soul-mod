@@ -16,6 +16,7 @@ import otava.symbols.type.symbol;
 import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.visitor;
+import otava.symbols.variable.symbol;
 import otava.ast.error;
 
 namespace otava::symbols {
@@ -528,6 +529,21 @@ void SymbolValue::Resolve(SymbolTable& symbolTable)
 std::u32string SymbolValue::ToString() const
 {
     return symbol->Name();
+}
+
+otava::intermediate::Value* SymbolValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (symbol->IsVariableSymbol())
+    {
+        VariableSymbol* variableSymbol = static_cast<VariableSymbol*>(symbol);
+        Value* value = variableSymbol->GetValue();
+        if (value)
+        {
+            return value->IrValue(emitter, sourcePos, context);
+        }
+    }
+    ThrowException("cannot evaluate statically", sourcePos, context);
+    return nullptr;
 }
 
 InvokeValue::InvokeValue() : Value(SymbolKind::invokeValueSymbol, std::u32string(), nullptr), subject(nullptr)

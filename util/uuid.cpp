@@ -102,13 +102,13 @@ void RandomUuid(uuid& id)
     id = uuid::random();
 }
 
-std::string ToString(const uuid& uuid)
+std::string ToString(const uuid& id)
 {
     std::string s;
     int index = 0;
-    for (uint8_t x : uuid)
+    for (uint8_t x : id)
     {
-        s.append(ToLower(ToHexString(x)));
+        s.append(ToLowerNarrow(ToHexString(x)));
         if (index == 3 || index == 5 || index == 7 || index == 9)
         {
             s.append(1, '-');
@@ -122,15 +122,17 @@ uuid ParseUuid(const std::string& str)
 {
     if (str.length() != 2 * uuid::static_size() + 4)
     {
-        throw std::runtime_error("wrong number of hex bytes in uuid string '" + str + "'." + std::to_string(uuid::static_size()) + " hex bytes + 4 hyphens expected.");
+        std::string msg("wrong number of hex bytes in uuid string '");
+        msg.append(str).append("'.").append(std::to_string(uuid::static_size())).append(" hex bytes + 4 hyphens expected.");
+        throw std::runtime_error(msg);
     }
-    uuid uuid;
+    uuid id;
     int index = 0;
     for (long i = 0; i < uuid::static_size(); ++i)
     {
         std::string hexByteStr = str.substr(index, 2);
         uint8_t hexByte = ParseHexByte(hexByteStr);
-        uuid.data[i] = hexByte;
+        id.data[i] = hexByte;
         ++index;
         ++index;
         if (i == 3 || i == 5 || i == 7 || i == 9)
@@ -138,7 +140,7 @@ uuid ParseUuid(const std::string& str)
             ++index;
         }
     }
-    return uuid;
+    return id;
 }
 
 } // namespace util

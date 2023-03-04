@@ -82,6 +82,11 @@ enum class SymbolGroupKind : int32_t;
 
 void SetProjectReady(bool projectReady_);
 
+struct ClassTemplateNameLess
+{
+    bool operator()(ClassTemplateSpecializationSymbol* left, ClassTemplateSpecializationSymbol* right) const;
+};
+
 class SymbolTable
 {
 public:
@@ -136,7 +141,7 @@ public:
     FunctionSymbol* AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     void AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
     FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes,
-        FunctionQualifiers qualifiers, FunctionKind kind, otava::ast::Node* node, Context* context);
+        FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, otava::ast::Node* node, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
     VariableSymbol* AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type, 
         Value* value, DeclarationFlags flags, Context* context);
@@ -246,7 +251,7 @@ private:
     std::vector<std::unique_ptr<CompoundTypeSymbol>> compoundTypes;
     std::map<TypeSymbol*, std::vector<CompoundTypeSymbol*>> compoundTypeMap;
     std::vector<std::unique_ptr<ExplicitInstantiationSymbol>> explicitInstantiations;
-    std::map<ClassTemplateSpecializationSymbol*, ExplicitInstantiationSymbol*> explicitInstantiationMap;
+    std::map<ClassTemplateSpecializationSymbol*, ExplicitInstantiationSymbol*, ClassTemplateNameLess> explicitInstantiationMap;
     std::vector<std::unique_ptr<FunctionGroupTypeSymbol>> functionGroupTypes;
     std::map<FunctionGroupSymbol*, FunctionGroupTypeSymbol*> functionGroupTypeMap;
     std::map<int32_t, TypeSymbol*> fundamentalTypeMap;

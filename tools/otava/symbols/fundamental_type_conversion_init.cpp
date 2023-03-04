@@ -38,6 +38,7 @@ void AddFundamentalTypeConversionsToSymboTable(
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBooleanConversion(floatType, boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBooleanConversion(doubleType, boolType, context), context);
 
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(10, ConversionKind::explicitConversion, charType, boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, charType, signedCharType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, charType, unsignedCharType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, charType, char8Type, context), context);
@@ -55,6 +56,7 @@ void AddFundamentalTypeConversionsToSymboTable(
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeFloatToIntConversion(5, ConversionKind::explicitConversion, charType, floatType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeFloatToIntConversion(6, ConversionKind::explicitConversion, charType, doubleType, context), context);
 
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(10, ConversionKind::explicitConversion, signedCharType, boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, signedCharType, charType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, signedCharType, unsignedCharType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, signedCharType, char8Type, context), context);
@@ -72,6 +74,7 @@ void AddFundamentalTypeConversionsToSymboTable(
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeFloatToIntConversion(5, ConversionKind::explicitConversion, signedCharType, floatType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeFloatToIntConversion(6, ConversionKind::explicitConversion, signedCharType, doubleType, context), context);
 
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(10, ConversionKind::explicitConversion, unsignedCharType, boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, unsignedCharType, charType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, unsignedCharType, signedCharType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, unsignedCharType, char8Type, context), context);
@@ -89,6 +92,7 @@ void AddFundamentalTypeConversionsToSymboTable(
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeFloatToIntConversion(5, ConversionKind::explicitConversion, unsignedCharType, floatType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeFloatToIntConversion(6, ConversionKind::explicitConversion, unsignedCharType, doubleType, context), context);
 
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(10, ConversionKind::explicitConversion, char8Type, boolType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, char8Type, charType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, char8Type, signedCharType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeBitcastConversion(1, ConversionKind::implicitConversion, char8Type, unsignedCharType, context), context);

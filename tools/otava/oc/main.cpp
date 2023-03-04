@@ -13,6 +13,7 @@ import otava.symbols.modules;
 import otava.symbols.namespaces;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.conversion.table;
+import otava.symbols.type.symbol;
 import otava.parser.recorded.parse;
 import util.init.done;
 import util.unicode;

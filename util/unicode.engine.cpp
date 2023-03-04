@@ -9,7 +9,7 @@ namespace util {
 
 Utf8ToUtf32Engine::Utf8ToUtf32Engine() : state(0), resultReady(false), result(U'\0')
 {
-    std::memset(bytes, 0, sizeof(bytes));
+    std::memset(static_cast<void*>(&bytes[0]), 0, sizeof(bytes));
 }
 
 void Utf8ToUtf32Engine::Put(uint8_t x)

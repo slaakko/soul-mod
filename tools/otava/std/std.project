@@ -31,7 +31,7 @@ source <std.filesystem.cpp>;
 interface <std.functional.ixx>;
 interface <std.hash.ixx>;
 interface <std.iterator.list.ixx>;
-interface <std.iterator.reverse.ixx>;
+// interface <std.iterator.reverse.ixx>;
 interface <std.iterator.unordered_map.ixx>;
 interface <std.iterator.ixx>;
 interface <std.new_delete.ixx>;

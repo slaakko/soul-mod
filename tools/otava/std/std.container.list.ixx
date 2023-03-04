@@ -2,7 +2,6 @@ export module std.container.list;
 
 import std.type.fundamental;
 import std.iterator.list;
-import std.iterator.reverse;
 
 export namespace std {
 
@@ -18,8 +17,6 @@ public:
     using size_type = int64_t;
     using iterator = std::list_iterator<value_type>;
     using const_iterator = std::list_iterator<const value_type&>;
-    using reverse_iterator = std::reverse_iterator<iterator>;
-    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     list();
     explicit list(size_type n);
@@ -34,14 +31,8 @@ public:
     const_iterator begin() const;
     iterator end();
     const_iterator end() const;
-    reverse_iterator rbegin();
-    const_reverse_iterator rbegin() const;
-    reverse_iterator rend();
-    const_reverse_iterator rend() const;
     const_iterator cbegin() const;
     const_iterator cend() const;
-    const_reverse_iterator crbegin() const;
-    const_reverse_iterator crend() const;
 
     bool empty() const;
     size_type size() const;

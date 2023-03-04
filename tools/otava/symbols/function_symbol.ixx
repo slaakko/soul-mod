@@ -16,7 +16,7 @@ export namespace otava::symbols {
 
 enum class FunctionKind
 {
-    function, constructor, destructor, special, conversion, conversionMemFn
+    function, constructor, destructor, special, conversionMemFn
 };
 
 enum class SpecialFunctionKind
@@ -57,7 +57,7 @@ std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
 
 enum class FunctionSymbolFlags : int32_t
 {
-    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3
+    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3, conversion = 1 << 4, fixedIrName = 1 << 5
 };
 
 constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
@@ -114,12 +114,14 @@ public:
     int MinMemFunArity(Context* context) const;
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
-    FunctionKind GetFunctionKind() const { return kind; }
+    virtual FunctionKind GetFunctionKind() const { return kind; }
     void SetFunctionKind(FunctionKind kind_) { kind = kind_; }
     FunctionQualifiers Qualifiers() const { return qualifiers; }
     void SetFunctionQualifiers(FunctionQualifiers qualifiers_) { qualifiers = qualifiers_; }
-    bool IsConversion() const { return kind == FunctionKind::conversion; }
-    void SetConversion() { kind = FunctionKind::conversion; }
+    bool IsConversion() const { return GetFlag(FunctionSymbolFlags::conversion); }
+    void SetConversion() { SetFlag(FunctionSymbolFlags::conversion); }
+    bool IsConversionMemFn() const { return GetFunctionKind() == FunctionKind::conversionMemFn; }
+    void SetConversionMemFn() { SetFunctionKind(FunctionKind::conversionMemFn); }
     virtual bool IsArrayElementAccess() const { return false; }
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
     void SetReturnType(TypeSymbol* returnType_, Context* context);
@@ -128,11 +130,16 @@ public:
     void SetReturnsClass() { SetFlag(FunctionSymbolFlags::returnsClass); }
     std::u32string FullName() const override;
     bool IsTemplate() const;
+    int TemplateArity() const;
     bool IsMemFnOfClassTemplate() const;
-    virtual TypeSymbol* ConversionParamType() const { return nullptr; }
-    virtual TypeSymbol* ConversionArgType() const { return nullptr; }
-    virtual ConversionKind GetConversionKind() const;
-    virtual int32_t ConversionDistance() const { return 0; }
+    virtual TypeSymbol* ConversionParamType() const { return conversionParamType; }
+    void SetConversionParamType(TypeSymbol* conversionParamType_);
+    virtual TypeSymbol* ConversionArgType() const { return conversionArgType; }
+    void SetConversionArgType(TypeSymbol* conversionArgType_);
+    virtual ConversionKind GetConversionKind() const { return conversionKind; }
+    void SetConversionKind(ConversionKind conversionKind_);
+    virtual int32_t ConversionDistance() const { return conversionDistance; }
+    void SetConversionDistance(int32_t conversionDistance_);
     virtual bool IsCtorAssignmentOrArrow() const { return false; }
     virtual bool IsIdentityConversion() const { return false; }
     virtual bool IsDerivedToBaseConversion() const { return false; }
@@ -155,6 +162,7 @@ public:
     std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }
     VariableSymbol* CreateTemporary(TypeSymbol* type);
+    virtual bool IsConst() const;
     virtual bool IsVirtual() const;
     virtual bool IsPure() const;
     void SetVirtual();
@@ -181,6 +189,8 @@ public:
     FunctionDefinitionSymbol* Destructor() const { return destructor; }
     void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
     virtual bool IsStatic() const;
+    virtual bool IsExplicit() const;
+    virtual bool IsPointerCopyAssignment() const { return false; }
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -198,6 +208,13 @@ private:
     int32_t nextTemporaryId;
     int32_t vtabIndex;
     FunctionDefinitionSymbol* destructor;
+    ConversionKind conversionKind;
+    TypeSymbol* conversionParamType;
+    util::uuid conversionParamTypeId;
+    TypeSymbol* conversionArgType;
+    util::uuid conversionArgTypeId;
+    int32_t conversionDistance;
+    mutable std::string fixedIrName;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol
@@ -205,6 +222,7 @@ class FunctionDefinitionSymbol : public FunctionSymbol
 public:
     FunctionDefinitionSymbol(const std::u32string& name_);
     FunctionDefinitionSymbol(SymbolKind kind_, const std::u32string& name_);
+    FunctionKind GetFunctionKind() const override;
     std::string SymbolKindStr() const override { return "function definition symbol"; }
     std::string SymbolDocKindStr() const override { return "function_definition"; }
     void SetDeclaration(FunctionSymbol* declaration_) { declaration = declaration_; }
@@ -216,11 +234,16 @@ public:
     void Accept(Visitor& visitor) override;
     int32_t DefIndex() const { return defIndex; }
     void SetDefIndex(int32_t defIndex_) { defIndex = defIndex_; }
+    bool IsConst() const override;
     bool IsVirtual() const override;
     bool IsPure() const override;
     bool IsOverride() const override;
     int32_t VTabIndex() const override;
     bool IsStatic() const override;
+    bool IsExplicit() const override;
+    TypeSymbol* ConversionParamType() const override;
+    TypeSymbol* ConversionArgType() const override;
+    int32_t ConversionDistance() const override;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;

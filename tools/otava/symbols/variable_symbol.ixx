@@ -39,7 +39,7 @@ public:
     bool IsStatic() const;
     int32_t LayoutIndex() const { return layoutIndex; }
     void SetLayoutIndex(int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
-    std::string IrName() const;
+    std::string IrName(Context* context) const;
     int32_t Index() const { return index; }
     void SetIndex(int32_t index_) { index = index_; }
     VariableSymbol* Final() { if (global) return global; else return this; }

@@ -15,6 +15,7 @@ import otava.symbols.value;
 import otava.symbols.visitor;
 import otava.symbols.context;
 import otava.symbols.declaration;
+import otava.symbols.bound.tree;
 import util.unicode;
 import util.sha1;
 
@@ -131,10 +132,18 @@ TypeSymbol* VariableSymbol::GetReferredType() const
     return referredType;
 }
 
-std::string VariableSymbol::IrName() const
+std::string VariableSymbol::IrName(Context* context) const
 {
     std::string irName = "variable_";
-    irName.append(util::ToUtf8(Name())).append("_").append(util::GetSha1MessageDigest(util::ToUtf8(FullName())));
+    irName.append(util::ToUtf8(Name())).append("_");
+    if (IsStatic())
+    {
+        irName.append(util::GetSha1MessageDigest(util::ToUtf8(FullName()) + context->GetBoundCompileUnit()->Id()));
+    }
+    else
+    {
+        irName.append(util::GetSha1MessageDigest(util::ToUtf8(FullName())));
+    }
     return irName;
 }
 

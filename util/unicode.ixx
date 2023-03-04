@@ -8,12 +8,15 @@ export module util.unicode;
 import std.core;
 import util.binary.stream.writer;
 import util.binary.stream.reader;
+import util.text.util;
 
 export namespace util {
 
 std::string SoulVersionStr();
 std::string SoulRoot();
 std::string SoulUcdFilePath();
+
+void SetEx();
 
 class UnicodeException : public std::runtime_error
 {
@@ -26,20 +29,20 @@ void ThrowUnicodeException(const std::string& message_);
 
 std::u32string ToUtf32(const std::string& utf8Str);
 std::u32string ToUtf32(const std::u16string& utf16Str);
-inline const std::u32string& ToUtf32(const std::u32string& utf32Str) { return utf32Str; }
+std::u32string ToUtf32(const std::u32string& utf32Str) { return utf32Str; }
 std::u16string ToUtf16(const std::u32string& utf32Str);
-inline const std::u16string& ToUtf16(const std::u16string& utf16Str) { return utf16Str; }
+std::u16string ToUtf16(const std::u16string& utf16Str) { return utf16Str; }
 std::u16string ToUtf16(const std::string& u8str);
 std::string ToUtf8(const std::u32string& utf32Str);
 std::string ToUtf8(const std::u16string& utf16Str);
-inline const std::string& ToUtf8(const std::string& utf8Str) { return utf8Str; }
+std::string ToUtf8(const std::string& utf8Str) { return utf8Str; }
 
 class Utf8ToUtf32Engine
 {
 public:
     Utf8ToUtf32Engine();
     void Put(uint8_t x);
-    bool ResulReady() const { return resultReady; }
+    bool ResultReady() const { return resultReady; }
     char32_t Result() const { return result; }
 private:
     int state;
@@ -49,7 +52,11 @@ private:
 };
 
 std::u32string ToUpper(const std::u32string& s);
+std::u16string ToUpper(const std::u16string& s);
+std::string ToUpper(const std::string& s);
 std::u32string ToLower(const std::u32string& s);
+std::u16string ToLower(const std::u16string& s);
+std::string ToLower(const std::string& s);
 std::string MakeCanonicalPropertyName(const std::string& s);
 
 enum class BinaryPropertyId : uint8_t
@@ -129,20 +136,10 @@ private:
     std::string longName;
 };
 
-struct BinaryPropertyIdHash
-{
-    size_t operator()(BinaryPropertyId id) const
-    {
-        return std::hash<uint8_t>()(static_cast<uint8_t>(id));
-    }
-};
-
 class BinaryPropertyTable
 {
 public:
-    static void Init();
-    static void Done();
-    static BinaryPropertyTable& Instance() { return *instance; }
+    static BinaryPropertyTable& Instance();
     const BinaryProperty& GetBinaryProperty(BinaryPropertyId binaryPropertyId) const;
     bool IsBinaryProperty(const std::string& shortName) const;
     const BinaryProperty& GetBinaryPropertyByShortName(const std::string& shortName) const;
@@ -150,10 +147,9 @@ public:
     const std::vector<BinaryProperty>& BinaryProperties() const { return binaryProperties; }
 private:
     BinaryPropertyTable();
-    static std::unique_ptr<BinaryPropertyTable> instance;
-    std::unordered_map<BinaryPropertyId, const BinaryProperty*, BinaryPropertyIdHash> binaryPropertyIdMap;
-    std::unordered_map<std::string, const BinaryProperty*> shortNameMap;
-    std::unordered_map<std::string, const BinaryProperty*> longNameMap;
+    std::map<BinaryPropertyId, const BinaryProperty*> binaryPropertyIdMap;
+    std::map<std::string, const BinaryProperty*> shortNameMap;
+    std::map<std::string, const BinaryProperty*> longNameMap;
     std::vector<BinaryProperty> binaryProperties;
 };
 
@@ -206,14 +202,6 @@ enum class BlockId : uint16_t
     ucas, ucasExt, ugaritic, vai, vedicExt, verticalForms, vs, vsSup, wancho, warangCiti, yiRadicals, yiSyllables, yijing, zanabazarSquare
 };
 
-struct BlockIdHash
-{
-    size_t operator()(BlockId id) const
-    {
-        return std::hash<uint16_t>()(static_cast<uint16_t>(id));
-    }
-};
-
 class Block
 {
 public:
@@ -234,19 +222,16 @@ private:
 class BlockTable
 {
 public:
-    static void Init();
-    static void Done();
-    static BlockTable& Instance() { return *instance; }
+    static BlockTable& Instance();
     const Block& GetBlock(BlockId blockId) const;
     const Block& GetBlockByShortName(const std::string& shortName) const;
     const Block& GetBlockByLongName(const std::string& longName) const;
     const std::vector<Block>& Blocks() const { return blocks; }
 private:
     BlockTable();
-    static std::unique_ptr<BlockTable> instance;
-    std::unordered_map<BlockId, const Block*, BlockIdHash> blockIdMap;
-    std::unordered_map<std::string, const Block*> shortNameMap;
-    std::unordered_map<std::string, const Block*> longNameMap;
+    std::map<BlockId, const Block*> blockIdMap;
+    std::map<std::string, const Block*> shortNameMap;
+    std::map<std::string, const Block*> longNameMap;
     std::vector<Block> blocks;
 };
 
@@ -265,7 +250,7 @@ inline const Block& GetBlockByLongName(const std::string& longName)
     return BlockTable::Instance().GetBlockByLongName(longName);
 }
 
-enum class GeneralCategoryId : uint32_t
+enum class GeneralCategoryId : int32_t
 {
     none = 0,
     Lu = 1 << 0, Ll = 1 << 1, Lt = 1 << 2, Lm = 1 << 3, Lo = 1 << 4,
@@ -289,21 +274,13 @@ enum class GeneralCategoryId : uint32_t
 
 inline GeneralCategoryId operator&(GeneralCategoryId left, GeneralCategoryId right)
 {
-    return GeneralCategoryId(uint32_t(left) & uint32_t(right));
+    return GeneralCategoryId(int32_t(left) & int32_t(right));
 }
 
 inline GeneralCategoryId operator|(GeneralCategoryId left, GeneralCategoryId right)
 {
-    return GeneralCategoryId(uint32_t(left) | uint32_t(right));
+    return GeneralCategoryId(int32_t(left) | int32_t(right));
 }
-
-struct GeneralCategoryIdHash
-{
-    size_t operator()(GeneralCategoryId id) const
-    {
-        return std::hash<uint32_t>()(static_cast<uint32_t>(id));
-    }
-};
 
 class GeneralCategory
 {
@@ -321,19 +298,16 @@ private:
 class GeneralCategoryTable
 {
 public:
-    static void Init();
-    static void Done();
-    static GeneralCategoryTable& Instance() { return *instance; }
+    static GeneralCategoryTable& Instance();
     const GeneralCategory& GetGeneralCategory(GeneralCategoryId generalCategoryId) const;
     const GeneralCategory& GetGeneralCategoryByShortName(const std::string& shortName) const;
     const GeneralCategory& GetGeneralCategoryByLongName(const std::string& shortName) const;
     const std::vector<GeneralCategory>& GeneralCategories() const { return generalCategories; }
 private:
     GeneralCategoryTable();
-    static std::unique_ptr<GeneralCategoryTable> instance;
-    std::unordered_map<GeneralCategoryId, const GeneralCategory*, GeneralCategoryIdHash> generalCategoryIdMap;
-    std::unordered_map<std::string, const GeneralCategory*> shortNameMap;
-    std::unordered_map<std::string, const GeneralCategory*> longNameMap;
+    std::map<GeneralCategoryId, const GeneralCategory*> generalCategoryIdMap;
+    std::map<std::string, const GeneralCategory*> shortNameMap;
+    std::map<std::string, const GeneralCategory*> longNameMap;
     std::vector<GeneralCategory> generalCategories;
 };
 
@@ -369,14 +343,6 @@ enum class AgeId : uint8_t
     age_12_0, age_12_1
 };
 
-struct AgeIdHash
-{
-    size_t operator()(AgeId id) const
-    {
-        return std::hash<uint8_t>()(static_cast<uint8_t>(id));
-    }
-};
-
 class Age
 {
 public:
@@ -391,17 +357,14 @@ private:
 class AgeTable
 {
 public:
-    static void Init();
-    static void Done();
-    static AgeTable& Instance() { return *instance; }
+    static AgeTable& Instance();
     const Age& GetAge(AgeId id) const;
     const Age& GetAge(const std::string& version) const;
     const std::vector<Age>& Ages() const { return ages; }
 private:
-    static std::unique_ptr<AgeTable> instance;
     AgeTable();
-    std::unordered_map<AgeId, const Age*, AgeIdHash> ageIdMap;
-    std::unordered_map<std::string, const Age*> versionMap;
+    std::map<AgeId, const Age*> ageIdMap;
+    std::map<std::string, const Age*> versionMap;
     std::vector<Age> ages;
 };
 
@@ -446,14 +409,6 @@ enum class ScriptId : uint8_t
     zinh, zyyy, zzzz
 };
 
-struct ScriptIdHash
-{
-    size_t operator()(ScriptId id) const
-    {
-        return std::hash<uint8_t>()(static_cast<uint8_t>(id));
-    }
-};
-
 class Script
 {
 public:
@@ -470,20 +425,17 @@ private:
 class ScriptTable
 {
 public:
-    static void Init();
-    static void Done();
-    static ScriptTable& Instance() { return *instance; }
+    static ScriptTable& Instance();
     const Script& GetScript(ScriptId id) const;
     const Script& GetScriptByShortName(const std::string& shortName) const;
     const Script& GetScriptByLongName(const std::string& longName) const;
     const std::vector<Script>& Scripts() const { return scripts; }
 private:
-    static std::unique_ptr<ScriptTable> instance;
     ScriptTable();
     std::vector<Script> scripts;
-    std::unordered_map<ScriptId, const Script*, ScriptIdHash> scriptIdMap;
-    std::unordered_map<std::string, const Script*> shortNameMap;
-    std::unordered_map<std::string, const Script*> longNameMap;
+    std::map<ScriptId, const Script*> scriptIdMap;
+    std::map<std::string, const Script*> shortNameMap;
+    std::map<std::string, const Script*> longNameMap;
 };
 
 inline const Script& GetScript(ScriptId id)
@@ -507,12 +459,12 @@ public:
     CharacterInfo();
     bool GetBinaryProperty(BinaryPropertyId binaryPropertyId) const
     {
-        uint64_t mask = static_cast<uint64_t>(1) << static_cast<uint64_t>(binaryPropertyId);
+        uint64_t mask = static_cast<uint64_t>(1) << static_cast<uint64_t>(static_cast<uint8_t>(binaryPropertyId));
         return (binaryProperties & mask) != 0;
     }
     void SetBinaryPropery(BinaryPropertyId binaryPropertyId, bool value)
     {
-        uint64_t bit = static_cast<uint64_t>(1) << static_cast<uint64_t>(binaryPropertyId);
+        uint64_t bit = static_cast<uint64_t>(1) << static_cast<uint64_t>(static_cast<uint8_t>(binaryPropertyId));
         if (value)
         {
             binaryProperties = binaryProperties | bit;
@@ -615,14 +567,6 @@ enum class NumericTypeId : uint8_t
     de, di, nu
 };
 
-struct NumericTypeIdHash
-{
-    size_t operator()(NumericTypeId id) const
-    {
-        return std::hash<uint8_t>()(static_cast<uint8_t>(id));
-    }
-};
-
 class NumericType
 {
 public:
@@ -639,20 +583,17 @@ private:
 class NumericTypeTable
 {
 public:
-    static void Init();
-    static void Done();
-    static NumericTypeTable& Instance() { return *instance; }
+    static NumericTypeTable& Instance();
     const NumericType& GetNumericType(NumericTypeId id) const;
     const NumericType& GetNumericTypeByShortName(const std::string& shortName) const;
     const NumericType& GetNumericTypeByLongName(const std::string& longName) const;
     const std::vector<NumericType>& NumericTypes() const { return numericTypes; }
 private:
-    static std::unique_ptr<NumericTypeTable> instance;
     NumericTypeTable();
     std::vector<NumericType> numericTypes;
-    std::unordered_map<NumericTypeId, const NumericType*, NumericTypeIdHash> numericTypeMap;
-    std::unordered_map<std::string, const NumericType*> shortNameMap;
-    std::unordered_map<std::string, const NumericType*> longNameMap;
+    std::map<NumericTypeId, const NumericType*> numericTypeMap;
+    std::map<std::string, const NumericType*> shortNameMap;
+    std::map<std::string, const NumericType*> longNameMap;
 };
 
 inline const NumericType& GetNumericType(NumericTypeId id)
@@ -676,14 +617,6 @@ enum class BidiClassId : uint8_t
     al, an, b, bn, cs, en, es, et, fsi, l, lre, lri, lro, nsm, on, pdf, pdi, r, rle, rli, rlo, s, ws
 };
 
-struct BidiClassIdHash
-{
-    size_t operator()(BidiClassId id) const
-    {
-        return std::hash<uint8_t>()(static_cast<uint8_t>(id));
-    }
-};
-
 class BidiClass
 {
 public:
@@ -700,20 +633,17 @@ private:
 class BidiClassTable
 {
 public:
-    static void Init();
-    static void Done();
-    static BidiClassTable& Instance() { return *instance; }
+    static BidiClassTable& Instance();
     const BidiClass& GetBidiClass(BidiClassId id) const;
     const BidiClass& GetBidiClassByShortName(const std::string& shortName) const;
     const BidiClass& GetBidiClassByLongName(const std::string& longName) const;
     const std::vector<BidiClass>& BidiClasses() const { return bidiClasses; }
 private:
-    static std::unique_ptr<BidiClassTable> instance;
     BidiClassTable();
     std::vector<BidiClass> bidiClasses;
-    std::unordered_map<BidiClassId, const BidiClass*, BidiClassIdHash> bidiClassMap;
-    std::unordered_map<std::string, const BidiClass*> shortNameMap;
-    std::unordered_map<std::string, const BidiClass*> longNameMap;
+    std::map<BidiClassId, const BidiClass*> bidiClassMap;
+    std::map<std::string, const BidiClass*> shortNameMap;
+    std::map<std::string, const BidiClass*> longNameMap;
 };
 
 inline const BidiClass& GetBidiClass(BidiClassId id)
@@ -737,14 +667,6 @@ enum class BidiPairedBracketTypeId : uint8_t
     o, c
 };
 
-struct BidiPairedBracketTypeIdHash
-{
-    size_t operator()(BidiPairedBracketTypeId id) const
-    {
-        return std::hash<uint8_t>()(static_cast<uint8_t>(id));
-    }
-};
-
 class BidiPairedBracketType
 {
 public:
@@ -761,20 +683,17 @@ private:
 class BidiPairedBracketTypeTable
 {
 public:
-    static void Init();
-    static void Done();
-    static BidiPairedBracketTypeTable& Instance() { return *instance; }
+    static BidiPairedBracketTypeTable& Instance();
     const BidiPairedBracketType& GetBidiPairedBracketType(BidiPairedBracketTypeId id) const;
     const BidiPairedBracketType& GetBidiPairedBracketTypeByShortName(const std::string& shortName) const;
     const BidiPairedBracketType& GetBidiPairedBracketTypeByLongName(const std::string& longName) const;
     const std::vector<BidiPairedBracketType>& BidiPairedBracketTypes() const { return bidiPairedBracketTypes; }
 private:
-    static std::unique_ptr<BidiPairedBracketTypeTable> instance;
     BidiPairedBracketTypeTable();
     std::vector<BidiPairedBracketType> bidiPairedBracketTypes;
-    std::unordered_map<BidiPairedBracketTypeId, const BidiPairedBracketType*, BidiPairedBracketTypeIdHash> typeMap;
-    std::unordered_map<std::string, const BidiPairedBracketType*> shortNameMap;
-    std::unordered_map<std::string, const BidiPairedBracketType*> longNameMap;
+    std::map<BidiPairedBracketTypeId, const BidiPairedBracketType*> typeMap;
+    std::map<std::string, const BidiPairedBracketType*> shortNameMap;
+    std::map<std::string, const BidiPairedBracketType*> longNameMap;
 };
 
 inline const BidiPairedBracketType& GetBidiPairedBracketType(BidiPairedBracketTypeId id)
@@ -798,14 +717,6 @@ enum class AliasTypeId : uint8_t
     correction, control, alternate, figment, abbreviation
 };
 
-struct AliasTypeIdHash
-{
-    size_t operator()(AliasTypeId id) const
-    {
-        return std::hash<uint8_t>()(static_cast<uint8_t>(id));
-    }
-};
-
 class AliasType
 {
 public:
@@ -820,18 +731,15 @@ private:
 class AliasTypeTable
 {
 public:
-    static void Init();
-    static void Done();
-    static AliasTypeTable& Instance() { return *instance; }
+    static AliasTypeTable& Instance();
     const AliasType& GetAliasType(AliasTypeId id) const;
     const AliasType& GetAliasType(const std::string& typeName) const;
     const std::vector<AliasType>& AliasTypes() const { return aliasTypes; }
 private:
-    static std::unique_ptr<AliasTypeTable> instance;
     AliasTypeTable();
     std::vector<AliasType> aliasTypes;
-    std::unordered_map<AliasTypeId, const AliasType*, AliasTypeIdHash> aliasTypeMap;
-    std::unordered_map<std::string, const AliasType*> typeNameMap;
+    std::map<AliasTypeId, const AliasType*> aliasTypeMap;
+    std::map<std::string, const AliasType*> typeNameMap;
 };
 
 inline const AliasType& GetAliasType(AliasTypeId id)
@@ -1027,11 +935,11 @@ private:
     std::vector<uint32_t> extendedPageStarts;
 };
 
-const uint8_t soul_ucd_version_1 = '1';
-const uint8_t soul_ucd_version_2 = '2';
-const uint8_t soul_ucd_version_3 = '3';
-const uint8_t soul_ucd_version_4 = '4';
-const uint8_t current_soul_ucd_version = soul_ucd_version_4;
+const int soul_ucd_version_1 = 1;
+const int soul_ucd_version_2 = 2;
+const int soul_ucd_version_3 = 3;
+const int soul_ucd_version_4 = 4;
+const int current_soul_ucd_version = soul_ucd_version_4;
 
 enum class CharacterTableDataSource
 {
@@ -1043,9 +951,7 @@ class CharacterTable
 public:
     CharacterTable(const CharacterTable&) = delete;
     CharacterTable& operator=(const CharacterTable&) = delete;
-    static void Init();
-    static void Done();
-    static CharacterTable& Instance() { return *instance; }
+    static CharacterTable& Instance();
     std::string FilePath() const;
     std::string DeflateFilePath() const;
     int64_t GetUncompressedFileSize() const;
@@ -1062,9 +968,11 @@ public:
     void SetDeflateData(uint8_t* deflateData, int64_t deflateSize, int64_t uncompressedSize);
 #endif	
 private:
-    static std::unique_ptr<CharacterTable> instance;
     CharacterTable();
     Streams GetReadStreams();
+    void WriteHeader(BinaryStreamWriter& writer);
+    void ReadHeader(BinaryStreamReader& reader);
+    void ReadExtendedHeader(BinaryStreamReader& reader);
     CharacterTableDataSource dataSource;
     uint8_t* data;
     int64_t size;
@@ -1076,10 +984,7 @@ private:
     bool extendedHeaderRead;
     ExtendedCharacterInfoHeader extendedHeader;
     std::vector<std::unique_ptr<ExtendedCharacterInfoPage>> extendedPages;
-    void WriteHeader(BinaryStreamWriter& writer);
-    void ReadHeader(BinaryStreamReader& reader);
-    void ReadExtendedHeader(BinaryStreamReader& reader);
-    const size_t headerSize = 4096;
+    size_t headerSize;
 };
 
 inline const CharacterInfo& GetCharacterInfo(char32_t codePoint) { return CharacterTable::Instance().GetCharacterInfo(codePoint); }
@@ -1441,8 +1346,5 @@ inline const std::vector<Alias>& Aliases(char32_t c)
 {
     return GetExtendedCharacterInfo(c).Aliases();
 }
-
-void UnicodeInit();
-void UnicodeDone();
 
 } // util

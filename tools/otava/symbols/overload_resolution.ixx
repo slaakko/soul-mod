@@ -7,13 +7,13 @@ export module otava.symbols.overload.resolution;
 
 import std.core;
 import soul.ast.source.pos;
+import otava.symbols.templates;
 
 export namespace otava::symbols {
 
 class BoundFunctionCallNode;
 class BoundExpressionNode;
 class Context;
-class Scope;
 class Exception;
 
 enum class OverloadResolutionFlags : int32_t
@@ -37,8 +37,6 @@ constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
 }
 
 class FunctionSymbol;
-class TemplateParameterSymbol;
-class TypeSymbol;
 class ClassTemplateSpecializationSymbol;
 enum class ConversionKind : int32_t;
 enum class OperationFlags : int32_t;
@@ -63,7 +61,7 @@ struct FunctionMatch
     std::vector<ArgumentMatch> argumentMatches;
     int numConversions;
     int numQualifyingConversions;
-    std::map<TemplateParameterSymbol*, TypeSymbol*> templateParameterMap;
+    std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
     ClassTemplateSpecializationSymbol* specialization;
     std::vector<std::unique_ptr<BoundExpressionNode>> defaultArgs;
 };

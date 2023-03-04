@@ -26,7 +26,9 @@ import otava.symbols.class_templates;
 import otava.symbols.array.type.symbol;
 import otava.symbols.overload.resolution;
 import otava.symbols.modules;
+import otava.symbols.conversion.table;
 import otava.symbols.expression.binder;
+import otava.symbols.type_compare;
 import otava.ast.error;
 import otava.ast.attribute;
 import otava.ast.visitor;
@@ -221,6 +223,7 @@ public:
     void Visit(otava::ast::ThreadLocalNode& node) override;
     void Visit(otava::ast::ExternNode& node) override;
     void Visit(otava::ast::VirtualNode& node) override;
+    void Visit(otava::ast::ExplicitNode& node) override;
 
     void Visit(otava::ast::QualifiedIdNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
@@ -556,6 +559,12 @@ void DeclarationProcessor::Visit(otava::ast::VirtualNode& node)
     flags = flags | DeclarationFlags::virtualFlag;
 }
 
+void DeclarationProcessor::Visit(otava::ast::ExplicitNode& node)
+{
+    CheckDuplicateSpecifier(flags, DeclarationFlags::explicitFlag, "explicit", node.GetSourcePos(), context);
+    flags = flags | DeclarationFlags::explicitFlag;
+}
+
 void DeclarationProcessor::Visit(otava::ast::QualifiedIdNode& node)
 {
     type = ResolveType(&node, flags, context);
@@ -641,6 +650,7 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
         classType->MapFunction(functionSymbol);
         context->GetSymbolTable()->MapFunction(functionSymbol);
     }
+    AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
 }
 
 void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
@@ -773,7 +783,7 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
                 parameterTypes.push_back(parameterDeclaration.type);
             }
             FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                parameterTypes, qualifiers, kind, declarator, context);
+                parameterTypes, qualifiers, kind, declaration.flags, declarator, context);
             if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
                 context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
                 context->GetFlag(ContextFlags::generateMainWrapper))
@@ -1040,6 +1050,27 @@ std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* var
         atExitCall = ResolveOverload(stdScope, U"at_exit", atExitArgs, sourcePos, context, ex);
     }
     return atExitCall;
+}
+
+void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (!functionSymbol->IsExplicit() && functionSymbol->GetFunctionKind() == FunctionKind::constructor && functionSymbol->MemFunArity(context) == 2)
+    {
+        TypeSymbol* conversionParamType = functionSymbol->MemFunParameters(context)[0]->GetType()->RemovePointer(context)->DirectType(context)->FinalType(sourcePos, context);
+        TypeSymbol* conversionArgType = functionSymbol->MemFunParameters(context)[1]->GetType()->PlainType(context)->DirectType(context)->FinalType(sourcePos, context);
+        if (!TypesEqual(conversionParamType, conversionArgType))
+        {
+            FunctionSymbol* conversion = context->GetSymbolTable()->GetConversionTable().GetConversion(conversionParamType, conversionArgType, context);
+            if (!conversion)
+            {
+                functionSymbol->SetConversion();
+                functionSymbol->SetConversionParamType(conversionParamType);
+                functionSymbol->SetConversionArgType(conversionArgType);
+                functionSymbol->SetConversionDistance(10);
+                context->GetSymbolTable()->GetConversionTable().AddConversion(functionSymbol);
+            }
+        }
+    }
 }
 
 } // namespace otava::symbols

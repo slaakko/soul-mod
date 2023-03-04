@@ -14,7 +14,8 @@ export namespace otava::symbols {
 
 enum class OperationFlags : int32_t
 {
-    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, setPtr = 1 << 4, dup = 1 << 5, storeDeref = 1 << 6, derefCount = 0xFF << 8
+    none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, setPtr = 1 << 4, dup = 1 << 5, storeDeref = 1 << 6, derefAfterConv = 1 << 7, 
+    derefCount = 0xFF << 8
 };
 
 constexpr OperationFlags operator|(OperationFlags left, OperationFlags right)
@@ -97,6 +98,7 @@ public:
     bool IsBoundEnumConstant() const { return kind == BoundNodeKind::boundEnumConstantNode; }
     bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
     bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
+    bool IsBoundConversionNode() const { return kind == BoundNodeKind::boundConversionNode; }
     int Index() const { return index; }
     void SetIndex(int index_) { index = index_; }
 private:
@@ -257,8 +259,6 @@ public:
     void SetGenerated() { generated = true; }
     bool Postfix() const { return postfix; }
     void SetPostfix() { postfix = true; }
-    virtual bool ContainsSingleIfStatement() const { return false; }
-    virtual bool IsIfStatementNode() const { return false; }
 private:
     BoundStatementNode* parent;
     bool generated;
@@ -273,7 +273,6 @@ public:
     void AddStatement(BoundStatementNode* statement);
     const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
     bool EndsWithTerminator() const override;
-    bool ContainsSingleIfStatement() const override;
 private:
     std::vector<std::unique_ptr<BoundStatementNode>> statements;
 };
@@ -291,8 +290,6 @@ public:
     void SetThenStatement(BoundStatementNode* thenStatement_);
     BoundStatementNode* ElseStatement() const { return elseStatement.get(); }
     void SetElseStatement(BoundStatementNode* elseStatement_);
-    bool ContainsSingleIfStatement() const override { return true; }
-    bool IsIfStatementNode() const override { return true; }
 private:
     std::unique_ptr<BoundStatementNode> initStatement;
     std::unique_ptr<BoundExpressionNode> condition;
@@ -751,6 +748,7 @@ class BoundDereferenceNode : public BoundExpressionNode
 {
 public:
     BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
+    BoundDereferenceNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_, OperationFlags kind_);
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
@@ -759,6 +757,7 @@ public:
     BoundExpressionNode* Clone() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
+    OperationFlags kind;
     std::unique_ptr<BoundExpressionNode> subject;
 };
 
@@ -781,6 +780,7 @@ public:
     BoundPtrToRefNode(BoundExpressionNode* subject_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:

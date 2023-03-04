@@ -1,0 +1,44 @@
+// =================================
+// Copyright (c) 2022 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module solution_file.lexer;
+import solution_file.token;
+import solution_file.keyword;
+import solution_file.expr;
+
+lexer solution_file_lexer
+{
+    rules
+    {
+        "{separators}" {}
+        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{number}" { return NUMBER; }
+        "{guid}" { return GUID; }
+        "{path}" $(0) { return PATH; }
+        "{config}" $(1) { return CONFIG; }
+        "{guid_config}" $(2) { return GUID_CONFIG; }
+        "{string}" { return STRING; }
+        "\." { return DOT; }
+        "," { return COMMA; }
+        "=" { return ASSIGN; }
+        "\(" { return LPAREN; }
+        "\)" { return RPAREN; }
+        "\|" { return PIPE; }
+    }
+
+    variables
+    {
+        bool inSolutionItems;
+        bool inSolutionConfigurationPlatforms;
+        bool inProjectConfigurationPlatforms;
+    }
+
+    actions
+    {
+        $(0)={ if (!vars->inSolutionItems) return INVALID_TOKEN; }
+        $(1)={ if (!vars->inSolutionConfigurationPlatforms) return INVALID_TOKEN; }
+        $(2)={ if (!vars->inProjectConfigurationPlatforms) return INVALID_TOKEN; }
+    }
+}

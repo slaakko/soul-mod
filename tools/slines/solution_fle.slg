@@ -1,0 +1,5 @@
+project solution_file;
+tokens <solution_file.token>;
+keywords <solution_file.keyword>;
+expressions <solution_file.expr>;
+lexer <solution_file.lexer>;

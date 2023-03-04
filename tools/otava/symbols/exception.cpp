@@ -52,7 +52,7 @@ void ThrowException(const std::string& message, const soul::ast::SourcePos& sour
 {
     exception_thrown = true;
     throw Exception(message, sourcePos, context);
- }
+}
 
 [[noreturn]]
 void ThrowException(const Exception& ex)

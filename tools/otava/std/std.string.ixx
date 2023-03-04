@@ -1,7 +1,6 @@
 export module std.string;
 
 import std.type.fundamental;
-import std.iterator.reverse;
 
 export namespace std {
 

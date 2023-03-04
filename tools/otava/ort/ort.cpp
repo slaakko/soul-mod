@@ -6,29 +6,99 @@
 module;
 #include <cstdio>
 #include <cstring>
+#include <direct.h>
+#include <io.h>
+#include <fcntl.h>
 
 module ort;
 
 import class_info_index;
 import context_stack;
+import std.filesystem;
+import util;
+
+bool initialized = false;
+bool stdout_tty = false;
+bool stderr_tty = false;
+util::Utf8ToUtf32Engine stdoutEngine;
+util::Utf8ToUtf32Engine stderrEngine;
+
+void init_console()
+{
+    stdout_tty = _isatty(1);
+    if (stdout_tty)
+    {
+        _setmode(1, _O_U16TEXT);
+    }
+    stderr_tty = _isatty(2);
+    if (stderr_tty)
+    {
+        _setmode(2, _O_U16TEXT);
+    }
+    initialized = true;
+}
+
+void print_unicode(const char* s, util::Utf8ToUtf32Engine& engine, FILE* file)
+{
+    std::u32string utf32Chars;
+    while (*s)
+    {
+        engine.Put(*s);
+        ++s;
+        if (engine.ResultReady())
+        {
+            utf32Chars.append(1, engine.Result());
+        }
+    }
+    std::u16string utf16Chars(util::ToUtf16(utf32Chars));
+    if (!utf16Chars.empty())
+    {
+        std::fwrite(utf16Chars.c_str(), sizeof(char16_t), utf16Chars.length(), file);
+    }
+}
 
 void prints(const char* s, int handle)
 {
+    if (!initialized)
+    {
+        init_console();
+    }
     switch (handle)
     {
         case 1:
         {
-            std::fwrite(s, strlen(s), 1, stdout);
+            if (stdout_tty)
+            {
+                print_unicode(s, stdoutEngine, stdout);
+            }
+            else
+            {
+                std::fwrite(s, strlen(s), 1, stdout);
+            }
             break;
         }
         case 2:
         {
-            std::fwrite(s, strlen(s), 1, stderr);
+            if (stderr_tty)
+            {
+                print_unicode(s, stderrEngine, stderr);
+            }
+            else
+            {
+                std::fwrite(s, strlen(s), 1, stderr);
+            }
             break;
         }
         default:
         {
-            std::fwrite(s, strlen(s), 1, stdout);
+            if (stdout_tty)
+            {
+                print_unicode(s, stdoutEngine, stdout);
+            }
+            else
+            {
+                std::fwrite(s, strlen(s), 1, stdout);
+            }
             break;
         }
     }
@@ -203,6 +273,11 @@ int eof_file(void* stream)
     return std::feof(static_cast<FILE*>(stream));
 }
 
+ int flush_file(void* stream)
+{
+     return std::fflush(static_cast<FILE*>(stream));
+}
+
 int error_file(void* stream)
 {
     return std::ferror(static_cast<FILE*>(stream));
@@ -232,4 +307,49 @@ int error_number()
 void destroy_str(const char* str)
 {
     delete str;
+}
+
+void* mem_set(void* dest, int c, size_t count)
+{
+    return std::memset(dest, c, count);
+}
+
+char* get_cwd(char* buffer, int maxlen)
+{
+    return _getcwd(buffer, maxlen);
+}
+
+bool file_exists(const char* path)
+{
+    return std::filesystem::exists(path) && !std::filesystem::is_directory(path);
+}
+
+bool dir_exists(const char* path)
+{
+    return std::filesystem::exists(path) && std::filesystem::is_directory(path);
+}
+
+bool path_exists(const char* path)
+{
+    return std::filesystem::exists(path);
+}
+
+int to_lower(int c)
+{
+    return std::tolower(c);
+}
+
+int to_upper(int c)
+{
+    return std::toupper(c);
+}
+
+bool is_alpha(int c)
+{
+    return std::isalpha(c);
+}
+
+bool is_digit(int c)
+{
+    return std::isdigit(c);
 }
