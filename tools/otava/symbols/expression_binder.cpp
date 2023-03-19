@@ -135,6 +135,8 @@ public:
     const std::u32string& GetGroupName() const { return groupName; }
     void Visit(BoundFunctionGroupNode& node) override;
     void Visit(BoundVariableNode& node) override;
+    void Visit(BoundParameterNode& node) override;
+    void Visit(BoundConstructTemporaryNode& node) override;
 private:
     std::u32string groupName;
 };
@@ -149,6 +151,16 @@ void GroupNameResolver::Visit(BoundFunctionGroupNode& node)
 }
 
 void GroupNameResolver::Visit(BoundVariableNode& node)
+{
+    groupName = U"operator()";
+}
+
+void GroupNameResolver::Visit(BoundParameterNode& node)
+{
+    groupName = U"operator()";
+}
+
+void GroupNameResolver::Visit(BoundConstructTemporaryNode& node)
 {
     groupName = U"operator()";
 }
@@ -168,6 +180,7 @@ public:
     void Visit(BoundVariableNode& node) override;
     void Visit(BoundParameterNode& node) override;
     void Visit(BoundFunctionCallNode& node) override;
+    void Visit(BoundConstructTemporaryNode& node) override;
     BoundExpressionNode* GetFirstArg() const { return firstArg; }
 private:
     Context* context;
@@ -238,6 +251,11 @@ void FirstArgResolver::Visit(BoundFunctionCallNode& node)
     {
         firstArg = new BoundRefToPtrNode(node.Clone(), node.GetSourcePos(), node.GetType()->RemoveReference(context)->AddPointer(context));
     }
+}
+
+void FirstArgResolver::Visit(BoundConstructTemporaryNode& node)
+{
+    node.Temporary()->Accept(*this);
 }
 
 BoundExpressionNode* GetFirstArg(BoundNode* node, Context* context)
@@ -805,7 +823,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             {
                 VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
                 Symbol* sym = variableGroup->GetSingleSymbol();
-                if (sym->IsVariableSymbol())
+                if (sym && sym->IsVariableSymbol())
                 {
                     VariableSymbol* variable = static_cast<VariableSymbol*>(sym)->Final();
                     BoundVariableNode* boundVariable = new BoundVariableNode(variable, node.GetSourcePos());
@@ -815,16 +833,24 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                     }
                     boundExpression = boundVariable;
                 }
+                else
+                {
+                    ThrowException("ambiguous reference to variable '" + util::ToUtf8(variableGroup->Name()) + "'", node.GetSourcePos(), context);
+                }
                 break;
             }
             case SymbolKind::classGroupSymbol:
             {
                 ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
                 Symbol* sym = classGroup->GetSingleSymbol();
-                if (sym->IsClassTypeSymbol())
+                if (sym && sym->IsClassTypeSymbol())
                 {
                     ClassTypeSymbol* cls = static_cast<ClassTypeSymbol*>(sym);
                     boundExpression = new BoundTypeNode(cls, node.GetSourcePos());
+                }
+                else
+                {
+                    ThrowException("ambiguous reference to class '" + util::ToUtf8(classGroup->Name()) + "'", node.GetSourcePos(), context);
                 }
                 break;
             }
@@ -838,7 +864,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             {
                 AliasGroupSymbol* aliasGroup = static_cast<AliasGroupSymbol*>(symbol);
                 Symbol* sym = aliasGroup->GetSingleSymbol();
-                if (sym->IsAliasTypeSymbol())
+                if (sym && sym->IsAliasTypeSymbol())
                 {
                     AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(sym);
                     TypeSymbol* referredType = aliasType->ReferredType();
@@ -848,6 +874,10 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                         referredType = aliasType->ReferredType();
                     }
                     boundExpression = new BoundTypeNode(referredType, node.GetSourcePos());
+                }
+                else
+                {
+                    ThrowException("ambiguous reference to type alias '" + util::ToUtf8(aliasGroup->Name()) + "'", node.GetSourcePos(), context);
                 }
                 break;
             }
@@ -872,6 +902,10 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             case SymbolKind::functionGroupSymbol:
             {
                 FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
+                if (functionGroupSymbol->Name() == U"next")
+                {
+                    int x = 0;
+                }
                 FunctionGroupTypeSymbol* functionGroupType = context->GetSymbolTable()->MakeFunctionGroupTypeSymbol(functionGroupSymbol);
                 boundExpression = new BoundFunctionGroupNode(functionGroupSymbol, node.GetSourcePos(), functionGroupType);
                 break;
@@ -993,19 +1027,33 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
         }
         boundExpression = memberVar;
     }
+    else if (subject->IsBoundMemberVariable() && member->IsBoundMemberVariable() && node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
+    {
+        BoundVariableNode* subjectVar = static_cast<BoundVariableNode*>(subject);
+        BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
+        memberVar->SetThisPtr(subjectVar->Clone());
+        boundExpression = memberVar;
+    }
     else if (subject->IsBoundParameterNode() && member->IsBoundMemberVariable())
     {
         BoundParameterNode* param = static_cast<BoundParameterNode*>(subject);
-        if (param->GetType()->PlainType(context)->IsClassTypeSymbol())
+        if (param->GetType()->GetBaseType()->IsClassTypeSymbol())
         {
             BoundExpressionNode* thisPtr = nullptr;
-            if (param->GetType()->IsReferenceType())
+            if (node->Op()->Kind() == otava::ast::NodeKind::arrowNode)
             {
-                thisPtr = new BoundRefToPtrNode(param, node->GetSourcePos(), param->GetType()->RemoveReference(context)->AddPointer(context));
+                thisPtr = param->Clone();
             }
             else
             {
-                thisPtr = new BoundAddressOfNode(param, node->GetSourcePos(), param->GetType()->AddPointer(context));
+                if (param->GetType()->IsReferenceType())
+                {
+                    thisPtr = new BoundRefToPtrNode(param, node->GetSourcePos(), param->GetType()->RemoveReference(context)->AddPointer(context));
+                }
+                else
+                {
+                    thisPtr = new BoundAddressOfNode(param, node->GetSourcePos(), param->GetType()->AddPointer(context));
+                }
             }
             BoundVariableNode* memberVar = static_cast<BoundVariableNode*>(member.release());
             memberVar->SetThisPtr(thisPtr);

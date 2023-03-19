@@ -444,14 +444,17 @@ void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
     formatter.Write(" }");
 }
 
-void StructureType::ResolveForwardReferences(const util::uuid& uuid, Context* context)
+void StructureType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
 {
-    FwdDeclaredStructureType* fwdDeclaredType = context->GetFwdDeclaredStructureType(uuid, -1);
     int n = FieldCount();
     for (int i = 0; i < n; ++i)
     {
         Type* fieldType = FieldType(i);
-        fieldType->ReplaceForwardReference(fwdDeclaredType, this, context);
+        if (fieldType == fwdDeclaredType)
+        {
+            fieldTypeRefs[i] = TypeRef(SourcePos(), structureType->Id());
+            context->GetTypes().ResolveType(fieldTypeRefs[i], context);
+        }
     }
 }
 
@@ -467,8 +470,7 @@ Value* StructureType::MakeDefaultValue(Context& context) const
     return context.MakeStructureValue(soul::ast::SourcePos(), fieldValues);
 }
 
-FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& uuid_, int32_t typeId_) :
-    Type(soul::ast::SourcePos(), TypeKind::fwdDeclaredStructureType, typeId_), uuid(uuid_)
+FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& id_, int32_t typeId_) : Type(soul::ast::SourcePos(), TypeKind::fwdDeclaredStructureType, typeId_), id(id_)
 {
 }
 
@@ -647,6 +649,10 @@ Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context*
             ArrayType* arrayType = static_cast<ArrayType*>(aggregateType);
             return context->MakePtrType(arrayType->ElementType());
         }
+        else if (aggregateType->IsFwdDeclaredStructureType())
+        {
+            Error("forward declaration of structure type id " + std::to_string(aggregateType->Id()) + " not resolved", sourcePos, context);
+        }
         else
         {
             Error("structure or array type expected", sourcePos, context);
@@ -716,6 +722,16 @@ StructureType* Types::GetStructureType(const SourcePos& sourcePos, int32_t typeI
     types.push_back(std::unique_ptr<Type>(structureType));
     structureTypeMap[fieldTypeIds] = structureType;
     Map(structureType);
+    int n = structureType->FieldCount();
+    for (int i = 0; i < n; ++i)
+    {
+        Type* fieldType = structureType->FieldType(i);
+        if (fieldType && fieldType->IsFwdDeclaredStructureType())
+        {
+            FwdDeclaredStructureType* fwdType = static_cast<FwdDeclaredStructureType*>(fieldType);
+            AddFwdDependentType(fwdType, structureType);
+        }
+    }
     return structureType;
 }
 
@@ -759,20 +775,52 @@ FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, int32_t typeId,
     return functionType;
 }
 
-FwdDeclaredStructureType* Types::GetFwdDeclaredStructureType(const util::uuid& uuid, int32_t typeId)
+FwdDeclaredStructureType* Types::GetFwdDeclaredStructureType(const util::uuid& id)
 {
-    auto it = fwdDeclaredStructureTypes.find(uuid);
+    auto it = fwdDeclaredStructureTypes.find(id);
     if (it != fwdDeclaredStructureTypes.cend())
     {
         return it->second;
     }
     else
     {
-        FwdDeclaredStructureType* fwdDeclaredType = new FwdDeclaredStructureType(uuid, typeId);
-        fwdDeclaredStructureTypes[uuid] = fwdDeclaredType;
-        types.push_back(std::unique_ptr<Type>(fwdDeclaredType));
-        Map(fwdDeclaredType);
-        return fwdDeclaredType;
+        return nullptr;
+    }
+}
+
+FwdDeclaredStructureType* Types::MakeFwdDeclaredStructureType(const util::uuid& id, int32_t typeId)
+{
+    FwdDeclaredStructureType* fwdDeclaredType = new FwdDeclaredStructureType(id, typeId);
+    fwdDeclaredStructureTypes[id] = fwdDeclaredType;
+    types.push_back(std::unique_ptr<Type>(fwdDeclaredType));
+    Map(fwdDeclaredType);
+    return fwdDeclaredType;
+}
+
+void Types::AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type)
+{
+    std::vector<Type*>& dependentTypes = fwdDeclarationMap[fwdType->Id()];
+    if (std::find(dependentTypes.begin(), dependentTypes.end(), type) == dependentTypes.end())
+    {
+        dependentTypes.push_back(type);
+    }
+}
+
+void Types::ResolveForwardReferences(const util::uuid& id, StructureType* structureType)
+{
+    FwdDeclaredStructureType* fwdType = GetFwdDeclaredStructureType(id);
+    if (fwdType)
+    {
+        auto it = fwdDeclarationMap.find(id);
+        if (it != fwdDeclarationMap.end())
+        {
+            std::vector<Type*>& dependentTypes = it->second;
+            for (auto& dependentType : dependentTypes)
+            {
+                dependentType->ReplaceForwardReference(fwdType, structureType, context);
+            }
+            fwdDeclarationMap.erase(id);
+        }
     }
 }
 
@@ -855,6 +903,11 @@ PointerType* Types::MakePointerType(const SourcePos& sourcePos, int32_t baseType
         Error("pointer count > 0 expected", sourcePos, context);
     }
     ResolveType(type->BaseTypeRef(), context);
+    if (type->BaseType()->IsFwdDeclaredStructureType())
+    {
+        FwdDeclaredStructureType* fwdType = static_cast<FwdDeclaredStructureType*>(type->BaseType());
+        context->AddFwdDependentType(fwdType, type);
+    }
     types.push_back(std::unique_ptr<Type>(type));
     Map(type);
     pointerTypeMap[std::make_pair(baseTypeId, pointerCount)] = type;

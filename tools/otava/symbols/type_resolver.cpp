@@ -318,6 +318,10 @@ void TypeResolver::Visit(otava::ast::QualifiedIdNode& node)
 
 void TypeResolver::Visit(otava::ast::IdentifierNode& node)
 {
+    if (node.Str() == U"less")
+    {
+        int x = 0;
+    }
     Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context);
     if (symbol)
     {
@@ -410,17 +414,30 @@ void TypeResolver::Visit(otava::ast::TemplateIdNode& node)
                 continue;
             }
         }
-        TypeSymbol* templateArg = otava::symbols::ResolveType(argItem, DeclarationFlags::none, context);
+        TypeSymbol* templateArg = otava::symbols::ResolveType(argItem, DeclarationFlags::none, context, resolverFlags);
+        if (!templateArg)
+        {
+            type = nullptr;
+            return;
+        }
         templateArg = templateArg->DirectType(context)->FinalType(node.GetSourcePos(), context);
         templateArgs.push_back(templateArg);
     }
     if (typeSymbol->IsClassGroupSymbol())
     {
         ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(typeSymbol);
-        typeSymbol = classGroup->GetBestMatchingClass(templateArgs);
+        TemplateMatchInfo matchInfo;
+        typeSymbol = classGroup->GetBestMatchingClass(templateArgs, matchInfo, context);
         if (!typeSymbol)
         {
             ThrowException("no matching class found from class group '" + util::ToUtf8(classGroup->Name()) + "'", node.GetSourcePos(), context);
+        }
+        else
+        {
+            if (matchInfo.kind == TemplateMatchKind::explicitSpecialization)
+            {
+                templateArgs = matchInfo.templateArgs;
+            }
         }
     }
     else if (typeSymbol->IsAliasGroupSymbol())

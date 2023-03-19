@@ -5,7 +5,6 @@
 
 module util.json;
 
-import util.code.formatter;
 import util.unicode;
 import util.text.util;
 

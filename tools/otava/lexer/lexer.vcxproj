@@ -152,11 +152,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="line_tokenizer.cpp" />
-    <ClCompile Include="line_tokenizer.ixx" />
+    <ClCompile Include="line_tokenizer.cppm" />
     <ClCompile Include="otava.lexer.cpp" />
-    <ClCompile Include="otava.lexer.ixx" />
+    <ClCompile Include="otava.lexer.cppm" />
     <ClCompile Include="otava.token.line.lexer.cpp" />
-    <ClCompile Include="otava.token.line.lexer.ixx" />
+    <ClCompile Include="otava.token.line.lexer.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\soul\ast\ast.vcxproj">

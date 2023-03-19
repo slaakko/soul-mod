@@ -25,6 +25,7 @@ import otava.symbols.conversion.table;
 import otava.symbols.symbol.table;
 import otava.symbols.exception;
 import otava.symbols.function.symbol;
+import otava.symbols.classes;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
@@ -46,25 +47,25 @@ void WriteClassIndex(const std::string& classIndexFilePath, info::class_index& i
     index.write(writer, true);
 }
 
-void Visit(int file, Project* project, std::vector<int>& topologicalOrder, std::set<int>& visited)
+void Visit(int32_t fileId, Project* project, std::vector<int>& topologicalOrder, std::set<int>& visited)
 {
-    otava::symbols::Module* module = project->GetModule(file);
+    otava::symbols::Module* module = project->GetModule(fileId);
     for (otava::symbols::Module* dependsOnModule : module->DependsOnModules())
     {
         if (project->GetModule(dependsOnModule->Name()))
         {
-            if (dependsOnModule->File() != -1)
+            if (dependsOnModule->FileId() != -1)
             {
-                if (visited.find(dependsOnModule->File()) == visited.cend())
+                if (visited.find(dependsOnModule->FileId()) == visited.cend())
                 {
-                    visited.insert(dependsOnModule->File());
-                    Visit(dependsOnModule->File(), project, topologicalOrder, visited);
+                    visited.insert(dependsOnModule->FileId());
+                    Visit(dependsOnModule->FileId(), project, topologicalOrder, visited);
                 }
             }
         }
     }
-    visited.insert(file);
-    topologicalOrder.push_back(file);
+    visited.insert(fileId);
+    topologicalOrder.push_back(fileId);
 }
 
 std::vector<int32_t> MakeTopologicalOrder(const std::vector<int32_t>& files, Project* project)
@@ -137,7 +138,7 @@ void ModuleDependencyVisitor::Visit(otava::ast::TranslationUnitNode& node)
 {
     module.reset(new otava::symbols::Module(project->Name() + "." + fileName));
     module->Init();
-    module->SetFile(file);
+    module->SetFileId(file);
     if (node.Unit())
     {
         node.Unit()->Accept(*this);
@@ -175,7 +176,7 @@ void ModuleDependencyVisitor::Visit(otava::ast::ModuleNameNode& node)
             module->AddImportModuleName("std.type.fundamental");
         }
         module->Init();
-        module->SetFile(file);
+        module->SetFileId(file);
     }
     else if (expimp && module)
     {
@@ -194,23 +195,51 @@ void ModuleDependencyVisitor::Visit(otava::ast::ModuleNameNode& node)
     }
 }
 
-void ScanDependencies(Project* project, int32_t file, bool implementationUnit, std::string& interfaceUnitName)
+void ScanDependencies(Project* project, int32_t fileId, bool implementationUnit, std::string& interfaceUnitName)
 {
-    std::string filePath = project->GetFileMap().GetFilePath(file);
+    std::string filePath = project->GetFileMap().GetFilePath(fileId);
     std::string fileName = util::Path::GetFileNameWithoutExtension(filePath);
     std::string fileContent = util::ReadFile(filePath);
     std::u32string content = util::ToUtf32(fileContent);
     auto lexer = otava::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);
-    lexer.SetFile(file);
+    lexer.SetFile(fileId);
     lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
     otava::symbols::Context context;
     context.SetLexer(&lexer);
     std::unique_ptr<otava::ast::Node> node = otava::parser::module_dependency::ModuleDependencyParser<decltype(lexer)>::Parse(lexer, &context);
-    project->GetFileMap().AddFileContent(file, std::move(content), lexer.GetLineStartIndeces());
-    ModuleDependencyVisitor visitor(file, project, fileName, implementationUnit);
+    project->GetFileMap().AddFileContent(fileId, std::move(content), lexer.GetLineStartIndeces());
+    ModuleDependencyVisitor visitor(fileId, project, fileName, implementationUnit);
     node->Accept(visitor);
-    project->SetModule(file, visitor.GetModule());
+    project->SetModule(fileId, visitor.GetModule());
     interfaceUnitName = visitor.InterfaceUnitName();
+}
+
+void ReadFilesFile(const std::string& projectFilesPath, soul::lexer::FileMap& fileMap)
+{
+    util::FileStream filesFile(projectFilesPath, util::OpenMode::read | util::OpenMode::binary);
+    util::BufferedStream filesBufStream(filesFile);
+    util::BinaryStreamReader filesReader(filesBufStream);
+    int32_t fileCount = filesReader.ReadInt();
+    for (int32_t i = 0; i < fileCount; ++i)
+    {
+        int32_t fileId = filesReader.ReadInt();
+        std::string filePath = filesReader.ReadUtf8String();
+        fileMap.MapFile(filePath, fileId);
+    }
+}
+
+void WriteFilesFile(const std::string& projectFilesPath, const std::vector<std::pair<int32_t, std::string>>& files)
+{
+    util::FileStream filesFile(projectFilesPath, util::OpenMode::write | util::OpenMode::binary);
+    util::BufferedStream filesBufStream(filesFile);
+    util::BinaryStreamWriter filesWriter(filesBufStream);
+    int32_t fileCount = files.size();
+    filesWriter.Write(fileCount);
+    for (const auto& file : files)
+    {
+        filesWriter.Write(file.first);
+        filesWriter.Write(file.second);
+    }
 }
 
 void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, BuildFlags flags)
@@ -260,16 +289,22 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     }
     project->LoadModules(moduleMapper);
     std::vector<std::unique_ptr<Project>> references;
+    std::vector<std::string> referenceFilePaths;
+    if (project->Name() != "std")
+    {
+        otava::symbols::Module* stdModule = moduleMapper.GetModule("std");
+        referenceFilePaths.push_back(util::Path::Combine(util::Path::GetDirectoryName(stdModule->FilePath()), "std.project"));
+    }
+    for (const auto& referenceFilePath : project->ReferenceFilePaths())
+    {
+        referenceFilePaths.push_back(referenceFilePath);
+    }
+    for (const auto& referenceFilePath : referenceFilePaths)
+    {
+        references.push_back(ParseProjectFile(util::Path::Combine(project->Root(), referenceFilePath)));
+    }
     if (project->GetTarget() == Target::program)
     {
-        std::vector<std::string> referenceFilePaths;
-        otava::symbols::Module* stdModule = moduleMapper.GetModule("std");
-        referenceFilePaths.push_back(stdModule->FilePath());
-        for (const auto& referenceFilePath : project->ReferenceFilePaths())
-        {
-            referenceFilePaths.push_back(referenceFilePath);
-            references.push_back(ParseProjectFile(util::Path::Combine(project->Root(), referenceFilePath)));
-        }
         for (const auto& referenceFilePath : referenceFilePaths)
         {
             std::string cuInitFileName = util::GetFullPath(util::Path::Combine(project->Root(), util::Path::Combine(util::Path::GetDirectoryName(referenceFilePath), "cu.init")));
@@ -283,10 +318,17 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             }
         }
     }
+    for (const auto& reference : references)
+    {
+        std::string referenceFilesPath = util::GetFullPath(util::Path::Combine(reference->Root(), reference->Name() + ".files"));
+        ReadFilesFile(referenceFilesPath, project->GetFileMap());
+    }
+    std::vector<std::pair<int32_t, std::string>> files;
     std::vector<int32_t> topologicalOrder = MakeTopologicalOrder(project->InterfaceFiles(), project);
     for (int32_t file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        files.push_back(std::make_pair(file, filePath));
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = otava::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
         lexer.SetPPHook(otava::pp::PreprocessPPLine);
@@ -318,6 +360,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        otava::symbols::GenerateDestructors(context.GetBoundCompileUnit(), &context);
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
             std::string xmlFilePath = filePath + ".ast.xml";
@@ -347,6 +390,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         std::string interfaceUnitName;
         ScanDependencies(project, file, true, interfaceUnitName);
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
+        files.push_back(std::make_pair(file, filePath));
         const auto& fileContent = project->GetFileMap().GetFileContent(file).first;
         auto lexer = otava::lexer::MakeLexer(fileContent.c_str(), fileContent.c_str() + fileContent.length(), filePath);
         lexer.SetPPHook(otava::pp::PreprocessPPLine);
@@ -370,6 +414,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        otava::symbols::GenerateDestructors(context.GetBoundCompileUnit(), &context);
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
             std::string xmlFilePath = filePath + ".ast.xml";
@@ -436,6 +481,8 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     {
         std::cout << "project '" << project->Name() << "' built successfully" << std::endl;
     }
+    std::string projectFilesPath = util::GetFullPath(util::Path::Combine(project->Root(), project->Name() + ".files"));
+    WriteFilesFile(projectFilesPath, files);
     otava::symbols::SetProjectReady(true);
 }
 
@@ -482,7 +529,7 @@ std::vector<Project*> MakeTopologicalOrder(Solution* solution)
     return topologicalOrder;
 }
 
-void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Solution* solution, const std::string& config, BuildFlags flags)
+void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, BuildFlags flags)
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -493,6 +540,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Solution* sol
     {
         std::string projectFilePath = util::GetFullPath(util::Path::Combine(root, path));
         std::unique_ptr<Project> project = otava::build::ParseProjectFile(projectFilePath);
+        project->SetFileMap(&fileMap);
         solution->AddProject(project.release());
     }
     std::vector<Project*> buildOrder = MakeTopologicalOrder(solution);
@@ -512,9 +560,9 @@ void Build(otava::symbols::ModuleMapper& moduleMapper, Project* project, const s
     BuildSequentially(moduleMapper, project, config, flags);
 }
 
-void Build(otava::symbols::ModuleMapper& moduleMapper, Solution* solution, const std::string& config, BuildFlags flags)
+void Build(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, BuildFlags flags)
 {
-    BuildSequentially(moduleMapper, solution, config, flags);
+    BuildSequentially(moduleMapper, fileMap, solution, config, flags);
 }
 
 } // namespace otava::build

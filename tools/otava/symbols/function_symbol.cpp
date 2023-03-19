@@ -197,6 +197,10 @@ ParameterSymbol::ParameterSymbol(const std::u32string& name_, TypeSymbol* type_)
     defaultValue(nullptr),
     defaultValueNodeId(-1)
 {
+    if (Name() == U"lexerContext")
+    {
+        int x = 0;
+    }
 }
 
 void ParameterSymbol::Write(Writer& writer)
@@ -863,7 +867,17 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
         std::vector<otava::intermediate::Type*> paramIrTypes;
         for (const auto& param : MemFunParameters(context))
         {
-            paramIrTypes.push_back(param->GetReferredType(context)->IrType(emitter, sourcePos, context));
+            otava::intermediate::Type* paramIrType = nullptr;
+            TypeSymbol* paramType = param->GetReferredType(context);
+            if (paramType->IsClassTypeSymbol())
+            {
+                paramIrType = paramType->AddConst(context)->AddLValueRef(context)->IrType(emitter, sourcePos, context);
+            }
+            else
+            {
+                paramIrType = paramType->IrType(emitter, sourcePos, context);
+            }
+            paramIrTypes.push_back(paramIrType);
         }
         if (ReturnsClass())
         {
@@ -984,6 +998,19 @@ bool FunctionSymbol::IsStatic() const
 bool FunctionSymbol::IsExplicit() const
 {
     return (GetDeclarationFlags() & DeclarationFlags::explicitFlag) != DeclarationFlags::none;
+}
+
+void FunctionSymbol::CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    for (const auto& parameter : MemFunParameters(context))
+    {
+        TypeSymbol* paramType = parameter->GetReferredType(context);
+        if (paramType->IsClassTypeSymbol())
+        {
+            ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(paramType);
+            classType->GenerateCopyCtor(sourcePos, context);
+        }
+    }
 }
 
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : 

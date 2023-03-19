@@ -166,10 +166,10 @@
     <None Include="tokens.slg" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="soul.cpp.op.token.ixx" />
-    <ClCompile Include="soul.cpp.token.ixx" />
-    <ClCompile Include="soul.punctuation.token.ixx" />
-    <ClCompile Include="soul.tool.token.ixx" />
+    <ClCompile Include="soul.cpp.op.token.cppm" />
+    <ClCompile Include="soul.cpp.token.cppm" />
+    <ClCompile Include="soul.punctuation.token.cppm" />
+    <ClCompile Include="soul.tool.token.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">

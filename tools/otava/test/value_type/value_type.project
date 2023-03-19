@@ -1,0 +1,3 @@
+project value_type;
+target=program;
+source <value_type.cpp>;

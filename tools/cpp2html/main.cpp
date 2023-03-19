@@ -54,7 +54,7 @@ std::string CommentColor()
 void PrintHelp()
 {
     std::cout << "C++ to HTML converter version " << Version() << std::endl;
-    std::cout << "usage: cpp2html [options] { FILE.cpp | FILE.ixx }" << std::endl;
+    std::cout << "usage: cpp2html [options] { FILE.cpp | FILE.cppm }" << std::endl;
     std::cout << "options:" << std::endl;
     std::cout << "--verbose | -v" << std::endl;
     std::cout << "  Be verbose." << std::endl;

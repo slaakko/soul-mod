@@ -163,27 +163,30 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ast.cpp" />
-    <ClCompile Include="ast.ixx" />
+    <ClCompile Include="ast.cppm" />
     <ClCompile Include="class_registry.cpp" />
-    <ClCompile Include="class_registry.ixx" />
+    <ClCompile Include="class_registry.cppm" />
     <ClCompile Include="exp.cpp" />
     <ClCompile Include="generator.cpp" />
-    <ClCompile Include="generator.ixx" />
+    <ClCompile Include="generator.cppm" />
     <ClCompile Include="imp.cpp" />
-    <ClCompile Include="imp.ixx" />
-    <ClCompile Include="scanner.ixx" />
+    <ClCompile Include="imp.cppm" />
+    <ClCompile Include="scanner.cppm" />
     <ClCompile Include="version.cpp" />
-    <ClCompile Include="version.ixx" />
+    <ClCompile Include="version.cppm" />
     <ClCompile Include="xmlser.lexer.cpp" />
-    <ClCompile Include="xmlser.lexer.ixx" />
+    <ClCompile Include="xmlser.lexer.cppm" />
     <ClCompile Include="xmlser.parser.cpp" />
-    <ClCompile Include="xmlser.parser.ixx" />
-    <ClCompile Include="xmlser.token.ixx" />
+    <ClCompile Include="xmlser.parser.cppm" />
+    <ClCompile Include="xmlser.token.cppm" />
     <ClCompile Include="xmlser_rules.cpp" />
-    <ClCompile Include="xmlser_rules.ixx" />
-    <ClCompile Include="exp.ixx" />
+    <ClCompile Include="xmlser_rules.cppm" />
+    <ClCompile Include="exp.cppm" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
     </ProjectReference>

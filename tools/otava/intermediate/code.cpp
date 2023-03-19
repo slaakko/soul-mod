@@ -113,7 +113,8 @@ Function* Code::AddFunctionDefinition(const SourcePos& sourcePos, FunctionType* 
     {
         if (prev->IsDefined())
         {
-            Error("error adding function '" + functionId + "': function id not unique", sourcePos, context, prev->GetSourcePos());
+            Warning("Warning: '" + functionId + "': function id not unique", sourcePos, context, prev->GetSourcePos());
+            return prev;
         }
         else
         {

@@ -146,9 +146,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="codegen.cpp" />
-    <ClCompile Include="codegen.ixx" />
+    <ClCompile Include="codegen.cppm" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\assembly\assembly.vcxproj">
       <Project>{86c6dbf9-631b-42e0-81f0-b14d48e5f2e8}</Project>
     </ProjectReference>

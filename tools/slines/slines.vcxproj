@@ -139,19 +139,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="counters.cpp" />
-    <ClCompile Include="counters.ixx" />
+    <ClCompile Include="counters.cppm" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="project_file_ast.cpp" />
-    <ClCompile Include="project_file_ast.ixx" />
+    <ClCompile Include="project_file_ast.cppm" />
     <ClCompile Include="solution_file.lexer.cpp" />
-    <ClCompile Include="solution_file.lexer.ixx" />
+    <ClCompile Include="solution_file.lexer.cppm" />
     <ClCompile Include="solution_file.parser.cpp" />
-    <ClCompile Include="solution_file.parser.ixx" />
-    <ClCompile Include="solution_file.token.ixx" />
+    <ClCompile Include="solution_file.parser.cppm" />
+    <ClCompile Include="solution_file.token.cppm" />
     <ClCompile Include="solution_file_ast.cpp" />
-    <ClCompile Include="solution_file_ast.ixx" />
+    <ClCompile Include="solution_file_ast.cppm" />
     <ClCompile Include="source_file_ast.cpp" />
-    <ClCompile Include="source_file_ast.ixx" />
+    <ClCompile Include="source_file_ast.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\soul\ast\ast.vcxproj">
@@ -176,7 +176,7 @@
       <Project>{ada5d2e5-5404-4c0b-a9ca-2acc7aa07ca4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

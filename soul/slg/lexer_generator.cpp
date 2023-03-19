@@ -321,7 +321,7 @@ void WriteVariables(soul::ast::re::LexerContext& lexerContext, util::CodeFormatt
 
 void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFile* slgFile, const std::string& root, bool verbose)
 {
-    std::string interfaceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".ixx"));
+    std::string interfaceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".cppm"));
     std::string sourceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".cpp"));
     std::ofstream interfaceStream(interfaceFilePath);
     util::CodeFormatter interfaceFormatter(interfaceStream);

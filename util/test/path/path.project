@@ -1,4 +1,4 @@
 project path;
-reference <../../util_incremental.project>;
+reference <../../util.project>;
 target=program;
 source <path.cpp>;

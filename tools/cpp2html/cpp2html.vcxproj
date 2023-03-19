@@ -150,9 +150,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cpp.token.ixx" />
+    <ClCompile Include="cpp.token.cppm" />
     <ClCompile Include="cpp_token_lexer.cpp" />
-    <ClCompile Include="cpp_token_lexer.ixx" />
+    <ClCompile Include="cpp_token_lexer.cppm" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

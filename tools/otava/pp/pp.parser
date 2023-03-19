@@ -29,6 +29,7 @@ parser PPParser
         |   DefineCommand(state):defineCommand
         |   UndefCommand(state):undefCommand
         |   IncludeCommand(state):includeCommand
+        |   PragmaCommand(state):pragmaCommand
         |   any*
         ;
 
@@ -69,6 +70,10 @@ parser PPParser
 
     IncludeCommand(otava::pp::state::State* state) 
         ::= INCLUDE Header:header{ state->Include(); }
+        ;
+
+    PragmaCommand(otava::pp::state::State* state) 
+        ::= PRAGMA (any - RPAREN)* RPAREN
         ;
 
     Header

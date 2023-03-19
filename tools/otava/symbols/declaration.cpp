@@ -675,8 +675,11 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
                     {
                         variableInitializer.reset(BindExpression(declaration.initializer, context));
                     }
-                    context->GetBoundCompileUnit()->AddBoundNode(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos()));
-                    GenerateDynamicInitialization(variable, variableInitializer.get(), node->GetSourcePos(), context);
+                    if (!variable->IsExtern())
+                    {
+                        context->GetBoundCompileUnit()->AddBoundNode(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos()));
+                        GenerateDynamicInitialization(variable, variableInitializer.get(), node->GetSourcePos(), context);
+                    }
                 }
                 declaration.variable = variable;
                 break;

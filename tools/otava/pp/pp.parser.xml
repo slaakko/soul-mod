@@ -3,35 +3,38 @@
   <rule first="{HASH}" name="PPLIne">
    <sequence first="{HASH}">
     <token first="{HASH}" name="HASH"/>
-    <nonterminal first="{#, *, DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, UNDEF}" ruleName="PPCommand"/>
+    <nonterminal first="{#, *, DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, PRAGMA, UNDEF}" ruleName="PPCommand"/>
    </sequence>
   </rule>
-  <rule first="{#, *, DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, UNDEF}" name="PPCommand">
-   <choice first="{#, *, DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, UNDEF}">
-    <choice first="{DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, UNDEF}">
-     <choice first="{DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, UNDEF}">
-      <choice first="{DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF}">
-       <choice first="{ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF}">
-        <choice first="{ELIF, ELSE, IF, IFDEF, IFNDEF}">
-         <choice first="{ELIF, IF, IFDEF, IFNDEF}">
-          <choice first="{ELIF, IF, IFDEF}">
-           <choice first="{ELIF, IF}">
-            <nonterminal first="{IF}" ruleName="IfCommand"/>
-            <nonterminal first="{ELIF}" ruleName="ElifCommand"/>
+  <rule first="{#, *, DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, PRAGMA, UNDEF}" name="PPCommand">
+   <choice first="{#, *, DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, PRAGMA, UNDEF}">
+    <choice first="{DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, PRAGMA, UNDEF}">
+     <choice first="{DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, INCLUDE, UNDEF}">
+      <choice first="{DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF, UNDEF}">
+       <choice first="{DEFINE, ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF}">
+        <choice first="{ELIF, ELSE, ENDIF, IF, IFDEF, IFNDEF}">
+         <choice first="{ELIF, ELSE, IF, IFDEF, IFNDEF}">
+          <choice first="{ELIF, IF, IFDEF, IFNDEF}">
+           <choice first="{ELIF, IF, IFDEF}">
+            <choice first="{ELIF, IF}">
+             <nonterminal first="{IF}" ruleName="IfCommand"/>
+             <nonterminal first="{ELIF}" ruleName="ElifCommand"/>
+            </choice>
+            <nonterminal first="{IFDEF}" ruleName="IfdefCommand"/>
            </choice>
-           <nonterminal first="{IFDEF}" ruleName="IfdefCommand"/>
+           <nonterminal first="{IFNDEF}" ruleName="IfndefCommand"/>
           </choice>
-          <nonterminal first="{IFNDEF}" ruleName="IfndefCommand"/>
+          <nonterminal first="{ELSE}" ruleName="ElseCommand"/>
          </choice>
-         <nonterminal first="{ELSE}" ruleName="ElseCommand"/>
+         <nonterminal first="{ENDIF}" ruleName="EndifCommand"/>
         </choice>
-        <nonterminal first="{ENDIF}" ruleName="EndifCommand"/>
+        <nonterminal first="{DEFINE}" ruleName="DefineCommand"/>
        </choice>
-       <nonterminal first="{DEFINE}" ruleName="DefineCommand"/>
+       <nonterminal first="{UNDEF}" ruleName="UndefCommand"/>
       </choice>
-      <nonterminal first="{UNDEF}" ruleName="UndefCommand"/>
+      <nonterminal first="{INCLUDE}" ruleName="IncludeCommand"/>
      </choice>
-     <nonterminal first="{INCLUDE}" ruleName="IncludeCommand"/>
+     <nonterminal first="{PRAGMA}" ruleName="PragmaCommand"/>
     </choice>
     <kleene first="{#, *}">
      <any first="{*}"/>
@@ -114,6 +117,22 @@
     <action first="{ANGLE_HEADER_NAME, QUOTE_HEADER_NAME}">
      <nonterminal first="{ANGLE_HEADER_NAME, QUOTE_HEADER_NAME}" ruleName="Header"/>
     </action>
+   </sequence>
+  </rule>
+  <rule first="{PRAGMA}" name="PragmaCommand">
+   <sequence first="{PRAGMA}">
+    <sequence first="{PRAGMA}">
+     <token first="{PRAGMA}" name="PRAGMA"/>
+     <kleene first="{#, *}">
+      <group first="{*}">
+       <difference first="{*}">
+        <any first="{*}"/>
+        <token first="{}" name="RPAREN"/>
+       </difference>
+      </group>
+     </kleene>
+    </sequence>
+    <token first="{RPAREN}" name="RPAREN"/>
    </sequence>
   </rule>
   <rule first="{ANGLE_HEADER_NAME, QUOTE_HEADER_NAME}" name="Header">

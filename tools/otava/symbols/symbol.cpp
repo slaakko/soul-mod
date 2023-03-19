@@ -574,4 +574,9 @@ void* Symbol::IrObject(Emitter& emitter, const soul::ast::SourcePos& sourcePos, 
     return emitter.GetIrObject(this);
 }
 
+bool Symbol::IsExtern() const
+{
+    return (declarationFlags & DeclarationFlags::externFlag) != DeclarationFlags::none;
+}
+
 } // namespace otava::symbols

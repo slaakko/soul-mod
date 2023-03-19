@@ -168,6 +168,7 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(ENDIF, "ENDIF", "'endif'"));
         tokens.AddToken(new soul::ast::slg::Token(UNDEF, "UNDEF", "'undef'"));
         tokens.AddToken(new soul::ast::slg::Token(DEFINED, "DEFINED", "'defined'"));
+        tokens.AddToken(new soul::ast::slg::Token(PRAGMA, "PRAGMA", "'pragma'"));
         tokens.AddToken(new soul::ast::slg::Token(MAX, "MAX", "max"));
     }
     return &tokens;

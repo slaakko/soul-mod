@@ -44,7 +44,7 @@ Symbol* EnumGroupSymbol::GetSingleSymbol()
     }
     else
     {
-        return nullptr;
+        return this;
     }
 }
 

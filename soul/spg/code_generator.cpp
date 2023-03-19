@@ -1160,7 +1160,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     }
     sn = 0;
     stage = CodeGenerationStage::generateInterface;
-    std::string interfaceFileName = parserFile.FilePath() + ".ixx";
+    std::string interfaceFileName = parserFile.FilePath() + ".cppm";
     std::ofstream interfaceFile(interfaceFileName);
     util::CodeFormatter interfaceFormatter(interfaceFile);
     formatter = &interfaceFormatter;

@@ -168,6 +168,7 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(ENDIF, "ENDIF", "'endif'"));
         tokens.AddToken(new soul::ast::slg::Token(UNDEF, "UNDEF", "'undef'"));
         tokens.AddToken(new soul::ast::slg::Token(DEFINED, "DEFINED", "'defined'"));
+        tokens.AddToken(new soul::ast::slg::Token(PRAGMA, "PRAGMA", "'pragma'"));
         tokens.AddToken(new soul::ast::slg::Token(MAX, "MAX", "max"));
     }
     return &tokens;
@@ -194,6 +195,7 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "endif", ENDIF },
          { "undef", UNDEF },
          { "defined", DEFINED },
+         { "pragma", PRAGMA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char> keywordMap(keywords);
@@ -213,6 +215,7 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"endif", ENDIF },
          { u8"undef", UNDEF },
          { u8"defined", DEFINED },
+         { u8"pragma", PRAGMA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);
@@ -232,6 +235,7 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"endif", ENDIF },
          { u"undef", UNDEF },
          { u"defined", DEFINED },
+         { u"pragma", PRAGMA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);
@@ -251,6 +255,7 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"endif", ENDIF },
          { U"undef", UNDEF },
          { U"defined", DEFINED },
+         { U"pragma", PRAGMA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);

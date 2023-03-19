@@ -25,6 +25,7 @@ void Writer::Write(const soul::ast::SourcePos& sourcePos)
     {
         writerPtr->WriteULEB128UInt(sourcePos.line);
         writerPtr->WriteULEB128UInt(sourcePos.col);
+        writerPtr->WriteULEB128UInt(sourcePos.file);
     }
     else
     {

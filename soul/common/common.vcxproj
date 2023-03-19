@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -151,7 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
@@ -176,8 +176,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="common.parser.cpp" />
-    <ClCompile Include="common.parser.ixx" />
-    <ClCompile Include="token_parser.ixx" />
+    <ClCompile Include="common.parser.cppm" />
+    <ClCompile Include="token_parser.cppm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

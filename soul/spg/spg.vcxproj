@@ -157,37 +157,37 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="array_generator.cpp" />
-    <ClCompile Include="array_generator.ixx" />
+    <ClCompile Include="array_generator.cppm" />
     <ClCompile Include="code_generator.cpp" />
-    <ClCompile Include="code_generator.ixx" />
+    <ClCompile Include="code_generator.cppm" />
     <ClCompile Include="code_modifier.cpp" />
-    <ClCompile Include="code_modifier.ixx" />
+    <ClCompile Include="code_modifier.cppm" />
     <ClCompile Include="error.cpp" />
-    <ClCompile Include="error.ixx" />
+    <ClCompile Include="error.cppm" />
     <ClCompile Include="file_parsers.cpp" />
-    <ClCompile Include="file_parsers.ixx" />
-    <ClCompile Include="first_set_computer.ixx" />
+    <ClCompile Include="file_parsers.cppm" />
+    <ClCompile Include="first_set_computer.cppm" />
     <ClCompile Include="first_set_computer.cpp" />
     <ClCompile Include="xml_printer.cpp" />
-    <ClCompile Include="xml_printer.ixx" />
+    <ClCompile Include="xml_printer.cppm" />
     <ClCompile Include="linking.cpp" />
-    <ClCompile Include="linking.ixx" />
+    <ClCompile Include="linking.cppm" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="nonterminal_info.cpp" />
-    <ClCompile Include="nonterminal_info.ixx" />
+    <ClCompile Include="nonterminal_info.cppm" />
     <ClCompile Include="optimizer.cpp" />
-    <ClCompile Include="optimizer.ixx" />
+    <ClCompile Include="optimizer.cppm" />
     <ClCompile Include="parser_file.parser.cpp" />
-    <ClCompile Include="parser_file.parser.ixx" />
+    <ClCompile Include="parser_file.parser.cppm" />
     <ClCompile Include="parser_generator.cpp" />
-    <ClCompile Include="parser_generator.ixx" />
+    <ClCompile Include="parser_generator.cppm" />
     <ClCompile Include="parsing_util.cpp" />
-    <ClCompile Include="parsing_util.ixx" />
+    <ClCompile Include="parsing_util.cppm" />
     <ClCompile Include="spg_file.parser.cpp" />
-    <ClCompile Include="spg_file.parser.ixx" />
+    <ClCompile Include="spg_file.parser.cppm" />
     <ClCompile Include="spg_parsers_rules.cpp" />
-    <ClCompile Include="spg_parsers_rules.ixx" />
-    <ClCompile Include="token_parser.ixx" />
+    <ClCompile Include="spg_parsers_rules.cppm" />
+    <ClCompile Include="token_parser.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">

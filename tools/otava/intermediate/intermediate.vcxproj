@@ -117,6 +117,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -135,6 +136,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <EnableModules>true</EnableModules>
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -146,55 +148,55 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="basic_block.cpp" />
-    <ClCompile Include="basic_block.ixx" />
+    <ClCompile Include="basic_block.cppm" />
     <ClCompile Include="code.cpp" />
-    <ClCompile Include="code.ixx" />
+    <ClCompile Include="code.cppm" />
     <ClCompile Include="code_generator.cpp" />
-    <ClCompile Include="code_generator.ixx" />
+    <ClCompile Include="code_generator.cppm" />
     <ClCompile Include="compile_unit.cpp" />
-    <ClCompile Include="compile_unit.ixx" />
+    <ClCompile Include="compile_unit.cppm" />
     <ClCompile Include="context.cpp" />
-    <ClCompile Include="context.ixx" />
+    <ClCompile Include="context.cppm" />
     <ClCompile Include="data.cpp" />
-    <ClCompile Include="data.ixx" />
+    <ClCompile Include="data.cppm" />
     <ClCompile Include="data_item_adder.cpp" />
-    <ClCompile Include="data_item_adder.ixx" />
+    <ClCompile Include="data_item_adder.cppm" />
     <ClCompile Include="error.cpp" />
-    <ClCompile Include="error.ixx" />
+    <ClCompile Include="error.cppm" />
     <ClCompile Include="function.cpp" />
-    <ClCompile Include="function.ixx" />
+    <ClCompile Include="function.cppm" />
     <ClCompile Include="instruction.cpp" />
-    <ClCompile Include="instruction.ixx" />
+    <ClCompile Include="instruction.cppm" />
     <ClCompile Include="intermediate.lexer.cpp" />
-    <ClCompile Include="intermediate.lexer.ixx" />
+    <ClCompile Include="intermediate.lexer.cppm" />
     <ClCompile Include="intermediate.parser.cpp" />
-    <ClCompile Include="intermediate.parser.ixx" />
-    <ClCompile Include="intermediate.token.ixx" />
+    <ClCompile Include="intermediate.parser.cppm" />
+    <ClCompile Include="intermediate.token.cppm" />
     <ClCompile Include="intermediate_rules.cpp" />
-    <ClCompile Include="intermediate_rules.ixx" />
+    <ClCompile Include="intermediate_rules.cppm" />
     <ClCompile Include="linear_scan_register_allocator.cpp" />
-    <ClCompile Include="linear_scan_register_allocator.ixx" />
+    <ClCompile Include="linear_scan_register_allocator.cppm" />
     <ClCompile Include="metadata.cpp" />
-    <ClCompile Include="metadata.ixx" />
+    <ClCompile Include="metadata.cppm" />
     <ClCompile Include="parser.cpp" />
-    <ClCompile Include="parser.ixx" />
-    <ClCompile Include="reference_resolver.ixx" />
+    <ClCompile Include="parser.cppm" />
+    <ClCompile Include="reference_resolver.cppm" />
     <ClCompile Include="reference_resolver.cpp" />
     <ClCompile Include="register_allocator.cpp" />
-    <ClCompile Include="register_allocator.ixx" />
+    <ClCompile Include="register_allocator.cppm" />
     <ClCompile Include="simple_assembly_code_generator.cpp" />
-    <ClCompile Include="simple_assembly_code_generator.ixx" />
+    <ClCompile Include="simple_assembly_code_generator.cppm" />
     <ClCompile Include="token_parser.cpp" />
-    <ClCompile Include="token_parser.ixx" />
+    <ClCompile Include="token_parser.cppm" />
     <ClCompile Include="type.cpp" />
-    <ClCompile Include="type.ixx" />
-    <ClCompile Include="util.ixx" />
+    <ClCompile Include="type.cppm" />
+    <ClCompile Include="util.cppm" />
     <ClCompile Include="value.cpp" />
-    <ClCompile Include="value.ixx" />
+    <ClCompile Include="value.cppm" />
     <ClCompile Include="verify.cpp" />
-    <ClCompile Include="verify.ixx" />
+    <ClCompile Include="verify.cppm" />
     <ClCompile Include="visitor.cpp" />
-    <ClCompile Include="visitor.ixx" />
+    <ClCompile Include="visitor.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\soul\ast\ast.vcxproj">

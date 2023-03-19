@@ -1,0 +1,3 @@
+project list;
+target=program;
+source <list.cpp>;

@@ -353,3 +353,43 @@ bool is_digit(int c)
 {
     return std::isdigit(c);
 }
+
+bool is_atty(int handle)
+{
+    return _isatty(handle);
+}
+
+int64_t current_time()
+{
+    return std::time(nullptr);
+}
+
+void current_date(int& yyyy, int& month, int& day)
+{
+    util::Date date = util::GetCurrentDate();
+    yyyy = date.Year();
+    month = static_cast<int8_t>(date.GetMonth());
+    day = date.Day();
+}
+
+void current_date_time(int& yyyy, int& month, int& day, int& seconds)
+{
+    util::DateTime dateTime = util::GetCurrentDateTime();
+    util::Date date = dateTime.GetDate();
+    yyyy = date.Year();
+    month = static_cast<int8_t>(date.GetMonth());
+    day = date.Day();
+    seconds = dateTime.Seconds();
+}
+
+int64_t make_time(int yyyy, int month, int day, int seconds)
+{
+    util::Date date(yyyy, static_cast<util::Month>(month), static_cast<int8_t>(day));
+    util::DateTime dt(date, seconds);
+    return util::MkTime(dt);
+}
+
+int64_t current_ms()
+{
+    return util::CurrentMs();
+}

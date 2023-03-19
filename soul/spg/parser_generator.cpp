@@ -24,7 +24,7 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
     }
     std::filesystem::path spgFilePath = spgFile->FilePath();
     std::filesystem::path root = spgFilePath.parent_path();
-    std::filesystem::path interfaceFilePath = root / (spgFilePath.stem().generic_string() + "_rules.ixx");
+    std::filesystem::path interfaceFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cppm");
     std::ofstream interfaceFile(interfaceFilePath);
     util::CodeFormatter interfaceFormatter(interfaceFile);
     std::string moduleName = spgFile->ProjectName() + ".rules";

@@ -804,7 +804,7 @@ void GenerateClassDefinitions(const std::string& xmlserFileName, bool verbose)
     auto lexer = soul::xml::serialization::lexer::MakeLexer(ucontent.c_str(), ucontent.c_str() + ucontent.length(), xmlserFileName);
     lexer.SetRuleNameMapPtr(soul::xml::serialization::spg::rules::GetRuleNameMapPtr());
     std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> sourceFile = soul::xml::serialization::parser::XmlSerParser<decltype(lexer)>::Parse(lexer);
-    std::string interfaceFileName = util::GetFullPath(util::Path::ChangeExtension(xmlserFileName, ".ixx"));
+    std::string interfaceFileName = util::GetFullPath(util::Path::ChangeExtension(xmlserFileName, ".cppm"));
     InterfaceGeneratorVisitor interfaceGeneratorVisitor(xmlserFileName, interfaceFileName);
     sourceFile->Accept(interfaceGeneratorVisitor);
     if (verbose)

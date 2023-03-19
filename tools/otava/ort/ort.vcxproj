@@ -149,22 +149,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="class_info.cpp" />
-    <ClCompile Include="class_info.ixx" />
+    <ClCompile Include="class_info.cppm" />
     <ClCompile Include="context_stack.cpp" />
-    <ClCompile Include="context_stack.ixx" />
+    <ClCompile Include="context_stack.cppm" />
     <ClCompile Include="filesystem.cpp" />
-    <ClCompile Include="filesystem.ixx" />
+    <ClCompile Include="filesystem.cppm" />
     <ClCompile Include="ort.cpp" />
-    <ClCompile Include="ort.ixx" />
+    <ClCompile Include="ort.cppm" />
     <ClCompile Include="threading.cpp" />
-    <ClCompile Include="threading.ixx" />
+    <ClCompile Include="threading.cppm" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="context.asm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

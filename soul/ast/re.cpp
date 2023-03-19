@@ -70,6 +70,10 @@ void Any::Print(CodeFormatter& formatter)
     formatter.Write(".");
 }
 
+Range::Range() : Symbol(SymbolKind::rangeSymbol), start(), end()
+{
+}
+
 Range::Range(char32_t start_, char32_t end_) : Symbol(SymbolKind::rangeSymbol), start(start_), end(end_)
 {
     SetName("(" + util::ToUtf8(std::u32string(1, start)) + "-" + util::ToUtf8(std::u32string(1, end)) + ")");
@@ -816,7 +820,7 @@ void DfaState::Print(LexerContext& context, CodeFormatter& formatter)
             {
                 context.Partition()[i]->Print(formatter);
             }
-            formatter.WriteLine(+" -> " + std::to_string(next[i]->Id()));
+            formatter.WriteLine(" -> " + std::to_string(next[i]->Id()));
         }
     }
     formatter.DecIndent();
@@ -829,7 +833,7 @@ void Dfa::AddState(DfaState* state)
 
 void Dfa::Finalize(LexerContext& lexerContext)
 {
-    for (const auto& state : states)
+    for (auto state : states)
     {
         for (auto nfaStateId : state->NfaStateIds())
         {
@@ -954,9 +958,10 @@ ExprParser::~ExprParser()
 
 LexerContext::LexerContext() :
     nextNfaStateId(0), nextDfaStateId(0), ruleIndex(-1), classIndex(0), any(), epsilon(eps), 
-    asciiIdStart(new Class(classIndex++)), asciiIdCont(new Class(classIndex++)), unicodeIdStart(new Class(classIndex++)), unicodeIdCont(new Class(classIndex++)),
+    asciiIdStart(new Class(classIndex)), asciiIdCont(new Class(classIndex + 1)), unicodeIdStart(new Class(classIndex + 2)), unicodeIdCont(new Class(classIndex + 3)),
     tokens(nullptr), keywords(nullptr), expressions(nullptr), lexer(nullptr), currentExpression(nullptr), exprParser(nullptr), masterNfaIndex(-1)
 {
+    classIndex += 4;
     symbols.push_back(asciiIdStart);
     symbols.push_back(asciiIdCont);
     symbols.push_back(unicodeIdStart);

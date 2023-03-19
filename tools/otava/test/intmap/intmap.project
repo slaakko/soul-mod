@@ -1,0 +1,3 @@
+project intmap;
+target=program;
+source <intmap.cpp>;

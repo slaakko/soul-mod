@@ -145,33 +145,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="assembly.ixx" />
+    <ClCompile Include="assembly.cppm" />
     <ClCompile Include="context.cpp" />
-    <ClCompile Include="context.ixx" />
+    <ClCompile Include="context.cppm" />
     <ClCompile Include="data.cpp" />
-    <ClCompile Include="data.ixx" />
+    <ClCompile Include="data.cppm" />
     <ClCompile Include="declaration.cpp" />
-    <ClCompile Include="declaration.ixx" />
+    <ClCompile Include="declaration.cppm" />
     <ClCompile Include="expr.cpp" />
-    <ClCompile Include="expr.ixx" />
+    <ClCompile Include="expr.cppm" />
     <ClCompile Include="file.cpp" />
-    <ClCompile Include="file.ixx" />
+    <ClCompile Include="file.cppm" />
     <ClCompile Include="function.cpp" />
-    <ClCompile Include="function.ixx" />
+    <ClCompile Include="function.cppm" />
     <ClCompile Include="instruction.cpp" />
-    <ClCompile Include="instruction.ixx" />
+    <ClCompile Include="instruction.cppm" />
     <ClCompile Include="literal.cpp" />
-    <ClCompile Include="literal.ixx" />
-    <ClCompile Include="register.ixx" />
+    <ClCompile Include="literal.cppm" />
+    <ClCompile Include="register.cppm" />
     <ClCompile Include="register.cpp" />
     <ClCompile Include="symbol.cpp" />
-    <ClCompile Include="symbol.ixx" />
+    <ClCompile Include="symbol.cppm" />
     <ClCompile Include="value.cpp" />
-    <ClCompile Include="value.ixx" />
+    <ClCompile Include="value.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

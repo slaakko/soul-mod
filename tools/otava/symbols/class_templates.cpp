@@ -29,7 +29,7 @@ import util.sha1;
 namespace otava::symbols {
 
 ClassTemplateSpecializationSymbol::ClassTemplateSpecializationSymbol(const std::u32string& name_) : 
-    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_), classTemplate(nullptr), instantiated(false), destructor(nullptr)
+    ClassTypeSymbol(SymbolKind::classTemplateSpecializationSymbol, name_), classTemplate(nullptr), instantiated(false), destructor(nullptr), instantiatingDestructor(false)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -183,7 +183,7 @@ TypeSymbol* ClassTemplateSpecializationSymbol::FinalType(const soul::ast::Source
         if (templateArg->IsTypeSymbol())
         {
             TypeSymbol* typeTemplateArg = static_cast<TypeSymbol*>(templateArg);
-            typeTemplateArg = typeTemplateArg->FinalType(sourcePos, context)->DirectType(context);
+            typeTemplateArg = typeTemplateArg->DirectType(context)->FinalType(sourcePos, context);
             templateArgs.push_back(typeTemplateArg);
         }
         else
@@ -191,12 +191,23 @@ TypeSymbol* ClassTemplateSpecializationSymbol::FinalType(const soul::ast::Source
             templateArgs.push_back(templateArg);
         }
     }
-    ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
-    if (specialization != this)
-    {
-        InstantiateClassTemplate(classTemplate, templateArgs, sourcePos, context);
-    }
+    ClassTemplateSpecializationSymbol* specialization = InstantiateClassTemplate(classTemplate, templateArgs, sourcePos, context);
     return specialization;
+}
+
+bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+{
+    if (visited.find(this) != visited.end()) return true;
+    visited.insert(this);
+    for (const auto& templateArg : templateArguments)
+    {
+        if (templateArg->IsTypeSymbol())
+        {
+            TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArg);
+            if (!templateArgType->IsComplete(visited)) return false;
+        }
+    }
+    return true;
 }
 
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments)
@@ -221,7 +232,7 @@ std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vec
     return specializationName;
 }
 
-CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int index)
+CompoundTypeSymbol* GetCompoundSpecializationArgType(TypeSymbol* specialization, int index)
 {
     if (specialization->IsClassTemplateSpecializationSymbol())
     {
@@ -239,9 +250,32 @@ CompoundTypeSymbol* GetSpecializationArgType(TypeSymbol* specialization, int ind
     return nullptr;
 }
 
+ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSymbol* specialization, int index)
+{
+    if (specialization->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* specializationSymbol = static_cast<ClassTemplateSpecializationSymbol*>(specialization);
+        if (index >= 0 && index < specializationSymbol->TemplateArguments().size())
+        {
+            Symbol* specializationArg = specializationSymbol->TemplateArguments()[index];
+            if (specializationArg->IsClassTemplateSpecializationSymbol())
+            {
+                ClassTemplateSpecializationSymbol* specializationArgType = static_cast<ClassTemplateSpecializationSymbol*>(specializationArg);
+                return specializationArgType;
+            }
+        }
+    }
+    return nullptr;
+}
+
 void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     if (specialization->IsTemplateParameterInstantiation()) return;
+    if (specialization->Destructor()) return;
+    std::set<const TypeSymbol*> visited;
+    if (!specialization->IsComplete(visited)) return;
+    if (specialization->InstantiatingDestructor()) return;
+    specialization->SetInstantiatingDestructor(true);
     context->PushResetFlag(ContextFlags::skipFunctionDefinitions);
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
@@ -262,12 +296,22 @@ void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, co
     }
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
     context->PopFlags();
+    specialization->SetInstantiatingDestructor(false);
 }
 
-TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, Context* context)
+ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, 
+    Context* context)
 {
+    if (classTemplate->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* specialization = static_cast<ClassTemplateSpecializationSymbol*>(classTemplate);
+        classTemplate = specialization->ClassTemplate();
+    }
+    TemplateDeclarationSymbol* templateDeclaration = classTemplate->ParentTemplateDeclaration();
+    int arity = templateDeclaration->Arity();
     ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
-    if (specialization->Instantiated())
+    int m = templateArgs.size();
+    if (specialization->Instantiated() && arity == m)
     {
         return specialization;
     }
@@ -291,98 +335,94 @@ TypeSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::
     }
     specialization->SetInstantiated();
     context->GetBoundCompileUnit()->AddBoundNodeForClass(specialization, sourcePos);
-    TemplateDeclarationSymbol* templateDeclaration = classTemplate->ParentTemplateDeclaration();
-    if (templateDeclaration)
+    int argCount = templateArgs.size();
+    if (argCount > arity)
     {
-        int arity = templateDeclaration->Arity();
-        int argCount = templateArgs.size();
-        if (argCount > arity)
+        ThrowException("otava.symbols.templates: wrong number of template args for instantiating class template '" +
+            util::ToUtf8(classTemplate->Name()) + "'",
+            sourcePos, context);
+    }
+    specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
+    specialization->GetScope()->AddParentScope(specialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+    context->GetSymbolTable()->BeginScope(specialization->GetScope());
+    InstantiationScope instantiationScope(specialization->GetScope());
+    std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
+    for (int i = 0; i < arity; ++i)
+    {
+        TemplateParameterSymbol* templateParameter = templateDeclaration->TemplateParameters()[i];
+        Symbol* templateArg = nullptr;
+        if (i >= argCount)
         {
-            ThrowException("otava.symbols.templates: wrong number of template args for instantiating class template '" +
-                util::ToUtf8(classTemplate->Name()) + "'",
-                sourcePos, context);
-        }
-        specialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope());
-        specialization->GetScope()->AddParentScope(specialization->ClassTemplate()->GetScope()->GetNamespaceScope());
-        context->GetSymbolTable()->BeginScope(specialization->GetScope());
-        InstantiationScope instantiationScope(specialization->GetScope());
-        std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
-        for (int i = 0; i < arity; ++i)
-        {
-            TemplateParameterSymbol* templateParameter = templateDeclaration->TemplateParameters()[i];
-            Symbol* templateArg = nullptr;
-            if (i >= argCount)
+            otava::ast::Node* defaultTemplateArgNode = templateParameter->DefaultTemplateArg();
+            if (defaultTemplateArgNode)
             {
-                otava::ast::Node* defaultTemplateArgNode = templateParameter->DefaultTemplateArg();
-                if (defaultTemplateArgNode)
-                {
-                    context->GetSymbolTable()->BeginScope(&instantiationScope);
-                    templateArg = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
-                    context->GetSymbolTable()->EndScope();
-                }
-                else
-                {
-                    ThrowException("otava.symbols.templates: template parameter " + std::to_string(i) + " has no default type argument", sourcePos, context);
-                }
+                context->GetSymbolTable()->BeginScope(&instantiationScope);
+                templateArg = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
+                context->GetSymbolTable()->EndScope();
+                specialization->AddTemplateArgument(templateArg);
             }
             else
             {
-                templateArg = templateArgs[i];
+                ThrowException("otava.symbols.templates: template parameter " + std::to_string(i) + " has no default type argument", sourcePos, context);
             }
-            if (templateArg->IsTypeSymbol())
+        }
+        else
+        {
+            templateArg = templateArgs[i];
+        }
+        if (templateArg->IsTypeSymbol())
+        {
+            TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArg);
+            TypeSymbol* specialization = classTemplate->Specialization();
+            if (specialization)
             {
-                TypeSymbol* templateArgType = static_cast<TypeSymbol*>(templateArg);
-                TypeSymbol* specialization = classTemplate->Specialization();
-                if (specialization)
+                CompoundTypeSymbol* specializationArgType = GetCompoundSpecializationArgType(specialization, i);
+                if (specializationArgType)
                 {
-                    CompoundTypeSymbol* specializationArgType = GetSpecializationArgType(specialization, i);
-                    if (specializationArgType)
-                    {
-                        templateArg = templateArgType->RemoveDerivations(specializationArgType->GetDerivations(), context);
-                    }
-                    else
+                    templateArg = templateArgType->RemoveDerivations(specializationArgType->GetDerivations(), context);
+                }
+                else
+                {
+                    ClassTemplateSpecializationSymbol* specializationArgType = GetClassTemplateSpecializationArgType(specialization, i);
+                    if (!specializationArgType)
                     {
                         ThrowException("otava.symbols.templates: specialization argument type not resolved", sourcePos, context);
                     }
                 }
             }
-            BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
-            boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
-            boundTemplateParameter->SetBoundSymbol(templateArg);
-            boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
-            instantiationScope.Install(boundTemplateParameter);
         }
-        context->GetSymbolTable()->BeginScope(&instantiationScope);
-        Instantiator instantiator(context, &instantiationScope);
-        try
-        {
-            context->PushSetFlag(ContextFlags::dontBind | ContextFlags::skipFunctionDefinitions);
-            classNode->Accept(instantiator);
-            std::vector<ClassTypeSymbol*> baseClasses = instantiator.GetBaseClasses();
-            for (ClassTypeSymbol* baseClass : baseClasses)
-            {
-                specialization->AddBaseClass(baseClass, sourcePos, context);
-            }
-            context->PopFlags();
-            if (!specialization->IsTemplateParameterInstantiation())
-            {
-                AddClassInfo(specialization, context);
-            }
-            InstantiateDestructor(specialization, sourcePos, context);
-        }
-        catch (const std::exception& ex)
-        {
-            ThrowException("otava.symbols.templates: error instantiating specialization '" +
-                util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), sourcePos, context);
-        }
-        context->GetSymbolTable()->EndScope();
-        context->GetSymbolTable()->EndScope();
-        specialization->GetScope()->ClearParentScopes();
+        BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+        boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
+        boundTemplateParameter->SetBoundSymbol(templateArg);
+        boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
+        instantiationScope.Install(boundTemplateParameter);
     }
-    else
+    context->GetSymbolTable()->BeginScope(&instantiationScope);
+    Instantiator instantiator(context, &instantiationScope);
+    try
     {
-        ThrowException("otava.symbols.templates: template declarator for class template '" + util::ToUtf8(classTemplate->Name()) + " not found", sourcePos, context);
+        context->PushSetFlag(ContextFlags::dontBind | ContextFlags::skipFunctionDefinitions);
+        classNode->Accept(instantiator);
+        std::vector<ClassTypeSymbol*> baseClasses = instantiator.GetBaseClasses();
+        for (ClassTypeSymbol* baseClass : baseClasses)
+        {
+            specialization->AddBaseClass(baseClass, sourcePos, context);
+        }
+        context->PopFlags();
+        if (!specialization->IsTemplateParameterInstantiation())
+        {
+            AddClassInfo(specialization, context);
+        }
+        InstantiateDestructor(specialization, sourcePos, context);
     }
+    catch (const std::exception& ex)
+    {
+        ThrowException("otava.symbols.templates: error instantiating specialization '" +
+            util::ToUtf8(specialization->FullName()) + "': " + std::string(ex.what()), sourcePos, context);
+    }
+    context->GetSymbolTable()->EndScope();
+    context->GetSymbolTable()->EndScope();
+    specialization->GetScope()->ClearParentScopes();
     return specialization;
 }
 
@@ -424,7 +464,8 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::string specializationName = util::ToUtf8(memFn->Name());
-    InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), classTemplateSpecialization->TemplateArguments(), sourcePos, context);
+    classTemplateSpecialization = InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), classTemplateSpecialization->TemplateArguments(), sourcePos, context);
+    classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(classTemplateSpecialization->FinalType(sourcePos, context));
     context->GetBoundCompileUnit()->AddBoundNodeForClass(classTemplateSpecialization, sourcePos);
     ClassTemplateRepository* classTemplateRepository = context->GetBoundCompileUnit()->GetClassTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
@@ -478,11 +519,10 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
                 if (argCount > arity)
                 {
                     ThrowException("otava.symbols.class_templates: wrong number of template args for instantiating class template member function '" +
-                        util::ToUtf8(memFn->Name()) + "'",
-                        node->GetSourcePos(),
-                        context);
+                        util::ToUtf8(memFn->Name()) + "'", sourcePos, node->GetSourcePos(), context);
                 }
                 classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+                classTemplateSpecialization->GetScope()->AddParentScope(classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope());
                 InstantiationScope instantiationScope(classTemplateSpecialization->GetScope());
                 std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
                 for (int i = 0; i < arity; ++i)
@@ -526,12 +566,13 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
                         context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
                     }
                     context->PopBoundFunction();
+                    instantiationScope.PopParentScope();
                     specialization->GetScope()->ClearParentScopes();
                 }
                 catch (const std::exception& ex)
                 {
                     ThrowException("otava.symbols.class_templates: error instantiating specialization '" + specializationName + 
-                        "': " + std::string(ex.what()), node->GetSourcePos(), context);
+                        "': " + std::string(ex.what()), node->GetSourcePos(), sourcePos, context);
                 }
                 context->GetSymbolTable()->EndScope();
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
@@ -539,22 +580,25 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
                 {
                     context->SetFlag(ContextFlags::parseMemberFunction);
                 }
+                if (specialization->GroupName() != U"@destructor")
+                {
+                    InstantiateDestructor(classTemplateSpecialization, sourcePos, context);
+                }
                 return specialization;
             }
             else
             {
-                ThrowException("otava.symbols.class_templates: parent class template declaration not found", node->GetSourcePos(), context);
+                ThrowException("otava.symbols.class_templates: parent class template declaration not found", node->GetSourcePos(), sourcePos, context);
             }
         }
         else
         {
-            ThrowException("otava.symbols.class_templates: parent class template not found", node->GetSourcePos(), context);
+            ThrowException("otava.symbols.class_templates: parent class template not found", node->GetSourcePos(), sourcePos, context);
         }
     }
     else
     {
-        ThrowException("otava.symbols.class_templates: function definition node expected: class template: " + 
-            util::ToUtf8(classTemplateSpecialization->Name()) + ", function: " + util::ToUtf8(memFn->Name()), node->GetSourcePos(), context);
+        ThrowException("otava.symbols.class_templates: function definition required for template instantiation", node->GetSourcePos(), sourcePos, context);
     }
 }
 

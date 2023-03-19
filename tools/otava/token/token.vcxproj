@@ -148,7 +148,7 @@
     <None Include="otava.token" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="otava.token.ixx" />
+    <ClCompile Include="otava.token.cppm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

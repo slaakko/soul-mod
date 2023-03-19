@@ -1,0 +1,4 @@
+project time;
+reference <../../util.project>;
+target=program;
+source <time.cpp>;

@@ -25,7 +25,7 @@ std::unique_ptr<soul::ast::spg::SpgFile> ParseSpgFile(const std::string& spgFile
     {
         std::cout << "> " << spgFilePath << std::endl;
     }
-    int file = fileMap.AddFilePath(spgFilePath);
+    int32_t file = fileMap.MapFile(spgFilePath);
     std::string spgFileContent = util::ReadFile(spgFilePath);
     std::u32string content = util::ToUtf32(spgFileContent);
     auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), spgFilePath);
@@ -51,7 +51,7 @@ std::unique_ptr<soul::ast::spg::ParserFile> ParseParserFile(const std::string& p
     {
         std::cout << "> " << parserFilePath << std::endl;
     }
-    int file = fileMap.AddFilePath(parserFilePath);
+    int32_t file = fileMap.MapFile(parserFilePath);
     std::string parserFileContent = util::ReadFile(parserFilePath);
     std::u32string content = util::ToUtf32(parserFileContent);
     auto lexer = soul::lex::spg::MakeLexer(content.c_str(), content.c_str() + content.length(), parserFilePath);

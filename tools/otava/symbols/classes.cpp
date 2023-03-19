@@ -105,7 +105,8 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     specializationId(),
     vtabSize(0),
     vptrIndex(-1),
-    group(nullptr)
+    group(nullptr),
+    copyCtor(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -121,7 +122,8 @@ ClassTypeSymbol::ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_) 
     specializationId(),
     vtabSize(0),
     vptrIndex(-1),
-    group(nullptr)
+    group(nullptr),
+    copyCtor(nullptr)
 {
     GetScope()->SetKind(ScopeKind::classScope);
 }
@@ -576,7 +578,7 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
     otava::intermediate::Type* irType = emitter.GetType(Id());
     if (!irType)
     {
-        irType = emitter.MakeFwdDeclaredStructureType(Id());
+        irType = emitter.GetOrInsertFwdDeclaredStructureType(Id());
         emitter.SetType(Id(), irType);
         MakeObjectLayout(sourcePos, context);
         int n = objectLayout.size();
@@ -587,13 +589,10 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
             elementTypes.push_back(type->IrType(emitter, sourcePos, context));
         }
         otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes);
-        if (type->IsStructureType())
-        {
-            otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
-            structureType->ResolveForwardReferences(Id(), emitter.GetIntermediateContext());
-        }
+        otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
         irType = type;
         emitter.SetType(Id(), irType);
+        emitter.ResolveForwardReferences(Id(), structureType);
     }
     return irType;
 }
@@ -631,6 +630,41 @@ FunctionSymbol* ClassTypeSymbol::GetConversionFunction(TypeSymbol* type) const
         }
     }
     return nullptr;
+}
+
+bool ClassTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+{
+    if (visited.find(this) != visited.end()) return true;
+    visited.insert(this);
+    for (const auto& baseClass : baseClasses)
+    {
+        if (!baseClass->IsComplete(visited)) return false;
+    }
+    for (const auto& memberVariable : memberVariables)
+    {
+        if (!memberVariable->GetType()->IsComplete(visited)) return false;
+    }
+    for (const auto& staticMemberVariable : staticMemberVariables)
+    {
+        if (!staticMemberVariable->GetType()->IsComplete(visited)) return false;
+    }
+    return true;
+}
+
+void ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    if (copyCtor) return;
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
+    VariableSymbol* classTempVar = new VariableSymbol(U"@class_temp");
+    classTempVar->SetDeclaredType(this);
+    tempVars.push_back(std::unique_ptr<Symbol>(classTempVar));
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(new BoundVariableNode(classTempVar, sourcePos), sourcePos, classTempVar->GetType()->AddPointer(context))));
+    VariableSymbol* constLvalueRefTempVar = new VariableSymbol(U"@const_lvalue_ref_temp");
+    constLvalueRefTempVar->SetDeclaredType(this->AddConst(context)->AddLValueRef(context));
+    tempVars.push_back(std::unique_ptr<Symbol>(constLvalueRefTempVar));
+    args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableNode(constLvalueRefTempVar, sourcePos)));
+    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+    copyCtor = functionCall->GetFunctionSymbol();
 }
 
 ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32string& name_) : 
@@ -730,7 +764,7 @@ TypeSymbol* ForwardClassDeclarationSymbol::FinalType(const soul::ast::SourcePos&
 {
     if (classTypeSymbol)
     {
-        return classTypeSymbol;
+        return classTypeSymbol->FinalType(sourcePos, context);
     }
     else if (context->GetFlag(ContextFlags::requireForwardResolved))
     {
@@ -745,6 +779,20 @@ TypeSymbol* ForwardClassDeclarationSymbol::FinalType(const soul::ast::SourcePos&
 otava::intermediate::Type* ForwardClassDeclarationSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     return FinalType(sourcePos, context)->IrType(emitter, sourcePos, context);
+}
+
+bool ForwardClassDeclarationSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+{
+    if (visited.find(this) != visited.end()) return true;
+    visited.insert(this);
+    if (classTypeSymbol)
+    {
+        return classTypeSymbol->IsComplete(visited);
+    }
+    else
+    {
+        return false;
+    }
 }
 
 class ClassResolver : public otava::ast::DefaultVisitor
@@ -897,7 +945,15 @@ void EndClass(otava::ast::Node* node, Context* context)
     }
     if (!classTypeSymbol->IsTemplate() && !classTypeSymbol->HasUserDefinedDestructor())
     {
-        GenerateDestructor(classTypeSymbol, node->GetSourcePos(), context);
+        std::set<const TypeSymbol*> visited;
+        if (classTypeSymbol->IsComplete(visited))
+        {
+            GenerateDestructor(classTypeSymbol, node->GetSourcePos(), context);
+        }
+        else
+        { 
+            context->GetBoundCompileUnit()->AddClassToGenerateDestructorList(classTypeSymbol);
+        }
     }
     context->PopFlags();
     context->GetSymbolTable()->EndClass();
@@ -1074,7 +1130,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             return destructorFn;
         }
         destructorFn = destructorGroup->GetSingleSymbol();
-        if (destructorFn)
+        if (destructorFn && destructorFn != destructorGroup)
         {
             return destructorFn;
         }
@@ -1082,6 +1138,14 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     if (classTypeSymbol->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(classTypeSymbol);
+        if (!sp->Destructor())
+        {
+            std::set<const TypeSymbol*> visited;
+            if (sp->IsComplete(visited))
+            {
+                InstantiateDestructor(sp, sourcePos, context);
+            }
+        }
         destructorFn = sp->Destructor();
         if (destructorFn)
         {
@@ -1220,6 +1284,20 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     boundDestructor->SetDtorTerminator(terminator.release());
     context->GetBoundCompileUnit()->AddBoundNode(boundDestructor);
     return destructor;
+}
+
+void GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* context)
+{
+    for (auto& classType : boundCompileUnit->GenerateDestructorList())
+    {
+        soul::ast::SourcePos sourcePos;
+        TypeSymbol* finalType = classType->FinalType(sourcePos, context);
+        if (finalType->IsClassTypeSymbol())
+        {
+            ClassTypeSymbol* finalClass = static_cast<ClassTypeSymbol*>(finalType);
+            GenerateDestructor(finalClass, sourcePos, context);
+        }
+    }
 }
 
 void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)

@@ -380,6 +380,14 @@ void BoundCompileUnitNode::AddDynamicInitialization(BoundExpressionNode* dynamic
     }
 }
 
+void BoundCompileUnitNode::AddClassToGenerateDestructorList(ClassTypeSymbol* classType)
+{
+    if (std::find(generateDestructorList.begin(), generateDestructorList.end(), classType) == generateDestructorList.end())
+    {
+        generateDestructorList.push_back(classType);
+    }
+}
+
 BoundCtorInitializerNode::BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_) : BoundNode(BoundNodeKind::boundCtorInitializerNode, sourcePos_)
 {
 }

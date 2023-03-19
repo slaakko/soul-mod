@@ -19,11 +19,11 @@ void ParseIntermediateCodeFile(const std::string& filePath, Context& context)
     std::u32string content = util::ToUtf32(codeFileContent);
     auto lexer = otava::intermediate::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);
     lexer.SetRuleNameMapPtr(otava::intermediate::spg::rules::GetRuleNameMapPtr());
-    int file = context.GetFileMap().AddFilePath(filePath);
-    lexer.SetFile(file);
+    int32_t fileId = context.GetFileMap().MapFile(filePath);
+    lexer.SetFile(fileId);
     using LexerType = decltype(lexer);
     otava::intermediate::code::parser::IntermediateCodeParser<LexerType>::Parse(lexer, &context);
-    context.GetFileMap().AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));
+    context.GetFileMap().AddFileContent(fileId, std::move(content), std::move(lexer.GetLineStartIndeces()));
 }
 
 } // namespace otava::intermediate

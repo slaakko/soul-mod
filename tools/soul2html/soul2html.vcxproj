@@ -157,9 +157,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="soul.token.ixx" />
+    <ClCompile Include="soul.token.cppm" />
     <ClCompile Include="soul_token_lexer.cpp" />
-    <ClCompile Include="soul_token_lexer.ixx" />
+    <ClCompile Include="soul_token_lexer.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="soul.token.lexer.classmap.rc" />

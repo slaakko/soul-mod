@@ -152,11 +152,13 @@ void Node::Clear()
 void Node::Write(Writer& writer)
 {
     writer.GetBinaryStreamWriter().Write(id);
+    writer.Write(sourcePos);
 }
 
 void Node::Read(Reader& reader)
 {
     id = reader.GetBinaryStreamReader().ReadLong();
+    sourcePos = reader.ReadSourcePos();
 }
 
 CompoundNode::CompoundNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_) : Node(kind_, sourcePos_)

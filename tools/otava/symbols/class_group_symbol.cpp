@@ -12,6 +12,7 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
 import otava.symbols.compound.type.symbol;
+import otava.symbols.type_compare;
 
 namespace otava::symbols {
 
@@ -36,12 +37,15 @@ bool ClassGroupSymbol::IsValidDeclarationScope(ScopeKind scopeKind) const
 
 void ClassGroupSymbol::AddClass(ClassTypeSymbol* classTypeSymbol)
 {
-    classTypeSymbol->SetGroup(this);
-    classes.push_back(classTypeSymbol);
-    ForwardClassDeclarationSymbol* fwdDeclaration = GetForwardDeclaration(classTypeSymbol->Arity());
-    if (fwdDeclaration)
+    if (std::find(classes.begin(), classes.end(), classTypeSymbol) == classes.end())
     {
-        fwdDeclaration->SetClassTypeSymbol(classTypeSymbol);
+        classTypeSymbol->SetGroup(this);
+        classes.push_back(classTypeSymbol);
+        ForwardClassDeclarationSymbol* fwdDeclaration = GetForwardDeclaration(classTypeSymbol->Arity());
+        if (fwdDeclaration)
+        {
+            fwdDeclaration->SetClassTypeSymbol(classTypeSymbol);
+        }
     }
 }
 
@@ -75,7 +79,10 @@ ClassTypeSymbol* ClassGroupSymbol::GetClass(int arity) const
 
 void ClassGroupSymbol::AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration)
 {
-    forwardDeclarations.push_back(forwardDeclaration);
+    if (std::find(forwardDeclarations.begin(), forwardDeclarations.end(), forwardDeclaration) == forwardDeclarations.end())
+    {
+        forwardDeclarations.push_back(forwardDeclaration);
+    }
     ClassTypeSymbol* cls = GetClass(forwardDeclaration->Arity());
     if (cls)
     {
@@ -124,7 +131,10 @@ void ClassGroupSymbol::Resolve(SymbolTable& symbolTable)
     for (const auto& classId : classIds)
     {
         ClassTypeSymbol* cls = symbolTable.GetClass(classId);
-        classes.push_back(cls);
+        if (std::find(classes.begin(), classes.end(), cls) == classes.end())
+        {
+            classes.push_back(cls);
+        }
     }
 }
 
@@ -153,32 +163,110 @@ void ClassGroupSymbol::Merge(ClassGroupSymbol* that)
 
 struct ViableClassGreater
 {
-    bool operator()(const std::pair<ClassTypeSymbol*, int>& left, const std::pair<ClassTypeSymbol*, int>& right) const
+    bool operator()(const std::pair<ClassTypeSymbol*, TemplateMatchInfo>& left, const std::pair<ClassTypeSymbol*, TemplateMatchInfo>& right) const
     {
-        return left.second > right.second;
+        return left.second.matchValue > right.second.matchValue;
     }
 };
 
-int Match(Symbol* templateArg, TypeSymbol* specialization, int index)
+int Match(Symbol* templateArg, TypeSymbol* specialization, int index, TemplateMatchInfo& info, Context* context)
 {
     if (templateArg->IsCompoundTypeSymbol())
     {
         CompoundTypeSymbol* templateArgType = static_cast<CompoundTypeSymbol*>(templateArg);
         const Derivations& argDerivations = templateArgType->GetDerivations();
-        CompoundTypeSymbol* specializationArgType = GetSpecializationArgType(specialization, index);
+        CompoundTypeSymbol* specializationArgType = GetCompoundSpecializationArgType(specialization, index);
         const Derivations& specializationDerivations = specializationArgType->GetDerivations();
         int numMatchingDerivations = CountMatchingDerivations(argDerivations, specializationDerivations);
         if (numMatchingDerivations > 0)
         {
+            info.kind = TemplateMatchKind::partialSpecialization;
             return numMatchingDerivations;
+        }
+    }
+    else if (templateArg->IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* templateArgType = static_cast<ClassTemplateSpecializationSymbol*>(templateArg);
+        ClassTemplateSpecializationSymbol* specializationArgType = GetClassTemplateSpecializationArgType(specialization, index);
+        if (specializationArgType)
+        {
+            if (TypesEqual(templateArgType->ClassTemplate(), specializationArgType->ClassTemplate()))
+            {
+                int n = templateArgType->TemplateArguments().size();
+                int m = specializationArgType->TemplateArguments().size();
+                if (n == m)
+                {
+                    for (int i = 0; i < n; ++i)
+                    {
+                        Symbol* argSymbol = templateArgType->TemplateArguments()[i];
+                        TypeSymbol* argTypeSymbol = nullptr;
+                        if (argSymbol->IsTypeSymbol())
+                        {
+                            argTypeSymbol = static_cast<TypeSymbol*>(argSymbol);
+                        }
+                        Symbol* templateSymbol = specializationArgType->TemplateArguments()[i];
+                        TypeSymbol* templateTypeSymbol = nullptr;
+                        if (templateSymbol->IsTypeSymbol())
+                        {
+                            templateTypeSymbol = static_cast<TypeSymbol*>(templateSymbol);
+                        }
+                        if (argTypeSymbol && templateTypeSymbol)
+                        {
+                            TypeSymbol* templateArgumentType = nullptr;
+                            if (templateTypeSymbol->GetBaseType()->IsTemplateParameterSymbol())
+                            {
+                                TemplateParameterSymbol* templateParameter = static_cast<TemplateParameterSymbol*>(argTypeSymbol->GetBaseType());
+                                auto it = info.templateParameterMap.find(templateParameter);
+                                if (it == info.templateParameterMap.end())
+                                {
+                                    templateArgumentType = argTypeSymbol->RemoveDerivations(templateTypeSymbol->GetDerivations(), context);
+                                    if (templateArgumentType)
+                                    {
+                                        info.templateParameterMap[templateParameter] = templateArgumentType;
+                                    }
+                                    else
+                                    {
+                                        return -1;
+                                    }
+                                }
+                                else
+                                {
+                                    templateArgumentType = it->second;
+                                }
+                            }
+                            templateTypeSymbol = templateTypeSymbol->Unify(templateArgumentType, context);
+                            if (!templateTypeSymbol)
+                            {
+                                return -1;
+                            }
+                            if (!TypesEqual(argTypeSymbol, templateTypeSymbol))
+                            {
+                                return -1;
+                            }
+                        }
+                    }
+                    info.kind = TemplateMatchKind::explicitSpecialization;
+                    return 1;
+                }
+            }
         }
     }
     return -1;
 }
 
-ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol*>& templateArgs) const
+std::vector<Symbol*> MakeTemplateArgs(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParamMap)
 {
-    std::vector<std::pair<ClassTypeSymbol*, int>> viableClasses;
+    std::vector<Symbol*> templateArgs;
+    for (const auto& p : templateParamMap)
+    {
+        templateArgs.push_back(p.second);
+    }
+    return templateArgs;
+}
+
+ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const
+{
+    std::vector<std::pair<ClassTypeSymbol*, TemplateMatchInfo>> viableClasses;
     int arity = templateArgs.size();
     for (const auto& cls : classes)
     {
@@ -190,22 +278,30 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
                 for (int i = 0; i < arity; ++i)
                 {
                     Symbol* templateArg = templateArgs[i];
-                    int matchValue = Match(templateArg, specialization, i);
+                    TemplateMatchInfo info;
+                    int matchValue = Match(templateArg, specialization, i, info, context);
                     if (matchValue >= 0)
                     {
-                        viableClasses.push_back(std::make_pair(cls, matchValue));
+                        info.matchValue = matchValue;
+                        viableClasses.push_back(std::make_pair(cls, info));
                     }
                 }
             }
             else
             {
-                viableClasses.push_back(std::make_pair(cls, 0));
+                TemplateMatchInfo info;
+                viableClasses.push_back(std::make_pair(cls, info));
             }
         }
     }
     std::sort(viableClasses.begin(), viableClasses.end(), ViableClassGreater());
     if (!viableClasses.empty())
     {
+        matchInfo = viableClasses[0].second;
+        if (matchInfo.kind == TemplateMatchKind::explicitSpecialization)
+        {
+            matchInfo.templateArgs = MakeTemplateArgs(matchInfo.templateParameterMap);
+        }
         return viableClasses[0].first;
     }
     return nullptr;

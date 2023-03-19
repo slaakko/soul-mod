@@ -15,6 +15,7 @@ import otava.symbols.compound.type.symbol;
 import otava.symbols.conversion.table;
 import otava.symbols.type.symbol;
 import otava.parser.recorded.parse;
+import soul.lexer.file.map;
 import util.init.done;
 import util.unicode;
 import util.path;
@@ -51,6 +52,7 @@ int main(int argc, const char** argv)
         otava::symbols::Init();
         otava::parser::recorded::parse::Init();
         otava::symbols::ModuleMapper moduleMapper;
+        soul::lexer::FileMap fileMap;
         std::vector<std::string> files;
         bool verbose = false;
         std::string config = "debug";
@@ -207,6 +209,7 @@ int main(int argc, const char** argv)
             if (file.ends_with(".project"))
             {
                 std::unique_ptr<otava::build::Project> project = otava::build::ParseProjectFile(file);
+                project->SetFileMap(&fileMap);
                 otava::build::BuildFlags buildFlags = otava::build::BuildFlags::none;
                 if (verbose)
                 {
@@ -242,7 +245,7 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::xml;
                 }
-                otava::build::Build(moduleMapper, solution.get(), config, buildFlags);
+                otava::build::Build(moduleMapper, fileMap, solution.get(), config, buildFlags);
             }
             else
             {

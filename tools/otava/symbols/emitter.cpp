@@ -116,9 +116,27 @@ otava::intermediate::Type* Emitter::MakeArrayType(int64_t size, otava::intermedi
     return context->GetArrayType(soul::ast::SourcePos(), context->NextTypeId(), size, elementTypeRef);
 }
 
-otava::intermediate::Type* Emitter::MakeFwdDeclaredStructureType(const util::uuid& uuid)
+otava::intermediate::Type* Emitter::MakeFwdDeclaredStructureType(const util::uuid& id)
 {
-    return context->GetFwdDeclaredStructureType(uuid, context->NextTypeId());
+    return context->MakeFwdDeclaredStructureType(id, context->NextTypeId());
+}
+
+otava::intermediate::Type* Emitter::GetOrInsertFwdDeclaredStructureType(const util::uuid& id)
+{
+    otava::intermediate::Type* type = context->GetFwdDeclaredStructureType(id);
+    if (type)
+    {
+        return type;
+    }
+    else
+    {
+        return MakeFwdDeclaredStructureType(id);
+    }
+}
+
+void Emitter::ResolveForwardReferences(const util::uuid& id, otava::intermediate::StructureType* structureType)
+{
+    context->ResolveForwardReferences(id, structureType);
 }
 
 otava::intermediate::Type* Emitter::GetVoidType()

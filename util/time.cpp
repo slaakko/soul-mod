@@ -14,14 +14,39 @@ import util.text.util;
 
 namespace util {
 
+std::vector<int> monthDays;
+
+struct InitMonthDays
+{
+    InitMonthDays();
+};
+
+InitMonthDays::InitMonthDays() 
+{
+    monthDays.push_back(0);
+    monthDays.push_back(31);
+    monthDays.push_back(28);
+    monthDays.push_back(31);
+    monthDays.push_back(30);
+    monthDays.push_back(31);
+    monthDays.push_back(30);
+    monthDays.push_back(31);
+    monthDays.push_back(31);
+    monthDays.push_back(30);
+    monthDays.push_back(31);
+    monthDays.push_back(30);
+    monthDays.push_back(31);
+}
+
+InitMonthDays initMonthDays;
+
 int GetMonthDays(Month month, int year)
 {
-    static int monthDays[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     if (month == Month::february && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0))
     {
         return 29;
     }
-    return monthDays[static_cast<int>(month)];
+    return monthDays[static_cast<int8_t>(month)];
 }
 
 Date Date::AddDays(int n)
@@ -42,7 +67,7 @@ Date Date::AddDays(int n)
             }
             else
             {
-                m = static_cast<Month>(static_cast<int>(m) + 1);
+                m = static_cast<Month>(static_cast<int8_t>(static_cast<int8_t>(m) + 1));
             }
             md = GetMonthDays(m, y);
         }
@@ -62,7 +87,7 @@ Date Date::AddDays(int n)
             }
             else
             {
-                m = static_cast<Month>(static_cast<int>(m) - 1);
+                m = static_cast<Month>(static_cast<int8_t>(static_cast<int8_t>(m) - 1));
             }
             d = d + GetMonthDays(m, y);
         }
@@ -78,7 +103,7 @@ Date Date::AddMonths(int n)
 {
     if (n > 0)
     {
-        int m = static_cast<int>(month) + n;
+        int m = static_cast<int8_t>(month) + n;
         int y = year;
         int d = day;
         while (m > 12)
@@ -86,7 +111,7 @@ Date Date::AddMonths(int n)
             m = m - 12;
             ++y;
         }
-        Month mnth = static_cast<Month>(m);
+        Month mnth = static_cast<Month>(static_cast<int8_t>(m));
         int md = GetMonthDays(mnth, y);
         if (d > md)
         {
@@ -96,7 +121,7 @@ Date Date::AddMonths(int n)
     }
     else if (n < 0)
     {
-        int m = static_cast<int>(month) + n;
+        int m = static_cast<int8_t>(month) + n;
         int y = year;
         int d = day;
         while (m < 1)
@@ -104,7 +129,7 @@ Date Date::AddMonths(int n)
             m = m + 12;
             --y;
         }
-        Month mnth = static_cast<Month>(m);
+        Month mnth = static_cast<Month>(static_cast<int8_t>(m));
         int md = GetMonthDays(mnth, y);
         if (d > md)
         {
@@ -157,15 +182,29 @@ std::string Date::ToString(bool omitDashes) const
     return date;
 }
 
+#if defined(OTAVA)
+
+Date GetCurrentDate()
+{
+    int yyyy = 0;
+    int mm = 0;
+    int dd = 0;
+    current_date(yyyy, mm, dd);
+    return Date(yyyy, static_cast<Month>(static_cast<int8_t>(mm)), dd);
+}
+
+#else
+
 Date GetCurrentDate()
 {
     std::time_t currentTime;
     std::time(&currentTime);
     struct tm* localTime = nullptr;
-#pragma warning(suppress : 4996)
     localTime = std::localtime(&currentTime);
     return Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<int8_t>(localTime->tm_mday));
 }
+
+#endif
 
 bool operator==(const Date& left, const Date& right)
 {
@@ -299,15 +338,32 @@ std::string FormatTimeMs(int32_t milliseconds)
     return time;
 }
 
+#ifdef OTAVA
+
+DateTime GetCurrentDateTime()
+{
+    int yyyy = 0;
+    int month = 0;
+    int day = 0;
+    int seconds = 0;
+    current_date_time(yyyy, month, day, seconds);
+    Date date(yyyy, static_cast<Month>(static_cast<int8_t>(month)), day);
+    DateTime dt(date, seconds);
+    return dt;
+}
+
+#else
+
 DateTime GetCurrentDateTime()
 {
     std::time_t currentTime;
     std::time(&currentTime);
     struct tm* localTime = nullptr;
-#pragma warning(suppress : 4996)
     localTime = std::localtime(&currentTime);
     return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
+
+#endif
 
 bool operator==(const DateTime& left, const DateTime& right)
 {
@@ -370,95 +426,19 @@ DateTime ParseDateTime(const std::string& dateTimeStr)
     return DateTime(date, totalSecs);
 }
 
-std::string Timestamp::ToString() const
+#ifdef OTAVA
+
+std::int64_t CurrentMs()
 {
-    std::string s(dateTime.ToString());
-    s.append(1, '.').append(Format(std::to_string(nanosecs), 9, FormatWidth::exact, FormatJustify::right, '0'));
-    return s;
+    return current_ms();
 }
 
-bool operator==(const Timestamp& left, const Timestamp& right)
+int64_t GetCurrentTime()
 {
-    return left.GetDateTime() == right.GetDateTime() && left.Nanoseconds() == right.Nanoseconds();
+    return current_time();
 }
 
-bool operator<(const Timestamp& left, const Timestamp& right)
-{
-    if (left.GetDateTime() < right.GetDateTime()) return true;
-    if (left.GetDateTime() > right.GetDateTime()) return false;
-    return left.Nanoseconds() < right.Nanoseconds();
-}
-
-class TimestampProvider
-{
-public:
-    static void Init();
-    static void Done();
-    static TimestampProvider& Instance() { return *instance; }
-    Timestamp GetCurrentTimestamp();
-private:
-    static std::unique_ptr<TimestampProvider> instance;
-    TimestampProvider();
-    DateTime startDateTime;
-    std::chrono::steady_clock::time_point startTimePoint;
-    void Reset();
-};
-
-std::unique_ptr<TimestampProvider> TimestampProvider::instance;
-
-void TimestampProvider::Init()
-{
-    instance.reset(new TimestampProvider());
-}
-
-void TimestampProvider::Done()
-{
-    instance.reset();
-}
-
-void TimestampProvider::Reset()
-{
-    startDateTime = GetCurrentDateTime();
-    startTimePoint = std::chrono::steady_clock::now();
-}
-
-TimestampProvider::TimestampProvider() : startDateTime(), startTimePoint()
-{
-    Reset();
-}
-
-Timestamp TimestampProvider::GetCurrentTimestamp()
-{
-    if (GetCurrentDate() != startDateTime.GetDate())
-    {
-        Reset();
-    }
-    std::chrono::nanoseconds elapsed = std::chrono::steady_clock::now() - startTimePoint;
-    int64_t elapsedNanosecs = elapsed.count();
-    int elapsedSecs = static_cast<int>(elapsedNanosecs / 1000000000ll);
-    int nanosecs = static_cast<int>(elapsedNanosecs % 1000000000ll);
-    Date date = startDateTime.GetDate();
-    int secs = startDateTime.Seconds() + elapsedSecs;
-    if (secs >= secsInDay)
-    {
-        date = date.AddDays(1);
-        secs = secs - secsInDay;
-    }
-    Timestamp timestamp(DateTime(date, secs), nanosecs);
-    return timestamp;
-}
-
-Timestamp GetCurrentTimestamp()
-{
-    return TimestampProvider::Instance().GetCurrentTimestamp();
-}
-
-Timestamp ParseTimestamp(const std::string& timestampStr)
-{
-    DateTime dateTime = ParseDateTime(timestampStr.substr(0, 19));
-    int32_t nanosecs = std::stoi(timestampStr.substr(20));
-    return Timestamp(dateTime, nanosecs);
-}
+#else
 
 std::int64_t CurrentMs()
 {
@@ -471,6 +451,8 @@ int64_t GetCurrentTime()
     std::time(&currentTime);
     return currentTime;
 }
+
+#endif
 
 int64_t Hours(int64_t nanosecs)
 {
@@ -496,6 +478,8 @@ int64_t Microseconds(int64_t nanosecs)
 {
     return nanosecs / int64_t(1000ll);
 }
+
+#ifndef OTAVA
 
 std::string DurationStr(const std::chrono::nanoseconds& duration)
 {
@@ -524,6 +508,23 @@ std::string DurationStr(const std::chrono::nanoseconds& duration)
     return s;
 }
 
+#endif
+
+#ifdef OTAVA
+
+std::time_t Time()
+{
+    return current_time();
+}
+
+std::time_t MkTime(const DateTime& dt)
+{
+    Date date = dt.GetDate();
+    return make_time(date.Year(), static_cast<int8_t>(date.GetMonth()), date.Day(), dt.Seconds());
+}
+
+#else
+
 std::time_t Time()
 {
     std::time_t time = std::time(nullptr);
@@ -533,7 +534,6 @@ std::time_t Time()
 std::time_t MkTime(const DateTime& dt)
 {
     std::time_t time = std::time(nullptr);
-#pragma warning(suppress : 4996)
     std::tm* ltm = std::localtime(&time);
     std::tm tm{};
     tm.tm_year = dt.GetDate().Year() - 1900;
@@ -546,9 +546,12 @@ std::time_t MkTime(const DateTime& dt)
     return std::mktime(&tm);
 }
 
+#endif
+
+#ifndef OTAVA
+
 std::string TimeToString(std::time_t time)
 {
-#pragma warning(suppress : 4996)
     std::tm* ptm = std::localtime(&time);
     char buffer[20];
     // Format: 15.06.2009 20:20:00
@@ -558,19 +561,10 @@ std::string TimeToString(std::time_t time)
 
 DateTime ToDateTime(time_t time)
 {
-#pragma warning(suppress : 4996)
     struct tm* localTime = std::localtime(&time);
     return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
 
-void TimeInit()
-{
-    TimestampProvider::Init();
-}
-
-void TimeDone()
-{
-    TimestampProvider::Done();
-}
+#endif
 
 } // namespace util

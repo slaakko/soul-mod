@@ -26,7 +26,8 @@ soul::ast::SourcePos Reader::ReadSourcePos()
     int line = readerPtr->ReadULEB128UInt();
     if (line == 0) return soul::ast::SourcePos();
     int col = readerPtr->ReadULEB128UInt();
-    return soul::ast::SourcePos(-1, line, col);
+    int file = readerPtr->ReadULEB128UInt();
+    return soul::ast::SourcePos(file, line, col);
 }
 
 NodeKind Reader::ReadNodeKind()

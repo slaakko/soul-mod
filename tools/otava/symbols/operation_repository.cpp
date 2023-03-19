@@ -944,6 +944,10 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
+    if (classType->Name() == U"Actions")
+    {
+        int x = 0;
+    }
     FunctionSymbol* defaultCtor = classType->GetFunction(defaultCtorIndex);
     if (defaultCtor)
     {
@@ -1079,7 +1083,7 @@ ClassCopyCtorOperation::ClassCopyCtorOperation() : Operation(U"@constructor", 2)
 FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->IsClassTypeSymbol()) return nullptr;
+    if (type->PointerCount() != 1 || !type->RemovePointer(context)->RemoveConst(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
@@ -1227,7 +1231,7 @@ ClassMoveCtorOperation::ClassMoveCtorOperation() : Operation(U"@constructor", 2)
 FunctionSymbol* ClassMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     TypeSymbol* type = args[0]->GetType();
-    if (type->PointerCount() != 1 || !type->RemovePointer(context)->IsClassTypeSymbol()) return nullptr;
+    if (type->PointerCount() != 1 || !type->RemovePointer(context)->RemoveConst(context)->IsClassTypeSymbol()) return nullptr;
     if (!args[1]->GetType()->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
@@ -1574,7 +1578,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         boundMemberVariable->SetThisPtr(new BoundParameterNode(classMoveAssignment->ThisParam(context), sourcePos, classMoveAssignment->ThisParam(context)->GetReferredType(context)));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
-        args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
+        args.push_back(std::unique_ptr<BoundExpressionNode>(boundMemberVariable));
         ParameterSymbol* thatParam = classMoveAssignment->MemFunParameters(context)[1];
         BoundVariableNode* thatBoundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(

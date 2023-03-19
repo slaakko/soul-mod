@@ -1,0 +1,3 @@
+project intset;
+target=program;
+source <intset.cpp>;

@@ -163,12 +163,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="test.lexer.cpp" />
-    <ClCompile Include="test.lexer.ixx" />
+    <ClCompile Include="test.lexer.cppm" />
     <ClCompile Include="test.parser.cpp" />
-    <ClCompile Include="test.parser.ixx" />
-    <ClCompile Include="test.token.ixx" />
+    <ClCompile Include="test.parser.cppm" />
+    <ClCompile Include="test.token.cppm" />
     <ClCompile Include="test_rules.cpp" />
-    <ClCompile Include="test_rules.ixx" />
+    <ClCompile Include="test_rules.cppm" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="test.parser.opt.xml" />

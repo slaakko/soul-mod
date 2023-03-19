@@ -155,16 +155,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="attribute.cpp" />
-    <ClCompile Include="attribute.ixx" />
+    <ClCompile Include="attribute.cppm" />
     <ClCompile Include="content_handler.cpp" />
-    <ClCompile Include="content_handler.ixx" />
+    <ClCompile Include="content_handler.cppm" />
     <ClCompile Include="entity.cpp" />
-    <ClCompile Include="entity.ixx" />
+    <ClCompile Include="entity.cppm" />
     <ClCompile Include="xml_processor.cpp" />
-    <ClCompile Include="processor.ixx" />
-    <ClCompile Include="xml_processor.ixx" />
+    <ClCompile Include="processor.cppm" />
+    <ClCompile Include="xml_processor.cppm" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
     </ProjectReference>

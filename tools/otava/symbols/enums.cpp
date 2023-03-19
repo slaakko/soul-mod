@@ -316,9 +316,25 @@ void EnumCreator::Visit(otava::ast::EnumNode& node)
 
 void EnumCreator::Visit(otava::ast::EnumeratorDefinitionNode& node)
 {
+    Symbol* currentSymbol = context->GetSymbolTable()->CurrentScope()->GetSymbol();
+    if (!currentSymbol->IsEnumeratedTypeSymbol())
+    {
+        ThrowException("otava.symbols.enums: EnumCreator(): enum scope expected", node.GetSourcePos(), context);
+    }
+    EnumeratedTypeSymbol* enumType = static_cast<EnumeratedTypeSymbol*>(currentSymbol);
+    TypeSymbol* valueType = enumType->UnderlyingType();
+    if (!valueType)
+    {
+        valueType = context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType);
+    }
     if (node.Value())
     {
-        value = Evaluate(node.Value(), context);
+        Value* val = Evaluate(node.Value(), context);
+        if (val->IsIntegerValue())
+        {
+            IntegerValue* intVal = static_cast<IntegerValue*>(val);
+            value = context->GetEvaluationContext()->GetIntegerValue(intVal->GetValue(), util::ToUtf32(std::to_string(intVal->GetValue())), valueType);
+        }
         if (value && value->IsIntegerValue())
         {
             IntegerValue* integerValue = static_cast<IntegerValue*>(value);
@@ -333,15 +349,13 @@ void EnumCreator::Visit(otava::ast::EnumeratorDefinitionNode& node)
     {
         if (first)
         {
-            value = context->GetEvaluationContext()->GetIntegerValue(0, util::ToUtf32(std::to_string(0)), 
-                context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
+            value = context->GetEvaluationContext()->GetIntegerValue(0, util::ToUtf32(std::to_string(0)), valueType);
             prevValue = 0;
             first = false;
         }
         else
         {
-            value = context->GetEvaluationContext()->GetIntegerValue(prevValue + 1, util::ToUtf32(std::to_string(prevValue + 1)),
-                context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
+            value = context->GetEvaluationContext()->GetIntegerValue(prevValue + 1, util::ToUtf32(std::to_string(prevValue + 1)), valueType);
             ++prevValue;
         }
     }

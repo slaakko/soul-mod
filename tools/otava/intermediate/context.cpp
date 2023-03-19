@@ -149,9 +149,24 @@ FunctionType* Context::GetFunctionType(const SourcePos& sourcePos, int32_t typeI
     return types->GetFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
 }
 
-FwdDeclaredStructureType* Context::GetFwdDeclaredStructureType(const util::uuid& id, int32_t typeId)
+FwdDeclaredStructureType* Context::GetFwdDeclaredStructureType(const util::uuid& id)
 {
-    return types->GetFwdDeclaredStructureType(id, typeId);
+    return types->GetFwdDeclaredStructureType(id);
+}
+
+FwdDeclaredStructureType* Context::MakeFwdDeclaredStructureType(const util::uuid& id, int32_t typeId)
+{
+    return types->MakeFwdDeclaredStructureType(id, typeId);
+}
+
+void Context::AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type)
+{
+    types->AddFwdDependentType(fwdType, type);
+}
+
+void Context::ResolveForwardReferences(const util::uuid& id, StructureType* structureType)
+{
+    types->ResolveForwardReferences(id, structureType);
 }
 
 GlobalVariable* Context::AddGlobalVariable(const SourcePos& sourcePos, Type* type, Type* globalType, const std::string& variableName, Value* initializer, bool once)

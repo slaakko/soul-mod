@@ -154,15 +154,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pp.cpp" />
-    <ClCompile Include="pp.ixx" />
+    <ClCompile Include="pp.cppm" />
     <ClCompile Include="pp.lexer.cpp" />
-    <ClCompile Include="pp.lexer.ixx" />
+    <ClCompile Include="pp.lexer.cppm" />
     <ClCompile Include="pp.parser.cpp" />
-    <ClCompile Include="pp.parser.ixx" />
+    <ClCompile Include="pp.parser.cppm" />
     <ClCompile Include="pp_rules.cpp" />
-    <ClCompile Include="pp_rules.ixx" />
+    <ClCompile Include="pp_rules.cppm" />
     <ClCompile Include="state.cpp" />
-    <ClCompile Include="state.ixx" />
+    <ClCompile Include="state.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\soul\ast\ast.vcxproj">
@@ -176,6 +176,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\soul\token\token.vcxproj">
       <Project>{9a60acdf-1b45-4184-9d82-86fe5ed2d708}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\ast\ast.vcxproj">
       <Project>{66f070ac-324d-4b4a-b3f3-d8f48ea46179}</Project>

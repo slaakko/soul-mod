@@ -20,9 +20,9 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
         }
         return;
     }
-    std::string ixxFilePath = tokenFile->FilePath() + ".ixx";
-    std::ofstream ixxFile(ixxFilePath);
-    util::CodeFormatter formatter(ixxFile);
+    std::string cppmFilePath = tokenFile->FilePath() + ".cppm";
+    std::ofstream cppmFile(cppmFilePath);
+    util::CodeFormatter formatter(cppmFile);
     soul::ast::slg::TokenCollection* tokenCollection = tokenFile->GetTokenCollection();
     formatter.WriteLine();
     formatter.WriteLine("// this file has been automatically generated from '" + tokenFile->FilePath() + "' using soul lexer generator version 4.0.0");
@@ -46,7 +46,7 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
     formatter.WriteLine("} // " + tokenNamespaceName);
     if (verbose)
     {
-        std::cout << "==> " << ixxFilePath << std::endl;
+        std::cout << "==> " << cppmFilePath << std::endl;
     }
 }
 

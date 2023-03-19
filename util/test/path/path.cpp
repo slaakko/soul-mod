@@ -6,5 +6,7 @@ int main()
 {
     std::filesystem::path f = util::SoulRoot();
     f /= "util";
+    std::cout << f.generic_string() << "\n";
     return 0;
 }
+

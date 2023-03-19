@@ -566,13 +566,34 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         otava::intermediate::Value* param = emitter.GetParam(i);
         otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters(&context)[i];
-        emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
+        if (parameter->GetType()->IsClassTypeSymbol())
+        {
+            otava::symbols::ClassTypeSymbol* classTypeSymbol = static_cast<otava::symbols::ClassTypeSymbol*>(parameter->GetType());
+            if (classTypeSymbol->CopyCtor())
+            {
+                otava::intermediate::FunctionType* copyCtorType = static_cast<otava::intermediate::FunctionType*>(classTypeSymbol->CopyCtor()->IrType(
+                    emitter, node.GetSourcePos(), &context));
+                otava::intermediate::Function* copyCtor = emitter.GetOrInsertFunction(classTypeSymbol->CopyCtor()->IrName(&context), copyCtorType);
+                std::vector<otava::intermediate::Value*> args;
+                args.push_back(static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
+                args.push_back(param);
+                emitter.EmitCall(copyCtor, args);
+            }
+            else
+            {
+                otava::symbols::ThrowException("class type '" + util::ToUtf8(classTypeSymbol->FullName()) + "' has no copy constructor needed by function '" +
+                    util::ToUtf8(functionDefinition->FullName()) + "'", node.GetSourcePos(), &context);
+            }
+        }
+        else
+        {
+            emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
+        }
     }
     if (functionDefinition->ReturnsClass())
     {
         otava::intermediate::Value* param = emitter.GetParam(np);
         otava::symbols::ParameterSymbol* parameter = functionDefinition->ReturnValueParam();
-        emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
     }
     otava::symbols::BoundCtorInitializerNode* ctorInitializer = node.CtorInitializer();
     if (ctorInitializer)

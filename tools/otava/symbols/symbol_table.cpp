@@ -754,6 +754,7 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
     std::set<Scope*> visited;
     for (const auto& [scope, lookup] : scopeLookups)
     {
+        scope->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
         Scope* scp = scope;
         Scope* classScope = scp->GetClassScope();
         if (classScope)
@@ -765,7 +766,10 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
                 scp = specialization->ClassTemplate()->GetScope();
             }
         }
-        scp->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
+        if (scp != scope)
+        {
+            scp->Lookup(groupName, SymbolGroupKind::functionSymbolGroup, lookup, LookupFlags::dontResolveSingle | LookupFlags::all, symbols, visited, context);
+        }
     }
     for (Symbol* symbol : symbols)
     {
@@ -1033,6 +1037,10 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, Ty
     classTypeSymbol->SetAccess(CurrentAccess());
     classTypeSymbol->SetClassKind(classKind);
     classTypeSymbol->SetSpecialization(specialization);
+    if (specialization)
+    {
+        int x = 0;
+    }
     currentScope->SymbolScope()->AddSymbol(classTypeSymbol, node->GetSourcePos(), context);
     classGroup->AddClass(classTypeSymbol);
     MapNode(node, classTypeSymbol);

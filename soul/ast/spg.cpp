@@ -110,7 +110,7 @@ void ThrowCannotBeOptimized()
     throw std::runtime_error("grammars that contain character, string or character set parsers cannot be optimized currently");
 }
 
-ParamVar::ParamVar(const soul::ast::SourcePos& sourcePos_, Kind kind_, soul::ast::cpp::TypeIdNode* type_, const std::string& name_) : 
+ParamVar::ParamVar(const soul::ast::SourcePos& sourcePos_, ParamVarKind kind_, soul::ast::cpp::TypeIdNode* type_, const std::string& name_) :
     sourcePos(sourcePos_), kind(kind_), type(type_), name(name_)
 {
 }
@@ -120,7 +120,7 @@ ParamVar::~ParamVar()
 }
 
 Parameter::Parameter(const soul::ast::SourcePos& sourcePos_, soul::ast::cpp::TypeIdNode* type_, const std::string& name_) : 
-    ParamVar(sourcePos_, ParamVar::Kind::parameter, type_, name_)
+    ParamVar(sourcePos_, ParamVarKind::parameter, type_, name_)
 {
 }
 
@@ -130,7 +130,7 @@ ParamVar* Parameter::Clone() const
 }
 
 Variable::Variable(const soul::ast::SourcePos& sourcePos_, soul::ast::cpp::TypeIdNode* type_, const std::string& name_) : 
-    ParamVar(sourcePos_, ParamVar::Kind::variable, type_, name_)
+    ParamVar(sourcePos_, ParamVarKind::variable, type_, name_)
 {
 }
 
@@ -798,11 +798,11 @@ void RuleParser::SetInfo(const std::string& info_)
 
 void RuleParser::AddParamOrVariable(ParamVar* paramVar)
 {
-    if (paramVar->GetKind() == ParamVar::Kind::parameter)
+    if (paramVar->Kind() == ParamVarKind::parameter)
     {
         params.push_back(std::unique_ptr<Parameter>(static_cast<Parameter*>(paramVar)));
     }
-    else if (paramVar->GetKind() == ParamVar::Kind::variable)
+    else if (paramVar->Kind() == ParamVarKind::variable)
     {
         vars.push_back(std::unique_ptr<Variable>(static_cast<Variable*>(paramVar)));
     }
@@ -848,7 +848,7 @@ Parser* RuleParser::Clone() const
     {
         clone->SetReturnType(static_cast<soul::ast::cpp::TypeIdNode*>(returnType->Clone()));
     }
-    for (const auto& nonterminal : nonterminals)
+    for (auto nonterminal : nonterminals)
     {
         clone->AddNonterminal(static_cast<NonterminalParser*>(nonterminal->Clone()));
     }

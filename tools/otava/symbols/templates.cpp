@@ -120,7 +120,8 @@ TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<Te
     auto it = templateParameterMap.find(this);
     if (it != templateParameterMap.cend())
     {
-        return it->second;
+        TypeSymbol* templateArgumentType = it->second;
+        return templateArgumentType;
     }
     else
     {

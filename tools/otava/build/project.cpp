@@ -13,6 +13,11 @@ import util;
 
 namespace otava::build {
 
+int32_t MakeFileId(int16_t projectId, int16_t fileIndex)
+{
+    return static_cast<int32_t>(projectId) << 16 | static_cast<int32_t>(fileIndex);
+}
+
 Define::Define(const std::string& symbol_, int64_t value_) : symbol(symbol_), value(value_)
 {
 }
@@ -47,9 +52,15 @@ void LoadImportedModules(Project* project, otava::symbols::Module* module, otava
     }
 }
 
-Project::Project(const std::string& filePath_, const std::string& name_) : filePath(filePath_), name(name_), initialized(false), scanned(false), loaded(false), target(Target::program)
+Project::Project(const std::string& filePath_, const std::string& name_) : 
+    fileMap(nullptr), filePath(filePath_), name(name_), initialized(false), scanned(false), loaded(false), target(Target::program)
 {
     root = util::Path::GetDirectoryName(filePath);
+}
+
+int16_t Project::Id() const
+{
+    return static_cast<int16_t>(std::hash<std::string>()(name) & 0x7FFF);
 }
 
 void Project::AddDefine(const std::string& symbol, int64_t value)
@@ -66,12 +77,6 @@ void Project::AddRoots(otava::symbols::ModuleMapper& moduleMapper)
     }
 }
 
-void Project::Resize()
-{
-    fileMap.Resize();
-    modules.resize(fileMap.Count());
-}
-
 void Project::AddInterfaceFilePath(const std::string& interfaceFilePath)
 {
     interfaceFilePaths.push_back(interfaceFilePath);
@@ -82,9 +87,9 @@ void Project::AddSourceFilePath(const std::string& sourceFilePath)
     sourceFilePaths.push_back(sourceFilePath);
 }
 
-const std::string& Project::GetModuleSourceFilePath(int32_t file) const
+const std::string& Project::GetModuleSourceFilePath(int32_t fileId) const
 {
-    return fileMap.GetFilePath(file);
+    return fileMap->GetFilePath(fileId);
 }
 
 void Project::InitModules()
@@ -92,7 +97,6 @@ void Project::InitModules()
     if (initialized) return;
     initialized = true;
     MapFiles();
-    Resize();
 }
 
 void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper)
@@ -151,17 +155,11 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper)
     }
 }
 
-void Project::SetModule(int32_t file, otava::symbols::Module* module)
+void Project::SetModule(int32_t fileId, otava::symbols::Module* module)
 {
-    if (file >= 0 && file < modules.size())
-    {
-        modules[file].reset(module);
-    }
-    else
-    {
-        otava::ast::SetExceptionThrown();
-        throw std::runtime_error("invalid file index");
-    }
+    module->SetIndex(modules.size());
+    modules.push_back(std::unique_ptr<otava::symbols::Module>(module));
+    fileIdModuleMap[fileId] = module;
 }
 
 otava::symbols::Module* Project::GetModule(const std::string& moduleName) const
@@ -177,44 +175,43 @@ otava::symbols::Module* Project::GetModule(const std::string& moduleName) const
     }
 }
 
-otava::symbols::Module* Project::GetModule(int32_t file) const
+otava::symbols::Module* Project::GetModule(int32_t fileId) const
 {
-    if (file >= 0 && file < modules.size())
+    auto it = fileIdModuleMap.find(fileId);
+    if (it != fileIdModuleMap.end())
     {
-        return modules[file].get();
+        return it->second;
     }
     else
     {
         otava::ast::SetExceptionThrown();
-        throw std::runtime_error("invalid file index");
+        throw std::runtime_error("invalid file id");
     }
 }
 
-otava::symbols::Module* Project::ReleaseModule(int32_t file)
+otava::symbols::Module* Project::ReleaseModule(int32_t fileId)
 {
-    if (file >= 0 && file < modules.size())
-    {
-        return modules[file].release();
-    }
-    else
-    {
-        otava::ast::SetExceptionThrown();
-        throw std::runtime_error("invalid file index");
-    }
+    otava::symbols::Module* module = GetModule(fileId);
+    return modules[module->Index()].release();
 }
 
 void Project::MapFiles()
 {
     root = util::Path::GetDirectoryName(filePath);
+    int16_t fileIndex = 0;
     for (const auto& interfaceFileName : interfaceFilePaths)
     {
         std::string interfaceFilePath = util::GetFullPath(util::Path::Combine(root, interfaceFileName));
-        interfaceFiles.push_back(fileMap.AddFilePath(interfaceFilePath));
+        int32_t interfaceFileId = MakeFileId(Id(), fileIndex++);
+        fileMap->MapFile(interfaceFilePath, interfaceFileId);
+        interfaceFiles.push_back(interfaceFileId);
     }
     for (const auto& sourceFileName : sourceFilePaths)
     {
         std::string sourceFilePath = util::GetFullPath(util::Path::Combine(root, sourceFileName));
-        sourceFiles.push_back(fileMap.AddFilePath(sourceFilePath));
+        int32_t sourceFileId = MakeFileId(Id(), fileIndex++);
+        fileMap->MapFile(sourceFilePath, sourceFileId);
+        sourceFiles.push_back(sourceFileId);
     }
 }
 
@@ -224,7 +221,7 @@ bool Project::UpToDate() const
     {
         if (module)
         {
-            const std::string& moduleSourceFilePath = GetModuleSourceFilePath(module->File());
+            const std::string& moduleSourceFilePath = GetModuleSourceFilePath(module->FileId());
             std::string moduleFilePath = otava::symbols::MakeModuleFilePath(root, module->Name());
             if (!std::filesystem::exists(moduleFilePath) || std::filesystem::last_write_time(moduleFilePath) < std::filesystem::last_write_time(moduleSourceFilePath))
             {

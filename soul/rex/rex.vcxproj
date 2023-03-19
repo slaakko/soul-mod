@@ -164,24 +164,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="algorithm.cpp" />
-    <ClCompile Include="algorithm.ixx" />
+    <ClCompile Include="algorithm.cppm" />
     <ClCompile Include="context.cpp" />
-    <ClCompile Include="context.ixx" />
+    <ClCompile Include="context.cppm" />
     <ClCompile Include="match.cpp" />
-    <ClCompile Include="match.ixx" />
+    <ClCompile Include="match.cppm" />
     <ClCompile Include="nfa.cpp" />
-    <ClCompile Include="nfa.ixx" />
-    <ClCompile Include="rex.ixx" />
+    <ClCompile Include="nfa.cppm" />
+    <ClCompile Include="rex.cppm" />
     <ClCompile Include="rex.lexer.cpp" />
-    <ClCompile Include="rex.lexer.ixx" />
+    <ClCompile Include="rex.lexer.cppm" />
     <ClCompile Include="rex.parser.cpp" />
-    <ClCompile Include="rex.parser.ixx" />
-    <ClCompile Include="rex.token.ixx" />
+    <ClCompile Include="rex.parser.cppm" />
+    <ClCompile Include="rex.token.cppm" />
     <ClCompile Include="rex_rules.cpp" />
-    <ClCompile Include="rex_rules.ixx" />
+    <ClCompile Include="rex_rules.cppm" />
     <ClCompile Include="symbol.cpp" />
-    <ClCompile Include="symbol.ixx" />
-    <ClCompile Include="token_parser.ixx" />
+    <ClCompile Include="symbol.cppm" />
+    <ClCompile Include="token_parser.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">

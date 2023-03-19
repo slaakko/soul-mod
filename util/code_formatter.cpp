@@ -106,6 +106,18 @@ void WriteUtf8(std::ostream& s, const std::string& str)
     s << str;
 }
 
+#elif defined(OTAVA)
+
+bool IsHandleRedirected(int handle)
+{
+    return !std::isatty(handle);
+}
+
+void WriteUtf8(std::ostream& s, const std::string& str)
+{
+    s << str;
+}
+
 #else
 
 #error unknown platform

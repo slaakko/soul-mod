@@ -1,0 +1,3 @@
+project class_param;
+target=program;
+source <class_param.cpp>;

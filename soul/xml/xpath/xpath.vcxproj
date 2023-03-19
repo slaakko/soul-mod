@@ -155,28 +155,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="context.cpp" />
-    <ClCompile Include="context.ixx" />
+    <ClCompile Include="context.cppm" />
     <ClCompile Include="evaluate.cpp" />
-    <ClCompile Include="evaluate.ixx" />
+    <ClCompile Include="evaluate.cppm" />
     <ClCompile Include="expr.cpp" />
-    <ClCompile Include="expr.ixx" />
+    <ClCompile Include="expr.cppm" />
     <ClCompile Include="function.cpp" />
-    <ClCompile Include="function.ixx" />
+    <ClCompile Include="function.cppm" />
     <ClCompile Include="object.cpp" />
-    <ClCompile Include="object.ixx" />
+    <ClCompile Include="object.cppm" />
     <ClCompile Include="parser_rules.cpp" />
-    <ClCompile Include="parser_rules.ixx" />
-    <ClCompile Include="token_parser.ixx" />
-    <ClCompile Include="xpath.ixx" />
+    <ClCompile Include="parser_rules.cppm" />
+    <ClCompile Include="token_parser.cppm" />
+    <ClCompile Include="xpath.cppm" />
     <ClCompile Include="xpath.lexer.cpp" />
-    <ClCompile Include="xpath.lexer.ixx" />
+    <ClCompile Include="xpath.lexer.cppm" />
     <ClCompile Include="xpath.parser.cpp" />
-    <ClCompile Include="xpath.parser.ixx" />
-    <ClCompile Include="xpath.token.ixx" />
+    <ClCompile Include="xpath.parser.cppm" />
+    <ClCompile Include="xpath.token.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>

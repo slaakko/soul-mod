@@ -94,6 +94,8 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
                 context);
         }
         InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
+        instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
         std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
         for (int i = 0; i < arity; ++i)
         {
@@ -132,6 +134,7 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
             context->SetFunctionDefinitionNode(functionDefinitionNode);
             functionDefinitionNode->Accept(instantiator);
             specialization = context->GetSpecialization();
+            functionTemplateRepository->AddFunctionDefinition(key, specialization, node);
             context->PushBoundFunction(new BoundFunctionNode(specialization, sourcePos));
             BindFunction(functionDefinitionNode, specialization, context);
             context->PopFlags();
@@ -153,7 +156,8 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
                 "': " + std::string(ex.what()), node->GetSourcePos(), context);
         }
         context->GetSymbolTable()->EndScope();
-        functionTemplateRepository->AddFunctionDefinition(key, specialization, node);
+        instantiationScope.PopParentScope();
+        instantiationScope.PopParentScope();
         return specialization;
     }
     else

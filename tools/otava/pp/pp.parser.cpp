@@ -200,6 +200,15 @@ soul::parser::Match PPParser<Lexer>::PPCommand(Lexer& lexer, otava::pp::state::S
                 }
                 break;
             }
+            case PRAGMA:
+            {
+                soul::parser::Match match = PPParser<Lexer>::PragmaCommand(lexer, state);
+                if (match.hit)
+                {
+                    *parentMatch1 = match;
+                }
+                break;
+            }
         }
         *parentMatch0 = match;
         if (!match.hit)
@@ -833,6 +842,131 @@ soul::parser::Match PPParser<Lexer>::IncludeCommand(Lexer& lexer, otava::pp::sta
 }
 
 template<typename Lexer>
+soul::parser::Match PPParser<Lexer>::PragmaCommand(Lexer& lexer, otava::pp::state::State* state)
+{
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    int64_t parser_debug_match_pos = 0;
+    bool parser_debug_write_to_log = lexer.Log() != nullptr;
+    if (parser_debug_write_to_log)
+    {
+        parser_debug_match_pos = lexer.GetPos();
+        soul::lexer::WriteBeginRuleToLog(lexer, "PragmaCommand");
+    }
+    #endif
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113420);
+    soul::parser::Match match(false);
+    soul::parser::Match* parentMatch0 = &match;
+    {
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch1 = &match;
+        {
+            soul::parser::Match match(false);
+            if (*lexer == PRAGMA)
+            {
+                ++lexer;
+                match.hit = true;
+            }
+            *parentMatch1 = match;
+        }
+        if (match.hit)
+        {
+            soul::parser::Match match(false);
+            soul::parser::Match* parentMatch2 = &match;
+            {
+                soul::parser::Match match(true);
+                soul::parser::Match* parentMatch3 = &match;
+                {
+                    while (true)
+                    {
+                        int64_t save = lexer.GetPos();
+                        {
+                            soul::parser::Match match(false);
+                            soul::parser::Match* parentMatch4 = &match;
+                            {
+                                soul::parser::Match match(false);
+                                soul::parser::Match* parentMatch5 = &match;
+                                int64_t save = lexer.GetPos();
+                                {
+                                    soul::parser::Match match(false);
+                                    if (*lexer != soul::lexer::END_TOKEN)
+                                    {
+                                        ++lexer;
+                                        match.hit = true;
+                                    }
+                                    *parentMatch5 = match;
+                                }
+                                if (match.hit)
+                                {
+                                    soul::parser::Match match(false);
+                                    soul::parser::Match* parentMatch6 = &match;
+                                    {
+                                        int64_t tmp = lexer.GetPos();
+                                        lexer.SetPos(save);
+                                        save = tmp;
+                                        soul::parser::Match match(false);
+                                        if (*lexer == RPAREN)
+                                        {
+                                            ++lexer;
+                                            match.hit = true;
+                                        }
+                                        *parentMatch6 = match;
+                                    }
+                                    if (!match.hit)
+                                    {
+                                        lexer.SetPos(save);
+                                    }
+                                    *parentMatch5 = soul::parser::Match(!match.hit, match.value);
+                                }
+                                *parentMatch4 = match;
+                            }
+                            if (match.hit)
+                            {
+                                *parentMatch3 = match;
+                            }
+                            else
+                            {
+                                lexer.SetPos(save);
+                                break;
+                            }
+                        }
+                    }
+                }
+                *parentMatch2 = match;
+            }
+            *parentMatch1 = match;
+        }
+        *parentMatch0 = match;
+    }
+    if (match.hit)
+    {
+        soul::parser::Match match(false);
+        soul::parser::Match* parentMatch7 = &match;
+        {
+            soul::parser::Match match(false);
+            if (*lexer == RPAREN)
+            {
+                ++lexer;
+                match.hit = true;
+            }
+            *parentMatch7 = match;
+        }
+        *parentMatch0 = match;
+    }
+    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+    if (parser_debug_write_to_log)
+    {
+        if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PragmaCommand");
+        else soul::lexer::WriteFailureToLog(lexer, "PragmaCommand");
+    }
+    #endif
+    if (!match.hit)
+    {
+        match.value = nullptr;
+    }
+    return match;
+}
+
+template<typename Lexer>
 soul::parser::Match PPParser<Lexer>::Header(Lexer& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -844,7 +978,7 @@ soul::parser::Match PPParser<Lexer>::Header(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Header");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113420);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113421);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
@@ -904,7 +1038,7 @@ soul::parser::Match PPParser<Lexer>::Expression(Lexer& lexer, otava::pp::state::
         soul::lexer::WriteBeginRuleToLog(lexer, "Expression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113421);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113422);
     std::unique_ptr<soul::parser::Value<int64_t>> expr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -949,7 +1083,7 @@ soul::parser::Match PPParser<Lexer>::LogicalOrExpr(Lexer& lexer, otava::pp::stat
         soul::lexer::WriteBeginRuleToLog(lexer, "LogicalOrExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113422);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113423);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> right;
@@ -1081,7 +1215,7 @@ soul::parser::Match PPParser<Lexer>::LogicalAndExpr(Lexer& lexer, otava::pp::sta
         soul::lexer::WriteBeginRuleToLog(lexer, "LogicalAndExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113423);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113424);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> right;
@@ -1213,7 +1347,7 @@ soul::parser::Match PPParser<Lexer>::InclusiveOrExpression(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "InclusiveOrExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113424);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113425);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> right;
@@ -1345,7 +1479,7 @@ soul::parser::Match PPParser<Lexer>::ExclusiveOrExpression(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "ExclusiveOrExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113425);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113426);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> right;
@@ -1477,7 +1611,7 @@ soul::parser::Match PPParser<Lexer>::AndExpression(Lexer& lexer, otava::pp::stat
         soul::lexer::WriteBeginRuleToLog(lexer, "AndExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113426);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113427);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> right;
@@ -1609,7 +1743,7 @@ soul::parser::Match PPParser<Lexer>::EqualityExpression(Lexer& lexer, otava::pp:
         soul::lexer::WriteBeginRuleToLog(lexer, "EqualityExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113427);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113428);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> rightEq;
@@ -1795,7 +1929,7 @@ soul::parser::Match PPParser<Lexer>::RelationalExpression(Lexer& lexer, otava::p
         soul::lexer::WriteBeginRuleToLog(lexer, "RelationalExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113428);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113429);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> rightLess;
@@ -2063,7 +2197,7 @@ soul::parser::Match PPParser<Lexer>::ShiftExpression(Lexer& lexer, otava::pp::st
         soul::lexer::WriteBeginRuleToLog(lexer, "ShiftExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113429);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113430);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> rightLShift;
@@ -2249,7 +2383,7 @@ soul::parser::Match PPParser<Lexer>::AdditiveExpression(Lexer& lexer, otava::pp:
         soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113430);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113431);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> rightPlus;
@@ -2435,7 +2569,7 @@ soul::parser::Match PPParser<Lexer>::MultiplicativeExpression(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113431);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113432);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> left;
     std::unique_ptr<soul::parser::Value<int64_t>> rightMul;
@@ -2662,7 +2796,7 @@ soul::parser::Match PPParser<Lexer>::UnaryExpression(Lexer& lexer, otava::pp::st
         soul::lexer::WriteBeginRuleToLog(lexer, "UnaryExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113432);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113433);
     int64_t value = int64_t();
     std::unique_ptr<soul::parser::Value<int64_t>> plusExpr;
     std::unique_ptr<soul::parser::Value<int64_t>> minusExpr;
@@ -2913,7 +3047,7 @@ soul::parser::Match PPParser<Lexer>::PrimaryExpr(Lexer& lexer, otava::pp::state:
         soul::lexer::WriteBeginRuleToLog(lexer, "PrimaryExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113433);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113434);
     std::unique_ptr<soul::parser::Value<int64_t>> defined;
     std::unique_ptr<soul::parser::Value<int64_t>> value;
     soul::parser::Match match(false);
@@ -3095,7 +3229,7 @@ soul::parser::Match PPParser<Lexer>::DefinedExpr(Lexer& lexer, otava::pp::state:
         soul::lexer::WriteBeginRuleToLog(lexer, "DefinedExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113434);
+    soul::lexer::RuleGuard ruleGuard(lexer, 1180017559924113435);
     std::string symbol = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

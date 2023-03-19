@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -150,13 +150,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="lex.ixx" />
+    <ClCompile Include="lex.cppm" />
     <ClCompile Include="re_lexer.cpp" />
-    <ClCompile Include="re_lexer.ixx" />
+    <ClCompile Include="re_lexer.cppm" />
     <ClCompile Include="slg_lexer.cpp" />
-    <ClCompile Include="slg_lexer.ixx" />
+    <ClCompile Include="slg_lexer.cppm" />
     <ClCompile Include="spg_lexer.cpp" />
-    <ClCompile Include="spg_lexer.ixx" />
+    <ClCompile Include="spg_lexer.cppm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="re_lexer.lexer" />
@@ -168,7 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>

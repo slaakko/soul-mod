@@ -139,6 +139,12 @@ TypeSymbol* CompoundTypeSymbol::Unify(TypeSymbol* argType, Context* context)
     return context->GetSymbolTable()->MakeCompoundType(newBaseType, UnifyDerivations(derivations, argType->GetDerivations()));
 }
 
+TypeSymbol* CompoundTypeSymbol::UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context)
+{
+    TypeSymbol* newBaseType = baseType->UnifyTemplateArgumentType(templateParameterMap, context);
+    return context->GetSymbolTable()->MakeCompoundType(newBaseType, GetDerivations());
+}
+
 otava::intermediate::Type* CompoundTypeSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     otava::intermediate::Type* type = emitter.GetType(Id());
@@ -173,6 +179,13 @@ TypeSymbol* CompoundTypeSymbol::DirectType(Context* context)
 {
     TypeSymbol* directBaseType = baseType->DirectType(context);
     return context->GetSymbolTable()->MakeCompoundType(directBaseType, derivations);
+}
+
+bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
+{
+    if (visited.find(this) != visited.end()) return true;
+    visited.insert(this);
+    return baseType->IsComplete(visited);
 }
 
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations)

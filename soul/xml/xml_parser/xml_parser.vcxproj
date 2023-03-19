@@ -154,6 +154,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\ast\ast.vcxproj">
       <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
     </ProjectReference>
@@ -172,11 +175,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="xml_document.parser.cpp" />
-    <ClCompile Include="xml_document.parser.ixx" />
+    <ClCompile Include="xml_document.parser.cppm" />
     <ClCompile Include="xml_parser.cpp" />
-    <ClCompile Include="xml_parser.ixx" />
+    <ClCompile Include="xml_parser.cppm" />
     <ClCompile Include="xml_parser_rules.cpp" />
-    <ClCompile Include="xml_parser_rules.ixx" />
+    <ClCompile Include="xml_parser_rules.cppm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="xml_document.parser" />

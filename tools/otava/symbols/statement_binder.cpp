@@ -139,10 +139,6 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
 void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
 {
     Symbol* symbol = context->GetSymbolTable()->GetSymbol(&node);
-    if (symbol->IrName(context) == "op_eq_111C89C19AC3711BF520A0354A3F0697D888E7D6_compile_unit_2530D28A2915F7A69558611F6C87946CAFED88A9")
-    {
-        int x = 0;
-    }
     SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
     switch (specialFunctionKind)
     {
@@ -189,6 +185,7 @@ void StatementBinder::Visit(otava::ast::FunctionDefinitionNode& node)
         GenerateDestructorTerminator(node.GetSourcePos());
     }
     context->GetSymbolTable()->EndScopeGeneric(context);
+    functionDefinitionSymbol->CheckGenerateClassCopyCtor(node.GetSourcePos(), context);
 }
 
 void StatementBinder::Visit(otava::ast::ConstructorNode& node)
@@ -501,6 +498,10 @@ void StatementBinder::Visit(otava::ast::MemberInitializerNode& node)
         initializerArgs.clear();
         if (memberVariableSymbol)
         {
+            if (memberVariableSymbol->Name() == U"key_of")
+            {
+                int x = 0;
+            }
             BoundVariableNode* boundVariableNode = new BoundVariableNode(memberVariableSymbol, node.GetSourcePos());
             ParameterSymbol* thisParam = context->GetBoundFunction()->GetFunctionDefinitionSymbol()->ThisParam(context);
             BoundParameterNode* thisPtr = new BoundParameterNode(thisParam, node.GetSourcePos(), thisParam->GetType());
@@ -1392,6 +1393,10 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (functionDefinitionSymbol->IrName(context) == "ctor_class_Keyword_2CACE8EEA622808152B002F3E63A53A8A649B09B_6B9E1965313FFA812D413874F32575D37EF964F6")
+    {
+        int x = 0;
+    }
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;
     if (context->GetFlag(ContextFlags::parseMemberFunction)) return;

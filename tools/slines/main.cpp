@@ -12,7 +12,7 @@ std::string version = "1.0.0";
 void PrintHelp()
 {
     std::cout << "slines version " << version << std::endl;
-    std::cout << "usage: slines [options] { file.sln | file.vcxproj | file.ixx | file.cpp }" << std::endl;
+    std::cout << "usage: slines [options] { file.sln | file.vcxproj | file.cppm | file.cpp }" << std::endl;
     std::cout << "print number of source lines in solution, project, or source file." << std::endl;
     std::cout << "options:" << std::endl;
     std::cout << "--help | -h" << std::endl;
@@ -86,7 +86,7 @@ int main(int argc, const char** argv)
             {
                 // todo
             }
-            else if (file.ends_with(".ixx") || file.ends_with(".cpp"))
+            else if (file.ends_with(".cppm") || file.ends_with(".cpp"))
             {
                 // todo
             }
