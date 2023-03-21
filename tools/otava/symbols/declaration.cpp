@@ -29,6 +29,7 @@ import otava.symbols.modules;
 import otava.symbols.conversion.table;
 import otava.symbols.expression.binder;
 import otava.symbols.type_compare;
+import otava.symbols.type.symbol;
 import otava.ast.error;
 import otava.ast.attribute;
 import otava.ast.visitor;
@@ -763,7 +764,7 @@ Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context)
 }
 
 int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, Context* context)
-{
+{   
     int scopes = 0;
     if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {

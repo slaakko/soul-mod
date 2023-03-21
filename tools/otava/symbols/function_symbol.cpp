@@ -267,6 +267,16 @@ ParameterSymbol* ParameterSymbol::Copy() const
     return copy;
 }
 
+bool ParameterSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+{ 
+    if (visited.find(this) == visited.end())
+    {
+        visited.insert(this);
+        return type->IsTemplateParameterInstantiation(context, visited);
+    }
+    return false;
+}
+
 FunctionSymbol::FunctionSymbol(const std::u32string& name_) : 
     ContainerSymbol(SymbolKind::functionSymbol, name_), 
     memFunParamsConstructed(false), 
@@ -369,6 +379,23 @@ int FunctionSymbol::MinMemFunArity(Context* context) const
         }
     }
     return minMemFunArity;
+}
+
+bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+{
+    if (visited.find(this) == visited.end())
+    {
+        visited.insert(this);
+        for (const auto& parameter : MemFunParameters(context))
+        {
+            if (parameter->IsTemplateParameterInstantiation(context, visited)) return true;
+        }
+        if (returnType)
+        {
+            if (returnType->IsTemplateParameterInstantiation(context, visited)) return true;
+        }
+    }
+    return false;
 }
 
 bool FunctionSymbol::IsVirtual() const

@@ -28,7 +28,8 @@ Context::Context() :
     aliasType(nullptr),
     ptr(nullptr),
     memFunDefSymbolIndex(-1),
-    rejectTemplateId(false)
+    rejectTemplateId(false),
+    switchCondType(nullptr)
 {
 }
 
@@ -197,6 +198,18 @@ void Context::PopBoundFunction()
 {
     boundFunction.reset(boundFunctionStack.top().release());
     boundFunctionStack.pop();
+}
+
+void Context::PushSwitchCondType(TypeSymbol* switchCondType_)
+{
+    switchCondTypeStack.push(switchCondType);
+    switchCondType = switchCondType_;
+}
+
+void Context::PopSwitchCondType()
+{
+    switchCondType = switchCondTypeStack.top();
+    switchCondTypeStack.pop();
 }
 
 } // namespace otava::symbols

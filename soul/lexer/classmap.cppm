@@ -32,6 +32,8 @@ private:
     int32_t upperBound;
 };
 
+#ifndef OTAVA
+
 template<typename Char>
 ClassMap<Char>* MakeClassMap(const std::string& classMapName)
 {
@@ -51,5 +53,7 @@ ClassMap<Char>* MakeClassMap(const std::string& classMapName)
     ClassMap<Char>* classMap = new ClassMap<Char>(data, size);
     return classMap;
 }
+
+#endif
 
 } // soul::lexer

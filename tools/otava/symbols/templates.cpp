@@ -129,6 +129,15 @@ TypeSymbol* TemplateParameterSymbol::UnifyTemplateArgumentType(const std::map<Te
     }
 }
 
+bool TemplateParameterSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
+{ 
+    if (visited.find(this) == visited.end())
+    {
+        visited.insert(this);
+    }
+    return true; 
+}
+
 BoundTemplateParameterSymbol::BoundTemplateParameterSymbol(const std::u32string & name_) : 
     TypeSymbol(SymbolKind::boundTemplateParameterSymbol, name_), 
     templateParameterSymbol(nullptr), 

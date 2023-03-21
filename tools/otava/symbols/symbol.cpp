@@ -116,6 +116,15 @@ std::u32string Symbol::FullName() const
     return fullName;
 }
 
+bool Symbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+{
+    if (visited.find(this) == visited.end())
+    {
+        visited.insert(this);
+    }
+    return false;
+}
+
 std::string Symbol::IrName(Context* context) const
 { 
     return util::ToUtf8(Name()); 

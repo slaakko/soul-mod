@@ -85,6 +85,7 @@ public:
     ParameterSymbol(const std::u32string& name_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "paremeter"; }
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     TypeSymbol* GetType() const { return type; }
     TypeSymbol* GetReferredType(Context* context) const;
     void SetType(TypeSymbol* type_) { type = type_; }
@@ -114,6 +115,7 @@ public:
     int MinMemFunArity(Context* context) const;
     std::string SymbolKindStr() const override { return "function symbol"; }
     std::string SymbolDocKindStr() const override { return "function"; }
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     virtual FunctionKind GetFunctionKind() const { return kind; }
     void SetFunctionKind(FunctionKind kind_) { kind = kind_; }
     FunctionQualifiers Qualifiers() const { return qualifiers; }

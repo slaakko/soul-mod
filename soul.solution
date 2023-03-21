@@ -2,7 +2,7 @@ solution soul;
 project <tools/otava/std/std.project>;
 project <util/util.project>;
 project <soul/ast/ast.project>;
-//project <soul/lexer/lexer.project>;
+project <soul/lexer/lexer.project>;
 //project <soul/parser/parser.project>;
 //project <soul/token/token.project>;
 //project <soul/lex/lex.project>;

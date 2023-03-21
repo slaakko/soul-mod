@@ -34,6 +34,7 @@ public:
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::string SymbolKindStr() const override { return "template parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "template_paremeter"; }
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     Symbol* Constraint() const { return constraint; }
     otava::ast::Node* DefaultTemplateArg() const { return defaultTemplateArgNode; }
     int Index() const { return index; }

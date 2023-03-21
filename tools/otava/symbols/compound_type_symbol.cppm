@@ -19,6 +19,7 @@ public:
     TypeSymbol* GetBaseType() override { return baseType; }
     std::string SymbolKindStr() const override { return "compound type symbol"; }
     std::string SymbolDocKindStr() const override { return "compound_type"; }
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     TypeSymbol* PlainType(Context* context) override;
     bool IsVoidPtrType() const override { return baseType->IsVoidType(); }
     int PointerCount() const override;

@@ -21,6 +21,7 @@ public:
     int Arity() const { return 0; }
     std::string SymbolKindStr() const override { return "variable symbol"; }
     std::string SymbolDocKindStr() const override { return "variable"; }
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     TypeSymbol* GetDeclaredType() const { return declaredType; }
     void SetDeclaredType(TypeSymbol* declaredType_) { declaredType = declaredType_; }
     TypeSymbol* GetInitializerType() const { return initializerType; }

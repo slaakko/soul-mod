@@ -318,9 +318,10 @@ void BoundCompileUnitNode::AddBoundNode(BoundNode* node)
     boundNodes.push_back(std::unique_ptr<BoundNode>(node));
 }
 
-void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos)
+void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (cls->IsTemplateParameterInstantiation()) return;
+    std::set<const Symbol*> visited;
+    if (cls->IsTemplateParameterInstantiation(context, visited)) return;
     for (const auto& prev : boundClasses)
     {
         if (prev == cls) return;

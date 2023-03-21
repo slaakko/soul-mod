@@ -161,15 +161,14 @@ TypeSymbol* ClassTemplateSpecializationSymbol::UnifyTemplateArgumentType(const s
     return context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, targetTemplateArguments);
 }
 
-bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation() const
+bool ClassTemplateSpecializationSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
 {
-    for (const auto& templateArg : templateArguments)
+    if (visited.find(this) == visited.end())
     {
-        if (templateArg->IsTemplateParameterSymbol()) return true;
-        if (templateArg->IsClassTypeSymbol())
+        if (ClassTypeSymbol::IsTemplateParameterInstantiation(context, visited)) return true;
+        for (const auto& templateArg : templateArguments)
         {
-            ClassTypeSymbol* classTypeTemplateArg = static_cast<ClassTypeSymbol*>(templateArg);
-            if (classTypeTemplateArg->IsTemplateParameterInstantiation()) return true;
+            if (templateArg->IsTemplateParameterInstantiation(context, visited)) return true;
         }
     }
     return false;
@@ -270,7 +269,8 @@ ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSym
 
 void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (specialization->IsTemplateParameterInstantiation()) return;
+    std::set<const Symbol*> tpi_visited;
+    if (specialization->IsTemplateParameterInstantiation(context, tpi_visited)) return;
     if (specialization->Destructor()) return;
     std::set<const TypeSymbol*> visited;
     if (!specialization->IsComplete(visited)) return;
@@ -334,7 +334,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         }
     }
     specialization->SetInstantiated();
-    context->GetBoundCompileUnit()->AddBoundNodeForClass(specialization, sourcePos);
+    context->GetBoundCompileUnit()->AddBoundNodeForClass(specialization, sourcePos, context);
     int argCount = templateArgs.size();
     if (argCount > arity)
     {
@@ -409,11 +409,12 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
             specialization->AddBaseClass(baseClass, sourcePos, context);
         }
         context->PopFlags();
-        if (!specialization->IsTemplateParameterInstantiation())
+        std::set<const Symbol*> visited;
+        if (!specialization->IsTemplateParameterInstantiation(context, visited))
         {
             AddClassInfo(specialization, context);
+            InstantiateDestructor(specialization, sourcePos, context);
         }
-        InstantiateDestructor(specialization, sourcePos, context);
     }
     catch (const std::exception& ex)
     {
@@ -466,7 +467,7 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     std::string specializationName = util::ToUtf8(memFn->Name());
     classTemplateSpecialization = InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), classTemplateSpecialization->TemplateArguments(), sourcePos, context);
     classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(classTemplateSpecialization->FinalType(sourcePos, context));
-    context->GetBoundCompileUnit()->AddBoundNodeForClass(classTemplateSpecialization, sourcePos);
+    context->GetBoundCompileUnit()->AddBoundNodeForClass(classTemplateSpecialization, sourcePos, context);
     ClassTemplateRepository* classTemplateRepository = context->GetBoundCompileUnit()->GetClassTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
     int n = classTemplateSpecialization->TemplateArguments().size();

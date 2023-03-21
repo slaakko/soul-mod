@@ -77,6 +77,7 @@ class BoundCompoundStatementNode;
 class OperationRepository;
 class FunctionDefinitionSymbol;
 class AliasTypeSymbol;
+class TypeSymbol;
 
 class Context
 {
@@ -127,6 +128,9 @@ public:
     void ResetRejectTemplateId() { rejectTemplateId = false; }
     void SetRejectTemplateId() { rejectTemplateId = true; }
     bool RejectTemplateId() const { return rejectTemplateId; }
+    void PushSwitchCondType(TypeSymbol* switchCondType_);
+    void PopSwitchCondType();
+    TypeSymbol* GetSwitchCondType() const { return switchCondType; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -146,6 +150,8 @@ private:
     int memFunDefSymbolIndex;
     std::string fileName;
     bool rejectTemplateId;
+    TypeSymbol* switchCondType;
+    std::stack<TypeSymbol*> switchCondTypeStack;
 };
 
 } // namespace otava::symbols

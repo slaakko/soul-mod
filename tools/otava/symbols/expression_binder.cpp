@@ -1023,7 +1023,16 @@ void ExpressionBinder::BindMemberExpr(otava::ast::MemberExprNode* node, BoundExp
         }
         else
         {
-            memberVar->SetThisPtr(new BoundAddressOfNode(localVar, node->GetSourcePos(), localVar->GetType()->AddPointer(context)));
+            BoundExpressionNode* thisPtr = nullptr;
+            if (localVar->GetType()->IsReferenceType())
+            {
+                thisPtr = new BoundRefToPtrNode(localVar, node->GetSourcePos(), localVar->GetType()->RemoveReference(context)->AddPointer(context));
+            }
+            else
+            {
+                thisPtr = new BoundAddressOfNode(localVar, node->GetSourcePos(), localVar->GetType()->AddPointer(context));
+            }
+            memberVar->SetThisPtr(thisPtr);
         }
         boundExpression = memberVar;
     }

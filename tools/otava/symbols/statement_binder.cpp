@@ -312,7 +312,7 @@ void StatementBinder::GenerateSetVPtrStatement(const soul::ast::SourcePos& sourc
 {
     if (!currentClass || !currentClass->IsPolymorphic() || setVPtrStatementGenerated) return;
     if (HasThisInitializer()) return;
-    context->GetBoundCompileUnit()->AddBoundNodeForClass(currentClass, sourcePos);
+    context->GetBoundCompileUnit()->AddBoundNodeForClass(currentClass, sourcePos, context);
     setVPtrStatementGenerated = true;
     if (!currentClass->ObjectLayoutComputed())
     {
@@ -657,7 +657,9 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
     }
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     boundSwitchStatement->SetCondition(condition);
+    context->PushSwitchCondType(condition->GetType());
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
+    context->PopSwitchCondType();
     if (boundStmt)
     {
         boundSwitchStatement->SetStatement(boundStmt);
@@ -670,6 +672,20 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
 {
     BoundCaseStatementNode* boundCaseStatement = new BoundCaseStatementNode(node.GetSourcePos());
     BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context);
+    TypeSymbol* switchCondType = context->GetSwitchCondType();
+    if (!TypesEqual(caseExpr->GetType(), switchCondType))
+    {
+        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+            switchCondType, caseExpr->GetType()->DirectType(context)->FinalType(node.GetSourcePos(), context), node.GetSourcePos(), context);
+        if (conversion)
+        {
+            caseExpr = new BoundConversionNode(caseExpr, conversion, node.GetSourcePos());
+        }
+        else
+        {
+            ThrowException("no conversion found", node.GetSourcePos(), context);
+        }
+    }
     boundCaseStatement->SetCaseExpr(caseExpr);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
@@ -1393,13 +1409,11 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    if (functionDefinitionSymbol->IrName(context) == "ctor_class_Keyword_2CACE8EEA622808152B002F3E63A53A8A649B09B_6B9E1965313FFA812D413874F32575D37EF964F6")
-    {
-        int x = 0;
-    }
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;
     if (context->GetFlag(ContextFlags::parseMemberFunction)) return;
+    std::set<const Symbol*> visited;
+    if (functionDefinitionSymbol->IsTemplateParameterInstantiation(context, visited)) return;
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     functionDefinitionNode->Accept(binder);

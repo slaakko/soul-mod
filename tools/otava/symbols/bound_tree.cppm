@@ -95,6 +95,7 @@ public:
     bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
     bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
+    bool IsBoundVariableNode() const { return kind == BoundNodeKind::boundVariableNode; }
     bool IsBoundEnumConstant() const { return kind == BoundNodeKind::boundEnumConstantNode; }
     bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
     bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
@@ -167,7 +168,7 @@ public:
     void AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, BoundExpressionNode* atExitCall, const soul::ast::SourcePos& sourcePos, Context* context);
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBoundNode(BoundNode* node);
-    void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos);
+    void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos, Context* context);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
     void SetId(const std::string& id_) { id = id_; }
     const std::string& Id() const { return id; }
@@ -725,6 +726,7 @@ public:
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsLvalueExpression() const override;
+    BoundExpressionNode* Subject() const { return subject.get(); }
     BoundExpressionNode* Clone() const override;
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:

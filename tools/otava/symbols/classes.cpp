@@ -191,6 +191,23 @@ bool ClassTypeSymbol::HasPolymorphicBaseClass() const
     return false;
 }
 
+bool ClassTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+{
+    if (visited.find(this) == visited.end())
+    {
+        visited.insert(this);
+        for (const auto& memberVariable : memberVariables)
+        {
+            if (memberVariable->IsTemplateParameterInstantiation(context, visited)) return true;
+        }
+        for (const auto& staticMemberVar : staticMemberVariables)
+        {
+            if (staticMemberVar->IsTemplateParameterInstantiation(context, visited)) return true;
+        }
+    }
+    return false;
+}
+
 void ClassTypeSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
@@ -961,9 +978,10 @@ void EndClass(otava::ast::Node* node, Context* context)
     {
         ParseInlineMemberFunctions(specNode, classTypeSymbol, context);
     }
-    if (!classTypeSymbol->IsTemplate())
+    std::set<const Symbol*> visited;
+    if (!classTypeSymbol->IsTemplate() && !classTypeSymbol->IsTemplateParameterInstantiation(context, visited))
     {
-        context->GetBoundCompileUnit()->AddBoundNodeForClass(classTypeSymbol, node->GetSourcePos());
+        context->GetBoundCompileUnit()->AddBoundNodeForClass(classTypeSymbol, node->GetSourcePos(), context);
     }
 }
 
@@ -1138,18 +1156,22 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     if (classTypeSymbol->IsClassTemplateSpecializationSymbol())
     {
         ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(classTypeSymbol);
-        if (!sp->Destructor())
+        std::set<const Symbol*> visited;
+        if (!sp->IsTemplateParameterInstantiation(context, visited))
         {
-            std::set<const TypeSymbol*> visited;
-            if (sp->IsComplete(visited))
+            if (!sp->Destructor())
             {
-                InstantiateDestructor(sp, sourcePos, context);
+                std::set<const TypeSymbol*> visited;
+                if (sp->IsComplete(visited))
+                {
+                    InstantiateDestructor(sp, sourcePos, context);
+                }
             }
-        }
-        destructorFn = sp->Destructor();
-        if (destructorFn)
-        {
-            return destructorFn;
+            destructorFn = sp->Destructor();
+            if (destructorFn)
+            {
+                return destructorFn;
+            }
         }
     }
     std::unique_ptr<TrivialClassDtor> trivialClassDestructor(new TrivialClassDtor());

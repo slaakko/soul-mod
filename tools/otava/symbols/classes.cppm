@@ -83,7 +83,6 @@ public:
     std::string SymbolDocKindStr() const override { return "class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     TemplateDeclarationSymbol* ParentTemplateDeclaration() const;
-    virtual bool IsTemplateParameterInstantiation() const { return false; }
     bool IsTemplate() const;
     void MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos);
     void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos);
@@ -102,6 +101,7 @@ public:
     void AddDerivedClass(ClassTypeSymbol* derivedClass);
     bool HasBaseClass(TypeSymbol* baseClass, int& distance) const override;
     bool HasPolymorphicBaseClass() const;
+    bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

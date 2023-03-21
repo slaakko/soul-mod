@@ -132,6 +132,16 @@ TypeSymbol* VariableSymbol::GetReferredType() const
     return referredType;
 }
 
+bool VariableSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const
+{ 
+    if (visited.find(this) == visited.end())
+    {
+        visited.insert(this);
+        return GetType()->IsTemplateParameterInstantiation(context, visited);
+    }
+    return false;
+}
+
 std::string VariableSymbol::IrName(Context* context) const
 {
     std::string irName = "variable_";

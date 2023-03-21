@@ -118,6 +118,7 @@ public:
     virtual std::string SymbolKindStr() const = 0;
     virtual bool IsValidDeclarationScope(ScopeKind scopeKind) const { return true; }
     virtual void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const;
     virtual std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol);
     virtual void Write(Writer& writer);
     virtual void Read(Reader& reader);

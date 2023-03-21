@@ -188,6 +188,16 @@ bool CompoundTypeSymbol::IsComplete(std::set<const TypeSymbol*>& visited) const
     return baseType->IsComplete(visited);
 }
 
+bool CompoundTypeSymbol::IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const 
+{ 
+    if (visited.find(this) == visited.end())
+    {
+        visited.insert(this);
+        return baseType->IsTemplateParameterInstantiation(context, visited);
+    }
+    return false;
+}
+
 std::u32string MakeCompoundTypeName(TypeSymbol* baseType, const Derivations& derivations)
 {
     std::u32string name;

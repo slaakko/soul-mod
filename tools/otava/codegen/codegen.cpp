@@ -120,6 +120,7 @@ public:
     ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::SourcePos& sourcePos_, otava::symbols::Context& context_);
     void Visit(otava::symbols::BoundLiteralNode& node) override;
     void Visit(otava::symbols::BoundEnumConstant& node) override;
+    void Visit(otava::symbols::BoundConversionNode& node) override;
 private:
     otava::symbols::Emitter& emitter;
     soul::ast::SourcePos sourcePos;
@@ -139,6 +140,76 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundLiteralNode& node)
 void ConstantExpressionEvaluator::Visit(otava::symbols::BoundEnumConstant& node)
 {
     emitter.Stack().Push(node.EnumConstant()->GetValue()->IrValue(emitter, sourcePos, &context));
+}
+
+void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& node)
+{
+    node.Subject()->Accept(*this);
+    otava::intermediate::Value* value = emitter.Stack().Pop();
+    if (value->IsIntegerValue())
+    {
+        int64_t val = value->GetIntegerValue();
+        otava::intermediate::Type* type = node.GetType()->IrType(emitter, sourcePos, &context);
+        if (type->IsIntegerType())
+        {
+            switch (type->Id())
+            {
+                case otava::intermediate::sbyteTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetSByteValue(static_cast<int8_t>(val));
+                    break;
+                }
+                case otava::intermediate::byteTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetByteValue(static_cast<uint8_t>(val));
+                    break;
+                }
+                case otava::intermediate::shortTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetShortValue(static_cast<int16_t>(val));
+                    break;
+                }
+                case otava::intermediate::ushortTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetUShortValue(static_cast<uint16_t>(val));
+                    break;
+                }
+                case otava::intermediate::intTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetIntValue(static_cast<int32_t>(val));
+                    break;
+                }
+                case otava::intermediate::uintTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetUIntValue(static_cast<uint32_t>(val));
+                    break;
+                }
+                case otava::intermediate::longTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetLongValue(static_cast<int64_t>(val));
+                    break;
+                }
+                case otava::intermediate::ulongTypeId:
+                {
+                    value = emitter.GetIntermediateContext()->GetULongValue(static_cast<uint64_t>(val));
+                    break;
+                }
+                default:
+                {
+                    ThrowException("cannot evaluate statically", sourcePos, &context);
+                }
+            }
+            emitter.Stack().Push(value);
+        }
+        else
+        {
+            ThrowException("cannot evaluate statically", sourcePos, &context);
+        }
+    }
+    else
+    {
+        ThrowException("cannot evaluate statically", sourcePos, &context);
+    }
 }
 
 void EvaluateConstantExpr(otava::symbols::Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context& context,

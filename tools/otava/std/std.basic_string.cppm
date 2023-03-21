@@ -70,6 +70,9 @@ public:
             scpy(chars, s);
         }
     }
+    basic_string(const charT* begin, const charT* end) : basic_string(begin, end - begin)
+    {
+    }
     basic_string(size_type n, charT c) : chars(nullptr), len(n), res(0)
     {
         if (n > 0)
