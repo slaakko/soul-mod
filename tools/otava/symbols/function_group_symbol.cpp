@@ -11,6 +11,9 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
 import otava.symbols.type_compare;
+import otava.symbols.type.symbol;
+import otava.symbols.compound.type.symbol;
+import otava.symbols.templates;
 
 namespace otava::symbols {
 
@@ -194,15 +197,121 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::
     return nullptr;
 }
 
-void FunctionGroupSymbol::AddFunctionDefinition(FunctionDefinitionSymbol* definition_)
+void FunctionGroupSymbol::AddFunctionDefinition(FunctionDefinitionSymbol* definition_, Context* context)
 {
     definitions.push_back(definition_);
 }
 
-void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
+struct FunctionScoreGreater
 {
+    bool operator()(const std::pair<FunctionSymbol*, int>& left, const std::pair<FunctionSymbol*, int>& right) const
+    {
+        return left.second > right.second;
+    }
+};
+
+int MatchFunctionTemplate(FunctionSymbol* function, const std::vector<TypeSymbol*>& templateArgs, Context* context)
+{
+    if (function->Specialization().empty())
+    {
+        return 0;
+    }
+    else
+    {
+        int score = 0;
+        int n = templateArgs.size();
+        std::map<TemplateParameterSymbol*, TypeSymbol*> templateParameterMap;
+        for (int i = 0; i < n; ++i)
+        {
+            TypeSymbol* templateArg = templateArgs[i];
+            if (function->Specialization().size() >= i)
+            {
+                TypeSymbol* specializationType = function->Specialization()[i];
+                if (templateArg->IsCompoundTypeSymbol())
+                {
+                    CompoundTypeSymbol* templateArgCompoundType = static_cast<CompoundTypeSymbol*>(templateArg);
+                    const Derivations& argDerivations = templateArgCompoundType->GetDerivations();
+                    if (specializationType->IsCompoundTypeSymbol())
+                    {
+                        CompoundTypeSymbol* specializationCompoundType = static_cast<CompoundTypeSymbol*>(specializationType);
+                        const Derivations& specializationDerivations = specializationCompoundType->GetDerivations();
+                        int numMatchingDerivations = CountMatchingDerivations(argDerivations, specializationDerivations);
+                        if (numMatchingDerivations > 0)
+                        {
+                            score += numMatchingDerivations;
+                        }
+                    }
+                    else
+                    {
+                        return -1;
+                    }
+                }
+                else
+                {
+                    TypeSymbol* templateArgumentType = nullptr;
+                    if (specializationType->GetBaseType()->IsTemplateParameterSymbol())
+                    {
+                        TemplateParameterSymbol* templateParameter = static_cast<TemplateParameterSymbol*>(specializationType->GetBaseType());
+                        auto it = templateParameterMap.find(templateParameter);
+                        if (it == templateParameterMap.end())
+                        {
+                            templateArgumentType = templateArg->RemoveDerivations(specializationType->GetDerivations(), context);
+                            if (templateArgumentType)
+                            {
+                                templateParameterMap[templateParameter] = templateArgumentType;
+                            }
+                            else
+                            {
+                                return -1;
+                            }
+                        }
+                        else
+                        {
+                            templateArgumentType = it->second;
+                        }
+                        specializationType = specializationType->Unify(templateArgumentType, context);
+                        if (!specializationType)
+                        {
+                            return -1;
+                        }
+                    }
+                    if (!TypesEqual(templateArg, specializationType))
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        score += 1;
+                    }
+                }
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        return score;
+    }
+    return -1;
+}
+
+void FunctionGroupSymbol::CollectBestMatchingViableFunctionTemplates(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, 
+    Context* context)
+{
+    std::vector<std::pair<FunctionSymbol*, int>> functionScores;
     for (const auto& function : functions)
     {
+        if (!function->IsTemplate()) continue;
+        int score = MatchFunctionTemplate(function, templateArgs, context);
+        if (score >= 0)
+        {
+            functionScores.push_back(std::make_pair(function, score));
+        }
+    }
+    std::sort(functionScores.begin(), functionScores.end(), FunctionScoreGreater());
+    if (!functionScores.empty())
+    {
+        FunctionSymbol* function = functionScores[0].first;
         if (arity >= function->MinMemFunArity(context) && arity <= function->MemFunArity(context))
         {
             if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
@@ -211,13 +320,56 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, std::vector<Function
             }
         }
     }
+    std::vector<std::pair<FunctionSymbol*, int>> functionDefScores;
     for (const auto& functionDefinition : definitions)
     {
-        if (arity >= functionDefinition->MinMemFunArity(context) && arity <= functionDefinition->MemFunArity(context))
+        if (!functionDefinition->IsTemplate()) continue;
+        int score = MatchFunctionTemplate(functionDefinition, templateArgs, context);
+        if (score >= 0)
         {
-            if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())
+            functionDefScores.push_back(std::make_pair(functionDefinition, score));
+        }
+    }
+    std::sort(functionDefScores.begin(), functionDefScores.end(), FunctionScoreGreater());
+    if (!functionDefScores.empty())
+    {
+        FunctionSymbol* function = functionDefScores[0].first;
+        if (arity >= function->MinMemFunArity(context) && arity <= function->MemFunArity(context))
+        {
+            if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
             {
-                viableFunctions.push_back(functionDefinition);
+                viableFunctions.push_back(function);
+            }
+        }
+    }
+}
+
+void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
+{
+    if (!templateArgs.empty())
+    {
+        CollectBestMatchingViableFunctionTemplates(arity, templateArgs, viableFunctions, context);
+    }
+    else
+    {
+        for (const auto& function : functions)
+        {
+            if (arity >= function->MinMemFunArity(context) && arity <= function->MemFunArity(context))
+            {
+                if (std::find(viableFunctions.begin(), viableFunctions.end(), function) == viableFunctions.end())
+                {
+                    viableFunctions.push_back(function);
+                }
+            }
+        }
+        for (const auto& functionDefinition : definitions)
+        {
+            if (arity >= functionDefinition->MinMemFunArity(context) && arity <= functionDefinition->MemFunArity(context))
+            {
+                if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())
+                {
+                    viableFunctions.push_back(functionDefinition);
+                }
             }
         }
     }

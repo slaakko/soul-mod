@@ -21,6 +21,7 @@ class LexerBase
 {
 public:
     using Self = LexerBase<Char>;
+    virtual ~LexerBase() {}
     virtual void Retract() = 0;
     virtual int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const = 0;
     virtual void EraseTail() = 0;

@@ -29,6 +29,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     void Merge(AliasGroupSymbol* that);
+    void RemoveAliasType(AliasTypeSymbol* aliasType);
 private:
     std::vector<AliasTypeSymbol*> aliasTypeSymbols;
     std::vector<util::uuid> aliasTypeIds;

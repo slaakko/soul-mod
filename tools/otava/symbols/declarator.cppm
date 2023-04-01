@@ -72,10 +72,13 @@ public:
     void AddParameterDeclaration(Declaration&& parameterDeclaration);
     const std::vector<Declaration>& ParameterDeclarations() const { return parameterDeclarations; }
     Scope* GetScope() const { return scope; }
+    void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
+    const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
 private:
     FunctionKind kind;
     FunctionQualifiers qualifiers;
     std::vector<Declaration> parameterDeclarations;
+    std::vector<TypeSymbol*> templateArgs;
     Scope* scope;
 };
 
@@ -90,8 +93,9 @@ private:
 
 class Context;
 
-std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context);
-std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context);
-Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, DeclarationFlags flags, Context* context);
+std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* initDeclaratorList, 
+    DeclarationFlags flags, Context* context);
+std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context);
+Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, Context* context);
 
 } // namespace otava::symbols

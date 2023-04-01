@@ -77,7 +77,7 @@ std::unique_ptr<soul::ast::slg::SlgFile> ParseSlgFile(const std::string& slgFile
     auto lexer = MakeLexer(content.c_str(), content.c_str() + content.length(), slgFilePath);
     lexer.SetRuleNameMapPtr(soul::slg::parsers::rules::GetRuleNameMapPtr());
     using LexerType = decltype(lexer);
-    auto vars = static_cast<LexerType::VariableClassType*>(lexer.GetVariables());
+    auto vars = static_cast<typename LexerType::VariableClassType*>(lexer.GetVariables());
     vars->matchFilePath = true;
     return SlgFileParser<LexerType>::Parse(lexer);
 }

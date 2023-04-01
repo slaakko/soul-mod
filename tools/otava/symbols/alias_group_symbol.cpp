@@ -51,6 +51,7 @@ void AliasGroupSymbol::AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol)
         std::find_if(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), 
             [&](AliasTypeSymbol* symbol) { return TypesEqual(symbol->ReferredType(), aliasTypeSymbol->ReferredType()); }) == aliasTypeSymbols.end())
     {
+        aliasTypeSymbol->SetGroup(this);
         aliasTypeSymbols.push_back(aliasTypeSymbol);
     }
 }
@@ -154,6 +155,11 @@ AliasTypeSymbol* AliasGroupSymbol::GetBestMatchingAliasType(const std::vector<Sy
         return viableAliasTypes[0].first;
     }
     return nullptr;
+}
+
+void AliasGroupSymbol::RemoveAliasType(AliasTypeSymbol* aliasType)
+{
+    aliasTypeSymbols.erase(std::remove(aliasTypeSymbols.begin(), aliasTypeSymbols.end(), aliasType), aliasTypeSymbols.end());
 }
 
 } // namespace otava::symbols

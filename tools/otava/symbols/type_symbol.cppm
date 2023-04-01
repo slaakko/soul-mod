@@ -95,4 +95,15 @@ private:
     util::uuid functionGroupSymbolId;
 };
 
+class GenericTypeSymbol : public TypeSymbol
+{
+public:
+    static TypeSymbol* Instance();
+    std::string SymbolKindStr() const override { return "generic type symbol"; }
+    std::string SymbolDocKindStr() const override { return "generic_type"; }
+    void Accept(Visitor& visitor) override;
+private:
+    GenericTypeSymbol();
+};
+
 } // namespace otava::symbols

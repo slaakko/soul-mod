@@ -12,21 +12,22 @@ import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.templates;
+import otava.symbols.alias.group.symbol;
 
 namespace otava::symbols {
 
 AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_) : 
-    TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(nullptr), referredTypeId(util::nil_uuid())
+    TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(nullptr), referredTypeId(util::nil_uuid()), group(nullptr)
 {
 }
 
 AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, SymbolKind kind_) : 
-    TypeSymbol(kind_, name_), referredType(nullptr), referredTypeId(util::nil_uuid())
+    TypeSymbol(kind_, name_), referredType(nullptr), referredTypeId(util::nil_uuid()), group(nullptr)
 {
 }
 
 AliasTypeSymbol::AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referredType_) : 
-    TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(referredType_), referredTypeId(util::nil_uuid())
+    TypeSymbol(SymbolKind::aliasTypeSymbol, name_), referredType(referredType_), referredTypeId(util::nil_uuid()), group(nullptr)
 {
 }
 
@@ -146,6 +147,30 @@ void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* co
 bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const
 {
     return left->Name() < right->Name();
+}
+
+void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context)
+{
+    if (aliasDeclarationNode->IsAliasDeclarationNode())
+    {
+        otava::ast::Node* idNode = static_cast<otava::ast::AliasDeclarationNode*>(aliasDeclarationNode)->Identifier();
+        AliasTypeSymbol* temporaryAlias = context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, GenericTypeSymbol::Instance(), context);
+        context->AddTemporaryAliasType(temporaryAlias);
+    }
+}
+
+void RemoveTemporaryAliasTypeSymbols(Context* context)
+{
+    for (const auto& temporaryAlias : context->TemporaryAliasTypes())
+    {
+        temporaryAlias->Group()->RemoveAliasType(temporaryAlias);
+        Scope* scope = temporaryAlias->Parent()->GetScope()->SymbolScope();
+        if (scope->IsContainerScope())
+        {
+            scope->RemoveSymbol(temporaryAlias);
+        }
+    }
+    context->ClearTemporaryAliasTypes();
 }
 
 } // namespace otava::symbols

@@ -15,6 +15,9 @@ import otava.symbols.symbol.table;
 import otava.symbols.variable.symbol;
 import otava.symbols.conversion.table;
 import otava.symbols.function.group.symbol;
+import otava.symbols.exception;
+import otava.symbols.concepts;
+import util.unicode;
 
 namespace otava::symbols {
 
@@ -74,6 +77,11 @@ void ContainerSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
         FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
         context->GetSymbolTable()->MapFunctionGroup(functionGroup);
     }
+    if (symbol->IsConceptSymbol())
+    {
+        ConceptSymbol* cncp = static_cast<ConceptSymbol*>(symbol);
+        context->GetSymbolTable()->MapConcept(cncp);
+    }
     if (symbol->IsTypenameConstraintSymbol())
     {
         context->GetSymbolTable()->SetTypenameConstraintSymbol(symbol);
@@ -122,7 +130,15 @@ void ContainerSymbol::Read(Reader& reader)
     for (uint32_t i = 0; i < count; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
-        AddSymbol(symbol, soul::ast::SourcePos(), reader.GetContext());
+        if (symbol)
+        {
+            AddSymbol(symbol, soul::ast::SourcePos(), reader.GetContext());
+        }
+        else
+        {
+            SetExceptionThrown();
+            throw std::runtime_error("ContainerSymbol::read: '" + util::ToUtf8(Name()) + "': null symbol read");
+        }
     }
 }
 

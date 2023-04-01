@@ -191,6 +191,14 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
     {
         return false;
     }
+    if ((left.function->IsTemplate() || left.function->IsMemFnOfClassTemplate()) && !(right.function->IsTemplate() || right.function->IsMemFnOfClassTemplate()))
+    {
+        return true;
+    }
+    if (!(left.function->IsTemplate() || left.function->IsMemFnOfClassTemplate()) && (right.function->IsTemplate() || right.function->IsMemFnOfClassTemplate()))
+    {
+        return false;
+    }
     int leftFundamentalTypeDistance = 0;
     int rightFundamentalTypeDistance = 0;
     for (int i = 0; i < n; ++i)
@@ -510,7 +518,7 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
         else
         {
             FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                paramType, argType, sourcePos, argumentMatch, context);
+                paramType, argType, arg, sourcePos, argumentMatch, functionMatch, context);
             if (conversionFun)
             {
                 ++functionMatch.numConversions;
@@ -544,9 +552,6 @@ bool FindTemplateParameterMatch(TypeSymbol* argType, TypeSymbol* paramType, Boun
     }
     return false;
 }
-
-bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch,
-    const soul::ast::SourcePos& sourcePos, Context* context);
 
 bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExpressionNode* arg, FunctionMatch& functionMatch,
     const soul::ast::SourcePos& sourcePos, Context* context)
@@ -655,7 +660,7 @@ bool FindClassTemplateMatch(TypeSymbol* argType, TypeSymbol* paramType, BoundExp
         else
         {
             FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                paramType, argType, sourcePos, argumentMatch, context);
+                paramType, argType, arg, sourcePos, argumentMatch, functionMatch, context);
             if (conversionFun)
             {
                 ++functionMatch.numConversions;
@@ -818,7 +823,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
             else
             {
                 FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                    compoundParamType, argType, sourcePos, argumentMatch, context);
+                    compoundParamType, argType, arg, sourcePos, argumentMatch, functionMatch, context);
                 if (conversionFun)
                 {
                     ++functionMatch.numConversions;
@@ -876,7 +881,7 @@ bool FindClassTemplateSpecializationMatch(TypeSymbol* argType, TypeSymbol* param
                             else
                             {
                                 FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                                    compoundParamType, argType, sourcePos, argumentMatch, context);
+                                    compoundParamType, argType, arg, sourcePos, argumentMatch, functionMatch, context);
                                 if (conversionFun)
                                 {
                                     ++functionMatch.numConversions;
@@ -975,7 +980,7 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             if (!qualificationConversionMatch)
             {
                 FunctionSymbol* conversionFun = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                    paramType, argType, sourcePos, argumentMatch, context);
+                    paramType, argType, arg, sourcePos, argumentMatch, functionMatch, context);
                 if (conversionFun)
                 {
                     argumentMatch.conversionFun = conversionFun;
@@ -1031,8 +1036,30 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
     return true;
 }
 
-std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
-    const std::u32string& groupName, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
+void SetTemplateArgs(FunctionSymbol* viableFunction, std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, 
+    const std::vector<TypeSymbol*>& templateArgs)
+{
+    if (viableFunction->IsTemplate())
+    {
+        TemplateDeclarationSymbol* templateDeclaration = viableFunction->ParentTemplateDeclaration();
+        if (templateDeclaration)
+        {
+            int n = templateArgs.size();
+            if (templateDeclaration->Arity() >= n)
+            {
+                for (int i = 0; i < n; ++i)
+                {
+                    TypeSymbol* templateArg = templateArgs[i];
+                    TemplateParameterSymbol* templateParam = templateDeclaration->TemplateParameters()[i];
+                    templateParameterMap[templateParam] = templateArg;
+                }
+            }
+        }
+    }
+}
+
+std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<FunctionSymbol*>& viableFunctions, const std::vector<TypeSymbol*>& templateArgs, 
+    const std::vector<std::unique_ptr<BoundExpressionNode>>& args, const std::u32string& groupName, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
     std::vector<std::unique_ptr<FunctionMatch>> functionMatches;
     int n = viableFunctions.size();
@@ -1040,6 +1067,7 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
     {
         FunctionSymbol* viableFunction = viableFunctions[i];
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction));
+        SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);
         if (FindConversions(*functionMatch, args, sourcePos, context))
         {
             functionMatches.push_back(std::move(functionMatch));
@@ -1122,7 +1150,9 @@ std::unique_ptr<BoundFunctionCallNode> ResolveIOManipFn(Scope* scope, const std:
         BoundExpressionNode* arg = args[0]->Clone();
         std::vector<std::unique_ptr<BoundExpressionNode>> ioManipFnArgs;
         ioManipFnArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
-        std::unique_ptr<BoundFunctionCallNode> ioManipFnCall = ResolveOverload(scope, functionGroupType->FunctionGroup()->Name(), ioManipFnArgs, sourcePos, context, ex, flags);
+        std::vector<TypeSymbol*> templateArgs;
+        std::unique_ptr<BoundFunctionCallNode> ioManipFnCall = ResolveOverload(scope, functionGroupType->FunctionGroup()->Name(), templateArgs, 
+            ioManipFnArgs, sourcePos, context, ex, flags);
         if (ioManipFnCall)
         {
             return ioManipFnCall;
@@ -1139,10 +1169,11 @@ void MakeFinalDirectArgs(std::vector<std::unique_ptr<BoundExpressionNode>>& args
     }
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, OverloadResolutionFlags flags)
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, 
+    OverloadResolutionFlags flags)
 {
-    if (groupName == U"swap")
+    if (groupName == U"operator++")
     {
         int x = 0;
     }
@@ -1185,9 +1216,9 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
             scopeLookups.push_back(std::make_pair(scope, ScopeLookup::allScopes));
             AddArgumentScopes(scopeLookups, args);
         }
-        context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, args.size(), viableFunctions, context);
+        context->GetSymbolTable()->CollectViableFunctions(scopeLookups, groupName, templateArgs, args.size(), viableFunctions, context);
     }
-    std::unique_ptr<FunctionMatch> bestMatch = SelectBestMatchingFunction(viableFunctions, args, groupName, sourcePos, context, ex);
+    std::unique_ptr<FunctionMatch> bestMatch = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context, ex);
     if (!bestMatch)
     {
         context->ResetFlag(ContextFlags::ignoreClassTemplateSpecializations);
@@ -1196,7 +1227,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
         {
             viableFunctions.clear();
             viableFunctions.push_back(operation);
-            bestMatch = SelectBestMatchingFunction(viableFunctions, args, groupName, sourcePos, context, ex);
+            bestMatch = SelectBestMatchingFunction(viableFunctions, templateArgs, args, groupName, sourcePos, context, ex);
         }
         if (!bestMatch)
         {
@@ -1226,49 +1257,47 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
             }
             else
             {
-                TypeSymbol* arg0Type = args[0]->GetType()->GetBaseType();
-                if (arg0Type->IsClassTemplateSpecializationSymbol())
+                if (!bestMatch->function->IsStatic())
                 {
-                    classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(arg0Type);
-                }
-                else
-                {
-                    ex = Exception("function argument 0 is expected to be a class template specialization", sourcePos, context);
-                    return std::unique_ptr<BoundFunctionCallNode>();
+                    TypeSymbol* arg0Type = args[0]->GetType()->GetBaseType();
+                    if (arg0Type->IsClassTemplateSpecializationSymbol())
+                    {
+                        classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(arg0Type);
+                    }
                 }
             }
-            bestMatch->function = InstantiateMemFnOfClassTemplate(bestMatch->function, classTemplateSpecialization, sourcePos, context);
+            bestMatch->function = InstantiateMemFnOfClassTemplate(bestMatch->function, classTemplateSpecialization, bestMatch->templateParameterMap, sourcePos, context);
         }
     }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(*bestMatch, args, sourcePos, context);
     return boundFunctionCall;
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, OverloadResolutionFlags flags)
 {
     FunctionMatch functionMatch;
-    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, functionMatch, flags);
+    return ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex, functionMatch, flags);
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch)
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch)
 {
-    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, functionMatch, OverloadResolutionFlags::none);
+    return ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex, functionMatch, OverloadResolutionFlags::none);
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
+std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
     FunctionMatch functionMatch;
-    return ResolveOverload(scope, groupName, args, sourcePos, context, ex, functionMatch, OverloadResolutionFlags::none);
+    return ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex, functionMatch, OverloadResolutionFlags::none);
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context, OverloadResolutionFlags flags)
+std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, OverloadResolutionFlags flags)
 {
     Exception ex;
-    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(scope, groupName, args, sourcePos, context, ex, flags);
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(scope, groupName, templateArgs, args, sourcePos, context, ex, flags);
     if (!boundFunctionCall)
     {
         ThrowException(ex);
@@ -1276,10 +1305,10 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const 
     return boundFunctionCall;
 }
 
-std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, std::vector<std::unique_ptr<BoundExpressionNode>>& args,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+std::unique_ptr<BoundFunctionCallNode> ResolveOverloadThrow(Scope* scope, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
+    std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    return ResolveOverloadThrow(scope, groupName, args, sourcePos, context, OverloadResolutionFlags::none);
+    return ResolveOverloadThrow(scope, groupName, templateArgs, args, sourcePos, context, OverloadResolutionFlags::none);
 }
 
 } // namespace otava::symbols

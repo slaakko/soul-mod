@@ -54,6 +54,7 @@ public:
     void Visit(otava::ast::ExpressionStatementNode& node) override;
     void Visit(otava::ast::DeclarationStatementNode& node) override;
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
+    void Visit(otava::ast::AliasDeclarationNode& node) override;
     void Visit(otava::ast::TryStatementNode& node) override;
     void Visit(otava::ast::HandlerNode& node) override;
     void Visit(otava::ast::BoundStatementNode& node) override;

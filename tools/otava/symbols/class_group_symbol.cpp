@@ -275,17 +275,19 @@ ClassTypeSymbol* ClassGroupSymbol::GetBestMatchingClass(const std::vector<Symbol
             TypeSymbol* specialization = cls->Specialization();
             if (specialization)
             {
+                int score = 0;
+                TemplateMatchInfo info;
                 for (int i = 0; i < arity; ++i)
                 {
                     Symbol* templateArg = templateArgs[i];
-                    TemplateMatchInfo info;
                     int matchValue = Match(templateArg, specialization, i, info, context);
                     if (matchValue >= 0)
                     {
-                        info.matchValue = matchValue;
-                        viableClasses.push_back(std::make_pair(cls, info));
+                        score += matchValue;
                     }
                 }
+                info.matchValue = score;
+                viableClasses.push_back(std::make_pair(cls, info));
             }
             else
             {

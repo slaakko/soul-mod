@@ -44,10 +44,18 @@ void PrintHelp()
     std::cout << "  Initialize uuid seed to 0." << std::endl;
 }
 
+std::string Version()
+{
+    return "4.1.0";
+}
+
 int main(int argc, const char** argv)
 {
     try
     {
+        std::cout << "****************************************" << "\n";
+        std::cout << "* Otava C++ Compiler version " << Version() << "\n";
+        std::cout << "****************************************" << "\n";
         util::Init();
         otava::symbols::Init();
         otava::parser::recorded::parse::Init();

@@ -1009,7 +1009,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                        auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == LANGLE)
                                         {
@@ -1046,7 +1046,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                     soul::parser::Match* parentMatch12 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                        auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == RANGLE)
                                         {

@@ -477,7 +477,14 @@ parser DeclarationParser
         {
             otava::ast::AliasDeclarationNode* aliasDeclarationNode = new otava::ast::AliasDeclarationNode(sourcePos, usng, identifier, assign, definingTypeId, 
                 attributes, semicolon);
-            otava::symbols::ProcessAliasDeclaration(aliasDeclarationNode, context); 
+            if (!context->GetSymbolTable()->CurrentScope()->IsBlockScope())
+            {
+                otava::symbols::ProcessAliasDeclaration(aliasDeclarationNode, context); 
+            }
+            else
+            {
+                otava::symbols::AddTemporaryTypeAlias(aliasDeclarationNode, context); 
+            }
             return aliasDeclarationNode;
         }
         ;

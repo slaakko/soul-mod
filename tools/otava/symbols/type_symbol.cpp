@@ -264,4 +264,19 @@ void FunctionGroupTypeSymbol::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
+TypeSymbol* GenericTypeSymbol::Instance()
+{
+    static GenericTypeSymbol instance;
+    return &instance;
+}
+
+GenericTypeSymbol::GenericTypeSymbol() : TypeSymbol(SymbolKind::genericTypeSymbol, U"@generic_type")
+{
+}
+
+void GenericTypeSymbol::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
 } // namespace otava::symbols

@@ -68,7 +68,7 @@ enum class SymbolKind : int32_t
 {
     null, 
     classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
-    boolValueSymbol, integerValueSymbol, floatingValueSymbol, stringValueSymbol, charValueSymbol, genericTypeSymbol, nullPtrTypeSymbol, 
+    boolValueSymbol, integerValueSymbol, floatingValueSymbol, stringValueSymbol, charValueSymbol, genericTypeSymbol, nullPtrTypeSymbol, arrayValueSymbol, structureValueSymbol,
     aliasTypeSymbol, arrayTypeSymbol, blockSymbol, classTypeSymbol, compoundTypeSymbol,
     conceptSymbol, enumTypeSymbol, enumConstantSymbol, functionSymbol, functionTypeSymbol, functionDefinitionSymbol, explicitlyInstantiatedFunctionDefinitionSymbol,
     fundamentalTypeSymbol, namespaceSymbol, templateDeclarationSymbol, typenameConstraintSymbol, explicitInstantiationSymbol,
@@ -151,6 +151,7 @@ public:
     bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
     bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol || IsClassTemplateSpecializationSymbol(); }
     bool IsForwardClassDeclarationSymbol() const { return kind == SymbolKind::forwardClassDeclarationSymbol; }
+    bool IsConceptGroupSymbol() const { return kind == SymbolKind::conceptGroupSymbol; }
     bool IsConceptSymbol() const { return kind == SymbolKind::conceptSymbol; }
     bool IsEnumGroupSymbol() const { return kind == SymbolKind::enumGroupSymbol; }
     bool IsEnumeratedTypeSymbol() const { return kind == SymbolKind::enumTypeSymbol; }

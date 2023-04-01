@@ -206,7 +206,8 @@ void ScanDependencies(Project* project, int32_t fileId, bool implementationUnit,
     lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
     otava::symbols::Context context;
     context.SetLexer(&lexer);
-    std::unique_ptr<otava::ast::Node> node = otava::parser::module_dependency::ModuleDependencyParser<decltype(lexer)>::Parse(lexer, &context);
+    using LexerType = decltype(lexer);
+    std::unique_ptr<otava::ast::Node> node = otava::parser::module_dependency::ModuleDependencyParser<LexerType>::Parse(lexer, &context);
     project->GetFileMap().AddFileContent(fileId, std::move(content), lexer.GetLineStartIndeces());
     ModuleDependencyVisitor visitor(fileId, project, fileName, implementationUnit);
     node->Accept(visitor);
@@ -249,6 +250,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     {
         std::cout << "> building project '" << project->Name() << "'..." << std::endl;
     }
+    otava::symbols::InstantiationQueue instantiationQueue;
     std::string projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
     std::vector<std::string> asmFileNames;
     std::vector<std::string> cppFileNames;
@@ -359,7 +361,9 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
-        std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        context.SetInstantiationQueue(&instantiationQueue);
+        using LexerType = decltype(lexer);
+        std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<LexerType>::Parse(lexer, &context);
         otava::symbols::GenerateDestructors(context.GetBoundCompileUnit(), &context);
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {
@@ -403,6 +407,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
         otava::symbols::Context context;
         context.SetFileMap(&project->GetFileMap());
+        context.SetInstantiationQueue(&instantiationQueue);
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
@@ -413,7 +418,8 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->Import(moduleMapper);
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
-        std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<decltype(lexer)>::Parse(lexer, &context);
+        using LexerType = decltype(lexer);
+        std::unique_ptr<otava::ast::Node> node = otava::parser::translation::unit::TranslationUnitParser<LexerType>::Parse(lexer, &context);
         otava::symbols::GenerateDestructors(context.GetBoundCompileUnit(), &context);
         if ((flags & BuildFlags::xml) != BuildFlags::none)
         {

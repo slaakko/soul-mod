@@ -1,0 +1,3 @@
+project explicit_instantiation;
+target=program;
+source <explicit_instantiation.cpp>;

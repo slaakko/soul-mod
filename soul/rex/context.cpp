@@ -32,8 +32,8 @@ soul::rex::nfa::NfaState* Context::MakeNfaState()
 
 soul::rex::symbol::Symbol* Context::MakeChar(char32_t c)
 {
-    std::map<char32_t, soul::rex::symbol::Symbol*>::const_iterator it = charSymbols.find(c);
-    if (it != charSymbols.cend())
+    std::map<char32_t, soul::rex::symbol::Symbol*>::iterator it = charSymbols.find(c);
+    if (it != charSymbols.end())
     {
         return it->second;
     }
@@ -49,8 +49,8 @@ soul::rex::symbol::Symbol* Context::MakeChar(char32_t c)
 soul::rex::symbol::Symbol* Context::MakeRange(char32_t start, char32_t end)
 {
     soul::rex::symbol::Range range(start, end);
-    std::map<soul::rex::symbol::Range, soul::rex::symbol::Symbol*>::const_iterator it = rangeSymbols.find(range);
-    if (it != rangeSymbols.cend())
+    std::map<soul::rex::symbol::Range, soul::rex::symbol::Symbol*>::iterator it = rangeSymbols.find(range);
+    if (it != rangeSymbols.end())
     {
         return it->second;
     }

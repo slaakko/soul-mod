@@ -43,7 +43,7 @@ void ConstraintExprSymbol::Write(Writer& writer)
 void ConstraintExprSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
-    constraintEprNodeId = reader.GetBinaryStreamReader().ReadInt();
+    constraintEprNodeId = reader.GetBinaryStreamReader().ReadLong();
 }
 
 void ConstraintExprSymbol::Resolve(SymbolTable& symbolTable)

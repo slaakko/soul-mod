@@ -1,5 +1,6 @@
 project soul.parser;
+target=library;
 reference <../../util/util.project>;
-interface <match.ixx>;
-interface <parser.ixx>;
-interface <value.ixx>;
+interface <match.cppm>;
+interface <parser.cppm>;
+interface <value.cppm>;

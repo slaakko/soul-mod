@@ -11,6 +11,8 @@ import otava.symbols.type.symbol;
 
 export namespace otava::symbols {
 
+class AliasGroupSymbol;
+
 class AliasTypeSymbol : public TypeSymbol
 {
 public:
@@ -29,9 +31,12 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    AliasGroupSymbol* Group() const { return group; }
+    void SetGroup(AliasGroupSymbol* group_) { group = group_; }
 private:
     TypeSymbol* referredType;
     util::uuid referredTypeId;
+    AliasGroupSymbol* group;
 };
 
 void ProcessAliasDeclaration(otava::ast::Node* aliasDeclarationNode, Context* context);
@@ -40,5 +45,9 @@ struct AliasTypeLess
 {
     bool operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) const;
 };
+
+void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context);
+
+void RemoveTemporaryAliasTypeSymbols(Context* context);
 
 } // namespace otava::symbols

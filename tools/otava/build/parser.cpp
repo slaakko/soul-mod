@@ -27,7 +27,8 @@ std::unique_ptr<Project> ParseProjectFile(const std::string& projectFilePath)
     std::u32string ucontent = util::ToUtf32(content);
     auto lexer = otava::project_lexer::MakeLexer(ucontent.c_str(), ucontent.c_str() + ucontent.length(), filePath);
     lexer.SetRuleNameMapPtr(otava::project_spg::rules::GetRuleNameMapPtr());
-    return otava::project_parser::ProjectParser<decltype(lexer)>::Parse(lexer);
+    using LexerType = decltype(lexer);
+    return otava::project_parser::ProjectParser<LexerType>::Parse(lexer);
 }
 
 std::unique_ptr<Solution> ParseSolutionFile(const std::string& solutionFilePath)
@@ -37,7 +38,8 @@ std::unique_ptr<Solution> ParseSolutionFile(const std::string& solutionFilePath)
     std::u32string ucontent = util::ToUtf32(content);
     auto lexer = otava::solution_lexer::MakeLexer(ucontent.c_str(), ucontent.c_str() + ucontent.length(), filePath);
     lexer.SetRuleNameMapPtr(otava::solution_spg::rules::GetRuleNameMapPtr());
-    return otava::solution_parser::SolutionParser<decltype(lexer)>::Parse(lexer);
+    using LexerType = decltype(lexer);
+    return otava::solution_parser::SolutionParser<LexerType>::Parse(lexer);
 }
 
 } // namespace otava::build

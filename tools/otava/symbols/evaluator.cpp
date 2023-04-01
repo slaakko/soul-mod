@@ -19,6 +19,9 @@ import otava.symbols.fundamental.type.symbol;
 import otava.symbols.type.resolver;
 import otava.symbols.emitter;
 import otava.symbols.variable.symbol;
+import otava.symbols.array.type.symbol;
+import otava.symbols.classes;
+import otava.symbols.modules;
 import util.unicode;
 
 namespace otava::symbols {
@@ -126,6 +129,7 @@ public:
     void Visit(otava::ast::BinaryExprNode& node) override;
     void Visit(otava::ast::InvokeExprNode& node) override;
     void Visit(otava::ast::SizeOfTypeExprNode& node) override;
+    void Visit(otava::ast::BracedInitListNode& node) override;
 private:
     Context* context;
     Value* value;
@@ -493,6 +497,59 @@ void Evaluator::Visit(otava::ast::SizeOfTypeExprNode& node)
     int64_t size = irType->Size();
     value = context->GetEvaluationContext()->GetIntegerValue(size, util::ToUtf32(std::to_string(size)), 
         context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType));
+}
+
+void Evaluator::Visit(otava::ast::BracedInitListNode& node)
+{
+    TypeSymbol* type = context->DeclaredInitializerType();
+    if (type)
+    {
+        if (type->IsArrayTypeSymbol())
+        {
+            ArrayTypeSymbol* arrayTypeSymbol = static_cast<ArrayTypeSymbol*>(type);
+            ArrayValue* arrayValue = context->GetSymbolTable()->GetModule()->GetEvaluationContext()->GetArrayValue(type);
+            int64_t count = 0;
+            for (const auto& element : node.Items())
+            {
+                if (element->IsLBraceNode() || element->IsRBraceNode()) continue;
+                context->SetDeclaredInitializerType(arrayTypeSymbol->ElementType());
+                Value* elementValue = Evaluate(element, context);
+                arrayValue->AddElementValue(elementValue);
+                context->SetDeclaredInitializerType(type);
+                ++count;
+            }
+            if (arrayTypeSymbol->Size() == -1)
+            {
+                arrayTypeSymbol->SetSize(count);
+            }
+            else if (arrayTypeSymbol->Size() != count)
+            {
+                ThrowException("conflicting array size: size=" + std::to_string(arrayTypeSymbol->Size()) + ", number of elements in initializer=" + std::to_string(count), 
+                    node.GetSourcePos(), context);
+            }
+            value = arrayValue;
+        }
+        else if (type->PlainType(context)->IsClassTypeSymbol())
+        {
+            ClassTypeSymbol* classTypeSymbol = static_cast<ClassTypeSymbol*>(type->PlainType(context));
+            StructureValue* structureValue = context->GetSymbolTable()->GetModule()->GetEvaluationContext()->GetStructureValue(type);
+            int index = 0;
+            for (const auto& field : node.Items())
+            {
+                if (field->IsLBraceNode() || field->IsRBraceNode()) continue;
+                context->SetDeclaredInitializerType(nullptr);
+                Value* fieldValue = Evaluate(field, context);
+                structureValue->AddFieldValue(fieldValue);
+                context->SetDeclaredInitializerType(type);
+                ++index;
+            }
+            value = structureValue;
+        }
+    }
+    else
+    {
+        value = nullptr;
+    }
 }
 
 Value* Evaluate(otava::ast::Node* node, Context* context)

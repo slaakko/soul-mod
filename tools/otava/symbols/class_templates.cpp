@@ -288,7 +288,8 @@ void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, co
         FunctionDefinitionSymbol* destructorFn = destructorGroup->GetSingleDefinition();
         if (destructorFn)
         {
-            FunctionDefinitionSymbol* instantiatedDestructor = InstantiateMemFnOfClassTemplate(destructorFn, specialization, sourcePos, context);
+            std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
+            FunctionSymbol* instantiatedDestructor = InstantiateMemFnOfClassTemplate(destructorFn, specialization, templateParameterMap, sourcePos, context);
             instantiatedDestructor->SetFlag(FunctionSymbolFlags::fixedIrName);
             std::string irName = instantiatedDestructor->IrName(context);
             specialization->SetDestructor(instantiatedDestructor);
@@ -461,11 +462,34 @@ void ClassTemplateRepository::AddFunctionDefinition(const MemFunKey& key, Functi
     functionDefinitionNodes.push_back(std::unique_ptr<otava::ast::Node>(functionDefinitionNode));
 }
 
-FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemplateSpecializationSymbol* classTemplateSpecialization,
-    const soul::ast::SourcePos& sourcePos, Context* context)
+FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemplateSpecializationSymbol* classTemplateSpecialization, 
+    const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     std::string specializationName = util::ToUtf8(memFn->Name());
-    classTemplateSpecialization = InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), classTemplateSpecialization->TemplateArguments(), sourcePos, context);
+    if (!classTemplateSpecialization)
+    {
+        ClassTypeSymbol* classTemplate = memFn->ParentClassType();
+        std::vector<Symbol*> templateArguments;
+        TemplateDeclarationSymbol* templateDeclaration = classTemplate->ParentTemplateDeclaration();
+        for (TemplateParameterSymbol* templateParameter : templateDeclaration->TemplateParameters())
+        {
+            auto it = templateParameterMap.find(templateParameter);
+            if (it != templateParameterMap.cend())
+            {
+                TypeSymbol* templateArgumentType = it->second;
+                templateArguments.push_back(templateArgumentType);
+            }
+            else
+            {
+                ThrowException("template parameter type not found", sourcePos, context);
+            }
+        }
+        classTemplateSpecialization = InstantiateClassTemplate(classTemplate, templateArguments, sourcePos, context);
+    }
+    else
+    {
+        classTemplateSpecialization = InstantiateClassTemplate(classTemplateSpecialization->ClassTemplate(), classTemplateSpecialization->TemplateArguments(), sourcePos, context);
+    }
     classTemplateSpecialization = static_cast<ClassTemplateSpecializationSymbol*>(classTemplateSpecialization->FinalType(sourcePos, context));
     context->GetBoundCompileUnit()->AddBoundNodeForClass(classTemplateSpecialization, sourcePos, context);
     ClassTemplateRepository* classTemplateRepository = context->GetBoundCompileUnit()->GetClassTemplateRepository();
@@ -512,6 +536,10 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
         ClassTypeSymbol* parentClass = memFn->ParentClassType();
         if (parentClass)
         {
+            if (parentClass->IsClassTemplateSpecializationSymbol())
+            {
+                parentClass = static_cast<ClassTemplateSpecializationSymbol*>(parentClass)->ClassTemplate();
+            }
             TemplateDeclarationSymbol* templateDeclaration = parentClass->ParentTemplateDeclaration();
             if (templateDeclaration)
             {
@@ -542,33 +570,37 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
                 instantiationScope.Install(templateNameParameter);
                 context->GetSymbolTable()->BeginScope(&instantiationScope);
                 Instantiator instantiator(context, &instantiationScope);
-                FunctionDefinitionSymbol* specialization = nullptr;
+                FunctionSymbol* specialization = nullptr;
                 try
                 {
                     context->PushSetFlag(ContextFlags::instantiateMemFnOfClassTemplate | ContextFlags::saveDeclarations | ContextFlags::dontBind);
-                    context->SetFunctionDefinitionNode(functionDefinitionNode);
                     if (memFn->IsFunctionDefinitionSymbol())
                     {
                         FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
                         context->SetMemFunDefSymbolIndex(memFnDefSymbol->DefIndex());
                     }
+                    context->SetSpecialization(nullptr);
                     functionDefinitionNode->Accept(instantiator);
                     context->SetMemFunDefSymbolIndex(-1);
                     specialization = context->GetSpecialization();
                     specializationName = util::ToUtf8(specialization->FullName());
-                    classTemplateRepository->AddFunctionDefinition(key, specialization, node);
-                    context->PushBoundFunction(new BoundFunctionNode(specialization, sourcePos));
-                    Scope* nsScope = classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope();
-                    instantiationScope.PushParentScope(nsScope);
-                    BindFunction(functionDefinitionNode, specialization, context);
-                    context->PopFlags();
-                    if (specialization->IsBound())
+                    if (specialization->IsFunctionDefinitionSymbol())
                     {
-                        context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+                        FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(specialization);
+                        classTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
+                        context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
+                        Scope* nsScope = classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope();
+                        instantiationScope.PushParentScope(nsScope);
+                        BindFunction(functionDefinitionNode, functionDefinition, context);
+                        context->PopFlags();
+                        if (specialization->IsBound())
+                        {
+                            context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+                        }
+                        context->PopBoundFunction();
+                        instantiationScope.PopParentScope();
+                        functionDefinition->GetScope()->ClearParentScopes();
                     }
-                    context->PopBoundFunction();
-                    instantiationScope.PopParentScope();
-                    specialization->GetScope()->ClearParentScopes();
                 }
                 catch (const std::exception& ex)
                 {
@@ -599,7 +631,78 @@ FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
     }
     else
     {
-        ThrowException("otava.symbols.class_templates: function definition required for template instantiation", node->GetSourcePos(), sourcePos, context);
+        ClassTypeSymbol* parentClass = memFn->ParentClassType();
+        if (parentClass)
+        {
+            TemplateDeclarationSymbol* templateDeclaration = parentClass->ParentTemplateDeclaration();
+            if (templateDeclaration)
+            {
+                int arity = templateDeclaration->Arity();
+                int argCount = templateArgumentTypes.size();
+                if (argCount > arity)
+                {
+                    ThrowException("otava.symbols.class_templates: wrong number of template args for instantiating class template member function '" +
+                        util::ToUtf8(memFn->Name()) + "'", sourcePos, node->GetSourcePos(), context);
+                }
+                classTemplateSpecialization->GetScope()->AddParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+                classTemplateSpecialization->GetScope()->AddParentScope(classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope());
+                InstantiationScope instantiationScope(classTemplateSpecialization->GetScope());
+                std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
+                for (int i = 0; i < arity; ++i)
+                {
+                    Symbol* templateArg = templateArgumentTypes[i];
+                    TemplateParameterSymbol* templateParameter = templateDeclaration->TemplateParameters()[i];
+                    BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+                    boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
+                    boundTemplateParameter->SetBoundSymbol(templateArg);
+                    boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
+                    instantiationScope.Install(boundTemplateParameter);
+                }
+                BoundTemplateParameterSymbol* templateNameParameter(new BoundTemplateParameterSymbol(classTemplateSpecialization->ClassTemplate()->Name()));
+                templateNameParameter->SetBoundSymbol(classTemplateSpecialization);
+                boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(templateNameParameter));
+                instantiationScope.Install(templateNameParameter);
+                context->GetSymbolTable()->BeginScope(&instantiationScope);
+                Instantiator instantiator(context, &instantiationScope);
+                FunctionSymbol* specialization = nullptr;
+                try
+                {
+                    context->PushSetFlag(ContextFlags::instantiateMemFnOfClassTemplate | ContextFlags::saveDeclarations | ContextFlags::dontBind);
+                    if (memFn->IsFunctionDefinitionSymbol())
+                    {
+                        FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
+                        context->SetMemFunDefSymbolIndex(memFnDefSymbol->DefIndex());
+                    }
+                    context->SetSpecialization(nullptr);
+                    node->Accept(instantiator);
+                    context->PopFlags();
+                    context->SetMemFunDefSymbolIndex(-1);
+                    specialization = context->GetSpecialization();
+                    specializationName = util::ToUtf8(specialization->FullName());
+                    instantiationScope.PopParentScope();
+                }
+                catch (const std::exception& ex)
+                {
+                    ThrowException("otava.symbols.class_templates: error instantiating specialization '" + specializationName +
+                        "': " + std::string(ex.what()), node->GetSourcePos(), sourcePos, context);
+                }
+                context->GetSymbolTable()->EndScope();
+                context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+                if (prevParseMemberFunction)
+                {
+                    context->SetFlag(ContextFlags::parseMemberFunction);
+                }
+                return specialization;
+            }
+            else
+            {
+                ThrowException("otava.symbols.class_templates: parent class template declaration not found", node->GetSourcePos(), sourcePos, context);
+            }
+        }
+        else
+        {
+            ThrowException("otava.symbols.class_templates: parent class template not found", node->GetSourcePos(), sourcePos, context);
+        }
     }
 }
 

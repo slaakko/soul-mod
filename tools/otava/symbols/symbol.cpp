@@ -429,6 +429,7 @@ bool Symbol::IsValueSymbol() const
         case SymbolKind::charValueSymbol:
         case SymbolKind::symbolValueSymbol:
         case SymbolKind::invokeValueSymbol:
+        case SymbolKind::arrayValueSymbol:
         {
             return true;
         }

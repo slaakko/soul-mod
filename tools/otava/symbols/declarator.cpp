@@ -51,6 +51,11 @@ void FunctionDeclarator::AddQualifier(FunctionQualifiers qualifier)
     qualifiers = qualifiers | qualifier;
 }
 
+void FunctionDeclarator::SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_)
+{
+    templateArgs = templateArgs_;
+}
+
 ArrayDeclarator::ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, int64_t size_) : Declarator(DeclaratorKind::arrayDeclarator, name_, node_), size(size_)
 {
 }
@@ -67,7 +72,7 @@ Declaration::Declaration(DeclarationFlags flags_, TypeSymbol* type_, Declarator*
 class DeclaratorListProcessor : public otava::ast::DefaultVisitor
 {
 public:
-    DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_);
+    DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_, otava::ast::Node* declarationNode_);
     std::unique_ptr<DeclarationList> GetDeclarations() { return std::move(declarationList); }
     void Visit(otava::ast::InitDeclaratorListNode& node) override;
     void Visit(otava::ast::MemberDeclaratorListNode& node) override;
@@ -76,10 +81,11 @@ private:
     TypeSymbol* baseType;
     DeclarationFlags flags;
     std::unique_ptr<DeclarationList> declarationList;
+    otava::ast::Node* declarationNode;
 };
 
-DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_) : 
-    context(context_), baseType(baseType_), flags(flags_), declarationList(new DeclarationList())
+DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* baseType_, DeclarationFlags flags_, otava::ast::Node* declarationNode_) :
+    context(context_), baseType(baseType_), flags(flags_), declarationList(new DeclarationList()), declarationNode(declarationNode_)
 {
 }
 
@@ -89,7 +95,7 @@ void DeclaratorListProcessor::Visit(otava::ast::InitDeclaratorListNode& node)
     for (int32_t i = 0; i < n; ++i)
     {
         otava::ast::Node* declarator = node.Items()[i];
-        Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
+        Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, context);
         if (declaration.declarator.get())
         {
             declarationList->declarations.push_back(std::move(declaration));
@@ -103,7 +109,7 @@ void DeclaratorListProcessor::Visit(otava::ast::MemberDeclaratorListNode& node)
     for (int32_t i = 0; i < n; ++i)
     {
         otava::ast::Node* declarator = node.Items()[i];
-        Declaration declaration = ProcessDeclarator(baseType, declarator, flags, context);
+        Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, context);
         if (declaration.declarator.get())
         {
             declarationList->declarations.push_back(std::move(declaration));
@@ -114,7 +120,7 @@ void DeclaratorListProcessor::Visit(otava::ast::MemberDeclaratorListNode& node)
 class DeclaratorProcessor : public otava::ast::DefaultVisitor
 {
 public:
-    DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_);
+    DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, otava::ast::Node* declarationNode_);
     void SetProcessTrailingQualifiers(bool processTrailingQualifiers_) { processTrailingQualifiers = processTrailingQualifiers_; }
     Declaration GetDeclaration() { return std::move(declaration); }
     void Visit(otava::ast::FunctionDeclaratorNode& node) override;
@@ -129,6 +135,7 @@ public:
     void Visit(otava::ast::OperatorFunctionIdNode& node) override;
     void Visit(otava::ast::QualifiedIdNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;
+    void Visit(otava::ast::TemplateIdNode& node) override;
     void Visit(otava::ast::AbstractDeclaratorNode& node) override;
     void Visit(otava::ast::ArrayDeclaratorNode& node) override;
     void Visit(otava::ast::ConstNode& node) override;
@@ -200,9 +207,10 @@ private:
     FunctionDeclarator* functionDeclarator;
     Scope* scope;
     std::u32string arrayName;
+    otava::ast::Node* declarationNode;
 };
 
-DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_) :
+DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, otava::ast::Node* declarationNode_) :
     context(context_), 
     flags(flags_),
     baseType(baseType_), 
@@ -216,7 +224,8 @@ DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags fla
     processArrayId(false),
     scope(context->GetSymbolTable()->CurrentScope()),
     functionDeclarator(),
-    qualifiers()
+    qualifiers(),
+    declarationNode(declarationNode_)
 {
 }
 
@@ -254,7 +263,7 @@ void DeclaratorProcessor::Visit(otava::ast::ParenthesizedDeclaratorNode& node)
         baseType = functionTypeSymbol;
         context->GetSymbolTable()->SetAddToRecomputeNameSet(true);
     }
-    declaration = ProcessDeclarator(baseType, node.Declarator(), flags, context);
+    declaration = ProcessDeclarator(baseType, node.Declarator(), declarationNode, flags, context);
 }
 
 void DeclaratorProcessor::Visit(otava::ast::TrailingQualifiersNode& node)
@@ -777,7 +786,7 @@ void DeclaratorProcessor::Visit(otava::ast::IdentifierNode& node)
             {
                 if (isDestructorDeclarator)
                 {
-                    functionDeclarator = new FunctionDeclarator(U"~" + node.Str(), &node, FunctionKind::destructor, qualifiers, scope);
+                    functionDeclarator = new FunctionDeclarator(U"~" + node.Str(), declarationNode, FunctionKind::destructor, qualifiers, scope);
                 }
                 else
                 {
@@ -795,7 +804,7 @@ void DeclaratorProcessor::Visit(otava::ast::IdentifierNode& node)
                             }
                         }
                     }
-                    functionDeclarator = new FunctionDeclarator(node.Str(), &node, kind, qualifiers, scope);
+                    functionDeclarator = new FunctionDeclarator(node.Str(), declarationNode, kind, qualifiers, scope);
                 }
                 declaration = Declaration(flags, baseType, functionDeclarator);
             }
@@ -804,6 +813,21 @@ void DeclaratorProcessor::Visit(otava::ast::IdentifierNode& node)
                 declaration = Declaration(flags, baseType, new SimpleDeclarator(node.Str(), &node));
             }
         }
+    }
+}
+
+void DeclaratorProcessor::Visit(otava::ast::TemplateIdNode& node)
+{
+    node.TemplateName()->Accept(*this);
+    std::vector<TypeSymbol*> templateArgs;
+    for (const auto& item : node.Items())
+    {
+        TypeSymbol* type = ResolveType(item, DeclarationFlags::none, context);
+        templateArgs.push_back(type);
+    }
+    if (functionDeclarator)
+    {
+        functionDeclarator->SetTemplateArgs(templateArgs);
     }
 }
 
@@ -834,23 +858,23 @@ void DeclaratorProcessor::Visit(otava::ast::ArrayDeclaratorNode& node)
     declaration = Declaration(flags, baseType, new ArrayDeclarator(arrayName, &node, size));
 }
 
-std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)
+std::unique_ptr<DeclarationList> ProcessInitDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* initDeclaratorList, DeclarationFlags flags, Context* context)
 {
-    DeclaratorListProcessor processor(context, baseType, flags);
+    DeclaratorListProcessor processor(context, baseType, flags, declarationNode);
     initDeclaratorList->Accept(processor);
     return processor.GetDeclarations();
 }
 
-std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
+std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseType, otava::ast::Node* declarationNode, otava::ast::Node* memberDeclaratorList, DeclarationFlags flags, Context* context)
 {
-    DeclaratorListProcessor processor(context, baseType, flags);
+    DeclaratorListProcessor processor(context, baseType, flags, declarationNode);
     memberDeclaratorList->Accept(processor);
     return processor.GetDeclarations();
 }
 
-Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, DeclarationFlags flags, Context* context)
+Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, Context* context)
 {
-    DeclaratorProcessor processor(context, flags, baseType);
+    DeclaratorProcessor processor(context, flags, baseType, declarationNode);
     if (declarator->Kind() == otava::ast::NodeKind::trailingQualifiersNode)
     {
         processor.SetProcessTrailingQualifiers(true);

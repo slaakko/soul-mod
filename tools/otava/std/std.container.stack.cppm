@@ -4,7 +4,7 @@ import std.type.fundamental;
 
 export namespace std {
 
-template<typename T, typename Container = vector>
+template<typename T, typename Container = vector<T>>
 class stack
 {
 public:
@@ -16,20 +16,22 @@ public:
 protected:
     Container c;
 public: 
-    stack();
-    explicit stack(const Container&);
-    explicit stack(Container&&);
-    bool empty() const;
-    size_type size() const;
-    reference top();
-    const_reference top() const;
-    void push(const value_type& x);
-    void push(value_type&& x);
-    void pop();
-    void swap(stack& s);
+    stack() : c()
+    {
+    }
+    explicit stack(const Container& c_) : c(c_)
+    {
+    }
+    explicit stack(Container&& that) : c(std::move(that.c))
+    {
+    }
+    bool empty() const { return c.empty(); }
+    size_type size() const { return c.size(); }
+    reference top() { return c.back(); }
+    const_reference top() const { return c.back(); }
+    void push(const value_type& x) { c.push_back(x); }
+    void push(value_type&& x) { c.push_back(std::move(x)); }
+    void pop() { c.pop_back(); }
 };
-
-template<class T, class Container>
-void swap(stack<T, Container>& x, stack<T, Container>& y);
 
 } // namespace std

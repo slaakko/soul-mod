@@ -21,6 +21,8 @@ class StringValue;
 class CharValue;
 class SymbolValue;
 class InvokeValue;
+class ArrayValue;
+class StructureValue;
 class AliasGroupSymbol;
 class AliasTypeSymbol;
 class AliasTypeTemplateSpecializationSymbol;
@@ -55,6 +57,7 @@ class NestedTypeSymbol;
 class VariableGroupSymbol;
 class VariableSymbol;
 class ConstraintExprSymbol;
+class GenericTypeSymbol;
 
 class Visitor
 {
@@ -75,6 +78,8 @@ public:
     virtual void Visit(CharValue& value) {}
     virtual void Visit(SymbolValue& value) {}
     virtual void Visit(InvokeValue& value) {}
+    virtual void Visit(ArrayValue& value) {}
+    virtual void Visit(StructureValue& value) {}
     virtual void Visit(AliasGroupSymbol& symbol) {}
     virtual void Visit(AliasTypeSymbol& symbol) {}
     virtual void Visit(AliasTypeTemplateSpecializationSymbol& symbol) {}
@@ -109,6 +114,7 @@ public:
     virtual void Visit(VariableGroupSymbol& symbol) {}
     virtual void Visit(VariableSymbol& symbol) {}
     virtual void Visit(ConstraintExprSymbol& symbol) {}
+    virtual void Visit(GenericTypeSymbol& symbol) {}
     void SetVisitContainer(bool visitContainer_) { visitContainer = visitContainer_; }
 private:
     bool visitContainer;

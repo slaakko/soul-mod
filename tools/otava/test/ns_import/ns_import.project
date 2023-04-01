@@ -1,0 +1,4 @@
+project ns_import;
+target=library;
+interface <ns_import.cppm>;
+interface <ns.cppm>;

@@ -558,7 +558,10 @@ void DefaultVisitor::Visit(SimpleDeclarationNode& node)
     {
         node.InitDeclaratorList()->Accept(*this);
     }
-    node.Semicolon()->Accept(*this);
+    if (node.Semicolon())
+    {
+        node.Semicolon()->Accept(*this);
+    }
     EndVisit(node);
 }
 

@@ -18,7 +18,7 @@ class TypeSymbol;
 
 enum class ValueKind : int32_t
 {
-    none, boolValue, integerValue, floatingValue, nullPtrValue, stringValue, charValue, symbolValue, invokeValue
+    none, boolValue, integerValue, floatingValue, nullPtrValue, stringValue, charValue, symbolValue, invokeValue, arrayValue
 };
 
 ValueKind CommonValueKind(ValueKind left, ValueKind right);
@@ -35,6 +35,7 @@ public:
     bool IsNullPtrValue() const { return GetValueKind() == ValueKind::nullPtrValue; }
     bool IsSymbolValue() const { return GetValueKind() == ValueKind::symbolValue; }
     bool IsInvokeValue() const { return GetValueKind() == ValueKind::invokeValue; }
+    bool IsArrayValue() const { return GetValueKind() == ValueKind::arrayValue; }
     virtual BoolValue* ToBoolValue(EvaluationContext& context) = 0;
     virtual Value* Convert(ValueKind kind, EvaluationContext& context) = 0;
     virtual otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -199,6 +200,40 @@ private:
     util::uuid subjectId;
 };
 
+class ArrayValue : public Value
+{
+public:
+    ArrayValue(TypeSymbol* type_);
+    void AddElementValue(Value* elementValue);
+    std::string SymbolKindStr() const override { return "array value"; }
+    std::string SymbolDocKindStr() const override { return "array_value"; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
+    BoolValue* ToBoolValue(EvaluationContext& context) override;
+    Value* Convert(ValueKind kind, EvaluationContext& context) override;
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    std::vector<Value*> elementValues;
+};
+
+class StructureValue : public Value
+{
+public:
+    StructureValue(TypeSymbol* type_);
+    void AddFieldValue(Value* fieldValue);
+    std::string SymbolKindStr() const override { return "array value"; }
+    std::string SymbolDocKindStr() const override { return "array_value"; }
+    void Write(Writer& writer) override;
+    void Read(Reader& reader) override;
+    void Accept(Visitor& visitor) override;
+    BoolValue* ToBoolValue(EvaluationContext& context) override;
+    Value* Convert(ValueKind kind, EvaluationContext& context) override;
+    otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    std::vector<Value*> fieldValues;
+};
+
 class EvaluationContext
 {
 public:
@@ -214,7 +249,10 @@ public:
     CharValue* GetCharValue(char32_t value, TypeSymbol* type);
     SymbolValue* GetSymbolValue(Symbol* symbol);
     InvokeValue* GetInvokeValue(Value* subject);
+    ArrayValue* GetArrayValue(TypeSymbol* type);
+    StructureValue* GetStructureValue(TypeSymbol* type);
     Value* GetValue(const util::uuid& valueId) const;
+    void AddValue(Value* value);
     void Resolve(SymbolTable& symbolTable);
     SymbolTable& GetSymbolTable() { return symbolTable; }
 private:

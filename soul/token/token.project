@@ -1,6 +1,7 @@
 project soul.token;
+target=library;
 reference <../../util/util.project>;
-interface <soul.cpp.op.token.ixx>;
-interface <soul.cpp.token.ixx>;
-interface <soul.punctuation.token.ixx>;
-interface <soul.tool.token.ixx>;
+interface <soul.cpp.op.token.cppm>;
+interface <soul.cpp.token.cppm>;
+interface <soul.punctuation.token.cppm>;
+interface <soul.tool.token.cppm>;

@@ -16,7 +16,8 @@ void PreprocessPPLine(Lexer& lexer, Token& token)
     otava::pp::state::State* state = otava::pp::state::LexerStateMap::Instance().GetState(&lexer);
     auto ppLexer = otava::pp::lexer::MakeLexer(token.match.begin, token.match.end, lexer.FileName());
     lexer.SetRuleNameMapPtr(otava::pp::parser::spg::rules::GetRuleNameMapPtr());
-    otava::pp::parser::PPParser<decltype(ppLexer)>::Parse(ppLexer, state);
+    using LexerType = decltype(ppLexer);
+    otava::pp::parser::PPParser<LexerType>::Parse(ppLexer, state);
 }
 
 } // namespace soul::cpp20::pp

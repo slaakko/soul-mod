@@ -1,0 +1,3 @@
+project parser;
+target=program;
+source <parser.cpp>;

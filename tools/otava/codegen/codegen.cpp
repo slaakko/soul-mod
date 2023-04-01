@@ -40,14 +40,14 @@ namespace otava::codegen {
 
 struct SwitchTarget
 {
-    SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, otava::symbols::BoundExpressionNode* expr_);
+    SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, const std::vector<otava::symbols::BoundExpressionNode*> exprs_);
     otava::intermediate::BasicBlock* block;
     otava::symbols::BoundStatementNode* statement;
-    otava::symbols::BoundExpressionNode* expr;
+    std::vector<otava::symbols::BoundExpressionNode*> exprs;
 };
 
-SwitchTarget::SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, otava::symbols::BoundExpressionNode* expr_) :
-    block(block_), statement(statement_), expr(expr_)
+SwitchTarget::SwitchTarget(otava::intermediate::BasicBlock* block_, otava::symbols::BoundStatementNode* statement_, const std::vector<otava::symbols::BoundExpressionNode*> exprs_) :
+    block(block_), statement(statement_), exprs(exprs_)
 {
 }
 
@@ -96,13 +96,18 @@ SwitchTargetCollector::SwitchTargetCollector(otava::symbols::Emitter& emitter_) 
 
 void SwitchTargetCollector::Visit(otava::symbols::BoundCaseStatementNode& node)
 {
-    SwitchTarget* caseTarget = new SwitchTarget(emitter.CreateBasicBlock(), node.Statement(), node.CaseExpr());
+    std::vector<otava::symbols::BoundExpressionNode*> caseExprs;
+    for (const auto& caseExpr : node.CaseExprs())
+    {
+        caseExprs.push_back(caseExpr.get());
+    }
+    SwitchTarget* caseTarget = new SwitchTarget(emitter.CreateBasicBlock(), node.Statement(), caseExprs);
     switchTargets->AddCase(caseTarget);
 }
 
 void SwitchTargetCollector::Visit(otava::symbols::BoundDefaultStatementNode& node)
 {
-    SwitchTarget* defaultTarget = new SwitchTarget(emitter.CreateBasicBlock(), node.Statement(), nullptr);
+    SwitchTarget* defaultTarget = new SwitchTarget(emitter.CreateBasicBlock(), node.Statement(), std::vector<otava::symbols::BoundExpressionNode*>());
     switchTargets->SetDefault(defaultTarget);
 }
 
@@ -833,10 +838,13 @@ void CodeGenerator::Visit(otava::symbols::BoundSwitchStatementNode& node)
     {
         const auto& caseTarget = switchTargets->Cases()[i];
         emitter.SetCurrentBasicBlock(caseTarget->block);
-        EvaluateConstantExpr(emitter, node.GetSourcePos(), context, caseTarget->expr);
-        otava::intermediate::Value* caseValue = emitter.Stack().Pop();
-        otava::intermediate::CaseTarget target(caseValue, caseTarget->block->Id());
-        switchInst->AddCaseTarget(target);
+        for (const auto& expr : caseTarget->exprs)
+        {
+            EvaluateConstantExpr(emitter, node.GetSourcePos(), context, expr);
+            otava::intermediate::Value* caseValue = emitter.Stack().Pop();
+            otava::intermediate::CaseTarget target(caseValue, caseTarget->block->Id());
+            switchInst->AddCaseTarget(target);
+        }
         otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
         nextBlock = nullptr;
         emitter.SetNextBlock(nextBlock);

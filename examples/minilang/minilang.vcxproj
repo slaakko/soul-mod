@@ -151,29 +151,29 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ast.cpp" />
-    <ClCompile Include="ast.ixx" />
+    <ClCompile Include="ast.cppm" />
     <ClCompile Include="expression.parser.cpp" />
-    <ClCompile Include="expression.parser.ixx" />
+    <ClCompile Include="expression.parser.cppm" />
     <ClCompile Include="function.parser.cpp" />
-    <ClCompile Include="function.parser.ixx" />
+    <ClCompile Include="function.parser.cppm" />
     <ClCompile Include="identifier.parser.cpp" />
-    <ClCompile Include="identifier.parser.ixx" />
+    <ClCompile Include="identifier.parser.cppm" />
     <ClCompile Include="literal.parser.cpp" />
-    <ClCompile Include="literal.parser.ixx" />
+    <ClCompile Include="literal.parser.cppm" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="minilang.lexer.cpp" />
-    <ClCompile Include="minilang.lexer.ixx" />
-    <ClCompile Include="minilang.token.ixx" />
+    <ClCompile Include="minilang.lexer.cppm" />
+    <ClCompile Include="minilang.token.cppm" />
     <ClCompile Include="minilang_rules.cpp" />
-    <ClCompile Include="minilang_rules.ixx" />
-    <ClCompile Include="parser.ixx" />
+    <ClCompile Include="minilang_rules.cppm" />
+    <ClCompile Include="parser.cppm" />
     <ClCompile Include="source_file.parser.cpp" />
-    <ClCompile Include="source_file.parser.ixx" />
+    <ClCompile Include="source_file.parser.cppm" />
     <ClCompile Include="statement.parser.cpp" />
-    <ClCompile Include="statement.parser.ixx" />
+    <ClCompile Include="statement.parser.cppm" />
     <ClCompile Include="type.parser.cpp" />
-    <ClCompile Include="type.parser.ixx" />
-    <ClCompile Include="visitor.ixx" />
+    <ClCompile Include="type.parser.cppm" />
+    <ClCompile Include="visitor.cppm" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\soul\ast\ast.vcxproj">

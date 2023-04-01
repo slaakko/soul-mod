@@ -36,10 +36,10 @@ public:
     {
         app, ate, binary, in, out, trunc
     };
-    fmtflags flags() const { return fl; }
-    void flags(fmtflags f_) { fl = f_; }
-    void setf(fmtflags f_) { fl = fl | f_; }
-    void unsetf(fmtflags f_) { fl = fl & ~f_; }
+    fmtflags flags() const;
+    void flags(fmtflags f_);
+    void setf(fmtflags f_);
+    void unsetf(fmtflags f_);
 private:
     fmtflags fl;
 };

@@ -12,6 +12,7 @@ import soul.ast.source.pos;
 import otava.ast.node;
 import otava.ast.function;
 import otava.intermediate.value;
+import otava.symbols.instantiation_queue;
 
 export namespace otava::symbols {
 
@@ -115,10 +116,8 @@ public:
     std::unique_ptr<DeclarationList> ReleaseDeclarationList(otava::ast::Node* node);
     soul::lexer::FileMap* GetFileMap() const { return fileMap; }
     void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
-    void SetSpecialization(FunctionDefinitionSymbol* specialization_) { specialization = specialization_; }
-    FunctionDefinitionSymbol* GetSpecialization() const { return specialization; }
-    void SetFunctionDefinitionNode(otava::ast::FunctionDefinitionNode* functionDefinitionNode_) { functionDefinitionNode = functionDefinitionNode_; }
-    otava::ast::Node* GetFunctionDefinitionNode() const { return functionDefinitionNode; }
+    void SetSpecialization(FunctionSymbol* specialization_);
+    FunctionSymbol* GetSpecialization() const;
     void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }
     AliasTypeSymbol* GetAliasType() const { return aliasType; }
     void SetPtr(otava::intermediate::Value* ptr_) { ptr = ptr_; }
@@ -131,6 +130,13 @@ public:
     void PushSwitchCondType(TypeSymbol* switchCondType_);
     void PopSwitchCondType();
     TypeSymbol* GetSwitchCondType() const { return switchCondType; }
+    void SetInstantiationQueue(InstantiationQueue* instantiationQueue_);
+    InstantiationQueue* GetInstantiationQueue() { return instantiationQueue; }
+    void AddTemporaryAliasType(AliasTypeSymbol* temporaryAliasType);
+    const std::vector<AliasTypeSymbol*>& TemporaryAliasTypes() const { return temporaryAliasTypes; }
+    void ClearTemporaryAliasTypes();
+    void SetDeclaredInitializerType(TypeSymbol* type) { declaredInitializerType = type; }
+    TypeSymbol* DeclaredInitializerType() const { return declaredInitializerType; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -143,7 +149,7 @@ private:
     otava::ast::Node* node;
     std::map<otava::ast::Node*, std::unique_ptr<DeclarationList>> declarationMap;
     soul::lexer::FileMap* fileMap;
-    FunctionDefinitionSymbol* specialization;
+    FunctionSymbol* specialization;
     otava::ast::FunctionDefinitionNode* functionDefinitionNode;
     AliasTypeSymbol* aliasType;
     otava::intermediate::Value* ptr;
@@ -152,6 +158,9 @@ private:
     bool rejectTemplateId;
     TypeSymbol* switchCondType;
     std::stack<TypeSymbol*> switchCondTypeStack;
+    InstantiationQueue* instantiationQueue;
+    std::vector<AliasTypeSymbol*> temporaryAliasTypes;
+    TypeSymbol* declaredInitializerType;
 };
 
 } // namespace otava::symbols

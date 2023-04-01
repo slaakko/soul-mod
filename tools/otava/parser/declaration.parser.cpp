@@ -5023,7 +5023,14 @@ soul::parser::Match DeclarationParser<Lexer>::AliasDeclaration(Lexer& lexer, ota
         if (match.hit)
         {
             otava::ast::AliasDeclarationNode *aliasDeclarationNode = new otava::ast::AliasDeclarationNode(sourcePos, usng.release(), identifier.release(), assign.release(), definingTypeId.release(), attributes.release(), semicolon.release());
-            otava::symbols::ProcessAliasDeclaration(aliasDeclarationNode, context);
+            if (!context->GetSymbolTable()->CurrentScope()->IsBlockScope())
+            {
+                otava::symbols::ProcessAliasDeclaration(aliasDeclarationNode, context);
+            }
+            else
+            {
+                otava::symbols::AddTemporaryTypeAlias(aliasDeclarationNode, context);
+            }
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AliasDeclaration");

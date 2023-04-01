@@ -113,6 +113,7 @@ public:
     const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
     std::vector<FunctionDefinitionSymbol*> MemFunDefSymbols() const { return memFunDefSymbols; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    void AddMemFunDefSymbol(FunctionDefinitionSymbol* memFunDefSymbol);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
     void MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context);

@@ -23,22 +23,22 @@ void Symbol::SetName(const std::string& name_)
     name = name_;
 }
 
-Char::Char(char32_t chr_) : Symbol(SymbolKind::charSymbol), chr(chr_)
+CharSymbol::CharSymbol(char32_t chr_) : Symbol(SymbolKind::charSymbol), chr(chr_)
 {
     SetName("(" + util::ToUtf8(std::u32string(1, chr)) + ")");
 }
 
-bool Char::Match(char32_t c)
+bool CharSymbol::Match(char32_t c)
 {
     return chr == c;
 }
 
-void Char::Accept(Visitor& visitor)
+void CharSymbol::Accept(Visitor& visitor)
 {
     visitor.Visit(*this);
 }
 
-void Char::Print(CodeFormatter& formatter)
+void CharSymbol::Print(CodeFormatter& formatter)
 {
     if (chr == eps)
     {
@@ -183,7 +183,7 @@ Class* Class::MakeCanonical(LexerContext& lexerContext)
     {
         if (symbol->Kind() == SymbolKind::charSymbol)
         {
-            Char* chr = static_cast<Char*>(symbol);
+            CharSymbol* chr = static_cast<CharSymbol*>(symbol);
             rangeVec.push_back(Range(chr->Chr(), chr->Chr()));
         }
         else if (symbol->Kind() == SymbolKind::rangeSymbol)
@@ -1859,7 +1859,7 @@ Symbol* LexerContext::MakeChar(char32_t c)
     {
         return it->second;
     }
-    Symbol* symbol = new Char(c);
+    Symbol* symbol = new CharSymbol(c);
     symbol->DontSetContained();
     symbols.push_back(symbol);
     charSymbols[c] = symbol;

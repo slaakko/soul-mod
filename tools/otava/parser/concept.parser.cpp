@@ -2021,7 +2021,7 @@ soul::parser::Match ConceptParser<Lexer>::TypeConstraint(Lexer& lexer, otava::sy
                                     soul::parser::Match* parentMatch18 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                        auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == LANGLE)
                                         {
@@ -2073,7 +2073,7 @@ soul::parser::Match ConceptParser<Lexer>::TypeConstraint(Lexer& lexer, otava::sy
                                     soul::parser::Match* parentMatch22 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                        auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == RANGLE)
                                         {

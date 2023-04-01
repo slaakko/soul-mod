@@ -148,7 +148,8 @@ public:
             if (currentPos == recordedPosPair.end)
             {
                 current = tokens.end() - 1; // set current to last token whose id is END_TOKEN
-                pos = tokens.back().match.end;
+                auto token = tokens.back();
+                pos = token.match.end;
             }
             else
             {
@@ -333,7 +334,7 @@ public:
         {
             s = lineStarts[line];
         }
-        Token token = GetToken(pos);
+        auto token = GetToken(pos);
         int col = static_cast<int>(token.match.begin - s + 1);
         return soul::ast::SourcePos(pos, file, line, col);
     }
@@ -575,7 +576,7 @@ private:
             {
                 lexeme.end = pos + 1;
             }
-            state = Machine::NextState(state, c, *this);
+            state = Machine::NextState(state, c, *static_cast<LexerBase<Char>*>(this));
             if (state == -1)
             {
                 if (token.id == CONTINUE_TOKEN)
@@ -633,7 +634,7 @@ private:
             current = tokens.end() - 1;
             p = GetPos();
         }
-        Token<Char, LexerBase<Char>> endToken(END_TOKEN, this);
+        TokenType endToken(END_TOKEN, this);
         endToken.match.begin = end;
         endToken.match.end = end;
         tokens.push_back(endToken);

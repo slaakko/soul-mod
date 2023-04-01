@@ -29,7 +29,9 @@ Context::Context() :
     ptr(nullptr),
     memFunDefSymbolIndex(-1),
     rejectTemplateId(false),
-    switchCondType(nullptr)
+    switchCondType(nullptr),
+    instantiationQueue(nullptr),
+    declaredInitializerType(nullptr)
 {
 }
 
@@ -210,6 +212,38 @@ void Context::PopSwitchCondType()
 {
     switchCondType = switchCondTypeStack.top();
     switchCondTypeStack.pop();
+}
+
+void Context::SetInstantiationQueue(InstantiationQueue* instantiationQueue_)
+{
+    instantiationQueue = instantiationQueue_;
+}
+
+void Context::AddTemporaryAliasType(AliasTypeSymbol* temporaryAliasType)
+{
+    temporaryAliasTypes.push_back(temporaryAliasType);
+}
+
+void Context::ClearTemporaryAliasTypes()
+{
+    temporaryAliasTypes.clear();
+}
+
+void Context::SetSpecialization(FunctionSymbol* specialization_) 
+{ 
+    if (specialization_ == nullptr)
+    {
+        specialization = nullptr;
+    }
+    else if (specialization == nullptr)
+    {
+        specialization = specialization_;
+    }
+}
+
+FunctionSymbol* Context::GetSpecialization() const 
+{ 
+    return specialization; 
 }
 
 } // namespace otava::symbols

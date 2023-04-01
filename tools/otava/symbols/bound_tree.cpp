@@ -312,8 +312,17 @@ void BoundCompileUnitNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundCompileUnitNode::AddBoundNode(BoundNode* node)
+void BoundCompileUnitNode::AddBoundNode(BoundNode* node, Context* context)
 {
+    if (node->IsBoundFunctionNode())
+    {
+        BoundFunctionNode* boundFunction = static_cast<BoundFunctionNode*>(node);
+        std::set<const Symbol*> visited;
+        if (boundFunction->GetFunctionDefinitionSymbol()->IsTemplateParameterInstantiation(context, visited))
+        {
+            return;
+        }
+    }
     node->SetIndex(boundNodes.size());
     boundNodes.push_back(std::unique_ptr<BoundNode>(node));
 }
@@ -327,7 +336,7 @@ void BoundCompileUnitNode::AddBoundNodeForClass(ClassTypeSymbol* cls, const soul
         if (prev == cls) return;
     }
     boundClasses.push_back(cls);
-    AddBoundNode(new BoundClassNode(cls, sourcePos));
+    AddBoundNode(new BoundClassNode(cls, sourcePos), context);
 }
 
 void BoundCompileUnitNode::Sort()
@@ -580,9 +589,14 @@ void BoundCaseStatementNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundCaseStatementNode::SetCaseExpr(BoundExpressionNode* caseExpr_)
+void BoundCaseStatementNode::AddCaseExpr(BoundExpressionNode* caseExpr)
 {
-    caseExpr.reset(caseExpr_);
+    caseExprs.push_back(std::unique_ptr<BoundExpressionNode>(caseExpr));
+}
+
+void BoundCaseStatementNode::InsertCaseExprToFront(BoundExpressionNode* caseExpr)
+{
+    caseExprs.insert(caseExprs.begin(), std::unique_ptr<BoundExpressionNode>(caseExpr));
 }
 
 void BoundCaseStatementNode::SetStatement(BoundStatementNode* stmt_)
@@ -1204,7 +1218,17 @@ void BoundFunctionGroupNode::Accept(BoundTreeVisitor& visitor)
 
 BoundExpressionNode* BoundFunctionGroupNode::Clone() const
 {
-    return new BoundFunctionGroupNode(functionGroupSymbol, GetSourcePos(), GetType());
+    BoundFunctionGroupNode* clone = new BoundFunctionGroupNode(functionGroupSymbol, GetSourcePos(), GetType());
+    for (auto templateArg : templateArgs)
+    {
+        clone->AddTemplateArg(templateArg);
+    }
+    return clone;
+}
+
+void BoundFunctionGroupNode::AddTemplateArg(TypeSymbol* templateArg)
+{
+    templateArgs.push_back(templateArg);
 }
 
 BoundTypeNode::BoundTypeNode(TypeSymbol* type_, const soul::ast::SourcePos& sourcePos_) : 

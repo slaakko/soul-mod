@@ -10,6 +10,21 @@ ios_base::~ios_base()
 {
 }
 
+void ios_base::flags(fmtflags f_) 
+{
+    fl = f_; 
+}
+
+void ios_base::setf(fmtflags f_) 
+{ 
+    fl = fl | f_; 
+}
+
+void ios_base::unsetf(fmtflags f_) 
+{ 
+    fl = fl & ~f_; 
+}
+
 ios_base& dec(std::ios_base& strm)
 {
     strm.unsetf(std::fmtflags::basefield);

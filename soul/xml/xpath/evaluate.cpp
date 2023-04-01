@@ -21,7 +21,8 @@ std::unique_ptr<soul::xml::xpath::expr::Expr> ParseXPathExpr(const std::string& 
     std::u32string u32expr = util::ToUtf32(xpathExpr);
     auto lexer = soul::xml::xpath::lexer::MakeLexer(u32expr.c_str(), u32expr.c_str() + u32expr.length(), "xpath expression");
     lexer.SetRuleNameMapPtr(soul::xml::xpath::parser::rules::GetRuleNameMapPtr());
-    std::unique_ptr<soul::xml::xpath::expr::Expr> expr = soul::xml::xpath::parser::XPathParser<decltype(lexer)>::Parse(lexer);
+    using LexerType = decltype(lexer);
+    std::unique_ptr<soul::xml::xpath::expr::Expr> expr = soul::xml::xpath::parser::XPathParser<LexerType>::Parse(lexer);
     expr->SetStr(xpathExpr);
     return expr;
 }

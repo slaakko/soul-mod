@@ -431,6 +431,10 @@ StoreInstruction::StoreInstruction(const SourcePos& sourcePos_, Value* value_, V
 
 void StoreInstruction::Write(util::CodeFormatter& formatter)
 {
+    if (value->IsArrayValue())
+    {
+        return; // TODO!!!
+    }
     formatter.Write(util::Format("store ", 8));
     formatter.Write(value->GetType()->Name());
     formatter.Write(" ");

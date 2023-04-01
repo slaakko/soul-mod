@@ -41,7 +41,7 @@ void MakeCanonicalClasses(soul::ast::re::LexerContext& lexerContext)
         }
         else if (symbol->Kind() == soul::ast::re::SymbolKind::charSymbol)
         {
-            soul::ast::re::Char* chr = static_cast<soul::ast::re::Char*>(symbol);
+            soul::ast::re::CharSymbol* chr = static_cast<soul::ast::re::CharSymbol*>(symbol);
             soul::ast::re::Class* canonicalClass = new soul::ast::re::Class(-1);
             canonicalClass->Ranges().push_back(soul::ast::re::Range(chr->Chr(), chr->Chr()));
             lexerContext.AddCanonicalClass(canonicalClass);
@@ -432,17 +432,17 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
         if (state->Accept())
         {
             interfaceFormatter.WriteLine("auto& token = lexer.CurrentToken();");
-            interfaceFormatter.WriteLine("Lexeme prevMatch = token.match;");
+            interfaceFormatter.WriteLine("auto prevMatch = token.match;");
             interfaceFormatter.WriteLine("token.match = lexer.CurrentLexeme();");
             interfaceFormatter.WriteLine("int64_t tokenId = GetTokenId(" + std::to_string(state->RuleIndex()) + ", lexer);");
-            interfaceFormatter.WriteLine("if (tokenId == CONTINUE_TOKEN)");
+            interfaceFormatter.WriteLine("if (tokenId == soul::lexer::CONTINUE_TOKEN)");
             interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
-            interfaceFormatter.WriteLine("token.id = CONTINUE_TOKEN;");
+            interfaceFormatter.WriteLine("token.id = soul::lexer::CONTINUE_TOKEN;");
             interfaceFormatter.WriteLine("return -1;");
             interfaceFormatter.DecIndent();
             interfaceFormatter.WriteLine("}");
-            interfaceFormatter.WriteLine("else if (tokenId != INVALID_TOKEN)");
+            interfaceFormatter.WriteLine("else if (tokenId != soul::lexer::INVALID_TOKEN)");
             interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
             interfaceFormatter.WriteLine("token.id = tokenId;");
@@ -552,7 +552,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     }
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
-    interfaceFormatter.WriteLine("return CONTINUE_TOKEN;");
+    interfaceFormatter.WriteLine("return soul::lexer::CONTINUE_TOKEN;");
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.DecIndent();

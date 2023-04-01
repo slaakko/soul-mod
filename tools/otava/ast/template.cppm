@@ -167,7 +167,8 @@ class ExplicitSpecializationNode : public CompoundNode
 {
 public:
     ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_);
-    ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* declaration_, const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_);
+    ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* templateHeadNode_, Node* declaration_,
+        const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
@@ -178,6 +179,7 @@ public:
     const soul::ast::SourcePos& RAnglePos() const { return raPos; }
 private:
     std::unique_ptr<Node> tmp;
+    std::unique_ptr<Node> templateHeadNode;
     std::unique_ptr<Node> declaration;
     soul::ast::SourcePos laPos;
     soul::ast::SourcePos raPos;

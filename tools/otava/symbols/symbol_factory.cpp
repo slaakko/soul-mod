@@ -88,6 +88,14 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new CharValue(nullptr);
         }
+        case SymbolKind::arrayValueSymbol:
+        {
+            return new ArrayValue(nullptr);
+        }
+        case SymbolKind::structureValueSymbol:
+        {
+            return new StructureValue(nullptr);
+        }
         case SymbolKind::genericTypeSymbol:
         {
             otava::ast::SetExceptionThrown();

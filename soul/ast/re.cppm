@@ -45,10 +45,10 @@ private:
     bool dontSetContained;
 };
 
-class Char : public Symbol
+class CharSymbol : public Symbol
 {
 public:
-    Char(char32_t chr_);
+    CharSymbol(char32_t chr_);
     bool Match(char32_t c) override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
@@ -304,7 +304,7 @@ private:
     std::map<char32_t, Symbol*> charSymbols;
     std::map<Range, Symbol*> rangeSymbols;
     Any any;
-    Char epsilon;
+    CharSymbol epsilon;
     Class* asciiIdStart;
     Class* asciiIdCont;
     Class* unicodeIdStart;
@@ -324,7 +324,7 @@ private:
 class Visitor
 {
 public:
-    virtual void Visit(Char& c) {}
+    virtual void Visit(CharSymbol& c) {}
     virtual void Visit(Any& a) {}
     virtual void Visit(Range& r) {}
     virtual void Visit(Class& c) {}

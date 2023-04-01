@@ -91,8 +91,10 @@ public:
     bool IsBoundAddressOfNode() const { return kind == BoundNodeKind::boundAddressOfNode; }
     bool IsBoundDereferenceNode() const { return kind == BoundNodeKind::boundDereferenceNode; }
     virtual bool IsReturnStatementNode() const { return kind == BoundNodeKind::boundReturnStatementNode; }
+    bool IsBoundCaseStatementNode() const { return kind == BoundNodeKind::boundCaseStatementNode; }
     bool IsBoundMemberExprNode() const { return kind == BoundNodeKind::boundMemberExprNode; }
     bool IsBoundTypeNode() const { return kind == BoundNodeKind::boundTypeNode; }
+    bool IsBoundFunctionGroupNode() const { return kind == BoundNodeKind::boundFunctionGroupNode; }
     bool IsBoundExpressionListNode() const { return kind == BoundNodeKind::boundExpressionListNode; }
     bool IsBoundParameterNode() const { return kind == BoundNodeKind::boundParameterNode; }
     bool IsBoundVariableNode() const { return kind == BoundNodeKind::boundVariableNode; }
@@ -100,6 +102,7 @@ public:
     bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
     bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
     bool IsBoundConversionNode() const { return kind == BoundNodeKind::boundConversionNode; }
+    bool IsBoundFunctionNode() const { return kind == BoundNodeKind::boundFunctionNode; }
     int Index() const { return index; }
     void SetIndex(int index_) { index = index_; }
 private:
@@ -167,7 +170,7 @@ public:
     BoundFunctionNode* GetCompileUnitInitializationFunction() { return compileUnitInitializationFunction.get(); }
     void AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, BoundExpressionNode* atExitCall, const soul::ast::SourcePos& sourcePos, Context* context);
     void Accept(BoundTreeVisitor& visitor) override;
-    void AddBoundNode(BoundNode* node);
+    void AddBoundNode(BoundNode* node, Context* context);
     void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos, Context* context);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
     void SetId(const std::string& id_) { id = id_; }
@@ -323,12 +326,13 @@ class BoundCaseStatementNode : public BoundStatementNode
 public:
     BoundCaseStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
-    BoundExpressionNode* CaseExpr() const { return caseExpr.get(); }
-    void SetCaseExpr(BoundExpressionNode* caseExpr_);
+    const std::vector<std::unique_ptr<BoundExpressionNode>>& CaseExprs() const { return caseExprs; }
+    void InsertCaseExprToFront(BoundExpressionNode* caseExpr);
+    void AddCaseExpr(BoundExpressionNode* caseExpr);
     BoundStatementNode* Statement() const { return stmt.get(); }
     void SetStatement(BoundStatementNode* stmt_);
 private:
-    std::unique_ptr<BoundExpressionNode> caseExpr;
+    std::vector<std::unique_ptr<BoundExpressionNode>> caseExprs;
     std::unique_ptr<BoundStatementNode> stmt;
 };
 
@@ -591,8 +595,11 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     FunctionGroupSymbol* GetFunctionGroupSymbol() const { return functionGroupSymbol; }
     BoundExpressionNode* Clone() const override;
+    void AddTemplateArg(TypeSymbol* templateArg);
+    const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
 private:
     FunctionGroupSymbol* functionGroupSymbol;
+    std::vector<TypeSymbol*> templateArgs;
 };
 
 class BoundTypeNode : public BoundExpressionNode
@@ -787,6 +794,7 @@ public:
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void Store(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
+    BoundExpressionNode* Subject() const { return subject.get(); }
     void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
     std::unique_ptr<BoundExpressionNode> subject;

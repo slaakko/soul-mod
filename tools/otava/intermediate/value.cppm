@@ -37,6 +37,7 @@ public:
     bool IsGlobalVariable() const { return kind == ValueKind::globalVariable; }
     bool IsIntegerValue() const;
     bool IsAggregateValue() const { return kind == ValueKind::arrayValue || kind == ValueKind::structureValue; }
+    bool IsArrayValue() const { return kind == ValueKind::arrayValue; }
     bool IsStringValue() const { return kind == ValueKind::stringValue; }
     bool IsLongValue() const { return kind == ValueKind::longValue; }
     int64_t GetIntegerValue() const;

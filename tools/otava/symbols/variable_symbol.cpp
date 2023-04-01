@@ -137,7 +137,11 @@ bool VariableSymbol::IsTemplateParameterInstantiation(Context* context, std::set
     if (visited.find(this) == visited.end())
     {
         visited.insert(this);
-        return GetType()->IsTemplateParameterInstantiation(context, visited);
+        TypeSymbol* type = GetType();
+        if (type)
+        {
+            return type->IsTemplateParameterInstantiation(context, visited);
+        }
     }
     return false;
 }

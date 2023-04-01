@@ -36,8 +36,8 @@ public:
     void Accept(Visitor& visitor) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
-    FunctionDefinitionSymbol* Destructor() const { return destructor; }
-    void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
+    FunctionSymbol* Destructor() const { return destructor; }
+    void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     bool InstantiatingDestructor() const { return instantiatingDestructor; }
@@ -46,7 +46,7 @@ private:
     ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;
     std::vector<std::pair<util::uuid, bool>> ids;
-    FunctionDefinitionSymbol* destructor;
+    FunctionSymbol* destructor;
     util::uuid destructorId;
     bool instantiated;
     bool instantiatingDestructor;
@@ -83,8 +83,9 @@ ClassTemplateSpecializationSymbol* GetClassTemplateSpecializationArgType(TypeSym
 ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, 
     const soul::ast::SourcePos& sourcePos, Context* context);
 
-FunctionDefinitionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
-    ClassTemplateSpecializationSymbol* classTemplateSpecialization, const soul::ast::SourcePos& sourcePos, Context* context);
+FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn,
+    ClassTemplateSpecializationSymbol* classTemplateSpecialization, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
+    const soul::ast::SourcePos& sourcePos, Context* context);
 
 void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context);
 

@@ -109,6 +109,8 @@ public:
     FunctionSymbol(const std::u32string& name_);
     FunctionSymbol(SymbolKind kind_, const std::u32string& name_);
     std::u32string GroupName() const;
+    FunctionGroupSymbol* Group() const { return group; }
+    void SetGroup(FunctionGroupSymbol* group_) { group = group_; }
     int Arity() const;
     int MemFunArity(Context* context) const;
     int MinArity() const;
@@ -153,6 +155,8 @@ public:
     void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
     void AddLocalVariable(VariableSymbol* variable);
     void RemoveLocalVariable(VariableSymbol* variable);
+    void SetSpecialization(const std::vector<TypeSymbol*>& specialization_);
+    const std::vector<TypeSymbol*>& Specialization() const { return specialization; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -194,6 +198,7 @@ public:
     virtual bool IsExplicit() const;
     virtual bool IsPointerCopyAssignment() const { return false; }
     void CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
+    virtual void AddDefinitionToGroup(Context* context);
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -208,6 +213,7 @@ private:
     std::unique_ptr<ParameterSymbol> returnValueParam;
     mutable std::vector<ParameterSymbol*> memFunParameters;
     std::vector<VariableSymbol*> localVariables;
+    std::vector<TypeSymbol*> specialization;
     int32_t nextTemporaryId;
     int32_t vtabIndex;
     FunctionDefinitionSymbol* destructor;
@@ -218,6 +224,7 @@ private:
     util::uuid conversionArgTypeId;
     int32_t conversionDistance;
     mutable std::string fixedIrName;
+    FunctionGroupSymbol* group;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol
@@ -247,6 +254,7 @@ public:
     TypeSymbol* ConversionParamType() const override;
     TypeSymbol* ConversionArgType() const override;
     int32_t ConversionDistance() const override;
+    void AddDefinitionToGroup(Context* context) override;
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
@@ -271,6 +279,8 @@ struct FunctionLess
 {
     bool operator()(FunctionSymbol* left, FunctionSymbol* right) const;
 };
+
+bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* context);
 
 void InitFunction();
 

@@ -1041,7 +1041,7 @@ soul::parser::Match solution_file_parser<Lexer>::solution_items_section(Lexer& l
                                 soul::parser::Match* parentMatch9 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                    auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                     soul::parser::Match match(false);
                                     if (*lexer == SOLUTION_ITEMS)
                                     {
@@ -1132,7 +1132,7 @@ soul::parser::Match solution_file_parser<Lexer>::solution_items_section(Lexer& l
             soul::parser::Match* parentMatch15 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                 soul::parser::Match match(false);
                 if (*lexer == END_PROJECT_SECTION)
                 {
@@ -1850,7 +1850,7 @@ soul::parser::Match solution_file_parser<Lexer>::solution_configuration_platform
                                 soul::parser::Match* parentMatch9 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                    auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                     soul::parser::Match match(false);
                                     if (*lexer == SOLUTION_CONFIGURATION_PLATFORMS)
                                     {
@@ -1941,7 +1941,7 @@ soul::parser::Match solution_file_parser<Lexer>::solution_configuration_platform
             soul::parser::Match* parentMatch15 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                 soul::parser::Match match(false);
                 if (*lexer == END_GLOBAL_SECTION)
                 {
@@ -2187,7 +2187,7 @@ soul::parser::Match solution_file_parser<Lexer>::project_configuration_platform_
                                 soul::parser::Match* parentMatch9 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                    auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                     soul::parser::Match match(false);
                                     if (*lexer == PROJECT_CONFIGURATION_PLATFORMS)
                                     {
@@ -2278,7 +2278,7 @@ soul::parser::Match solution_file_parser<Lexer>::project_configuration_platform_
             soul::parser::Match* parentMatch15 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                 soul::parser::Match match(false);
                 if (*lexer == END_GLOBAL_SECTION)
                 {

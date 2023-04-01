@@ -227,6 +227,8 @@
     <ClCompile Include="fundamental_type_symbol.cppm" />
     <ClCompile Include="init.cpp" />
     <ClCompile Include="init.cppm" />
+    <ClCompile Include="instantiation_queue.cpp" />
+    <ClCompile Include="instantiation_queue.cppm" />
     <ClCompile Include="instantiator.cpp" />
     <ClCompile Include="instantiator.cppm" />
     <ClCompile Include="lookup.cppm" />

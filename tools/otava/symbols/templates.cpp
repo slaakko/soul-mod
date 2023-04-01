@@ -433,8 +433,17 @@ void ExplicitInstantiationProcessor::Visit(otava::ast::ExplicitInstantiationNode
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
                 for (const auto& memFunDefSymbol : classTemplate->MemFunDefSymbols())
                 {
-                    FunctionDefinitionSymbol* instantiatedMemFunDefSymbol = InstantiateMemFnOfClassTemplate(memFunDefSymbol, specialization, node.GetSourcePos(), context);
-                    explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFunDefSymbol, node.GetSourcePos(), context);
+                    std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
+                    FunctionSymbol* instantiatedFunctionSymbol = InstantiateMemFnOfClassTemplate(memFunDefSymbol, specialization, templateParameterMap, node.GetSourcePos(), context);
+                    if (instantiatedFunctionSymbol->IsFunctionDefinitionSymbol())
+                    {
+                        FunctionDefinitionSymbol* instantiatedMemFunDefSymbol = static_cast<FunctionDefinitionSymbol*>(instantiatedFunctionSymbol);
+                        explicitInstantiationSymbol->AddFunctionDefinitionSymbol(instantiatedMemFunDefSymbol, node.GetSourcePos(), context);
+                    }
+                    else
+                    {
+                        ThrowException("function definition symbol expected", node.GetSourcePos(), context);
+                    }
                 }
                 context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
             }

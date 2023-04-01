@@ -60,7 +60,10 @@ void DefaultBoundTreeVisitor::Visit(BoundSwitchStatementNode& node)
 
 void DefaultBoundTreeVisitor::Visit(BoundCaseStatementNode& node)
 {
-    node.CaseExpr()->Accept(*this);
+    for (const auto& caseExpr : node.CaseExprs())
+    {
+        caseExpr->Accept(*this);
+    }
     node.Statement()->Accept(*this);
 }
 

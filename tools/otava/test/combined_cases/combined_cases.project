@@ -1,0 +1,3 @@
+project combined_cases;
+target=program;
+source <combined_cases.cpp>;

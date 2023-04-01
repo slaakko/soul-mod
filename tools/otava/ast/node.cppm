@@ -134,6 +134,9 @@ public:
     bool IsStaticNode() const { return kind == NodeKind::staticNode; }
     bool IsBoundStatementNode() const { return kind == NodeKind::boundStatementNode; }
     bool IsInitDeclaratorNode() const { return kind == NodeKind::initDeclaratorNode; }
+    bool IsAliasDeclarationNode() const { return kind == NodeKind::aliasDeclarationNode; }
+    bool IsLBraceNode() const { return kind == NodeKind::lbraceNode; }
+    bool IsRBraceNode() const { return kind == NodeKind::rbraceNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

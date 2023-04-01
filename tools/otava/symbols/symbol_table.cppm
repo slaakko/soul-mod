@@ -138,10 +138,12 @@ public:
     void RemoveTemplateDeclaration();
     void AddTemplateParameter(const std::u32string& name, otava::ast::Node* node, Symbol* constraint, int index, ParameterSymbol* parameter, 
         otava::ast::Node* defaultTemplateArgNode, Context* context);
-    FunctionSymbol* AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
+    FunctionSymbol* AddFunction(const std::u32string& name, const std::vector<TypeSymbol*>& specialization, otava::ast::Node* node, FunctionKind kind, 
+        FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     void AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
-    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes,
-        FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, otava::ast::Node* node, Context* context);
+    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization, 
+        const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, 
+        otava::ast::Node* node, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
     VariableSymbol* AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type, 
         Value* value, DeclarationFlags flags, Context* context);
@@ -163,8 +165,8 @@ public:
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupSymbol(Symbol* symbol);
-    void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, int arity, 
-        std::vector<FunctionSymbol*>& viableFunctions, Context* context);
+    void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
+        int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     void MapNode(otava::ast::Node* node);
     void MapNode(otava::ast::Node* node, Symbol* symbol);
     void MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind);
@@ -184,11 +186,13 @@ public:
     void MapVariable(VariableSymbol* variable);
     void MapConstraint(Symbol* constraint);
     void MapFunctionGroup(FunctionGroupSymbol* functionGroup);
+    void MapConcept(ConceptSymbol* cncp);
     FunctionSymbol* GetFunction(const util::uuid& id) const;
     FunctionDefinitionSymbol* GetFunctionDefinition(const util::uuid& id) const;
     AliasTypeSymbol* GetAliasType(const util::uuid& id) const;
     ClassTypeSymbol* GetClass(const util::uuid& id) const;
     VariableSymbol* GetVariable(const util::uuid& id) const;
+    ConceptSymbol* GetConcept(const util::uuid& id) const;
     Symbol* GetConstraint(const util::uuid& id) const;
     FunctionGroupSymbol* GetFunctionGroup(const util::uuid& id) const;
     TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const;
@@ -233,6 +237,7 @@ private:
     void ImportFunctionMap(const SymbolTable& that);
     void ImportFunctionDefinitionMap(const SymbolTable& that);
     void ImportVariableMap(const SymbolTable& that);
+    void ImportConceptMap(const SymbolTable& that);
     void ImportConstraintMap(const SymbolTable& that);
     void ImportForwardDeclarations(const SymbolTable& that);
     void ImportSpecifierMap(const SymbolTable& that);
@@ -269,6 +274,7 @@ private:
     std::map<util::uuid, VariableSymbol*> variableMap;
     std::map<util::uuid, Symbol*> constraintMap;
     std::map<util::uuid, FunctionGroupSymbol*> functionGroupMap;
+    std::map < util::uuid, ConceptSymbol*> conceptMap;
     Symbol* typenameConstraintSymbol;
     TypeSymbol* errorTypeSymbol;
     int topScopeIndex;

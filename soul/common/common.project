@@ -1,9 +1,11 @@
 project soul.common;
+target=library;
 reference <../ast/ast.project>;
 reference <../lexer/lexer.project>;
 reference <../parser/parser.project>;
 reference <../token/token.project>;
 reference <../lex/lex.project>;
 reference <../../util/util.project>;
-interface <common.parser.ixx>;
-interface <token_parser.ixx>;
+interface <common.parser.cppm>;
+source <common.parser.cpp>;
+interface <token_parser.cppm>;

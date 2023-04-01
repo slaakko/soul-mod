@@ -215,6 +215,7 @@ void SymbolTable::Import(const SymbolTable& that)
     ImportFunctionMap(that);
     ImportFunctionDefinitionMap(that);
     ImportVariableMap(that);
+    ImportConceptMap(that);
     ImportConstraintMap(that);
     ImportForwardDeclarations(that);
     ImportSpecifierMap(that);
@@ -309,6 +310,14 @@ void SymbolTable::ImportVariableMap(const SymbolTable& that)
     for (const auto& p : that.variableMap)
     {
         variableMap.insert(p);
+    }
+}
+
+void SymbolTable::ImportConceptMap(const SymbolTable& that)
+{
+    for (const auto& p : that.conceptMap)
+    {
+        conceptMap.insert(p);
     }
 }
 
@@ -747,8 +756,8 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
     return nullptr;
 }
 
-void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, int arity, 
-    std::vector<FunctionSymbol*>& viableFunctions, Context* context)
+void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
+    int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
     std::vector<Symbol*> symbols;
     std::set<Scope*> visited;
@@ -776,7 +785,7 @@ void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, Sco
         if (symbol->IsFunctionGroupSymbol())
         {
             FunctionGroupSymbol* functionGroup = static_cast<FunctionGroupSymbol*>(symbol);
-            functionGroup->CollectViableFunctions(arity, viableFunctions, context);
+            functionGroup->CollectViableFunctions(arity, templateArgs, viableFunctions, context);
         }
     }
 }
@@ -1037,10 +1046,6 @@ void SymbolTable::BeginClass(const std::u32string& name, ClassKind classKind, Ty
     classTypeSymbol->SetAccess(CurrentAccess());
     classTypeSymbol->SetClassKind(classKind);
     classTypeSymbol->SetSpecialization(specialization);
-    if (specialization)
-    {
-        int x = 0;
-    }
     currentScope->SymbolScope()->AddSymbol(classTypeSymbol, node->GetSourcePos(), context);
     classGroup->AddClass(classTypeSymbol);
     MapNode(node, classTypeSymbol);
@@ -1228,7 +1233,8 @@ void SymbolTable::AddTemplateParameter(const std::u32string& name, otava::ast::N
     MapNode(node, templateParameterSymbol);
 }
 
-FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast::Node* node, FunctionKind kind, FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context)
+FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::vector<TypeSymbol*>& specialization, otava::ast::Node* node, FunctionKind kind, 
+    FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context)
 {
     std::u32string groupName = name;
     if (kind == FunctionKind::constructor)
@@ -1246,6 +1252,7 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, otava::ast:
     functionSymbol->SetFunctionQualifiers(qualifiers);
     functionSymbol->SetLinkage(currentLinkage);
     functionSymbol->SetDeclarationFlags(flags);
+    functionSymbol->SetSpecialization(specialization);
     currentScope->SymbolScope()->AddSymbol(functionSymbol, node->GetSourcePos(), context);
     functionGroup->AddFunction(functionSymbol);
     MapNode(node, functionSymbol);
@@ -1260,8 +1267,8 @@ void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol
     functionGroup->AddFunction(functionSymbol);
 }
 
-FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& parameterTypes,
-    FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, otava::ast::Node* node, Context* context)
+FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization,
+    const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, otava::ast::Node* node, Context* context)
 {
     std::u32string groupName = name;
     Symbol* containerSymbol = scope->SymbolScope()->GetSymbol();
@@ -1278,12 +1285,8 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         groupName = U"@destructor";
     }
     FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
-    FunctionDefinitionSymbol* prev = functionGroup->GetFunctionDefinition(parameterTypes, qualifiers);
-    if (prev)
-    {
-        // PrintWarning("function definition '" + util::ToUtf8(name) + "' not unique", node->GetSourcePos(), context);
-    }
     FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
+    functionDefinition->SetGroup(functionGroup);
     functionDefinition->SetDeclarationFlags(declarationFlags);
     if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
@@ -1293,6 +1296,7 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
     MapNode(node, functionDefinition, MapKind::nodeToSymbol);
     functionDefinition->SetFunctionKind(kind);
     functionDefinition->SetFunctionQualifiers(qualifiers);
+    functionDefinition->SetSpecialization(specialization);
     FunctionSymbol* declaration = functionGroup->ResolveFunction(parameterTypes, qualifiers);
     if (declaration)
     {
@@ -1305,7 +1309,6 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         context->SetMemFunDefSymbolIndex(-1);
     }
     currentScope->SymbolScope()->AddSymbol(functionDefinition, node->GetSourcePos(), context);
-    functionGroup->AddFunctionDefinition(functionDefinition);
     return functionDefinition;
 }
 
@@ -1556,6 +1559,11 @@ void SymbolTable::MapFunctionGroup(FunctionGroupSymbol* functionGroup)
     functionGroupMap[functionGroup->Id()] = functionGroup;
 }
 
+void SymbolTable::MapConcept(ConceptSymbol* cncp)
+{
+    conceptMap[cncp->Id()] = cncp;
+}
+
 FunctionSymbol* SymbolTable::GetFunction(const util::uuid& id) const
 {
     auto it = functionMap.find(id);
@@ -1624,6 +1632,20 @@ VariableSymbol* SymbolTable::GetVariable(const util::uuid& id) const
     {
         otava::ast::SetExceptionThrown();
         throw std::runtime_error("variable for id '" + util::ToString(id) + "' not found");
+    }
+}
+
+ConceptSymbol* SymbolTable::GetConcept(const util::uuid& id) const
+{
+    auto it = conceptMap.find(id);
+    if (it != conceptMap.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        otava::ast::SetExceptionThrown();
+        throw std::runtime_error("concept for id '" + util::ToString(id) + "' not found");
     }
 }
 

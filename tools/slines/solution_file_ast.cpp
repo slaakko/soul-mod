@@ -38,7 +38,8 @@ std::unique_ptr<Solution> ParseSolutionFile(const std::string& filePath)
 {
     std::u32string content = util::ToUtf32(util::ReadFile(filePath));
     auto lexer = solution_file::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);
-    std::unique_ptr<solution_file::ast::Solution> solution = solution_file::parser::solution_file_parser<decltype(lexer)>::Parse(lexer);
+    using LexerType = decltype(lexer);
+    std::unique_ptr<solution_file::ast::Solution> solution = solution_file::parser::solution_file_parser<LexerType>::Parse(lexer);
     return solution;
 }
 

@@ -60,7 +60,7 @@ void UsingDirectiveProcessor::Visit(otava::ast::IdentifierNode& node)
     }
     else
     {
-        ThrowException("symbol '" + util::ToUtf8(symbol->Name()) + "' not found", node.GetSourcePos(), context);
+        ThrowException("symbol '" + util::ToUtf8(node.Str()) + "' not found", node.GetSourcePos(), context);
     }
 }
 

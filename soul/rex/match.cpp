@@ -59,8 +59,9 @@ bool PatternMatch(const std::string& str, soul::rex::nfa::Nfa& nfa)
 soul::rex::nfa::Nfa CompileRegularExpressionPattern(soul::rex::context::Context& context, const std::u32string& regularExpressionPattern)
 {
     auto lexer = soul::rex::lexer::MakeLexer(regularExpressionPattern.c_str(), regularExpressionPattern.c_str() + regularExpressionPattern.length(), "");
+    using LexerType = decltype(lexer);
     lexer.SetRuleNameMapPtr(soul::rex::spg::rules::GetRuleNameMapPtr());
-    return soul::rex::parser::RexParser<decltype(lexer)>::Parse(lexer, &context);
+    return soul::rex::parser::RexParser<LexerType>::Parse(lexer, &context);
 }
 
 soul::rex::nfa::Nfa CompileRegularExpressionPattern(soul::rex::context::Context& context, const std::string& regularExpressionPattern)

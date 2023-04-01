@@ -1395,7 +1395,7 @@ soul::parser::Match TemplateParser<Lexer>::TemplateId(Lexer& lexer, otava::symbo
                                         soul::parser::Match* parentMatch13 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                            auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                             soul::parser::Match match(false);
                                             if (*lexer == LANGLE)
                                             {
@@ -1451,7 +1451,7 @@ soul::parser::Match TemplateParser<Lexer>::TemplateId(Lexer& lexer, otava::symbo
                                 soul::parser::Match* parentMatch17 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                    auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                     soul::parser::Match match(false);
                                     if (*lexer == RANGLE)
                                     {
@@ -1596,7 +1596,7 @@ soul::parser::Match TemplateParser<Lexer>::SimpleTemplateId(Lexer& lexer, otava:
                             soul::parser::Match* parentMatch7 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                                auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                                 soul::parser::Match match(false);
                                 if (*lexer == LANGLE)
                                 {
@@ -1653,7 +1653,7 @@ soul::parser::Match TemplateParser<Lexer>::SimpleTemplateId(Lexer& lexer, otava:
                     soul::parser::Match* parentMatch11 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());
+                        auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
                         soul::parser::Match match(false);
                         if (*lexer == RANGLE)
                         {
@@ -2613,6 +2613,7 @@ soul::parser::Match TemplateParser<Lexer>::ExplicitSpecialization(Lexer& lexer, 
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos laPos = soul::ast::SourcePos();
     soul::ast::SourcePos raPos = soul::ast::SourcePos();
+    std::unique_ptr<otava::ast::TemplateHeadNode> templateHeadNode = std::unique_ptr<otava::ast::TemplateHeadNode>();
     std::unique_ptr<otava::ast::Node> tmp;
     std::unique_ptr<otava::ast::Node> declaration;
     soul::parser::Match match(false);
@@ -2714,6 +2715,8 @@ soul::parser::Match TemplateParser<Lexer>::ExplicitSpecialization(Lexer& lexer, 
                             soul::parser::Match match(true);
                             if (match.hit)
                             {
+                                templateHeadNode.reset(new otava::ast::TemplateHeadNode(lexer.GetSourcePos(pos)));
+                                otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context);
                                 context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateDeclaration);
                             }
                             *parentMatch12 = match;
@@ -2741,6 +2744,7 @@ soul::parser::Match TemplateParser<Lexer>::ExplicitSpecialization(Lexer& lexer, 
                         }
                         else
                         {
+                            otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
                             context->PopFlags();
                         }
                         *parentMatch14 = match;
@@ -2753,11 +2757,12 @@ soul::parser::Match TemplateParser<Lexer>::ExplicitSpecialization(Lexer& lexer, 
         }
         if (match.hit)
         {
+            otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context);
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExplicitSpecialization");
                 #endif
-                return soul::parser::Match(true, new otava::ast::ExplicitSpecializationNode(sourcePos, tmp.release(), declaration.release(), laPos, raPos));
+                return soul::parser::Match(true, new otava::ast::ExplicitSpecializationNode(sourcePos, tmp.release(), templateHeadNode.release(), declaration.release(), laPos, raPos));
             }
         }
         *parentMatch0 = match;

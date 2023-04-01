@@ -28,7 +28,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
 private:
     otava::ast::Node* constraintExprNode;
-    int32_t constraintEprNodeId;
+    int64_t constraintEprNodeId;
 };
 
 class ConceptSymbol : public Symbol

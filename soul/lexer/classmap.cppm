@@ -54,6 +54,15 @@ ClassMap<Char>* MakeClassMap(const std::string& classMapName)
     return classMap;
 }
 
+#else
+
+template<typename Char>
+ClassMap<Char>* MakeClassMap(const std::string& classMapName)
+{
+    ClassMap<Char>* cm = nullptr;
+    return  cm;
+}
+
 #endif
 
 } // soul::lexer

@@ -318,18 +318,25 @@ parser TemplateParser
         }
         ;
 
-    ExplicitSpecialization(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos laPos, var soul::ast::SourcePos raPos) : 
+    ExplicitSpecialization(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos laPos, var soul::ast::SourcePos raPos,
+        var std::unique_ptr<otava::ast::TemplateHeadNode> templateHeadNode) : 
         otava::ast::Node*
         ::= 
         (
             Template:tmp{ sourcePos = lexer.GetSourcePos(pos); }
             LANGLE{ laPos = lexer.GetSourcePos(pos); }
             RANGLE{ raPos = lexer.GetSourcePos(pos); }
-            empty{ context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateDeclaration); }
-            Declaration(context):declaration{ context->PopFlags(); } / { context->PopFlags(); }
+            empty
+            {
+                templateHeadNode.reset(new otava::ast::TemplateHeadNode(lexer.GetSourcePos(pos)));
+                otava::symbols::BeginTemplateDeclaration(templateHeadNode.get(), context); 
+                context->PushSetFlag(otava::symbols::ContextFlags::parsingTemplateDeclaration); 
+            }
+            Declaration(context):declaration{ context->PopFlags(); } / { otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context); context->PopFlags(); }
         )
         {
-            return new otava::ast::ExplicitSpecializationNode(sourcePos, tmp, declaration, laPos, raPos);
+            otava::symbols::EndTemplateDeclaration(templateHeadNode.get(), context); 
+            return new otava::ast::ExplicitSpecializationNode(sourcePos, tmp, templateHeadNode.release(), declaration, laPos, raPos);
         }
         ;
 

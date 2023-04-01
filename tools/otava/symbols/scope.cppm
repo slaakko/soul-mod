@@ -46,6 +46,7 @@ public:
     void Install(Symbol* symbol, Symbol* from);
     void Uninstall(Symbol* symbol);
     Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags) const;
+    bool IsBlockScope() const { return kind == ScopeKind::blockScope; }
     bool IsClassScope() const { return kind == ScopeKind::classScope; }
     bool IsNamespaceScope() const { return kind == ScopeKind::namespaceScope;  }
     bool IsTemplateDeclarationScope() const { return kind == ScopeKind::templateDeclarationScope; }

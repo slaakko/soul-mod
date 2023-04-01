@@ -151,20 +151,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="lex.cppm" />
-    <ClCompile Include="re_lexer.cpp" />
-    <ClCompile Include="re_lexer.cppm" />
-    <ClCompile Include="slg_lexer.cpp" />
-    <ClCompile Include="slg_lexer.cppm" />
-    <ClCompile Include="spg_lexer.cpp" />
-    <ClCompile Include="spg_lexer.cppm" />
+    <ClCompile Include="re.lexer.cpp" />
+    <ClCompile Include="re.lexer.cppm" />
+    <ClCompile Include="slg.lexer.cpp" />
+    <ClCompile Include="slg.lexer.cppm" />
+    <ClCompile Include="spg.lexer.cpp" />
+    <ClCompile Include="spg.lexer.cppm" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="re_lexer.lexer" />
-    <None Include="re_lexer.slg" />
-    <None Include="slg_lexer.lexer" />
-    <None Include="slg_lexer.slg" />
-    <None Include="spg_lexer.lexer" />
-    <None Include="spg_lexer.slg" />
+    <None Include="re.lexer" />
+    <None Include="re.slg" />
+    <None Include="slg.lexer" />
+    <None Include="slg.slg" />
+    <None Include="spg.lexer" />
+    <None Include="spg.slg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\util\util.vcxproj">

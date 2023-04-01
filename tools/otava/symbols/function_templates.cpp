@@ -55,7 +55,7 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
     functionDefinitionNodes.push_back(std::unique_ptr<otava::ast::Node>(functionDefinitionNode));
 }
 
-FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
+FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
@@ -127,23 +127,31 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
         }
         context->GetSymbolTable()->BeginScope(&instantiationScope);
         Instantiator instantiator(context, &instantiationScope);
-        FunctionDefinitionSymbol* specialization = nullptr;
+        FunctionSymbol* specialization = nullptr;
         try
         {
             context->PushSetFlag(ContextFlags::instantiateFunctionTemplate | ContextFlags::saveDeclarations | ContextFlags::dontBind);
-            context->SetFunctionDefinitionNode(functionDefinitionNode);
+            context->SetSpecialization(nullptr);
             functionDefinitionNode->Accept(instantiator);
             specialization = context->GetSpecialization();
-            functionTemplateRepository->AddFunctionDefinition(key, specialization, node);
-            context->PushBoundFunction(new BoundFunctionNode(specialization, sourcePos));
-            BindFunction(functionDefinitionNode, specialization, context);
-            context->PopFlags();
-            if (specialization->IsBound())
+            if (specialization->IsFunctionDefinitionSymbol())
             {
-                context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+                FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(specialization);
+                functionTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
+                context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
+                BindFunction(functionDefinitionNode, functionDefinition, context);
+                context->PopFlags();
+                if (functionDefinition->IsBound())
+                {
+                    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+                }
+                context->PopBoundFunction();
+                functionDefinition->GetScope()->ClearParentScopes();
             }
-            context->PopBoundFunction();
-            specialization->GetScope()->ClearParentScopes();
+            else
+            {
+                ThrowException("otava.symbols.function_templates: function definition symbol expected", node->GetSourcePos(), context);
+            }
         }
         catch (const std::exception& ex)
         {
@@ -160,9 +168,76 @@ FunctionDefinitionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTe
         instantiationScope.PopParentScope();
         return specialization;
     }
-    else
+    else 
     {
-        ThrowException("function definition node expected", sourcePos, context);
+        context->GetInstantiationQueue()->EnqueueInstantiationRequest(functionTemplate, templateParameterMap);
+        int arity = templateDeclaration->Arity();
+        int argCount = templateArgumentTypes.size();
+        if (argCount > arity)
+        {
+            ThrowException("otava.symbols.function_templates: wrong number of template args for instantiating function template '" +
+                util::ToUtf8(functionTemplate->Name()) + "'",
+                node->GetSourcePos(),
+                context);
+        }
+        InstantiationScope instantiationScope(functionTemplate->Parent()->GetScope());
+        instantiationScope.PushParentScope(context->GetSymbolTable()->CurrentScope()->GetNamespaceScope());
+        instantiationScope.PushParentScope(context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context));
+        std::vector<std::unique_ptr<BoundTemplateParameterSymbol>> boundTemplateParameters;
+        for (int i = 0; i < arity; ++i)
+        {
+            TemplateParameterSymbol* templateParameter = templateDeclaration->TemplateParameters()[i];
+            Symbol* templateArg = nullptr;
+            if (i >= argCount)
+            {
+                otava::ast::Node* defaultTemplateArgNode = templateParameter->DefaultTemplateArg();
+                if (defaultTemplateArgNode)
+                {
+                    context->GetSymbolTable()->BeginScope(&instantiationScope);
+                    templateArg = ResolveType(defaultTemplateArgNode, DeclarationFlags::none, context);
+                    context->GetSymbolTable()->EndScope();
+                }
+                else
+                {
+                    ThrowException("otava.symbols.function_templates: template parameter " + std::to_string(i) + " has no default type argument", node->GetSourcePos(), context);
+                }
+            }
+            else
+            {
+                templateArg = templateArgumentTypes[i];
+            }
+            BoundTemplateParameterSymbol* boundTemplateParameter(new BoundTemplateParameterSymbol(templateParameter->Name()));
+            boundTemplateParameter->SetTemplateParameterSymbol(templateParameter);
+            boundTemplateParameter->SetBoundSymbol(templateArg);
+            boundTemplateParameters.push_back(std::unique_ptr<BoundTemplateParameterSymbol>(boundTemplateParameter));
+            instantiationScope.Install(boundTemplateParameter);
+        }
+        context->GetSymbolTable()->BeginScope(&instantiationScope);
+        Instantiator instantiator(context, &instantiationScope);
+        FunctionSymbol* specialization = nullptr;
+        try
+        {
+            context->PushSetFlag(ContextFlags::instantiateFunctionTemplate | ContextFlags::saveDeclarations | ContextFlags::dontBind);
+            context->SetSpecialization(nullptr);
+            node->Accept(instantiator);
+            specialization = context->GetSpecialization();
+            context->PopFlags();
+            specialization->GetScope()->ClearParentScopes();
+        }
+        catch (const std::exception& ex)
+        {
+            std::string specializationFullName;
+            if (specialization)
+            {
+                specializationFullName = util::ToUtf8(specialization->FullName());
+            }
+            ThrowException("otava.symbols.function_templates: error instantiating specialization '" + specializationFullName +
+                "': " + std::string(ex.what()), node->GetSourcePos(), context);
+        }
+        context->GetSymbolTable()->EndScope();
+        instantiationScope.PopParentScope();
+        instantiationScope.PopParentScope();
+        return specialization;
     }
     return nullptr;
 }

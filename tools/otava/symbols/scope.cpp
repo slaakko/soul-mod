@@ -92,6 +92,12 @@ void Scope::Install(Symbol* symbol, Symbol* from)
             VariableGroupSymbol* variableGroup = static_cast<VariableGroupSymbol*>(symbol);
             variableGroup->Merge(fromVariableGroup);
         }
+        else if (from->IsConceptGroupSymbol() && symbol->IsConceptGroupSymbol())
+        {
+            ConceptGroupSymbol* fromConceptGroup = static_cast<ConceptGroupSymbol*>(from);
+            ConceptGroupSymbol* conceptGroup = static_cast<ConceptGroupSymbol*>(symbol);
+            conceptGroup->Merge(fromConceptGroup);
+        }
         else if (from->IsEnumGroupSymbol() && symbol->IsEnumGroupSymbol())
         {
             EnumGroupSymbol* fromEnumGroup = static_cast<EnumGroupSymbol*>(from);
@@ -311,6 +317,10 @@ void ContainerScope::Import(Scope* that)
     if (that->IsContainerScope())
     {
         ContainerScope* thatScope = static_cast<ContainerScope*>(that);
+        if (thatScope->GetContainerSymbol()->FullName() == U"soul::ast::re")
+        {
+            int x = 0;
+        }
         if (thatScope->usingDeclarationScope)
         {
             if (!usingDeclarationScope)
@@ -412,47 +422,43 @@ std::string ContainerScope::FullName() const
 void ContainerScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
     std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
 {
-    std::vector<SymbolGroupKind> symbolGroupKindVec = SymbolGroupKindstoSymbolGroupKindVec(symbolGroupKinds);
-    for (SymbolGroupKind symbolGroupKind : symbolGroupKindVec)
+    Scope::Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
+    if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
     {
-        Scope::Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
-        if ((scopeLookup & ScopeLookup::parentScope) != ScopeLookup::none)
+        for (const auto& parentScope : parentScopes)
         {
-            for (const auto& parentScope : parentScopes)
+            if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
+            {
+                parentScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
+            }
+        }
+    }
+    if ((scopeLookup & ScopeLookup::baseScope) != ScopeLookup::none)
+    {
+        if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
+        {
+            for (Scope* baseScope : baseScopes)
+            {
+                baseScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
+            }
+        }
+    }
+    if ((scopeLookup & ScopeLookup::usingScope) != ScopeLookup::none)
+    {
+        if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
+        {
+            if (usingDeclarationScope)
             {
                 if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
                 {
-                    parentScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
+                    usingDeclarationScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
                 }
             }
-        }
-        if ((scopeLookup & ScopeLookup::baseScope) != ScopeLookup::none)
-        {
-            if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
+            for (Scope* usingDirectiveScope : usingDirectiveScopes)
             {
-                for (Scope* baseScope : baseScopes)
+                if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
                 {
-                    baseScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
-                }
-            }
-        }
-        if ((scopeLookup & ScopeLookup::usingScope) != ScopeLookup::none)
-        {
-            if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
-            {
-                if (usingDeclarationScope)
-                {
-                    if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
-                    {
-                        usingDeclarationScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
-                    }
-                }
-                for (Scope* usingDirectiveScope : usingDirectiveScopes)
-                {
-                    if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
-                    {
-                        usingDirectiveScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
-                    }
+                    usingDirectiveScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
                 }
             }
         }
@@ -607,10 +613,10 @@ std::string UsingDeclarationScope::FullName() const
     return parentScope->FullName();
 }
 
-void UsingDeclarationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
+void UsingDeclarationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
     std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
 {
-    Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, flags, symbols, visited, context);
+    Scope::Lookup(id, symbolGroupKinds, ScopeLookup::thisScope, flags, symbols, visited, context);
 }
 
 UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_)
@@ -618,13 +624,13 @@ UsingDirectiveScope::UsingDirectiveScope(NamespaceSymbol* ns_) : Scope(), ns(ns_
     SetKind(ScopeKind::usingDirectiveScope);
 }
 
-void UsingDirectiveScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags, 
+void UsingDirectiveScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags, 
     std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
 {
     if (visited.find(ns->GetScope()) == visited.end())
     {
         visited.insert(ns->GetScope());
-        ns->GetScope()->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
+        ns->GetScope()->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
     }
 }
 
@@ -706,11 +712,11 @@ Scope* InstantiationScope::GetNamespaceScope() const
     return nullptr;
 }
 
-void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, LookupFlags flags,
+void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKinds, ScopeLookup scopeLookup, LookupFlags flags,
     std::vector<Symbol*>& symbols, std::set<Scope*>& visited, Context* context) const
 {
     std::vector<Symbol*> foundSymbols;
-    Scope::Lookup(id, symbolGroupKind, ScopeLookup::thisScope, flags, foundSymbols, visited, context);
+    Scope::Lookup(id, symbolGroupKinds, ScopeLookup::thisScope, flags, foundSymbols, visited, context);
     for (const auto& symbol : foundSymbols)
     {
         if (symbol->IsBoundTemplateParameterSymbol())
@@ -731,7 +737,7 @@ void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbol
             {
                 if (symbols.empty())
                 {
-                    parentScope->Lookup(id, symbolGroupKind, scopeLookup, flags, symbols, visited, context);
+                    parentScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
                 }
             }
         }

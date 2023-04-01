@@ -406,6 +406,7 @@ bool Overrides(FunctionSymbol* f, FunctionSymbol* g)
                 ParameterSymbol* q = g->Parameters()[i];
                 if (!TypesEqual(p->GetType(), q->GetType())) return false;
             }
+            if (f->IsConst() != g->IsConst()) return false;
             return true;
         }
     }
@@ -435,7 +436,19 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
         }
         if (fn->IsVirtual())
         {
-            virtualFunctions.push_back(fn);
+            bool found = false;
+            for (const auto& existing : virtualFunctions)
+            {
+                if (FunctionMatches(fn, existing, context))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                virtualFunctions.push_back(fn);
+            }
         }
     }
     int n = virtualFunctions.size();
@@ -543,6 +556,37 @@ int ClassTypeSymbol::Arity()
     }
 }
 
+void ClassTypeSymbol::AddMemFunDefSymbol(FunctionDefinitionSymbol* memFunDefSymbol)
+{
+    if (IsClassTemplateSpecializationSymbol())
+    {
+        ClassTemplateSpecializationSymbol* sp = static_cast<ClassTemplateSpecializationSymbol*>(this);
+        if (sp->ClassTemplate())
+        {
+            sp->ClassTemplate()->AddMemFunDefSymbol(memFunDefSymbol);
+        }
+    }
+    else
+    {
+        if (std::find(memFunDefSymbols.begin(), memFunDefSymbols.end(), memFunDefSymbol) == memFunDefSymbols.end())
+        {
+            if (memFunDefSymbol->DefIndex() == -1)
+            {
+                memFunDefSymbol->SetDefIndex(memFunDefSymbols.size());
+                memFunDefSymbols.push_back(memFunDefSymbol);
+            }
+            else
+            {
+                while (memFunDefSymbol->DefIndex() >= memFunDefSymbols.size())
+                {
+                    memFunDefSymbols.push_back(nullptr);
+                }
+                memFunDefSymbols[memFunDefSymbol->DefIndex()] = memFunDefSymbol;
+            }
+        }
+    }
+}
+
 void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     TypeSymbol::AddSymbol(symbol, sourcePos, context);
@@ -574,19 +618,7 @@ void ClassTypeSymbol::AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sour
     if (symbol->IsFunctionDefinitionSymbol())
     {
         FunctionDefinitionSymbol* memFunDefSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
-        if (memFunDefSymbol->DefIndex() == -1)
-        {
-            memFunDefSymbol->SetDefIndex(memFunDefSymbols.size());
-            memFunDefSymbols.push_back(memFunDefSymbol);
-        }
-        else
-        {
-            while (memFunDefSymbol->DefIndex() >= memFunDefSymbols.size())
-            {
-                memFunDefSymbols.push_back(nullptr);
-            }
-            memFunDefSymbols[memFunDefSymbol->DefIndex()] = memFunDefSymbol;
-        }
+        AddMemFunDefSymbol(memFunDefSymbol);
     }
 }
 
@@ -680,7 +712,8 @@ void ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Co
     constLvalueRefTempVar->SetDeclaredType(this->AddConst(context)->AddLValueRef(context));
     tempVars.push_back(std::unique_ptr<Symbol>(constLvalueRefTempVar));
     args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundVariableNode(constLvalueRefTempVar, sourcePos)));
-    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+    std::vector<TypeSymbol*> templateArgs;
+    std::unique_ptr<BoundFunctionCallNode> functionCall = ResolveOverloadThrow(context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
     copyCtor = functionCall->GetFunctionSymbol();
 }
 
@@ -1064,23 +1097,24 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
                 RecordedParseCompoundStatement(compoundStatementNode, context);
             }
         }
-        FunctionDefinitionSymbol* functionDefinitionSymbol = nullptr;
-        if (symbol->IsFunctionDefinitionSymbol())
+        FunctionSymbol* functionSymbol = nullptr;
+        if (symbol->IsFunctionSymbol())
         {
-            functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
+            functionSymbol = static_cast<FunctionSymbol*>(symbol);
         }
         else
         {
-            ThrowException("function definition symbol expected", node.GetSourcePos(), context);
+            ThrowException("function symbol expected", node.GetSourcePos(), context);
         }
-        if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration))
+        if (!context->GetFlag(ContextFlags::parsingTemplateDeclaration) && functionSymbol->IsFunctionDefinitionSymbol())
         {
+            FunctionDefinitionSymbol* functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(functionSymbol);
             context->PushBoundFunction(new BoundFunctionNode(functionDefinitionSymbol, node.GetSourcePos()));
             BindFunction(&node, functionDefinitionSymbol, context);
             BoundFunctionNode* boundFunction = context->ReleaseBoundFunction();
             if (functionDefinitionSymbol->IsBound())
             {
-                context->GetBoundCompileUnit()->AddBoundNode(boundFunction);
+                context->GetBoundCompileUnit()->AddBoundNode(boundFunction, context);
             }
             context->PopBoundFunction();
         }
@@ -1207,8 +1241,9 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
         boundVariableNode->SetThisPtr(thisPtr);
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundVariableNode, sourcePos, boundVariableNode->GetType()->AddPointer(context))));
         Exception ex;
+        std::vector<TypeSymbol*> templateArgs;
         std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(
-            context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context, ex);
+            context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, args, sourcePos, context, ex);
         if (boundFunctionCall)
         {
             if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
@@ -1231,8 +1266,9 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
             GenerateDestructor(baseClass, sourcePos, context);
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             Exception ex;
+            std::vector<TypeSymbol*> templateArgs;
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverload(
-                context->GetSymbolTable()->CurrentScope(), U"@destructor", args, sourcePos, context, ex);
+                context->GetSymbolTable()->CurrentScope(), U"@destructor", templateArgs, args, sourcePos, context, ex);
             if (boundFunctionCall)
             {
                 if (!boundFunctionCall->GetFunctionSymbol()->GetFlag(FunctionSymbolFlags::trivialDestructor))
@@ -1304,7 +1340,7 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
     }
     boundDestructor->SetBody(body);
     boundDestructor->SetDtorTerminator(terminator.release());
-    context->GetBoundCompileUnit()->AddBoundNode(boundDestructor);
+    context->GetBoundCompileUnit()->AddBoundNode(boundDestructor, context);
     return destructor;
 }
 

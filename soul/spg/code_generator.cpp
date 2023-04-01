@@ -525,7 +525,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
         }
         if (hasVars)
         {
-            formatter->WriteLine("auto vars = static_cast<Lexer::VariableClassType*>(lexer.GetVariables());");
+            formatter->WriteLine("auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());");
         }
         parser.Child()->Accept(*this);
         formatter->WriteLine("if (match.hit)");

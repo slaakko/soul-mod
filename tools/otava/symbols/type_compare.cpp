@@ -37,6 +37,12 @@ bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
         CompoundTypeSymbol* rightCompound = static_cast<CompoundTypeSymbol*>(right);
         if (TypesEqual(leftCompound->BaseType(), rightCompound->BaseType()) && leftCompound->GetDerivations() == rightCompound->GetDerivations()) return true;
     }
+    if (left->IsTemplateParameterSymbol() && right->IsTemplateParameterSymbol())
+    {
+        TemplateParameterSymbol* leftTemplateParam = static_cast<TemplateParameterSymbol*>(left);
+        TemplateParameterSymbol* rightTemplateParam = static_cast<TemplateParameterSymbol*>(right);
+        return leftTemplateParam->Index() == rightTemplateParam->Index();
+    }
     return false;
 }
 

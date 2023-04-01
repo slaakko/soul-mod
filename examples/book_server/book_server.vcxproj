@@ -150,12 +150,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="book_msg.cpp" />
-    <ClCompile Include="book_msg.ixx" />
+    <ClCompile Include="book_msg.cppm" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="msg.cpp" />
-    <ClCompile Include="msg.ixx" />
+    <ClCompile Include="msg.cppm" />
     <ClCompile Include="server.cpp" />
-    <ClCompile Include="server.ixx" />
+    <ClCompile Include="server.cppm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="book_msg.xmlser" />

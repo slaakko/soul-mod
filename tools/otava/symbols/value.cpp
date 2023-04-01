@@ -593,6 +593,124 @@ std::u32string InvokeValue::ToString() const
     return subject->ToString() + U"()";
 }
 
+ArrayValue::ArrayValue(TypeSymbol* type_) : Value(SymbolKind::arrayValueSymbol, std::u32string(), type_)
+{
+}
+
+void ArrayValue::AddElementValue(Value* elementValue)
+{
+    elementValues.push_back(elementValue);
+}
+
+void ArrayValue::Write(Writer& writer)
+{
+    Value::Write(writer);
+    uint32_t count = elementValues.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
+    for (const auto& elementValue : elementValues)
+    {
+        writer.Write(elementValue);
+    }
+}
+
+void ArrayValue::Read(Reader& reader)
+{
+    Value::Read(reader);
+    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        SymbolTable* symbolTable = reader.GetSymbolTable();
+        EvaluationContext* evaluationContext = symbolTable->GetModule()->GetEvaluationContext();
+        evaluationContext->AddValue(static_cast<Value*>(symbol));
+        elementValues.push_back(static_cast<Value*>(symbol));
+    }
+}
+
+BoolValue* ArrayValue::ToBoolValue(EvaluationContext& context)
+{
+    return context.GetBoolValue(false);
+}
+
+Value* ArrayValue::Convert(ValueKind kind, EvaluationContext& context)
+{
+    return this;
+}
+
+void ArrayValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+otava::intermediate::Value* ArrayValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::vector<otava::intermediate::Value*> elements;
+    for (const auto& elementValue : elementValues)
+    {
+        elements.push_back(elementValue->IrValue(emitter, sourcePos, context));
+    }
+    return emitter.EmitArrayValue(elements);
+}
+
+StructureValue::StructureValue(TypeSymbol* type_) : Value(SymbolKind::structureValueSymbol, std::u32string(), type_)
+{
+}
+
+void StructureValue::AddFieldValue(Value* fieldValue)
+{
+    fieldValues.push_back(fieldValue);
+}
+
+void StructureValue::Write(Writer& writer)
+{
+    Value::Write(writer);
+    uint32_t count = fieldValues.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
+    for (const auto& fieldValue : fieldValues)
+    {
+        writer.Write(fieldValue);
+    }
+}
+
+void StructureValue::Read(Reader& reader)
+{
+    Value::Read(reader);
+    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < count; ++i)
+    {
+        Symbol* symbol = reader.ReadSymbol();
+        SymbolTable* symbolTable = reader.GetSymbolTable();
+        EvaluationContext* evaluationContext = symbolTable->GetModule()->GetEvaluationContext();
+        evaluationContext->AddValue(static_cast<Value*>(symbol));
+        fieldValues.push_back(static_cast<Value*>(symbol));
+    }
+}
+
+void StructureValue::Accept(Visitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoolValue* StructureValue::ToBoolValue(EvaluationContext& context)
+{
+    return context.GetBoolValue(false);
+}
+
+Value* StructureValue::Convert(ValueKind kind, EvaluationContext& context)
+{
+    return this;
+}
+
+otava::intermediate::Value* StructureValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    std::vector<otava::intermediate::Value*> fields;
+    for (const auto& fieldValue : fieldValues)
+    {
+        fields.push_back(fieldValue->IrValue(emitter, sourcePos, context));
+    }
+    return emitter.EmitStructureValue(fields);
+}
+
 EvaluationContext::EvaluationContext(SymbolTable& symbolTable_) : 
     initialized(false),
     symbolTable(symbolTable_),
@@ -719,6 +837,25 @@ InvokeValue* EvaluationContext::GetInvokeValue(Value* subject)
         MapValue(invokeValue);
         return invokeValue;
     }
+}
+
+ArrayValue* EvaluationContext::GetArrayValue(TypeSymbol* type)
+{
+    ArrayValue* arrayValue = new ArrayValue(type);
+    values.push_back(std::unique_ptr<Value>(arrayValue));
+    return arrayValue;
+}
+
+StructureValue* EvaluationContext::GetStructureValue(TypeSymbol* type)
+{
+    StructureValue* structureValue = new StructureValue(type);
+    values.push_back(std::unique_ptr<Value>(structureValue));
+    return structureValue;
+}
+
+void EvaluationContext::AddValue(Value* value)
+{
+    values.push_back(std::unique_ptr<Value>(value));
 }
 
 void EvaluationContext::Write(Writer& writer)

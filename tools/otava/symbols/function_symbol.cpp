@@ -24,6 +24,7 @@ import otava.symbols.fundamental.type.conversion;
 import otava.symbols.bound.tree;
 import otava.symbols.context;
 import otava.symbols.class_templates;
+import otava.symbols.function.group.symbol;
 import otava.intermediate.function;
 import util.sha1;
 import util.unicode;
@@ -197,10 +198,6 @@ ParameterSymbol::ParameterSymbol(const std::u32string& name_, TypeSymbol* type_)
     defaultValue(nullptr),
     defaultValueNodeId(-1)
 {
-    if (Name() == U"lexerContext")
-    {
-        int x = 0;
-    }
 }
 
 void ParameterSymbol::Write(Writer& writer)
@@ -293,7 +290,8 @@ FunctionSymbol::FunctionSymbol(const std::u32string& name_) :
     conversionKind(ConversionKind::implicitConversion),
     conversionParamType(nullptr), 
     conversionArgType(nullptr),
-    conversionDistance(0)
+    conversionDistance(0),
+    group(nullptr)
 {
     GetScope()->SetKind(ScopeKind::functionScope);
 }
@@ -393,6 +391,10 @@ bool FunctionSymbol::IsTemplateParameterInstantiation(Context* context, std::set
         if (returnType)
         {
             if (returnType->IsTemplateParameterInstantiation(context, visited)) return true;
+        }
+        for (const auto& localVariable : localVariables)
+        {
+            if (localVariable->IsTemplateParameterInstantiation(context, visited)) return true;
         }
     }
     return false;
@@ -963,6 +965,14 @@ std::string FunctionSymbol::IrName(Context* context) const
             }
         }
         std::string fullName = util::ToUtf8(FullName());
+        if (!specialization.empty())
+        {
+            int n = specialization.size();
+            for (int i = 0; i < n; ++i)
+            {
+                fullName.append(".").append(util::ToUtf8(specialization[i]->FullName()));
+            }
+        }
         irName.append("_").append(util::GetSha1MessageDigest(fullName));
         if (IsSpecialization())
         {
@@ -1004,6 +1014,11 @@ void FunctionSymbol::RemoveLocalVariable(VariableSymbol* variable)
     }
 }
 
+void FunctionSymbol::SetSpecialization(const std::vector<TypeSymbol*>& specialization_)
+{
+    specialization = specialization_;
+}
+
 std::u32string FunctionSymbol::NextTemporaryName()
 {
     return U"@t" + util::ToUtf32(std::to_string(nextTemporaryId++));
@@ -1038,6 +1053,10 @@ void FunctionSymbol::CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sour
             classType->GenerateCopyCtor(sourcePos, context);
         }
     }
+}
+
+void FunctionSymbol::AddDefinitionToGroup(Context* context)
+{
 }
 
 FunctionDefinitionSymbol::FunctionDefinitionSymbol(const std::u32string& name_) : 
@@ -1235,7 +1254,12 @@ int32_t FunctionDefinitionSymbol::ConversionDistance() const
     }
 }
 
-ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, 
+void FunctionDefinitionSymbol::AddDefinitionToGroup(Context* context)
+{
+    Group()->AddFunctionDefinition(this, context);
+}
+
+ExplicitlyInstantiatedFunctionDefinitionSymbol::ExplicitlyInstantiatedFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol,
     const soul::ast::SourcePos& sourcePos, Context* context) : 
     FunctionDefinitionSymbol(SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol, functionDefinitionSymbol->Name()), irName(functionDefinitionSymbol->IrName(context))
 {
@@ -1272,6 +1296,36 @@ bool FunctionLess::operator()(FunctionSymbol* left, FunctionSymbol* right) const
     if (int(left->GetFunctionKind()) < int(right->GetFunctionKind())) return true;
     if (int(left->GetFunctionKind()) > int(right->GetFunctionKind())) return false;
     return left->Name() < right->Name();
+}
+
+bool FunctionMatches(FunctionSymbol* left, FunctionSymbol* right, Context* context)
+{
+    if (left->GroupName() != right->GroupName()) return false;
+    if (left->IsConst() != right->IsConst()) return false;
+    if (left->IsTemplate() != right->IsTemplate()) return false;
+    if (left->IsTemplate())
+    {
+        TemplateDeclarationSymbol* leftTemplateDeclaration = left->ParentTemplateDeclaration();
+        TemplateDeclarationSymbol* rightTemplateDeclaration = right->ParentTemplateDeclaration();
+        if (leftTemplateDeclaration->Arity() != rightTemplateDeclaration->Arity()) return false;
+        for (int i = 0; i < leftTemplateDeclaration->Arity(); ++i)
+        {
+            if (!TypesEqual(leftTemplateDeclaration->TemplateParameters()[i], rightTemplateDeclaration->TemplateParameters()[i])) return false;
+        }
+    }
+    int leftsn = left->Specialization().size();
+    int rightsn = right->Specialization().size();
+    if (leftsn != rightsn) return false;
+    for (int i = 0; i < leftsn; ++i)
+    {
+        if (!TypesEqual(left->Specialization()[i], right->Specialization()[i])) return false;
+    }
+    if (left->MemFunArity(context) != right->MemFunArity(context)) return false;
+    for (int i = 0; i < left->MemFunArity(context); ++i)
+    {
+        if (!TypesEqual(left->MemFunParameters(context)[i]->GetType(), right->MemFunParameters(context)[i]->GetType())) return false;
+    }
+    return true;
 }
 
 void InitFunction()

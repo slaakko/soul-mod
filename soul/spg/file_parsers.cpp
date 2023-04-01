@@ -32,7 +32,7 @@ std::unique_ptr<soul::ast::spg::SpgFile> ParseSpgFile(const std::string& spgFile
     lexer.SetRuleNameMapPtr(soul::spg::parsers::rules::GetRuleNameMapPtr());
     lexer.SetFile(file);
     using LexerType = decltype(lexer);
-    auto vars = static_cast<LexerType::VariableClassType*>(lexer.GetVariables());
+    auto vars = static_cast<typename LexerType::VariableClassType*>(lexer.GetVariables());
     vars->matchFilePath = true;
     std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::spg::file::parser::SpgFileParser<LexerType>::Parse(lexer);
     fileMap.AddFileContent(file, std::move(content), std::move(lexer.GetLineStartIndeces()));

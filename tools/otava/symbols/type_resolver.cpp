@@ -24,6 +24,8 @@ import otava.symbols.scope.resolver;
 import otava.symbols.templates;
 import otava.symbols.class_templates;
 import otava.symbols.value;
+import otava.symbols.expression.binder;
+import otava.symbols.bound.tree;
 import util.unicode;
 
 namespace otava::symbols {
@@ -303,8 +305,8 @@ void TypeResolver::Visit(otava::ast::TypenameSpecifierNode& node)
 
 void TypeResolver::Visit(otava::ast::DeclTypeSpecifierNode& node)
 {
-    // TODO: resolve type of node.Expression();
-    type = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::autoType);
+    std::unique_ptr<BoundExpressionNode> expr(BindExpression(node.Expression(), context));
+    type = expr->GetType();
 }
 
 void TypeResolver::Visit(otava::ast::QualifiedIdNode& node)
@@ -318,10 +320,6 @@ void TypeResolver::Visit(otava::ast::QualifiedIdNode& node)
 
 void TypeResolver::Visit(otava::ast::IdentifierNode& node)
 {
-    if (node.Str() == U"less")
-    {
-        int x = 0;
-    }
     Symbol* symbol = context->GetSymbolTable()->Lookup(node.Str(), SymbolGroupKind::typeSymbolGroup, node.GetSourcePos(), context);
     if (symbol)
     {
@@ -512,7 +510,7 @@ void TypeResolver::Visit(otava::ast::TypeIdNode& node)
 void TypeResolver::Visit(otava::ast::FunctionDeclaratorNode& node)
 {
     ResolveType();
-    Declaration declaration = ProcessDeclarator(type, &node, flags, context);
+    Declaration declaration = ProcessDeclarator(type, &node, &node, flags, context);
     type = declaration.type;
 }
 

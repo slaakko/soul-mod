@@ -54,6 +54,10 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
         if (symbol->IsNamespaceSymbol())
         {
             NamespaceSymbol* thatNs = static_cast<NamespaceSymbol*>(symbol.get());
+            if (thatNs->FullName() == U"soul::ast::re")
+            {
+                int x = 0;
+            }
             ns->Import(thatNs, context);
         }
         else

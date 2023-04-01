@@ -26,6 +26,7 @@ import otava.symbols.declaration;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.expression.binder;
+import otava.symbols.exception;
 import otava.codegen;
 import otava.ast.declaration;
 import otava.ast.function;
@@ -174,12 +175,20 @@ std::string GenerateMainWrapper(otava::symbols::Context* context)
     context->PushSetFlag(otava::symbols::ContextFlags::saveDeclarations | otava::symbols::ContextFlags::dontBind | otava::symbols::ContextFlags::generateMainWrapper);
     mainWrapperFn->Accept(instantiator);
     context->PopFlags();
-    otava::symbols::FunctionDefinitionSymbol* mainWrapperFnSymbol = context->GetSpecialization();
-    context->PushBoundFunction(new otava::symbols::BoundFunctionNode(mainWrapperFnSymbol, soul::ast::SourcePos()));
-    otava::symbols::BindFunction(mainWrapperFn.get(), mainWrapperFnSymbol, context);
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
-    context->PopBoundFunction();
-    return mainWrapperFnSymbol->IrName(context);
+    otava::symbols::FunctionSymbol* mainWrapperFnSymbol = context->GetSpecialization();
+    if (mainWrapperFnSymbol->IsFunctionDefinitionSymbol())
+    {
+        otava::symbols::FunctionDefinitionSymbol* mainWrapperFnDefSymbol = static_cast<otava::symbols::FunctionDefinitionSymbol*>(mainWrapperFnSymbol);
+        context->PushBoundFunction(new otava::symbols::BoundFunctionNode(mainWrapperFnDefSymbol, soul::ast::SourcePos()));
+        otava::symbols::BindFunction(mainWrapperFn.get(), mainWrapperFnDefSymbol, context);
+        context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+        context->PopBoundFunction();
+        return mainWrapperFnDefSymbol->IrName(context);
+    }
+    else
+    {
+        otava::symbols::ThrowException("error instantiating main wrapper: function definition symbol expected", soul::ast::SourcePos(), context);
+    }
 }
 
 std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const std::string& mainFilePath, const std::string& mainFunctionIrName, int numParams, 
@@ -194,10 +203,10 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     context.SetSymbolTable(symbolTable.get());
     context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
     context.GetBoundCompileUnit()->SetId("main_unit");
-    otava::symbols::FunctionSymbol* globalInitFn = context.GetSymbolTable()->AddFunction(U"__global_init__", nullptr, 
+    otava::symbols::FunctionSymbol* globalInitFn = context.GetSymbolTable()->AddFunction(U"__global_init__", std::vector<otava::symbols::TypeSymbol*>(), nullptr, 
         otava::symbols::FunctionKind::function, otava::symbols::FunctionQualifiers::none, otava::symbols::DeclarationFlags::none, &context);
     globalInitFn->SetLinkage(otava::symbols::Linkage::c_linkage);
-    otava::symbols::FunctionSymbol* mainFn = context.GetSymbolTable()->AddFunction(U"main", nullptr, 
+    otava::symbols::FunctionSymbol* mainFn = context.GetSymbolTable()->AddFunction(U"main", std::vector<otava::symbols::TypeSymbol*>(), nullptr,
         otava::symbols::FunctionKind::function, otava::symbols::FunctionQualifiers::none, otava::symbols::DeclarationFlags::none, &context);
     otava::symbols::TypeSymbol* intType = context.GetSymbolTable()->GetFundamentalTypeSymbol(otava::symbols::FundamentalTypeKind::intType);
     mainFn->SetReturnType(intType, &context);

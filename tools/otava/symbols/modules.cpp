@@ -74,6 +74,10 @@ void Module::Import(ModuleMapper& moduleMapper)
 
 void Module::Import(Module* that, ModuleMapper& moduleMapper)
 {
+    if (Name() == "ns_import")
+    {
+        int x = 0;
+    }
     if (importSet.find(that) == importSet.cend())
     {
         importSet.insert(that);

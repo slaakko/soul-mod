@@ -944,10 +944,6 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
     if (type->PointerCount() != 1 || !type->RemovePointer(context)->PlainType(context)->IsClassTypeSymbol()) return nullptr;
     ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(type->GetBaseType());
     if (classType->IsClassTemplateSpecializationSymbol() && context->GetFlag(ContextFlags::ignoreClassTemplateSpecializations)) return nullptr;
-    if (classType->Name() == U"Actions")
-    {
-        int x = 0;
-    }
     FunctionSymbol* defaultCtor = classType->GetFunction(defaultCtorIndex);
     if (defaultCtor)
     {
@@ -971,6 +967,10 @@ FunctionSymbol* ClassDefaultCtorOperation::Get(std::vector<std::unique_ptr<Bound
 void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDefaultCtor, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     ClassTypeSymbol* classType = classDefaultCtor->ClassType();
+    if (!classType->ObjectLayoutComputed())
+    {
+        classType->MakeObjectLayout(sourcePos, context);
+    }
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classDefaultCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos)); 
     context->PushBoundFunction(boundFunction.release());
@@ -984,9 +984,10 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
             baseClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
         if (conversion)
         {
+            std::vector<TypeSymbol*> templateArgs;
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+                context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
@@ -1032,13 +1033,14 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         BoundVariableNode* boundMemberVariable = new BoundVariableNode(memberVariableSymbol, sourcePos);
         boundMemberVariable->SetThisPtr(new BoundParameterNode(classDefaultCtor->ThisParam(context), sourcePos, classDefaultCtor->ThisParam(context)->GetReferredType(context)));
         std::vector<std::unique_ptr<BoundExpressionNode>> args;
+        std::vector<TypeSymbol*> templateArgs;
         args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundAddressOfNode(boundMemberVariable, sourcePos, boundMemberVariable->GetType()->AddPointer(context))));
-        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
+        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", templateArgs, args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
     context->PopBoundFunction();
 }
 
@@ -1112,6 +1114,10 @@ FunctionSymbol* ClassCopyCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
 void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     ClassTypeSymbol* classType = classCopyCtor->ClassType();
+    if (!classType->ObjectLayoutComputed())
+    {
+        classType->MakeObjectLayout(sourcePos, context);
+    }
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classCopyCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
     context->PushBoundFunction(boundFunction.release());
@@ -1128,8 +1134,9 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classCopyCtor->MemFunParameters(context)[1];
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
+            std::vector<TypeSymbol*> templateArgs;
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+                context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
@@ -1181,12 +1188,13 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
             new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
-        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
+        std::vector<TypeSymbol*> templateArgs;
+        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", templateArgs, args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
     context->PopBoundFunction();
 }
 
@@ -1260,6 +1268,10 @@ FunctionSymbol* ClassMoveCtorOperation::Get(std::vector<std::unique_ptr<BoundExp
 void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     ClassTypeSymbol* classType = classMoveCtor->ClassType();
+    if (!classType->ObjectLayoutComputed())
+    {
+        classType->MakeObjectLayout(sourcePos, context);
+    }
     std::unique_ptr<BoundFunctionNode> boundFunction(new BoundFunctionNode(classMoveCtor, sourcePos));
     boundFunction->SetBody(new BoundCompoundStatementNode(sourcePos));
     context->PushBoundFunction(boundFunction.release());
@@ -1278,11 +1290,12 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
             std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
             moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
             Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            std::vector<TypeSymbol*> templateArgs;
             std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(
-                stdScope, U"move", moveArgs, sourcePos, context));
+                stdScope, U"move", templateArgs, moveArgs, sourcePos, context));
             args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"@constructor", args, sourcePos, context);
+                context->GetSymbolTable()->CurrentScope(), U"@constructor", templateArgs, args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
@@ -1336,15 +1349,16 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
             new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
         moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
         Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+        std::vector<TypeSymbol*> templateArgs;
         std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(
-            stdScope, U"move", moveArgs, sourcePos, context));
+            stdScope, U"move", templateArgs, moveArgs, sourcePos, context));
         args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
-        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", args, sourcePos, context);
+        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(classType->GetScope(), U"@constructor", templateArgs, args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
     context->PopBoundFunction();
 }
 
@@ -1432,8 +1446,9 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundConversionNode(thisPtr, conversion, sourcePos)));
             ParameterSymbol* thatParam = classCopyAssignment->MemFunParameters(context)[1];
             args.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
+            std::vector<TypeSymbol*> templateArgs;
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
+                context->GetSymbolTable()->CurrentScope(), U"operator=", templateArgs, args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
@@ -1456,7 +1471,8 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
         thatBoundMemberVariable->SetThisPtr(new BoundRefToPtrNode(
             new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
-        std::unique_ptr<BoundFunctionCallNode> memberAssignmentrCall = ResolveOverloadThrow(classType->GetScope(), U"operator=", args, sourcePos, context);
+        std::vector<TypeSymbol*> templateArgs;
+        std::unique_ptr<BoundFunctionCallNode> memberAssignmentrCall = ResolveOverloadThrow(classType->GetScope(), U"operator=", templateArgs, args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberAssignmentrCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
@@ -1467,7 +1483,7 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
     context->PopBoundFunction();
 }
 
@@ -1557,11 +1573,12 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
             std::vector<std::unique_ptr<BoundExpressionNode>> moveArgs;
             moveArgs.push_back(std::unique_ptr<BoundExpressionNode>(new BoundParameterNode(thatParam, sourcePos, thatParam->GetType())));
             Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
+            std::vector<TypeSymbol*> templateArgs;
             std::unique_ptr<BoundFunctionCallNode> moveThat(ResolveOverloadThrow(
-                stdScope, U"move", moveArgs, sourcePos, context));
+                stdScope, U"move", templateArgs, moveArgs, sourcePos, context));
             args.push_back(std::unique_ptr<BoundExpressionNode>(moveThat.release()));
             std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = ResolveOverloadThrow(
-                context->GetSymbolTable()->CurrentScope(), U"operator=", args, sourcePos, context);
+                context->GetSymbolTable()->CurrentScope(), U"operator=", templateArgs, args, sourcePos, context);
             BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
             expressionStatement->SetExpr(boundFunctionCall.release(), sourcePos, context);
             context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
@@ -1585,7 +1602,8 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
             new BoundParameterNode(thatParam, sourcePos, thatParam->GetReferredType(context)), sourcePos, thatParam->GetType()->RemoveReference(context)->AddPointer(context)));
         args.push_back(std::unique_ptr<BoundExpressionNode>(thatBoundMemberVariable));
         Scope* stdScope = context->GetSymbolTable()->GetNamespaceScope(U"std", sourcePos, context);
-        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(stdScope, U"swap", args, sourcePos, context);
+        std::vector<TypeSymbol*> templateArgs;
+        std::unique_ptr<BoundFunctionCallNode> memberConstructorCall = ResolveOverloadThrow(stdScope, U"swap", templateArgs, args, sourcePos, context);
         BoundExpressionStatementNode* expressionStatement = new BoundExpressionStatementNode(sourcePos);
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
@@ -1596,7 +1614,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction());
+    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
     context->PopBoundFunction();
 }
 

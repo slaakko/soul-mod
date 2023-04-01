@@ -1,0 +1,3 @@
+project static_array;
+target=program;
+source <static_array.cpp>;

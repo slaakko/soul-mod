@@ -25,6 +25,7 @@ public:
     void Accept(Visitor& visitor) override;
     TypeSymbol* ElementType() const { return elementType; }
     int64_t Size() const { return size; }
+    void SetSize(int64_t size_) { size = size_; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsBound() const { return bound; }
     void SetBound() { bound = true; }

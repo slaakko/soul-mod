@@ -348,15 +348,15 @@ ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePo
 {
 }
 
-ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* declaration_, const soul::ast::SourcePos& laPos_, 
-    const soul::ast::SourcePos& raPos_) :
-    CompoundNode(NodeKind::explicitSpecializationNode, sourcePos_), tmp(tmp_), declaration(declaration_), laPos(laPos_), raPos(raPos_)
+ExplicitSpecializationNode::ExplicitSpecializationNode(const soul::ast::SourcePos& sourcePos_, Node* tmp_, Node* templateHeadNode_, Node* declaration_,
+    const soul::ast::SourcePos& laPos_, const soul::ast::SourcePos& raPos_) :
+    CompoundNode(NodeKind::explicitSpecializationNode, sourcePos_), tmp(tmp_), templateHeadNode(templateHeadNode_), declaration(declaration_), laPos(laPos_), raPos(raPos_)
 {
 }
 
 Node* ExplicitSpecializationNode::Clone() const
 {
-    ExplicitSpecializationNode* clone = new ExplicitSpecializationNode(GetSourcePos(), tmp->Clone(), declaration->Clone(), laPos, raPos);
+    ExplicitSpecializationNode* clone = new ExplicitSpecializationNode(GetSourcePos(), tmp->Clone(), templateHeadNode->Clone(), declaration->Clone(), laPos, raPos);
     return clone;
 }
 
