@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,6 +13,7 @@ import otava.ast.node;
 import otava.ast.function;
 import otava.intermediate.value;
 import otava.symbols.instantiation_queue;
+import otava.symbols.function_definition_symbol_set;
 
 export namespace otava::symbols {
 
@@ -50,7 +51,9 @@ enum class ContextFlags : int32_t
     requireForwardResolved = 1 << 24,
     noPtrOps = 1 << 25,
     reinterpretCast = 1 << 26,
-    derefAfterConv = 1 << 27
+    derefAfterConv = 1 << 27,
+    generatingVTab = 1 << 28,
+    resolveNestedTypes = 1 << 29
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -79,6 +82,7 @@ class OperationRepository;
 class FunctionDefinitionSymbol;
 class AliasTypeSymbol;
 class TypeSymbol;
+class ClassTemplateSpecializationSymbol;
 
 class Context
 {
@@ -89,6 +93,8 @@ public:
     SymbolTable* GetSymbolTable() { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_);
     Module* GetModule();
+    void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
+    FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
     BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit.get(); }
     OperationRepository* GetOperationRepository() const;
     BoundFunctionNode* GetBoundFunction() const { return boundFunction.get(); }
@@ -116,8 +122,6 @@ public:
     std::unique_ptr<DeclarationList> ReleaseDeclarationList(otava::ast::Node* node);
     soul::lexer::FileMap* GetFileMap() const { return fileMap; }
     void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
-    void SetSpecialization(FunctionSymbol* specialization_);
-    FunctionSymbol* GetSpecialization() const;
     void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }
     AliasTypeSymbol* GetAliasType() const { return aliasType; }
     void SetPtr(otava::intermediate::Value* ptr_) { ptr = ptr_; }
@@ -137,20 +141,38 @@ public:
     void ClearTemporaryAliasTypes();
     void SetDeclaredInitializerType(TypeSymbol* type) { declaredInitializerType = type; }
     TypeSymbol* DeclaredInitializerType() const { return declaredInitializerType; }
+    FunctionSymbol* GetSpecialization(otava::ast::Node* functionNode) const;
+    void SetSpecialization(FunctionSymbol* specialization, otava::ast::Node* functionNode);
+    void RemoveSpecialization(otava::ast::Node* functionNode);
+    ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization(otava::ast::Node* functionNode) const;
+    void SetClassTemplateSpecialization(otava::ast::Node* functionNode, ClassTemplateSpecializationSymbol* sp);
+    void RemoveClassTemplateSpecialization(otava::ast::Node* functionNode);
+    void SetInstantiationIrName(const std::string& instantiationIrName_);
+    const std::string& InstantiationIrName() const { return instantiationIrName; }
+    void AddBoundVTabFunction(BoundFunctionNode* node);
+    const std::vector<std::unique_ptr<BoundFunctionNode>>& BoundVTabFunctions() const { return boundVTabFunctions; }
+    void ClearBoundVTabFunctions();
+    void PushTemplateParameterMap(std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParamMap);
+    void PopTemplateParameterMap();
+    std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* TemplateParameterMap() const { return templateParameterMap; }
+    void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
+    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
     std::unique_ptr<BoundCompileUnitNode> boundCompileUnit;
     std::unique_ptr<BoundFunctionNode> boundFunction;
     std::stack<std::unique_ptr<BoundFunctionNode>> boundFunctionStack;
+    std::vector<std::unique_ptr<BoundFunctionNode>> boundVTabFunctions;
     ContextFlags flags;
     std::stack<ContextFlags> flagStack;
     std::stack<otava::ast::Node*> nodeStack;
     otava::ast::Node* node;
     std::map<otava::ast::Node*, std::unique_ptr<DeclarationList>> declarationMap;
     soul::lexer::FileMap* fileMap;
-    FunctionSymbol* specialization;
-    otava::ast::FunctionDefinitionNode* functionDefinitionNode;
+    otava::ast::Node* functionNode;
+    std::map<otava::ast::Node*, FunctionSymbol*> specializationMap;
+    std::map<otava::ast::Node*, ClassTemplateSpecializationSymbol*> classTemplateSpecializationMap;
     AliasTypeSymbol* aliasType;
     otava::intermediate::Value* ptr;
     int memFunDefSymbolIndex;
@@ -161,6 +183,11 @@ private:
     InstantiationQueue* instantiationQueue;
     std::vector<AliasTypeSymbol*> temporaryAliasTypes;
     TypeSymbol* declaredInitializerType;
+    std::string instantiationIrName;
+    FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
+    std::stack< std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>*> templateParameterMapStack;
+    std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParameterMap;
+    soul::ast::SourcePos sourcePos;
 };
 
 } // namespace otava::symbols

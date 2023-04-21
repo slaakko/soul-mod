@@ -1,0 +1,3 @@
+project empty_map;
+target=program;
+source <empty_map.cpp>;

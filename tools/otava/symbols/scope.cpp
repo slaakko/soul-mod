@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -317,10 +317,6 @@ void ContainerScope::Import(Scope* that)
     if (that->IsContainerScope())
     {
         ContainerScope* thatScope = static_cast<ContainerScope*>(that);
-        if (thatScope->GetContainerSymbol()->FullName() == U"soul::ast::re")
-        {
-            int x = 0;
-        }
         if (thatScope->usingDeclarationScope)
         {
             if (!usingDeclarationScope)
@@ -735,7 +731,7 @@ void InstantiationScope::Lookup(const std::u32string& id, SymbolGroupKind symbol
         {
             for (Scope* parentScope : parentScopes)
             {
-                if (symbols.empty())
+                if (symbols.empty() || (flags & LookupFlags::all) != LookupFlags::none)
                 {
                     parentScope->Lookup(id, symbolGroupKinds, scopeLookup, flags, symbols, visited, context);
                 }

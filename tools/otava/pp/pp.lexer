@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,7 +14,7 @@ lexer PPLexer
     rules
     {
         "{separators}" {}
-        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
         "{integer_literal}" { return INTEGER_LITERAL; }
         "{character_literal}" { return CHARACTER_LITERAL; }
         "{string_literal}" { return STRING_LITERAL; }

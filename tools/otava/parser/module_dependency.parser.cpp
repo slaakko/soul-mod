@@ -19,8 +19,8 @@ using namespace otava::parser::punctuation;
 
 namespace otava::parser::module_dependency {
 
-template<typename Lexer>
-std::unique_ptr<otava::ast::Node> ModuleDependencyParser<Lexer>::Parse(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+std::unique_ptr<otava::ast::Node> ModuleDependencyParser<LexerT>::Parse(LexerT& lexer, otava::symbols::Context* context)
 {
     std::unique_ptr<otava::ast::Node> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -31,7 +31,7 @@ std::unique_ptr<otava::ast::Node> ModuleDependencyParser<Lexer>::Parse(Lexer& le
     }
     #endif
     ++lexer;
-    soul::parser::Match match = ModuleDependencyParser<Lexer>::ModuleUnit(lexer, context);
+    soul::parser::Match match = ModuleDependencyParser<LexerT>::ModuleUnit(lexer, context);
     value.reset(static_cast<otava::ast::Node*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -58,8 +58,8 @@ std::unique_ptr<otava::ast::Node> ModuleDependencyParser<Lexer>::Parse(Lexer& le
     return value;
 }
 
-template<typename Lexer>
-soul::parser::Match ModuleDependencyParser<Lexer>::ModuleUnit(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match ModuleDependencyParser<LexerT>::ModuleUnit(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -70,7 +70,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ModuleUnit(Lexer& lexer, otav
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleUnit");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 4573667023757770753);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4573667023757770753);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> moduleDeclarationNode = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> globalModuleFragment;
@@ -108,7 +108,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ModuleUnit(Lexer& lexer, otav
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = ModuleDependencyParser<Lexer>::GlobalModuleFragment(lexer, context);
+                                        soul::parser::Match match = ModuleDependencyParser<LexerT>::GlobalModuleFragment(lexer, context);
                                         globalModuleFragment.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -138,7 +138,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ModuleUnit(Lexer& lexer, otav
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = ModuleParser<Lexer>::ModuleDeclaration(lexer, context);
+                                    soul::parser::Match match = ModuleParser<LexerT>::ModuleDeclaration(lexer, context);
                                     moduleDeclaration.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -162,7 +162,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ModuleUnit(Lexer& lexer, otav
                             int64_t save = lexer.GetPos();
                             soul::parser::Match* parentMatch12 = &match;
                             {
-                                soul::parser::Match match = ModuleDependencyParser<Lexer>::DeclarationSeq(lexer, context);
+                                soul::parser::Match match = ModuleDependencyParser<LexerT>::DeclarationSeq(lexer, context);
                                 declarations.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -188,7 +188,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ModuleUnit(Lexer& lexer, otav
                             soul::parser::Match* parentMatch14 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = ModuleDependencyParser<Lexer>::DeclarationSeq(lexer, context);
+                                soul::parser::Match match = ModuleDependencyParser<LexerT>::DeclarationSeq(lexer, context);
                                 declarations.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -264,8 +264,8 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ModuleUnit(Lexer& lexer, otav
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match ModuleDependencyParser<Lexer>::GlobalModuleFragment(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match ModuleDependencyParser<LexerT>::GlobalModuleFragment(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -276,7 +276,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::GlobalModuleFragment(Lexer& l
         soul::lexer::WriteBeginRuleToLog(lexer, "GlobalModuleFragment");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 4573667023757770754);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4573667023757770754);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> moduleKw;
     std::unique_ptr<otava::ast::Node> semicolon;
@@ -294,7 +294,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::GlobalModuleFragment(Lexer& l
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = ModuleParser<Lexer>::ModuleKeyword(lexer, context);
+                    soul::parser::Match match = ModuleParser<LexerT>::ModuleKeyword(lexer, context);
                     moduleKw.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -309,7 +309,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::GlobalModuleFragment(Lexer& l
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch4 = &match;
                 {
-                    soul::parser::Match match = PunctuationParser<Lexer>::Semicolon(lexer);
+                    soul::parser::Match match = PunctuationParser<LexerT>::Semicolon(lexer);
                     semicolon.reset(static_cast<otava::ast::Node*>(match.value));
                     *parentMatch4 = match;
                 }
@@ -342,8 +342,8 @@ soul::parser::Match ModuleDependencyParser<Lexer>::GlobalModuleFragment(Lexer& l
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match ModuleDependencyParser<Lexer>::DeclarationSeq(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match ModuleDependencyParser<LexerT>::DeclarationSeq(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -354,7 +354,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::DeclarationSeq(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclarationSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 4573667023757770755);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4573667023757770755);
     std::unique_ptr<otava::ast::Node> sequence = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
@@ -373,7 +373,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::DeclarationSeq(Lexer& lexer, 
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = ModuleDependencyParser<Lexer>::Declaration(lexer, context);
+                    soul::parser::Match match = ModuleDependencyParser<LexerT>::Declaration(lexer, context);
                     first.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -407,7 +407,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::DeclarationSeq(Lexer& lexer, 
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = ModuleDependencyParser<Lexer>::Declaration(lexer, context);
+                                        soul::parser::Match match = ModuleDependencyParser<LexerT>::Declaration(lexer, context);
                                         next.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -464,8 +464,8 @@ soul::parser::Match ModuleDependencyParser<Lexer>::DeclarationSeq(Lexer& lexer, 
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match ModuleDependencyParser<Lexer>::Declaration(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match ModuleDependencyParser<LexerT>::Declaration(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -476,7 +476,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::Declaration(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "Declaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 4573667023757770756);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4573667023757770756);
     std::unique_ptr<otava::ast::Node> moduleImportDeclaration;
     std::unique_ptr<otava::ast::Node> exportImportDeclaration;
     soul::parser::Match match(false);
@@ -487,7 +487,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::Declaration(Lexer& lexer, ota
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = ModuleParser<Lexer>::ImportDeclaration(lexer, context);
+            soul::parser::Match match = ModuleParser<LexerT>::ImportDeclaration(lexer, context);
             moduleImportDeclaration.reset(static_cast<otava::ast::Node*>(match.value));
             if (match.hit)
             {
@@ -511,7 +511,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::Declaration(Lexer& lexer, ota
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = ModuleDependencyParser<Lexer>::ExportImportDeclaration(lexer, context);
+                    soul::parser::Match match = ModuleDependencyParser<LexerT>::ExportImportDeclaration(lexer, context);
                     exportImportDeclaration.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -543,8 +543,8 @@ soul::parser::Match ModuleDependencyParser<Lexer>::Declaration(Lexer& lexer, ota
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match ModuleDependencyParser<Lexer>::ExportImportDeclaration(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match ModuleDependencyParser<LexerT>::ExportImportDeclaration(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -555,7 +555,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ExportImportDeclaration(Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportImportDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 4573667023757770757);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4573667023757770757);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> exprt;
     std::unique_ptr<otava::ast::Node> imprt;
@@ -573,7 +573,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ExportImportDeclaration(Lexer
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = ModuleParser<Lexer>::ExportKeyword(lexer, context);
+                    soul::parser::Match match = ModuleParser<LexerT>::ExportKeyword(lexer, context);
                     exprt.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -588,7 +588,7 @@ soul::parser::Match ModuleDependencyParser<Lexer>::ExportImportDeclaration(Lexer
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch4 = &match;
                 {
-                    soul::parser::Match match = ModuleParser<Lexer>::ImportDeclaration(lexer, context);
+                    soul::parser::Match match = ModuleParser<LexerT>::ImportDeclaration(lexer, context);
                     imprt.reset(static_cast<otava::ast::Node*>(match.value));
                     *parentMatch4 = match;
                 }

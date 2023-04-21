@@ -1,0 +1,3 @@
+project friend;
+target=program;
+source <friend.cpp>;

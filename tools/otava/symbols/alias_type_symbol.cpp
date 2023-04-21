@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,6 +13,8 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.templates;
 import otava.symbols.alias.group.symbol;
+import otava.symbols.modules;
+import otava.symbols.expression.binder;
 
 namespace otava::symbols {
 
@@ -151,12 +153,15 @@ bool AliasTypeLess::operator()(AliasTypeSymbol* left, AliasTypeSymbol* right) co
 
 void AddTemporaryTypeAlias(otava::ast::Node* aliasDeclarationNode, Context* context)
 {
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     if (aliasDeclarationNode->IsAliasDeclarationNode())
     {
         otava::ast::Node* idNode = static_cast<otava::ast::AliasDeclarationNode*>(aliasDeclarationNode)->Identifier();
         AliasTypeSymbol* temporaryAlias = context->GetSymbolTable()->AddAliasType(idNode, aliasDeclarationNode, GenericTypeSymbol::Instance(), context);
         context->AddTemporaryAliasType(temporaryAlias);
     }
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
 }
 
 void RemoveTemporaryAliasTypeSymbols(Context* context)

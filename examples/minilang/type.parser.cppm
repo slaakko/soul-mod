@@ -9,10 +9,10 @@ import soul.parser;
 
 export namespace minilang::parser::type {
 
-template<typename Lexer>
+template<typename LexerT>
 struct TypeParser
 {
-    static soul::parser::Match Type(Lexer& lexer);
+    static soul::parser::Match Type(LexerT& lexer);
 };
 
 } // namespace minilang::parser::type

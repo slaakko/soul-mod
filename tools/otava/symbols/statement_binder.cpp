@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -660,6 +660,7 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
             boundSwitchStatement->SetInitStatement(boundInitStatement);
         }
     }
+    // todo!!!
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     boundSwitchStatement->SetCondition(condition);
     context->PushSwitchCondType(condition->GetType());
@@ -1396,14 +1397,18 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
         }
     */
     bool isArrayVar = variable->GetDeclaredType()->IsArrayTypeSymbol();
-    if (isArrayVar)
-    {
-        int x = 0;
-    }
     soul::ast::SourcePos sourcePos = declarationNode->GetSourcePos();
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    std::string sha = util::GetSha1MessageDigest(util::ToUtf8(functionDefinitionSymbol->FullName()));
+    std::string shaMaterial = util::ToUtf8(functionDefinitionSymbol->FullName());
+    if (!functionDefinitionSymbol->Specialization().empty())
+    {
+        for (const auto& type : functionDefinitionSymbol->Specialization())
+        {
+            shaMaterial.append(".").append(util::ToUtf8(type->FullName()));
+        }
+    }
+    std::string sha = util::GetSha1MessageDigest(shaMaterial);
     otava::ast::Node* atomicBoolType = MakeTypeNameNodes(sourcePos, U"std::atomic_bool");
     otava::ast::DeclSpecifierSequenceNode* declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
     declSpecifiers->AddNode(atomicBoolType);
@@ -1412,7 +1417,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     initDeclarators->AddNode(initializedVarName->Clone());
     std::unique_ptr<otava::ast::SimpleDeclarationNode> initializedVarDeclaration(new otava::ast::SimpleDeclarationNode(sourcePos, declSpecifiers, initDeclarators, nullptr, nullptr));
     context->GetSymbolTable()->BeginScope(context->GetSymbolTable()->GlobalNs()->GetScope());
-    ProcessSimpleDeclaration(initializedVarDeclaration.get(), context);
+    ProcessSimpleDeclaration(initializedVarDeclaration.get(), nullptr, context);
     std::u32string globalStaticVarName = variable->Name() + U"_global_" + util::ToUtf32(sha);
     std::unique_ptr<otava::ast::IdentifierNode> globalStaticVarId(new otava::ast::IdentifierNode(sourcePos, globalStaticVarName));
     FunctionStaticDeclarationExtractor extractor(sourcePos, globalStaticVarId.get(), isArrayVar);
@@ -1426,7 +1431,7 @@ void StatementBinder::BindStaticLocalVariable(VariableSymbol* variable, otava::a
     {
         context->SetDeclaredInitializerType(variable->GetDeclaredType());
     }
-    ProcessSimpleDeclaration(globalStaticVarDeclaration.get(), context);
+    ProcessSimpleDeclaration(globalStaticVarDeclaration.get(), nullptr, context);
     context->PopFlags();
     context->GetSymbolTable()->EndScope();
     std::unique_ptr<otava::ast::CompoundStatementNode> compound1;
@@ -1534,10 +1539,6 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    if (functionDefinitionSymbol->Name() == U"main")
-    {
-        int x = 0;
-    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;

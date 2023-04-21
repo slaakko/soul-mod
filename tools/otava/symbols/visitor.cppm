@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -31,6 +31,7 @@ class BlockSymbol;
 class ClassGroupSymbol;
 class ClassTypeSymbol;
 class ForwardClassDeclarationSymbol;
+class FriendSymbol;
 class CompoundTypeSymbol;
 class ConceptGroupSymbol;
 class ConceptSymbol;
@@ -88,6 +89,7 @@ public:
     virtual void Visit(ClassGroupSymbol& symbol) {}
     virtual void Visit(ClassTypeSymbol& symbol) {}
     virtual void Visit(ForwardClassDeclarationSymbol& symbol) {}
+    virtual void Visit(FriendSymbol& symbol) {}
     virtual void Visit(CompoundTypeSymbol& symbol) {}
     virtual void Visit(ConceptGroupSymbol& symbol) {}
     virtual void Visit(ConceptSymbol& symbol) {}

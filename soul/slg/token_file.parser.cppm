@@ -12,12 +12,12 @@ using namespace soul::ast::slg;
 
 export namespace soul::slg::token::file::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct TokenFileParser
 {
-    static std::unique_ptr<soul::ast::slg::TokenFile> Parse(Lexer& lexer);
-    static soul::parser::Match TokenFile(Lexer& lexer);
-    static soul::parser::Match Token(Lexer& lexer);
+    static std::unique_ptr<soul::ast::slg::TokenFile> Parse(LexerT& lexer);
+    static soul::parser::Match TokenFile(LexerT& lexer);
+    static soul::parser::Match Token(LexerT& lexer);
 };
 
 } // namespace soul::slg::token::file::parser

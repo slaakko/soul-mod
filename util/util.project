@@ -46,4 +46,5 @@ source <unicode.conversion.cpp>;
 source <unicode.engine.cpp>;
 interface <uuid.cppm>;
 source <uuid.cpp>;
+interface <util.init_otava.cppm>;
 interface <util_otava.cppm>;

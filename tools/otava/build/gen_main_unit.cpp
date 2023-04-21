@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -42,7 +42,7 @@ import std.filesystem;
 
 namespace otava::build {
 
-std::string GenerateMainWrapper(otava::symbols::Context* context)
+std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
 {
 /*  int __main_wrapper(int argc, const char** argv)
 *   {
@@ -70,6 +70,13 @@ std::string GenerateMainWrapper(otava::symbols::Context* context)
 */
     otava::ast::IdentifierNode* mainFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"main");
     otava::ast::InvokeExprNode* mainFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), mainFn);
+    if (numParams == 2)
+    {
+        otava::ast::IdentifierNode* argcNode = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"argc");
+        mainFnCall->AddNode(argcNode);
+        otava::ast::IdentifierNode* argvNode = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"argv");
+        mainFnCall->AddNode(argvNode);
+    }
     otava::ast::IdentifierNode* retValDeclarator = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@retval");
     otava::ast::DeclSpecifierSequenceNode* retValDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
     retValDeclSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::SourcePos()));
@@ -173,15 +180,16 @@ std::string GenerateMainWrapper(otava::symbols::Context* context)
     otava::symbols::InstantiationScope instantiationScope(context->GetSymbolTable()->CurrentScope());
     otava::symbols::Instantiator instantiator(context, &instantiationScope);
     context->PushSetFlag(otava::symbols::ContextFlags::saveDeclarations | otava::symbols::ContextFlags::dontBind | otava::symbols::ContextFlags::generateMainWrapper);
+    instantiator.SetFunctionNode(mainWrapperFn.get());
     mainWrapperFn->Accept(instantiator);
     context->PopFlags();
-    otava::symbols::FunctionSymbol* mainWrapperFnSymbol = context->GetSpecialization();
-    if (mainWrapperFnSymbol->IsFunctionDefinitionSymbol())
+    otava::symbols::FunctionSymbol* mainWrapperFnSymbol = instantiator.GetSpecialization();
+    if (mainWrapperFnSymbol && mainWrapperFnSymbol->IsFunctionDefinitionSymbol())
     {
         otava::symbols::FunctionDefinitionSymbol* mainWrapperFnDefSymbol = static_cast<otava::symbols::FunctionDefinitionSymbol*>(mainWrapperFnSymbol);
         context->PushBoundFunction(new otava::symbols::BoundFunctionNode(mainWrapperFnDefSymbol, soul::ast::SourcePos()));
         otava::symbols::BindFunction(mainWrapperFn.get(), mainWrapperFnDefSymbol, context);
-        context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<otava::symbols::BoundNode>(context->ReleaseBoundFunction()), context);
         context->PopBoundFunction();
         return mainWrapperFnDefSymbol->IrName(context);
     }
@@ -198,8 +206,9 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     otava::symbols::Module main("main");
     std::unique_ptr<otava::symbols::SymbolTable> symbolTable(new otava::symbols::SymbolTable());
     symbolTable->SetModule(&main);
-    symbolTable->Import(*core->GetSymbolTable());
+    symbolTable->Import(*core->GetSymbolTable(), moduleMapper.GetFunctionDefinitionSymbolSet());
     otava::symbols::Context context;
+    context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(symbolTable.get());
     context.SetFileName((std::filesystem::path(mainFilePath).parent_path().parent_path() / std::filesystem::path(mainFilePath).filename()).generic_string());
     context.GetBoundCompileUnit()->SetId("main_unit");
@@ -215,12 +224,12 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
         otava::symbols::TypeSymbol* intType = context.GetSymbolTable()->GetFundamentalTypeSymbol(otava::symbols::FundamentalTypeKind::intType);
         otava::symbols::ParameterSymbol* argcParam = context.GetSymbolTable()->CreateParameter(U"argc", nullptr, intType, &context);
         mainFn->AddSymbol(argcParam, soul::ast::SourcePos(), &context);
-        otava::symbols::TypeSymbol* charPtrPtrType = context.GetSymbolTable()->GetFundamentalTypeSymbol(
+        otava::symbols::TypeSymbol* constCharPtrPtrType = context.GetSymbolTable()->GetFundamentalTypeSymbol(
             otava::symbols::FundamentalTypeKind::charType)->AddConst(&context)->AddPointer(&context)->AddPointer(&context);
-        otava::symbols::ParameterSymbol* argvParam = context.GetSymbolTable()->CreateParameter(U"argv", nullptr, charPtrPtrType, &context);
+        otava::symbols::ParameterSymbol* argvParam = context.GetSymbolTable()->CreateParameter(U"argv", nullptr, constCharPtrPtrType, &context);
         mainFn->AddSymbol(argvParam, soul::ast::SourcePos(), &context);
     }
-    std::string mainWrapperIrName = GenerateMainWrapper(&context);
+    std::string mainWrapperIrName = GenerateMainWrapper(&context, numParams);
     int np = numParams;
     std::string asmFilename = otava::codegen::GenerateCode(context, config, true, mainWrapperIrName, np, true, compileUnitInitFnNames);
     std::ofstream mainFile(mainFilePath);

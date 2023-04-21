@@ -156,15 +156,15 @@ struct IntermediateCodeLexer
             case 23:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(20, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -177,15 +177,15 @@ struct IntermediateCodeLexer
             case 22:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(17, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -198,15 +198,15 @@ struct IntermediateCodeLexer
             case 21:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(16, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -219,15 +219,15 @@ struct IntermediateCodeLexer
             case 20:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(15, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -240,15 +240,15 @@ struct IntermediateCodeLexer
             case 19:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(14, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -261,15 +261,15 @@ struct IntermediateCodeLexer
             case 18:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(13, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -282,15 +282,15 @@ struct IntermediateCodeLexer
             case 17:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(12, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -303,15 +303,15 @@ struct IntermediateCodeLexer
             case 16:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(11, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -324,15 +324,15 @@ struct IntermediateCodeLexer
             case 15:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(10, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -345,15 +345,15 @@ struct IntermediateCodeLexer
             case 14:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(9, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -366,15 +366,15 @@ struct IntermediateCodeLexer
             case 13:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -412,15 +412,15 @@ struct IntermediateCodeLexer
             case 26:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(6, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -456,15 +456,15 @@ struct IntermediateCodeLexer
             case 28:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -509,15 +509,15 @@ struct IntermediateCodeLexer
             case 29:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -540,15 +540,15 @@ struct IntermediateCodeLexer
             case 25:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(6, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -576,15 +576,15 @@ struct IntermediateCodeLexer
             case 24:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -612,15 +612,15 @@ struct IntermediateCodeLexer
             case 31:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -667,15 +667,15 @@ struct IntermediateCodeLexer
             case 12:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -724,15 +724,15 @@ struct IntermediateCodeLexer
             case 36:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -778,15 +778,15 @@ struct IntermediateCodeLexer
             case 35:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -829,15 +829,15 @@ struct IntermediateCodeLexer
             case 34:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -883,15 +883,15 @@ struct IntermediateCodeLexer
             case 37:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -937,15 +937,15 @@ struct IntermediateCodeLexer
             case 38:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -991,15 +991,15 @@ struct IntermediateCodeLexer
             case 39:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1096,15 +1096,15 @@ struct IntermediateCodeLexer
             case 43:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1144,15 +1144,15 @@ struct IntermediateCodeLexer
             case 33:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1195,15 +1195,15 @@ struct IntermediateCodeLexer
             case 32:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1246,15 +1246,15 @@ struct IntermediateCodeLexer
             case 11:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1318,15 +1318,15 @@ struct IntermediateCodeLexer
             case 44:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1372,15 +1372,15 @@ struct IntermediateCodeLexer
             case 8:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(19, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1417,15 +1417,15 @@ struct IntermediateCodeLexer
             case 46:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(3, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1448,15 +1448,15 @@ struct IntermediateCodeLexer
             case 7:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(18, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1469,15 +1469,15 @@ struct IntermediateCodeLexer
             case 6:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(8, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1490,15 +1490,15 @@ struct IntermediateCodeLexer
             case 5:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(7, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1511,15 +1511,15 @@ struct IntermediateCodeLexer
             case 4:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1562,15 +1562,15 @@ struct IntermediateCodeLexer
             case 3:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1715,15 +1715,15 @@ struct IntermediateCodeLexer
             case 47:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(4, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1736,15 +1736,15 @@ struct IntermediateCodeLexer
             case 1:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1903,7 +1903,7 @@ struct IntermediateCodeLexer
                 break;
             }
         }
-        return CONTINUE_TOKEN;
+        return soul::lexer::CONTINUE_TOKEN;
     }
 };
 

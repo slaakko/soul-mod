@@ -9,11 +9,11 @@ import soul.parser;
 
 export namespace soul::cpp::identifier::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct CppIdentifierParser
 {
-    static soul::parser::Match CppIdentifier(Lexer& lexer);
-    static soul::parser::Match QualifiedCppId(Lexer& lexer);
+    static soul::parser::Match CppIdentifier(LexerT& lexer);
+    static soul::parser::Match QualifiedCppId(LexerT& lexer);
 };
 
 } // namespace soul::cpp::identifier::parser

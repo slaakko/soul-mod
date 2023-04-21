@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,6 +15,8 @@ import soul.ast.cpp;
 import soul.ast.common;
 
 namespace soul::slg {
+
+#ifndef OTAVA
 
 void MakeNfas(soul::ast::re::LexerContext& lexerContext)
 {
@@ -419,7 +421,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    interfaceFormatter.WriteLine("ClassMap<Char>* classmap = lexer.GetClassMap();");
+    interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();");
     interfaceFormatter.WriteLine("int32_t cls = classmap->GetClass(chr);");
     interfaceFormatter.WriteLine("switch (state)");
     interfaceFormatter.WriteLine("{");
@@ -559,10 +561,10 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("};");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
-    interfaceFormatter.WriteLine("ClassMap<Char>* GetClassMap()");
+    interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap()");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
-    interfaceFormatter.WriteLine("static ClassMap<Char>* classmap = MakeClassMap<Char>(\"" + moduleName + ".classmap\");");
+    interfaceFormatter.WriteLine("static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(\"" + moduleName + ".classmap\");");
     interfaceFormatter.WriteLine("return classmap;");
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
@@ -881,5 +883,13 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
         std::cout << "lexers for project '" << slgFile->ProjectName() << "' generated successfully." << std::endl;
     }
 }
+
+#else
+
+void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
+{
+}
+
+#endif
 
 } // namespace soul::slg

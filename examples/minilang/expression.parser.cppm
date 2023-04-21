@@ -12,23 +12,23 @@ using namespace minilang::ast;
 
 export namespace minilang::parser::expression {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ExpressionParser
 {
-    static soul::parser::Match Expression(Lexer& lexer);
-    static soul::parser::Match PrimaryExpression(Lexer& lexer);
-    static soul::parser::Match PostfixExpression(Lexer& lexer);
-    static soul::parser::Match ExpressionList(Lexer& lexer, minilang::ast::Node* owner);
-    static soul::parser::Match UnaryExpression(Lexer& lexer);
-    static soul::parser::Match UnaryOperator(Lexer& lexer);
-    static soul::parser::Match MultiplicativeExpression(Lexer& lexer);
-    static soul::parser::Match MultiplicativeOperator(Lexer& lexer);
-    static soul::parser::Match AdditiveExpression(Lexer& lexer);
-    static soul::parser::Match AdditiveOperator(Lexer& lexer);
-    static soul::parser::Match RelationalExpression(Lexer& lexer);
-    static soul::parser::Match RelationalOperator(Lexer& lexer);
-    static soul::parser::Match EqualityExpression(Lexer& lexer);
-    static soul::parser::Match EqualityOperator(Lexer& lexer);
+    static soul::parser::Match Expression(LexerT& lexer);
+    static soul::parser::Match PrimaryExpression(LexerT& lexer);
+    static soul::parser::Match PostfixExpression(LexerT& lexer);
+    static soul::parser::Match ExpressionList(LexerT& lexer, minilang::ast::Node* owner);
+    static soul::parser::Match UnaryExpression(LexerT& lexer);
+    static soul::parser::Match UnaryOperator(LexerT& lexer);
+    static soul::parser::Match MultiplicativeExpression(LexerT& lexer);
+    static soul::parser::Match MultiplicativeOperator(LexerT& lexer);
+    static soul::parser::Match AdditiveExpression(LexerT& lexer);
+    static soul::parser::Match AdditiveOperator(LexerT& lexer);
+    static soul::parser::Match RelationalExpression(LexerT& lexer);
+    static soul::parser::Match RelationalOperator(LexerT& lexer);
+    static soul::parser::Match EqualityExpression(LexerT& lexer);
+    static soul::parser::Match EqualityOperator(LexerT& lexer);
 };
 
 } // namespace minilang::parser::expression

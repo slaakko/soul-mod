@@ -7,18 +7,22 @@ import util;
 import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
+import soul.tool.token;
+import soul.punctuation.token;
 import soul.lex.slg;
 import soul.lex.spg;
 
 using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
+using namespace soul::tool::token;
+using namespace soul::punctuation::token;
 using namespace soul::lex::slg;
 using namespace soul::lex::spg;
 
 namespace soul::cpp::identifier::parser {
 
-template<typename Lexer>
-soul::parser::Match CppIdentifierParser<Lexer>::CppIdentifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -29,7 +33,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::CppIdentifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2155528619961614337);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614337);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -65,8 +69,8 @@ soul::parser::Match CppIdentifierParser<Lexer>::CppIdentifier(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match CppIdentifierParser<Lexer>::QualifiedCppId(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -77,7 +81,7 @@ soul::parser::Match CppIdentifierParser<Lexer>::QualifiedCppId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2155528619961614338);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614338);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

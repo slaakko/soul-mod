@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -19,6 +19,7 @@ import otava.intermediate.instruction;
 import otava.intermediate.basic.block;
 import otava.intermediate.function;
 import otava.symbols.type.resolver;
+import otava.symbols.class_templates;
 import otava.intermediate.simple.assembly.code.generator;
 import otava.assembly;
 import otava.symbols.bound.tree;
@@ -125,6 +126,7 @@ public:
     ConstantExpressionEvaluator(otava::symbols::Emitter& emitter_, const soul::ast::SourcePos& sourcePos_, otava::symbols::Context& context_);
     void Visit(otava::symbols::BoundLiteralNode& node) override;
     void Visit(otava::symbols::BoundEnumConstant& node) override;
+    void Visit(otava::symbols::BoundVariableNode& node) override;
     void Visit(otava::symbols::BoundConversionNode& node) override;
 private:
     otava::symbols::Emitter& emitter;
@@ -145,6 +147,18 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundLiteralNode& node)
 void ConstantExpressionEvaluator::Visit(otava::symbols::BoundEnumConstant& node)
 {
     emitter.Stack().Push(node.EnumConstant()->GetValue()->IrValue(emitter, sourcePos, &context));
+}
+
+void ConstantExpressionEvaluator::Visit(otava::symbols::BoundVariableNode& node)
+{
+    otava::symbols::VariableSymbol* variable = node.GetVariable();
+    otava::symbols::Value* value = variable->GetValue();
+    if (!value)
+    {
+        ThrowException("cannot evaluate statically", sourcePos, &context);
+    }
+    otava::intermediate::Value* irValue = value->IrValue(emitter, sourcePos, &context);
+    emitter.Stack().Push(irValue);
 }
 
 void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& node)
@@ -426,6 +440,7 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
 {
     if (!cls->IsPolymorphic()) return;
     if (cls->VTabInitialized()) return;
+    context.SetFlag(otava::symbols::ContextFlags::generatingVTab);
     cls->SetVTabInitialized();
     cls->ComputeVTabName(&context);
     cls->MakeVTab(&context, sourcePos);
@@ -487,6 +502,12 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
     std::string vtabName = cls->VTabName(&context);
     otava::intermediate::Value* vtabVariable = emitter.EmitGlobalVariable(arrayType, vtabName, arrayValue);
     emitter.SetVTabVariable(cls, vtabVariable);
+    context.ResetFlag(otava::symbols::ContextFlags::generatingVTab);
+    for (const auto& boundVTabFunction : context.BoundVTabFunctions())
+    {
+        boundVTabFunction->Accept(*this);
+    }
+    context.ClearBoundVTabFunctions();
 }
 
 void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::SourcePos& sourcePos)
@@ -592,6 +613,20 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
 void CodeGenerator::Visit(otava::symbols::BoundClassNode& node)
 {
     otava::symbols::ClassTypeSymbol* cls = node.GetClass();
+    if (cls->IsClassTemplateSpecializationSymbol())
+    {
+        if (cls->Name() == U"basic_ostream<char>")
+        {
+            otava::symbols::ClassTemplateSpecializationSymbol* sp = static_cast<otava::symbols::ClassTemplateSpecializationSymbol*>(cls);
+            if (sp->TemplateArguments().size() == 1)
+            {
+                if (sp->TemplateArguments()[0]->Name() == U"char")
+                {
+                    int x = 0;
+                }
+            }
+        }
+    }
     GenerateVTab(cls, node.GetSourcePos());
 }
 
@@ -613,6 +648,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
         mainIrName = functionDefinition->IrName(&context);
         mainFunctionParams = functionDefinition->Arity();
     }
+    std::string functionDefinitionName = functionDefinition->IrName(&context);
     otava::intermediate::Type* functionType = functionDefinition->IrType(emitter, node.GetSourcePos(), &context);
     bool once = false;
     emitter.CreateFunction(functionDefinition->IrName(&context), functionType, once);
@@ -622,21 +658,45 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     for (int i = 0; i < np; ++i)
     {
         otava::symbols::ParameterSymbol* parameter = functionDefinition->MemFunParameters(&context)[i];
-        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType(&context)->IrType(emitter, node.GetSourcePos(), &context));
-        emitter.SetIrObject(parameter, local);
+        otava::symbols::TypeSymbol* type = parameter->GetReferredType(&context);
+        if (type)
+        {
+            otava::intermediate::Value* local = emitter.EmitLocal(type->IrType(emitter, node.GetSourcePos(), &context));
+            emitter.SetIrObject(parameter, local);
+        }
+        else
+        {
+            otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+        }
     }
     if (functionDefinition->ReturnsClass())
     {
         otava::symbols::ParameterSymbol* parameter = functionDefinition->ReturnValueParam();
-        otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType(&context)->IrType(emitter, node.GetSourcePos(), &context));
-        emitter.SetIrObject(parameter, local);
+        otava::symbols::TypeSymbol* type = parameter->GetReferredType(&context);
+        if (type)
+        {
+            otava::intermediate::Value* local = emitter.EmitLocal(parameter->GetReferredType(&context)->IrType(emitter, node.GetSourcePos(), &context));
+            emitter.SetIrObject(parameter, local);
+        }
+        else
+        {
+            otava::symbols::ThrowException("parameter has no type", node.GetSourcePos(), &context);
+        }
     }
     int nlv = functionDefinition->LocalVariables().size();
     for (int i = 0; i < nlv; ++i)
     {
         otava::symbols::VariableSymbol* localVariable = functionDefinition->LocalVariables()[i];
-        otava::intermediate::Value* local = emitter.EmitLocal(localVariable->GetReferredType()->IrType(emitter, node.GetSourcePos(), &context));
-        emitter.SetIrObject(localVariable, local);
+        otava::symbols::TypeSymbol* type = localVariable->GetReferredType();
+        if (type)
+        {
+            otava::intermediate::Value* local = emitter.EmitLocal(type->IrType(emitter, node.GetSourcePos(), &context));
+            emitter.SetIrObject(localVariable, local);
+        }
+        else
+        {
+            otava::symbols::ThrowException("variable has no type", node.GetSourcePos(), &context);
+        }
     }
     for (int i = 0; i < np; ++i)
     {
@@ -670,6 +730,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     {
         otava::intermediate::Value* param = emitter.GetParam(np);
         otava::symbols::ParameterSymbol* parameter = functionDefinition->ReturnValueParam();
+        emitter.EmitStore(param, static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, node.GetSourcePos(), &context)));
     }
     otava::symbols::BoundCtorInitializerNode* ctorInitializer = node.CtorInitializer();
     if (ctorInitializer)
@@ -723,7 +784,7 @@ void CodeGenerator::Visit(otava::symbols::BoundCompoundStatementNode& node)
     {
         otava::symbols::BoundStatementNode* statement = node.Statements()[i].get();
         statement->Accept(*this);
-        prevWasTerminator = statement->IsTerminator();
+        prevWasTerminator = statement->EndsWithTerminator();
     }
     if (nextBlock && !prevWasTerminator)
     {
@@ -780,7 +841,7 @@ void CodeGenerator::Visit(otava::symbols::BoundIfStatementNode& node)
         otava::intermediate::BasicBlock* prevNextBlock = nextBlock;
         nextBlock = nullptr;
         emitter.SetNextBlock(nextBlock);
-        prevWasTerminator = false; 
+        prevWasTerminator = false;
         node.ElseStatement()->Accept(*this);
         nextBlock = prevNextBlock;
         emitter.SetNextBlock(nextBlock);
@@ -1074,6 +1135,19 @@ void CodeGenerator::Visit(otava::symbols::BoundBreakStatementNode& node)
 {
     StatementPrefix();
     ExitBlocks(currentBlockId, breakBlockId + 1, node.GetSourcePos());
+    if (node.Parent())
+    {
+        int index = node.Parent()->IndexOf(&node);
+        if (index > 0)
+        {
+            otava::symbols::BoundCompoundStatementNode* parent = static_cast<otava::symbols::BoundCompoundStatementNode*>(node.Parent());
+            otava::symbols::BoundStatementNode* prev = parent->Statements()[index - 1].get();
+            if (prev->EndsWithTerminator())
+            {
+                return;
+            }
+        }
+    }
     emitter.EmitJump(breakBlock);
 }
 

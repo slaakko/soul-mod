@@ -39,8 +39,8 @@ using namespace otava::parser::templates;
 
 namespace otava::parser::type {
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeq(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::TypeSpecifierSeq(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -51,7 +51,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeq(Lexer& lexer, otava::sym
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeSpecifierSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754753);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754753);
     std::unique_ptr<otava::ast::Node> sequence = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> next;
@@ -73,7 +73,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeq(Lexer& lexer, otava::sym
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = TypeParser<Lexer>::TypeSpecifier(lexer, context);
+                        soul::parser::Match match = TypeParser<LexerT>::TypeSpecifier(lexer, context);
                         first.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -103,7 +103,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeq(Lexer& lexer, otava::sym
                                         soul::parser::Match* parentMatch8 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = TypeParser<Lexer>::TypeSpecifier(lexer, context);
+                                            soul::parser::Match match = TypeParser<LexerT>::TypeSpecifier(lexer, context);
                                             next.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
@@ -147,7 +147,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeq(Lexer& lexer, otava::sym
                             soul::parser::Match* parentMatch12 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = AttributeParser<Lexer>::AttributeSpecifierSeq(lexer, context);
+                                soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
                                 attributes.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -197,8 +197,8 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeq(Lexer& lexer, otava::sym
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeqReset(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::TypeSpecifierSeqReset(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -209,7 +209,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeqReset(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeSpecifierSeqReset");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754754);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754754);
     std::unique_ptr<otava::ast::Node> typeSpecifierSeq;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -236,7 +236,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeqReset(Lexer& lexer, otava
             soul::parser::Match* parentMatch3 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = TypeParser<Lexer>::TypeSpecifierSeq(lexer, context);
+                soul::parser::Match match = TypeParser<LexerT>::TypeSpecifierSeq(lexer, context);
                 typeSpecifierSeq.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
@@ -272,8 +272,8 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifierSeqReset(Lexer& lexer, otava
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::DefiningTypeId(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::DefiningTypeId(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -284,7 +284,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeId(Lexer& lexer, otava::symbo
         soul::lexer::WriteBeginRuleToLog(lexer, "DefiningTypeId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754755);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754755);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> definingTypeSpecifierSeq;
     std::unique_ptr<otava::ast::Node> abstractDeclararator;
@@ -302,7 +302,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeId(Lexer& lexer, otava::symbo
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = TypeParser<Lexer>::DefiningTypeSpecifierSeq(lexer, context);
+                    soul::parser::Match match = TypeParser<LexerT>::DefiningTypeSpecifierSeq(lexer, context);
                     definingTypeSpecifierSeq.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -321,7 +321,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeId(Lexer& lexer, otava::symbo
                     int64_t save = lexer.GetPos();
                     soul::parser::Match* parentMatch5 = &match;
                     {
-                        soul::parser::Match match = DeclarationParser<Lexer>::AbstractDeclarator(lexer, context);
+                        soul::parser::Match match = DeclarationParser<LexerT>::AbstractDeclarator(lexer, context);
                         abstractDeclararator.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -363,8 +363,8 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeId(Lexer& lexer, otava::symbo
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierSeq(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::DefiningTypeSpecifierSeq(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -375,7 +375,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierSeq(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "DefiningTypeSpecifierSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754756);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754756);
     std::unique_ptr<otava::ast::Node> node = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<Node> first;
     std::unique_ptr<Node> next;
@@ -397,7 +397,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierSeq(Lexer& lexer, ot
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = TypeParser<Lexer>::DefiningTypeSpecifierReset(lexer, context);
+                        soul::parser::Match match = TypeParser<LexerT>::DefiningTypeSpecifierReset(lexer, context);
                         first.reset(static_cast<Node*>(match.value));
                         if (match.hit)
                         {
@@ -427,7 +427,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierSeq(Lexer& lexer, ot
                                         soul::parser::Match* parentMatch8 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = TypeParser<Lexer>::DefiningTypeSpecifierReset(lexer, context);
+                                            soul::parser::Match match = TypeParser<LexerT>::DefiningTypeSpecifierReset(lexer, context);
                                             next.reset(static_cast<Node*>(match.value));
                                             if (match.hit)
                                             {
@@ -471,7 +471,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierSeq(Lexer& lexer, ot
                             soul::parser::Match* parentMatch12 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = AttributeParser<Lexer>::AttributeSpecifierSeq(lexer, context);
+                                soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
                                 attributes.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -521,8 +521,8 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierSeq(Lexer& lexer, ot
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierReset(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::DefiningTypeSpecifierReset(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -533,7 +533,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierReset(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "DefiningTypeSpecifierReset");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754757);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754757);
     std::unique_ptr<otava::ast::Node> definingTypeSpecifier;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -560,7 +560,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierReset(Lexer& lexer, 
             soul::parser::Match* parentMatch3 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = TypeParser<Lexer>::DefiningTypeSpecifier(lexer, context);
+                soul::parser::Match match = TypeParser<LexerT>::DefiningTypeSpecifier(lexer, context);
                 definingTypeSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
@@ -596,8 +596,8 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifierReset(Lexer& lexer, 
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifier(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::DefiningTypeSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -608,7 +608,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifier(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "DefiningTypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754758);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754758);
     std::unique_ptr<otava::ast::Node> classSpecifier;
     std::unique_ptr<otava::ast::Node> enumSpecifier;
     std::unique_ptr<otava::ast::Node> typeSpecifier;
@@ -631,7 +631,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifier(Lexer& lexer, otava
                     soul::parser::Match* parentMatch3 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = ClassParser<Lexer>::ClassSpecifier(lexer, context);
+                        soul::parser::Match match = ClassParser<LexerT>::ClassSpecifier(lexer, context);
                         classSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -657,7 +657,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifier(Lexer& lexer, otava
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = EnumParser<Lexer>::EnumSpecifier(lexer, context);
+                        soul::parser::Match match = EnumParser<LexerT>::EnumSpecifier(lexer, context);
                         enumSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -689,7 +689,7 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifier(Lexer& lexer, otava
                     soul::parser::Match* parentMatch6 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = TypeParser<Lexer>::TypeSpecifier(lexer, context);
+                        soul::parser::Match match = TypeParser<LexerT>::TypeSpecifier(lexer, context);
                         typeSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -723,8 +723,8 @@ soul::parser::Match TypeParser<Lexer>::DefiningTypeSpecifier(Lexer& lexer, otava
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::TypeSpecifier(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::TypeSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -735,7 +735,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifier(Lexer& lexer, otava::symbol
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754759);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754759);
     std::unique_ptr<otava::ast::Node> simpleTypeSpecifier;
     std::unique_ptr<otava::ast::Node> elaboratedTypeSpecifier;
     std::unique_ptr<otava::ast::Node> typenameSpecifier;
@@ -756,7 +756,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifier(Lexer& lexer, otava::symbol
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = TypeParser<Lexer>::SimpleTypeSpecifier(lexer, context);
+                    soul::parser::Match match = TypeParser<LexerT>::SimpleTypeSpecifier(lexer, context);
                     simpleTypeSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -781,7 +781,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifier(Lexer& lexer, otava::symbol
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = TypeParser<Lexer>::ElaboratedTypeSpecifier(lexer, context);
+                            soul::parser::Match match = TypeParser<LexerT>::ElaboratedTypeSpecifier(lexer, context);
                             elaboratedTypeSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -811,7 +811,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifier(Lexer& lexer, otava::symbol
                     soul::parser::Match* parentMatch7 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = TypeParser<Lexer>::TypenameSpecifier(lexer, context);
+                        soul::parser::Match match = TypeParser<LexerT>::TypenameSpecifier(lexer, context);
                         typenameSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -841,7 +841,7 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifier(Lexer& lexer, otava::symbol
                 soul::parser::Match* parentMatch9 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = DeclarationParser<Lexer>::CVQualifier(lexer);
+                    soul::parser::Match match = DeclarationParser<LexerT>::CVQualifier(lexer);
                     cvQualifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -873,8 +873,8 @@ soul::parser::Match TypeParser<Lexer>::TypeSpecifier(Lexer& lexer, otava::symbol
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::ElaboratedTypeSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -885,7 +885,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
         soul::lexer::WriteBeginRuleToLog(lexer, "ElaboratedTypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754760);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754760);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos nnsPos = soul::ast::SourcePos();
     soul::ast::SourcePos tmpPos = soul::ast::SourcePos();
@@ -917,7 +917,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                     soul::parser::Match* parentMatch3 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = ClassParser<Lexer>::ClassKey(lexer);
+                        soul::parser::Match match = ClassParser<LexerT>::ClassKey(lexer);
                         classKey.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -936,7 +936,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                         int64_t save = lexer.GetPos();
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            soul::parser::Match match = AttributeParser<Lexer>::AttributeSpecifierSeq(lexer, context);
+                            soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifierSeq(lexer, context);
                             attributes.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -976,7 +976,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                                     soul::parser::Match* parentMatch11 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = IdentifierParser<Lexer>::NestedNameSpecifier(lexer, context);
+                                        soul::parser::Match match = IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
                                         nns.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -1011,7 +1011,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                                                             soul::parser::Match* parentMatch17 = &match;
                                                             {
                                                                 int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = IdentifierParser<Lexer>::Template(lexer);
+                                                                soul::parser::Match match = IdentifierParser<LexerT>::Template(lexer);
                                                                 tmp.reset(static_cast<otava::ast::Node*>(match.value));
                                                                 if (match.hit)
                                                                 {
@@ -1030,12 +1030,12 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                                                                 soul::parser::Match* parentMatch19 = &match;
                                                                 {
                                                                     int64_t pos = lexer.GetPos();
-                                                                    soul::parser::Match match = TemplateParser<Lexer>::SimpleTemplateId(lexer, context);
+                                                                    soul::parser::Match match = TemplateParser<LexerT>::SimpleTemplateId(lexer, context);
                                                                     simpleTemplateId.reset(static_cast<otava::ast::Node*>(match.value));
                                                                     if (match.hit)
                                                                     {
                                                                         otava::ast::Node *node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), new otava::ast::QualifiedIdNode(nnsPos, nns.release(), new otava::ast::PrefixNode(tmpPos, tmp.release(), simpleTemplateId.release())), attributes.release());
-                                                                        otava::symbols::AddForwardClassDeclaration(node, context);
+                                                                        otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                                                                         {
                                                                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedTypeSpecifier");
@@ -1061,12 +1061,12 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                                                         soul::parser::Match* parentMatch20 = &match;
                                                         {
                                                             int64_t pos = lexer.GetPos();
-                                                            soul::parser::Match match = TemplateParser<Lexer>::SimpleTemplateId(lexer, context);
+                                                            soul::parser::Match match = TemplateParser<LexerT>::SimpleTemplateId(lexer, context);
                                                             simpleTemplateId2.reset(static_cast<otava::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
                                                                 otava::ast::Node *node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), new otava::ast::QualifiedIdNode(nnsPos, nns.release(), simpleTemplateId2.release()), attributes.release());
-                                                                otava::symbols::AddForwardClassDeclaration(node, context);
+                                                                otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                                                                 {
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedTypeSpecifier");
@@ -1094,12 +1094,12 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                                                         soul::parser::Match* parentMatch22 = &match;
                                                         {
                                                             int64_t pos = lexer.GetPos();
-                                                            soul::parser::Match match = IdentifierParser<Lexer>::Identifier(lexer, context);
+                                                            soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
                                                             identifier.reset(static_cast<otava::ast::Node*>(match.value));
                                                             if (match.hit)
                                                             {
                                                                 otava::ast::Node *node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), new otava::ast::QualifiedIdNode(nnsPos, nns.release(), identifier.release()), attributes.release());
-                                                                otava::symbols::AddForwardClassDeclaration(node, context);
+                                                                otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                                                                 {
                                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedTypeSpecifier");
@@ -1131,12 +1131,12 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                                         soul::parser::Match* parentMatch24 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = TemplateParser<Lexer>::SimpleTemplateId(lexer, context);
+                                            soul::parser::Match match = TemplateParser<LexerT>::SimpleTemplateId(lexer, context);
                                             simpleTemplateId3.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
                                                 otava::ast::Node *node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), simpleTemplateId3.release(), attributes.release());
-                                                otava::symbols::AddForwardClassDeclaration(node, context);
+                                                otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                                                 {
                                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedTypeSpecifier");
@@ -1162,12 +1162,12 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
                                     soul::parser::Match* parentMatch26 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = IdentifierParser<Lexer>::Identifier(lexer, context);
+                                        soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
                                         identifier2.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
                                             otava::ast::Node *node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey.release(), identifier2.release(), attributes.release());
-                                            otava::symbols::AddForwardClassDeclaration(node, context);
+                                            otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                                             {
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ElaboratedTypeSpecifier");
@@ -1200,7 +1200,7 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
             soul::parser::Match* parentMatch27 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = EnumParser<Lexer>::ElaboratedEnumSpecifier(lexer, context);
+                soul::parser::Match match = EnumParser<LexerT>::ElaboratedEnumSpecifier(lexer, context);
                 elaboratedEnumSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
@@ -1234,8 +1234,8 @@ soul::parser::Match TypeParser<Lexer>::ElaboratedTypeSpecifier(Lexer& lexer, ota
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifierReset(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::SimpleTypeSpecifierReset(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1246,7 +1246,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifierReset(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleTypeSpecifierReset");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754761);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754761);
     std::unique_ptr<otava::ast::Node> simpleTypeSpecifier;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1273,7 +1273,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifierReset(Lexer& lexer, ot
             soul::parser::Match* parentMatch3 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = TypeParser<Lexer>::SimpleTypeSpecifier(lexer, context);
+                soul::parser::Match match = TypeParser<LexerT>::SimpleTypeSpecifier(lexer, context);
                 simpleTypeSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
@@ -1309,8 +1309,8 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifierReset(Lexer& lexer, ot
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::SimpleTypeSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1321,7 +1321,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleTypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754762);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754762);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos tmpPos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> nns = std::unique_ptr<otava::ast::Node>();
@@ -1346,7 +1346,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
             soul::parser::Match* parentMatch2 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = SimpleTypeParser<Lexer>::SimpleType(lexer);
+                soul::parser::Match match = SimpleTypeParser<LexerT>::SimpleType(lexer);
                 simpleType.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
@@ -1369,7 +1369,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = GuardParser<Lexer>::NotDefiningTypeSpecifierGuard(lexer, context);
+                        soul::parser::Match match = GuardParser<LexerT>::NotDefiningTypeSpecifierGuard(lexer, context);
                         *parentMatch4 = match;
                     }
                     if (match.hit)
@@ -1409,7 +1409,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                             soul::parser::Match* parentMatch14 = &match;
                                                             {
                                                                 int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = IdentifierParser<Lexer>::NestedNameSpecifier(lexer, context);
+                                                                soul::parser::Match match = IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
                                                                 nns1.reset(static_cast<otava::ast::Node*>(match.value));
                                                                 if (match.hit)
                                                                 {
@@ -1429,7 +1429,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                                 soul::parser::Match* parentMatch16 = &match;
                                                                 {
                                                                     int64_t pos = lexer.GetPos();
-                                                                    soul::parser::Match match = IdentifierParser<Lexer>::Template(lexer);
+                                                                    soul::parser::Match match = IdentifierParser<LexerT>::Template(lexer);
                                                                     tmp.reset(static_cast<otava::ast::Node*>(match.value));
                                                                     if (match.hit)
                                                                     {
@@ -1452,7 +1452,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                             soul::parser::Match* parentMatch18 = &match;
                                                             {
                                                                 int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = TemplateParser<Lexer>::SimpleTemplateId(lexer, context);
+                                                                soul::parser::Match match = TemplateParser<LexerT>::SimpleTemplateId(lexer, context);
                                                                 simpleTemplateId.reset(static_cast<otava::ast::Node*>(match.value));
                                                                 if (match.hit)
                                                                 {
@@ -1483,7 +1483,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                                 soul::parser::Match* parentMatch21 = &match;
                                                                 {
                                                                     int64_t pos = lexer.GetPos();
-                                                                    soul::parser::Match match = IdentifierParser<Lexer>::NestedNameSpecifier(lexer, context);
+                                                                    soul::parser::Match match = IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
                                                                     nns2.reset(static_cast<otava::ast::Node*>(match.value));
                                                                     if (match.hit)
                                                                     {
@@ -1505,7 +1505,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                                     {
                                                                         int64_t pos = lexer.GetPos();
                                                                         bool pass = true;
-                                                                        soul::parser::Match match = TypeParser<Lexer>::TypeName(lexer, context);
+                                                                        soul::parser::Match match = TypeParser<LexerT>::TypeName(lexer, context);
                                                                         typeName.reset(static_cast<otava::ast::Node*>(match.value));
                                                                         if (match.hit)
                                                                         {
@@ -1584,7 +1584,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                                 {
                                                                     int64_t pos = lexer.GetPos();
                                                                     bool pass = true;
-                                                                    soul::parser::Match match = TypeParser<Lexer>::TypeName(lexer, context);
+                                                                    soul::parser::Match match = TypeParser<LexerT>::TypeName(lexer, context);
                                                                     typeName2.reset(static_cast<otava::ast::Node*>(match.value));
                                                                     if (match.hit)
                                                                     {
@@ -1630,7 +1630,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                     soul::parser::Match* parentMatch30 = &match;
                                                     {
                                                         int64_t pos = lexer.GetPos();
-                                                        soul::parser::Match match = TypeParser<Lexer>::DeclTypeSpecifier(lexer, context);
+                                                        soul::parser::Match match = TypeParser<LexerT>::DeclTypeSpecifier(lexer, context);
                                                         declTypeSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                                                         if (match.hit)
                                                         {
@@ -1659,7 +1659,7 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
                                                 soul::parser::Match* parentMatch32 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = TypeParser<Lexer>::PlaceholderTypeSpecifier(lexer, context);
+                                                    soul::parser::Match match = TypeParser<LexerT>::PlaceholderTypeSpecifier(lexer, context);
                                                     placeholderTypeSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                                                     if (match.hit)
                                                     {
@@ -1706,8 +1706,8 @@ soul::parser::Match TypeParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer, otava::
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::TypeName(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::TypeName(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1718,7 +1718,7 @@ soul::parser::Match TypeParser<Lexer>::TypeName(Lexer& lexer, otava::symbols::Co
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754763);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754763);
     std::unique_ptr<otava::ast::Node> templateId;
     std::unique_ptr<otava::ast::Node> typeIdentifier;
     soul::parser::Match match(false);
@@ -1729,7 +1729,7 @@ soul::parser::Match TypeParser<Lexer>::TypeName(Lexer& lexer, otava::symbols::Co
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = TemplateParser<Lexer>::SimpleTemplateId(lexer, context);
+            soul::parser::Match match = TemplateParser<LexerT>::SimpleTemplateId(lexer, context);
             templateId.reset(static_cast<otava::ast::Node*>(match.value));
             if (match.hit)
             {
@@ -1753,7 +1753,7 @@ soul::parser::Match TypeParser<Lexer>::TypeName(Lexer& lexer, otava::symbols::Co
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = IdentifierParser<Lexer>::TypeIdentifier(lexer, context);
+                    soul::parser::Match match = IdentifierParser<LexerT>::TypeIdentifier(lexer, context);
                     typeIdentifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -1785,8 +1785,8 @@ soul::parser::Match TypeParser<Lexer>::TypeName(Lexer& lexer, otava::symbols::Co
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::TypeId(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::TypeId(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1797,7 +1797,7 @@ soul::parser::Match TypeParser<Lexer>::TypeId(Lexer& lexer, otava::symbols::Cont
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754764);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754764);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> typeSpecifiers;
     std::unique_ptr<otava::ast::Node> abstractDeclarator;
@@ -1836,7 +1836,7 @@ soul::parser::Match TypeParser<Lexer>::TypeId(Lexer& lexer, otava::symbols::Cont
                         soul::parser::Match* parentMatch6 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = TypeParser<Lexer>::TypeSpecifierSeq(lexer, context);
+                            soul::parser::Match match = TypeParser<LexerT>::TypeSpecifierSeq(lexer, context);
                             typeSpecifiers.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -1859,7 +1859,7 @@ soul::parser::Match TypeParser<Lexer>::TypeId(Lexer& lexer, otava::symbols::Cont
                     int64_t save = lexer.GetPos();
                     soul::parser::Match* parentMatch8 = &match;
                     {
-                        soul::parser::Match match = DeclarationParser<Lexer>::AbstractDeclarator(lexer, context);
+                        soul::parser::Match match = DeclarationParser<LexerT>::AbstractDeclarator(lexer, context);
                         abstractDeclarator.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -1906,8 +1906,8 @@ soul::parser::Match TypeParser<Lexer>::TypeId(Lexer& lexer, otava::symbols::Cont
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::TypenameSpecifier(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::TypenameSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1918,7 +1918,7 @@ soul::parser::Match TypeParser<Lexer>::TypenameSpecifier(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "TypenameSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754765);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754765);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> templateNode = std::unique_ptr<otava::ast::Node>();
     bool typenameSeen = bool();
@@ -1991,7 +1991,7 @@ soul::parser::Match TypeParser<Lexer>::TypenameSpecifier(Lexer& lexer, otava::sy
                     soul::parser::Match* parentMatch8 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = IdentifierParser<Lexer>::NestedNameSpecifier(lexer, context);
+                        soul::parser::Match match = IdentifierParser<LexerT>::NestedNameSpecifier(lexer, context);
                         nns.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -2035,7 +2035,7 @@ soul::parser::Match TypeParser<Lexer>::TypenameSpecifier(Lexer& lexer, otava::sy
                                     soul::parser::Match* parentMatch15 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = IdentifierParser<Lexer>::Template(lexer);
+                                        soul::parser::Match match = IdentifierParser<LexerT>::Template(lexer);
                                         t.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -2065,7 +2065,7 @@ soul::parser::Match TypeParser<Lexer>::TypenameSpecifier(Lexer& lexer, otava::sy
                                 soul::parser::Match* parentMatch17 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = TemplateParser<Lexer>::SimpleTemplateId(lexer, context);
+                                    soul::parser::Match match = TemplateParser<LexerT>::SimpleTemplateId(lexer, context);
                                     simpleTemplateId.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -2095,7 +2095,7 @@ soul::parser::Match TypeParser<Lexer>::TypenameSpecifier(Lexer& lexer, otava::sy
                                 soul::parser::Match* parentMatch19 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = IdentifierParser<Lexer>::Identifier(lexer, context);
+                                    soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
                                     identifier.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -2167,8 +2167,8 @@ soul::parser::Match TypeParser<Lexer>::TypenameSpecifier(Lexer& lexer, otava::sy
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::DeclTypeSpecifier(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::DeclTypeSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2179,7 +2179,7 @@ soul::parser::Match TypeParser<Lexer>::DeclTypeSpecifier(Lexer& lexer, otava::sy
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclTypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754766);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754766);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos lpPos = soul::ast::SourcePos();
     soul::ast::SourcePos rpPos = soul::ast::SourcePos();
@@ -2250,7 +2250,7 @@ soul::parser::Match TypeParser<Lexer>::DeclTypeSpecifier(Lexer& lexer, otava::sy
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch8 = &match;
                     {
-                        soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer, context);
+                        soul::parser::Match match = ExpressionParser<LexerT>::Expression(lexer, context);
                         expr.reset(static_cast<otava::ast::Node*>(match.value));
                         *parentMatch8 = match;
                     }
@@ -2310,8 +2310,8 @@ soul::parser::Match TypeParser<Lexer>::DeclTypeSpecifier(Lexer& lexer, otava::sy
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::PlaceholderTypeSpecifier(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::PlaceholderTypeSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2322,7 +2322,7 @@ soul::parser::Match TypeParser<Lexer>::PlaceholderTypeSpecifier(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "PlaceholderTypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2330114084151754767);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2330114084151754767);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     soul::ast::SourcePos dtPos = soul::ast::SourcePos();
     soul::ast::SourcePos autoPos = soul::ast::SourcePos();
@@ -2350,7 +2350,7 @@ soul::parser::Match TypeParser<Lexer>::PlaceholderTypeSpecifier(Lexer& lexer, ot
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = ConceptParser<Lexer>::TypeConstraint(lexer, context);
+                            soul::parser::Match match = ConceptParser<LexerT>::TypeConstraint(lexer, context);
                             typeConstraint.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {

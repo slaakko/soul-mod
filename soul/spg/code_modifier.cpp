@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -85,7 +85,7 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::ReturnStatementNode& node)
             matchArgs.push_back(node.Expr()->Clone());
         }
         soul::ast::cpp::InvokeNode* invokeMatch = new soul::ast::cpp::InvokeNode(sourcePos, new soul::ast::cpp::IdExprNode(sourcePos, "soul::parser::Match"));
-        for (const auto& arg : matchArgs)
+        for (auto arg : matchArgs)
         {
             invokeMatch->Add(arg);
         }
@@ -122,6 +122,7 @@ void CodeModifierVisitor::Visit(soul::ast::cpp::ReturnStatementNode& node)
         else
         {
             node.SetExpr(invokeMatch);
+            return;
         }
     }
 }

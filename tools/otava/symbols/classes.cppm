@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -190,17 +190,20 @@ public:
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
+    ClassGroupSymbol* Group() const { return group; }
+    void SetGroup(ClassGroupSymbol* group_) { group = group_; }
 private:
     ClassKind classKind;
     TypeSymbol* specialization;
     ClassTypeSymbol* classTypeSymbol;
     util::uuid classTypeSymbolId;
+    ClassGroupSymbol* group;
 };
 
 void BeginClass(otava::ast::Node* node, Context* context);
 void EndClass(otava::ast::Node* node, Context* context);
 void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context);
-void AddForwardClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
+void ProcessElaboratedClassDeclaration(otava::ast::Node* node, otava::symbols::Context* context);
 void SetCurrentAccess(otava::ast::Node* node, otava::symbols::Context* context);
 void GetClassAttributes(otava::ast::Node* node, std::u32string& name, otava::symbols::ClassKind& kind, TypeSymbol*& specialization, Context* context);
 std::vector<ClassTypeSymbol*> ResolveBaseClasses(otava::ast::Node* node, Context* context);

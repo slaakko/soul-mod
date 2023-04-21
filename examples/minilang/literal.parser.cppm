@@ -9,12 +9,12 @@ import soul.parser;
 
 export namespace minilang::parser::literal {
 
-template<typename Lexer>
+template<typename LexerT>
 struct LiteralParser
 {
-    static soul::parser::Match Literal(Lexer& lexer);
-    static soul::parser::Match BooleanLiteral(Lexer& lexer);
-    static soul::parser::Match IntegerLiteral(Lexer& lexer);
+    static soul::parser::Match Literal(LexerT& lexer);
+    static soul::parser::Match BooleanLiteral(LexerT& lexer);
+    static soul::parser::Match IntegerLiteral(LexerT& lexer);
 };
 
 } // namespace minilang::parser::literal

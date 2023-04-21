@@ -35,7 +35,7 @@ struct TestLexer
 
     static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
-        ClassMap<Char>* classmap = lexer.GetClassMap();
+        soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
         int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
@@ -58,15 +58,15 @@ struct TestLexer
             case 1:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -93,15 +93,15 @@ struct TestLexer
             case 2:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -137,19 +137,19 @@ struct TestLexer
             {
                 lexer.Retract();
                 int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
-                if (kw == INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return ID;
                 else return kw;
                 break;
             }
         }
-        return CONTINUE_TOKEN;
+        return soul::lexer::CONTINUE_TOKEN;
     }
 };
 
 template<typename Char>
-ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static ClassMap<Char>* classmap = MakeClassMap<Char>("test.lexer.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("test.lexer.classmap");
     return classmap;
 }
 

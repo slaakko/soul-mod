@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -145,34 +145,34 @@ parser TypeParser
                     {
                         otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
                             new otava::ast::QualifiedIdNode(nnsPos, nns, new otava::ast::PrefixNode(tmpPos, tmp, simpleTemplateId)), attributes);
-                        otava::symbols::AddForwardClassDeclaration(node, context);
+                        otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                         return node;
                     }
                 |   SimpleTemplateId(context):simpleTemplateId2
                     {
                         otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
                             new otava::ast::QualifiedIdNode(nnsPos, nns, simpleTemplateId2), attributes);
-                        otava::symbols::AddForwardClassDeclaration(node, context);
+                        otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                         return node;
                     }
                 |   Identifier(context):identifier
                     {
                         otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, 
                             new otava::ast::QualifiedIdNode(nnsPos, nns, identifier), attributes);
-                        otava::symbols::AddForwardClassDeclaration(node, context);
+                        otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                         return node;
                     }
                 )
             |   SimpleTemplateId(context):simpleTemplateId3
                 {
                     otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, simpleTemplateId3, attributes);
-                    otava::symbols::AddForwardClassDeclaration(node, context);
+                    otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                     return node;
                 }
             |   Identifier(context):identifier2
                 {
                     otava::ast::Node* node = new otava::ast::ElaboratedTypeSpecifierNode(sourcePos, classKey, identifier2, attributes);
-                    otava::symbols::AddForwardClassDeclaration(node, context);
+                    otava::symbols::ProcessElaboratedClassDeclaration(node, context);
                     return node;
                 }
             )

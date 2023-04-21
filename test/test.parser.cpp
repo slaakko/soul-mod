@@ -13,8 +13,8 @@ using namespace test::lexer;
 
 namespace test::parser {
 
-template<typename Lexer>
-int TestParser<Lexer>::Parse(Lexer& lexer)
+template<typename LexerT>
+int TestParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::parser::Value<int>> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -25,7 +25,7 @@ int TestParser<Lexer>::Parse(Lexer& lexer)
     }
     #endif
     ++lexer;
-    soul::parser::Match match = TestParser<Lexer>::ClassKey(lexer);
+    soul::parser::Match match = TestParser<LexerT>::ClassKey(lexer);
     value.reset(static_cast<soul::parser::Value<int>*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -52,8 +52,8 @@ int TestParser<Lexer>::Parse(Lexer& lexer)
     return value->value;
 }
 
-template<typename Lexer>
-soul::parser::Match TestParser<Lexer>::ClassKey(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match TestParser<LexerT>::ClassKey(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -64,7 +64,7 @@ soul::parser::Match TestParser<Lexer>::ClassKey(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ClassKey");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5305326204553789441);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5305326204553789441);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)

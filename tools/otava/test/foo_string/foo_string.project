@@ -1,0 +1,3 @@
+project foo_string;
+target=program;
+source <foo_string.cpp>;

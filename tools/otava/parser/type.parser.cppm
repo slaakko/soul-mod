@@ -12,24 +12,24 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::type {
 
-template<typename Lexer>
+template<typename LexerT>
 struct TypeParser
 {
-    static soul::parser::Match TypeSpecifierSeq(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeSpecifierSeqReset(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match DefiningTypeId(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match DefiningTypeSpecifierSeq(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match DefiningTypeSpecifierReset(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match DefiningTypeSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ElaboratedTypeSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match SimpleTypeSpecifierReset(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match SimpleTypeSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeName(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeId(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypenameSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match DeclTypeSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match PlaceholderTypeSpecifier(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeSpecifierSeq(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeSpecifierSeqReset(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match DefiningTypeId(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match DefiningTypeSpecifierSeq(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match DefiningTypeSpecifierReset(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match DefiningTypeSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ElaboratedTypeSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SimpleTypeSpecifierReset(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SimpleTypeSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeName(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeId(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypenameSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match DeclTypeSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match PlaceholderTypeSpecifier(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::type

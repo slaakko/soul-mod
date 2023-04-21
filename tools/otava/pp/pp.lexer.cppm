@@ -214,15 +214,15 @@ struct PPLexer
             case 35:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(57, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -235,15 +235,15 @@ struct PPLexer
             case 34:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(56, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -256,15 +256,15 @@ struct PPLexer
             case 33:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(55, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -277,15 +277,15 @@ struct PPLexer
             case 32:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(53, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -298,15 +298,15 @@ struct PPLexer
             case 31:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(50, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -319,15 +319,15 @@ struct PPLexer
             case 30:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(49, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -340,15 +340,15 @@ struct PPLexer
             case 29:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(48, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -361,15 +361,15 @@ struct PPLexer
             case 28:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(44, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -382,15 +382,15 @@ struct PPLexer
             case 27:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(43, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -403,15 +403,15 @@ struct PPLexer
             case 26:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(51, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -452,15 +452,15 @@ struct PPLexer
             case 38:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(54, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -473,15 +473,15 @@ struct PPLexer
             case 36:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(41, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -494,15 +494,15 @@ struct PPLexer
             case 25:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(47, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -525,15 +525,15 @@ struct PPLexer
             case 39:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(28, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -546,15 +546,15 @@ struct PPLexer
             case 24:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(24, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -581,15 +581,15 @@ struct PPLexer
             case 41:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(22, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -602,15 +602,15 @@ struct PPLexer
             case 40:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(19, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -623,15 +623,15 @@ struct PPLexer
             case 23:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(25, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -654,15 +654,15 @@ struct PPLexer
             case 42:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(18, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -675,15 +675,15 @@ struct PPLexer
             case 22:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(26, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -710,15 +710,15 @@ struct PPLexer
             case 44:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(23, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -731,15 +731,15 @@ struct PPLexer
             case 43:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(17, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -752,15 +752,15 @@ struct PPLexer
             case 21:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(37, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -791,15 +791,15 @@ struct PPLexer
             case 47:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(46, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -812,15 +812,15 @@ struct PPLexer
             case 46:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(14, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -833,15 +833,15 @@ struct PPLexer
             case 45:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(52, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -864,15 +864,15 @@ struct PPLexer
             case 48:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(42, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -885,15 +885,15 @@ struct PPLexer
             case 20:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(36, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -920,15 +920,15 @@ struct PPLexer
             case 50:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(45, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -941,15 +941,15 @@ struct PPLexer
             case 49:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(13, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -962,15 +962,15 @@ struct PPLexer
             case 19:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(40, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -993,15 +993,15 @@ struct PPLexer
             case 51:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(12, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1014,15 +1014,15 @@ struct PPLexer
             case 18:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(9, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1045,15 +1045,15 @@ struct PPLexer
             case 52:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(27, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1066,15 +1066,15 @@ struct PPLexer
             case 17:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(8, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1087,15 +1087,15 @@ struct PPLexer
             case 16:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(21, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1118,15 +1118,15 @@ struct PPLexer
             case 53:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(7, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1139,15 +1139,15 @@ struct PPLexer
             case 15:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(33, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1174,15 +1174,15 @@ struct PPLexer
             case 55:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(30, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1195,15 +1195,15 @@ struct PPLexer
             case 54:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(35, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1226,15 +1226,15 @@ struct PPLexer
             case 56:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(15, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1247,15 +1247,15 @@ struct PPLexer
             case 14:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(32, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1343,15 +1343,15 @@ struct PPLexer
             case 60:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(29, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1433,15 +1433,15 @@ struct PPLexer
             case 61:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1454,15 +1454,15 @@ struct PPLexer
             case 59:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1475,15 +1475,15 @@ struct PPLexer
             case 58:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(34, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1568,15 +1568,15 @@ struct PPLexer
             case 62:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(16, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1731,15 +1731,15 @@ struct PPLexer
             case 13:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1802,15 +1802,15 @@ struct PPLexer
             case 72:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1857,15 +1857,15 @@ struct PPLexer
             case 73:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1926,15 +1926,15 @@ struct PPLexer
             case 75:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -1983,15 +1983,15 @@ struct PPLexer
             case 80:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2036,15 +2036,15 @@ struct PPLexer
             case 79:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2076,15 +2076,15 @@ struct PPLexer
             case 83:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2097,15 +2097,15 @@ struct PPLexer
             case 82:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2128,15 +2128,15 @@ struct PPLexer
             case 84:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2149,15 +2149,15 @@ struct PPLexer
             case 81:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2180,15 +2180,15 @@ struct PPLexer
             case 85:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2201,15 +2201,15 @@ struct PPLexer
             case 78:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2233,15 +2233,15 @@ struct PPLexer
             case 86:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2254,15 +2254,15 @@ struct PPLexer
             case 77:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2290,15 +2290,15 @@ struct PPLexer
             case 88:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2311,15 +2311,15 @@ struct PPLexer
             case 87:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2343,15 +2343,15 @@ struct PPLexer
             case 89:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2364,15 +2364,15 @@ struct PPLexer
             case 76:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2400,15 +2400,15 @@ struct PPLexer
             case 90:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2432,15 +2432,15 @@ struct PPLexer
             case 74:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2507,15 +2507,15 @@ struct PPLexer
             case 69:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2558,15 +2558,15 @@ struct PPLexer
             case 68:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2598,15 +2598,15 @@ struct PPLexer
             case 93:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2619,15 +2619,15 @@ struct PPLexer
             case 92:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2650,15 +2650,15 @@ struct PPLexer
             case 94:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2671,15 +2671,15 @@ struct PPLexer
             case 91:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2702,15 +2702,15 @@ struct PPLexer
             case 95:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2723,15 +2723,15 @@ struct PPLexer
             case 67:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2755,15 +2755,15 @@ struct PPLexer
             case 96:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2776,15 +2776,15 @@ struct PPLexer
             case 66:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2812,15 +2812,15 @@ struct PPLexer
             case 98:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2833,15 +2833,15 @@ struct PPLexer
             case 97:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2865,15 +2865,15 @@ struct PPLexer
             case 99:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2886,15 +2886,15 @@ struct PPLexer
             case 65:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2922,15 +2922,15 @@ struct PPLexer
             case 100:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -2977,15 +2977,15 @@ struct PPLexer
             case 101:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3039,15 +3039,15 @@ struct PPLexer
             case 106:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3097,15 +3097,15 @@ struct PPLexer
             case 105:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3137,15 +3137,15 @@ struct PPLexer
             case 109:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3158,15 +3158,15 @@ struct PPLexer
             case 108:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3189,15 +3189,15 @@ struct PPLexer
             case 110:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3210,15 +3210,15 @@ struct PPLexer
             case 107:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3241,15 +3241,15 @@ struct PPLexer
             case 111:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3262,15 +3262,15 @@ struct PPLexer
             case 104:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3294,15 +3294,15 @@ struct PPLexer
             case 112:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3315,15 +3315,15 @@ struct PPLexer
             case 103:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3351,15 +3351,15 @@ struct PPLexer
             case 114:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3372,15 +3372,15 @@ struct PPLexer
             case 113:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3404,15 +3404,15 @@ struct PPLexer
             case 115:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3425,15 +3425,15 @@ struct PPLexer
             case 102:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3461,15 +3461,15 @@ struct PPLexer
             case 116:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3516,15 +3516,15 @@ struct PPLexer
             case 12:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3573,15 +3573,15 @@ struct PPLexer
             case 122:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3630,15 +3630,15 @@ struct PPLexer
             case 123:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3683,15 +3683,15 @@ struct PPLexer
             case 121:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3736,15 +3736,15 @@ struct PPLexer
             case 120:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3776,15 +3776,15 @@ struct PPLexer
             case 126:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3797,15 +3797,15 @@ struct PPLexer
             case 125:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3828,15 +3828,15 @@ struct PPLexer
             case 127:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3849,15 +3849,15 @@ struct PPLexer
             case 124:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3880,15 +3880,15 @@ struct PPLexer
             case 128:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3901,15 +3901,15 @@ struct PPLexer
             case 119:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3933,15 +3933,15 @@ struct PPLexer
             case 129:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3954,15 +3954,15 @@ struct PPLexer
             case 118:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -3990,15 +3990,15 @@ struct PPLexer
             case 131:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -4011,15 +4011,15 @@ struct PPLexer
             case 130:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -4043,15 +4043,15 @@ struct PPLexer
             case 132:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -4064,15 +4064,15 @@ struct PPLexer
             case 117:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -4100,15 +4100,15 @@ struct PPLexer
             case 133:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -4132,15 +4132,15 @@ struct PPLexer
             case 11:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(20, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -4229,15 +4229,15 @@ struct PPLexer
             case 136:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(3, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -5410,15 +5410,15 @@ struct PPLexer
             case 166:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -5672,15 +5672,15 @@ struct PPLexer
             case 178:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -5824,15 +5824,15 @@ struct PPLexer
             case 182:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -5884,15 +5884,15 @@ struct PPLexer
             case 167:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -6036,15 +6036,15 @@ struct PPLexer
             case 186:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -6096,15 +6096,15 @@ struct PPLexer
             case 8:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7198,15 +7198,15 @@ struct PPLexer
             case 188:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(4, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7219,15 +7219,15 @@ struct PPLexer
             case 7:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7290,15 +7290,15 @@ struct PPLexer
             case 211:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7358,15 +7358,15 @@ struct PPLexer
             case 6:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7426,15 +7426,15 @@ struct PPLexer
             case 5:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(1, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7486,15 +7486,15 @@ struct PPLexer
             case 4:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(38, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7517,15 +7517,15 @@ struct PPLexer
             case 212:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(10, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7538,15 +7538,15 @@ struct PPLexer
             case 3:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(39, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7577,15 +7577,15 @@ struct PPLexer
             case 215:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(11, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -7751,15 +7751,15 @@ struct PPLexer
             case 219:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -8170,15 +8170,15 @@ struct PPLexer
             case 231:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -8274,15 +8274,15 @@ struct PPLexer
             case 235:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -8546,15 +8546,15 @@ struct PPLexer
             case 233:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -8647,15 +8647,15 @@ struct PPLexer
             case 237:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -8745,15 +8745,15 @@ struct PPLexer
             case 232:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -8924,15 +8924,15 @@ struct PPLexer
             case 229:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -9025,15 +9025,15 @@ struct PPLexer
             case 228:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -9204,15 +9204,15 @@ struct PPLexer
             case 225:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -9305,15 +9305,15 @@ struct PPLexer
             case 224:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -9403,15 +9403,15 @@ struct PPLexer
             case 220:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -9807,15 +9807,15 @@ struct PPLexer
             case 239:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -9866,15 +9866,15 @@ struct PPLexer
             case 241:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -9904,15 +9904,15 @@ struct PPLexer
             case 238:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -11100,15 +11100,15 @@ struct PPLexer
             case 255:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(6, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -11729,15 +11729,15 @@ struct PPLexer
             case 246:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(6, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -11898,15 +11898,15 @@ struct PPLexer
             case 243:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(4, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -11919,15 +11919,15 @@ struct PPLexer
             case 1:
             {
                 auto& token = lexer.CurrentToken();
-                Lexeme prevMatch = token.match;
+                auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
                 int64_t tokenId = GetTokenId(0, lexer);
-                if (tokenId == CONTINUE_TOKEN)
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
-                    token.id = CONTINUE_TOKEN;
+                    token.id = soul::lexer::CONTINUE_TOKEN;
                     return -1;
                 }
-                else if (tokenId != INVALID_TOKEN)
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
                 {
                     token.id = tokenId;
                 }
@@ -11971,7 +11971,7 @@ struct PPLexer
             {
                 lexer.Retract();
                 int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
-                if (kw == INVALID_TOKEN) return ID;
+                if (kw == soul::lexer::INVALID_TOKEN) return ID;
                 else return kw;
                 break;
             }
@@ -12312,7 +12312,7 @@ struct PPLexer
                 break;
             }
         }
-        return CONTINUE_TOKEN;
+        return soul::lexer::CONTINUE_TOKEN;
     }
 };
 

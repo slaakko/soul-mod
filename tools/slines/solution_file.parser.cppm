@@ -14,44 +14,44 @@ using namespace project_file::ast;
 
 export namespace solution_file::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct solution_file_parser
 {
-    static std::unique_ptr<solution_file::ast::Solution> Parse(Lexer& lexer);
-    static soul::parser::Match file(Lexer& lexer);
-    static soul::parser::Match header(Lexer& lexer);
-    static soul::parser::Match visual_studio_version(Lexer& lexer);
-    static soul::parser::Match minimum_visual_studio_version(Lexer& lexer);
-    static soul::parser::Match projects(Lexer& lexer, solution_file::ast::Solution* solution);
-    static soul::parser::Match project_(Lexer& lexer, std::string root);
-    static soul::parser::Match project_sections(Lexer& lexer);
-    static soul::parser::Match project_section(Lexer& lexer);
-    static soul::parser::Match solution_items_section(Lexer& lexer);
-    static soul::parser::Match path_lines(Lexer& lexer);
-    static soul::parser::Match path_line(Lexer& lexer);
-    static soul::parser::Match project_dependencies_section(Lexer& lexer);
-    static soul::parser::Match guid_lines(Lexer& lexer);
-    static soul::parser::Match guid_line(Lexer& lexer);
-    static soul::parser::Match global(Lexer& lexer);
-    static soul::parser::Match global_sections(Lexer& lexer);
-    static soul::parser::Match global_section(Lexer& lexer);
-    static soul::parser::Match solution_configuration_platform_section(Lexer& lexer);
-    static soul::parser::Match config_lines(Lexer& lexer);
-    static soul::parser::Match config_line(Lexer& lexer);
-    static soul::parser::Match config(Lexer& lexer);
-    static soul::parser::Match project_configuration_platform_section(Lexer& lexer);
-    static soul::parser::Match guid_config_lines(Lexer& lexer);
-    static soul::parser::Match guid_config_line(Lexer& lexer);
-    static soul::parser::Match guid_config(Lexer& lexer);
-    static soul::parser::Match solution_properties_section(Lexer& lexer);
-    static soul::parser::Match hide_solution_node_lines(Lexer& lexer);
-    static soul::parser::Match hide_solution_node_line(Lexer& lexer);
-    static soul::parser::Match nested_project_section(Lexer& lexer);
-    static soul::parser::Match nested_projects(Lexer& lexer);
-    static soul::parser::Match nested_project(Lexer& lexer);
-    static soul::parser::Match extensibility_globals_section(Lexer& lexer);
-    static soul::parser::Match solution_guids(Lexer& lexer);
-    static soul::parser::Match solution_guid(Lexer& lexer);
+    static std::unique_ptr<solution_file::ast::Solution> Parse(LexerT& lexer);
+    static soul::parser::Match file(LexerT& lexer);
+    static soul::parser::Match header(LexerT& lexer);
+    static soul::parser::Match visual_studio_version(LexerT& lexer);
+    static soul::parser::Match minimum_visual_studio_version(LexerT& lexer);
+    static soul::parser::Match projects(LexerT& lexer, solution_file::ast::Solution* solution);
+    static soul::parser::Match project_(LexerT& lexer, std::string root);
+    static soul::parser::Match project_sections(LexerT& lexer);
+    static soul::parser::Match project_section(LexerT& lexer);
+    static soul::parser::Match solution_items_section(LexerT& lexer);
+    static soul::parser::Match path_lines(LexerT& lexer);
+    static soul::parser::Match path_line(LexerT& lexer);
+    static soul::parser::Match project_dependencies_section(LexerT& lexer);
+    static soul::parser::Match guid_lines(LexerT& lexer);
+    static soul::parser::Match guid_line(LexerT& lexer);
+    static soul::parser::Match global(LexerT& lexer);
+    static soul::parser::Match global_sections(LexerT& lexer);
+    static soul::parser::Match global_section(LexerT& lexer);
+    static soul::parser::Match solution_configuration_platform_section(LexerT& lexer);
+    static soul::parser::Match config_lines(LexerT& lexer);
+    static soul::parser::Match config_line(LexerT& lexer);
+    static soul::parser::Match config(LexerT& lexer);
+    static soul::parser::Match project_configuration_platform_section(LexerT& lexer);
+    static soul::parser::Match guid_config_lines(LexerT& lexer);
+    static soul::parser::Match guid_config_line(LexerT& lexer);
+    static soul::parser::Match guid_config(LexerT& lexer);
+    static soul::parser::Match solution_properties_section(LexerT& lexer);
+    static soul::parser::Match hide_solution_node_lines(LexerT& lexer);
+    static soul::parser::Match hide_solution_node_line(LexerT& lexer);
+    static soul::parser::Match nested_project_section(LexerT& lexer);
+    static soul::parser::Match nested_projects(LexerT& lexer);
+    static soul::parser::Match nested_project(LexerT& lexer);
+    static soul::parser::Match extensibility_globals_section(LexerT& lexer);
+    static soul::parser::Match solution_guids(LexerT& lexer);
+    static soul::parser::Match solution_guid(LexerT& lexer);
 };
 
 } // namespace solution_file::parser

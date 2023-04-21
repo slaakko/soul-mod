@@ -12,10 +12,10 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::simple::type {
 
-template<typename Lexer>
+template<typename LexerT>
 struct SimpleTypeParser
 {
-    static soul::parser::Match SimpleType(Lexer& lexer);
+    static soul::parser::Match SimpleType(LexerT& lexer);
 };
 
 } // namespace otava::parser::simple::type

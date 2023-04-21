@@ -54,6 +54,11 @@ size_t fwrite(const void* ptr, size_t size, size_t count, FILE* stream)
     return write_file(ptr, size, count, stream);
 }
 
+int fputs(const char* str, FILE* stream)
+{
+    return puts_file(str, stream);
+}
+
 int feof(FILE* stream)
 {
     return eof_file(stream);
@@ -127,6 +132,11 @@ bool isalpha(int c)
 bool isdigit(int c)
 {
     return is_digit(c);
+}
+
+bool isatty(int handle)
+{
+    return is_atty(handle);
 }
 
 } // namespace std

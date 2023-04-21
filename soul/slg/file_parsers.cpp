@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,6 +9,7 @@ import util;
 import soul.lexer;
 import soul.parser;
 import soul.lex.slg;
+import soul.cpp.token;
 import soul.slg.token.file.parser;
 import soul.slg.keyword.file.parser;
 import soul.slg.expression.file.parser;
@@ -18,6 +19,7 @@ import soul.slg.parsers.rules;
 
 namespace soul::slg {
 
+using namespace soul::cpp::token;
 using namespace soul::lex::slg;
 using namespace soul::slg::token::file::parser;
 using namespace soul::slg::keyword::file::parser;

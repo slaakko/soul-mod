@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -266,6 +266,11 @@ int read_file(void* ptr, size_t size, size_t count, void* stream)
 int write_file(void* ptr, size_t size, size_t count, void* stream)
 {
     return std::fwrite(ptr, size, count, static_cast<FILE*>(stream));
+}
+
+int puts_file(const char* str, void* stream)
+{
+    return std::fputs(str, static_cast<FILE*>(stream));
 }
 
 int eof_file(void* stream)

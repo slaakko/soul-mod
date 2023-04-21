@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -8,6 +8,7 @@ export module otava.build_project;
 import std.core;
 import soul.lexer.file.map;
 import otava.symbols;
+import otava.symbols.function_definition_symbol_set;
 
 export namespace otava::build_project {}
 
@@ -63,6 +64,7 @@ public:
     void SetTarget(Target target_) { target = target_; }
     Target GetTarget() const { return target; }
     info::class_index& Index() { return index; }
+    otava::symbols::FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() { return &functionDefinitionSymbolSet; }
 private:
     soul::lexer::FileMap* fileMap;
     std::string filePath;
@@ -83,6 +85,7 @@ private:
     std::vector<std::string> moduleNames;
     std::vector<Define> defines;
     info::class_index index;
+    otava::symbols::FunctionDefinitionSymbolSet functionDefinitionSymbolSet;
 };
 
 } // namespace otava::build

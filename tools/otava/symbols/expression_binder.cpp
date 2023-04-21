@@ -1,5 +1,6 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// =================================
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,6 +15,7 @@ import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.declaration;
 import otava.symbols.enums;
+import otava.symbols.enum_group.symbol;
 import otava.symbols.evaluator;
 import otava.symbols.exception;
 import otava.symbols.fundamental.type.symbol;
@@ -41,6 +43,7 @@ import otava.ast.visitor;
 import otava.ast.templates;
 import otava.ast.statement;
 import otava.ast.simple.type;
+import otava.ast.function;
 import util.unicode;
 import util.text.util;
 import std.core;
@@ -890,6 +893,20 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
                 }
                 break;
             }
+            case SymbolKind::enumGroupSymbol:
+            {
+                EnumGroupSymbol* enumGroup = static_cast<EnumGroupSymbol*>(symbol);
+                EnumeratedTypeSymbol* enm = enumGroup->GetEnumType();
+                if (enm)
+                {
+                    boundExpression = new BoundTypeNode(enm, node.GetSourcePos());
+                }
+                else
+                {
+                    ThrowException("enumerated type not found from enum group '" + util::ToUtf8(enumGroup->Name()) + "'", node.GetSourcePos(), context);
+                }
+                break;
+            }
             case SymbolKind::enumTypeSymbol:
             {
                 EnumeratedTypeSymbol* enm = static_cast<EnumeratedTypeSymbol*>(symbol);
@@ -1211,6 +1228,16 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         if (functionSymbol->IsVirtual())
         {
             functionCall->SetFlag(BoundExpressionFlags::virtualCall);
+            if (!functionCall->Args().empty())
+            {
+                BoundExpressionNode* firstArg = functionCall->Args()[0].get();
+                TypeSymbol* firstArgType = firstArg->GetType()->GetBaseType();
+                if (firstArgType->IsClassTypeSymbol())
+                {
+                    ClassTypeSymbol* classType = static_cast<ClassTypeSymbol*>(firstArgType);
+                    context->GetBoundCompileUnit()->AddBoundNodeForClass(classType, node.GetSourcePos(), context);
+                }
+            }
         }
         VariableSymbol* classTemporary = nullptr;
         if (functionSymbol->ReturnsClass())
@@ -1566,7 +1593,7 @@ void ExpressionBinder::Visit(otava::ast::BracedInitListNode& node)
     if (value)
     {
         boundExpression = new BoundLiteralNode(value, node.GetSourcePos());
-        context->GetBoundCompileUnit()->AddBoundNode(boundExpression, context);
+        context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(boundExpression), context);
     }
 }
 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -37,6 +37,16 @@ Symbol* Reader::ReadSymbol()
         symbolMap->AddSymbol(symbol);
         return symbol;
     }
+}
+
+void Reader::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_)
+{
+    functionDefinitionSymbolSet = functionDefinitionSymbolSet_;
+}
+
+FunctionDefinitionSymbolSet* Reader::GetFunctionDefinitionSymbolSet() const
+{
+    return functionDefinitionSymbolSet;
 }
 
 } // namespace otava::symbols

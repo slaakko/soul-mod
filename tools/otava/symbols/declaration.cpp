@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -31,6 +31,7 @@ import otava.symbols.expression.binder;
 import otava.symbols.type_compare;
 import otava.symbols.type.symbol;
 import otava.symbols.value;
+import otava.symbols.function.templates;
 import otava.ast.error;
 import otava.ast.attribute;
 import otava.ast.visitor;
@@ -180,13 +181,57 @@ std::string DeclarationFlagStr(DeclarationFlags flags)
     return str;
 }
 
+class FunctionQualifierExtractor : public otava::ast::DefaultVisitor
+{
+public:
+    FunctionQualifierExtractor();
+    FunctionQualifiers Qualifiers() const { return qualifiers; }
+    void Visit(otava::ast::VirtSpecifierSequenceNode& node) override;
+    void Visit(otava::ast::OverrideNode& node) override;
+    void Visit(otava::ast::FinalNode& node) override;
+private:
+    FunctionQualifiers qualifiers;
+};
+
+FunctionQualifierExtractor::FunctionQualifierExtractor() : qualifiers(FunctionQualifiers::none)
+{
+}
+
+void FunctionQualifierExtractor::Visit(otava::ast::VirtSpecifierSequenceNode& node)
+{
+    for (const auto& specifierNode : node.Nodes())
+    {
+        specifierNode->Accept(*this);
+    }
+}
+
+void FunctionQualifierExtractor::Visit(otava::ast::OverrideNode& node)
+{
+    qualifiers = qualifiers | FunctionQualifiers::isOverride;
+}
+
+void FunctionQualifierExtractor::Visit(otava::ast::FinalNode& node)
+{
+    qualifiers = qualifiers | FunctionQualifiers::isFinal;
+}
+
+FunctionQualifiers GetQualifiers(otava::ast::Node* specifierNode)
+{
+    FunctionQualifierExtractor extractor;
+    if (specifierNode)
+    {
+        specifierNode->Accept(extractor);
+    }
+    return extractor.Qualifiers();
+}
+
 class DeclarationProcessor : public otava::ast::DefaultVisitor
 {
 public:
     DeclarationProcessor(Context* context_);
     std::unique_ptr<DeclarationList> GetDeclarations();
     TypeSymbol* GetType() const { return type; }
-    void BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator);
+    void BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator, otava::ast::Node* specifierNode);
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
     void Visit(otava::ast::MemberDeclarationNode& node) override;
     void Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node) override;
@@ -250,14 +295,15 @@ std::unique_ptr<DeclarationList> DeclarationProcessor::GetDeclarations()
     return std::move(declarationList);
 }
 
-void DeclarationProcessor::BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator)
+void DeclarationProcessor::BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator, otava::ast::Node* specifierNode)
 {
     if (declSpecifierSeq)
     {
         declSpecifierSeq->Accept(*this);
     }
     TypeSymbol* baseType = ResolveBaseType(declSpecifierSeq);
-    Declaration declaration = ProcessDeclarator(baseType, declarator, nullptr, flags, context);
+    FunctionQualifiers qualifiers = GetQualifiers(specifierNode);
+    Declaration declaration = ProcessDeclarator(baseType, declarator, nullptr, flags, qualifiers, context);
     declarationList->declarations.push_back(std::move(declaration));
 }
 
@@ -277,6 +323,22 @@ TypeSymbol* DeclarationProcessor::ResolveBaseType(otava::ast::Node* node)
             type = aliasType->ReferredType();
         }
         baseType = type;
+    }
+    if (baseType)
+    {
+        Derivations derivations;
+        if ((flags & DeclarationFlags::constFlag) != DeclarationFlags::none)
+        {
+            derivations.vec.push_back(Derivation::constDerivation);
+        }
+        if ((flags & DeclarationFlags::volatileFlag) != DeclarationFlags::none)
+        {
+            derivations.vec.push_back(Derivation::volatileDerivation);
+        }
+        if (!derivations.IsEmpty())
+        {
+            baseType = context->GetSymbolTable()->MakeCompoundType(baseType, derivations);
+        }
     }
     return baseType;
 }
@@ -306,7 +368,7 @@ void DeclarationProcessor::Visit(otava::ast::MemberDeclarationNode& node)
 
 void DeclarationProcessor::Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node)
 {
-    declarationList->declarations.push_back(ProcessDeclarator(nullptr, &node, &node, flags, context));
+    declarationList->declarations.push_back(ProcessDeclarator(nullptr, &node, &node, flags, FunctionQualifiers::none, context));
 }
 
 void DeclarationProcessor::Visit(otava::ast::FunctionDefinitionNode& node)
@@ -325,7 +387,8 @@ void DeclarationProcessor::Visit(otava::ast::FunctionDefinitionNode& node)
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(baseType);
         baseType = aliasType->ReferredType();
     }
-    Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), &node, flags, context);
+    FunctionQualifiers qualifiers = GetQualifiers(node.Specifiers());
+    Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), &node, flags, qualifiers, context);
     if (node.FunctionBody() && node.FunctionBody()->Kind() == otava::ast::NodeKind::defaultedOrDeletedFunctionNode)
     {
         if (declaration.declarator->IsFunctionDeclarator())
@@ -354,7 +417,7 @@ void DeclarationProcessor::Visit(otava::ast::ParameterNode& node)
 {
     node.DeclSpecifiers()->Accept(*this);
     TypeSymbol* baseType = ResolveBaseType(&node);
-    Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), &node, flags, context);
+    Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), &node, flags, FunctionQualifiers::none, context);
     if (node.Initializer())
     {
         declaration.value = Evaluate(node.Initializer(), context);
@@ -374,7 +437,7 @@ void DeclarationProcessor::Visit(otava::ast::ExceptionDeclarationNode& node)
     {
         node.TypeSpecifiers()->Accept(*this);
         TypeSymbol* baseType = ResolveBaseType(&node);
-        Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), &node, flags, context);
+        Declaration declaration = ProcessDeclarator(baseType, node.Declarator(), &node, flags, FunctionQualifiers::none, context);
         declarationList->declarations.push_back(std::move(declaration));
     }
 }
@@ -389,7 +452,7 @@ void DeclarationProcessor::Visit(otava::ast::EnumSpecifierNode& node)
 
 void DeclarationProcessor::Visit(otava::ast::ElaboratedTypeSpecifierNode& node)
 {
-    type = ResolveType(node.Id(), DeclarationFlags::none, context);
+    type = ResolveType(node.Id(), DeclarationFlags::none, context, TypeResolverFlags::dontThrow);
 }
 
 void DeclarationProcessor::Visit(otava::ast::CharNode& node)
@@ -601,7 +664,7 @@ VariableSymbol* ProcessArrayDeclarator(ArrayDeclarator* arrayDeclarator, TypeSym
     return variable;
 }
 
-void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbol* type, DeclarationFlags flags, Context* context)
+void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbol* type, DeclarationFlags flags, otava::ast::Node* functionNode, Context* context)
 {
     FunctionSymbol* functionSymbol = context->GetSymbolTable()->AddFunction(
         functionDeclarator->Name(),
@@ -611,7 +674,7 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
         functionDeclarator->GetFunctionQualifiers(),
         flags,
         context);
-    context->SetSpecialization(functionSymbol);
+    context->SetSpecialization(functionSymbol, functionNode); 
     TypeSymbol* returnType = MapType(functionSymbol, type, context);
     functionSymbol->SetReturnType(returnType, context);
     for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
@@ -654,10 +717,15 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
         classType->MapFunction(functionSymbol);
         context->GetSymbolTable()->MapFunction(functionSymbol);
     }
+    if (functionSymbol->IsExplicitSpecializationDeclaration())
+    {
+        std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
+        InstantiateFunctionTemplate(functionSymbol, templateParameterMap, functionDeclarator->Node()->GetSourcePos(), context);
+    }
     AddConvertingConstructorToConversionTable(functionSymbol, functionDeclarator->Node()->GetSourcePos(), context);
 }
 
-void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
+void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)
 {
     if (context->GetFlag(ContextFlags::linkageDeclaration)) return;
     DeclarationProcessor processor(context);
@@ -683,7 +751,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
                         }
                         if (!variable->IsExtern())
                         {
-                            context->GetBoundCompileUnit()->AddBoundNode(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos()), context);
+                            context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
                             GenerateDynamicInitialization(variable, variableInitializer.get(), node->GetSourcePos(), context);
                         }
                     }
@@ -694,7 +762,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
             case DeclaratorKind::functionDeclarator:
             {
                 FunctionDeclarator* functionDeclarator = static_cast<FunctionDeclarator*>(declarator);
-                ProcessFunctionDeclarator(functionDeclarator, declaration.type, declaration.flags, context);
+                ProcessFunctionDeclarator(functionDeclarator, declaration.type, declaration.flags, functionNode, context);
                 break;
             }
             case DeclaratorKind::arrayDeclarator:
@@ -708,7 +776,7 @@ void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context)
                 }
                 if (variable->IsGlobalVariable())
                 {
-                    context->GetBoundCompileUnit()->AddBoundNode(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos()), context);
+                    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(new BoundGlobalVariableDefinitionNode(variable, node->GetSourcePos())), context);
                 }
                 declaration.variable = variable;
                 break;
@@ -753,9 +821,9 @@ Declaration ProcessExceptionDeclaration(otava::ast::Node* node, Context* context
     }
 }
 
-void ProcessMemberDeclaration(otava::ast::Node* node, Context* context)
+void ProcessMemberDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context)
 {
-    ProcessSimpleDeclaration(node, context);
+    ProcessSimpleDeclaration(node, functionNode, context);
 }
 
 Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context) 
@@ -774,15 +842,34 @@ Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context)
     }
 }
 
-int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, Context* context)
+bool IsTokenSwitchDeclarator(otava::ast::Node* declarator)
+{
+    if (declarator->IsFunctionDeclaratorNode())
+    {
+        otava::ast::FunctionDeclaratorNode* fnd = static_cast<otava::ast::FunctionDeclaratorNode*>(declarator);
+        if (fnd->Child()->Str() == U"IsTokenSwitch")
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, otava::ast::Node* specifierNode, bool& get, 
+    Context* context)
 {   
+    if (IsTokenSwitchDeclarator(declarator))
+    {
+        int x = 0;
+    }
+    get = false;
     int scopes = 0;
     if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
         context->GetSymbolTable()->CurrentScope()->PopParentScope();
     }
     DeclarationProcessor processor(context);
-    processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator);
+    processor.BeginProcessFunctionDefinition(declSpecifierSequence, declarator, specifierNode);
     std::unique_ptr<DeclarationList> declarationList = processor.GetDeclarations();
     if (declarationList->declarations.size() == 1)
     {
@@ -797,13 +884,17 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
             {
                 parameterTypes.push_back(parameterDeclaration.type);
             }
-            FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
-                functionDeclarator->TemplateArgs(), parameterTypes, qualifiers, kind, declaration.flags, declarator, context);
+            FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddOrGetFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
+                functionDeclarator->TemplateArgs(), parameterTypes, qualifiers, kind, declaration.flags, declarator, functionNode, get, context);
             if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
                 context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
                 context->GetFlag(ContextFlags::generateMainWrapper))
             {
-                context->SetSpecialization(definition);
+                context->SetSpecialization(definition, functionNode);
+            }
+            if (get)
+            {
+                return 0;
             }
             int parameterIndex = 0;
             for (const auto& parameterDeclaration : functionDeclarator->ParameterDeclarations())
@@ -909,6 +1000,11 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         {
             InstantiateEnqueuedRequests(functionDefinitionSymbol, node->GetSourcePos(), context);
         }
+        if (functionDefinitionSymbol && functionDefinitionSymbol->IsExplicitSpecializationDefinitionSymbol())
+        {
+            std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
+            InstantiateFunctionTemplate(functionDefinitionSymbol, templateParameterMap, node->GetSourcePos(), context);
+        }
     }
     else
     {
@@ -918,7 +1014,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
     {
         if (context->GetBoundFunction()->GetFunctionDefinitionSymbol()->IsBound())
         {
-            context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+            context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
         }
         context->PopBoundFunction();
     }
@@ -926,7 +1022,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
 
 void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context)
 {
-    ProcessSimpleDeclaration(node, context); 
+    ProcessSimpleDeclaration(node, nullptr, context); 
 }
 
 void Write(Writer& writer, DeclarationFlags flags)
@@ -986,7 +1082,7 @@ void LinkageProcessor::Visit(otava::ast::StringLiteralNode& node)
 
 void LinkageProcessor::Visit(otava::ast::SimpleDeclarationNode& node)
 {
-    ProcessSimpleDeclaration(&node, context);
+    ProcessSimpleDeclaration(&node, nullptr, context);
 }
 
 void ProcessLinkageSpecification(otava::ast::Node* node, Context* context)

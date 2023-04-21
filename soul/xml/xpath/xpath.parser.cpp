@@ -15,8 +15,8 @@ using namespace soul::xml::xpath::token::parser;
 
 namespace soul::xml::xpath::parser {
 
-template<typename Lexer>
-std::unique_ptr<soul::xml::xpath::expr::Expr> XPathParser<Lexer>::Parse(Lexer& lexer)
+template<typename LexerT>
+std::unique_ptr<soul::xml::xpath::expr::Expr> XPathParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::xml::xpath::expr::Expr> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -27,7 +27,7 @@ std::unique_ptr<soul::xml::xpath::expr::Expr> XPathParser<Lexer>::Parse(Lexer& l
     }
     #endif
     ++lexer;
-    soul::parser::Match match = XPathParser<Lexer>::Expr(lexer);
+    soul::parser::Match match = XPathParser<LexerT>::Expr(lexer);
     value.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -54,8 +54,8 @@ std::unique_ptr<soul::xml::xpath::expr::Expr> XPathParser<Lexer>::Parse(Lexer& l
     return value;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::Expr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::Expr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -66,7 +66,7 @@ soul::parser::Match XPathParser<Lexer>::Expr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Expr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127425);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127425);
     std::unique_ptr<soul::xml::xpath::expr::Expr> orExpr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -75,7 +75,7 @@ soul::parser::Match XPathParser<Lexer>::Expr(Lexer& lexer)
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            soul::parser::Match match = XPathParser<Lexer>::OrExpr(lexer);
+            soul::parser::Match match = XPathParser<LexerT>::OrExpr(lexer);
             orExpr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
             *parentMatch1 = match;
         }
@@ -104,8 +104,8 @@ soul::parser::Match XPathParser<Lexer>::Expr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::OrExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -116,7 +116,7 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "OrExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127426);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127426);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::xml::xpath::expr::Expr> right;
@@ -134,7 +134,7 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::AndExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::AndExpr(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -162,7 +162,7 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        soul::parser::Match match = XPathParser<Lexer>::OrKeyword(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::OrKeyword(lexer);
                                         *parentMatch7 = match;
                                     }
                                     if (match.hit)
@@ -174,7 +174,7 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
-                                                soul::parser::Match match = XPathParser<Lexer>::AndExpr(lexer);
+                                                soul::parser::Match match = XPathParser<LexerT>::AndExpr(lexer);
                                                 right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                 if (match.hit)
                                                 {
@@ -231,8 +231,8 @@ soul::parser::Match XPathParser<Lexer>::OrExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AndExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -243,7 +243,7 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AndExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127427);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127427);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::xml::xpath::expr::Expr> right;
@@ -261,7 +261,7 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::EqualityExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::EqualityExpr(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -289,7 +289,7 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        soul::parser::Match match = XPathParser<Lexer>::AndKeyword(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::AndKeyword(lexer);
                                         *parentMatch7 = match;
                                     }
                                     if (match.hit)
@@ -301,7 +301,7 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
-                                                soul::parser::Match match = XPathParser<Lexer>::EqualityExpr(lexer);
+                                                soul::parser::Match match = XPathParser<LexerT>::EqualityExpr(lexer);
                                                 right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                 if (match.hit)
                                                 {
@@ -358,8 +358,8 @@ soul::parser::Match XPathParser<Lexer>::AndExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::EqualityExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -370,7 +370,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EqualityExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127428);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127428);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::parser::Value<soul::xml::xpath::expr::Operator>> op;
@@ -389,7 +389,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::RelationalExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::RelationalExpr(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -417,7 +417,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        soul::parser::Match match = XPathParser<Lexer>::EqualityOp(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::EqualityOp(lexer);
                                         op.reset(static_cast<soul::parser::Value<soul::xml::xpath::expr::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
@@ -434,7 +434,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
                                                 soul::parser::Match* parentMatch10 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = XPathParser<Lexer>::RelationalExpr(lexer);
+                                                    soul::parser::Match match = XPathParser<LexerT>::RelationalExpr(lexer);
                                                     right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                     if (match.hit)
                                                     {
@@ -500,8 +500,8 @@ soul::parser::Match XPathParser<Lexer>::EqualityExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::RelationalExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -512,7 +512,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RelationalExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127429);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127429);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::parser::Value<soul::xml::xpath::expr::Operator>> op;
@@ -531,7 +531,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::AdditiveExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::AdditiveExpr(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -559,7 +559,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        soul::parser::Match match = XPathParser<Lexer>::RelationalOp(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::RelationalOp(lexer);
                                         op.reset(static_cast<soul::parser::Value<soul::xml::xpath::expr::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
@@ -576,7 +576,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
                                                 soul::parser::Match* parentMatch10 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = XPathParser<Lexer>::AdditiveExpr(lexer);
+                                                    soul::parser::Match match = XPathParser<LexerT>::AdditiveExpr(lexer);
                                                     right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                     if (match.hit)
                                                     {
@@ -642,8 +642,8 @@ soul::parser::Match XPathParser<Lexer>::RelationalExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AdditiveExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -654,7 +654,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127430);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127430);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::parser::Value<soul::xml::xpath::expr::Operator>> op;
@@ -673,7 +673,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::MultiplicativeExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::MultiplicativeExpr(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -701,7 +701,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        soul::parser::Match match = XPathParser<Lexer>::AdditiveOp(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::AdditiveOp(lexer);
                                         op.reset(static_cast<soul::parser::Value<soul::xml::xpath::expr::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
@@ -718,7 +718,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
                                                 soul::parser::Match* parentMatch10 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = XPathParser<Lexer>::MultiplicativeExpr(lexer);
+                                                    soul::parser::Match match = XPathParser<LexerT>::MultiplicativeExpr(lexer);
                                                     right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                     if (match.hit)
                                                     {
@@ -784,8 +784,8 @@ soul::parser::Match XPathParser<Lexer>::AdditiveExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::MultiplicativeExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -796,7 +796,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127431);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127431);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::parser::Value<soul::xml::xpath::expr::Operator>> op;
@@ -815,7 +815,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::UnaryExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::UnaryExpr(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -843,7 +843,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        soul::parser::Match match = XPathParser<Lexer>::MultiplicativeOp(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::MultiplicativeOp(lexer);
                                         op.reset(static_cast<soul::parser::Value<soul::xml::xpath::expr::Operator>*>(match.value));
                                         *parentMatch7 = match;
                                     }
@@ -860,7 +860,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
                                                 soul::parser::Match* parentMatch10 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = XPathParser<Lexer>::UnaryExpr(lexer);
+                                                    soul::parser::Match match = XPathParser<LexerT>::UnaryExpr(lexer);
                                                     right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                     if (match.hit)
                                                     {
@@ -926,8 +926,8 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::UnaryExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -938,7 +938,7 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UnaryExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127432);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127432);
     std::unique_ptr<soul::xml::xpath::expr::Expr> subject;
     std::unique_ptr<soul::xml::xpath::expr::Expr> unionExpr;
     soul::parser::Match match(false);
@@ -965,7 +965,7 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::UnaryExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::UnaryExpr(lexer);
                     subject.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -993,7 +993,7 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch5 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::UnionExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::UnionExpr(lexer);
                     unionExpr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -1025,8 +1025,8 @@ soul::parser::Match XPathParser<Lexer>::UnaryExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::UnionExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1037,7 +1037,7 @@ soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UnionExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127433);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127433);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::xml::xpath::expr::Expr> right;
@@ -1055,7 +1055,7 @@ soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::PathExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::PathExpr(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -1100,7 +1100,7 @@ soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
-                                                soul::parser::Match match = XPathParser<Lexer>::PathExpr(lexer);
+                                                soul::parser::Match match = XPathParser<LexerT>::PathExpr(lexer);
                                                 right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                 if (match.hit)
                                                 {
@@ -1157,8 +1157,8 @@ soul::parser::Match XPathParser<Lexer>::UnionExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::PathExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1169,7 +1169,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "PathExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127434);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127434);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> locationPath;
     std::unique_ptr<soul::xml::xpath::expr::Expr> functionCall;
@@ -1194,7 +1194,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                     soul::parser::Match* parentMatch4 = &match;
                     int64_t save = lexer.GetPos();
                     {
-                        soul::parser::Match match = XPathParser<Lexer>::LocationPath(lexer);
+                        soul::parser::Match match = XPathParser<LexerT>::LocationPath(lexer);
                         locationPath.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                         *parentMatch4 = match;
                     }
@@ -1206,7 +1206,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                             int64_t tmp = lexer.GetPos();
                             lexer.SetPos(save);
                             save = tmp;
-                            soul::parser::Match match = XPathParser<Lexer>::FunctionCall(lexer);
+                            soul::parser::Match match = XPathParser<LexerT>::FunctionCall(lexer);
                             functionCall.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                             *parentMatch5 = match;
                         }
@@ -1248,7 +1248,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                         soul::parser::Match* parentMatch9 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = XPathParser<Lexer>::FilterExpr(lexer);
+                            soul::parser::Match match = XPathParser<LexerT>::FilterExpr(lexer);
                             filterExpr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                             if (match.hit)
                             {
@@ -1287,7 +1287,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch17 = &match;
                                                     {
-                                                        soul::parser::Match match = XPathParser<Lexer>::CombinePathOp(lexer);
+                                                        soul::parser::Match match = XPathParser<LexerT>::CombinePathOp(lexer);
                                                         op.reset(static_cast<soul::parser::Value<soul::xml::xpath::expr::Operator>*>(match.value));
                                                         *parentMatch17 = match;
                                                     }
@@ -1296,7 +1296,7 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
                                                         soul::parser::Match match(false);
                                                         soul::parser::Match* parentMatch18 = &match;
                                                         {
-                                                            soul::parser::Match match = XPathParser<Lexer>::RelativeLocationPath(lexer);
+                                                            soul::parser::Match match = XPathParser<LexerT>::RelativeLocationPath(lexer);
                                                             right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                             *parentMatch18 = match;
                                                         }
@@ -1377,8 +1377,8 @@ soul::parser::Match XPathParser<Lexer>::PathExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::LocationPath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1389,7 +1389,7 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LocationPath");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127435);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127435);
     std::unique_ptr<soul::xml::xpath::expr::Expr> absoluteLocationPath;
     std::unique_ptr<soul::xml::xpath::expr::Expr> relativeLocationPath;
     soul::parser::Match match(false);
@@ -1400,7 +1400,7 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = XPathParser<Lexer>::AbsoluteLocationPath(lexer);
+            soul::parser::Match match = XPathParser<LexerT>::AbsoluteLocationPath(lexer);
             absoluteLocationPath.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
             if (match.hit)
             {
@@ -1424,7 +1424,7 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::RelativeLocationPath(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::RelativeLocationPath(lexer);
                     relativeLocationPath.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -1456,8 +1456,8 @@ soul::parser::Match XPathParser<Lexer>::LocationPath(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AbsoluteLocationPath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1468,7 +1468,7 @@ soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AbsoluteLocationPath");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127436);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127436);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> abbreviatedAbsoluteLocationPath;
     std::unique_ptr<soul::xml::xpath::expr::Expr> right;
@@ -1487,7 +1487,7 @@ soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::AbbreviatedAbsoluteLocationPath(lexer);
                     abbreviatedAbsoluteLocationPath.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -1539,7 +1539,7 @@ soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
                                         soul::parser::Match* parentMatch10 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = XPathParser<Lexer>::RelativeLocationPath(lexer);
+                                            soul::parser::Match match = XPathParser<LexerT>::RelativeLocationPath(lexer);
                                             right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                             if (match.hit)
                                             {
@@ -1594,8 +1594,8 @@ soul::parser::Match XPathParser<Lexer>::AbsoluteLocationPath(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AbbreviatedAbsoluteLocationPath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1606,7 +1606,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(Lexer& l
         soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAbsoluteLocationPath");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127437);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127437);
     std::unique_ptr<soul::xml::xpath::expr::Expr> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1628,7 +1628,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(Lexer& l
             soul::parser::Match* parentMatch2 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = XPathParser<Lexer>::RelativeLocationPath(lexer);
+                soul::parser::Match match = XPathParser<LexerT>::RelativeLocationPath(lexer);
                 right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                 if (match.hit)
                 {
@@ -1659,8 +1659,8 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAbsoluteLocationPath(Lexer& l
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::RelativeLocationPath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1671,7 +1671,7 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RelativeLocationPath");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127438);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127438);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> left;
     std::unique_ptr<soul::parser::Value<soul::xml::xpath::expr::Operator>> op;
@@ -1690,7 +1690,7 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::Step(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::Step(lexer);
                     left.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -1725,7 +1725,7 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                soul::parser::Match match = XPathParser<Lexer>::CombinePathOp(lexer);
+                                                soul::parser::Match match = XPathParser<LexerT>::CombinePathOp(lexer);
                                                 op.reset(static_cast<soul::parser::Value<soul::xml::xpath::expr::Operator>*>(match.value));
                                                 *parentMatch9 = match;
                                             }
@@ -1734,7 +1734,7 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
                                                 soul::parser::Match match(false);
                                                 soul::parser::Match* parentMatch10 = &match;
                                                 {
-                                                    soul::parser::Match match = XPathParser<Lexer>::Step(lexer);
+                                                    soul::parser::Match match = XPathParser<LexerT>::Step(lexer);
                                                     right.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                     *parentMatch10 = match;
                                                 }
@@ -1803,8 +1803,8 @@ soul::parser::Match XPathParser<Lexer>::RelativeLocationPath(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::Step(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1815,7 +1815,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Step");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127439);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127439);
     std::unique_ptr<soul::xml::xpath::expr::LocationStepExpr> expr = std::unique_ptr<soul::xml::xpath::expr::LocationStepExpr>();
     std::unique_ptr<soul::parser::Value<soul::xml::Axis>> axis;
     std::unique_ptr<soul::xml::xpath::expr::NodeTest> nodeTest;
@@ -1838,7 +1838,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = XPathParser<Lexer>::AxisSpecifier(lexer);
+                        soul::parser::Match match = XPathParser<LexerT>::AxisSpecifier(lexer);
                         axis.reset(static_cast<soul::parser::Value<soul::xml::Axis>*>(match.value));
                         *parentMatch4 = match;
                     }
@@ -1851,7 +1851,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
                             soul::parser::Match* parentMatch6 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = XPathParser<Lexer>::NodeTest(lexer);
+                                soul::parser::Match match = XPathParser<LexerT>::NodeTest(lexer);
                                 nodeTest.reset(static_cast<soul::xml::xpath::expr::NodeTest*>(match.value));
                                 if (match.hit)
                                 {
@@ -1884,7 +1884,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
                                         soul::parser::Match* parentMatch10 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = XPathParser<Lexer>::Predicate(lexer);
+                                            soul::parser::Match match = XPathParser<LexerT>::Predicate(lexer);
                                             predicate.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                             if (match.hit)
                                             {
@@ -1921,7 +1921,7 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
                         soul::parser::Match* parentMatch12 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = XPathParser<Lexer>::AbbreviatedStep(lexer);
+                            soul::parser::Match match = XPathParser<LexerT>::AbbreviatedStep(lexer);
                             abbreviatedStep.reset(static_cast<soul::xml::xpath::expr::LocationStepExpr*>(match.value));
                             if (match.hit)
                             {
@@ -1961,8 +1961,8 @@ soul::parser::Match XPathParser<Lexer>::Step(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AxisSpecifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1973,7 +1973,7 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AxisSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127440);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127440);
     std::unique_ptr<soul::parser::Value<soul::xml::Axis>> axis;
     std::unique_ptr<soul::parser::Value<soul::xml::Axis>> abbreviatedAxisSpecifier;
     soul::parser::Match match(false);
@@ -1983,7 +1983,7 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            soul::parser::Match match = XPathParser<Lexer>::AxisName(lexer);
+            soul::parser::Match match = XPathParser<LexerT>::AxisName(lexer);
             axis.reset(static_cast<soul::parser::Value<soul::xml::Axis>*>(match.value));
             *parentMatch1 = match;
         }
@@ -2028,7 +2028,7 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
                 soul::parser::Match* parentMatch5 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::AbbreviatedAxisSpecifier(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::AbbreviatedAxisSpecifier(lexer);
                     abbreviatedAxisSpecifier.reset(static_cast<soul::parser::Value<soul::xml::Axis>*>(match.value));
                     if (match.hit)
                     {
@@ -2060,8 +2060,8 @@ soul::parser::Match XPathParser<Lexer>::AxisSpecifier(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AxisName(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2072,7 +2072,7 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AxisName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127441);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127441);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2218,8 +2218,8 @@ soul::parser::Match XPathParser<Lexer>::AxisName(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AbbreviatedAxisSpecifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AbbreviatedAxisSpecifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2230,7 +2230,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAxisSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedAxisSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127442);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127442);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2298,8 +2298,8 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedAxisSpecifier(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::NodeTest(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2310,7 +2310,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "NodeTest");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127443);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127443);
     std::unique_ptr<soul::xml::xpath::expr::Literal> pi;
     std::unique_ptr<soul::xml::xpath::expr::NodeTest> nodeType;
     std::unique_ptr<soul::xml::xpath::expr::NodeTest> nameTest;
@@ -2341,7 +2341,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
-                                    soul::parser::Match match = XPathParser<Lexer>::ProcessingInstructionKeyword(lexer);
+                                    soul::parser::Match match = XPathParser<LexerT>::ProcessingInstructionKeyword(lexer);
                                     *parentMatch7 = match;
                                 }
                                 if (match.hit)
@@ -2366,7 +2366,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch9 = &match;
                                 {
-                                    soul::parser::Match match = XPathParser<Lexer>::Literal(lexer);
+                                    soul::parser::Match match = XPathParser<LexerT>::Literal(lexer);
                                     pi.reset(static_cast<soul::xml::xpath::expr::Literal*>(match.value));
                                     *parentMatch9 = match;
                                 }
@@ -2422,7 +2422,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch15 = &match;
                                     {
-                                        soul::parser::Match match = XPathParser<Lexer>::NodeType(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::NodeType(lexer);
                                         nodeType.reset(static_cast<soul::xml::xpath::expr::NodeTest*>(match.value));
                                         *parentMatch15 = match;
                                     }
@@ -2490,7 +2490,7 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch20 = &match;
                         {
-                            soul::parser::Match match = XPathParser<Lexer>::NameTest(lexer);
+                            soul::parser::Match match = XPathParser<LexerT>::NameTest(lexer);
                             nameTest.reset(static_cast<soul::xml::xpath::expr::NodeTest*>(match.value));
                             *parentMatch20 = match;
                         }
@@ -2526,8 +2526,8 @@ soul::parser::Match XPathParser<Lexer>::NodeTest(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::Literal(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::Literal(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2538,7 +2538,7 @@ soul::parser::Match XPathParser<Lexer>::Literal(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127444);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127444);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -2584,8 +2584,8 @@ soul::parser::Match XPathParser<Lexer>::Literal(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::NodeType(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2596,7 +2596,7 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "NodeType");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127445);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127445);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2670,8 +2670,8 @@ soul::parser::Match XPathParser<Lexer>::NodeType(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::NameTest(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2682,7 +2682,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "NameTest");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127446);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127446);
     std::unique_ptr<soul::parser::Value<std::string>> ncname;
     std::unique_ptr<soul::parser::Value<std::string>> qname;
     soul::parser::Match match(false);
@@ -2727,7 +2727,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            soul::parser::Match match = XPathParser<Lexer>::NCName(lexer);
+                            soul::parser::Match match = XPathParser<LexerT>::NCName(lexer);
                             ncname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                             *parentMatch5 = match;
                         }
@@ -2794,7 +2794,7 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
                 soul::parser::Match* parentMatch10 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::QName(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::QName(lexer);
                     qname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     if (match.hit)
                     {
@@ -2826,8 +2826,8 @@ soul::parser::Match XPathParser<Lexer>::NameTest(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::NCName(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::NCName(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2838,7 +2838,7 @@ soul::parser::Match XPathParser<Lexer>::NCName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "NCName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127447);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127447);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2874,8 +2874,8 @@ soul::parser::Match XPathParser<Lexer>::NCName(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::QName(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2886,7 +2886,7 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127448);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127448);
     std::unique_ptr<soul::parser::Value<std::string>> prefixedName;
     std::unique_ptr<soul::parser::Value<std::string>> unprefixedName;
     soul::parser::Match match(false);
@@ -2897,7 +2897,7 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = XPathParser<Lexer>::PrefixedName(lexer);
+            soul::parser::Match match = XPathParser<LexerT>::PrefixedName(lexer);
             prefixedName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
             if (match.hit)
             {
@@ -2921,7 +2921,7 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::UnprefixedName(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::UnprefixedName(lexer);
                     unprefixedName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     if (match.hit)
                     {
@@ -2953,8 +2953,8 @@ soul::parser::Match XPathParser<Lexer>::QName(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::PrefixedName(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2965,7 +2965,7 @@ soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "PrefixedName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127449);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127449);
     std::unique_ptr<soul::parser::Value<std::string>> prefix;
     std::unique_ptr<soul::parser::Value<std::string>> localPart;
     soul::parser::Match match(false);
@@ -2981,7 +2981,7 @@ soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    soul::parser::Match match = XPathParser<Lexer>::Prefix(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::Prefix(lexer);
                     prefix.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     *parentMatch3 = match;
                 }
@@ -3007,7 +3007,7 @@ soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch5 = &match;
                 {
-                    soul::parser::Match match = XPathParser<Lexer>::LocalPart(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::LocalPart(lexer);
                     localPart.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     *parentMatch5 = match;
                 }
@@ -3040,8 +3040,8 @@ soul::parser::Match XPathParser<Lexer>::PrefixedName(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::Prefix(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::Prefix(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3052,13 +3052,13 @@ soul::parser::Match XPathParser<Lexer>::Prefix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Prefix");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127450);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127450);
     std::unique_ptr<soul::parser::Value<std::string>> ncname;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match = XPathParser<Lexer>::NCName(lexer);
+        soul::parser::Match match = XPathParser<LexerT>::NCName(lexer);
         ncname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
         if (match.hit)
         {
@@ -3085,8 +3085,8 @@ soul::parser::Match XPathParser<Lexer>::Prefix(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::UnprefixedName(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::UnprefixedName(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3097,13 +3097,13 @@ soul::parser::Match XPathParser<Lexer>::UnprefixedName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UnprefixedName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127451);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127451);
     std::unique_ptr<soul::parser::Value<std::string>> localPart;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match = XPathParser<Lexer>::LocalPart(lexer);
+        soul::parser::Match match = XPathParser<LexerT>::LocalPart(lexer);
         localPart.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
         if (match.hit)
         {
@@ -3130,8 +3130,8 @@ soul::parser::Match XPathParser<Lexer>::UnprefixedName(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::LocalPart(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::LocalPart(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3142,13 +3142,13 @@ soul::parser::Match XPathParser<Lexer>::LocalPart(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LocalPart");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127452);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127452);
     std::unique_ptr<soul::parser::Value<std::string>> ncname;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match = XPathParser<Lexer>::NCName(lexer);
+        soul::parser::Match match = XPathParser<LexerT>::NCName(lexer);
         ncname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
         if (match.hit)
         {
@@ -3175,8 +3175,8 @@ soul::parser::Match XPathParser<Lexer>::LocalPart(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::Predicate(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::Predicate(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3187,7 +3187,7 @@ soul::parser::Match XPathParser<Lexer>::Predicate(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Predicate");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127453);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127453);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -3215,7 +3215,7 @@ soul::parser::Match XPathParser<Lexer>::Predicate(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = XPathParser<Lexer>::Expr(lexer);
+                        soul::parser::Match match = XPathParser<LexerT>::Expr(lexer);
                         expr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                         *parentMatch4 = match;
                     }
@@ -3265,8 +3265,8 @@ soul::parser::Match XPathParser<Lexer>::Predicate(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AbbreviatedStep(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AbbreviatedStep(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3277,7 +3277,7 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedStep(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AbbreviatedStep");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127454);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127454);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -3323,8 +3323,8 @@ soul::parser::Match XPathParser<Lexer>::AbbreviatedStep(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::FunctionCall(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3335,7 +3335,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionCall");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127455);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127455);
     std::unique_ptr<soul::xml::xpath::expr::FunctionCall> functionCall = std::unique_ptr<soul::xml::xpath::expr::FunctionCall>();
     std::unique_ptr<soul::parser::Value<std::string>> functionName;
     std::unique_ptr<soul::xml::xpath::expr::Expr> arg;
@@ -3355,7 +3355,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = XPathParser<Lexer>::FunctionName(lexer);
+                        soul::parser::Match match = XPathParser<LexerT>::FunctionName(lexer);
                         functionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                         *parentMatch4 = match;
                     }
@@ -3405,7 +3405,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
                                     soul::parser::Match* parentMatch11 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = XPathParser<Lexer>::Argument(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::Argument(lexer);
                                         arg.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                         if (match.hit)
                                         {
@@ -3447,7 +3447,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
                                                             soul::parser::Match* parentMatch16 = &match;
                                                             {
                                                                 int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = XPathParser<Lexer>::Argument(lexer);
+                                                                soul::parser::Match match = XPathParser<LexerT>::Argument(lexer);
                                                                 arg.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                                                 if (match.hit)
                                                                 {
@@ -3534,8 +3534,8 @@ soul::parser::Match XPathParser<Lexer>::FunctionCall(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::FunctionName(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3546,7 +3546,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "FunctionName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127456);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127456);
     std::unique_ptr<soul::parser::Value<std::string>> qname;
     std::unique_ptr<soul::xml::xpath::expr::NodeTest> nodeType;
     soul::parser::Match match(false);
@@ -3560,7 +3560,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
             soul::parser::Match* parentMatch2 = &match;
             int64_t save = lexer.GetPos();
             {
-                soul::parser::Match match = XPathParser<Lexer>::QName(lexer);
+                soul::parser::Match match = XPathParser<LexerT>::QName(lexer);
                 qname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                 *parentMatch2 = match;
             }
@@ -3572,7 +3572,7 @@ soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
                     int64_t tmp = lexer.GetPos();
                     lexer.SetPos(save);
                     save = tmp;
-                    soul::parser::Match match = XPathParser<Lexer>::NodeType(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::NodeType(lexer);
                     nodeType.reset(static_cast<soul::xml::xpath::expr::NodeTest*>(match.value));
                     *parentMatch3 = match;
                 }
@@ -3609,8 +3609,8 @@ soul::parser::Match XPathParser<Lexer>::FunctionName(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::Argument(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::Argument(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3621,13 +3621,13 @@ soul::parser::Match XPathParser<Lexer>::Argument(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Argument");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127457);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127457);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match = XPathParser<Lexer>::Expr(lexer);
+        soul::parser::Match match = XPathParser<LexerT>::Expr(lexer);
         expr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
         if (match.hit)
         {
@@ -3654,8 +3654,8 @@ soul::parser::Match XPathParser<Lexer>::Argument(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::FilterExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3666,7 +3666,7 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "FilterExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127458);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127458);
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr = std::unique_ptr<soul::xml::xpath::expr::Expr>();
     std::unique_ptr<soul::xml::xpath::expr::Expr> primaryExpr;
     std::unique_ptr<soul::xml::xpath::expr::Expr> predicate;
@@ -3684,7 +3684,7 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::PrimaryExpr(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::PrimaryExpr(lexer);
                     primaryExpr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -3713,7 +3713,7 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = XPathParser<Lexer>::Predicate(lexer);
+                                        soul::parser::Match match = XPathParser<LexerT>::Predicate(lexer);
                                         predicate.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                         if (match.hit)
                                         {
@@ -3766,8 +3766,8 @@ soul::parser::Match XPathParser<Lexer>::FilterExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::PrimaryExpr(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3778,7 +3778,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "PrimaryExpr");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127459);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127459);
     std::unique_ptr<soul::xml::xpath::expr::Expr> functionCall;
     std::unique_ptr<soul::xml::xpath::expr::Expr> variableReference;
     std::unique_ptr<soul::xml::xpath::expr::Expr> expr;
@@ -3804,7 +3804,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = XPathParser<Lexer>::FunctionCall(lexer);
+                        soul::parser::Match match = XPathParser<LexerT>::FunctionCall(lexer);
                         functionCall.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                         if (match.hit)
                         {
@@ -3828,7 +3828,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                             soul::parser::Match* parentMatch6 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = XPathParser<Lexer>::VariableReference(lexer);
+                                soul::parser::Match match = XPathParser<LexerT>::VariableReference(lexer);
                                 variableReference.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                 if (match.hit)
                                 {
@@ -3879,7 +3879,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch12 = &match;
                                         {
-                                            soul::parser::Match match = XPathParser<Lexer>::Expr(lexer);
+                                            soul::parser::Match match = XPathParser<LexerT>::Expr(lexer);
                                             expr.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                                             *parentMatch12 = match;
                                         }
@@ -3931,7 +3931,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                     soul::parser::Match* parentMatch15 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = XPathParser<Lexer>::Literal(lexer);
+                        soul::parser::Match match = XPathParser<LexerT>::Literal(lexer);
                         literal.reset(static_cast<soul::xml::xpath::expr::Literal*>(match.value));
                         if (match.hit)
                         {
@@ -3960,7 +3960,7 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
                 soul::parser::Match* parentMatch17 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::Number(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::Number(lexer);
                     number.reset(static_cast<soul::xml::xpath::expr::Expr*>(match.value));
                     if (match.hit)
                     {
@@ -3992,8 +3992,8 @@ soul::parser::Match XPathParser<Lexer>::PrimaryExpr(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::VariableReference(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4004,7 +4004,7 @@ soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "VariableReference");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127460);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127460);
     std::unique_ptr<soul::parser::Value<std::string>> qname;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -4029,7 +4029,7 @@ soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    soul::parser::Match match = XPathParser<Lexer>::QName(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::QName(lexer);
                     qname.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     *parentMatch3 = match;
                 }
@@ -4062,8 +4062,8 @@ soul::parser::Match XPathParser<Lexer>::VariableReference(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::Number(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::Number(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4074,7 +4074,7 @@ soul::parser::Match XPathParser<Lexer>::Number(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Number");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127461);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127461);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4110,8 +4110,8 @@ soul::parser::Match XPathParser<Lexer>::Number(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::EqualityOp(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4122,7 +4122,7 @@ soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EqualityOp");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127462);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127462);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -4168,8 +4168,8 @@ soul::parser::Match XPathParser<Lexer>::EqualityOp(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::RelationalOp(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4180,7 +4180,7 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RelationalOp");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127463);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127463);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -4252,8 +4252,8 @@ soul::parser::Match XPathParser<Lexer>::RelationalOp(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AdditiveOp(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4264,7 +4264,7 @@ soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AdditiveOp");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127464);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127464);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -4310,8 +4310,8 @@ soul::parser::Match XPathParser<Lexer>::AdditiveOp(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::MultiplicativeOp(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4322,7 +4322,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "MultiplicativeOp");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127465);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127465);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4363,7 +4363,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = XPathParser<Lexer>::DivKeyword(lexer);
+                        soul::parser::Match match = XPathParser<LexerT>::DivKeyword(lexer);
                         if (match.hit)
                         {
                             {
@@ -4391,7 +4391,7 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
                 soul::parser::Match* parentMatch6 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XPathParser<Lexer>::ModKeyword(lexer);
+                    soul::parser::Match match = XPathParser<LexerT>::ModKeyword(lexer);
                     if (match.hit)
                     {
                         {
@@ -4422,8 +4422,8 @@ soul::parser::Match XPathParser<Lexer>::MultiplicativeOp(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::CombinePathOp(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4434,7 +4434,7 @@ soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CombinePathOp");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127466);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127466);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -4480,8 +4480,8 @@ soul::parser::Match XPathParser<Lexer>::CombinePathOp(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::OrKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::OrKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4492,7 +4492,7 @@ soul::parser::Match XPathParser<Lexer>::OrKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "OrKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127467);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127467);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4528,8 +4528,8 @@ soul::parser::Match XPathParser<Lexer>::OrKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::AndKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::AndKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4540,7 +4540,7 @@ soul::parser::Match XPathParser<Lexer>::AndKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AndKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127468);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127468);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4576,8 +4576,8 @@ soul::parser::Match XPathParser<Lexer>::AndKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::DivKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::DivKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4588,7 +4588,7 @@ soul::parser::Match XPathParser<Lexer>::DivKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "DivKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127469);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127469);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4624,8 +4624,8 @@ soul::parser::Match XPathParser<Lexer>::DivKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::ModKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::ModKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4636,7 +4636,7 @@ soul::parser::Match XPathParser<Lexer>::ModKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ModKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127470);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127470);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -4672,8 +4672,8 @@ soul::parser::Match XPathParser<Lexer>::ModKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XPathParser<Lexer>::ProcessingInstructionKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XPathParser<LexerT>::ProcessingInstructionKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -4684,7 +4684,7 @@ soul::parser::Match XPathParser<Lexer>::ProcessingInstructionKeyword(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "ProcessingInstructionKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 6774979419569127471);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 6774979419569127471);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

@@ -21,8 +21,8 @@ using namespace soul::re::token::parser;
 
 namespace soul::re::parser {
 
-template<typename Lexer>
-soul::ast::re::Nfa RegExParser<Lexer>::Parse(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::ast::re::Nfa RegExParser<LexerT>::Parse(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -33,7 +33,7 @@ soul::ast::re::Nfa RegExParser<Lexer>::Parse(Lexer& lexer, soul::ast::re::LexerC
     }
     #endif
     ++lexer;
-    soul::parser::Match match = RegExParser<Lexer>::RegularExpression(lexer, lexerContext);
+    soul::parser::Match match = RegExParser<LexerT>::RegularExpression(lexer, lexerContext);
     value.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -60,8 +60,8 @@ soul::ast::re::Nfa RegExParser<Lexer>::Parse(Lexer& lexer, soul::ast::re::LexerC
     return value->value;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::RegularExpression(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::RegularExpression(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -72,13 +72,13 @@ soul::parser::Match RegExParser<Lexer>::RegularExpression(Lexer& lexer, soul::as
         soul::lexer::WriteBeginRuleToLog(lexer, "RegularExpression");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526657);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526657);
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> alternative;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
         int64_t pos = lexer.GetPos();
-        soul::parser::Match match = RegExParser<Lexer>::Alternative(lexer, lexerContext);
+        soul::parser::Match match = RegExParser<LexerT>::Alternative(lexer, lexerContext);
         alternative.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
         if (match.hit)
         {
@@ -105,8 +105,8 @@ soul::parser::Match RegExParser<Lexer>::RegularExpression(Lexer& lexer, soul::as
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::Alternative(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -117,7 +117,7 @@ soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re:
         soul::lexer::WriteBeginRuleToLog(lexer, "Alternative");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526658);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526658);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> left;
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> right;
@@ -135,7 +135,7 @@ soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re:
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = RegExParser<Lexer>::Catenation(lexer, lexerContext);
+                    soul::parser::Match match = RegExParser<LexerT>::Catenation(lexer, lexerContext);
                     left.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                     if (match.hit)
                     {
@@ -184,7 +184,7 @@ soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re:
                                                 soul::parser::Match* parentMatch10 = &match;
                                                 {
                                                     int64_t pos = lexer.GetPos();
-                                                    soul::parser::Match match = RegExParser<Lexer>::Catenation(lexer, lexerContext);
+                                                    soul::parser::Match match = RegExParser<LexerT>::Catenation(lexer, lexerContext);
                                                     right.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                                                     if (match.hit)
                                                     {
@@ -250,8 +250,8 @@ soul::parser::Match RegExParser<Lexer>::Alternative(Lexer& lexer, soul::ast::re:
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::Catenation(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -262,7 +262,7 @@ soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::
         soul::lexer::WriteBeginRuleToLog(lexer, "Catenation");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526659);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526659);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> left;
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> right;
@@ -280,7 +280,7 @@ soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = RegExParser<Lexer>::Repetition(lexer, lexerContext);
+                    soul::parser::Match match = RegExParser<LexerT>::Repetition(lexer, lexerContext);
                     left.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                     if (match.hit)
                     {
@@ -309,7 +309,7 @@ soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = RegExParser<Lexer>::Repetition(lexer, lexerContext);
+                                        soul::parser::Match match = RegExParser<LexerT>::Repetition(lexer, lexerContext);
                                         right.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                                         if (match.hit)
                                         {
@@ -362,8 +362,8 @@ soul::parser::Match RegExParser<Lexer>::Catenation(Lexer& lexer, soul::ast::re::
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::Repetition(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::Repetition(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -374,7 +374,7 @@ soul::parser::Match RegExParser<Lexer>::Repetition(Lexer& lexer, soul::ast::re::
         soul::lexer::WriteBeginRuleToLog(lexer, "Repetition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526660);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526660);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> left;
     soul::parser::Match match(false);
@@ -391,7 +391,7 @@ soul::parser::Match RegExParser<Lexer>::Repetition(Lexer& lexer, soul::ast::re::
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = RegExParser<Lexer>::Primary(lexer, lexerContext);
+                    soul::parser::Match match = RegExParser<LexerT>::Primary(lexer, lexerContext);
                     left.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                     if (match.hit)
                     {
@@ -535,8 +535,8 @@ soul::parser::Match RegExParser<Lexer>::Repetition(Lexer& lexer, soul::ast::re::
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::Primary(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -547,7 +547,7 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
         soul::lexer::WriteBeginRuleToLog(lexer, "Primary");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526661);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526661);
     soul::ast::re::Nfa value = soul::ast::re::Nfa();
     std::unique_ptr<soul::parser::Value<soul::ast::re::Nfa>> alt;
     std::unique_ptr<soul::ast::re::Class> cls;
@@ -614,7 +614,7 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
                                                         soul::parser::Match* parentMatch13 = &match;
                                                         {
                                                             int64_t pos = lexer.GetPos();
-                                                            soul::parser::Match match = RegExParser<Lexer>::Alternative(lexer, lexerContext);
+                                                            soul::parser::Match match = RegExParser<LexerT>::Alternative(lexer, lexerContext);
                                                             alt.reset(static_cast<soul::parser::Value<soul::ast::re::Nfa>*>(match.value));
                                                             if (match.hit)
                                                             {
@@ -817,7 +817,7 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
                             soul::parser::Match* parentMatch27 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = RegExParser<Lexer>::Class(lexer, lexerContext);
+                                soul::parser::Match match = RegExParser<LexerT>::Class(lexer, lexerContext);
                                 cls.reset(static_cast<soul::ast::re::Class*>(match.value));
                                 if (match.hit)
                                 {
@@ -841,7 +841,7 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
                         soul::parser::Match* parentMatch29 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = RegExParser<Lexer>::ExpressionReference(lexer);
+                            soul::parser::Match match = RegExParser<LexerT>::ExpressionReference(lexer);
                             ref.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                             if (match.hit)
                             {
@@ -881,8 +881,8 @@ soul::parser::Match RegExParser<Lexer>::Primary(Lexer& lexer, soul::ast::re::Lex
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::Class(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::Class(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -893,7 +893,7 @@ soul::parser::Match RegExParser<Lexer>::Class(Lexer& lexer, soul::ast::re::Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "Class");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526662);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526662);
     soul::ast::re::Class* cls = nullptr;
     std::unique_ptr<soul::ast::re::Symbol> r;
     soul::parser::Match match(false);
@@ -993,7 +993,7 @@ soul::parser::Match RegExParser<Lexer>::Class(Lexer& lexer, soul::ast::re::Lexer
                                                     soul::parser::Match* parentMatch14 = &match;
                                                     {
                                                         int64_t pos = lexer.GetPos();
-                                                        soul::parser::Match match = RegExParser<Lexer>::Range(lexer, lexerContext);
+                                                        soul::parser::Match match = RegExParser<LexerT>::Range(lexer, lexerContext);
                                                         r.reset(static_cast<soul::ast::re::Symbol*>(match.value));
                                                         if (match.hit)
                                                         {
@@ -1082,8 +1082,8 @@ soul::parser::Match RegExParser<Lexer>::Class(Lexer& lexer, soul::ast::re::Lexer
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::LexerContext* lexerContext)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::Range(LexerT& lexer, soul::ast::re::LexerContext* lexerContext)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1094,7 +1094,7 @@ soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "Range");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526663);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526663);
     soul::ast::re::Symbol* symbol = nullptr;
     std::unique_ptr<soul::parser::Value<char32_t>> s;
     std::unique_ptr<soul::parser::Value<char32_t>> e;
@@ -1108,7 +1108,7 @@ soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::Lexer
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = RegExParser<Lexer>::Char(lexer);
+                soul::parser::Match match = RegExParser<LexerT>::Char(lexer);
                 s.reset(static_cast<soul::parser::Value<char32_t>*>(match.value));
                 *parentMatch2 = match;
             }
@@ -1144,7 +1144,7 @@ soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::Lexer
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = RegExParser<Lexer>::Char(lexer);
+                                        soul::parser::Match match = RegExParser<LexerT>::Char(lexer);
                                         e.reset(static_cast<soul::parser::Value<char32_t>*>(match.value));
                                         if (match.hit)
                                         {
@@ -1212,8 +1212,8 @@ soul::parser::Match RegExParser<Lexer>::Range(Lexer& lexer, soul::ast::re::Lexer
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::Char(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1224,7 +1224,7 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Char");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526664);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526664);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -1427,8 +1427,8 @@ soul::parser::Match RegExParser<Lexer>::Char(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match RegExParser<Lexer>::ExpressionReference(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match RegExParser<LexerT>::ExpressionReference(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1439,7 +1439,7 @@ soul::parser::Match RegExParser<Lexer>::ExpressionReference(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionReference");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7216077787843526665);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7216077787843526665);
     std::string s = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;

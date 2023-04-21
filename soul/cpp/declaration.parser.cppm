@@ -12,24 +12,24 @@ using namespace soul::ast::cpp;
 
 export namespace soul::cpp::declaration::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct DeclarationParser
 {
-    static soul::parser::Match BlockDeclaration(Lexer& lexer);
-    static soul::parser::Match SimpleDeclaration(Lexer& lexer);
-    static soul::parser::Match DeclSpecifierSeq(Lexer& lexer, soul::ast::cpp::SimpleDeclarationNode* declaration);
-    static soul::parser::Match DeclSpecifier(Lexer& lexer);
-    static soul::parser::Match StorageClassSpecifier(Lexer& lexer);
-    static soul::parser::Match TypeSpecifier(Lexer& lexer);
-    static soul::parser::Match SimpleTypeSpecifier(Lexer& lexer);
-    static soul::parser::Match TypeName(Lexer& lexer);
-    static soul::parser::Match TemplateArgumentList(Lexer& lexer, soul::ast::cpp::TypeNameNode* typeName);
-    static soul::parser::Match TemplateArgument(Lexer& lexer);
-    static soul::parser::Match Typedef(Lexer& lexer);
-    static soul::parser::Match CVQualifier(Lexer& lexer);
-    static soul::parser::Match NamespaceAliasDefinition(Lexer& lexer);
-    static soul::parser::Match UsingDeclaration(Lexer& lexer);
-    static soul::parser::Match UsingDirective(Lexer& lexer);
+    static soul::parser::Match BlockDeclaration(LexerT& lexer);
+    static soul::parser::Match SimpleDeclaration(LexerT& lexer);
+    static soul::parser::Match DeclSpecifierSeq(LexerT& lexer, soul::ast::cpp::SimpleDeclarationNode* declaration);
+    static soul::parser::Match DeclSpecifier(LexerT& lexer);
+    static soul::parser::Match StorageClassSpecifier(LexerT& lexer);
+    static soul::parser::Match TypeSpecifier(LexerT& lexer);
+    static soul::parser::Match SimpleTypeSpecifier(LexerT& lexer);
+    static soul::parser::Match TypeName(LexerT& lexer);
+    static soul::parser::Match TemplateArgumentList(LexerT& lexer, soul::ast::cpp::TypeNameNode* typeName);
+    static soul::parser::Match TemplateArgument(LexerT& lexer);
+    static soul::parser::Match Typedef(LexerT& lexer);
+    static soul::parser::Match CVQualifier(LexerT& lexer);
+    static soul::parser::Match NamespaceAliasDefinition(LexerT& lexer);
+    static soul::parser::Match UsingDeclaration(LexerT& lexer);
+    static soul::parser::Match UsingDirective(LexerT& lexer);
 };
 
 } // namespace soul::cpp::declaration::parser

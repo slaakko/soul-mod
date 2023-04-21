@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -25,6 +25,7 @@ import otava.symbols.bound.tree;
 import otava.symbols.context;
 import otava.symbols.class_templates;
 import otava.symbols.function.group.symbol;
+import otava.symbols.namespaces;
 import otava.intermediate.function;
 import util.sha1;
 import util.unicode;
@@ -246,6 +247,27 @@ TypeSymbol* ParameterSymbol::GetReferredType(Context* context) const
     {
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);
         referredType = aliasType->ReferredType();
+        if (context->GetFlag(ContextFlags::resolveNestedTypes) && referredType->IsNestedTypeSymbol())
+        {
+            if (context->TemplateParameterMap())
+            {
+                if (referredType->Parent()->IsTemplateParameterSymbol())
+                {
+                    TemplateParameterSymbol* templateParam = static_cast<TemplateParameterSymbol*>(referredType->Parent());
+                    auto it = context->TemplateParameterMap()->find(templateParam);
+                    if (it != context->TemplateParameterMap()->end())
+                    {
+                        TypeSymbol* type = it->second;
+                        Symbol* symbol = type->GetScope()->Lookup(referredType->Name(), SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, context->GetSourcePos(), context,
+                            LookupFlags::none);
+                        if (symbol && symbol->IsTypeSymbol())
+                        {
+                            referredType = static_cast<TypeSymbol*>(symbol);
+                        }
+                    }
+                }
+            }
+        }
     }
     if (type->IsCompoundType())
     {
@@ -428,6 +450,11 @@ void FunctionSymbol::SetVirtual()
 bool FunctionSymbol::IsOverride() const
 {
     return (qualifiers & FunctionQualifiers::isOverride) != FunctionQualifiers::none;
+}
+
+bool FunctionSymbol::IsFinal() const
+{
+    return (qualifiers & FunctionQualifiers::isFinal) != FunctionQualifiers::none;
 }
 
 void FunctionSymbol::SetOverride()
@@ -615,9 +642,9 @@ std::u32string FunctionSymbol::FullName() const
     {
         fullName = parentClassType->FullName();
     }
-    else
+    else if (ParentNamespace())
     {
-        fullName = Parent()->FullName();
+        fullName = ParentNamespace()->FullName();
     }
     fullName.append(U"::").append(Name()).append(U"(");
     bool first = true;
@@ -661,6 +688,24 @@ void FunctionSymbol::AddParameter(ParameterSymbol* parameter, const soul::ast::S
     AddSymbol(parameter, sourcePos, context);
 }
 
+void FunctionSymbol::AddTemporaryParameter(TypeSymbol* paramType, int index)
+{
+    std::u32string paramName = U"p" + util::ToUtf32(std::to_string(index));
+    std::unique_ptr<ParameterSymbol> temporaryParam(new ParameterSymbol(paramName, paramType));
+    parameters.push_back(temporaryParam.get());
+    temporaryParams.push_back(std::move(temporaryParam));
+}
+
+void FunctionSymbol::ClearTemporaryParameters()
+{
+    thisParam.reset();
+    memFunParamsConstructed = false;
+    memFunParameters.clear();
+    parameters.clear();
+    temporaryParams.clear();
+    SetParent(nullptr);
+}
+
 void FunctionSymbol::SetReturnValueParam(ParameterSymbol* returnValueParam_)
 {
     returnValueParam.reset(returnValueParam_);
@@ -687,6 +732,10 @@ void FunctionSymbol::Write(Writer& writer)
         writer.Write(ReturnValueParam());
     }
     writer.GetBinaryStreamWriter().Write(vtabIndex);
+    if (IsVirtual() && vtabIndex == -1)
+    {
+        int x = 0;
+    }
     if (IsConversion())
     {
         writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(GetConversionKind()));
@@ -713,6 +762,12 @@ void FunctionSymbol::Write(Writer& writer)
     if (GetFlag(FunctionSymbolFlags::fixedIrName))
     {
         writer.GetBinaryStreamWriter().Write(fixedIrName);
+    }
+    uint32_t ns = specialization.size();
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(ns);
+    for (uint32_t i = 0; i < ns; ++i)
+    {
+        writer.GetBinaryStreamWriter().Write(specialization[i]->Id());
     }
 }
 
@@ -745,6 +800,13 @@ void FunctionSymbol::Read(Reader& reader)
     {
         fixedIrName = reader.GetBinaryStreamReader().ReadUtf8String();
     }
+    uint32_t ns = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < ns; ++i)
+    {
+        util::uuid sid;
+        reader.GetBinaryStreamReader().ReadUuid(sid);
+        specializationIds.push_back(sid);
+    }
 }
 
 void FunctionSymbol::Resolve(SymbolTable& symbolTable)
@@ -768,6 +830,11 @@ void FunctionSymbol::Resolve(SymbolTable& symbolTable)
         {
             conversionArgType = symbolTable.GetType(conversionArgTypeId);
         }
+    }
+    for (const auto& id : specializationIds)
+    {
+        TypeSymbol* type = symbolTable.GetType(id);
+        specialization.push_back(type);
     }
 }
 
@@ -857,6 +924,10 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
             otava::intermediate::Value* vptrPtr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->VPtrIndex()));
             otava::intermediate::Value* voidVPtr = emitter.EmitLoad(vptrPtr);
             otava::intermediate::Value* vptr = emitter.EmitBitcast(voidVPtr, classType->VPtrType(emitter));
+            if (VTabIndex() == -1)
+            {
+                ThrowException("invalid vtab index", sourcePos, context);
+            }
             otava::intermediate::Value* functionPtrPtr = emitter.EmitElemAddr(vptr, emitter.EmitLong(vtabClassIdElementCount + 2 * VTabIndex()));
             otava::intermediate::Value* voidFunctionPtr = emitter.EmitLoad(functionPtrPtr);
             callee = emitter.EmitBitcast(voidFunctionPtr, emitter.MakePtrType(functionType));
@@ -877,6 +948,7 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     {
         emitter.Stack().Push(emitter.EmitCall(callee, arguments));
     }
+    context->GetBoundCompileUnit()->AddBoundNodeForClass(classType, sourcePos, context);
 }
 
 otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
@@ -918,10 +990,22 @@ otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::
     return type;
 }
 
+void FunctionSymbol::SetFixedIrName(const std::string& fixedIrName_)
+{
+    fixedIrName = fixedIrName_;
+    SetFlag(FunctionSymbolFlags::fixedIrName);
+}
+
 std::string FunctionSymbol::IrName(Context* context) const
 {
     if (GetFlag(FunctionSymbolFlags::fixedIrName) && !fixedIrName.empty())
     {
+        //if (fixedIrName == "function_IsTokenSwitch_4A3207E938F065A36BC11C118315FE2ADBA840FA")
+        if (fixedIrName == "function_IsTokenSwitch_F25D2CAAA061297AFCE87FBCDC295CE06AE11AD5")
+        {
+            std::cout << "foo";
+            int x = 0;
+        }
         return fixedIrName;
     }
     if (linkage == Linkage::cpp_linkage)
@@ -948,12 +1032,12 @@ std::string FunctionSymbol::IrName(Context* context) const
             }
             else
             {
-                if (kind == FunctionKind::constructor)
+                if (kind == FunctionKind::constructor && ParentClassType())
                 {
                     ClassTypeSymbol* classType = ParentClassType();
                     irName.append("ctor_").append(classType->IrName(context));
                 }
-                else if (kind == FunctionKind::destructor)
+                else if (kind == FunctionKind::destructor && ParentClassType())
                 {
                     ClassTypeSymbol* classType = ParentClassType();
                     irName.append("dtor_").append(classType->IrName(context));
@@ -974,9 +1058,11 @@ std::string FunctionSymbol::IrName(Context* context) const
             }
         }
         irName.append("_").append(util::GetSha1MessageDigest(fullName));
-        if (IsSpecialization())
+        //if (irName == "function_IsTokenSwitch_4A3207E938F065A36BC11C118315FE2ADBA840FA")
+        if (irName == "function_IsTokenSwitch_F25D2CAAA061297AFCE87FBCDC295CE06AE11AD5")
         {
-            irName.append("_").append(context->GetBoundCompileUnit()->Id());
+            std::cout << "foo";
+            int x = 0;
         }
         if (GetFlag(FunctionSymbolFlags::fixedIrName))
         {
@@ -1019,6 +1105,24 @@ void FunctionSymbol::SetSpecialization(const std::vector<TypeSymbol*>& specializ
     specialization = specialization_;
 }
 
+bool FunctionSymbol::IsExplicitSpecializationDefinitionSymbol() const
+{
+    if (!IsFunctionDefinitionSymbol()) return false;
+    TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
+    if (!templateDeclaration) return false;
+    if (templateDeclaration->Arity() != 0) return false;
+    return true;
+}
+
+bool FunctionSymbol::IsExplicitSpecializationDeclaration() const
+{
+    if (IsFunctionDefinitionSymbol()) return false;
+    TemplateDeclarationSymbol* templateDeclaration = ParentTemplateDeclaration();
+    if (!templateDeclaration) return false;
+    if (templateDeclaration->Arity() != 0) return false;
+    return true;
+}
+
 std::u32string FunctionSymbol::NextTemporaryName()
 {
     return U"@t" + util::ToUtf32(std::to_string(nextTemporaryId++));
@@ -1040,6 +1144,11 @@ bool FunctionSymbol::IsStatic() const
 bool FunctionSymbol::IsExplicit() const
 {
     return (GetDeclarationFlags() & DeclarationFlags::explicitFlag) != DeclarationFlags::none;
+}
+
+bool FunctionSymbol::IsDestructor() const
+{
+    return GroupName() == U"@destructor";
 }
 
 void FunctionSymbol::CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1087,6 +1196,7 @@ void FunctionDefinitionSymbol::Write(Writer& writer)
         writer.GetBinaryStreamWriter().Write(util::nil_uuid());
     }
     writer.GetBinaryStreamWriter().Write(defIndex);
+    writer.GetBinaryStreamWriter().Write(irName);
 }
 
 void FunctionDefinitionSymbol::Read(Reader& reader)
@@ -1094,6 +1204,7 @@ void FunctionDefinitionSymbol::Read(Reader& reader)
     FunctionSymbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(declarationId);
     defIndex = reader.GetBinaryStreamReader().ReadInt();
+    irName = reader.GetBinaryStreamReader().ReadUtf8String();
 }
 
 void FunctionDefinitionSymbol::Accept(Visitor& visitor) 
@@ -1114,11 +1225,19 @@ std::string FunctionDefinitionSymbol::IrName(Context* context) const
 {
     if (declaration)
     {
-        return declaration->IrName(context);
+        if (irName.empty())
+        {
+            irName = declaration->IrName(context);
+        }
+        return irName;
     }
     else
     {
-        return FunctionSymbol::IrName(context);
+        if (irName.empty())
+        {
+            irName = FunctionSymbol::IrName(context);
+        }
+        return irName;
     }
 }
 
@@ -1179,6 +1298,18 @@ bool FunctionDefinitionSymbol::IsOverride() const
     else
     {
         return FunctionSymbol::IsOverride();
+    }
+}
+
+bool FunctionDefinitionSymbol::IsFinal() const
+{
+    if (declaration)
+    {
+        return declaration->IsFinal();
+    }
+    else
+    {
+        return FunctionSymbol::IsFinal();
     }
 }
 

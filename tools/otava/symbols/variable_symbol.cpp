@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -124,6 +124,10 @@ TypeSymbol* VariableSymbol::GetType() const
 TypeSymbol* VariableSymbol::GetReferredType() const
 {
     TypeSymbol* referredType = GetType();
+    if (!referredType)
+    {
+        return nullptr;
+    }
     while (referredType->IsAliasTypeSymbol())
     {
         AliasTypeSymbol* aliasType = static_cast<AliasTypeSymbol*>(referredType);

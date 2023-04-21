@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -103,6 +103,7 @@ public:
     bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
     bool IsBoundConversionNode() const { return kind == BoundNodeKind::boundConversionNode; }
     bool IsBoundFunctionNode() const { return kind == BoundNodeKind::boundFunctionNode; }
+    bool IsBoundCompoundStatementNode() const { return kind == BoundNodeKind::boundCompoundStatementNode; }
     int Index() const { return index; }
     void SetIndex(int index_) { index = index_; }
 private:
@@ -135,6 +136,8 @@ class BoundExpressionNode : public BoundNode
 {
 public:
     BoundExpressionNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
+    BoundExpressionFlags Flags() const { return flags; }
+    void SetFlags(BoundExpressionFlags flags_) { flags = flags_; }
     TypeSymbol* GetType() const { return type; }
     void SetType(TypeSymbol* type_) { type = type_; }
     virtual void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context);
@@ -170,7 +173,7 @@ public:
     BoundFunctionNode* GetCompileUnitInitializationFunction() { return compileUnitInitializationFunction.get(); }
     void AddDynamicInitialization(BoundExpressionNode* dynamicInitialization, BoundExpressionNode* atExitCall, const soul::ast::SourcePos& sourcePos, Context* context);
     void Accept(BoundTreeVisitor& visitor) override;
-    void AddBoundNode(BoundNode* node, Context* context);
+    void AddBoundNode(std::unique_ptr<BoundNode>&& node, Context* context);
     void AddBoundNodeForClass(ClassTypeSymbol* cls, const soul::ast::SourcePos& sourcePos, Context* context);
     const std::vector<std::unique_ptr<BoundNode>>& BoundNodes() const { return boundNodes; }
     void SetId(const std::string& id_) { id = id_; }
@@ -260,6 +263,7 @@ public:
     BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     virtual bool EndsWithTerminator() const { return IsTerminator(); }
     virtual bool IsTerminator() const { return false; }
+    virtual int IndexOf(BoundStatementNode* stmt) { return -1; }
     BoundStatementNode* Parent() const { return parent; }
     void SetParent(BoundStatementNode* parent_) { parent = parent_; }
     bool Generated() const { return generated; }
@@ -277,6 +281,7 @@ class BoundCompoundStatementNode : public BoundStatementNode
 public:
     BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
+    int IndexOf(BoundStatementNode* stmt) override;
     void AddStatement(BoundStatementNode* statement);
     const std::vector<std::unique_ptr<BoundStatementNode>>& Statements() const { return statements; }
     bool EndsWithTerminator() const override;

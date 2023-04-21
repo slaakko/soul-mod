@@ -9,16 +9,16 @@ import soul.parser;
 
 export namespace minilang::parser::statement {
 
-template<typename Lexer>
+template<typename LexerT>
 struct StatementParser
 {
-    static soul::parser::Match Statement(Lexer& lexer);
-    static soul::parser::Match IfStatement(Lexer& lexer);
-    static soul::parser::Match WhileStatement(Lexer& lexer);
-    static soul::parser::Match ReturnStatement(Lexer& lexer);
-    static soul::parser::Match CompoundStatement(Lexer& lexer);
-    static soul::parser::Match ConstructionStatement(Lexer& lexer);
-    static soul::parser::Match AssignmentStatement(Lexer& lexer);
+    static soul::parser::Match Statement(LexerT& lexer);
+    static soul::parser::Match IfStatement(LexerT& lexer);
+    static soul::parser::Match WhileStatement(LexerT& lexer);
+    static soul::parser::Match ReturnStatement(LexerT& lexer);
+    static soul::parser::Match CompoundStatement(LexerT& lexer);
+    static soul::parser::Match ConstructionStatement(LexerT& lexer);
+    static soul::parser::Match AssignmentStatement(LexerT& lexer);
 };
 
 } // namespace minilang::parser::statement

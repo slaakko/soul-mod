@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -137,6 +137,7 @@ public:
     bool IsAliasDeclarationNode() const { return kind == NodeKind::aliasDeclarationNode; }
     bool IsLBraceNode() const { return kind == NodeKind::lbraceNode; }
     bool IsRBraceNode() const { return kind == NodeKind::rbraceNode; }
+    bool IsFunctionDeclaratorNode() const { return kind == NodeKind::functionDeclaratorNode; }
 private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;

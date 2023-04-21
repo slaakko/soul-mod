@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -26,6 +26,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.exception;
 import otava.symbols.function.symbol;
 import otava.symbols.classes;
+import otava.symbols.function_definition_symbol_set;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
@@ -256,6 +257,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     std::vector<std::string> cppFileNames;
     std::vector<std::string> compileUnitInitFunctionNames;
     std::vector<std::string> allCompileUnitInitFunctionNames;
+    moduleMapper.SetFunctionDefinitionSymbolSet(project->GetFunctionDefinitionSymbolSet());
     std::string libraryDirs;
     std::string mainFunctionIrName;
     int mainFunctionParams = 0;
@@ -351,6 +353,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
         otava::symbols::Context context;
         context.SetFileMap(&project->GetFileMap());
+        context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
@@ -359,6 +362,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
         module->Import(moduleMapper);
+        module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         context.SetInstantiationQueue(&instantiationQueue);
@@ -376,7 +380,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         moduleMapper.AddModule(project->ReleaseModule(file));
         std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false,
-            std::vector<std::string>()); 
+            std::vector<std::string>());
         module->Write(project->Root());
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
@@ -408,6 +412,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         otava::symbols::Context context;
         context.SetFileMap(&project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
+        context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
         context.GetBoundCompileUnit()->SetId(compileUnitId);
         otava::symbols::Module* module = project->GetModule(file);
@@ -416,6 +421,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
         module->Import(moduleMapper);
+        module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
         using LexerType = decltype(lexer);

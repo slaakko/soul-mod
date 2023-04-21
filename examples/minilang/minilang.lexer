@@ -9,7 +9,7 @@ lexer MinilangLexer
     rules
     {
         "{separators}" {}
-        "{identifier}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{identifier}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
         "{integer}" { return INTEGER_LITERAL; }
         ";" { return SEMICOLON; }
         "\(" { return LPAREN; }

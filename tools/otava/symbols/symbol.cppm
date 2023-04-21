@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -88,7 +88,7 @@ enum class SymbolKind : int32_t
     arrayTypeBegin, arrayTypeEnd,
     defaultBool, defaultSByte, defaultByte, defaultShort, defaultUShort, defaultInt, defaultUInt, defaultLong, defaultULong, defaultFloat, defaultDouble,
     defaultChar, defaultChar16, defaultChar32,
-    functionGroupTypeSymbol,
+    functionGroupTypeSymbol, friendSymbol,
     max
 };
 
@@ -179,6 +179,7 @@ public:
     bool IsValueSymbol() const;
     bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
     bool IsFunctionGroupTypeSymbol() const { return kind == SymbolKind::functionGroupTypeSymbol; }
+    bool IsNestedTypeSymbol() const { return kind == SymbolKind::nestedTypeSymbol; }
     bool IsDefaultCtor() const;
     bool IsCopyCtor() const;
     bool IsMoveCtor() const;

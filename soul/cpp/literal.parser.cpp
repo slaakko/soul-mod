@@ -7,18 +7,22 @@ import util;
 import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
+import soul.tool.token;
+import soul.punctuation.token;
 import soul.lex.slg;
 import soul.lex.spg;
 
 using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
+using namespace soul::tool::token;
+using namespace soul::punctuation::token;
 using namespace soul::lex::slg;
 using namespace soul::lex::spg;
 
 namespace soul::cpp::literal::parser {
 
-template<typename Lexer>
-soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -29,7 +33,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 5808325801866690561);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5808325801866690561);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)

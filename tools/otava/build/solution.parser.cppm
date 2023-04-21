@@ -12,15 +12,15 @@ using namespace otava::build_solution;
 
 export namespace otava::solution_parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct SolutionParser
 {
-    static std::unique_ptr<otava::build::Solution> Parse(Lexer& lexer);
-    static soul::parser::Match SolutionFile(Lexer& lexer);
-    static soul::parser::Match SolutionDeclaration(Lexer& lexer);
-    static soul::parser::Match FilePath(Lexer& lexer, otava::build::Solution* sln);
-    static soul::parser::Match ProjectFilePath(Lexer& lexer);
-    static soul::parser::Match QualifiedId(Lexer& lexer);
+    static std::unique_ptr<otava::build::Solution> Parse(LexerT& lexer);
+    static soul::parser::Match SolutionFile(LexerT& lexer);
+    static soul::parser::Match SolutionDeclaration(LexerT& lexer);
+    static soul::parser::Match FilePath(LexerT& lexer, otava::build::Solution* sln);
+    static soul::parser::Match ProjectFilePath(LexerT& lexer);
+    static soul::parser::Match QualifiedId(LexerT& lexer);
 };
 
 } // namespace otava::solution_parser

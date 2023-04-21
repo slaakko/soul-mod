@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -305,6 +305,7 @@ bool Symbol::CanInstall() const
         case SymbolKind::templateDeclarationSymbol:
         case SymbolKind::typenameConstraintSymbol:
         case SymbolKind::forwardClassDeclarationSymbol:
+        case SymbolKind::friendSymbol:
         case SymbolKind::variableSymbol:
         {
             return false; 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -101,7 +101,7 @@ void LinkingVisitor::Visit(soul::ast::spg::GrammarParser& parser)
     {
         std::string fullGrammarName = parser.GetParserFile()->ExportModule()->ModuleName();
         fullGrammarName.append(1, '.').append(parser.Name());
-        int32_t grammarId = std::hash<std::string>{}(fullGrammarName) & 0x7FFFFFFF;
+        int32_t grammarId = std::hash<std::string>()(fullGrammarName) & 0x7FFFFFFF;
         parser.SetId(grammarId);
     }
     if (stage == LinkingStage::addParsers)

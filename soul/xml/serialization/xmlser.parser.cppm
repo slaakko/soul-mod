@@ -12,40 +12,40 @@ using namespace soul::xml::serialization::ast;
 
 export namespace soul::xml::serialization::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct XmlSerParser
 {
-    static std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> Parse(Lexer& lexer);
-    static soul::parser::Match SourceFile(Lexer& lexer);
-    static soul::parser::Match NamespaceContent(Lexer& lexer, soul::xml::serialization::ast::NamespaceNode* ns);
-    static soul::parser::Match Declaration(Lexer& lexer);
-    static soul::parser::Match ForwardClassDeclaration(Lexer& lexer);
-    static soul::parser::Match UsingAliasDeclaration(Lexer& lexer);
-    static soul::parser::Match Definition(Lexer& lexer);
-    static soul::parser::Match Class(Lexer& lexer);
-    static soul::parser::Match Inheritance(Lexer& lexer, soul::xml::serialization::ast::ClassNode* cls);
-    static soul::parser::Match ClassContent(Lexer& lexer, soul::xml::serialization::ast::ClassNode* cls);
-    static soul::parser::Match MemberVariable(Lexer& lexer);
-    static soul::parser::Match Type(Lexer& lexer);
-    static soul::parser::Match ScalarType(Lexer& lexer);
-    static soul::parser::Match ClassType(Lexer& lexer);
-    static soul::parser::Match CppBlock(Lexer& lexer, bool implementation);
-    static soul::parser::Match Enum(Lexer& lexer);
-    static soul::parser::Match EnumContent(Lexer& lexer, soul::xml::serialization::ast::EnumTypeNode* enm);
-    static soul::parser::Match EnumConstant(Lexer& lexer);
-    static soul::parser::Match Namespace(Lexer& lexer);
-    static soul::parser::Match QualifiedId(Lexer& lexer);
-    static soul::parser::Match QualifiedCppId(Lexer& lexer);
-    static soul::parser::Match ExportModule(Lexer& lexer);
-    static soul::parser::Match Import(Lexer& lexer);
-    static soul::parser::Match ImportPrefix(Lexer& lexer);
-    static soul::parser::Match ExportKeyword(Lexer& lexer);
-    static soul::parser::Match ModuleKeyword(Lexer& lexer);
-    static soul::parser::Match ImportKeyword(Lexer& lexer);
-    static soul::parser::Match ImplementationPrefix(Lexer& lexer);
-    static soul::parser::Match InterfacePrefix(Lexer& lexer);
-    static soul::parser::Match ImplementationKeyword(Lexer& lexer);
-    static soul::parser::Match InterfaceKeyword(Lexer& lexer);
+    static std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> Parse(LexerT& lexer);
+    static soul::parser::Match SourceFile(LexerT& lexer);
+    static soul::parser::Match NamespaceContent(LexerT& lexer, soul::xml::serialization::ast::NamespaceNode* ns);
+    static soul::parser::Match Declaration(LexerT& lexer);
+    static soul::parser::Match ForwardClassDeclaration(LexerT& lexer);
+    static soul::parser::Match UsingAliasDeclaration(LexerT& lexer);
+    static soul::parser::Match Definition(LexerT& lexer);
+    static soul::parser::Match Class(LexerT& lexer);
+    static soul::parser::Match Inheritance(LexerT& lexer, soul::xml::serialization::ast::ClassNode* cls);
+    static soul::parser::Match ClassContent(LexerT& lexer, soul::xml::serialization::ast::ClassNode* cls);
+    static soul::parser::Match MemberVariable(LexerT& lexer);
+    static soul::parser::Match Type(LexerT& lexer);
+    static soul::parser::Match ScalarType(LexerT& lexer);
+    static soul::parser::Match ClassType(LexerT& lexer);
+    static soul::parser::Match CppBlock(LexerT& lexer, bool implementation);
+    static soul::parser::Match Enum(LexerT& lexer);
+    static soul::parser::Match EnumContent(LexerT& lexer, soul::xml::serialization::ast::EnumTypeNode* enm);
+    static soul::parser::Match EnumConstant(LexerT& lexer);
+    static soul::parser::Match Namespace(LexerT& lexer);
+    static soul::parser::Match QualifiedId(LexerT& lexer);
+    static soul::parser::Match QualifiedCppId(LexerT& lexer);
+    static soul::parser::Match ExportModule(LexerT& lexer);
+    static soul::parser::Match Import(LexerT& lexer);
+    static soul::parser::Match ImportPrefix(LexerT& lexer);
+    static soul::parser::Match ExportKeyword(LexerT& lexer);
+    static soul::parser::Match ModuleKeyword(LexerT& lexer);
+    static soul::parser::Match ImportKeyword(LexerT& lexer);
+    static soul::parser::Match ImplementationPrefix(LexerT& lexer);
+    static soul::parser::Match InterfacePrefix(LexerT& lexer);
+    static soul::parser::Match ImplementationKeyword(LexerT& lexer);
+    static soul::parser::Match InterfaceKeyword(LexerT& lexer);
 };
 
 } // namespace soul::xml::serialization::parser

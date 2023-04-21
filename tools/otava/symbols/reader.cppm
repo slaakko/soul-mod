@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,6 +14,7 @@ class Symbol;
 class Context;
 class SymbolTable;
 class SymbolMap;
+class FunctionDefinitionSymbolSet;
 
 class Reader
 {
@@ -26,6 +27,8 @@ public:
     void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
     SymbolTable* GetSymbolTable() const { return symbolTable; }
     void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
+    FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
 private:
     util::FileStream fileStream;
     util::BufferedStream bufferedStream;
@@ -33,6 +36,7 @@ private:
     Context* context;
     SymbolTable* symbolTable;
     SymbolMap* symbolMap;
+    FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
 };
 
 } // namespace otava::symbols

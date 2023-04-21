@@ -12,12 +12,12 @@ using namespace soul::ast::slg;
 
 export namespace soul::slg::expression::file::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ExpressionFileParser
 {
-    static std::unique_ptr<soul::ast::slg::ExpressionFile> Parse(Lexer& lexer);
-    static soul::parser::Match ExpressionFile(Lexer& lexer);
-    static soul::parser::Match Expression(Lexer& lexer);
+    static std::unique_ptr<soul::ast::slg::ExpressionFile> Parse(LexerT& lexer);
+    static soul::parser::Match ExpressionFile(LexerT& lexer);
+    static soul::parser::Match Expression(LexerT& lexer);
 };
 
 } // namespace soul::slg::expression::file::parser

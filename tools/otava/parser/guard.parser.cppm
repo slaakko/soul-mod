@@ -12,17 +12,17 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::guard {
 
-template<typename Lexer>
+template<typename LexerT>
 struct GuardParser
 {
-    static soul::parser::Match ConceptGuard(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match NotDefiningTypeSpecifierGuard(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AssumeTypeGuard(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match MemberFunctionGuard(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match SavedMemberFunctionBodyGuard(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match SavedCtorInitializerGuard(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match NoDeclSpecFunctionDeclarationGuard(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match NoDeclSpecFunctionDefinitionGuard(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ConceptGuard(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match NotDefiningTypeSpecifierGuard(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AssumeTypeGuard(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match MemberFunctionGuard(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SavedMemberFunctionBodyGuard(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SavedCtorInitializerGuard(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match NoDeclSpecFunctionDeclarationGuard(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match NoDeclSpecFunctionDefinitionGuard(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::guard

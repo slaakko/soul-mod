@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,7 +18,7 @@ lexer SoulTokenLexer
         "{ws}" { return WS; }
         "{newline}" { }
         "{line_comment}" { return LINE_COMMENT; }
-        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return KEYWORD; }
+        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return KEYWORD; }
         "{integer_literal}"{ return NUMBER; }
         "{floating_literal}"{ return NUMBER; }
         "{char_literal}" { return CHAR_LITERAL; }

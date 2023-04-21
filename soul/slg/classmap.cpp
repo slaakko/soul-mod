@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -8,6 +8,8 @@ module soul.slg.classmap;
 import util;
 
 namespace soul::slg {
+
+#ifndef OTAVA
 
 void MakeCompressedClassMap(const std::string& root, const std::string& classMapName, bool verbose)
 {
@@ -45,5 +47,17 @@ void MakeResourceFile(const std::string& root, const std::string& classMapName, 
         std::cout << "==> " << resourceFileName << std::endl;
     }
 }
+
+#else
+
+void MakeCompressedClassMap(const std::string& root, const std::string& classMapName, bool verbose)
+{
+}
+
+void MakeResourceFile(const std::string& root, const std::string& classMapName, bool verbose)
+{
+}
+
+#endif
 
 } // namespace soul::slg

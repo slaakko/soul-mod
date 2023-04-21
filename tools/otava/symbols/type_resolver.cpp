@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -26,6 +26,7 @@ import otava.symbols.class_templates;
 import otava.symbols.value;
 import otava.symbols.expression.binder;
 import otava.symbols.bound.tree;
+import otava.symbols.function.symbol;
 import util.unicode;
 
 namespace otava::symbols {
@@ -510,7 +511,7 @@ void TypeResolver::Visit(otava::ast::TypeIdNode& node)
 void TypeResolver::Visit(otava::ast::FunctionDeclaratorNode& node)
 {
     ResolveType();
-    Declaration declaration = ProcessDeclarator(type, &node, &node, flags, context);
+    Declaration declaration = ProcessDeclarator(type, &node, &node, flags, FunctionQualifiers::none, context);
     type = declaration.type;
 }
 

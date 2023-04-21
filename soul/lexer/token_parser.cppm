@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -348,7 +348,7 @@ int8_t ParseSByte(const Char* begin, const Char* end, LexerBaseT* lexer, int lin
     }
     else
     {
-        throw std::runtime_error("sbyte token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("sbyte token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -362,7 +362,7 @@ uint8_t ParseByte(const Char* begin, const Char* end, LexerBaseT* lexer, int lin
     }
     else
     {
-        throw std::runtime_error("byte token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("byte token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -376,7 +376,7 @@ int16_t ParseShort(const Char* begin, const Char* end, LexerBaseT* lexer, int li
     }
     else
     {
-        throw std::runtime_error("short token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("short token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -390,7 +390,7 @@ uint16_t ParseUShort(const Char* begin, const Char* end, LexerBaseT* lexer, int 
     }
     else
     {
-        throw std::runtime_error("ushort token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("ushort token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -404,7 +404,7 @@ int32_t ParseInt(const Char* begin, const Char* end, LexerBaseT* lexer, int line
     }
     else
     {
-        throw std::runtime_error("integer token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("integer token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -418,7 +418,7 @@ uint32_t ParseUInt(const Char* begin, const Char* end, LexerBaseT* lexer, int li
     }
     else
     {
-        throw std::runtime_error("uint token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("uint token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -432,7 +432,7 @@ int64_t ParseLong(const Char* begin, const Char* end, LexerBaseT* lexer, int lin
     }
     else
     {
-        throw std::runtime_error("long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -446,7 +446,7 @@ uint64_t ParseULong(const Char* begin, const Char* end, LexerBaseT* lexer, int l
     }
     else
     {
-        throw std::runtime_error("unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -460,7 +460,7 @@ uint64_t ParseHexULong(const Char* begin, const Char* end, LexerBaseT* lexer, in
     }
     else
     {
-        throw std::runtime_error("hexadecimal unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("hexadecimal unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -474,7 +474,7 @@ uint64_t ParseOctalULong(const Char* begin, const Char* end, LexerBaseT* lexer, 
     }
     else
     {
-        throw std::runtime_error("octal unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("octal unsigned long long token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -488,7 +488,7 @@ float ParseFloat(const Char* begin, const Char* end, LexerBaseT* lexer, int line
     }
     else
     {
-        throw std::runtime_error("float token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("float token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
@@ -502,14 +502,14 @@ double ParseDouble(const Char* begin, const Char* end, LexerBaseT* lexer, int li
     }
     else
     {
-        throw std::runtime_error("double token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("double token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 
 template<typename Char, typename LexerBaseT>
 bool ParseBool(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    std::string s = ToString(begin, end);
+    std::string s = soul::lexer::ToString(begin, end);
     if (s == "true")
     {
         return true;
@@ -520,7 +520,7 @@ bool ParseBool(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
     }
     else
     {
-        throw std::runtime_error("Boolean token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + ToString(begin, end) + ")");
+        throw std::runtime_error("Boolean token expected in '" + lexer->FileName() + "' line " + std::to_string(line) + ": (" + soul::lexer::ToString(begin, end) + ")");
     }
 }
 

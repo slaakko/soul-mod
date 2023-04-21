@@ -14,18 +14,18 @@ using namespace soul::rex::nfa;
 
 export namespace soul::rex::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct RexParser
 {
-    static soul::rex::nfa::Nfa Parse(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match RegularExpression(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match Alternative(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match Catenation(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match Repetition(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match Primary(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match Class(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match Range(Lexer& lexer, soul::rex::context::Context* context);
-    static soul::parser::Match Char(Lexer& lexer);
+    static soul::rex::nfa::Nfa Parse(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match RegularExpression(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match Alternative(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match Catenation(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match Repetition(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match Primary(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match Class(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match Range(LexerT& lexer, soul::rex::context::Context* context);
+    static soul::parser::Match Char(LexerT& lexer);
 };
 
 } // namespace soul::rex::parser

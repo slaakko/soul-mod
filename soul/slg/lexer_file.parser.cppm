@@ -12,19 +12,19 @@ using namespace soul::ast::slg;
 
 export namespace soul::slg::lexer::file::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct LexerFileParser
 {
-    static std::unique_ptr<soul::ast::slg::LexerFile> Parse(Lexer& lexer);
-    static soul::parser::Match LexerFile(Lexer& lexer);
-    static soul::parser::Match Imports(Lexer& lexer, soul::ast::slg::LexerFile* lexerFile);
-    static soul::parser::Match LexerContent(Lexer& lexer, soul::ast::slg::Lexer* lxr);
-    static soul::parser::Match Rules(Lexer& lexer, soul::ast::slg::Lexer* lxr);
-    static soul::parser::Match Rule(Lexer& lexer);
-    static soul::parser::Match Variables(Lexer& lexer, soul::ast::slg::Lexer* lxr);
-    static soul::parser::Match Variable(Lexer& lexer);
-    static soul::parser::Match Actions(Lexer& lexer, soul::ast::slg::Lexer* lxr);
-    static soul::parser::Match Action(Lexer& lexer);
+    static std::unique_ptr<soul::ast::slg::LexerFile> Parse(LexerT& lexer);
+    static soul::parser::Match LexerFile(LexerT& lexer);
+    static soul::parser::Match Imports(LexerT& lexer, soul::ast::slg::LexerFile* lexerFile);
+    static soul::parser::Match LexerContent(LexerT& lexer, soul::ast::slg::Lexer* lxr);
+    static soul::parser::Match Rules(LexerT& lexer, soul::ast::slg::Lexer* lxr);
+    static soul::parser::Match Rule(LexerT& lexer);
+    static soul::parser::Match Variables(LexerT& lexer, soul::ast::slg::Lexer* lxr);
+    static soul::parser::Match Variable(LexerT& lexer);
+    static soul::parser::Match Actions(LexerT& lexer, soul::ast::slg::Lexer* lxr);
+    static soul::parser::Match Action(LexerT& lexer);
 };
 
 } // namespace soul::slg::lexer::file::parser

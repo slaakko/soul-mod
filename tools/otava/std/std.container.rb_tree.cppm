@@ -53,6 +53,7 @@ public:
     using value_type = T;
 
     rb_node(const value_type& value_, rb_node_base* parent_) : rb_node_base(parent_), val(value_) {}
+    rb_node(value_type&& value_, rb_node_base* parent_) : rb_node_base(parent_), val(std::move(value_)) {}
     const value_type& value() const { return val; }
     value_type& value() { return val; }
     value_type* value_ptr() { return &val; }
@@ -217,6 +218,45 @@ public:
         }
         return std::make_pair(j, false);
     }
+    std::pair<iterator, bool> insert(value_type&& value)
+    {
+        if (!header) init();
+        node_type* x = root();
+        node_type* p = header.get();
+        bool c = true;
+        while (x)
+        {
+            p = x;
+            c = comp(key_of(value), key_of(x->value()));
+            if (c)
+            {
+                x = static_cast<node_type*>(x->get_left());
+            }
+            else
+            {
+                x = static_cast<node_type*>(x->get_right());
+            }
+        }
+        iterator j(p);
+        if (c)
+        {
+            if (j == begin())
+            {
+                iterator it = insert(x, p, std::move(value));
+                return std::make_pair(it, true);
+            }
+            else
+            {
+                --j;
+            }
+        }
+        if (comp(key_of(j.node()->value()), key_of(value)))
+        {
+            iterator it = insert(x, p, std::move(value));
+            return std::make_pair(it, true);
+        }
+        return std::make_pair(j, false);
+    }
     iterator find(const key_type& key)
     {
         if (empty()) return end();
@@ -355,6 +395,35 @@ private:
         if (!header) init();
         node_type* n = new node_type(value, p);
         if (p == header.get() || x != nullptr || comp(key_of(value), key_of(p->value())))
+        {
+            p->set_left(n);
+            if (p == header.get())
+            {
+                set_root(n);
+                set_rightmost(n);
+            }
+            else if (p == leftmost())
+            {
+                set_leftmost(n);
+            }
+        }
+        else
+        {
+            p->set_right(n);
+            if (p == rightmost())
+            {
+                set_rightmost(n);
+            }
+        }
+        rebalance_after_insert(n, root_ptr());
+        ++sz;
+        return iterator(n);
+    }
+    iterator insert(node_type* x, node_type* p, value_type&& value)
+    {
+        if (!header) init();
+        node_type* n = new node_type(std::move(value), p);
+        if (p == header.get() || x != nullptr || comp(key_of(n->value()), key_of(p->value())))
         {
             p->set_left(n);
             if (p == header.get())

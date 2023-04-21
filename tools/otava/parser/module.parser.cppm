@@ -12,20 +12,20 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::modules {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ModuleParser
 {
-    static soul::parser::Match ModuleDeclaration(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ModuleName(Lexer& lexer);
-    static soul::parser::Match ExportDeclaration(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ImportDeclaration(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ModulePartition(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ExportKeyword(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ImportKeyword(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ModuleKeyword(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match GlobalModuleFragment(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match PrivateModuleFragment(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match HeaderName(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ModuleDeclaration(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ModuleName(LexerT& lexer);
+    static soul::parser::Match ExportDeclaration(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ImportDeclaration(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ModulePartition(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ExportKeyword(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ImportKeyword(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ModuleKeyword(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match GlobalModuleFragment(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match PrivateModuleFragment(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match HeaderName(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::modules

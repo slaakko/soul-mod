@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -234,7 +234,7 @@ RegValue* Function::GetRegRef(const SourcePos& sourcePos, Type* type, int32_t re
         }
         else
         {
-            Error("error referencing register value " + std::to_string(reg) + ": type conflick", sourcePos, context, regValue->GetSourcePos());
+            Error("error referencing register value " + std::to_string(reg) + ": type conflict", sourcePos, context, regValue->GetSourcePos());
         }
     }
     else

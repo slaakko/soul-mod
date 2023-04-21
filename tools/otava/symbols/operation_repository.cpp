@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -908,7 +908,6 @@ class ClassDefaultCtor : public FunctionDefinitionSymbol
 public:
     ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ClassTypeSymbol* ClassType() const { return classType; }
-    std::string IrName(Context* context) const override { return irName; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -920,7 +919,8 @@ ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast:
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "default_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "default_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    SetFixedIrName(irName);
 }
 
 class ClassDefaultCtorOperation : public Operation
@@ -1040,7 +1040,7 @@ void ClassDefaultCtorOperation::GenerateImplementation(ClassDefaultCtor* classDe
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
 }
 
@@ -1049,7 +1049,6 @@ class ClassCopyCtor : public FunctionDefinitionSymbol
 public:
     ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ClassTypeSymbol* ClassType() const { return classType; }
-    std::string IrName(Context* context) const override { return irName; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -1064,7 +1063,8 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "copy_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "copy_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    SetFixedIrName(irName);
 }
 
 class ClassCopyCtorOperation : public Operation
@@ -1194,7 +1194,7 @@ void ClassCopyCtorOperation::GenerateImplementation(ClassCopyCtor* classCopyCtor
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
 }
 
@@ -1203,7 +1203,6 @@ class ClassMoveCtor : public FunctionDefinitionSymbol
 public:
     ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ClassTypeSymbol* ClassType() const { return classType; }
-    std::string IrName(Context* context) const override { return irName; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -1218,7 +1217,8 @@ ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "move_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "move_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    SetFixedIrName(irName);
 }
 
 class ClassMoveCtorOperation : public Operation
@@ -1358,7 +1358,7 @@ void ClassMoveCtorOperation::GenerateImplementation(ClassMoveCtor* classMoveCtor
         expressionStatement->SetExpr(memberConstructorCall.release(), sourcePos, context);
         context->GetBoundFunction()->Body()->AddStatement(expressionStatement);
     }
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
 }
 
@@ -1367,7 +1367,6 @@ class ClassCopyAssignment: public FunctionDefinitionSymbol
 public:
     ClassCopyAssignment(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ClassTypeSymbol* ClassType() const { return classType; }
-    std::string IrName(Context* context) const override { return irName; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -1382,7 +1381,8 @@ ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(classType->AddLValueRef(context), context);
-    irName = "copy_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "copy_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    SetFixedIrName(irName);
 }
 
 class ClassCopyAssignmentOperation : public Operation
@@ -1483,7 +1483,7 @@ void ClassCopyAssignmentOperation::GenerateImplementation(ClassCopyAssignment* c
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
 }
 
@@ -1492,7 +1492,6 @@ class ClassMoveAssignment : public FunctionDefinitionSymbol
 public:
     ClassMoveAssignment(ClassTypeSymbol* classType_, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     ClassTypeSymbol* ClassType() const { return classType; }
-    std::string IrName(Context* context) const override { return irName; }
 private:
     ClassTypeSymbol* classType;
     std::string irName;
@@ -1507,7 +1506,8 @@ ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(classType->AddLValueRef(context), context);
-    irName = "move_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName())) + "_" + context->GetBoundCompileUnit()->Id();
+    irName = "move_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    SetFixedIrName(irName);
 }
 
 class ClassMoveAssignmentOperation : public Operation
@@ -1614,7 +1614,7 @@ void ClassMoveAssignmentOperation::GenerateImplementation(ClassMoveAssignment* c
     BoundExpressionNode* derefThisExpr = BindExpression(&derefNode, context);
     returnStatement->SetExpr(derefThisExpr, sourcePos, context);
     context->GetBoundFunction()->Body()->AddStatement(returnStatement);
-    context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+    context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
     context->PopBoundFunction();
 }
 

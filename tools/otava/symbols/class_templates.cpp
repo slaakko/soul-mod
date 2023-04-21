@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -22,6 +22,7 @@ import otava.symbols.reader;
 import otava.symbols.visitor;
 import otava.symbols.namespaces;
 import otava.symbols.function.group.symbol;
+import otava.symbols.class_group.symbol;
 import otava.ast;
 import util.unicode;
 import util.sha1;
@@ -83,6 +84,11 @@ void ClassTemplateSpecializationSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(util::nil_uuid());
     }
+    writer.GetBinaryStreamWriter().WriteULEB128UInt(instantiatedVirtualFunctionSpecializations.size());
+    for (auto nf : instantiatedVirtualFunctionSpecializations)
+    {
+        writer.GetBinaryStreamWriter().Write(nf->Id());
+    }
 }
 
 void ClassTemplateSpecializationSymbol::Read(Reader& reader)
@@ -101,6 +107,13 @@ void ClassTemplateSpecializationSymbol::Read(Reader& reader)
         ids.push_back(std::make_pair(id, isType));
     }
     reader.GetBinaryStreamReader().ReadUuid(destructorId);
+    uint32_t nfids = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (uint32_t i = 0; i < nfids; ++i)
+    {
+        util::uuid vfid;
+        reader.GetBinaryStreamReader().ReadUuid(vfid);
+        instantiatedVirtualFunctionSpecializationIds.push_back(vfid);
+    }
 }
 
 void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
@@ -126,6 +139,15 @@ void ClassTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
     {
         destructor = symbolTable.GetFunctionDefinition(destructorId);
     }
+    for (const auto& vfId : instantiatedVirtualFunctionSpecializationIds)
+    {
+        FunctionSymbol* vf = symbolTable.GetFunction(vfId);
+        if (vf)
+        {
+            instantiatedVirtualFunctionSpecializations.push_back(vf);
+        }
+    }
+    symbolTable.AddClassTemplateSpecializationToSet(this);
 }
 
 void ClassTemplateSpecializationSymbol::Accept(Visitor& visitor)
@@ -207,6 +229,39 @@ bool ClassTemplateSpecializationSymbol::IsComplete(std::set<const TypeSymbol*>& 
         }
     }
     return true;
+}
+
+void ClassTemplateSpecializationSymbol::AddInstantiatedVirtualFunctionSpecialization(FunctionSymbol* specialization)
+{
+    if (std::find(instantiatedVirtualFunctionSpecializations.begin(), instantiatedVirtualFunctionSpecializations.end(), specialization) == 
+        instantiatedVirtualFunctionSpecializations.end())
+    {
+        instantiatedVirtualFunctionSpecializations.push_back(specialization);
+    }
+}
+
+FunctionSymbol* ClassTemplateSpecializationSymbol::GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const
+{
+    bool found = false;
+    bool def = newcomer->IsFunctionDefinitionSymbol();
+    for (auto prev : instantiatedVirtualFunctionSpecializations)
+    {
+        bool prevDef = prev->IsFunctionDefinitionSymbol();
+        if (def == prevDef && FunctionMatches(newcomer, prev, context))
+        {
+            return prev;
+        }
+    }
+    return nullptr;
+}
+
+bool ClassTemplateSpecializationSymbol::ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const
+{
+    for (const auto& instance : instantiatedVirtualFunctionSpecializations)
+    {
+        if (instance == specialization) return true;
+    }
+    return false;
 }
 
 std::u32string MakeSpecializationName(TypeSymbol* templateSymbol, const std::vector<Symbol*>& templateArguments)
@@ -300,6 +355,71 @@ void InstantiateDestructor(ClassTemplateSpecializationSymbol* specialization, co
     specialization->SetInstantiatingDestructor(false);
 }
 
+class VirtualFunctionNodeClassifierVisitor : public otava::ast::DefaultVisitor
+{
+public:
+    VirtualFunctionNodeClassifierVisitor();
+    void Visit(otava::ast::VirtualNode& node);
+    void Visit(otava::ast::OverrideNode& node);
+    void Visit(otava::ast::FinalNode& node);
+    bool Value() const { return value; }
+private:
+    bool value;
+};
+
+VirtualFunctionNodeClassifierVisitor::VirtualFunctionNodeClassifierVisitor() : value(false)
+{
+}
+
+void VirtualFunctionNodeClassifierVisitor::Visit(otava::ast::VirtualNode& node)
+{
+    value = true;
+}
+
+void VirtualFunctionNodeClassifierVisitor::Visit(otava::ast::OverrideNode& node)
+{
+    value = true;
+}
+
+void VirtualFunctionNodeClassifierVisitor::Visit(otava::ast::FinalNode& node)
+{
+    value = true;
+}
+
+bool IsVirtualFunctionNode(otava::ast::Node* node)
+{
+    VirtualFunctionNodeClassifierVisitor visitor;
+    node->Accept(visitor);
+    return visitor.Value();
+}
+
+void InstantiateVirtualFunctions(ClassTemplateSpecializationSymbol* specialization, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
+    std::set<const Symbol*> visited;
+    std::vector<FunctionSymbol*> virtualFunctions;
+    if (!specialization->IsTemplateParameterInstantiation(context, visited))
+    {
+        ClassTypeSymbol* classTemplate = specialization->ClassTemplate();
+        for (const auto& memFn : classTemplate->MemberFunctions())
+        {
+            otava::ast::Node* node = context->GetSymbolTable()->GetNode(memFn);
+            if (node && IsVirtualFunctionNode(node))
+            {
+                virtualFunctions.push_back(memFn);
+            }
+        }
+    }
+    for (const auto& virtualMemFn : virtualFunctions)
+    {
+        std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
+        FunctionSymbol* instance = InstantiateMemFnOfClassTemplate(virtualMemFn, specialization, templateParameterMap, sourcePos, context);
+        specialization->AddInstantiatedVirtualFunctionSpecialization(instance);
+    }
+    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+}
+
 ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArgs, const soul::ast::SourcePos& sourcePos, 
     Context* context)
 {
@@ -309,6 +429,11 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         classTemplate = specialization->ClassTemplate();
     }
     TemplateDeclarationSymbol* templateDeclaration = classTemplate->ParentTemplateDeclaration();
+    if (!templateDeclaration)
+    {
+        ThrowException("otava.symbols.class_templates: template declaration not found from class template '" + util::ToUtf8(classTemplate->Name()) + "'", 
+            sourcePos, context);
+    }
     int arity = templateDeclaration->Arity();
     ClassTemplateSpecializationSymbol* specialization = context->GetSymbolTable()->MakeClassTemplateSpecialization(classTemplate, templateArgs);
     int m = templateArgs.size();
@@ -339,7 +464,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
     int argCount = templateArgs.size();
     if (argCount > arity)
     {
-        ThrowException("otava.symbols.templates: wrong number of template args for instantiating class template '" +
+        ThrowException("otava.symbols.class_templates: wrong number of template args for instantiating class template '" +
             util::ToUtf8(classTemplate->Name()) + "'",
             sourcePos, context);
     }
@@ -415,6 +540,7 @@ ClassTemplateSpecializationSymbol* InstantiateClassTemplate(ClassTypeSymbol* cla
         {
             AddClassInfo(specialization, context);
             InstantiateDestructor(specialization, sourcePos, context);
+            InstantiateVirtualFunctions(specialization, sourcePos, context);
         }
     }
     catch (const std::exception& ex)
@@ -533,6 +659,14 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
     if (node->IsFunctionDefinitionNode())
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);
+        if (functionDefinitionNode->FunctionBody()->IsDefaultedOrDeletedFunctionNode())
+        {
+            otava::ast::DefaultedOrDeletedFunctionNode* bodyNode = static_cast<otava::ast::DefaultedOrDeletedFunctionNode*>(functionDefinitionNode->FunctionBody());
+            if (bodyNode->DefaultOrDelete()->Kind() == otava::ast::NodeKind::deleteNode)
+            {
+                ThrowException("attempt to instantiate a deleted function", sourcePos, context);
+            }
+        }
         ClassTypeSymbol* parentClass = memFn->ParentClassType();
         if (parentClass)
         {
@@ -579,13 +713,31 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                         FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
                         context->SetMemFunDefSymbolIndex(memFnDefSymbol->DefIndex());
                     }
-                    context->SetSpecialization(nullptr);
+                    instantiator.SetFunctionNode(functionDefinitionNode);
+                    context->SetClassTemplateSpecialization(functionDefinitionNode, classTemplateSpecialization);
                     functionDefinitionNode->Accept(instantiator);
                     context->SetMemFunDefSymbolIndex(-1);
-                    specialization = context->GetSpecialization();
-                    specializationName = util::ToUtf8(specialization->FullName());
-                    if (specialization->IsFunctionDefinitionSymbol())
+                    specialization = instantiator.GetSpecialization();
+                    context->RemoveSpecialization(functionDefinitionNode);
+                    context->RemoveClassTemplateSpecialization(functionDefinitionNode);
+                    if (classTemplateSpecialization->ContainsVirtualFunctionSpecialization(specialization))
                     {
+                        context->PopFlags();
+                        context->GetSymbolTable()->EndScope();
+                        context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+                        if (prevParseMemberFunction)
+                        {
+                            context->SetFlag(ContextFlags::parseMemberFunction);
+                        }
+                        return specialization;
+                    }
+                    if (specialization && specialization->IsFunctionDefinitionSymbol())
+                    {
+                        if (specialization->IsVirtual())
+                        {
+                            classTemplateSpecialization->AddInstantiatedVirtualFunctionSpecialization(specialization);
+                        }
+                        specializationName = util::ToUtf8(specialization->Name());
                         FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(specialization);
                         classTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
                         context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
@@ -595,11 +747,15 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                         context->PopFlags();
                         if (specialization->IsBound())
                         {
-                            context->GetBoundCompileUnit()->AddBoundNode(context->ReleaseBoundFunction(), context);
+                            context->GetBoundCompileUnit()->AddBoundNode(std::unique_ptr<BoundNode>(context->ReleaseBoundFunction()), context);
                         }
                         context->PopBoundFunction();
                         instantiationScope.PopParentScope();
                         functionDefinition->GetScope()->ClearParentScopes();
+                    }
+                    else
+                    {
+                        ThrowException("otava.symbols.class_templates: function definition symbol expected", node->GetSourcePos(), context);
                     }
                 }
                 catch (const std::exception& ex)
@@ -673,12 +829,37 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                         FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
                         context->SetMemFunDefSymbolIndex(memFnDefSymbol->DefIndex());
                     }
-                    context->SetSpecialization(nullptr);
+                    instantiator.SetFunctionNode(node);
+                    context->SetClassTemplateSpecialization(node, classTemplateSpecialization);
                     node->Accept(instantiator);
                     context->PopFlags();
                     context->SetMemFunDefSymbolIndex(-1);
-                    specialization = context->GetSpecialization();
-                    specializationName = util::ToUtf8(specialization->FullName());
+                    specialization = instantiator.GetSpecialization();
+                    context->RemoveSpecialization(node);
+                    context->RemoveClassTemplateSpecialization(node);
+                    if (specialization)
+                    {
+                        specializationName = util::ToUtf8(specialization->FullName());
+                        if (classTemplateSpecialization->ContainsVirtualFunctionSpecialization(specialization))
+                        {
+                            context->PopFlags();
+                            context->GetSymbolTable()->EndScope();
+                            context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
+                            if (prevParseMemberFunction)
+                            {
+                                context->SetFlag(ContextFlags::parseMemberFunction);
+                            }
+                            return specialization;
+                        }
+                        if (specialization->IsVirtual())
+                        {
+                            classTemplateSpecialization->AddInstantiatedVirtualFunctionSpecialization(specialization);
+                        }
+                    }
+                    else
+                    {
+                        ThrowException("otava.symbols.function_templates: function symbol expected", node->GetSourcePos(), context);
+                    }
                     instantiationScope.PopParentScope();
                 }
                 catch (const std::exception& ex)

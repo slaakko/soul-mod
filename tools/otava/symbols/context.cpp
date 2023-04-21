@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -23,21 +23,32 @@ Context::Context() :
     boundCompileUnit(new BoundCompileUnitNode()),
     boundFunction(nullptr),
     fileMap(nullptr),
-    specialization(nullptr),
-    functionDefinitionNode(nullptr),
+    functionNode(nullptr),
     aliasType(nullptr),
     ptr(nullptr),
     memFunDefSymbolIndex(-1),
     rejectTemplateId(false),
     switchCondType(nullptr),
     instantiationQueue(nullptr),
-    declaredInitializerType(nullptr)
+    declaredInitializerType(nullptr),
+    functionDefinitionSymbolSet(nullptr),
+    templateParameterMap(nullptr)
 {
 }
 
 void Context::SetLexer(Lexer* lexer_)
 {
     lexer = lexer_;
+}
+
+void Context::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_)
+{
+    functionDefinitionSymbolSet = functionDefinitionSymbolSet_;
+}
+
+FunctionDefinitionSymbolSet* Context::GetFunctionDefinitionSymbolSet() const
+{
+    return functionDefinitionSymbolSet;
 }
 
 void Context::SetSymbolTable(SymbolTable* symbolTable_)
@@ -202,6 +213,16 @@ void Context::PopBoundFunction()
     boundFunctionStack.pop();
 }
 
+void Context::AddBoundVTabFunction(BoundFunctionNode* node)
+{
+    boundVTabFunctions.push_back(std::unique_ptr<BoundFunctionNode>(node));
+}
+
+void Context::ClearBoundVTabFunctions()
+{
+    boundVTabFunctions.clear();
+}
+
 void Context::PushSwitchCondType(TypeSymbol* switchCondType_)
 {
     switchCondTypeStack.push(switchCondType);
@@ -229,21 +250,76 @@ void Context::ClearTemporaryAliasTypes()
     temporaryAliasTypes.clear();
 }
 
-void Context::SetSpecialization(FunctionSymbol* specialization_) 
-{ 
-    if (specialization_ == nullptr)
+FunctionSymbol* Context::GetSpecialization(otava::ast::Node* functionNode)  const
+{
+    auto it = specializationMap.find(functionNode);
+    if (it != specializationMap.end())
     {
-        specialization = nullptr;
+        FunctionSymbol* specialization = it->second;
+        return specialization;
     }
-    else if (specialization == nullptr)
+    else
     {
-        specialization = specialization_;
+        return nullptr;
     }
 }
 
-FunctionSymbol* Context::GetSpecialization() const 
-{ 
-    return specialization; 
+void Context::SetSpecialization(FunctionSymbol* specialization, otava::ast::Node* functionNode)
+{
+    if (functionNode)
+    {
+        specializationMap[functionNode] = specialization;
+    }
+}
+
+void Context::RemoveSpecialization(otava::ast::Node* functionNode)
+{
+    specializationMap.erase(functionNode);
+}
+
+ClassTemplateSpecializationSymbol* Context::GetClassTemplateSpecialization(otava::ast::Node* functionNode) const
+{
+    auto it = classTemplateSpecializationMap.find(functionNode);
+    if (it != classTemplateSpecializationMap.end())
+    {
+        ClassTemplateSpecializationSymbol* sp = it->second;
+        return sp;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+void Context::SetClassTemplateSpecialization(otava::ast::Node* functionNode, ClassTemplateSpecializationSymbol* sp)
+{
+    if (functionNode)
+    {
+        classTemplateSpecializationMap[functionNode] = sp;
+    }
+}
+
+void Context::RemoveClassTemplateSpecialization(otava::ast::Node* functionNode)
+{
+    classTemplateSpecializationMap.erase(functionNode);
+}
+
+
+void Context::SetInstantiationIrName(const std::string& instantiationIrName_)
+{
+    instantiationIrName = instantiationIrName_;
+}
+
+void Context::PushTemplateParameterMap(std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParamMap)
+{
+    templateParameterMapStack.push(templateParameterMap);
+    templateParameterMap = templateParamMap;
+}
+
+void Context::PopTemplateParameterMap()
+{
+    templateParameterMap = templateParameterMapStack.top();
+    templateParameterMapStack.pop();
 }
 
 } // namespace otava::symbols

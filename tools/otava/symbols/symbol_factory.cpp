@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -32,6 +32,7 @@ import otava.symbols.templates;
 import otava.symbols.variable.symbol;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.fundamental.type.conversion;
+import otava.symbols.friends;
 import otava.ast.error;
 
 namespace otava::symbols {
@@ -440,6 +441,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         case SymbolKind::functionGroupTypeSymbol:
         {
             return new FunctionGroupTypeSymbol(name);
+        }
+        case SymbolKind::friendSymbol:
+        {
+            return new FriendSymbol(name);
         }
     }
     otava::ast::SetExceptionThrown();

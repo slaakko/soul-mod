@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -106,6 +106,7 @@ void SimpleAssemblyCodeGenerator::Visit(Function& function)
     }
     else
     {
+        file.GetDeclarationSection().AddPublicDataDeclaration(new otava::assembly::PublicDataDeclaration(function.Name()));
         currentFunction = &function;
         Ctx()->AssemblyContext().ResetRegisterPool();
         frameLocations.clear();

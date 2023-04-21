@@ -41,7 +41,7 @@ struct RegExLexer
 
     static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
-        ClassMap<Char>* classmap = lexer.GetClassMap();
+        soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
         int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
@@ -3257,9 +3257,9 @@ struct RegExLexer
 };
 
 template<typename Char>
-ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static ClassMap<Char>* classmap = MakeClassMap<Char>("soul.lex.re.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("soul.lex.re.classmap");
     return classmap;
 }
 

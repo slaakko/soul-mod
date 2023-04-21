@@ -15,8 +15,8 @@ using namespace otava::lexer;
 
 namespace otava::parser::punctuation {
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::Semicolon(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::Semicolon(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -27,7 +27,7 @@ soul::parser::Match PunctuationParser<Lexer>::Semicolon(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Semicolon");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921281);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921281);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -63,8 +63,8 @@ soul::parser::Match PunctuationParser<Lexer>::Semicolon(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::Comma(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::Comma(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -75,7 +75,7 @@ soul::parser::Match PunctuationParser<Lexer>::Comma(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Comma");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921282);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921282);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -111,8 +111,8 @@ soul::parser::Match PunctuationParser<Lexer>::Comma(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::Quest(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::Quest(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -123,7 +123,7 @@ soul::parser::Match PunctuationParser<Lexer>::Quest(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Quest");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921283);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921283);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -159,8 +159,8 @@ soul::parser::Match PunctuationParser<Lexer>::Quest(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::Colon(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::Colon(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -171,7 +171,7 @@ soul::parser::Match PunctuationParser<Lexer>::Colon(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Colon");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921284);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921284);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -207,8 +207,8 @@ soul::parser::Match PunctuationParser<Lexer>::Colon(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::ColonColon(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::ColonColon(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -219,7 +219,7 @@ soul::parser::Match PunctuationParser<Lexer>::ColonColon(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ColonColon");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921285);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921285);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -255,8 +255,8 @@ soul::parser::Match PunctuationParser<Lexer>::ColonColon(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::Ellipsis(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::Ellipsis(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -267,7 +267,7 @@ soul::parser::Match PunctuationParser<Lexer>::Ellipsis(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Ellipsis");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921286);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921286);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -303,8 +303,8 @@ soul::parser::Match PunctuationParser<Lexer>::Ellipsis(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::LParen(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::LParen(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -315,7 +315,7 @@ soul::parser::Match PunctuationParser<Lexer>::LParen(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LParen");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921287);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921287);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -351,8 +351,8 @@ soul::parser::Match PunctuationParser<Lexer>::LParen(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::RParen(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::RParen(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -363,7 +363,7 @@ soul::parser::Match PunctuationParser<Lexer>::RParen(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RParen");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921288);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921288);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -399,8 +399,8 @@ soul::parser::Match PunctuationParser<Lexer>::RParen(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::LBracket(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::LBracket(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -411,7 +411,7 @@ soul::parser::Match PunctuationParser<Lexer>::LBracket(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LBracket");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921289);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921289);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -447,8 +447,8 @@ soul::parser::Match PunctuationParser<Lexer>::LBracket(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::RBracket(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::RBracket(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -459,7 +459,7 @@ soul::parser::Match PunctuationParser<Lexer>::RBracket(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RBracket");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921290);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921290);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -495,8 +495,8 @@ soul::parser::Match PunctuationParser<Lexer>::RBracket(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::LBrace(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::LBrace(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -507,7 +507,7 @@ soul::parser::Match PunctuationParser<Lexer>::LBrace(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "LBrace");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921291);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921291);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -543,8 +543,8 @@ soul::parser::Match PunctuationParser<Lexer>::LBrace(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::RBrace(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::RBrace(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -555,7 +555,7 @@ soul::parser::Match PunctuationParser<Lexer>::RBrace(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "RBrace");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921292);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921292);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -591,8 +591,8 @@ soul::parser::Match PunctuationParser<Lexer>::RBrace(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match PunctuationParser<Lexer>::Assign(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match PunctuationParser<LexerT>::Assign(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -603,7 +603,7 @@ soul::parser::Match PunctuationParser<Lexer>::Assign(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Assign");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1955786072029921293);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1955786072029921293);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

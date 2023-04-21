@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -28,7 +28,8 @@ public:
     FunctionDefinitionSymbol* GetSingleDefinition();
     void AddFunction(FunctionSymbol* function);
     const std::vector<FunctionSymbol*>& Functions() const { return functions; }
-    FunctionSymbol* ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const;
+    FunctionSymbol* ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, const std::vector<TypeSymbol*>& specialization,
+        TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization) const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -36,7 +37,9 @@ public:
     void Merge(FunctionGroupSymbol* that);
     FunctionDefinitionSymbol* GetFunctionDefinition(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const;
     void AddFunctionDefinition(FunctionDefinitionSymbol* definition_, Context* context);
+    void SetVTabIndex(FunctionSymbol* function, int vtabIndex, Context* context);
     void CollectViableFunctions(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
+    FunctionSymbol* GetMatchingSpecialization(FunctionSymbol* that, Context* context) const;
 private:
     void CollectBestMatchingViableFunctionTemplates(int arity, const std::vector<TypeSymbol*>& templateArgs, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     std::vector<FunctionSymbol*> functions;

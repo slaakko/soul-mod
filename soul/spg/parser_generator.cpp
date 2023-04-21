@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -25,7 +25,7 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
     std::filesystem::path spgFilePath = spgFile->FilePath();
     std::filesystem::path root = spgFilePath.parent_path();
     std::filesystem::path interfaceFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cppm");
-    std::ofstream interfaceFile(interfaceFilePath);
+    std::ofstream interfaceFile(interfaceFilePath.generic_string());
     util::CodeFormatter interfaceFormatter(interfaceFile);
     std::string moduleName = spgFile->ProjectName() + ".rules";
     interfaceFormatter.WriteLine("export module " + moduleName + ";");
@@ -43,7 +43,7 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
     }
 
     std::filesystem::path implementationFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cpp");
-    std::ofstream implementationFile(implementationFilePath);
+    std::ofstream implementationFile(implementationFilePath.generic_string());
     util::CodeFormatter implementationFormatter(implementationFile);
     implementationFormatter.WriteLine("module " + moduleName + ";");
     implementationFormatter.WriteLine();

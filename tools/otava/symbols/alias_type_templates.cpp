@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -73,6 +73,7 @@ void AliasTypeTemplateSpecializationSymbol::Resolve(SymbolTable& symbolTable)
         TypeSymbol* templateArg = symbolTable.GetType(ids[i]);
         templateArguments.push_back(templateArg);
     }
+    symbolTable.AddAliasTypeTemplateSpecializationToSet(this);
 }
 
 void AliasTypeTemplateSpecializationSymbol::Accept(Visitor& visitor)

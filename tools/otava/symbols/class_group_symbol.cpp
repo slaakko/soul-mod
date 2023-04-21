@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -81,6 +81,7 @@ void ClassGroupSymbol::AddForwardDeclaration(ForwardClassDeclarationSymbol* forw
 {
     if (std::find(forwardDeclarations.begin(), forwardDeclarations.end(), forwardDeclaration) == forwardDeclarations.end())
     {
+        forwardDeclaration->SetGroup(this);
         forwardDeclarations.push_back(forwardDeclaration);
     }
     ClassTypeSymbol* cls = GetClass(forwardDeclaration->Arity());

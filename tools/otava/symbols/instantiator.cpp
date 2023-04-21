@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -20,8 +20,15 @@ import otava.ast;
 
 namespace otava::symbols {
 
-Instantiator::Instantiator(Context* context_, InstantiationScope* instantiationScope_) : context(context_), innerClass(false), index(0), instantiationScope(instantiationScope_)
+Instantiator::Instantiator(Context* context_, InstantiationScope* instantiationScope_) : 
+    context(context_), innerClass(false), index(0), instantiationScope(instantiationScope_), 
+    functionNode(nullptr), specialization(nullptr)
 {
+}
+
+void Instantiator::SetFunctionNode(otava::ast::Node* functionNode_)
+{
+    functionNode = functionNode_;
 }
 
 void Instantiator::Visit(otava::ast::ClassSpecifierNode& node)
@@ -89,12 +96,20 @@ void Instantiator::Visit(otava::ast::AliasDeclarationNode& node)
 
 void Instantiator::Visit(otava::ast::MemberDeclarationNode& node)
 {
-    ProcessMemberDeclaration(&node, context);
+    ProcessMemberDeclaration(&node, functionNode, context);
+    if (functionNode)
+    {
+        specialization = context->GetSpecialization(functionNode);
+    }
 }
 
 void Instantiator::Visit(otava::ast::SimpleDeclarationNode& node)
 {
-    ProcessSimpleDeclaration(&node, context);
+    ProcessSimpleDeclaration(&node, functionNode, context);
+    if (functionNode)
+    {
+        specialization = context->GetSpecialization(functionNode);
+    }
 }
 
 void Instantiator::Visit(otava::ast::UsingDeclarationNode& node)
@@ -110,13 +125,24 @@ void Instantiator::Visit(otava::ast::UsingDirectiveNode& node)
 void Instantiator::Visit(otava::ast::FunctionDefinitionNode& node)
 {
     if (context->GetFlag(ContextFlags::skipFunctionDefinitions)) return;
-    int scopes = BeginFunctionDefinition(node.DeclSpecifiers(), node.Declarator(), context);
+    bool get = false;
+    int scopes = BeginFunctionDefinition(node.DeclSpecifiers(), node.Declarator(), functionNode, node.Specifiers(), get, context);
     if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
     {
-        instantiationScope->PushParentScope(context->GetSpecialization()->GetScope());
+        if (functionNode)
+        {
+            specialization = context->GetSpecialization(functionNode);
+            if (specialization)
+            {
+                instantiationScope->PushParentScope(specialization->GetScope());
+            }
+        }
     }
-    node.FunctionBody()->Accept(*this);
-    otava::symbols::EndFunctionDefinition(&node, scopes, context);
+    if (!get)
+    {
+        node.FunctionBody()->Accept(*this);
+        otava::symbols::EndFunctionDefinition(&node, scopes, context);
+    }
 }
 
 void Instantiator::Visit(otava::ast::NoDeclSpecFunctionDeclarationNode& node)

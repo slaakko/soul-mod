@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -27,7 +27,7 @@ OptimizationFlagsSetter::OptimizationFlagsSetter() : count(0)
 
 void OptimizationFlagsSetter::Visit(soul::ast::spg::ChoiceParser& parser)
 {
-    DefaultVisitor::Visit(parser);
+    soul::ast::spg::DefaultVisitor::Visit(parser);
     parser.SetOptimizationFlag(count);
 }
 

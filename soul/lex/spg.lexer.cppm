@@ -43,7 +43,7 @@ struct SpgLexer
 
     static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
-        ClassMap<Char>* classmap = lexer.GetClassMap();
+        soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
         int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
@@ -16924,8 +16924,9 @@ struct SpgLexer
             case 1:
             {
                 lexer.Retract();
-                int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
-                if (kw == INVALID_TOKEN) return ID;
+                auto &token = lexer.CurrentToken();
+                int64_t kw = lexer.GetKeywordToken(token.match);
+                if (kw == soul::lexer::INVALID_TOKEN) return ID;
                 else return kw;
                 break;
             }
@@ -17052,7 +17053,7 @@ struct SpgLexer
             case 22:
             {
                 auto vars = static_cast<Variables*>(lexer.GetVariables());
-                if (vars->leftAngleCount > 0) return INVALID_TOKEN;
+                if (vars->leftAngleCount > 0) return soul::lexer::INVALID_TOKEN;
                 lexer.Retract();
                 return SHIFT_RIGHT;
                 break;
@@ -17270,7 +17271,7 @@ struct SpgLexer
             case 58:
             {
                 auto vars = static_cast<Variables*>(lexer.GetVariables());
-                if (!vars->matchFilePath) return INVALID_TOKEN;
+                if (!vars->matchFilePath) return soul::lexer::INVALID_TOKEN;
                 lexer.Retract();
                 return FILEPATH;
                 break;
@@ -17281,9 +17282,9 @@ struct SpgLexer
 };
 
 template<typename Char>
-ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static ClassMap<Char>* classmap = MakeClassMap<Char>("soul.lex.spg.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("soul.lex.spg.classmap");
     return classmap;
 }
 

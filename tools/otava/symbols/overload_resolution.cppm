@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -55,9 +55,10 @@ struct ArgumentMatch
 struct FunctionMatch
 {
     FunctionMatch();
-    FunctionMatch(FunctionSymbol* function_);
+    FunctionMatch(FunctionSymbol* function_, Context* context_);
     FunctionMatch& operator=(const FunctionMatch& that);
     FunctionSymbol* function;
+    Context* context;
     std::vector<ArgumentMatch> argumentMatches;
     int numConversions;
     int numQualifyingConversions;

@@ -12,19 +12,19 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::identifier {
 
-template<typename Lexer>
+template<typename LexerT>
 struct IdentifierParser
 {
-    static soul::parser::Match Identifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match UnqualifiedId(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match QualifiedId(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Template(Lexer& lexer);
-    static soul::parser::Match NestedNameSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match IdentifierList(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeIdentifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeIdentifierUnchecked(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeIdentifierChecked(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Unnamed(Lexer& lexer);
+    static soul::parser::Match Identifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match UnqualifiedId(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match QualifiedId(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Template(LexerT& lexer);
+    static soul::parser::Match NestedNameSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match IdentifierList(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeIdentifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeIdentifierUnchecked(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeIdentifierChecked(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Unnamed(LexerT& lexer);
 };
 
 } // namespace otava::parser::identifier

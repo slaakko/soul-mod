@@ -12,35 +12,35 @@ using namespace soul::ast::cpp;
 
 export namespace soul::cpp::statement::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct StatementParser
 {
-    static soul::parser::Match Statement(Lexer& lexer);
-    static soul::parser::Match LabeledStatement(Lexer& lexer);
-    static soul::parser::Match EmptyStatement(Lexer& lexer);
-    static soul::parser::Match CompoundStatement(Lexer& lexer);
-    static soul::parser::Match SelectionStatement(Lexer& lexer);
-    static soul::parser::Match IfStatement(Lexer& lexer);
-    static soul::parser::Match SwitchStatement(Lexer& lexer);
-    static soul::parser::Match IterationStatement(Lexer& lexer);
-    static soul::parser::Match WhileStatement(Lexer& lexer);
-    static soul::parser::Match DoStatement(Lexer& lexer);
-    static soul::parser::Match RangeForStatement(Lexer& lexer);
-    static soul::parser::Match ForRangeDeclaration(Lexer& lexer);
-    static soul::parser::Match ForStatement(Lexer& lexer);
-    static soul::parser::Match ForInitStatement(Lexer& lexer);
-    static soul::parser::Match JumpStatement(Lexer& lexer);
-    static soul::parser::Match BreakStatement(Lexer& lexer);
-    static soul::parser::Match ContinueStatement(Lexer& lexer);
-    static soul::parser::Match ReturnStatement(Lexer& lexer);
-    static soul::parser::Match GotoStatement(Lexer& lexer);
-    static soul::parser::Match DeclarationStatement(Lexer& lexer);
-    static soul::parser::Match Condition(Lexer& lexer);
-    static soul::parser::Match TryStatement(Lexer& lexer);
-    static soul::parser::Match HandlerSeq(Lexer& lexer, soul::ast::cpp::TryStatementNode* tryStatement);
-    static soul::parser::Match Handler(Lexer& lexer);
-    static soul::parser::Match ExceptionDeclaration(Lexer& lexer);
-    static soul::parser::Match ExpressionStatement(Lexer& lexer);
+    static soul::parser::Match Statement(LexerT& lexer);
+    static soul::parser::Match LabeledStatement(LexerT& lexer);
+    static soul::parser::Match EmptyStatement(LexerT& lexer);
+    static soul::parser::Match CompoundStatement(LexerT& lexer);
+    static soul::parser::Match SelectionStatement(LexerT& lexer);
+    static soul::parser::Match IfStatement(LexerT& lexer);
+    static soul::parser::Match SwitchStatement(LexerT& lexer);
+    static soul::parser::Match IterationStatement(LexerT& lexer);
+    static soul::parser::Match WhileStatement(LexerT& lexer);
+    static soul::parser::Match DoStatement(LexerT& lexer);
+    static soul::parser::Match RangeForStatement(LexerT& lexer);
+    static soul::parser::Match ForRangeDeclaration(LexerT& lexer);
+    static soul::parser::Match ForStatement(LexerT& lexer);
+    static soul::parser::Match ForInitStatement(LexerT& lexer);
+    static soul::parser::Match JumpStatement(LexerT& lexer);
+    static soul::parser::Match BreakStatement(LexerT& lexer);
+    static soul::parser::Match ContinueStatement(LexerT& lexer);
+    static soul::parser::Match ReturnStatement(LexerT& lexer);
+    static soul::parser::Match GotoStatement(LexerT& lexer);
+    static soul::parser::Match DeclarationStatement(LexerT& lexer);
+    static soul::parser::Match Condition(LexerT& lexer);
+    static soul::parser::Match TryStatement(LexerT& lexer);
+    static soul::parser::Match HandlerSeq(LexerT& lexer, soul::ast::cpp::TryStatementNode* tryStatement);
+    static soul::parser::Match Handler(LexerT& lexer);
+    static soul::parser::Match ExceptionDeclaration(LexerT& lexer);
+    static soul::parser::Match ExpressionStatement(LexerT& lexer);
 };
 
 } // namespace soul::cpp::statement::parser

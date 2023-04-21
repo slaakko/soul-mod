@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -444,7 +444,8 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ExpectationParser& parser)
         }
         else if (parser.Child()->IsTokenParser())
         {
-            std::string tokenName = static_cast<soul::ast::spg::TokenParser*>(parser.Child())->TokenName();
+            soul::ast::spg::TokenParser* tokenParser = static_cast<soul::ast::spg::TokenParser*>(parser.Child());
+            std::string tokenName = tokenParser->TokenName();
             formatter->WriteLine("lexer.ThrowExpectationFailure(pos, lexer.GetTokenInfo(" + tokenName + "));");
         }
         else
@@ -525,7 +526,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
         }
         if (hasVars)
         {
-            formatter->WriteLine("auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());");
+            formatter->WriteLine("auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());");
         }
         parser.Child()->Accept(*this);
         formatter->WriteLine("if (match.hit)");
@@ -575,7 +576,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::NonterminalParser& parser)
     if (stage == CodeGenerationStage::generateImplementation)
     {
         soul::ast::spg::RuleParser* rule = parser.Rule();
-        std::string ruleName = rule->Grammar()->Name() + "<Lexer>::" + rule->Name();
+        std::string ruleName = rule->Grammar()->Name() + "<LexerT>::" + rule->Name();
         formatter->Write("soul::parser::Match match = " + ruleName + "(lexer");
         if (parser.Arguments())
         {
@@ -760,7 +761,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
     currentRule = &parser;
     if (stage == CodeGenerationStage::generateInterface)
     {
-        formatter->Write("static soul::parser::Match " + parser.Name() + "(Lexer& lexer");
+        formatter->Write("static soul::parser::Match " + parser.Name() + "(LexerT& lexer");
         for (const auto& param : parser.Params())
         {
             formatter->Write(", ");
@@ -784,8 +785,8 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
         {
             formatter->WriteLine();
         }
-        formatter->WriteLine("template<typename Lexer>");
-        formatter->Write("soul::parser::Match " + parser.Grammar()->Name() + "<Lexer>::" + parser.Name() + "(Lexer& lexer");
+        formatter->WriteLine("template<typename LexerT>");
+        formatter->Write("soul::parser::Match " + parser.Grammar()->Name() + "<LexerT>::" + parser.Name() + "(LexerT& lexer");
         for (const auto& param : parser.Params())
         {
             formatter->Write(", ");
@@ -810,7 +811,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             formatter->WriteLine("}");
             formatter->WriteLine("#endif");
         }
-        formatter->WriteLine("soul::lexer::RuleGuard ruleGuard(lexer, " + std::to_string(parser.Id()) + ");");
+        formatter->WriteLine("soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, " + std::to_string(parser.Id()) + ");");
         for (const auto& variable : parser.Vars())
         {
             variable->Type()->Write(*formatter);
@@ -828,7 +829,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             }
         }
         nonterminalInfos.clear();
-        for (const auto& nonterminal : parser.Nonterminals())
+        for (auto nonterminal : parser.Nonterminals())
         {
             bool found = false;
             for (const auto& info : nonterminalInfos)
@@ -921,7 +922,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
     currentParser = &parser;
     if (stage == CodeGenerationStage::generateInterface)
     {
-        formatter->WriteLine("template<typename Lexer>");
+        formatter->WriteLine("template<typename LexerT>");
         formatter->WriteLine("struct " + parser.Name());
         formatter->WriteLine("{");
         formatter->IncIndent();
@@ -943,11 +944,11 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                     {
                         startRule->ReturnType()->Write(*formatter);
                     }
-                    formatter->Write(" Parse(Lexer& lexer");
+                    formatter->Write(" Parse(LexerT& lexer");
                 }
                 else
                 {
-                    formatter->Write("static void Parse(Lexer& lexer");
+                    formatter->Write("static void Parse(LexerT& lexer");
                 }
                 for (const auto& param : startRule->Params())
                 {
@@ -972,7 +973,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
         {
             if (!parser.Rules().empty())
             {
-                formatter->WriteLine("template<typename Lexer>");
+                formatter->WriteLine("template<typename LexerT>");
                 const std::unique_ptr<soul::ast::spg::RuleParser>& startRule = parser.Rules().front();
                 if (startRule->ReturnType() != nullptr)
                 {
@@ -986,11 +987,11 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                     {
                         startRule->ReturnType()->Write(*formatter);
                     }
-                    formatter->Write(" " + parser.Name() + "<Lexer>::Parse(Lexer& lexer");
+                    formatter->Write(" " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
                 }
                 else
                 {
-                    formatter->Write("void " + parser.Name() + "<Lexer>::Parse(Lexer& lexer");
+                    formatter->Write("void " + parser.Name() + "<LexerT>::Parse(LexerT& lexer");
                 }
                 for (const auto& param : startRule->Params())
                 {
@@ -1032,7 +1033,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::GrammarParser& parser)
                     formatter->WriteLine("#endif");
                 }
                 formatter->WriteLine("++lexer;");
-                std::string ruleName = rule->Grammar()->Name() + "<Lexer>::" + rule->Name();
+                std::string ruleName = rule->Grammar()->Name() + "<LexerT>::" + rule->Name();
                 formatter->Write("soul::parser::Match match = " + ruleName + "(lexer");
                 for (const auto& param : startRule->Params())
                 {
@@ -1266,7 +1267,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
         {
             if (lexer->TypeSpecifiers().size() > 0)
             {
-                auto firstTypeSpecifier = lexer->TypeSpecifiers()[0].get();
+                soul::ast::cpp::TypeSpecifierNode* firstTypeSpecifier = lexer->TypeSpecifiers()[0].get();
                 std::string charTypeName = "char";
                 if (firstTypeSpecifier->Kind() == soul::ast::cpp::NodeKind::typeNameNode)
                 {

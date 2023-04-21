@@ -12,32 +12,32 @@ using namespace soul::ast::spg;
 
 export namespace soul::spg::parser::file::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ParserFileParser
 {
-    static std::unique_ptr<soul::ast::spg::ParserFile> Parse(Lexer& lexer);
-    static soul::parser::Match ParserFile(Lexer& lexer);
-    static soul::parser::Match Parser(Lexer& lexer);
-    static soul::parser::Match ParserStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
-    static soul::parser::Match LexerStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
-    static soul::parser::Match MainStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
-    static soul::parser::Match UsingStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
-    static soul::parser::Match RuleStatement(Lexer& lexer, soul::ast::spg::GrammarParser* parser);
-    static soul::parser::Match ParametersAndVariables(Lexer& lexer, soul::ast::spg::RuleParser* rule);
-    static soul::parser::Match ParamOrVariable(Lexer& lexer);
-    static soul::parser::Match ReturnType(Lexer& lexer);
-    static soul::parser::Match RuleBody(Lexer& lexer);
-    static soul::parser::Match Choice(Lexer& lexer);
-    static soul::parser::Match Sequence(Lexer& lexer);
-    static soul::parser::Match Difference(Lexer& lexer);
-    static soul::parser::Match List(Lexer& lexer);
-    static soul::parser::Match Prefix(Lexer& lexer);
-    static soul::parser::Match Postfix(Lexer& lexer);
-    static soul::parser::Match Primary(Lexer& lexer);
-    static soul::parser::Match RuleCall(Lexer& lexer);
-    static soul::parser::Match Nonterminal(Lexer& lexer);
-    static soul::parser::Match Primitive(Lexer& lexer);
-    static soul::parser::Match Grouping(Lexer& lexer);
+    static std::unique_ptr<soul::ast::spg::ParserFile> Parse(LexerT& lexer);
+    static soul::parser::Match ParserFile(LexerT& lexer);
+    static soul::parser::Match Parser(LexerT& lexer);
+    static soul::parser::Match ParserStatement(LexerT& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match LexerStatement(LexerT& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match MainStatement(LexerT& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match UsingStatement(LexerT& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match RuleStatement(LexerT& lexer, soul::ast::spg::GrammarParser* parser);
+    static soul::parser::Match ParametersAndVariables(LexerT& lexer, soul::ast::spg::RuleParser* rule);
+    static soul::parser::Match ParamOrVariable(LexerT& lexer);
+    static soul::parser::Match ReturnType(LexerT& lexer);
+    static soul::parser::Match RuleBody(LexerT& lexer);
+    static soul::parser::Match Choice(LexerT& lexer);
+    static soul::parser::Match Sequence(LexerT& lexer);
+    static soul::parser::Match Difference(LexerT& lexer);
+    static soul::parser::Match List(LexerT& lexer);
+    static soul::parser::Match Prefix(LexerT& lexer);
+    static soul::parser::Match Postfix(LexerT& lexer);
+    static soul::parser::Match Primary(LexerT& lexer);
+    static soul::parser::Match RuleCall(LexerT& lexer);
+    static soul::parser::Match Nonterminal(LexerT& lexer);
+    static soul::parser::Match Primitive(LexerT& lexer);
+    static soul::parser::Match Grouping(LexerT& lexer);
 };
 
 } // namespace soul::spg::parser::file::parser

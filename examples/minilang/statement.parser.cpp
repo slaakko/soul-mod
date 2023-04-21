@@ -21,8 +21,8 @@ using namespace minilang::parser::identifier;
 
 namespace minilang::parser::statement {
 
-template<typename Lexer>
-soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::Statement(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -33,7 +33,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Statement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 127393969859461121);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 127393969859461121);
     std::unique_ptr<minilang::ast::Node> ifS;
     std::unique_ptr<minilang::ast::Node> whileS;
     std::unique_ptr<minilang::ast::Node> returnS;
@@ -64,7 +64,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = StatementParser<Lexer>::IfStatement(lexer);
+                            soul::parser::Match match = StatementParser<LexerT>::IfStatement(lexer);
                             ifS.reset(static_cast<minilang::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -88,7 +88,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = StatementParser<Lexer>::WhileStatement(lexer);
+                                    soul::parser::Match match = StatementParser<LexerT>::WhileStatement(lexer);
                                     whileS.reset(static_cast<minilang::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -117,7 +117,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
                             soul::parser::Match* parentMatch9 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = StatementParser<Lexer>::ReturnStatement(lexer);
+                                soul::parser::Match match = StatementParser<LexerT>::ReturnStatement(lexer);
                                 returnS.reset(static_cast<minilang::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -146,7 +146,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
                         soul::parser::Match* parentMatch11 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = StatementParser<Lexer>::CompoundStatement(lexer);
+                            soul::parser::Match match = StatementParser<LexerT>::CompoundStatement(lexer);
                             compoundS.reset(static_cast<minilang::ast::CompoundStatementNode*>(match.value));
                             if (match.hit)
                             {
@@ -175,7 +175,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
                     soul::parser::Match* parentMatch13 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = StatementParser<Lexer>::ConstructionStatement(lexer);
+                        soul::parser::Match match = StatementParser<LexerT>::ConstructionStatement(lexer);
                         constructionS.reset(static_cast<minilang::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -204,7 +204,7 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
                 soul::parser::Match* parentMatch15 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = StatementParser<Lexer>::AssignmentStatement(lexer);
+                    soul::parser::Match match = StatementParser<LexerT>::AssignmentStatement(lexer);
                     assignmentS.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -236,8 +236,8 @@ soul::parser::Match StatementParser<Lexer>::Statement(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::IfStatement(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -248,7 +248,7 @@ soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "IfStatement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 127393969859461122);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 127393969859461122);
     std::unique_ptr<minilang::ast::Node> condition;
     std::unique_ptr<minilang::ast::Node> thenS;
     std::unique_ptr<minilang::ast::Node> elseS;
@@ -321,7 +321,7 @@ soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
+                                    soul::parser::Match match = ExpressionParser<LexerT>::Expression(lexer);
                                     condition.reset(static_cast<minilang::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -377,7 +377,7 @@ soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
                         soul::parser::Match* parentMatch14 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = StatementParser<Lexer>::Statement(lexer);
+                            soul::parser::Match match = StatementParser<LexerT>::Statement(lexer);
                             thenS.reset(static_cast<minilang::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -426,7 +426,7 @@ soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
                                     soul::parser::Match* parentMatch20 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = StatementParser<Lexer>::Statement(lexer);
+                                        soul::parser::Match match = StatementParser<LexerT>::Statement(lexer);
                                         elseS.reset(static_cast<minilang::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -483,8 +483,8 @@ soul::parser::Match StatementParser<Lexer>::IfStatement(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match StatementParser<Lexer>::WhileStatement(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::WhileStatement(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -495,7 +495,7 @@ soul::parser::Match StatementParser<Lexer>::WhileStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "WhileStatement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 127393969859461123);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 127393969859461123);
     std::unique_ptr<minilang::ast::Node> condition;
     std::unique_ptr<minilang::ast::Node> statement;
     soul::parser::Match match(false);
@@ -564,7 +564,7 @@ soul::parser::Match StatementParser<Lexer>::WhileStatement(Lexer& lexer)
                             soul::parser::Match* parentMatch9 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
+                                soul::parser::Match match = ExpressionParser<LexerT>::Expression(lexer);
                                 condition.reset(static_cast<minilang::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -620,7 +620,7 @@ soul::parser::Match StatementParser<Lexer>::WhileStatement(Lexer& lexer)
                     soul::parser::Match* parentMatch13 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = StatementParser<Lexer>::Statement(lexer);
+                        soul::parser::Match match = StatementParser<LexerT>::Statement(lexer);
                         statement.reset(static_cast<minilang::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -662,8 +662,8 @@ soul::parser::Match StatementParser<Lexer>::WhileStatement(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match StatementParser<Lexer>::ReturnStatement(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::ReturnStatement(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -674,7 +674,7 @@ soul::parser::Match StatementParser<Lexer>::ReturnStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ReturnStatement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 127393969859461124);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 127393969859461124);
     std::unique_ptr<minilang::ast::Node> returnValue;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -706,7 +706,7 @@ soul::parser::Match StatementParser<Lexer>::ReturnStatement(Lexer& lexer)
                         int64_t save = lexer.GetPos();
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
+                            soul::parser::Match match = ExpressionParser<LexerT>::Expression(lexer);
                             returnValue.reset(static_cast<minilang::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -778,8 +778,8 @@ soul::parser::Match StatementParser<Lexer>::ReturnStatement(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match StatementParser<Lexer>::CompoundStatement(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::CompoundStatement(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -790,7 +790,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CompoundStatement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 127393969859461125);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 127393969859461125);
     std::unique_ptr<minilang::ast::CompoundStatementNode> compoundStatement = std::unique_ptr<minilang::ast::CompoundStatementNode>();
     std::unique_ptr<minilang::ast::Node> statement;
     soul::parser::Match match(false);
@@ -843,7 +843,7 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatement(Lexer& lexer)
                                         soul::parser::Match* parentMatch8 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = StatementParser<Lexer>::Statement(lexer);
+                                            soul::parser::Match match = StatementParser<LexerT>::Statement(lexer);
                                             statement.reset(static_cast<minilang::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
@@ -926,8 +926,8 @@ soul::parser::Match StatementParser<Lexer>::CompoundStatement(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match StatementParser<Lexer>::ConstructionStatement(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::ConstructionStatement(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -938,7 +938,7 @@ soul::parser::Match StatementParser<Lexer>::ConstructionStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ConstructionStatement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 127393969859461126);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 127393969859461126);
     std::unique_ptr<minilang::ast::Node> type;
     std::unique_ptr<minilang::ast::IdentifierNode> variableName;
     std::unique_ptr<minilang::ast::Node> value;
@@ -961,7 +961,7 @@ soul::parser::Match StatementParser<Lexer>::ConstructionStatement(Lexer& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            soul::parser::Match match = TypeParser<Lexer>::Type(lexer);
+                            soul::parser::Match match = TypeParser<LexerT>::Type(lexer);
                             type.reset(static_cast<minilang::ast::Node*>(match.value));
                             *parentMatch5 = match;
                         }
@@ -974,7 +974,7 @@ soul::parser::Match StatementParser<Lexer>::ConstructionStatement(Lexer& lexer)
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = IdentifierParser<Lexer>::Identifier(lexer);
+                                    soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer);
                                     variableName.reset(static_cast<minilang::ast::IdentifierNode*>(match.value));
                                     if (match.hit)
                                     {
@@ -1030,7 +1030,7 @@ soul::parser::Match StatementParser<Lexer>::ConstructionStatement(Lexer& lexer)
                         soul::parser::Match* parentMatch11 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
+                            soul::parser::Match match = ExpressionParser<LexerT>::Expression(lexer);
                             value.reset(static_cast<minilang::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -1102,8 +1102,8 @@ soul::parser::Match StatementParser<Lexer>::ConstructionStatement(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match StatementParser<Lexer>::AssignmentStatement(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match StatementParser<LexerT>::AssignmentStatement(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1114,7 +1114,7 @@ soul::parser::Match StatementParser<Lexer>::AssignmentStatement(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "AssignmentStatement");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 127393969859461127);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 127393969859461127);
     std::unique_ptr<minilang::ast::IdentifierNode> variableName;
     std::unique_ptr<minilang::ast::Node> value;
     soul::parser::Match match(false);
@@ -1133,7 +1133,7 @@ soul::parser::Match StatementParser<Lexer>::AssignmentStatement(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = IdentifierParser<Lexer>::Identifier(lexer);
+                        soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer);
                         variableName.reset(static_cast<minilang::ast::IdentifierNode*>(match.value));
                         *parentMatch4 = match;
                     }
@@ -1176,7 +1176,7 @@ soul::parser::Match StatementParser<Lexer>::AssignmentStatement(Lexer& lexer)
                         soul::parser::Match* parentMatch8 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer);
+                            soul::parser::Match match = ExpressionParser<LexerT>::Expression(lexer);
                             value.reset(static_cast<minilang::ast::Node*>(match.value));
                             if (match.hit)
                             {

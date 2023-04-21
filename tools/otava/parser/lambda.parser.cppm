@@ -12,20 +12,20 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::lambda {
 
-template<typename Lexer>
+template<typename LexerT>
 struct LambdaParser
 {
-    static soul::parser::Match LambdaExpression(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match LambdaIntroducer(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match LambdaCapture(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match CaptureDefault(Lexer& lexer);
-    static soul::parser::Match CaptureList(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* container);
-    static soul::parser::Match Capture(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match InitCapture(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match SimpleCapture(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match LambdaDeclarator(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match LambdaSpecifiers(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match LambdaTemplateParams(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match LambdaExpression(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match LambdaIntroducer(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match LambdaCapture(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match CaptureDefault(LexerT& lexer);
+    static soul::parser::Match CaptureList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* container);
+    static soul::parser::Match Capture(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match InitCapture(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SimpleCapture(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match LambdaDeclarator(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match LambdaSpecifiers(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match LambdaTemplateParams(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::lambda

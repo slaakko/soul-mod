@@ -44,33 +44,30 @@ public:
     
     mapped_type& operator[](const key_type& x)
     {
-        value_type value(x, mapped_type());
-        std::pair<iterator, bool> ib = insert(value);
+        key_type xc = x;
+        value_type value(std::move(xc), std::move(mapped_type()));
+        std::pair<iterator, bool> ib = insert(std::move(value));
         iterator it = ib.first;
         return it->second;
     }
-/*
     mapped_type& operator[](key_type&& x)
     {
-        value_type value(std::move(x), mapped_type());
-        std::pair<iterator, bool> ib = insert(value);
+        value_type value(std::move(x), std::move(mapped_type()));
+        std::pair<iterator, bool> ib = insert(std::move(value));
         iterator it = ib.first;
         return it->second;
     }
-*/
     mapped_type& at(const key_type& x);
     const mapped_type& at(const key_type& x) const;
     
-    std::pair<iterator, bool> insert(const value_type& x)
+    pair<iterator, bool> insert(const value_type& x)
     {
         return tree.insert(x);
     }
-/*
     pair<iterator, bool> insert(value_type&& x)
     {
         return tree.insert(std::move(x));
     }
-*/
     iterator insert(const_iterator position, const value_type& x);
     iterator insert(const_iterator position, value_type&& x);
     

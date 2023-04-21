@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -106,7 +106,7 @@ class Lexer : public LexerBase<Char>
 public:
     using LexerType = Lexer<Machine, Char>;
     using CharType = Char;
-    using TokenType = Token<Char, LexerBase<Char>>;
+    using TokenType = soul::lexer::Token<Char, LexerBase<Char>>;
     using VariableClassType = Machine::Variables;
     using PPHook = void (*)(LexerType& lexer, TokenType& token);
 
@@ -189,7 +189,7 @@ public:
         current = tokens.begin() + static_cast<int32_t>(pos);
         line = static_cast<int32_t>(pos >> 32);
     }
-    const Token<Char, LexerBase<Char>>& GetToken(int64_t pos) const override
+    const soul::lexer::Token<Char, LexerBase<Char>>& GetToken(int64_t pos) const override
     {
         int32_t tokenIndex = static_cast<int32_t>(pos);
         if (tokenIndex >= 0 && tokenIndex < tokens.size())
@@ -221,11 +221,11 @@ public:
     {
         line = line_;
     }
-    ClassMap<Char>* GetClassMap() const override
+    soul::lexer::ClassMap<Char>* GetClassMap() const override
     {
         return classMap;
     }
-    void SetClassMap(ClassMap<Char>* classMap_) override
+    void SetClassMap(soul::lexer::ClassMap<Char>* classMap_) override
     {
         classMap = classMap_;
     }
@@ -273,14 +273,14 @@ public:
         }
         else
         {
-            return INVALID_TOKEN;
+            return soul::lexer::INVALID_TOKEN;
         }
     }
     void Retract() override
     {
         token.match.end = pos;
     }
-    Token<Char, LexerBase<Char>>& CurrentToken() override
+    soul::lexer::Token<Char, LexerBase<Char>>& CurrentToken() override
     {
         return token;
     }
@@ -450,7 +450,7 @@ public:
     {
         return end;
     }
-    const std::vector<Token<Char, LexerBase<Char>>>& Tokens() const
+    const std::vector<soul::lexer::Token<Char, LexerBase<Char>>>& Tokens() const
     {
         return tokens;
     }
@@ -460,11 +460,11 @@ public:
     }
     void Increment() override
     {
-        operator++();
+        ++*this;
     }
     void MoveToEnd() override
     {
-        Token<Char, LexerBase<Char>> endToken(END_TOKEN, this);
+        TokenType endToken(END_TOKEN, this);
         endToken.match.begin = end;
         endToken.match.end = end;
         tokens.push_back(endToken);
@@ -475,7 +475,7 @@ public:
         PushState();
         if (tokens.empty() || tokens.back().id != END_TOKEN)
         {
-            Token<Char, LexerBase<Char>> endToken(END_TOKEN, this);
+            TokenType endToken(END_TOKEN, this);
             endToken.match.begin = end;
             endToken.match.end = end;
             tokens.push_back(endToken);
@@ -565,7 +565,7 @@ private:
             if (state == 0)
             {
                 lexeme.begin = pos;
-                token.id = INVALID_TOKEN;
+                token.id = soul::lexer::INVALID_TOKEN;
                 token.line = line;
             }
             if (pos == end)
@@ -579,7 +579,7 @@ private:
             state = Machine::NextState(state, c, *static_cast<LexerBase<Char>*>(this));
             if (state == -1)
             {
-                if (token.id == CONTINUE_TOKEN)
+                if (token.id == soul::lexer::CONTINUE_TOKEN)
                 {
                     if (pos == end)
                     {
@@ -592,7 +592,7 @@ private:
                     state = 0;
                     continue;
                 }
-                else if (token.id == INVALID_TOKEN)
+                else if (token.id == soul::lexer::INVALID_TOKEN)
                 {
                     if (pos == end)
                     {
@@ -625,16 +625,16 @@ private:
             }
             ++pos;
         }
-        token.id = INVALID_TOKEN;
+        token.id = soul::lexer::INVALID_TOKEN;
         state = Machine::NextState(state, '\0', *this);
         int64_t p = -1;
-        if (token.id != INVALID_TOKEN && token.id != CONTINUE_TOKEN)
+        if (token.id != soul::lexer::INVALID_TOKEN && token.id != soul::lexer::CONTINUE_TOKEN)
         {
             tokens.push_back(token);
             current = tokens.end() - 1;
             p = GetPos();
         }
-        TokenType endToken(END_TOKEN, this);
+        TokenType endToken(soul::lexer::END_TOKEN, this);
         endToken.match.begin = end;
         endToken.match.end = end;
         tokens.push_back(endToken);
@@ -664,9 +664,9 @@ private:
     LexerFlags flags;
     soul::ast::lexer::pos::pair::LexerPosPair recordedPosPair;
     Char separatorChar;
-    std::vector<Token<Char, LexerBase<Char>>> tokens;
-    std::vector<Token<Char, LexerBase<Char>>>::iterator current;
-    Token<Char, LexerBase<Char>> token;
+    std::vector<soul::lexer::Token<Char, LexerBase<Char>>> tokens;
+    std::vector<soul::lexer::Token<Char, LexerBase<Char>>>::iterator current;
+    soul::lexer::Token<Char, LexerBase<Char>> token;
     Lexeme<Char> lexeme;
     int32_t file;
     int32_t line;
@@ -675,7 +675,7 @@ private:
     const Char* pos;
     std::string fileName;
     bool countLines;
-    ClassMap<Char>* classMap;
+    soul::lexer::ClassMap<Char>* classMap;
     soul::ast::slg::TokenCollection* tokenCollection;
     KeywordMap<Char>* keywordMap;
     int64_t farthestPos;

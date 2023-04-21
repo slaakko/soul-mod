@@ -533,12 +533,54 @@ public:
     int compare(size_type pos1, size_type n1, const charT* s) const;
     int compare(size_type pos1, size_type n1, const charT* s, size_type n2) const;
     
-    bool starts_with(charT x) const;
-    bool starts_with(const charT* s) const;
-    bool ends_with(charT x) const;
-    bool ends_with(const charT* s) const;
-    bool contains(charT x) const;
-    bool contains(const charT* s) const;
+    bool starts_with(charT x) const
+    {
+        if (empty()) return false;
+        return chars[0] == x;
+    }
+    bool starts_with(const charT* s) const
+    {
+        size_type n = slen(s);
+        if (len < n) return false;
+        for (size_type i = 0; i < n; ++i)
+        {
+            if (chars[i] != s[i]) return false;
+        }
+        return true;
+
+    }
+    bool starts_with(const std::basic_string<charT>& s) const
+    {
+        return starts_with(s.c_str());
+    }
+    bool ends_with(charT x) const
+    {
+        if (empty()) return false;
+        return chars[len - 1] == x;
+    }
+    bool ends_with(const charT* s) const
+    {
+        size_type n = len;
+        size_type m = slen(s);
+        if (n < m) return false;
+        for (size_type i = 0; i < m; ++i)
+        {
+            if (chars[i + n - m] != s[i]) return false;
+        }
+        return true;
+    }
+    bool ends_with(const std::basic_string<charT>& s) const
+    {
+        return ends_with(s.c_str());
+    }
+    bool contains(charT x) const
+    {
+        return find(x) != npos;
+    }
+    bool contains(const charT* s) const
+    {
+        return find(s) != npos;
+    }
 private:
     void append_from(const charT* s, size_type n)
     {

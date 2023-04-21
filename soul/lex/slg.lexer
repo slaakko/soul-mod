@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,14 +15,14 @@ import soul.tool.expr;
 
 lexer SlgLexer
 {
-	rules
-	{
-		"{separators}" {}
-		"{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
-		"{integer_literal}" { return INTEGER_LITERAL; }
-		"{floating_literal}" { return FLOATING_LITERAL; }
-		"{char_literal}" { return CHAR_LITERAL; }
-		"{string_literal}" { return STRING_LITERAL; }
+    rules
+    {
+        "{separators}" {}
+        "{id}" { auto& token = lexer.CurrentToken(); int64_t kw = lexer.GetKeywordToken(token.match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
+        "{integer_literal}" { return INTEGER_LITERAL; }
+        "{floating_literal}" { return FLOATING_LITERAL; }
+        "{char_literal}" { return CHAR_LITERAL; }
+        "{string_literal}" { return STRING_LITERAL; }
         "$" { return DOLLAR; }
         "\|\|" { return DISJUNCTION; }
         "&&" { return AMP_AMP; }
@@ -75,7 +75,7 @@ lexer SlgLexer
         "^=" { return XOR_ASSIGN; }
         "\|=" { return OR_ASSIGN; }
         "<[^\n>]*>" $(1) { return FILEPATH; }
-	}
+    }
 
     variables 
     {
@@ -85,7 +85,7 @@ lexer SlgLexer
 
     actions
     {
-        $(0)={ if (vars->leftAngleCount > 0) return INVALID_TOKEN; }
-        $(1)={ if (!vars->matchFilePath) return INVALID_TOKEN; }
+        $(0)={ if (vars->leftAngleCount > 0) return soul::lexer::INVALID_TOKEN; }
+        $(1)={ if (!vars->matchFilePath) return soul::lexer::INVALID_TOKEN; }
     }
 }

@@ -12,27 +12,27 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::concepts {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ConceptParser
 {
-    static soul::parser::Match ConceptDefinition(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ConceptName(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ConceptNameChecked(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ConstraintExpression(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match RequiresClause(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ConstraintLogicalOrExpression(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ConstraintLogicalAndExpression(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match RequiresExpression(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match RequirementParameterList(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match RequirementBody(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match RequirementSeq(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* requirementBody);
-    static soul::parser::Match Requirement(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match SimpleRequirement(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeRequirement(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match CompoundRequirement(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ReturnTypeRequirement(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match NestedRequirement(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeConstraint(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ConceptDefinition(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ConceptName(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ConceptNameChecked(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ConstraintExpression(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match RequiresClause(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ConstraintLogicalOrExpression(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ConstraintLogicalAndExpression(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match RequiresExpression(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match RequirementParameterList(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match RequirementBody(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match RequirementSeq(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* requirementBody);
+    static soul::parser::Match Requirement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SimpleRequirement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeRequirement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match CompoundRequirement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ReturnTypeRequirement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match NestedRequirement(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeConstraint(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::concepts

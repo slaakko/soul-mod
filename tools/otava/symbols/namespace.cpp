@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,6 +14,7 @@ import otava.symbols.enum_group.symbol;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
 import otava.symbols.variable.group.symbol;
+import otava.symbols.function.symbol;
 import otava.symbols.visitor;
 import otava.symbols.symbol.table;
 
@@ -54,10 +55,6 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
         if (symbol->IsNamespaceSymbol())
         {
             NamespaceSymbol* thatNs = static_cast<NamespaceSymbol*>(symbol.get());
-            if (thatNs->FullName() == U"soul::ast::re")
-            {
-                int x = 0;
-            }
             ns->Import(thatNs, context);
         }
         else
@@ -65,6 +62,13 @@ void NamespaceSymbol::Import(NamespaceSymbol* that, Context* context)
             Symbol* installSymbol = symbol.get();
             switch (symbol->Kind())
             {
+                case SymbolKind::functionDefinitionSymbol:
+                {
+                    FunctionDefinitionSymbolSet* functionDefinitionSymbolSet = context->GetFunctionDefinitionSymbolSet();
+                    FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(installSymbol);
+                    functionDefinitionSymbolSet->AddFunctionDefinitionSymbol(functionDefinition);
+                    break;
+                }
                 case SymbolKind::conceptGroupSymbol:
                 {
                     installSymbol = currentScope->GetOrInsertConceptGroup(symbol->Name(), soul::ast::SourcePos(), context);

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,7 +14,7 @@ lexer OtavaLexer
     rules
     {
         "{separators}" {}
-        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
         "{integer_literal}" { return INTEGER_LITERAL; }
         "{floating_literal}" { return FLOATING_LITERAL; }
         "{character_literal}" { return CHARACTER_LITERAL; }
@@ -80,6 +80,6 @@ lexer OtavaLexer
 
     actions
     {
-        $(1) = { if (vars->langleCount > 0) return INVALID_TOKEN; }
+        $(1) = { if (vars->langleCount > 0) return soul::lexer::INVALID_TOKEN; }
     }
 }

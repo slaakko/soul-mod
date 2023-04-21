@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -25,6 +25,7 @@ export extern "C" int get_char(void* stream);
 export extern "C" int put_char(int character, void* stream);
 export extern "C" int read_file(void* ptr, size_t size, size_t count, void* stream);
 export extern "C" int write_file(void* ptr, size_t size, size_t count, void* stream);
+export extern "C" int puts_file(const char* str, void* stream);
 export extern "C" int eof_file(void* stream);
 export extern "C" int flush_file(void* stream);
 export extern "C" int error_file(void* stream);

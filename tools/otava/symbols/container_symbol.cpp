@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -133,6 +133,12 @@ void ContainerSymbol::Read(Reader& reader)
         if (symbol)
         {
             AddSymbol(symbol, soul::ast::SourcePos(), reader.GetContext());
+            if (symbol->IsFunctionDefinitionSymbol())
+            {
+                FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(symbol);
+                Context* context = reader.GetContext();
+                context->GetFunctionDefinitionSymbolSet()->AddFunctionDefinitionSymbol(functionDefinition);
+            }
         }
         else
         {

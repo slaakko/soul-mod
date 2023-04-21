@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -149,7 +149,7 @@ parser DeclarationParser
         )
         {
             otava::ast::NoDeclSpecFunctionDeclarationNode* node = new otava::ast::NoDeclSpecFunctionDeclarationNode(sourcePos, attributes, declarator, semicolon);
-            otava::symbols::ProcessMemberDeclaration(node, context);
+            otava::symbols::ProcessMemberDeclaration(node, nullptr, context);
             return node;
         }
         ;
@@ -170,7 +170,7 @@ parser DeclarationParser
             )
             {
                 std::unique_ptr<otava::ast::Node> node(new otava::ast::SimpleDeclarationNode(sourcePos, declSpecifierSeq, initDeclaratorList, attributes, semicolon)); 
-                otava::symbols::ProcessSimpleDeclaration(node.get(), context);
+                otava::symbols::ProcessSimpleDeclaration(node.get(), nullptr, context);
                 return node.release();
             }
         |   (AttributeSpecifierSeq(context):attributes3{ sourcePos = lexer.GetSourcePos(pos); })? 

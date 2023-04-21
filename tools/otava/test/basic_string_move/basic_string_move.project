@@ -1,0 +1,3 @@
+project basic_string_move;
+target=program;
+source <basic_string_move.cpp>;

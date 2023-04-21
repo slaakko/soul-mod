@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -75,6 +75,7 @@ void InstantiateEnqueuedRequests(FunctionSymbol* functionTemplate, const soul::a
             const InstantiationRequest& request = *it;
             if (FunctionMatches(request.Function(), functionTemplate, context))
             {
+                context->SetInstantiationIrName(request.Function()->IrName(context));
                 InstantiateFunctionTemplate(functionTemplate, request.TemplateParamMap(), sourcePos, context);
             }
         }

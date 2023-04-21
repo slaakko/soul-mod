@@ -14,15 +14,15 @@ using namespace otava::ast;
 
 export namespace otava::parser::module_dependency {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ModuleDependencyParser
 {
-    static std::unique_ptr<otava::ast::Node> Parse(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ModuleUnit(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match GlobalModuleFragment(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match DeclarationSeq(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Declaration(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ExportImportDeclaration(Lexer& lexer, otava::symbols::Context* context);
+    static std::unique_ptr<otava::ast::Node> Parse(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ModuleUnit(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match GlobalModuleFragment(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match DeclarationSeq(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Declaration(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ExportImportDeclaration(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::module_dependency

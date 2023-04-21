@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -95,7 +95,7 @@ void DeclaratorListProcessor::Visit(otava::ast::InitDeclaratorListNode& node)
     for (int32_t i = 0; i < n; ++i)
     {
         otava::ast::Node* declarator = node.Items()[i];
-        Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, context);
+        Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, FunctionQualifiers::none, context);
         if (declaration.declarator.get())
         {
             declarationList->declarations.push_back(std::move(declaration));
@@ -109,7 +109,7 @@ void DeclaratorListProcessor::Visit(otava::ast::MemberDeclaratorListNode& node)
     for (int32_t i = 0; i < n; ++i)
     {
         otava::ast::Node* declarator = node.Items()[i];
-        Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, context);
+        Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, FunctionQualifiers::none, context);
         if (declaration.declarator.get())
         {
             declarationList->declarations.push_back(std::move(declaration));
@@ -120,7 +120,7 @@ void DeclaratorListProcessor::Visit(otava::ast::MemberDeclaratorListNode& node)
 class DeclaratorProcessor : public otava::ast::DefaultVisitor
 {
 public:
-    DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, otava::ast::Node* declarationNode_);
+    DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, FunctionQualifiers qualifiers_, otava::ast::Node* declarationNode_);
     void SetProcessTrailingQualifiers(bool processTrailingQualifiers_) { processTrailingQualifiers = processTrailingQualifiers_; }
     Declaration GetDeclaration() { return std::move(declaration); }
     void Visit(otava::ast::FunctionDeclaratorNode& node) override;
@@ -210,7 +210,7 @@ private:
     otava::ast::Node* declarationNode;
 };
 
-DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, otava::ast::Node* declarationNode_) :
+DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags flags_, TypeSymbol* baseType_, FunctionQualifiers qualifiers_, otava::ast::Node* declarationNode_) :
     context(context_), 
     flags(flags_),
     baseType(baseType_), 
@@ -224,7 +224,7 @@ DeclaratorProcessor::DeclaratorProcessor(Context* context_, DeclarationFlags fla
     processArrayId(false),
     scope(context->GetSymbolTable()->CurrentScope()),
     functionDeclarator(),
-    qualifiers(),
+    qualifiers(qualifiers_),
     declarationNode(declarationNode_)
 {
 }
@@ -263,7 +263,7 @@ void DeclaratorProcessor::Visit(otava::ast::ParenthesizedDeclaratorNode& node)
         baseType = functionTypeSymbol;
         context->GetSymbolTable()->SetAddToRecomputeNameSet(true);
     }
-    declaration = ProcessDeclarator(baseType, node.Declarator(), declarationNode, flags, context);
+    declaration = ProcessDeclarator(baseType, node.Declarator(), declarationNode, flags, FunctionQualifiers::none, context);
 }
 
 void DeclaratorProcessor::Visit(otava::ast::TrailingQualifiersNode& node)
@@ -872,9 +872,10 @@ std::unique_ptr<DeclarationList> ProcessMemberDeclaratorList(TypeSymbol* baseTyp
     return processor.GetDeclarations();
 }
 
-Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, Context* context)
+Declaration ProcessDeclarator(TypeSymbol* baseType, otava::ast::Node* declarator, otava::ast::Node* declarationNode, DeclarationFlags flags, FunctionQualifiers qualifiers, 
+    Context* context)
 {
-    DeclaratorProcessor processor(context, flags, baseType, declarationNode);
+    DeclaratorProcessor processor(context, flags, baseType, qualifiers, declarationNode);
     if (declarator->Kind() == otava::ast::NodeKind::trailingQualifiersNode)
     {
         processor.SetProcessTrailingQualifiers(true);

@@ -12,20 +12,20 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::enums {
 
-template<typename Lexer>
+template<typename LexerT>
 struct EnumParser
 {
-    static soul::parser::Match EnumName(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match EnumSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match EnumHead(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match EnumKey(Lexer& lexer);
-    static soul::parser::Match EnumHeadName(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match EnumBase(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match EnumeratorList(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* container);
-    static soul::parser::Match EnumeratorDefinition(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Enumerator(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match OpaqueEnumDeclaration(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ElaboratedEnumSpecifier(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match EnumName(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match EnumSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match EnumHead(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match EnumKey(LexerT& lexer);
+    static soul::parser::Match EnumHeadName(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match EnumBase(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match EnumeratorList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* container);
+    static soul::parser::Match EnumeratorDefinition(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Enumerator(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match OpaqueEnumDeclaration(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ElaboratedEnumSpecifier(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::enums

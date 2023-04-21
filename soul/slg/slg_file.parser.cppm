@@ -12,16 +12,16 @@ using namespace soul::ast::slg;
 
 export namespace soul::slg::slg::file::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct SlgFileParser
 {
-    static std::unique_ptr<soul::ast::slg::SlgFile> Parse(Lexer& lexer);
-    static soul::parser::Match SlgFile(Lexer& lexer);
-    static soul::parser::Match SlgFileDeclaration(Lexer& lexer);
-    static soul::parser::Match TokenFileDeclaration(Lexer& lexer);
-    static soul::parser::Match KeywordFileDeclaration(Lexer& lexer);
-    static soul::parser::Match ExpressionFileDeclaration(Lexer& lexer);
-    static soul::parser::Match LexerFileDeclaration(Lexer& lexer);
+    static std::unique_ptr<soul::ast::slg::SlgFile> Parse(LexerT& lexer);
+    static soul::parser::Match SlgFile(LexerT& lexer);
+    static soul::parser::Match SlgFileDeclaration(LexerT& lexer);
+    static soul::parser::Match TokenFileDeclaration(LexerT& lexer);
+    static soul::parser::Match KeywordFileDeclaration(LexerT& lexer);
+    static soul::parser::Match ExpressionFileDeclaration(LexerT& lexer);
+    static soul::parser::Match LexerFileDeclaration(LexerT& lexer);
 };
 
 } // namespace soul::slg::slg::file::parser

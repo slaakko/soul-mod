@@ -12,24 +12,24 @@ using namespace soul::ast::common;
 
 export namespace soul::common::common::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct CommonParser
 {
-    static soul::parser::Match QualifiedId(Lexer& lexer);
-    static soul::parser::Match ExportModule(Lexer& lexer);
-    static soul::parser::Match Import(Lexer& lexer);
-    static soul::parser::Match ImportPrefix(Lexer& lexer);
-    static soul::parser::Match ExprString(Lexer& lexer);
-    static soul::parser::Match FilePath(Lexer& lexer);
-    static soul::parser::Match ExportKeyword(Lexer& lexer);
-    static soul::parser::Match ModuleKeyword(Lexer& lexer);
-    static soul::parser::Match ImportKeyword(Lexer& lexer);
-    static soul::parser::Match ImplementationPrefix(Lexer& lexer);
-    static soul::parser::Match InterfacePrefix(Lexer& lexer);
-    static soul::parser::Match ImplementationKeyword(Lexer& lexer);
-    static soul::parser::Match InterfaceKeyword(Lexer& lexer);
-    static soul::parser::Match ParserKeyword(Lexer& lexer);
-    static soul::parser::Match LexerKeyword(Lexer& lexer);
+    static soul::parser::Match QualifiedId(LexerT& lexer);
+    static soul::parser::Match ExportModule(LexerT& lexer);
+    static soul::parser::Match Import(LexerT& lexer);
+    static soul::parser::Match ImportPrefix(LexerT& lexer);
+    static soul::parser::Match ExprString(LexerT& lexer);
+    static soul::parser::Match FilePath(LexerT& lexer);
+    static soul::parser::Match ExportKeyword(LexerT& lexer);
+    static soul::parser::Match ModuleKeyword(LexerT& lexer);
+    static soul::parser::Match ImportKeyword(LexerT& lexer);
+    static soul::parser::Match ImplementationPrefix(LexerT& lexer);
+    static soul::parser::Match InterfacePrefix(LexerT& lexer);
+    static soul::parser::Match ImplementationKeyword(LexerT& lexer);
+    static soul::parser::Match InterfaceKeyword(LexerT& lexer);
+    static soul::parser::Match ParserKeyword(LexerT& lexer);
+    static soul::parser::Match LexerKeyword(LexerT& lexer);
 };
 
 } // namespace soul::common::common::parser

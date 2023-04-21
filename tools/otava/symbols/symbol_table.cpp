@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -43,6 +43,7 @@ import otava.symbols.bound.tree;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.symbol_map;
 import otava.symbols.conversion.table;
+import otava.symbols.friends;
 
 namespace otava::symbols {
 
@@ -200,10 +201,11 @@ void SymbolTable::Init()
     }
 }
 
-void SymbolTable::Import(const SymbolTable& that)
+void SymbolTable::Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet)
 {
     Context context;
     context.SetSymbolTable(this);
+    context.SetFunctionDefinitionSymbolSet(functionDefinitionSymbolSet);
     globalNs->Import(that.globalNs.get(), &context);
     ImportSpecializations(that);
     ImportArrayTypes(that);
@@ -227,10 +229,23 @@ void SymbolTable::Import(const SymbolTable& that)
     MapConstraint(typenameConstraintSymbol);
     conversionTable->Import(that.GetConversionTable());
     ImportClassIndex(that);
+    AddImportAfterResolve(&that);
+}
+
+void SymbolTable::AddImportAfterResolve(const SymbolTable* that)
+{
+    if (std::find(importAfterResolve.begin(), importAfterResolve.end(), that) == importAfterResolve.end())
+    {
+        importAfterResolve.push_back(that);
+    }
 }
 
 void SymbolTable::ImportSpecializations(const SymbolTable& that)
 {
+    if (module->Name() == "std.core" && that.module->Name() == "std.stream")
+    {
+        int x = 0;
+    }
     for (const auto& s : that.classTemplateSpecializationSet)
     {
         classTemplateSpecializationSet.insert(s);
@@ -384,7 +399,6 @@ void SymbolTable::WriteMaps(Writer& writer)
     for (const auto& m : nodeSymbolMap)
     {
         writer.GetBinaryStreamWriter().Write(static_cast<int32_t>(m.first->Kind()));
-        writer.GetBinaryStreamWriter().Write(m.second->Name());
         int64_t nodeId = m.first->Id();
         if (m.first->IsInternallyMapped())
         {
@@ -437,7 +451,6 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
     for (uint32_t i = 0; i < nns; ++i)
     {
         otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(reader.GetBinaryStreamReader().ReadInt());
-        std::u32string name = reader.GetBinaryStreamReader().ReadUtf32String();
         int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
@@ -542,6 +555,7 @@ void SymbolTable::Write(Writer& writer)
 void SymbolTable::Read(Reader& reader)
 {
     Context context;
+    context.SetFunctionDefinitionSymbolSet(reader.GetFunctionDefinitionSymbolSet());
     context.SetSymbolTable(this);
     reader.SetContext(&context);
     globalNs->Read(reader);
@@ -756,6 +770,37 @@ Symbol* SymbolTable::LookupSymbol(Symbol* symbol)
     return nullptr;
 }
 
+void SymbolTable::ResolveForwardDeclarations()
+{
+    std::vector<Symbol*> resolvedFwdDeclarations;
+    for (const auto& symbol : allForwardDeclarations)
+    {
+        if (symbol->IsForwardDeclarationSymbol())
+        {
+            ForwardClassDeclarationSymbol* forwardDeclaration = static_cast<ForwardClassDeclarationSymbol*>(symbol);
+            Symbol* group = LookupSymbol(forwardDeclaration);
+            if (group)
+            {
+                if (group->IsClassGroupSymbol())
+                {
+                    ClassGroupSymbol* classGroupSymbol = static_cast<ClassGroupSymbol*>(group);
+                    ClassTypeSymbol* classTypeSymbol = classGroupSymbol->GetClass(forwardDeclaration->Arity());
+                    if (classTypeSymbol)
+                    {
+                        forwardDeclaration->SetClassTypeSymbol(classTypeSymbol);
+                        resolvedFwdDeclarations.push_back(forwardDeclaration);
+                    }
+                }
+            }
+        }
+    }
+    for (const auto& symbol : resolvedFwdDeclarations)
+    {
+        ForwardDeclarations().erase(symbol);
+        AllForwardDeclarations().erase(symbol);
+    }
+}
+
 void SymbolTable::CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs,
     int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context)
 {
@@ -805,10 +850,18 @@ void SymbolTable::MapNode(otava::ast::Node* node, Symbol* symbol, MapKind kind)
 {
     if (!node) return;
     if (!symbol) return;
+    Symbol* prevSymbol = nullptr;
+    if (symbol->IsFunctionSymbol() && !symbol->IsFunctionDefinitionSymbol())
+    {
+        prevSymbol = GetSymbolNothrow(node);
+    }
     if ((kind & MapKind::nodeToSymbol) != MapKind::none)
     {
-        nodeSymbolMap[node] = symbol;
-        allNodeSymbolMap[node] = symbol;
+        if (!prevSymbol)
+        {
+            nodeSymbolMap[node] = symbol;
+            allNodeSymbolMap[node] = symbol;
+        }
     }
     if ((kind & MapKind::symbolToNode) != MapKind::none)
     {
@@ -1091,25 +1144,6 @@ void SymbolTable::EndClass()
 void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context)
 {
     Symbol* symbol = currentScope->Lookup(name, SymbolGroupKind::typeSymbolGroup, ScopeLookup::thisScope, node->GetSourcePos(), context, LookupFlags::dontResolveSingle);
-/*
-    if (symbol && symbol->IsClassGroupSymbol())
-    {
-        ClassGroupSymbol* classGroup = static_cast<ClassGroupSymbol*>(symbol);
-        int arity = 0;
-        Symbol* symbol = currentScope->GetSymbol();
-        if (symbol && symbol->IsTemplateDeclarationSymbol())
-        {
-            TemplateDeclarationSymbol* templateDeclarationSymbol = static_cast<TemplateDeclarationSymbol*>(symbol);
-            arity = templateDeclarationSymbol->Arity();
-        }
-        ForwardClassDeclarationSymbol* forwardDeclarationSymbol = classGroup->GetForwardDeclaration(arity);
-        if (forwardDeclarationSymbol)
-        {
-            forwardDeclarationSymbol->SetClassKind(classKind);
-            return;
-        }
-    }
-*/
     ClassGroupSymbol* classGroup = currentScope->GroupScope()->GetOrInsertClassGroup(name, node->GetSourcePos(), context);
     ForwardClassDeclarationSymbol* forwardDeclarationSymbol = new ForwardClassDeclarationSymbol(name);
     forwardDeclarationSymbol->SetAccess(CurrentAccess());
@@ -1120,6 +1154,13 @@ void SymbolTable::AddForwardClassDeclaration(const std::u32string& name, ClassKi
     MapNode(node, forwardDeclarationSymbol);
     forwardDeclarations.insert(forwardDeclarationSymbol);
     allForwardDeclarations.insert(forwardDeclarationSymbol);
+}
+
+void SymbolTable::AddFriend(const std::u32string& name, otava::ast::Node* node, Context* context)
+{
+    FriendSymbol* friendSymbol = new FriendSymbol(name);
+    currentScope->SymbolScope()->AddSymbol(friendSymbol, node->GetSourcePos(), context);
+    MapNode(node, friendSymbol);
 }
 
 void SymbolTable::BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context)
@@ -1267,9 +1308,11 @@ void SymbolTable::AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol
     functionGroup->AddFunction(functionSymbol);
 }
 
-FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization,
-    const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, otava::ast::Node* node, Context* context)
+FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization,
+    const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, otava::ast::Node* node,
+    otava::ast::Node* functionNode, bool& get, Context* context)
 {
+    get = false;
     std::u32string groupName = name;
     Symbol* containerSymbol = scope->SymbolScope()->GetSymbol();
     if (containerSymbol && containerSymbol->SimpleName() == name)
@@ -1285,7 +1328,7 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         groupName = U"@destructor";
     }
     FunctionGroupSymbol* functionGroup = scope->GroupScope()->GetOrInsertFunctionGroup(groupName, node->GetSourcePos(), context);
-    FunctionDefinitionSymbol* functionDefinition = new FunctionDefinitionSymbol(name);
+    std::unique_ptr<FunctionDefinitionSymbol> functionDefinition(new FunctionDefinitionSymbol(name));
     functionDefinition->SetGroup(functionGroup);
     functionDefinition->SetDeclarationFlags(declarationFlags);
     if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
@@ -1293,23 +1336,45 @@ FunctionDefinitionSymbol* SymbolTable::AddFunctionDefinition(Scope* scope, const
         functionDefinition->SetSpecialization();
     }
     functionDefinition->SetLinkage(currentLinkage);
-    MapNode(node, functionDefinition, MapKind::nodeToSymbol);
     functionDefinition->SetFunctionKind(kind);
     functionDefinition->SetFunctionQualifiers(qualifiers);
     functionDefinition->SetSpecialization(specialization);
-    FunctionSymbol* declaration = functionGroup->ResolveFunction(parameterTypes, qualifiers);
-    if (declaration)
+    functionDefinition->SetParent(currentScope->SymbolScope()->GetSymbol());
+    int index = 0;
+    for (const auto& parameterType : parameterTypes)
     {
-        functionDefinition->SetDeclaration(declaration);
-        functionDefinition->SetAccess(declaration->GetAccess());
+        functionDefinition->AddTemporaryParameter(parameterType, index++);
     }
+    if (functionDefinition->IsVirtual())
+    {
+        ClassTemplateSpecializationSymbol* csp = context->GetClassTemplateSpecialization(functionNode);
+        if (csp)
+        {
+            FunctionSymbol* prev = csp->GetMatchingVirtualFunctionSpecialization(functionDefinition.get(), context);
+            if (prev && prev->IsFunctionDefinitionSymbol())
+            {
+                get = true;
+                return static_cast<FunctionDefinitionSymbol*>(prev);
+            }
+        }
+    }
+    functionDefinition->ClearTemporaryParameters();
+    MapNode(node, functionDefinition.get(), MapKind::nodeToSymbol);
     if (context->MemFunDefSymbolIndex() != -1)
     {
         functionDefinition->SetDefIndex(context->MemFunDefSymbolIndex());
         context->SetMemFunDefSymbolIndex(-1);
     }
-    currentScope->SymbolScope()->AddSymbol(functionDefinition, node->GetSourcePos(), context);
-    return functionDefinition;
+    FunctionDefinitionSymbol* definition = functionDefinition.get();
+    currentScope->SymbolScope()->AddSymbol(functionDefinition.release(), node->GetSourcePos(), context);
+    FunctionSymbol* declaration = functionGroup->ResolveFunction(parameterTypes, qualifiers, specialization, definition->ParentTemplateDeclaration(),
+        definition->IsSpecialization());
+    if (declaration)
+    {
+        definition->SetDeclaration(declaration);
+        definition->SetAccess(declaration->GetAccess());
+    }
+    return definition;
 }
 
 ParameterSymbol* SymbolTable::CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context)
@@ -1749,6 +1814,31 @@ void SymbolTable::AddExplicitInstantiation(ExplicitInstantiationSymbol* explicit
 void SymbolTable::MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition)
 {
     explicitInstantiationMap[explicitInstantition->Specialization()] = explicitInstantition;
+}
+
+void SymbolTable::AddClassTemplateSpecializationToSet(ClassTemplateSpecializationSymbol* sp)
+{
+    classTemplateSpecializationSet.insert(sp);
+}
+
+void SymbolTable::AddAliasTypeTemplateSpecializationToSet(AliasTypeTemplateSpecializationSymbol* at)
+{
+    aliasTypeTemplateSpecializationSet.insert(at);
+}
+
+void SymbolTable::AddArrayTypeToSet(ArrayTypeSymbol* a)
+{
+    arrayTypeSet.insert(a);
+}
+
+void SymbolTable::ImportAfterResolve()
+{
+    for (const auto& st : importAfterResolve)
+    {
+        ImportSpecializations(*st);
+        ImportArrayTypes(*st);
+    }
+    importAfterResolve.clear();
 }
 
 } // namespace otava::symbols

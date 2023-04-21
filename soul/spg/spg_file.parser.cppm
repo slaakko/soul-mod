@@ -12,13 +12,13 @@ using namespace soul::ast::spg;
 
 export namespace soul::spg::spg::file::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct SpgFileParser
 {
-    static std::unique_ptr<soul::ast::spg::SpgFile> Parse(Lexer& lexer);
-    static soul::parser::Match SpgFile(Lexer& lexer);
-    static soul::parser::Match SpgFileDeclaration(Lexer& lexer);
-    static soul::parser::Match ParserFileDeclaration(Lexer& lexer);
+    static std::unique_ptr<soul::ast::spg::SpgFile> Parse(LexerT& lexer);
+    static soul::parser::Match SpgFile(LexerT& lexer);
+    static soul::parser::Match SpgFileDeclaration(LexerT& lexer);
+    static soul::parser::Match ParserFileDeclaration(LexerT& lexer);
 };
 
 } // namespace soul::spg::spg::file::parser

@@ -6,6 +6,7 @@ module soul.slg.keyword.file.parser;
 import util;
 import soul.ast.spg;
 import soul.cpp.token;
+import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
 import soul.common.common.parser;
@@ -13,6 +14,7 @@ import soul.common.token.parser;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
+using namespace soul::cpp::op::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
 using namespace soul::common::common::parser;
@@ -21,8 +23,8 @@ using namespace soul::lex::slg;
 
 namespace soul::slg::keyword::file::parser {
 
-template<typename Lexer>
-std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<Lexer>::Parse(Lexer& lexer)
+template<typename LexerT>
+std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::ast::slg::KeywordFile> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -33,7 +35,7 @@ std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<Lexer>::Parse(Lex
     }
     #endif
     ++lexer;
-    soul::parser::Match match = KeywordFileParser<Lexer>::KeywordFile(lexer);
+    soul::parser::Match match = KeywordFileParser<LexerT>::KeywordFile(lexer);
     value.reset(static_cast<soul::ast::slg::KeywordFile*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -60,8 +62,8 @@ std::unique_ptr<soul::ast::slg::KeywordFile> KeywordFileParser<Lexer>::Parse(Lex
     return value;
 }
 
-template<typename Lexer>
-soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match KeywordFileParser<LexerT>::KeywordFile(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -72,7 +74,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "KeywordFile");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860993);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860993);
     std::unique_ptr<soul::ast::slg::KeywordFile> keywordFile = std::unique_ptr<soul::ast::slg::KeywordFile>();
     std::unique_ptr<soul::ast::slg::KeywordCollection> keywordCollection = std::unique_ptr<soul::ast::slg::KeywordCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> keywordCollectionName;
@@ -120,7 +122,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
-                                        soul::parser::Match match = KeywordFileParser<Lexer>::Imports(lexer, keywordFile.get());
+                                        soul::parser::Match match = KeywordFileParser<LexerT>::Imports(lexer, keywordFile.get());
                                         *parentMatch9 = match;
                                     }
                                     *parentMatch7 = match;
@@ -157,7 +159,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
                                     soul::parser::Match* parentMatch13 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = CommonParser<Lexer>::QualifiedId(lexer);
+                                        soul::parser::Match match = CommonParser<LexerT>::QualifiedId(lexer);
                                         keywordCollectionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                         if (match.hit)
                                         {
@@ -229,7 +231,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
                                     soul::parser::Match* parentMatch20 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = KeywordFileParser<Lexer>::Keyword(lexer);
+                                        soul::parser::Match match = KeywordFileParser<LexerT>::Keyword(lexer);
                                         keyword.reset(static_cast<soul::ast::slg::Keyword*>(match.value));
                                         if (match.hit)
                                         {
@@ -271,7 +273,7 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
                                                             soul::parser::Match* parentMatch25 = &match;
                                                             {
                                                                 int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = KeywordFileParser<Lexer>::Keyword(lexer);
+                                                                soul::parser::Match match = KeywordFileParser<LexerT>::Keyword(lexer);
                                                                 keyword.reset(static_cast<soul::ast::slg::Keyword*>(match.value));
                                                                 if (match.hit)
                                                                 {
@@ -372,8 +374,8 @@ soul::parser::Match KeywordFileParser<Lexer>::KeywordFile(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::slg::KeywordFile* keywordFile)
+template<typename LexerT>
+soul::parser::Match KeywordFileParser<LexerT>::Imports(LexerT& lexer, soul::ast::slg::KeywordFile* keywordFile)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -384,7 +386,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
         soul::lexer::WriteBeginRuleToLog(lexer, "Imports");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860994);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860994);
     std::unique_ptr<soul::ast::common::Import> imp;
     soul::parser::Match match(true);
     soul::parser::Match* parentMatch0 = &match;
@@ -400,7 +402,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
                     soul::parser::Match* parentMatch2 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = CommonParser<Lexer>::Import(lexer);
+                        soul::parser::Match match = CommonParser<LexerT>::Import(lexer);
                         imp.reset(static_cast<soul::ast::common::Import*>(match.value));
                         if (match.hit)
                         {
@@ -436,8 +438,8 @@ soul::parser::Match KeywordFileParser<Lexer>::Imports(Lexer& lexer, soul::ast::s
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match KeywordFileParser<LexerT>::Keyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -448,7 +450,7 @@ soul::parser::Match KeywordFileParser<Lexer>::Keyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Keyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8613845327771860995);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8613845327771860995);
     std::string str = std::string();
     std::string tokenName = std::string();
     soul::parser::Match match(false);

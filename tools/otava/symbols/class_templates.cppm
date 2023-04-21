@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -42,6 +42,9 @@ public:
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     bool InstantiatingDestructor() const { return instantiatingDestructor; }
     void SetInstantiatingDestructor(bool instantiating) { instantiatingDestructor = instantiating; }
+    void AddInstantiatedVirtualFunctionSpecialization(FunctionSymbol* specialization);
+    FunctionSymbol* GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const;
+    bool ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const;
 private:
     ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;
@@ -50,6 +53,8 @@ private:
     util::uuid destructorId;
     bool instantiated;
     bool instantiatingDestructor;
+    std::vector<FunctionSymbol*> instantiatedVirtualFunctionSpecializations;
+    std::vector<util::uuid> instantiatedVirtualFunctionSpecializationIds;
 };
 
 struct MemFunKey

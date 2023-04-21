@@ -12,10 +12,10 @@ using namespace soul::ast::cpp;
 
 export namespace soul::cpp::literal::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct LiteralParser
 {
-    static soul::parser::Match Literal(Lexer& lexer);
+    static soul::parser::Match Literal(LexerT& lexer);
 };
 
 } // namespace soul::cpp::literal::parser

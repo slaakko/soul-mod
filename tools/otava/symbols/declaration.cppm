@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -78,12 +78,13 @@ class Reader;
 
 std::string DeclarationFlagStr(DeclarationFlags flags);
 
-void ProcessSimpleDeclaration(otava::ast::Node* node, Context* context);
+void ProcessSimpleDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
 Declaration ProcessFunctionDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessParameterDeclaration(otava::ast::Node* node, Context* context);
 Declaration ProcessExceptionDeclaration(otava::ast::Node* node, Context* context);
-void ProcessMemberDeclaration(otava::ast::Node* node, Context* context);
-int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, Context* context);
+void ProcessMemberDeclaration(otava::ast::Node* node, otava::ast::Node* functionNode, Context* context);
+int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, otava::ast::Node* specifierNode, 
+    bool& get, Context* context);
 void EndFunctionDefinition(otava::ast::Node* functionDefinitionNode, int scopes, Context* context);
 void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context);
 TypeSymbol* ProcessExplicitInstantiationDeclaration(otava::ast::Node* node, Context* context);

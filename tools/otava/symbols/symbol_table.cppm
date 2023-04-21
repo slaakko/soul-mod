@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -77,6 +77,7 @@ class Reader;
 class Writer;
 class Visitor;
 class ConversionTable;
+class FunctionDefinitionSymbolSet;
 
 enum class SymbolGroupKind : int32_t;
 
@@ -95,7 +96,7 @@ public:
     Module* GetModule() const { return module; }
     NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
     void Init();
-    void Import(const SymbolTable& that);
+    void Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
     void Write(Writer& writer);
     void Read(Reader& reader);
     void Resolve();
@@ -126,6 +127,7 @@ public:
     void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     void EndClass();
     void AddForwardClassDeclaration(const std::u32string& name, ClassKind classKind, TypeSymbol* specialization, otava::ast::Node* node, Context* context);
+    void AddFriend(const std::u32string& name, otava::ast::Node* node, Context* context);
     void BeginEnumeratedType(const std::u32string& name, EnumTypeKind kind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
     void EndEnumeratedType();
     void AddForwardEnumDeclaration(const std::u32string& name, EnumTypeKind enumTypeKind, TypeSymbol* underlyingType, otava::ast::Node* node, Context* context);
@@ -141,9 +143,9 @@ public:
     FunctionSymbol* AddFunction(const std::u32string& name, const std::vector<TypeSymbol*>& specialization, otava::ast::Node* node, FunctionKind kind, 
         FunctionQualifiers qualifiers, DeclarationFlags flags, Context* context);
     void AddFunctionSymbol(Scope* scope, FunctionSymbol* functionSymbol, Context* context);
-    FunctionDefinitionSymbol* AddFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization, 
+    FunctionDefinitionSymbol* AddOrGetFunctionDefinition(Scope* scope, const std::u32string& name, const std::vector<TypeSymbol*>& specialization,
         const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, FunctionKind kind, DeclarationFlags declarationFlags, 
-        otava::ast::Node* node, Context* context);
+        otava::ast::Node* node, otava::ast::Node* functionNode, bool& get, Context* context);
     ParameterSymbol* CreateParameter(const std::u32string& name, otava::ast::Node* node, TypeSymbol* type, Context* context);
     VariableSymbol* AddVariable(const std::u32string& name, otava::ast::Node* node, TypeSymbol* declaredType, TypeSymbol* type, 
         Value* value, DeclarationFlags flags, Context* context);
@@ -165,6 +167,7 @@ public:
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupSymbol(Symbol* symbol);
+    void ResolveForwardDeclarations();
     void CollectViableFunctions(const std::vector<std::pair<Scope*, ScopeLookup>>& scopeLookups, const std::u32string& groupName, const std::vector<TypeSymbol*>& templateArgs, 
         int arity, std::vector<FunctionSymbol*>& viableFunctions, Context* context);
     void MapNode(otava::ast::Node* node);
@@ -202,6 +205,8 @@ public:
     void RecomputeNames();
     const std::set<Symbol*>& ForwardDeclarations() const { return forwardDeclarations; }
     const std::set<Symbol*>& AllForwardDeclarations() const { return allForwardDeclarations; }
+    std::set<Symbol*>& ForwardDeclarations() { return forwardDeclarations; }
+    std::set<Symbol*>& AllForwardDeclarations() { return allForwardDeclarations; }
     Access CurrentAccess() const { return currentAccess; }
     void SetCurrentAccess(Access access);
     void PushAccess(Access access);
@@ -222,6 +227,10 @@ public:
     void MapExplicitInstantiation(ExplicitInstantiationSymbol* explicitInstantition);
     const info::class_index& ClassIndex() const { return index; }
     info::class_index& ClassIndex() { return index; }
+    void AddClassTemplateSpecializationToSet(ClassTemplateSpecializationSymbol* sp);
+    void AddAliasTypeTemplateSpecializationToSet(AliasTypeTemplateSpecializationSymbol* at);
+    void AddArrayTypeToSet(ArrayTypeSymbol* a);
+    void ImportAfterResolve();
 private:
     void CreateFundamentalTypes();
     void AddFundamentalType(FundamentalTypeKind kind);
@@ -245,6 +254,7 @@ private:
     void ImportExplicitInstantiations(const SymbolTable& that);
     void ImportFunctionGroupTypes(const SymbolTable& that);
     void ImportClassIndex(const SymbolTable& that);
+    void AddImportAfterResolve(const SymbolTable* that);
     Module* module;
     std::unique_ptr<NamespaceSymbol> globalNs;
     std::vector<std::unique_ptr<Symbol>> classTemplateSpecializations;
@@ -274,7 +284,7 @@ private:
     std::map<util::uuid, VariableSymbol*> variableMap;
     std::map<util::uuid, Symbol*> constraintMap;
     std::map<util::uuid, FunctionGroupSymbol*> functionGroupMap;
-    std::map < util::uuid, ConceptSymbol*> conceptMap;
+    std::map<util::uuid, ConceptSymbol*> conceptMap;
     Symbol* typenameConstraintSymbol;
     TypeSymbol* errorTypeSymbol;
     int topScopeIndex;
@@ -295,6 +305,7 @@ private:
     std::stack<Linkage> linkageStack;
     std::vector<ParameterSymbol*> returnValueParametersToResolve;
     info::class_index index;
+    std::vector<const SymbolTable*> importAfterResolve;
 };
 
 } // namespace otava::symbols

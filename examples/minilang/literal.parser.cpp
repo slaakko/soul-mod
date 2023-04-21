@@ -15,8 +15,8 @@ using namespace minilang::token;
 
 namespace minilang::parser::literal {
 
-template<typename Lexer>
-soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -27,7 +27,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Literal");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2710058753855586305);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2710058753855586305);
     std::unique_ptr<minilang::ast::Node> booleanLiteral;
     std::unique_ptr<minilang::ast::Node> integerLiteral;
     soul::parser::Match match(false);
@@ -38,7 +38,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = LiteralParser<Lexer>::BooleanLiteral(lexer);
+            soul::parser::Match match = LiteralParser<LexerT>::BooleanLiteral(lexer);
             booleanLiteral.reset(static_cast<minilang::ast::Node*>(match.value));
             if (match.hit)
             {
@@ -62,7 +62,7 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = LiteralParser<Lexer>::IntegerLiteral(lexer);
+                    soul::parser::Match match = LiteralParser<LexerT>::IntegerLiteral(lexer);
                     integerLiteral.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -94,8 +94,8 @@ soul::parser::Match LiteralParser<Lexer>::Literal(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match LiteralParser<Lexer>::BooleanLiteral(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match LiteralParser<LexerT>::BooleanLiteral(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -106,7 +106,7 @@ soul::parser::Match LiteralParser<Lexer>::BooleanLiteral(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "BooleanLiteral");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2710058753855586306);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2710058753855586306);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -152,8 +152,8 @@ soul::parser::Match LiteralParser<Lexer>::BooleanLiteral(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match LiteralParser<Lexer>::IntegerLiteral(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match LiteralParser<LexerT>::IntegerLiteral(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -164,7 +164,7 @@ soul::parser::Match LiteralParser<Lexer>::IntegerLiteral(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "IntegerLiteral");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 2710058753855586307);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2710058753855586307);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

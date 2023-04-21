@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -7,6 +7,7 @@ export module soul.slg.keyword.file.parser;
 
 [interface]import soul.ast.slg;
 [implementation]import soul.cpp.token;
+[implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.tool.token;
 [implementation]import soul.common.common.parser;

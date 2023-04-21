@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -17,7 +17,8 @@ namespace soul::spg {
 
 std::unique_ptr<soul::ast::spg::SpgFile> ParseSpgFile(const std::string& spgFilePath, soul::lexer::FileMap& fileMap, bool verbose)
 {
-    if (!std::filesystem::exists(spgFilePath))
+    std::filesystem::path p = spgFilePath;
+    if (!std::filesystem::exists(p))
     {
         throw std::runtime_error("SPG file '" + spgFilePath + "' not found");
     }
@@ -42,7 +43,8 @@ std::unique_ptr<soul::ast::spg::SpgFile> ParseSpgFile(const std::string& spgFile
 std::unique_ptr<soul::ast::spg::ParserFile> ParseParserFile(const std::string& parserFilePath, const soul::ast::SourcePos& sourcePos, soul::lexer::FileMap& fileMap, 
     bool verbose, bool external)
 {
-    if (!std::filesystem::exists(parserFilePath))
+    std::filesystem::path p = parserFilePath;
+    if (!std::filesystem::exists(p))
     {
         std::string errorMessage = soul::lexer::MakeMessage("error", "parser file '" + parserFilePath + "' not found", sourcePos, fileMap);
         throw std::runtime_error(errorMessage);

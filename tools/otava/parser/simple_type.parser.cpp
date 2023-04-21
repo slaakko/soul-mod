@@ -15,8 +15,8 @@ using namespace otava::lexer;
 
 namespace otava::parser::simple::type {
 
-template<typename Lexer>
-soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -27,7 +27,7 @@ soul::parser::Match SimpleTypeParser<Lexer>::SimpleType(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleType");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 695727793635328001);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 695727793635328001);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)

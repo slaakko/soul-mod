@@ -9,11 +9,11 @@ import soul.parser;
 
 export namespace test::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct TestParser
 {
-    static int Parse(Lexer& lexer);
-    static soul::parser::Match ClassKey(Lexer& lexer);
+    static int Parse(LexerT& lexer);
+    static soul::parser::Match ClassKey(LexerT& lexer);
 };
 
 } // namespace test::parser

@@ -15,8 +15,8 @@ using namespace soul::xml::serialization::scanner;
 
 namespace soul::xml::serialization::parser {
 
-template<typename Lexer>
-std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> XmlSerParser<Lexer>::Parse(Lexer& lexer)
+template<typename LexerT>
+std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> XmlSerParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -27,7 +27,7 @@ std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> XmlSerParser<Lexe
     }
     #endif
     ++lexer;
-    soul::parser::Match match = XmlSerParser<Lexer>::SourceFile(lexer);
+    soul::parser::Match match = XmlSerParser<LexerT>::SourceFile(lexer);
     value.reset(static_cast<soul::xml::serialization::ast::SourceFileNode*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -54,8 +54,8 @@ std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> XmlSerParser<Lexe
     return value;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::SourceFile(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -66,7 +66,7 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SourceFile");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527553);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527553);
     std::unique_ptr<soul::xml::serialization::ast::SourceFileNode> sourceFile = std::unique_ptr<soul::xml::serialization::ast::SourceFileNode>();
     std::unique_ptr<soul::xml::serialization::ast::ExportModule> module;
     std::unique_ptr<soul::xml::serialization::ast::Import> import;
@@ -108,7 +108,7 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
                             soul::parser::Match* parentMatch7 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = XmlSerParser<Lexer>::ExportModule(lexer);
+                                soul::parser::Match match = XmlSerParser<LexerT>::ExportModule(lexer);
                                 module.reset(static_cast<soul::xml::serialization::ast::ExportModule*>(match.value));
                                 if (match.hit)
                                 {
@@ -141,7 +141,7 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
                                         soul::parser::Match* parentMatch11 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = XmlSerParser<Lexer>::Import(lexer);
+                                            soul::parser::Match match = XmlSerParser<LexerT>::Import(lexer);
                                             import.reset(static_cast<soul::xml::serialization::ast::Import*>(match.value));
                                             if (match.hit)
                                             {
@@ -174,7 +174,7 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch12 = &match;
                 {
-                    soul::parser::Match match = XmlSerParser<Lexer>::NamespaceContent(lexer, sourceFile->GlobalNs());
+                    soul::parser::Match match = XmlSerParser<LexerT>::NamespaceContent(lexer, sourceFile->GlobalNs());
                     *parentMatch12 = match;
                 }
                 *parentMatch2 = match;
@@ -206,8 +206,8 @@ soul::parser::Match XmlSerParser<Lexer>::SourceFile(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::NamespaceContent(Lexer& lexer, soul::xml::serialization::ast::NamespaceNode* ns)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::NamespaceContent(LexerT& lexer, soul::xml::serialization::ast::NamespaceNode* ns)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -218,7 +218,7 @@ soul::parser::Match XmlSerParser<Lexer>::NamespaceContent(Lexer& lexer, soul::xm
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceContent");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527554);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527554);
     std::unique_ptr<soul::xml::serialization::ast::Node> declaration;
     std::unique_ptr<soul::xml::serialization::ast::Node> definition;
     soul::parser::Match match(true);
@@ -239,7 +239,7 @@ soul::parser::Match XmlSerParser<Lexer>::NamespaceContent(Lexer& lexer, soul::xm
                         soul::parser::Match* parentMatch3 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = XmlSerParser<Lexer>::Declaration(lexer);
+                            soul::parser::Match match = XmlSerParser<LexerT>::Declaration(lexer);
                             declaration.reset(static_cast<soul::xml::serialization::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -258,7 +258,7 @@ soul::parser::Match XmlSerParser<Lexer>::NamespaceContent(Lexer& lexer, soul::xm
                                 soul::parser::Match* parentMatch5 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = XmlSerParser<Lexer>::Definition(lexer);
+                                    soul::parser::Match match = XmlSerParser<LexerT>::Definition(lexer);
                                     definition.reset(static_cast<soul::xml::serialization::ast::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -299,8 +299,8 @@ soul::parser::Match XmlSerParser<Lexer>::NamespaceContent(Lexer& lexer, soul::xm
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Declaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -311,7 +311,7 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Declaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527555);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527555);
     std::unique_ptr<soul::xml::serialization::ast::Node> forwardClassDeclaration;
     std::unique_ptr<soul::xml::serialization::ast::Node> usingAliasDeclaration;
     soul::parser::Match match(false);
@@ -322,7 +322,7 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = XmlSerParser<Lexer>::ForwardClassDeclaration(lexer);
+            soul::parser::Match match = XmlSerParser<LexerT>::ForwardClassDeclaration(lexer);
             forwardClassDeclaration.reset(static_cast<soul::xml::serialization::ast::Node*>(match.value));
             if (match.hit)
             {
@@ -346,7 +346,7 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XmlSerParser<Lexer>::UsingAliasDeclaration(lexer);
+                    soul::parser::Match match = XmlSerParser<LexerT>::UsingAliasDeclaration(lexer);
                     usingAliasDeclaration.reset(static_cast<soul::xml::serialization::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -378,8 +378,8 @@ soul::parser::Match XmlSerParser<Lexer>::Declaration(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ForwardClassDeclaration(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ForwardClassDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -390,7 +390,7 @@ soul::parser::Match XmlSerParser<Lexer>::ForwardClassDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ForwardClassDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527556);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527556);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string classId = std::string();
     soul::parser::Match match(false);
@@ -493,8 +493,8 @@ soul::parser::Match XmlSerParser<Lexer>::ForwardClassDeclaration(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::UsingAliasDeclaration(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::UsingAliasDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -505,7 +505,7 @@ soul::parser::Match XmlSerParser<Lexer>::UsingAliasDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingAliasDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527557);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527557);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string id = std::string();
     std::unique_ptr<soul::parser::Value<std::string>> qualifiedCppId;
@@ -595,7 +595,7 @@ soul::parser::Match XmlSerParser<Lexer>::UsingAliasDeclaration(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch10 = &match;
                     {
-                        soul::parser::Match match = XmlSerParser<Lexer>::QualifiedCppId(lexer);
+                        soul::parser::Match match = XmlSerParser<LexerT>::QualifiedCppId(lexer);
                         qualifiedCppId.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                         *parentMatch10 = match;
                     }
@@ -645,8 +645,8 @@ soul::parser::Match XmlSerParser<Lexer>::UsingAliasDeclaration(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Definition(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -657,7 +657,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Definition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527558);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527558);
     std::unique_ptr<soul::xml::serialization::ast::Node> cls;
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> enm;
     std::unique_ptr<soul::xml::serialization::ast::Node> ns;
@@ -678,7 +678,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XmlSerParser<Lexer>::Class(lexer);
+                    soul::parser::Match match = XmlSerParser<LexerT>::Class(lexer);
                     cls.reset(static_cast<soul::xml::serialization::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -702,7 +702,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = XmlSerParser<Lexer>::Enum(lexer);
+                            soul::parser::Match match = XmlSerParser<LexerT>::Enum(lexer);
                             enm.reset(static_cast<soul::xml::serialization::ast::TypeNode*>(match.value));
                             if (match.hit)
                             {
@@ -731,7 +731,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                     soul::parser::Match* parentMatch7 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = XmlSerParser<Lexer>::Namespace(lexer);
+                        soul::parser::Match match = XmlSerParser<LexerT>::Namespace(lexer);
                         ns.reset(static_cast<soul::xml::serialization::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -760,7 +760,7 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
                 soul::parser::Match* parentMatch9 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XmlSerParser<Lexer>::CppBlock(lexer, true);
+                    soul::parser::Match match = XmlSerParser<LexerT>::CppBlock(lexer, true);
                     cppBlock.reset(static_cast<soul::xml::serialization::ast::CppBlockNode*>(match.value));
                     if (match.hit)
                     {
@@ -792,8 +792,8 @@ soul::parser::Match XmlSerParser<Lexer>::Definition(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Class(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -804,7 +804,7 @@ soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Class");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527559);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527559);
     std::unique_ptr<soul::xml::serialization::ast::ClassNode> cls = std::unique_ptr<soul::xml::serialization::ast::ClassNode>();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -872,7 +872,7 @@ soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
                                 int64_t save = lexer.GetPos();
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
-                                    soul::parser::Match match = XmlSerParser<Lexer>::Inheritance(lexer, cls.get());
+                                    soul::parser::Match match = XmlSerParser<LexerT>::Inheritance(lexer, cls.get());
                                     if (match.hit)
                                     {
                                         *parentMatch10 = match;
@@ -910,7 +910,7 @@ soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch12 = &match;
                     {
-                        soul::parser::Match match = XmlSerParser<Lexer>::ClassContent(lexer, cls.get());
+                        soul::parser::Match match = XmlSerParser<LexerT>::ClassContent(lexer, cls.get());
                         *parentMatch12 = match;
                     }
                     *parentMatch3 = match;
@@ -959,8 +959,8 @@ soul::parser::Match XmlSerParser<Lexer>::Class(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Inheritance(Lexer& lexer, soul::xml::serialization::ast::ClassNode* cls)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Inheritance(LexerT& lexer, soul::xml::serialization::ast::ClassNode* cls)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -971,7 +971,7 @@ soul::parser::Match XmlSerParser<Lexer>::Inheritance(Lexer& lexer, soul::xml::se
         soul::lexer::WriteBeginRuleToLog(lexer, "Inheritance");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527560);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527560);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1027,8 +1027,8 @@ soul::parser::Match XmlSerParser<Lexer>::Inheritance(Lexer& lexer, soul::xml::se
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ClassContent(Lexer& lexer, soul::xml::serialization::ast::ClassNode* cls)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ClassContent(LexerT& lexer, soul::xml::serialization::ast::ClassNode* cls)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1039,7 +1039,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassContent(Lexer& lexer, soul::xml::s
         soul::lexer::WriteBeginRuleToLog(lexer, "ClassContent");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527561);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527561);
     std::unique_ptr<soul::xml::serialization::ast::MemberVariableNode> memberVariable;
     std::unique_ptr<soul::xml::serialization::ast::CppBlockNode> cppBlock;
     soul::parser::Match match(true);
@@ -1060,7 +1060,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassContent(Lexer& lexer, soul::xml::s
                         soul::parser::Match* parentMatch3 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = XmlSerParser<Lexer>::MemberVariable(lexer);
+                            soul::parser::Match match = XmlSerParser<LexerT>::MemberVariable(lexer);
                             memberVariable.reset(static_cast<soul::xml::serialization::ast::MemberVariableNode*>(match.value));
                             if (match.hit)
                             {
@@ -1079,7 +1079,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassContent(Lexer& lexer, soul::xml::s
                                 soul::parser::Match* parentMatch5 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = XmlSerParser<Lexer>::CppBlock(lexer, false);
+                                    soul::parser::Match match = XmlSerParser<LexerT>::CppBlock(lexer, false);
                                     cppBlock.reset(static_cast<soul::xml::serialization::ast::CppBlockNode*>(match.value));
                                     if (match.hit)
                                     {
@@ -1120,8 +1120,8 @@ soul::parser::Match XmlSerParser<Lexer>::ClassContent(Lexer& lexer, soul::xml::s
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::MemberVariable(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::MemberVariable(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1132,7 +1132,7 @@ soul::parser::Match XmlSerParser<Lexer>::MemberVariable(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "MemberVariable");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527562);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527562);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string id = std::string();
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> type;
@@ -1149,7 +1149,7 @@ soul::parser::Match XmlSerParser<Lexer>::MemberVariable(Lexer& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    soul::parser::Match match = XmlSerParser<Lexer>::Type(lexer);
+                    soul::parser::Match match = XmlSerParser<LexerT>::Type(lexer);
                     type.reset(static_cast<soul::xml::serialization::ast::TypeNode*>(match.value));
                     *parentMatch3 = match;
                 }
@@ -1223,8 +1223,8 @@ soul::parser::Match XmlSerParser<Lexer>::MemberVariable(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Type(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1235,7 +1235,7 @@ soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Type");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527563);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527563);
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> type = std::unique_ptr<soul::xml::serialization::ast::TypeNode>();
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> scalarType;
     std::unique_ptr<soul::xml::serialization::ast::TypeNode> classType;
@@ -1263,7 +1263,7 @@ soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
                             soul::parser::Match* parentMatch6 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = XmlSerParser<Lexer>::ScalarType(lexer);
+                                soul::parser::Match match = XmlSerParser<LexerT>::ScalarType(lexer);
                                 scalarType.reset(static_cast<soul::xml::serialization::ast::TypeNode*>(match.value));
                                 if (match.hit)
                                 {
@@ -1282,7 +1282,7 @@ soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = XmlSerParser<Lexer>::ClassType(lexer);
+                                        soul::parser::Match match = XmlSerParser<LexerT>::ClassType(lexer);
                                         classType.reset(static_cast<soul::xml::serialization::ast::TypeNode*>(match.value));
                                         if (match.hit)
                                         {
@@ -1439,8 +1439,8 @@ soul::parser::Match XmlSerParser<Lexer>::Type(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ScalarType(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1451,7 +1451,7 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ScalarType");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527564);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527564);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -1757,8 +1757,8 @@ soul::parser::Match XmlSerParser<Lexer>::ScalarType(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ClassType(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ClassType(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1769,7 +1769,7 @@ soul::parser::Match XmlSerParser<Lexer>::ClassType(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ClassType");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527565);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527565);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1805,8 +1805,8 @@ soul::parser::Match XmlSerParser<Lexer>::ClassType(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::CppBlock(Lexer& lexer, bool implementation)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::CppBlock(LexerT& lexer, bool implementation)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1817,7 +1817,7 @@ soul::parser::Match XmlSerParser<Lexer>::CppBlock(Lexer& lexer, bool implementat
         soul::lexer::WriteBeginRuleToLog(lexer, "CppBlock");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527566);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527566);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::string cppText = std::string();
     soul::parser::Match match(false);
@@ -1876,8 +1876,8 @@ soul::parser::Match XmlSerParser<Lexer>::CppBlock(Lexer& lexer, bool implementat
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Enum(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Enum(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1888,7 +1888,7 @@ soul::parser::Match XmlSerParser<Lexer>::Enum(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Enum");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527567);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527567);
     std::unique_ptr<soul::xml::serialization::ast::EnumTypeNode> enm = std::unique_ptr<soul::xml::serialization::ast::EnumTypeNode>();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1970,7 +1970,7 @@ soul::parser::Match XmlSerParser<Lexer>::Enum(Lexer& lexer)
                         int64_t save = lexer.GetPos();
                         soul::parser::Match* parentMatch10 = &match;
                         {
-                            soul::parser::Match match = XmlSerParser<Lexer>::EnumContent(lexer, enm.get());
+                            soul::parser::Match match = XmlSerParser<LexerT>::EnumContent(lexer, enm.get());
                             if (match.hit)
                             {
                                 *parentMatch10 = match;
@@ -2028,8 +2028,8 @@ soul::parser::Match XmlSerParser<Lexer>::Enum(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::EnumContent(Lexer& lexer, soul::xml::serialization::ast::EnumTypeNode* enm)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::EnumContent(LexerT& lexer, soul::xml::serialization::ast::EnumTypeNode* enm)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2040,7 +2040,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumContent(Lexer& lexer, soul::xml::se
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumContent");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527568);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527568);
     std::unique_ptr<soul::xml::serialization::ast::EnumConstantNode> enumConstant;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2052,7 +2052,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumContent(Lexer& lexer, soul::xml::se
             soul::parser::Match* parentMatch2 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = XmlSerParser<Lexer>::EnumConstant(lexer);
+                soul::parser::Match match = XmlSerParser<LexerT>::EnumConstant(lexer);
                 enumConstant.reset(static_cast<soul::xml::serialization::ast::EnumConstantNode*>(match.value));
                 if (match.hit)
                 {
@@ -2094,7 +2094,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumContent(Lexer& lexer, soul::xml::se
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = XmlSerParser<Lexer>::EnumConstant(lexer);
+                                        soul::parser::Match match = XmlSerParser<LexerT>::EnumConstant(lexer);
                                         enumConstant.reset(static_cast<soul::xml::serialization::ast::EnumConstantNode*>(match.value));
                                         if (match.hit)
                                         {
@@ -2138,8 +2138,8 @@ soul::parser::Match XmlSerParser<Lexer>::EnumContent(Lexer& lexer, soul::xml::se
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::EnumConstant(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::EnumConstant(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2150,7 +2150,7 @@ soul::parser::Match XmlSerParser<Lexer>::EnumConstant(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "EnumConstant");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527569);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527569);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2186,8 +2186,8 @@ soul::parser::Match XmlSerParser<Lexer>::EnumConstant(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Namespace(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2198,7 +2198,7 @@ soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Namespace");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527570);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527570);
     std::unique_ptr<soul::xml::serialization::ast::NamespaceNode> ns = std::unique_ptr<soul::xml::serialization::ast::NamespaceNode>();
     std::unique_ptr<soul::parser::Value<std::string>> nsId;
     soul::parser::Match match(false);
@@ -2237,7 +2237,7 @@ soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = XmlSerParser<Lexer>::QualifiedCppId(lexer);
+                                    soul::parser::Match match = XmlSerParser<LexerT>::QualifiedCppId(lexer);
                                     nsId.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                     if (match.hit)
                                     {
@@ -2273,7 +2273,7 @@ soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch9 = &match;
                     {
-                        soul::parser::Match match = XmlSerParser<Lexer>::NamespaceContent(lexer, ns.get());
+                        soul::parser::Match match = XmlSerParser<LexerT>::NamespaceContent(lexer, ns.get());
                         *parentMatch9 = match;
                     }
                     *parentMatch3 = match;
@@ -2322,8 +2322,8 @@ soul::parser::Match XmlSerParser<Lexer>::Namespace(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::QualifiedId(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::QualifiedId(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2334,7 +2334,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527571);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527571);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2460,8 +2460,8 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedId(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::QualifiedCppId(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::QualifiedCppId(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2472,7 +2472,7 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedCppId(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527572);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527572);
     std::string str = std::string();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -2646,8 +2646,8 @@ soul::parser::Match XmlSerParser<Lexer>::QualifiedCppId(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ExportModule(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2658,7 +2658,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportModule");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527573);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527573);
     std::unique_ptr<soul::xml::serialization::ast::ExportModule> exp = std::unique_ptr<soul::xml::serialization::ast::ExportModule>();
     std::unique_ptr<soul::parser::Value<std::string>> moduleName;
     soul::parser::Match match(false);
@@ -2677,7 +2677,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        soul::parser::Match match = XmlSerParser<Lexer>::ExportKeyword(lexer);
+                        soul::parser::Match match = XmlSerParser<LexerT>::ExportKeyword(lexer);
                         *parentMatch4 = match;
                     }
                     if (match.hit)
@@ -2685,7 +2685,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            soul::parser::Match match = XmlSerParser<Lexer>::ModuleKeyword(lexer);
+                            soul::parser::Match match = XmlSerParser<LexerT>::ModuleKeyword(lexer);
                             *parentMatch5 = match;
                         }
                         *parentMatch4 = match;
@@ -2701,7 +2701,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
                         soul::parser::Match* parentMatch7 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = XmlSerParser<Lexer>::QualifiedId(lexer);
+                            soul::parser::Match match = XmlSerParser<LexerT>::QualifiedId(lexer);
                             moduleName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                             if (match.hit)
                             {
@@ -2770,8 +2770,8 @@ soul::parser::Match XmlSerParser<Lexer>::ExportModule(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::Import(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2782,7 +2782,7 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Import");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527574);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527574);
     std::unique_ptr<soul::xml::serialization::ast::Import> imp = std::unique_ptr<soul::xml::serialization::ast::Import>();
     soul::xml::serialization::ast::ImportPrefix prefix = soul::xml::serialization::ast::ImportPrefix();
     std::unique_ptr<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>> importPrefix;
@@ -2814,7 +2814,7 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = XmlSerParser<Lexer>::ImportPrefix(lexer);
+                                    soul::parser::Match match = XmlSerParser<LexerT>::ImportPrefix(lexer);
                                     importPrefix.reset(static_cast<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>*>(match.value));
                                     if (match.hit)
                                     {
@@ -2854,7 +2854,7 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch10 = &match;
                         {
-                            soul::parser::Match match = XmlSerParser<Lexer>::ImportKeyword(lexer);
+                            soul::parser::Match match = XmlSerParser<LexerT>::ImportKeyword(lexer);
                             *parentMatch10 = match;
                         }
                         *parentMatch4 = match;
@@ -2870,7 +2870,7 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
                         soul::parser::Match* parentMatch12 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = XmlSerParser<Lexer>::QualifiedId(lexer);
+                            soul::parser::Match match = XmlSerParser<LexerT>::QualifiedId(lexer);
                             moduleName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                             if (match.hit)
                             {
@@ -2939,8 +2939,8 @@ soul::parser::Match XmlSerParser<Lexer>::Import(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ImportPrefix(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -2951,7 +2951,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportPrefix");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527575);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527575);
     std::unique_ptr<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>> implementationPrefix;
     std::unique_ptr<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>> interfacePrefix;
     soul::parser::Match match(false);
@@ -2962,7 +2962,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = XmlSerParser<Lexer>::ImplementationPrefix(lexer);
+            soul::parser::Match match = XmlSerParser<LexerT>::ImplementationPrefix(lexer);
             implementationPrefix.reset(static_cast<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>*>(match.value));
             if (match.hit)
             {
@@ -2986,7 +2986,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = XmlSerParser<Lexer>::InterfacePrefix(lexer);
+                    soul::parser::Match match = XmlSerParser<LexerT>::InterfacePrefix(lexer);
                     interfacePrefix.reset(static_cast<soul::parser::Value<soul::xml::serialization::ast::ImportPrefix>*>(match.value));
                     if (match.hit)
                     {
@@ -3018,8 +3018,8 @@ soul::parser::Match XmlSerParser<Lexer>::ImportPrefix(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ExportKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ExportKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3030,7 +3030,7 @@ soul::parser::Match XmlSerParser<Lexer>::ExportKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527576);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527576);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3066,8 +3066,8 @@ soul::parser::Match XmlSerParser<Lexer>::ExportKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ModuleKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ModuleKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3078,7 +3078,7 @@ soul::parser::Match XmlSerParser<Lexer>::ModuleKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527577);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527577);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3114,8 +3114,8 @@ soul::parser::Match XmlSerParser<Lexer>::ModuleKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ImportKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ImportKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3126,7 +3126,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImportKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527578);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527578);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3162,8 +3162,8 @@ soul::parser::Match XmlSerParser<Lexer>::ImportKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ImplementationPrefix(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ImplementationPrefix(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3174,7 +3174,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationPrefix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationPrefix");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527579);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527579);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3194,7 +3194,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationPrefix(Lexer& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = XmlSerParser<Lexer>::ImplementationKeyword(lexer);
+                soul::parser::Match match = XmlSerParser<LexerT>::ImplementationKeyword(lexer);
                 *parentMatch2 = match;
             }
             *parentMatch1 = match;
@@ -3245,8 +3245,8 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationPrefix(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::InterfacePrefix(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::InterfacePrefix(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3257,7 +3257,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfacePrefix(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfacePrefix");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527580);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527580);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3277,7 +3277,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfacePrefix(Lexer& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = XmlSerParser<Lexer>::InterfaceKeyword(lexer);
+                soul::parser::Match match = XmlSerParser<LexerT>::InterfaceKeyword(lexer);
                 *parentMatch2 = match;
             }
             *parentMatch1 = match;
@@ -3328,8 +3328,8 @@ soul::parser::Match XmlSerParser<Lexer>::InterfacePrefix(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::ImplementationKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::ImplementationKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3340,7 +3340,7 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527581);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527581);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -3376,8 +3376,8 @@ soul::parser::Match XmlSerParser<Lexer>::ImplementationKeyword(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match XmlSerParser<Lexer>::InterfaceKeyword(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match XmlSerParser<LexerT>::InterfaceKeyword(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -3388,7 +3388,7 @@ soul::parser::Match XmlSerParser<Lexer>::InterfaceKeyword(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceKeyword");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 9203395559845527582);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9203395559845527582);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

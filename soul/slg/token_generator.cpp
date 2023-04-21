@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,6 +9,8 @@ import soul.ast.common;
 import util;
 
 namespace soul::slg {
+
+#ifndef OTAVA
 
 void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
 {
@@ -49,5 +51,13 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
         std::cout << "==> " << cppmFilePath << std::endl;
     }
 }
+
+#else
+
+void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
+{
+}
+
+#endif
 
 } // namespace soul::slg

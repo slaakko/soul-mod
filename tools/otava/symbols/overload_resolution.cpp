@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -76,13 +76,15 @@ FunctionMatch::FunctionMatch() : function(nullptr), numConversions(0), numQualif
 {
 }
 
-FunctionMatch::FunctionMatch(FunctionSymbol* function_) : function(function_), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
+FunctionMatch::FunctionMatch(FunctionSymbol* function_, Context* context_) : 
+    function(function_), context(context_), numConversions(0), numQualifyingConversions(0), specialization(nullptr)
 {
 }
 
 FunctionMatch& FunctionMatch::operator=(const FunctionMatch& that)
 {
     function = that.function;
+    context = that.context;
     argumentMatches = that.argumentMatches;
     numConversions = that.numConversions;
     numQualifyingConversions = that.numQualifyingConversions;
@@ -93,11 +95,11 @@ FunctionMatch& FunctionMatch::operator=(const FunctionMatch& that)
 
 bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMatch& right) const
 {
-    if (left.function->IsPointerCopyAssignment() && !right.function->IsPointerCopyAssignment())
+    if (left.function->IsTemplate() && !right.function->IsTemplate())
     {
         return true;
     }
-    if (!left.function->IsPointerCopyAssignment() && right.function->IsPointerCopyAssignment())
+    if (!left.function->IsTemplate() && right.function->IsTemplate())
     {
         return false;
     }
@@ -955,7 +957,12 @@ bool FindConversions(FunctionMatch& functionMatch, const std::vector<std::unique
             argType = arg->GetType();
         }
         ParameterSymbol* parameter = functionMatch.function->MemFunParameters(context)[i];
-        TypeSymbol* paramType = parameter->GetReferredType(context);
+        context->PushSetFlag(ContextFlags::resolveNestedTypes);
+        context->PushTemplateParameterMap(&functionMatch.templateParameterMap);
+        context->SetSourcePos(sourcePos);
+        TypeSymbol* paramType = parameter->GetReferredType(context)->FinalType(sourcePos, context);
+        context->PopTemplateParameterMap();
+        context->PopFlags();
         if (TypesEqual(argType, paramType))
         {
             ArgumentMatch argumentMatch;
@@ -1066,7 +1073,11 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
     for (int i = 0; i < n; ++i)
     {
         FunctionSymbol* viableFunction = viableFunctions[i];
-        std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction));
+        if ((viableFunction->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
+        {
+            continue;
+        }
+        std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);
         if (FindConversions(*functionMatch, args, sourcePos, context))
         {
@@ -1173,10 +1184,6 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     std::vector<std::unique_ptr<BoundExpressionNode>>& args, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex, FunctionMatch& functionMatch, 
     OverloadResolutionFlags flags)
 {
-    if (groupName == U"operator++")
-    {
-        int x = 0;
-    }
     MakeFinalDirectArgs(args, sourcePos, context);
     std::unique_ptr<BoundFunctionCallNode> ioManipFn = ResolveIOManipFn(scope, groupName, args, sourcePos, context, ex, flags);
     if (ioManipFn)

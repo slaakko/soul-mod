@@ -12,20 +12,20 @@ using namespace otava::build_project;
 
 export namespace otava::project_parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ProjectParser
 {
-    static std::unique_ptr<otava::build::Project> Parse(Lexer& lexer);
-    static soul::parser::Match ProjectFile(Lexer& lexer);
-    static soul::parser::Match ProjectDeclaration(Lexer& lexer);
-    static soul::parser::Match Define(Lexer& lexer, otava::build::Project* projectFile);
-    static soul::parser::Match TargetDeclaration(Lexer& lexer, otava::build::Project* projectFile);
-    static soul::parser::Match Target(Lexer& lexer);
-    static soul::parser::Match FilePath(Lexer& lexer, otava::build::Project* projectFile);
-    static soul::parser::Match InterfaceFilePath(Lexer& lexer);
-    static soul::parser::Match SourceFilePath(Lexer& lexer);
-    static soul::parser::Match ReferenceFilePath(Lexer& lexer);
-    static soul::parser::Match QualifiedId(Lexer& lexer);
+    static std::unique_ptr<otava::build::Project> Parse(LexerT& lexer);
+    static soul::parser::Match ProjectFile(LexerT& lexer);
+    static soul::parser::Match ProjectDeclaration(LexerT& lexer);
+    static soul::parser::Match Define(LexerT& lexer, otava::build::Project* projectFile);
+    static soul::parser::Match TargetDeclaration(LexerT& lexer, otava::build::Project* projectFile);
+    static soul::parser::Match Target(LexerT& lexer);
+    static soul::parser::Match FilePath(LexerT& lexer, otava::build::Project* projectFile);
+    static soul::parser::Match InterfaceFilePath(LexerT& lexer);
+    static soul::parser::Match SourceFilePath(LexerT& lexer);
+    static soul::parser::Match ReferenceFilePath(LexerT& lexer);
+    static soul::parser::Match QualifiedId(LexerT& lexer);
 };
 
 } // namespace otava::project_parser

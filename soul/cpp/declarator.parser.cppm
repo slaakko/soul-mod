@@ -12,24 +12,24 @@ using namespace soul::ast::cpp;
 
 export namespace soul::cpp::declarator::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct DeclaratorParser
 {
-    static soul::parser::Match InitDeclaratorList(Lexer& lexer);
-    static soul::parser::Match InitDeclarator(Lexer& lexer);
-    static soul::parser::Match Declarator(Lexer& lexer);
-    static soul::parser::Match DirectDeclarator(Lexer& lexer);
-    static soul::parser::Match DeclaratorId(Lexer& lexer);
-    static soul::parser::Match TypeId(Lexer& lexer);
-    static soul::parser::Match Type(Lexer& lexer);
-    static soul::parser::Match TypeSpecifierSeq(Lexer& lexer, soul::ast::cpp::TypeIdNode* typeId);
-    static soul::parser::Match AbstractDeclarator(Lexer& lexer);
-    static soul::parser::Match DirectAbstractDeclarator(Lexer& lexer);
-    static soul::parser::Match PtrOperator(Lexer& lexer);
-    static soul::parser::Match CVQualifierSeq(Lexer& lexer);
-    static soul::parser::Match Initializer(Lexer& lexer);
-    static soul::parser::Match InitializerClause(Lexer& lexer);
-    static soul::parser::Match InitializerList(Lexer& lexer, soul::ast::cpp::AssignInitNode* init);
+    static soul::parser::Match InitDeclaratorList(LexerT& lexer);
+    static soul::parser::Match InitDeclarator(LexerT& lexer);
+    static soul::parser::Match Declarator(LexerT& lexer);
+    static soul::parser::Match DirectDeclarator(LexerT& lexer);
+    static soul::parser::Match DeclaratorId(LexerT& lexer);
+    static soul::parser::Match TypeId(LexerT& lexer);
+    static soul::parser::Match Type(LexerT& lexer);
+    static soul::parser::Match TypeSpecifierSeq(LexerT& lexer, soul::ast::cpp::TypeIdNode* typeId);
+    static soul::parser::Match AbstractDeclarator(LexerT& lexer);
+    static soul::parser::Match DirectAbstractDeclarator(LexerT& lexer);
+    static soul::parser::Match PtrOperator(LexerT& lexer);
+    static soul::parser::Match CVQualifierSeq(LexerT& lexer);
+    static soul::parser::Match Initializer(LexerT& lexer);
+    static soul::parser::Match InitializerClause(LexerT& lexer);
+    static soul::parser::Match InitializerList(LexerT& lexer, soul::ast::cpp::AssignInitNode* init);
 };
 
 } // namespace soul::cpp::declarator::parser

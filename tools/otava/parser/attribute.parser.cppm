@@ -12,21 +12,21 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::attribute {
 
-template<typename Lexer>
+template<typename LexerT>
 struct AttributeParser
 {
-    static soul::parser::Match AttributeSpecifierSeq(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AttributeSpecifier(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AttributeList(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* container);
-    static soul::parser::Match AttributeUsingPrefix(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AttributeNamespace(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Attribute(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AttributeToken(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AttributeScopedToken(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AttributeArgumentClause(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match BalancedTokenSeq(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match BalancedToken(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match AlignmentSpecifier(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AttributeSpecifierSeq(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AttributeSpecifier(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AttributeList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* container);
+    static soul::parser::Match AttributeUsingPrefix(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AttributeNamespace(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Attribute(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AttributeToken(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AttributeScopedToken(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AttributeArgumentClause(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match BalancedTokenSeq(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match BalancedToken(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match AlignmentSpecifier(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::attribute

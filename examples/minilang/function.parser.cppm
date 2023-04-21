@@ -12,12 +12,12 @@ using namespace minilang::ast;
 
 export namespace minilang::parser::function {
 
-template<typename Lexer>
+template<typename LexerT>
 struct FunctionParser
 {
-    static soul::parser::Match Function(Lexer& lexer);
-    static soul::parser::Match ParameterList(Lexer& lexer, minilang::ast::FunctionNode* function);
-    static soul::parser::Match Parameter(Lexer& lexer);
+    static soul::parser::Match Function(LexerT& lexer);
+    static soul::parser::Match ParameterList(LexerT& lexer, minilang::ast::FunctionNode* function);
+    static soul::parser::Match Parameter(LexerT& lexer);
 };
 
 } // namespace minilang::parser::function

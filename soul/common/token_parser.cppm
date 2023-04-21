@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,23 +18,24 @@ void ParseHexChar(const std::string& fileName, char32_t& value, const Char*& p, 
 {
     if (p != e)
     {
-        switch (*p)
+        Char s = *p;
+        switch (s)
         {
-        case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-        {
-            value = 16 * value + *p - '0';
-            break;
-        }
-        case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
-        {
-            value = 16 * value + 10 + *p - 'A';
-            break;
-        }
-        case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
-        {
-            value = 16 * value + 10 + *p - 'a';
-            break;
-        }
+            case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+            {
+                value = 16 * value + *p - '0';
+                break;
+            }
+            case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
+            {
+                value = 16 * value + 10 + *p - 'A';
+                break;
+            }
+            case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
+            {
+                value = 16 * value + 10 + *p - 'a';
+                break;
+            }
         }
         ++p;
     }
@@ -95,16 +96,17 @@ char32_t ParseEscape(const std::string& fileName, const Char*& p, const Char* e,
     }
     else if (p != e)
     {
-        switch (*p)
+        Char s = *p;
+        switch (s)
         {
-        case 'a': value = '\a'; break;
-        case 'b': value = '\b'; break;
-        case 'f': value = '\f'; break;
-        case 'n': value = '\n'; break;
-        case 'r': value = '\r'; break;
-        case 't': value = '\t'; break;
-        case 'v': value = '\v'; break;
-        default: value = *p; break;
+            case 'a': value = '\a'; break;
+            case 'b': value = '\b'; break;
+            case 'f': value = '\f'; break;
+            case 'n': value = '\n'; break;
+            case 'r': value = '\r'; break;
+            case 't': value = '\t'; break;
+            case 'v': value = '\v'; break;
+            default: value = s; break;
         }
         ++p;
     }
@@ -142,12 +144,12 @@ char32_t ParseCharLiteral(const std::string& fileName, const soul::lexer::Token<
                 {
                     charLit = *p;
                     first = false;
+                    ++p;
                 }
                 else
                 {
                     throw std::runtime_error("invalid character literal at " + fileName + ":" + std::to_string(token.line) + ": " + util::ToUtf8(token.match.ToString()));
                 }
-                ++p;
             }
         }
         if (p != e && *p == '\'')

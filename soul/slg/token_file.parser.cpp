@@ -6,6 +6,7 @@ module soul.slg.token.file.parser;
 import util;
 import soul.ast.spg;
 import soul.cpp.token;
+import soul.cpp.op.token;
 import soul.punctuation.token;
 import soul.tool.token;
 import soul.common.common.parser;
@@ -13,6 +14,7 @@ import soul.common.token.parser;
 import soul.lex.slg;
 
 using namespace soul::cpp::token;
+using namespace soul::cpp::op::token;
 using namespace soul::punctuation::token;
 using namespace soul::tool::token;
 using namespace soul::common::common::parser;
@@ -21,8 +23,8 @@ using namespace soul::lex::slg;
 
 namespace soul::slg::token::file::parser {
 
-template<typename Lexer>
-std::unique_ptr<soul::ast::slg::TokenFile> TokenFileParser<Lexer>::Parse(Lexer& lexer)
+template<typename LexerT>
+std::unique_ptr<soul::ast::slg::TokenFile> TokenFileParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::ast::slg::TokenFile> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -33,7 +35,7 @@ std::unique_ptr<soul::ast::slg::TokenFile> TokenFileParser<Lexer>::Parse(Lexer& 
     }
     #endif
     ++lexer;
-    soul::parser::Match match = TokenFileParser<Lexer>::TokenFile(lexer);
+    soul::parser::Match match = TokenFileParser<LexerT>::TokenFile(lexer);
     value.reset(static_cast<soul::ast::slg::TokenFile*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -60,8 +62,8 @@ std::unique_ptr<soul::ast::slg::TokenFile> TokenFileParser<Lexer>::Parse(Lexer& 
     return value;
 }
 
-template<typename Lexer>
-soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match TokenFileParser<LexerT>::TokenFile(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -72,7 +74,7 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TokenFile");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7544922165020196865);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7544922165020196865);
     std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = std::unique_ptr<soul::ast::slg::TokenFile>();
     std::unique_ptr<soul::ast::slg::TokenCollection> tokenCollection = std::unique_ptr<soul::ast::slg::TokenCollection>();
     std::unique_ptr<soul::parser::Value<std::string>> tokenCollectionName;
@@ -127,7 +129,7 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = CommonParser<Lexer>::QualifiedId(lexer);
+                                        soul::parser::Match match = CommonParser<LexerT>::QualifiedId(lexer);
                                         tokenCollectionName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                         if (match.hit)
                                         {
@@ -199,7 +201,7 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
                                     soul::parser::Match* parentMatch16 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = TokenFileParser<Lexer>::Token(lexer);
+                                        soul::parser::Match match = TokenFileParser<LexerT>::Token(lexer);
                                         token.reset(static_cast<soul::ast::slg::Token*>(match.value));
                                         if (match.hit)
                                         {
@@ -241,7 +243,7 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
                                                             soul::parser::Match* parentMatch21 = &match;
                                                             {
                                                                 int64_t pos = lexer.GetPos();
-                                                                soul::parser::Match match = TokenFileParser<Lexer>::Token(lexer);
+                                                                soul::parser::Match match = TokenFileParser<LexerT>::Token(lexer);
                                                                 token.reset(static_cast<soul::ast::slg::Token*>(match.value));
                                                                 if (match.hit)
                                                                 {
@@ -342,8 +344,8 @@ soul::parser::Match TokenFileParser<Lexer>::TokenFile(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match TokenFileParser<Lexer>::Token(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match TokenFileParser<LexerT>::Token(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -354,7 +356,7 @@ soul::parser::Match TokenFileParser<Lexer>::Token(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Token");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7544922165020196866);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7544922165020196866);
     std::string name = std::string();
     std::string info = std::string();
     soul::parser::Match match(false);

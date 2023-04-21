@@ -1,0 +1,7 @@
+project incomplete;
+target=program;
+source <main.cpp>;
+interface <foo.cppm>;
+interface <bar.cppm>;
+source <bar.cpp>;
+

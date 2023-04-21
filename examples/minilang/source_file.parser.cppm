@@ -12,11 +12,11 @@ using namespace minilang::ast;
 
 export namespace minilang::parser::source::file {
 
-template<typename Lexer>
+template<typename LexerT>
 struct SourceFileParser
 {
-    static std::unique_ptr<minilang::ast::SourceFileNode> Parse(Lexer& lexer);
-    static soul::parser::Match SourceFile(Lexer& lexer);
+    static std::unique_ptr<minilang::ast::SourceFileNode> Parse(LexerT& lexer);
+    static soul::parser::Match SourceFile(LexerT& lexer);
 };
 
 } // namespace minilang::parser::source::file

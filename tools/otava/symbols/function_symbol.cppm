@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -153,10 +153,14 @@ public:
     ParameterSymbol* ReturnValueParam() const { return returnValueParam.get(); }
     void SetReturnValueParam(ParameterSymbol* returnValueParam_);
     void AddParameter(ParameterSymbol* parameter, const soul::ast::SourcePos& sourcePos, Context* context);
+    void AddTemporaryParameter(TypeSymbol* paramType, int index);
+    void ClearTemporaryParameters();
     void AddLocalVariable(VariableSymbol* variable);
     void RemoveLocalVariable(VariableSymbol* variable);
     void SetSpecialization(const std::vector<TypeSymbol*>& specialization_);
     const std::vector<TypeSymbol*>& Specialization() const { return specialization; }
+    bool IsExplicitSpecializationDefinitionSymbol() const;
+    bool IsExplicitSpecializationDeclaration()  const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -173,6 +177,7 @@ public:
     virtual bool IsPure() const;
     void SetVirtual();
     virtual bool IsOverride() const;
+    virtual bool IsFinal() const;
     void SetOverride();
     ClassTypeSymbol* ParentClassType() const override;
     ParameterSymbol* ThisParam(Context* ciontext) const;
@@ -194,11 +199,13 @@ public:
     virtual int32_t VTabIndex() const { return vtabIndex; }
     FunctionDefinitionSymbol* Destructor() const { return destructor; }
     void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
+    bool IsDestructor() const;
     virtual bool IsStatic() const;
     virtual bool IsExplicit() const;
     virtual bool IsPointerCopyAssignment() const { return false; }
     void CheckGenerateClassCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
     virtual void AddDefinitionToGroup(Context* context);
+    void SetFixedIrName(const std::string& fixedIrName_);
 private:
     mutable bool memFunParamsConstructed;
     FunctionKind kind;
@@ -214,6 +221,7 @@ private:
     mutable std::vector<ParameterSymbol*> memFunParameters;
     std::vector<VariableSymbol*> localVariables;
     std::vector<TypeSymbol*> specialization;
+    std::vector<util::uuid> specializationIds;
     int32_t nextTemporaryId;
     int32_t vtabIndex;
     FunctionDefinitionSymbol* destructor;
@@ -225,6 +233,7 @@ private:
     int32_t conversionDistance;
     mutable std::string fixedIrName;
     FunctionGroupSymbol* group;
+    std::vector<std::unique_ptr<ParameterSymbol>> temporaryParams;
 };
 
 class FunctionDefinitionSymbol : public FunctionSymbol
@@ -248,6 +257,7 @@ public:
     bool IsVirtual() const override;
     bool IsPure() const override;
     bool IsOverride() const override;
+    bool IsFinal() const override;
     int32_t VTabIndex() const override;
     bool IsStatic() const override;
     bool IsExplicit() const override;
@@ -255,10 +265,12 @@ public:
     TypeSymbol* ConversionArgType() const override;
     int32_t ConversionDistance() const override;
     void AddDefinitionToGroup(Context* context) override;
+    const std::string& GetIrName() const { return irName; }
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
     int32_t defIndex;
+    mutable std::string irName;
 };
 
 class ExplicitlyInstantiatedFunctionDefinitionSymbol : public FunctionDefinitionSymbol

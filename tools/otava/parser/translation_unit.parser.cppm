@@ -14,12 +14,12 @@ using namespace otava::ast;
 
 export namespace otava::parser::translation::unit {
 
-template<typename Lexer>
+template<typename LexerT>
 struct TranslationUnitParser
 {
-    static std::unique_ptr<otava::ast::Node> Parse(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TranslationUnit(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ModuleUnit(Lexer& lexer, otava::symbols::Context* context);
+    static std::unique_ptr<otava::ast::Node> Parse(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TranslationUnit(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ModuleUnit(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::translation::unit

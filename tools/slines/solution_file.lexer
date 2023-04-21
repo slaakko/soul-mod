@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,7 +13,7 @@ lexer solution_file_lexer
     rules
     {
         "{separators}" {}
-        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == INVALID_TOKEN) return ID; else return kw; }
+        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
         "{number}" { return NUMBER; }
         "{guid}" { return GUID; }
         "{path}" $(0) { return PATH; }
@@ -37,8 +37,8 @@ lexer solution_file_lexer
 
     actions
     {
-        $(0)={ if (!vars->inSolutionItems) return INVALID_TOKEN; }
-        $(1)={ if (!vars->inSolutionConfigurationPlatforms) return INVALID_TOKEN; }
-        $(2)={ if (!vars->inProjectConfigurationPlatforms) return INVALID_TOKEN; }
+        $(0)={ if (!vars->inSolutionItems) return soul::lexer::INVALID_TOKEN; }
+        $(1)={ if (!vars->inSolutionConfigurationPlatforms) return soul::lexer::INVALID_TOKEN; }
+        $(2)={ if (!vars->inProjectConfigurationPlatforms) return soul::lexer::INVALID_TOKEN; }
     }
 }

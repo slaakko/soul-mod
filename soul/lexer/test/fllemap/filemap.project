@@ -1,0 +1,6 @@
+project filemap;
+target=program;
+reference <../../../../util/util.project>;
+reference <../../../ast/ast.project>;
+reference <../../lexer.project>;
+source <filemap.cpp>;

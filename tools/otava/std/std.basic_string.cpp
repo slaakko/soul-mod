@@ -75,6 +75,37 @@ string to_string(unsigned long long val)
     return to_string_unsigned(val);
 }
 
+string to_string(float val)
+{
+    return to_string(static_cast<double>(val));
+}
+
+string to_string(double x)
+{
+    const int minNumDecimals = 0;
+    const int maxNumDecimals = 15;
+    string result;
+    if (x < 0)
+    {
+        x = -x;
+        result.append(1, '-');
+    }
+    result.append(to_string(static_cast<int>(x)));
+    double d = x - static_cast<int>(x);
+    if (d > 0)
+    {
+        result.append(1, '.');
+        for (int i = 0; (d > 0 || i < minNumDecimals) && i < maxNumDecimals; ++i)
+        {
+            d = 10 * d;
+            int digit = static_cast<int>(d) % 10;
+            result.append(1, static_cast<char>(static_cast<int>('0') + digit));
+            d = d - static_cast<int>(d);
+        }
+    }
+    return result;
+}
+
 char hex_char(int nibble)
 {
     const char* hex_chars = "0123456789ABCDEF";

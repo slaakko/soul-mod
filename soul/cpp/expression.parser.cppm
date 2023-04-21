@@ -12,50 +12,50 @@ using namespace soul::ast::cpp;
 
 export namespace soul::cpp::expression::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct ExpressionParser
 {
-    static soul::parser::Match Expression(Lexer& lexer);
-    static soul::parser::Match ConstantExpression(Lexer& lexer);
-    static soul::parser::Match AssignmentExpression(Lexer& lexer);
-    static soul::parser::Match AssignmentOp(Lexer& lexer);
-    static soul::parser::Match ConditionalExpression(Lexer& lexer);
-    static soul::parser::Match ThrowExpression(Lexer& lexer);
-    static soul::parser::Match LogicalOrExpression(Lexer& lexer);
-    static soul::parser::Match LogicalAndExpression(Lexer& lexer);
-    static soul::parser::Match InclusiveOrExpression(Lexer& lexer);
-    static soul::parser::Match ExclusiveOrExpression(Lexer& lexer);
-    static soul::parser::Match AndExpression(Lexer& lexer);
-    static soul::parser::Match EqualityExpression(Lexer& lexer);
-    static soul::parser::Match EqOp(Lexer& lexer);
-    static soul::parser::Match RelationalExpression(Lexer& lexer);
-    static soul::parser::Match RelOp(Lexer& lexer);
-    static soul::parser::Match ShiftExpression(Lexer& lexer);
-    static soul::parser::Match ShiftOp(Lexer& lexer);
-    static soul::parser::Match AdditiveExpression(Lexer& lexer);
-    static soul::parser::Match AddOp(Lexer& lexer);
-    static soul::parser::Match MultiplicativeExpression(Lexer& lexer);
-    static soul::parser::Match MulOp(Lexer& lexer);
-    static soul::parser::Match PmExpression(Lexer& lexer);
-    static soul::parser::Match PmOp(Lexer& lexer);
-    static soul::parser::Match CastExpression(Lexer& lexer);
-    static soul::parser::Match UnaryExpression(Lexer& lexer);
-    static soul::parser::Match UnaryOperator(Lexer& lexer);
-    static soul::parser::Match PostfixExpression(Lexer& lexer);
-    static soul::parser::Match PostCastExpression(Lexer& lexer);
-    static soul::parser::Match ExpressionList(Lexer& lexer, soul::ast::cpp::Node* owner);
-    static soul::parser::Match PrimaryExpression(Lexer& lexer);
-    static soul::parser::Match IdExpression(Lexer& lexer);
-    static soul::parser::Match TypeSpecifierOrTypeName(Lexer& lexer);
-    static soul::parser::Match NewExpression(Lexer& lexer);
-    static soul::parser::Match NewPlacement(Lexer& lexer, soul::ast::cpp::Node* owner);
-    static soul::parser::Match NewTypeId(Lexer& lexer);
-    static soul::parser::Match NewDeclarator(Lexer& lexer);
-    static soul::parser::Match NewInitializer(Lexer& lexer, soul::ast::cpp::Node* owner);
-    static soul::parser::Match DirectNewDeclarator(Lexer& lexer);
-    static soul::parser::Match DeleteExpression(Lexer& lexer);
-    static soul::parser::Match OperatorFunctionId(Lexer& lexer);
-    static soul::parser::Match Operator(Lexer& lexer);
+    static soul::parser::Match Expression(LexerT& lexer);
+    static soul::parser::Match ConstantExpression(LexerT& lexer);
+    static soul::parser::Match AssignmentExpression(LexerT& lexer);
+    static soul::parser::Match AssignmentOp(LexerT& lexer);
+    static soul::parser::Match ConditionalExpression(LexerT& lexer);
+    static soul::parser::Match ThrowExpression(LexerT& lexer);
+    static soul::parser::Match LogicalOrExpression(LexerT& lexer);
+    static soul::parser::Match LogicalAndExpression(LexerT& lexer);
+    static soul::parser::Match InclusiveOrExpression(LexerT& lexer);
+    static soul::parser::Match ExclusiveOrExpression(LexerT& lexer);
+    static soul::parser::Match AndExpression(LexerT& lexer);
+    static soul::parser::Match EqualityExpression(LexerT& lexer);
+    static soul::parser::Match EqOp(LexerT& lexer);
+    static soul::parser::Match RelationalExpression(LexerT& lexer);
+    static soul::parser::Match RelOp(LexerT& lexer);
+    static soul::parser::Match ShiftExpression(LexerT& lexer);
+    static soul::parser::Match ShiftOp(LexerT& lexer);
+    static soul::parser::Match AdditiveExpression(LexerT& lexer);
+    static soul::parser::Match AddOp(LexerT& lexer);
+    static soul::parser::Match MultiplicativeExpression(LexerT& lexer);
+    static soul::parser::Match MulOp(LexerT& lexer);
+    static soul::parser::Match PmExpression(LexerT& lexer);
+    static soul::parser::Match PmOp(LexerT& lexer);
+    static soul::parser::Match CastExpression(LexerT& lexer);
+    static soul::parser::Match UnaryExpression(LexerT& lexer);
+    static soul::parser::Match UnaryOperator(LexerT& lexer);
+    static soul::parser::Match PostfixExpression(LexerT& lexer);
+    static soul::parser::Match PostCastExpression(LexerT& lexer);
+    static soul::parser::Match ExpressionList(LexerT& lexer, soul::ast::cpp::Node* owner);
+    static soul::parser::Match PrimaryExpression(LexerT& lexer);
+    static soul::parser::Match IdExpression(LexerT& lexer);
+    static soul::parser::Match TypeSpecifierOrTypeName(LexerT& lexer);
+    static soul::parser::Match NewExpression(LexerT& lexer);
+    static soul::parser::Match NewPlacement(LexerT& lexer, soul::ast::cpp::Node* owner);
+    static soul::parser::Match NewTypeId(LexerT& lexer);
+    static soul::parser::Match NewDeclarator(LexerT& lexer);
+    static soul::parser::Match NewInitializer(LexerT& lexer, soul::ast::cpp::Node* owner);
+    static soul::parser::Match DirectNewDeclarator(LexerT& lexer);
+    static soul::parser::Match DeleteExpression(LexerT& lexer);
+    static soul::parser::Match OperatorFunctionId(LexerT& lexer);
+    static soul::parser::Match Operator(LexerT& lexer);
 };
 
 } // namespace soul::cpp::expression::parser

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -64,6 +64,7 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetSingleDefinition()
 void FunctionGroupSymbol::AddFunction(FunctionSymbol* function)
 {
     functions.push_back(function);
+    function->SetGroup(this);
 }
 
 void FunctionGroupSymbol::Write(Writer& writer)
@@ -143,21 +144,58 @@ void FunctionGroupSymbol::Merge(FunctionGroupSymbol* that)
     }
 }
 
-FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers) const
+FunctionSymbol* FunctionGroupSymbol::ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers,
+    const std::vector<TypeSymbol*>& specialization, TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization) const
 {
     for (const auto& function : functions)
     {
+        TemplateDeclarationSymbol* functionTemplateDeclaration = function->ParentTemplateDeclaration();
+        if (templateDeclaration && !functionTemplateDeclaration || !templateDeclaration && functionTemplateDeclaration)
+        {
+            continue;
+        }
+        if (templateDeclaration)
+        {
+            if (templateDeclaration->Arity() != functionTemplateDeclaration->Arity()) continue;
+            for (int i = 0; i < templateDeclaration->Arity(); ++i)
+            {
+                if (!TypesEqual(templateDeclaration->TemplateParameters()[i], functionTemplateDeclaration->TemplateParameters()[i])) continue;
+            }
+        }
+        if (!function->IsMemberFunction() && function->IsSpecialization() != isSpecialization) continue;
         if (function->Arity() == parameterTypes.size())
         {
             bool found = (qualifiers & FunctionQualifiers::isConst) == (function->Qualifiers() & FunctionQualifiers::isConst);
             if (found)
             {
-                for (int i = 0; i < function->Arity(); ++i)
+                if (!specialization.empty())
                 {
-                    if (!TypesEqual(function->Parameters()[i]->GetType(), parameterTypes[i]))
+                    int n = specialization.size();
+                    if (n != function->Specialization().size())
                     {
                         found = false;
-                        break;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < n; ++i)
+                        {
+                            if (!TypesEqual(specialization[i], function->Specialization()[i]))
+                            {
+                                found = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < function->Arity(); ++i)
+                    {
+                        if (!TypesEqual(function->Parameters()[i]->GetType(), parameterTypes[i]))
+                        {
+                            found = false;
+                            break;
+                        }
                     }
                 }
                 if (found)
@@ -197,9 +235,28 @@ FunctionDefinitionSymbol* FunctionGroupSymbol::GetFunctionDefinition(const std::
     return nullptr;
 }
 
-void FunctionGroupSymbol::AddFunctionDefinition(FunctionDefinitionSymbol* definition_, Context* context)
+void FunctionGroupSymbol::SetVTabIndex(FunctionSymbol* function, int vtabIndex, Context* context)
 {
-    definitions.push_back(definition_);
+    for (const auto& decl :  functions)
+    {
+        if (decl != function && FunctionMatches(decl, function, context))
+        {
+            decl->SetVTabIndex(vtabIndex);
+        }
+    }
+    for (const auto& def : definitions)
+    {
+        if (def != function && FunctionMatches(def, function, context))
+        {
+            def->SetVTabIndex(vtabIndex);
+        }
+    }
+}
+
+void FunctionGroupSymbol::AddFunctionDefinition(FunctionDefinitionSymbol* definition, Context* context)
+{
+    definitions.push_back(definition);
+    definition->SetGroup(this);
 }
 
 struct FunctionScoreGreater
@@ -364,6 +421,10 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
         }
         for (const auto& functionDefinition : definitions)
         {
+            if ((functionDefinition->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
+            {
+                continue;
+            }
             if (arity >= functionDefinition->MinMemFunArity(context) && arity <= functionDefinition->MemFunArity(context))
             {
                 if (std::find(viableFunctions.begin(), viableFunctions.end(), functionDefinition) == viableFunctions.end())
@@ -373,6 +434,25 @@ void FunctionGroupSymbol::CollectViableFunctions(int arity, const std::vector<Ty
             }
         }
     }
+}
+
+FunctionSymbol* FunctionGroupSymbol::GetMatchingSpecialization(FunctionSymbol* specialization, Context* context) const
+{
+    for (const auto& function : functions)
+    {
+        if (function->IsSpecialization() && FunctionMatches(function, specialization, context))
+        {
+            return function;
+        }
+    }
+    for (const auto& functionDefinition : definitions)
+    {
+        if (functionDefinition->IsSpecialization() && FunctionMatches(functionDefinition, specialization, context))
+        {
+            return functionDefinition;
+        }
+    }
+    return nullptr;
 }
 
 } // namespace otava::symbols

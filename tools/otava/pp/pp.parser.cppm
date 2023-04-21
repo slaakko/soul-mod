@@ -12,37 +12,37 @@ using namespace otava::pp::state;
 
 export namespace otava::pp::parser {
 
-template<typename Lexer>
+template<typename LexerT>
 struct PPParser
 {
-    static void Parse(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match PPLIne(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match PPCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match IfCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match ElifCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match IfdefCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match IfndefCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match ElseCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match EndifCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match DefineCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match UndefCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match IncludeCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match PragmaCommand(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match Header(Lexer& lexer);
-    static soul::parser::Match Expression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match LogicalOrExpr(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match LogicalAndExpr(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match InclusiveOrExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match ExclusiveOrExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match AndExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match EqualityExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match RelationalExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match ShiftExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match AdditiveExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match MultiplicativeExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match UnaryExpression(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match PrimaryExpr(Lexer& lexer, otava::pp::state::State* state);
-    static soul::parser::Match DefinedExpr(Lexer& lexer, otava::pp::state::State* state);
+    static void Parse(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match PPLIne(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match PPCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match IfCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match ElifCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match IfdefCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match IfndefCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match ElseCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match EndifCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match DefineCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match UndefCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match IncludeCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match PragmaCommand(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match Header(LexerT& lexer);
+    static soul::parser::Match Expression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match LogicalOrExpr(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match LogicalAndExpr(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match InclusiveOrExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match ExclusiveOrExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match AndExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match EqualityExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match RelationalExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match ShiftExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match AdditiveExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match MultiplicativeExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match UnaryExpression(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match PrimaryExpr(LexerT& lexer, otava::pp::state::State* state);
+    static soul::parser::Match DefinedExpr(LexerT& lexer, otava::pp::state::State* state);
 };
 
 } // namespace otava::pp::parser

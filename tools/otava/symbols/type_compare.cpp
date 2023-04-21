@@ -3,11 +3,28 @@ module otava.symbols.type_compare;
 import otava.symbols.type.symbol;
 import otava.symbols.class_templates;
 import otava.symbols.compound.type.symbol;
+import otava.symbols.classes;
 
 namespace otava::symbols {
 
 bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
 {
+    if (left->IsForwardClassDeclarationSymbol())
+    {
+        ForwardClassDeclarationSymbol* fwdLeft = static_cast<ForwardClassDeclarationSymbol*>(left);
+        if (fwdLeft->GetClassTypeSymbol())
+        {
+            left = fwdLeft->GetClassTypeSymbol();
+        }
+    }
+    if (right->IsForwardClassDeclarationSymbol())
+    {
+        ForwardClassDeclarationSymbol* fwdRight = static_cast<ForwardClassDeclarationSymbol*>(right);
+        if (fwdRight->GetClassTypeSymbol())
+        {
+            right = fwdRight->GetClassTypeSymbol();
+        }
+    }
     if (left == right) return true;
     if (left->Id() == right->Id()) return true;
     if (left->IsClassTemplateSpecializationSymbol() && right->IsClassTemplateSpecializationSymbol())

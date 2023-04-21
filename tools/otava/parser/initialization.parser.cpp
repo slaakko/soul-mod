@@ -19,8 +19,8 @@ using namespace otava::parser::punctuation;
 
 namespace otava::parser::initialization {
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::Initializer(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -31,7 +31,7 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, otava
         soul::lexer::WriteBeginRuleToLog(lexer, "Initializer");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744129);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744129);
     std::unique_ptr<otava::ast::Node> initializer = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::ExpressionListNode> exprListNode = std::unique_ptr<otava::ast::ExpressionListNode>();
     std::unique_ptr<otava::ast::Node> braceOrEqualInit;
@@ -53,7 +53,7 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, otava
                     soul::parser::Match* parentMatch3 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = InitializationParser<Lexer>::BraceOrEqualInitializer(lexer, context);
+                        soul::parser::Match match = InitializationParser<LexerT>::BraceOrEqualInitializer(lexer, context);
                         braceOrEqualInit.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -99,7 +99,7 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, otava
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch7 = &match;
                             {
-                                soul::parser::Match match = ExpressionParser<Lexer>::ExpressionList(lexer, context, exprListNode.get());
+                                soul::parser::Match match = ExpressionParser<LexerT>::ExpressionList(lexer, context, exprListNode.get());
                                 *parentMatch7 = match;
                             }
                             *parentMatch5 = match;
@@ -166,8 +166,8 @@ soul::parser::Match InitializationParser<Lexer>::Initializer(Lexer& lexer, otava
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::InitializerClause(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -178,7 +178,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "InitializerClause");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744130);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744130);
     std::unique_ptr<otava::ast::Node> bracedInitList;
     std::unique_ptr<otava::ast::Node> assignmentExpr;
     soul::parser::Match match(false);
@@ -189,7 +189,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = InitializationParser<Lexer>::BracedInitList(lexer, context);
+            soul::parser::Match match = InitializationParser<LexerT>::BracedInitList(lexer, context);
             bracedInitList.reset(static_cast<otava::ast::Node*>(match.value));
             if (match.hit)
             {
@@ -213,7 +213,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = ExpressionParser<Lexer>::AssignmentExpression(lexer, context);
+                    soul::parser::Match match = ExpressionParser<LexerT>::AssignmentExpression(lexer, context);
                     assignmentExpr.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -245,8 +245,8 @@ soul::parser::Match InitializationParser<Lexer>::InitializerClause(Lexer& lexer,
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* container)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::InitializerList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* container)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -257,7 +257,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, o
         soul::lexer::WriteBeginRuleToLog(lexer, "InitializerList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744131);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744131);
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
     std::unique_ptr<otava::ast::Node> next;
@@ -275,7 +275,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, o
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = InitializationParser<Lexer>::InitializerClause(lexer, context);
+                    soul::parser::Match match = InitializationParser<LexerT>::InitializerClause(lexer, context);
                     first.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -307,7 +307,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, o
                                         soul::parser::Match* parentMatch8 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = PunctuationParser<Lexer>::Comma(lexer);
+                                            soul::parser::Match match = PunctuationParser<LexerT>::Comma(lexer);
                                             comma.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
@@ -326,7 +326,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, o
                                             soul::parser::Match* parentMatch10 = &match;
                                             {
                                                 int64_t pos = lexer.GetPos();
-                                                soul::parser::Match match = InitializationParser<Lexer>::InitializerClause(lexer, context);
+                                                soul::parser::Match match = InitializationParser<LexerT>::InitializerClause(lexer, context);
                                                 next.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
                                                 {
@@ -374,7 +374,7 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, o
                         soul::parser::Match* parentMatch14 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = PunctuationParser<Lexer>::Ellipsis(lexer);
+                            soul::parser::Match match = PunctuationParser<LexerT>::Ellipsis(lexer);
                             ellipsis.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -413,8 +413,8 @@ soul::parser::Match InitializationParser<Lexer>::InitializerList(Lexer& lexer, o
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* container)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::DesignatedInitializerList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* container)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -425,7 +425,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744132);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744132);
     std::unique_ptr<otava::ast::Node> first;
     std::unique_ptr<otava::ast::Node> comma;
     std::unique_ptr<otava::ast::Node> next;
@@ -439,7 +439,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
             soul::parser::Match* parentMatch2 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = InitializationParser<Lexer>::DesignatedInitializerClause(lexer, context);
+                soul::parser::Match match = InitializationParser<LexerT>::DesignatedInitializerClause(lexer, context);
                 first.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
@@ -471,7 +471,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = PunctuationParser<Lexer>::Comma(lexer);
+                                        soul::parser::Match match = PunctuationParser<LexerT>::Comma(lexer);
                                         comma.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -490,7 +490,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
                                         soul::parser::Match* parentMatch9 = &match;
                                         {
                                             int64_t pos = lexer.GetPos();
-                                            soul::parser::Match match = InitializationParser<Lexer>::DesignatedInitializerClause(lexer, context);
+                                            soul::parser::Match match = InitializationParser<LexerT>::DesignatedInitializerClause(lexer, context);
                                             next.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
                                             {
@@ -536,8 +536,8 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerList(Lexer
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::DesignatedInitializerClause(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -548,7 +548,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
         soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerClause");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744133);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744133);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> designator;
     std::unique_ptr<otava::ast::Node> initializer;
@@ -566,7 +566,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = InitializationParser<Lexer>::Designator(lexer, context);
+                    soul::parser::Match match = InitializationParser<LexerT>::Designator(lexer, context);
                     designator.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -581,7 +581,7 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch4 = &match;
                 {
-                    soul::parser::Match match = InitializationParser<Lexer>::BraceOrEqualInitializer(lexer, context);
+                    soul::parser::Match match = InitializationParser<LexerT>::BraceOrEqualInitializer(lexer, context);
                     initializer.reset(static_cast<otava::ast::Node*>(match.value));
                     *parentMatch4 = match;
                 }
@@ -614,8 +614,8 @@ soul::parser::Match InitializationParser<Lexer>::DesignatedInitializerClause(Lex
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::Designator(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -626,7 +626,7 @@ soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "Designator");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744134);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744134);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> identifier;
     soul::parser::Match match(false);
@@ -662,7 +662,7 @@ soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, otava:
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch4 = &match;
                 {
-                    soul::parser::Match match = IdentifierParser<Lexer>::Identifier(lexer, context);
+                    soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
                     identifier.reset(static_cast<otava::ast::Node*>(match.value));
                     *parentMatch4 = match;
                 }
@@ -695,8 +695,8 @@ soul::parser::Match InitializationParser<Lexer>::Designator(Lexer& lexer, otava:
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::ExprOrBracedInitList(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -707,7 +707,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "ExprOrBracedInitList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744135);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744135);
     std::unique_ptr<otava::ast::Node> bracedInitList;
     std::unique_ptr<otava::ast::Node> expr;
     soul::parser::Match match(false);
@@ -718,7 +718,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = InitializationParser<Lexer>::BracedInitList(lexer, context);
+            soul::parser::Match match = InitializationParser<LexerT>::BracedInitList(lexer, context);
             bracedInitList.reset(static_cast<otava::ast::Node*>(match.value));
             if (match.hit)
             {
@@ -742,7 +742,7 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = ExpressionParser<Lexer>::Expression(lexer, context);
+                    soul::parser::Match match = ExpressionParser<LexerT>::Expression(lexer, context);
                     expr.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
                     {
@@ -774,8 +774,8 @@ soul::parser::Match InitializationParser<Lexer>::ExprOrBracedInitList(Lexer& lex
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::BraceOrEqualInitializer(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -786,7 +786,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
         soul::lexer::WriteBeginRuleToLog(lexer, "BraceOrEqualInitializer");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744136);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744136);
     soul::ast::SourcePos sourcePos = soul::ast::SourcePos();
     std::unique_ptr<otava::ast::Node> initializer;
     std::unique_ptr<otava::ast::Node> bracedInitList;
@@ -826,7 +826,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = InitializationParser<Lexer>::InitializerClause(lexer, context);
+                        soul::parser::Match match = InitializationParser<LexerT>::InitializerClause(lexer, context);
                         initializer.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
                         {
@@ -855,7 +855,7 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
             soul::parser::Match* parentMatch5 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = InitializationParser<Lexer>::BracedInitList(lexer, context);
+                soul::parser::Match match = InitializationParser<LexerT>::BracedInitList(lexer, context);
                 bracedInitList.reset(static_cast<otava::ast::Node*>(match.value));
                 if (match.hit)
                 {
@@ -889,8 +889,8 @@ soul::parser::Match InitializationParser<Lexer>::BraceOrEqualInitializer(Lexer& 
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match InitializationParser<LexerT>::BracedInitList(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -901,7 +901,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
         soul::lexer::WriteBeginRuleToLog(lexer, "BracedInitList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 8049098643501744137);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744137);
     std::unique_ptr<otava::ast::Node> initList = std::unique_ptr<otava::ast::Node>();
     std::unique_ptr<otava::ast::Node> lbrace;
     std::unique_ptr<otava::ast::Node> comma;
@@ -930,7 +930,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
                             soul::parser::Match* parentMatch6 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = PunctuationParser<Lexer>::LBrace(lexer);
+                                soul::parser::Match match = PunctuationParser<LexerT>::LBrace(lexer);
                                 lbrace.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -953,7 +953,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
                                         int64_t save = lexer.GetPos();
-                                        soul::parser::Match match = InitializationParser<Lexer>::InitializerList(lexer, context, initList.get());
+                                        soul::parser::Match match = InitializationParser<LexerT>::InitializerList(lexer, context, initList.get());
                                         *parentMatch9 = match;
                                         if (!match.hit)
                                         {
@@ -961,7 +961,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
                                             soul::parser::Match* parentMatch10 = &match;
                                             lexer.SetPos(save);
                                             {
-                                                soul::parser::Match match = InitializationParser<Lexer>::DesignatedInitializerList(lexer, context, initList.get());
+                                                soul::parser::Match match = InitializationParser<LexerT>::DesignatedInitializerList(lexer, context, initList.get());
                                                 *parentMatch10 = match;
                                             }
                                             *parentMatch9 = match;
@@ -991,7 +991,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
                                     soul::parser::Match* parentMatch14 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        soul::parser::Match match = PunctuationParser<Lexer>::Comma(lexer);
+                                        soul::parser::Match match = PunctuationParser<LexerT>::Comma(lexer);
                                         comma.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
                                         {
@@ -1025,7 +1025,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
                         soul::parser::Match* parentMatch16 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = PunctuationParser<Lexer>::RBrace(lexer);
+                            soul::parser::Match match = PunctuationParser<LexerT>::RBrace(lexer);
                             rbrace.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
                             {
@@ -1051,7 +1051,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
                             soul::parser::Match* parentMatch19 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = PunctuationParser<Lexer>::LBrace(lexer);
+                                soul::parser::Match match = PunctuationParser<LexerT>::LBrace(lexer);
                                 lbrace.reset(static_cast<otava::ast::Node*>(match.value));
                                 if (match.hit)
                                 {
@@ -1071,7 +1071,7 @@ soul::parser::Match InitializationParser<Lexer>::BracedInitList(Lexer& lexer, ot
                                 soul::parser::Match* parentMatch21 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = PunctuationParser<Lexer>::RBrace(lexer);
+                                    soul::parser::Match match = PunctuationParser<LexerT>::RBrace(lexer);
                                     rbrace.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
                                     {

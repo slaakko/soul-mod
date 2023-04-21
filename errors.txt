@@ -1,0 +1,1192 @@
+****************************************
+* Otava C++ Compiler version 4.1.0
+****************************************
+> C:/work/soul-mod/soul.solution
+> building solution 'soul'...
+> building project 'std'...
+==> C:/work/soul-mod/tools/otava/std/debug/std.type.fundamental.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.type.fundamental.cppm -> C:/work/soul-mod/tools/otava/std/std.type.fundamental.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.atexit.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.atexit.cppm -> C:/work/soul-mod/tools/otava/std/std.atexit.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.thread.mutex.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.thread.mutex.cppm -> C:/work/soul-mod/tools/otava/std/std.thread.mutex.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.init.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.init.cppm -> C:/work/soul-mod/tools/otava/std/std.init.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.type_traits.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.type_traits.cppm -> C:/work/soul-mod/tools/otava/std/std.type_traits.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.utilities.utility.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.utilities.utility.cppm -> C:/work/soul-mod/tools/otava/std/std.utilities.utility.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.utilities.pair.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.utilities.pair.cppm -> C:/work/soul-mod/tools/otava/std/std.utilities.pair.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.algorithm.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.algorithm.cppm -> C:/work/soul-mod/tools/otava/std/std.algorithm.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.atomic.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.atomic.cppm -> C:/work/soul-mod/tools/otava/std/std.atomic.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.crt.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.crt.cppm -> C:/work/soul-mod/tools/otava/std/std.crt.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.basic_string.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.basic_string.cppm -> C:/work/soul-mod/tools/otava/std/std.basic_string.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.utilities.ratio.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.utilities.ratio.cppm -> C:/work/soul-mod/tools/otava/std/std.utilities.ratio.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.chrono.duration.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.chrono.duration.cppm -> C:/work/soul-mod/tools/otava/std/std.chrono.duration.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.chrono.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.chrono.cppm -> C:/work/soul-mod/tools/otava/std/std.chrono.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.chrono.time_point.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.chrono.time_point.cppm -> C:/work/soul-mod/tools/otava/std/std.chrono.time_point.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.chrono.clock.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.chrono.clock.cppm -> C:/work/soul-mod/tools/otava/std/std.chrono.clock.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.list.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.container.list.cppm -> C:/work/soul-mod/tools/otava/std/std.container.list.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.functional.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.functional.cppm -> C:/work/soul-mod/tools/otava/std/std.functional.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.utilities.unique_ptr.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.utilities.unique_ptr.cppm -> C:/work/soul-mod/tools/otava/std/std.utilities.unique_ptr.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.new_delete.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.new_delete.cppm -> C:/work/soul-mod/tools/otava/std/std.new_delete_op.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.rb_tree.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.container.rb_tree.cppm -> C:/work/soul-mod/tools/otava/std/std.container.rb_tree.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.map.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.container.map.cppm -> C:/work/soul-mod/tools/otava/std/std.container.map.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.set.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.container.set.cppm -> C:/work/soul-mod/tools/otava/std/std.container.set.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.stack.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.container.stack.cppm -> C:/work/soul-mod/tools/otava/std/std.container.stack.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.vector.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.container.vector.cppm -> C:/work/soul-mod/tools/otava/std/std.container.vector.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.error.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.error.cppm -> C:/work/soul-mod/tools/otava/std/std.error.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.exception.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.exception.cppm -> C:/work/soul-mod/tools/otava/std/std.exception.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.hash.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.hash.cppm -> C:/work/soul-mod/tools/otava/std/std.hash.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.iterator.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.iterator.cppm -> C:/work/soul-mod/tools/otava/std/std.iterator.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.utf.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.utf.cppm -> C:/work/soul-mod/tools/otava/std/std.utf.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.stream.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.stream.cppm -> C:/work/soul-mod/tools/otava/std/std.stream.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.thread.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.thread.cppm -> C:/work/soul-mod/tools/otava/std/std.thread.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.thread.condition_variable.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.thread.condition_variable.cppm -> C:/work/soul-mod/tools/otava/std/std.thread.condition.variable.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.core.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.core.cppm -> C:/work/soul-mod/tools/otava/std/std.core.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.filesystem.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.filesystem.cppm -> C:/work/soul-mod/tools/otava/std/std.filesystem.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.cppm -> C:/work/soul-mod/tools/otava/std/std.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.iterator.unordered_map.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.iterator.unordered_map.cppm -> C:/work/soul-mod/tools/otava/std/std.iterator.unordered_map.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.unordered_map.cppm.asm
+C:/work/soul-mod/tools/otava/std/std.container.unordered_map.cppm -> C:/work/soul-mod/tools/otava/std/std.container.unordered_map.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.atexit.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.atexit.cpp -> C:/work/soul-mod/tools/otava/std/std.atexit.std.atexit.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.init.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.init.cpp -> C:/work/soul-mod/tools/otava/std/std.init.std.init.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.atomic.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.atomic.cpp -> C:/work/soul-mod/tools/otava/std/std.atomic.std.atomic.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.basic_string.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.basic_string.cpp -> C:/work/soul-mod/tools/otava/std/std.basic_string.std.basic_string.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.crt.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.crt.cpp -> C:/work/soul-mod/tools/otava/std/std.crt.std.crt.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.exception.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.exception.cpp -> C:/work/soul-mod/tools/otava/std/std.exception.std.exception.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.filesystem.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.filesystem.cpp -> C:/work/soul-mod/tools/otava/std/std.filesystem.std.filesystem.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.hash.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.hash.cpp -> C:/work/soul-mod/tools/otava/std/std.hash.std.hash.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.new_delete.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.new_delete.cpp -> C:/work/soul-mod/tools/otava/std/std.new_delete_op.std.new_delete.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.container.rb_tree.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.container.rb_tree.cpp -> C:/work/soul-mod/tools/otava/std/std.container.rb_tree.std.container.rb_tree.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.stream.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.stream.cpp -> C:/work/soul-mod/tools/otava/std/std.stream.std.stream.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.thread.mutex.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.thread.mutex.cpp -> C:/work/soul-mod/tools/otava/std/std.thread.mutex.std.thread.mutex.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.utf.cpp.asm
+C:/work/soul-mod/tools/otava/std/std.utf.cpp -> C:/work/soul-mod/tools/otava/std/std.utf.std.utf.cpp.module
+==> C:/work/soul-mod/tools/otava/std/debug/std.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling std.type.fundamental.cppm.asm...
+  Assembling std.atexit.cppm.asm...
+  Assembling std.thread.mutex.cppm.asm...
+  Assembling std.init.cppm.asm...
+  Assembling std.type_traits.cppm.asm...
+  Assembling std.utilities.utility.cppm.asm...
+  Assembling std.utilities.pair.cppm.asm...
+  Assembling std.algorithm.cppm.asm...
+  Assembling std.atomic.cppm.asm...
+  Assembling std.crt.cppm.asm...
+  Assembling std.basic_string.cppm.asm...
+  Assembling std.utilities.ratio.cppm.asm...
+  Assembling std.chrono.duration.cppm.asm...
+  Assembling std.chrono.cppm.asm...
+  Assembling std.chrono.time_point.cppm.asm...
+  Assembling std.chrono.clock.cppm.asm...
+  Assembling std.container.list.cppm.asm...
+  Assembling std.functional.cppm.asm...
+  Assembling std.utilities.unique_ptr.cppm.asm...
+  Assembling std.new_delete.cppm.asm...
+  Assembling std.container.rb_tree.cppm.asm...
+  Assembling std.container.map.cppm.asm...
+  Assembling std.container.set.cppm.asm...
+  Assembling std.container.stack.cppm.asm...
+  Assembling std.container.vector.cppm.asm...
+  Assembling std.error.cppm.asm...
+  Assembling std.exception.cppm.asm...
+  Assembling std.hash.cppm.asm...
+  Assembling std.iterator.cppm.asm...
+  Assembling std.utf.cppm.asm...
+  Assembling std.stream.cppm.asm...
+  Assembling std.thread.cppm.asm...
+  Assembling std.thread.condition_variable.cppm.asm...
+  Assembling std.core.cppm.asm...
+  Assembling std.filesystem.cppm.asm...
+  Assembling std.cppm.asm...
+  Assembling std.iterator.unordered_map.cppm.asm...
+  Assembling std.container.unordered_map.cppm.asm...
+  Assembling std.atexit.cpp.asm...
+  Assembling std.init.cpp.asm...
+  Assembling std.atomic.cpp.asm...
+  Assembling std.basic_string.cpp.asm...
+  Assembling std.crt.cpp.asm...
+  Assembling std.exception.cpp.asm...
+  Assembling std.filesystem.cpp.asm...
+  Assembling std.hash.cpp.asm...
+  Assembling std.new_delete.cpp.asm...
+  Assembling std.container.rb_tree.cpp.asm...
+  Assembling std.stream.cpp.asm...
+  Assembling std.thread.mutex.cpp.asm...
+  Assembling std.utf.cpp.asm...
+  std.vcxproj -> C:\work\soul-mod\tools\otava\std\debug\std.lib
+
+project 'std' built successfully
+> building project 'util'...
+==> C:/work/soul-mod/util/debug/align.cppm.asm
+C:/work/soul-mod/util/align.cppm -> C:/work/soul-mod/util/util.align.module
+==> C:/work/soul-mod/util/debug/ansi.cppm.asm
+C:/work/soul-mod/util/ansi.cppm -> C:/work/soul-mod/util/util.ansi.module
+==> C:/work/soul-mod/util/debug/stream.cppm.asm
+C:/work/soul-mod/util/stream.cppm -> C:/work/soul-mod/util/util.stream.module
+==> C:/work/soul-mod/util/debug/uuid.cppm.asm
+C:/work/soul-mod/util/uuid.cppm -> C:/work/soul-mod/util/util.uuid.module
+==> C:/work/soul-mod/util/debug/binary_stream_reader.cppm.asm
+C:/work/soul-mod/util/binary_stream_reader.cppm -> C:/work/soul-mod/util/util.binary.stream.reader.module
+==> C:/work/soul-mod/util/debug/binary_stream_writer.cppm.asm
+C:/work/soul-mod/util/binary_stream_writer.cppm -> C:/work/soul-mod/util/util.binary.stream.writer.module
+==> C:/work/soul-mod/util/debug/buffered_stream.cppm.asm
+C:/work/soul-mod/util/buffered_stream.cppm -> C:/work/soul-mod/util/util.buffered.stream.module
+==> C:/work/soul-mod/util/debug/code_formatter.cppm.asm
+C:/work/soul-mod/util/code_formatter.cppm -> C:/work/soul-mod/util/util.code.formatter.module
+==> C:/work/soul-mod/util/debug/component.cppm.asm
+C:/work/soul-mod/util/component.cppm -> C:/work/soul-mod/util/util.component.module
+==> C:/work/soul-mod/util/debug/error.cppm.asm
+C:/work/soul-mod/util/error.cppm -> C:/work/soul-mod/util/util.error.module
+==> C:/work/soul-mod/util/debug/file_stream.cppm.asm
+C:/work/soul-mod/util/file_stream.cppm -> C:/work/soul-mod/util/util.file.stream.module
+==> C:/work/soul-mod/util/debug/intrusive_list.cppm.asm
+C:/work/soul-mod/util/intrusive_list.cppm -> C:/work/soul-mod/util/util.intrusive.list.module
+==> C:/work/soul-mod/util/debug/time.cppm.asm
+C:/work/soul-mod/util/time.cppm -> C:/work/soul-mod/util/util.time.module
+==> C:/work/soul-mod/util/debug/memory_reader.cppm.asm
+C:/work/soul-mod/util/memory_reader.cppm -> C:/work/soul-mod/util/util.memory.reader.module
+==> C:/work/soul-mod/util/debug/memory_stream.cppm.asm
+C:/work/soul-mod/util/memory_stream.cppm -> C:/work/soul-mod/util/util.memory.stream.module
+==> C:/work/soul-mod/util/debug/memory_writer.cppm.asm
+C:/work/soul-mod/util/memory_writer.cppm -> C:/work/soul-mod/util/util.memory.writer.module
+==> C:/work/soul-mod/util/debug/path.cppm.asm
+C:/work/soul-mod/util/path.cppm -> C:/work/soul-mod/util/util.path.module
+==> C:/work/soul-mod/util/debug/rand.cppm.asm
+C:/work/soul-mod/util/rand.cppm -> C:/work/soul-mod/util/util.rand.module
+==> C:/work/soul-mod/util/debug/sha1.cppm.asm
+C:/work/soul-mod/util/sha1.cppm -> C:/work/soul-mod/util/util.sha1.module
+==> C:/work/soul-mod/util/debug/text_util.cppm.asm
+C:/work/soul-mod/util/text_util.cppm -> C:/work/soul-mod/util/util.text.util.module
+==> C:/work/soul-mod/util/debug/unicode.cppm.asm
+C:/work/soul-mod/util/unicode.cppm -> C:/work/soul-mod/util/util.unicode.module
+==> C:/work/soul-mod/util/debug/util.init_otava.cppm.asm
+C:/work/soul-mod/util/util.init_otava.cppm -> C:/work/soul-mod/util/util.init.done.module
+==> C:/work/soul-mod/util/debug/util_otava.cppm.asm
+C:/work/soul-mod/util/util_otava.cppm -> C:/work/soul-mod/util/util.module
+==> C:/work/soul-mod/util/debug/ansi.cpp.asm
+C:/work/soul-mod/util/ansi.cpp -> C:/work/soul-mod/util/util.ansi.ansi.cpp.module
+==> C:/work/soul-mod/util/debug/binary_stream_reader.cpp.asm
+C:/work/soul-mod/util/binary_stream_reader.cpp -> C:/work/soul-mod/util/util.binary.stream.reader.binary_stream_reader.cpp.module
+==> C:/work/soul-mod/util/debug/binary_stream_writer.cpp.asm
+C:/work/soul-mod/util/binary_stream_writer.cpp -> C:/work/soul-mod/util/util.binary.stream.writer.binary_stream_writer.cpp.module
+==> C:/work/soul-mod/util/debug/buffered_stream.cpp.asm
+C:/work/soul-mod/util/buffered_stream.cpp -> C:/work/soul-mod/util/util.buffered.stream.buffered_stream.cpp.module
+warning: include directive '#include <cstdio>' skipped
+warning: include directive '#include <unistd.h>' skipped
+==> C:/work/soul-mod/util/debug/code_formatter.cpp.asm
+C:/work/soul-mod/util/code_formatter.cpp -> C:/work/soul-mod/util/util.code.formatter.code_formatter.cpp.module
+==> C:/work/soul-mod/util/debug/component.cpp.asm
+C:/work/soul-mod/util/component.cpp -> C:/work/soul-mod/util/util.component.component.cpp.module
+==> C:/work/soul-mod/util/debug/error.cpp.asm
+C:/work/soul-mod/util/error.cpp -> C:/work/soul-mod/util/util.error.error.cpp.module
+warning: include directive '#include <cstdio>' skipped
+warning: include directive '#include <errno.h>' skipped
+==> C:/work/soul-mod/util/debug/file_stream.cpp.asm
+C:/work/soul-mod/util/file_stream.cpp -> C:/work/soul-mod/util/util.file.stream.file_stream.cpp.module
+==> C:/work/soul-mod/util/debug/memory_reader.cpp.asm
+C:/work/soul-mod/util/memory_reader.cpp -> C:/work/soul-mod/util/util.memory.reader.memory_reader.cpp.module
+==> C:/work/soul-mod/util/debug/memory_stream.cpp.asm
+C:/work/soul-mod/util/memory_stream.cpp -> C:/work/soul-mod/util/util.memory.stream.memory_stream.cpp.module
+==> C:/work/soul-mod/util/debug/memory_writer.cpp.asm
+C:/work/soul-mod/util/memory_writer.cpp -> C:/work/soul-mod/util/util.memory.writer.memory_writer.cpp.module
+warning: include directive '#include <sys/stat.h>' skipped
+warning: include directive '#include <fcntl.h>' skipped
+==> C:/work/soul-mod/util/debug/path.cpp.asm
+C:/work/soul-mod/util/path.cpp -> C:/work/soul-mod/util/util.path.path.cpp.module
+==> C:/work/soul-mod/util/debug/rand.cpp.asm
+C:/work/soul-mod/util/rand.cpp -> C:/work/soul-mod/util/util.rand.rand.cpp.module
+==> C:/work/soul-mod/util/debug/sha1.cpp.asm
+C:/work/soul-mod/util/sha1.cpp -> C:/work/soul-mod/util/util.sha1.sha1.cpp.module
+==> C:/work/soul-mod/util/debug/stream.cpp.asm
+C:/work/soul-mod/util/stream.cpp -> C:/work/soul-mod/util/util.stream.stream.cpp.module
+==> C:/work/soul-mod/util/debug/text_util.cpp.asm
+C:/work/soul-mod/util/text_util.cpp -> C:/work/soul-mod/util/util.text.util.text_util.cpp.module
+warning: include directive '#include <ctime>' skipped
+==> C:/work/soul-mod/util/debug/time.cpp.asm
+C:/work/soul-mod/util/time.cpp -> C:/work/soul-mod/util/util.time.time.cpp.module
+==> C:/work/soul-mod/util/debug/unicode.cpp.asm
+C:/work/soul-mod/util/unicode.cpp -> C:/work/soul-mod/util/util.unicode.unicode.cpp.module
+==> C:/work/soul-mod/util/debug/unicode.conversion.cpp.asm
+C:/work/soul-mod/util/unicode.conversion.cpp -> C:/work/soul-mod/util/util.unicode.unicode.conversion.cpp.module
+==> C:/work/soul-mod/util/debug/unicode.engine.cpp.asm
+C:/work/soul-mod/util/unicode.engine.cpp -> C:/work/soul-mod/util/util.unicode.unicode.engine.cpp.module
+==> C:/work/soul-mod/util/debug/uuid.cpp.asm
+C:/work/soul-mod/util/uuid.cpp -> C:/work/soul-mod/util/util.uuid.uuid.cpp.module
+==> C:/work/soul-mod/util/debug/util.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling align.cppm.asm...
+  Assembling ansi.cppm.asm...
+  Assembling stream.cppm.asm...
+  Assembling uuid.cppm.asm...
+  Assembling binary_stream_reader.cppm.asm...
+  Assembling binary_stream_writer.cppm.asm...
+  Assembling buffered_stream.cppm.asm...
+  Assembling code_formatter.cppm.asm...
+  Assembling component.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling file_stream.cppm.asm...
+  Assembling intrusive_list.cppm.asm...
+  Assembling time.cppm.asm...
+  Assembling memory_reader.cppm.asm...
+  Assembling memory_stream.cppm.asm...
+  Assembling memory_writer.cppm.asm...
+  Assembling path.cppm.asm...
+  Assembling rand.cppm.asm...
+  Assembling sha1.cppm.asm...
+  Assembling text_util.cppm.asm...
+  Assembling unicode.cppm.asm...
+  Assembling util.init_otava.cppm.asm...
+  Assembling util_otava.cppm.asm...
+  Assembling ansi.cpp.asm...
+  Assembling binary_stream_reader.cpp.asm...
+  Assembling binary_stream_writer.cpp.asm...
+  Assembling buffered_stream.cpp.asm...
+  Assembling code_formatter.cpp.asm...
+  Assembling component.cpp.asm...
+  Assembling error.cpp.asm...
+  Assembling file_stream.cpp.asm...
+  Assembling memory_reader.cpp.asm...
+  Assembling memory_stream.cpp.asm...
+  Assembling memory_writer.cpp.asm...
+  Assembling path.cpp.asm...
+  Assembling rand.cpp.asm...
+  Assembling sha1.cpp.asm...
+  Assembling stream.cpp.asm...
+  Assembling text_util.cpp.asm...
+  Assembling time.cpp.asm...
+  Assembling unicode.cpp.asm...
+  Assembling unicode.conversion.cpp.asm...
+  Assembling unicode.engine.cpp.asm...
+  Assembling uuid.cpp.asm...
+  util.vcxproj -> C:\work\soul-mod\util\debug\util.lib
+
+project 'util' built successfully
+> building project 'soul.ast'...
+==> C:/work/soul-mod/soul/ast/debug/common.cppm.asm
+C:/work/soul-mod/soul/ast/common.cppm -> C:/work/soul-mod/soul/ast/soul.ast.common.module
+==> C:/work/soul-mod/soul/ast/debug/source_pos.cppm.asm
+C:/work/soul-mod/soul/ast/source_pos.cppm -> C:/work/soul-mod/soul/ast/soul.ast.source.pos.module
+==> C:/work/soul-mod/soul/ast/debug/cpp.cppm.asm
+C:/work/soul-mod/soul/ast/cpp.cppm -> C:/work/soul-mod/soul/ast/soul.ast.cpp.module
+==> C:/work/soul-mod/soul/ast/debug/lexer_pos_pair.cppm.asm
+C:/work/soul-mod/soul/ast/lexer_pos_pair.cppm -> C:/work/soul-mod/soul/ast/soul.ast.lexer.pos.pair.module
+==> C:/work/soul-mod/soul/ast/debug/slg.cppm.asm
+C:/work/soul-mod/soul/ast/slg.cppm -> C:/work/soul-mod/soul/ast/soul.ast.slg.module
+==> C:/work/soul-mod/soul/ast/debug/re.cppm.asm
+C:/work/soul-mod/soul/ast/re.cppm -> C:/work/soul-mod/soul/ast/soul.ast.re.module
+==> C:/work/soul-mod/soul/ast/debug/spg.cppm.asm
+C:/work/soul-mod/soul/ast/spg.cppm -> C:/work/soul-mod/soul/ast/soul.ast.spg.module
+==> C:/work/soul-mod/soul/ast/debug/common.cpp.asm
+C:/work/soul-mod/soul/ast/common.cpp -> C:/work/soul-mod/soul/ast/soul.ast.common.common.cpp.module
+==> C:/work/soul-mod/soul/ast/debug/cpp.cpp.asm
+C:/work/soul-mod/soul/ast/cpp.cpp -> C:/work/soul-mod/soul/ast/soul.ast.cpp.cpp.cpp.module
+foo==> C:/work/soul-mod/soul/ast/debug/re.cpp.asm
+C:/work/soul-mod/soul/ast/re.cpp -> C:/work/soul-mod/soul/ast/soul.ast.re.re.cpp.module
+==> C:/work/soul-mod/soul/ast/debug/slg.cpp.asm
+C:/work/soul-mod/soul/ast/slg.cpp -> C:/work/soul-mod/soul/ast/soul.ast.slg.slg.cpp.module
+==> C:/work/soul-mod/soul/ast/debug/spg.cpp.asm
+C:/work/soul-mod/soul/ast/spg.cpp -> C:/work/soul-mod/soul/ast/soul.ast.spg.spg.cpp.module
+==> C:/work/soul-mod/soul/ast/debug/source_pos.cpp.asm
+C:/work/soul-mod/soul/ast/source_pos.cpp -> C:/work/soul-mod/soul/ast/soul.ast.source.pos.source_pos.cpp.module
+==> C:/work/soul-mod/soul/ast/debug/soul.ast.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling common.cppm.asm...
+  Assembling source_pos.cppm.asm...
+  Assembling cpp.cppm.asm...
+  Assembling lexer_pos_pair.cppm.asm...
+  Assembling slg.cppm.asm...
+  Assembling re.cppm.asm...
+  Assembling spg.cppm.asm...
+  Assembling common.cpp.asm...
+  Assembling cpp.cpp.asm...
+  Assembling re.cpp.asm...
+  Assembling slg.cpp.asm...
+  Assembling spg.cpp.asm...
+  Assembling source_pos.cpp.asm...
+  soul.ast.vcxproj -> C:\work\soul-mod\soul\ast\debug\soul.ast.lib
+
+project 'soul.ast' built successfully
+> building project 'soul.lexer'...
+==> C:/work/soul-mod/soul/lexer/debug/lexeme.cppm.asm
+C:/work/soul-mod/soul/lexer/lexeme.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.lexeme.module
+==> C:/work/soul-mod/soul/lexer/debug/token_parser.cppm.asm
+C:/work/soul-mod/soul/lexer/token_parser.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.token.parser.module
+==> C:/work/soul-mod/soul/lexer/debug/token.cppm.asm
+C:/work/soul-mod/soul/lexer/token.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.token.module
+==> C:/work/soul-mod/soul/lexer/debug/keyword.cppm.asm
+C:/work/soul-mod/soul/lexer/keyword.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.keyword.module
+==> C:/work/soul-mod/soul/lexer/debug/classmap.cppm.asm
+C:/work/soul-mod/soul/lexer/classmap.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.classmap.module
+==> C:/work/soul-mod/soul/lexer/debug/variables.cppm.asm
+C:/work/soul-mod/soul/lexer/variables.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.variables.module
+==> C:/work/soul-mod/soul/lexer/debug/base.cppm.asm
+C:/work/soul-mod/soul/lexer/base.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.base.module
+==> C:/work/soul-mod/soul/lexer/debug/concepts.cppm.asm
+C:/work/soul-mod/soul/lexer/concepts.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.concepts.module
+==> C:/work/soul-mod/soul/lexer/debug/file_map.cppm.asm
+C:/work/soul-mod/soul/lexer/file_map.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.file.map.module
+==> C:/work/soul-mod/soul/lexer/debug/error.cppm.asm
+C:/work/soul-mod/soul/lexer/error.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.error.module
+==> C:/work/soul-mod/soul/lexer/debug/parsing_log.cppm.asm
+C:/work/soul-mod/soul/lexer/parsing_log.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.parsing.log.module
+==> C:/work/soul-mod/soul/lexer/debug/lexer_class.cppm.asm
+C:/work/soul-mod/soul/lexer/lexer_class.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.cls.module
+==> C:/work/soul-mod/soul/lexer/debug/xml_parsing_log.cppm.asm
+C:/work/soul-mod/soul/lexer/xml_parsing_log.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.xml.parsing.log.module
+==> C:/work/soul-mod/soul/lexer/debug/lexing_util.cppm.asm
+C:/work/soul-mod/soul/lexer/lexing_util.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.lexing.util.module
+==> C:/work/soul-mod/soul/lexer/debug/test_lexer.cppm.asm
+C:/work/soul-mod/soul/lexer/test_lexer.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.test.module
+==> C:/work/soul-mod/soul/lexer/debug/trivial_lexer.cppm.asm
+C:/work/soul-mod/soul/lexer/trivial_lexer.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.trivial.module
+==> C:/work/soul-mod/soul/lexer/debug/lexer.cppm.asm
+C:/work/soul-mod/soul/lexer/lexer.cppm -> C:/work/soul-mod/soul/lexer/soul.lexer.module
+==> C:/work/soul-mod/soul/lexer/debug/error.cpp.asm
+C:/work/soul-mod/soul/lexer/error.cpp -> C:/work/soul-mod/soul/lexer/soul.lexer.error.error.cpp.module
+==> C:/work/soul-mod/soul/lexer/debug/file_map.cpp.asm
+C:/work/soul-mod/soul/lexer/file_map.cpp -> C:/work/soul-mod/soul/lexer/soul.lexer.file.map.file_map.cpp.module
+==> C:/work/soul-mod/soul/lexer/debug/parsing_log.cpp.asm
+C:/work/soul-mod/soul/lexer/parsing_log.cpp -> C:/work/soul-mod/soul/lexer/soul.lexer.parsing.log.parsing_log.cpp.module
+==> C:/work/soul-mod/soul/lexer/debug/variables.cpp.asm
+C:/work/soul-mod/soul/lexer/variables.cpp -> C:/work/soul-mod/soul/lexer/soul.lexer.variables.variables.cpp.module
+==> C:/work/soul-mod/soul/lexer/debug/xml_parsing_log.cpp.asm
+C:/work/soul-mod/soul/lexer/xml_parsing_log.cpp -> C:/work/soul-mod/soul/lexer/soul.lexer.xml.parsing.log.xml_parsing_log.cpp.module
+==> C:/work/soul-mod/soul/lexer/debug/soul.lexer.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling lexeme.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling token.cppm.asm...
+  Assembling keyword.cppm.asm...
+  Assembling classmap.cppm.asm...
+  Assembling variables.cppm.asm...
+  Assembling base.cppm.asm...
+  Assembling concepts.cppm.asm...
+  Assembling file_map.cppm.asm...
+  Assembling error.cppm.asm...
+  Assembling parsing_log.cppm.asm...
+  Assembling lexer_class.cppm.asm...
+  Assembling xml_parsing_log.cppm.asm...
+  Assembling lexing_util.cppm.asm...
+  Assembling test_lexer.cppm.asm...
+  Assembling trivial_lexer.cppm.asm...
+  Assembling lexer.cppm.asm...
+  Assembling error.cpp.asm...
+  Assembling file_map.cpp.asm...
+  Assembling parsing_log.cpp.asm...
+  Assembling variables.cpp.asm...
+  Assembling xml_parsing_log.cpp.asm...
+  soul.lexer.vcxproj -> C:\work\soul-mod\soul\lexer\debug\soul.lexer.lib
+
+project 'soul.lexer' built successfully
+> building project 'soul.parser'...
+==> C:/work/soul-mod/soul/parser/debug/match.cppm.asm
+C:/work/soul-mod/soul/parser/match.cppm -> C:/work/soul-mod/soul/parser/soul.parser.match.module
+==> C:/work/soul-mod/soul/parser/debug/value.cppm.asm
+C:/work/soul-mod/soul/parser/value.cppm -> C:/work/soul-mod/soul/parser/soul.parser.value.module
+==> C:/work/soul-mod/soul/parser/debug/parser.cppm.asm
+C:/work/soul-mod/soul/parser/parser.cppm -> C:/work/soul-mod/soul/parser/soul.parser.module
+==> C:/work/soul-mod/soul/parser/debug/soul.parser.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling match.cppm.asm...
+  Assembling value.cppm.asm...
+  Assembling parser.cppm.asm...
+  soul.parser.vcxproj -> C:\work\soul-mod\soul\parser\debug\soul.parser.lib
+
+project 'soul.parser' built successfully
+> building project 'soul.token'...
+==> C:/work/soul-mod/soul/token/debug/soul.cpp.op.token.cppm.asm
+C:/work/soul-mod/soul/token/soul.cpp.op.token.cppm -> C:/work/soul-mod/soul/token/soul.cpp.op.token.module
+==> C:/work/soul-mod/soul/token/debug/soul.cpp.token.cppm.asm
+C:/work/soul-mod/soul/token/soul.cpp.token.cppm -> C:/work/soul-mod/soul/token/soul.cpp.token.module
+==> C:/work/soul-mod/soul/token/debug/soul.punctuation.token.cppm.asm
+C:/work/soul-mod/soul/token/soul.punctuation.token.cppm -> C:/work/soul-mod/soul/token/soul.punctuation.token.module
+==> C:/work/soul-mod/soul/token/debug/soul.tool.token.cppm.asm
+C:/work/soul-mod/soul/token/soul.tool.token.cppm -> C:/work/soul-mod/soul/token/soul.tool.token.module
+==> C:/work/soul-mod/soul/token/debug/soul.token.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling soul.cpp.op.token.cppm.asm...
+  Assembling soul.cpp.token.cppm.asm...
+  Assembling soul.punctuation.token.cppm.asm...
+  Assembling soul.tool.token.cppm.asm...
+  soul.token.vcxproj -> C:\work\soul-mod\soul\token\debug\soul.token.lib
+
+project 'soul.token' built successfully
+> building project 'soul.lex'...
+==> C:/work/soul-mod/soul/lex/debug/lex.cppm.asm
+C:/work/soul-mod/soul/lex/lex.cppm -> C:/work/soul-mod/soul/lex/soul.lex.module
+==> C:/work/soul-mod/soul/lex/debug/re.lexer.cppm.asm
+C:/work/soul-mod/soul/lex/re.lexer.cppm -> C:/work/soul-mod/soul/lex/soul.lex.re.module
+==> C:/work/soul-mod/soul/lex/debug/slg.lexer.cppm.asm
+C:/work/soul-mod/soul/lex/slg.lexer.cppm -> C:/work/soul-mod/soul/lex/soul.lex.slg.module
+==> C:/work/soul-mod/soul/lex/debug/spg.lexer.cppm.asm
+C:/work/soul-mod/soul/lex/spg.lexer.cppm -> C:/work/soul-mod/soul/lex/soul.lex.spg.module
+==> C:/work/soul-mod/soul/lex/debug/re.lexer.cpp.asm
+C:/work/soul-mod/soul/lex/re.lexer.cpp -> C:/work/soul-mod/soul/lex/soul.lex.re.re.lexer.cpp.module
+==> C:/work/soul-mod/soul/lex/debug/slg.lexer.cpp.asm
+C:/work/soul-mod/soul/lex/slg.lexer.cpp -> C:/work/soul-mod/soul/lex/soul.lex.slg.slg.lexer.cpp.module
+==> C:/work/soul-mod/soul/lex/debug/spg.lexer.cpp.asm
+C:/work/soul-mod/soul/lex/spg.lexer.cpp -> C:/work/soul-mod/soul/lex/soul.lex.spg.spg.lexer.cpp.module
+==> C:/work/soul-mod/soul/lex/debug/soul.lex.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling lex.cppm.asm...
+  Assembling re.lexer.cppm.asm...
+  Assembling slg.lexer.cppm.asm...
+  Assembling spg.lexer.cppm.asm...
+  Assembling re.lexer.cpp.asm...
+  Assembling slg.lexer.cpp.asm...
+  Assembling spg.lexer.cpp.asm...
+  soul.lex.vcxproj -> C:\work\soul-mod\soul\lex\debug\soul.lex.lib
+
+project 'soul.lex' built successfully
+> building project 'soul.re'...
+==> C:/work/soul-mod/soul/re/debug/re.parser.cppm.asm
+C:/work/soul-mod/soul/re/re.parser.cppm -> C:/work/soul-mod/soul/re/soul.re.parser.module
+==> C:/work/soul-mod/soul/re/debug/token_parser.cppm.asm
+C:/work/soul-mod/soul/re/token_parser.cppm -> C:/work/soul-mod/soul/re/soul.re.token.parser.module
+foo==> C:/work/soul-mod/soul/re/debug/re.parser.cpp.asm
+C:/work/soul-mod/soul/re/re.parser.cpp -> C:/work/soul-mod/soul/re/soul.re.parser.re.parser.cpp.module
+==> C:/work/soul-mod/soul/re/debug/soul.re.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling re.parser.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling re.parser.cpp.asm...
+  soul.re.vcxproj -> C:\work\soul-mod\soul\re\debug\soul.re.lib
+
+project 'soul.re' built successfully
+> building project 'soul.rex'...
+==> C:/work/soul-mod/soul/rex/debug/symbol.cppm.asm
+C:/work/soul-mod/soul/rex/symbol.cppm -> C:/work/soul-mod/soul/rex/soul.rex.symbol.module
+==> C:/work/soul-mod/soul/rex/debug/nfa.cppm.asm
+C:/work/soul-mod/soul/rex/nfa.cppm -> C:/work/soul-mod/soul/rex/soul.rex.nfa.module
+==> C:/work/soul-mod/soul/rex/debug/algorithm.cppm.asm
+C:/work/soul-mod/soul/rex/algorithm.cppm -> C:/work/soul-mod/soul/rex/soul.rex.algorithm.module
+==> C:/work/soul-mod/soul/rex/debug/context.cppm.asm
+C:/work/soul-mod/soul/rex/context.cppm -> C:/work/soul-mod/soul/rex/soul.rex.context.module
+==> C:/work/soul-mod/soul/rex/debug/match.cppm.asm
+C:/work/soul-mod/soul/rex/match.cppm -> C:/work/soul-mod/soul/rex/soul.rex.match.module
+==> C:/work/soul-mod/soul/rex/debug/rex.token.cppm.asm
+C:/work/soul-mod/soul/rex/rex.token.cppm -> C:/work/soul-mod/soul/rex/soul.rex.token.module
+==> C:/work/soul-mod/soul/rex/debug/rex.lexer.cppm.asm
+C:/work/soul-mod/soul/rex/rex.lexer.cppm -> C:/work/soul-mod/soul/rex/soul.rex.lexer.module
+==> C:/work/soul-mod/soul/rex/debug/rex.parser.cppm.asm
+C:/work/soul-mod/soul/rex/rex.parser.cppm -> C:/work/soul-mod/soul/rex/soul.rex.parser.module
+==> C:/work/soul-mod/soul/rex/debug/rex.cppm.asm
+C:/work/soul-mod/soul/rex/rex.cppm -> C:/work/soul-mod/soul/rex/soul.rex.module
+==> C:/work/soul-mod/soul/rex/debug/rex_rules.cppm.asm
+C:/work/soul-mod/soul/rex/rex_rules.cppm -> C:/work/soul-mod/soul/rex/soul.rex.spg.rules.module
+==> C:/work/soul-mod/soul/rex/debug/token_parser.cppm.asm
+C:/work/soul-mod/soul/rex/token_parser.cppm -> C:/work/soul-mod/soul/rex/soul.rex.token.parser.module
+==> C:/work/soul-mod/soul/rex/debug/algorithm.cpp.asm
+C:/work/soul-mod/soul/rex/algorithm.cpp -> C:/work/soul-mod/soul/rex/soul.rex.algorithm.algorithm.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/context.cpp.asm
+C:/work/soul-mod/soul/rex/context.cpp -> C:/work/soul-mod/soul/rex/soul.rex.context.context.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/match.cpp.asm
+C:/work/soul-mod/soul/rex/match.cpp -> C:/work/soul-mod/soul/rex/soul.rex.match.match.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/nfa.cpp.asm
+C:/work/soul-mod/soul/rex/nfa.cpp -> C:/work/soul-mod/soul/rex/soul.rex.nfa.nfa.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/rex.lexer.cpp.asm
+C:/work/soul-mod/soul/rex/rex.lexer.cpp -> C:/work/soul-mod/soul/rex/soul.rex.lexer.rex.lexer.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/rex.parser.cpp.asm
+C:/work/soul-mod/soul/rex/rex.parser.cpp -> C:/work/soul-mod/soul/rex/soul.rex.parser.rex.parser.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/rex_rules.cpp.asm
+C:/work/soul-mod/soul/rex/rex_rules.cpp -> C:/work/soul-mod/soul/rex/soul.rex.spg.rules.rex_rules.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/symbol.cpp.asm
+C:/work/soul-mod/soul/rex/symbol.cpp -> C:/work/soul-mod/soul/rex/soul.rex.symbol.symbol.cpp.module
+==> C:/work/soul-mod/soul/rex/debug/soul.rex.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling symbol.cppm.asm...
+  Assembling nfa.cppm.asm...
+  Assembling algorithm.cppm.asm...
+  Assembling context.cppm.asm...
+  Assembling match.cppm.asm...
+  Assembling rex.token.cppm.asm...
+  Assembling rex.lexer.cppm.asm...
+  Assembling rex.parser.cppm.asm...
+  Assembling rex.cppm.asm...
+  Assembling rex_rules.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling algorithm.cpp.asm...
+  Assembling context.cpp.asm...
+  Assembling match.cpp.asm...
+  Assembling nfa.cpp.asm...
+  Assembling rex.lexer.cpp.asm...
+  Assembling rex.parser.cpp.asm...
+  Assembling rex_rules.cpp.asm...
+  Assembling symbol.cpp.asm...
+  soul.rex.vcxproj -> C:\work\soul-mod\soul\rex\debug\soul.rex.lib
+
+project 'soul.rex' built successfully
+> building project 'soul.common'...
+==> C:/work/soul-mod/soul/common/debug/common.parser.cppm.asm
+C:/work/soul-mod/soul/common/common.parser.cppm -> C:/work/soul-mod/soul/common/soul.common.common.parser.module
+==> C:/work/soul-mod/soul/common/debug/token_parser.cppm.asm
+C:/work/soul-mod/soul/common/token_parser.cppm -> C:/work/soul-mod/soul/common/soul.common.token.parser.module
+==> C:/work/soul-mod/soul/common/debug/common.parser.cpp.asm
+C:/work/soul-mod/soul/common/common.parser.cpp -> C:/work/soul-mod/soul/common/soul.common.common.parser.common.parser.cpp.module
+==> C:/work/soul-mod/soul/common/debug/soul.common.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling common.parser.cppm.asm...
+  Assembling token_parser.cppm.asm...
+  Assembling common.parser.cpp.asm...
+  soul.common.vcxproj -> C:\work\soul-mod\soul\common\debug\soul.common.lib
+
+project 'soul.common' built successfully
+> building project 'soul.cpp'...
+==> C:/work/soul-mod/soul/cpp/debug/declaration.parser.cppm.asm
+C:/work/soul-mod/soul/cpp/declaration.parser.cppm -> C:/work/soul-mod/soul/cpp/soul.cpp.declaration.parser.module
+==> C:/work/soul-mod/soul/cpp/debug/declarator.parser.cppm.asm
+C:/work/soul-mod/soul/cpp/declarator.parser.cppm -> C:/work/soul-mod/soul/cpp/soul.cpp.declarator.parser.module
+==> C:/work/soul-mod/soul/cpp/debug/expression.parser.cppm.asm
+C:/work/soul-mod/soul/cpp/expression.parser.cppm -> C:/work/soul-mod/soul/cpp/soul.cpp.expression.parser.module
+==> C:/work/soul-mod/soul/cpp/debug/identifier.parser.cppm.asm
+C:/work/soul-mod/soul/cpp/identifier.parser.cppm -> C:/work/soul-mod/soul/cpp/soul.cpp.identifier.parser.module
+==> C:/work/soul-mod/soul/cpp/debug/literal.parser.cppm.asm
+C:/work/soul-mod/soul/cpp/literal.parser.cppm -> C:/work/soul-mod/soul/cpp/soul.cpp.literal.parser.module
+==> C:/work/soul-mod/soul/cpp/debug/statement.parser.cppm.asm
+C:/work/soul-mod/soul/cpp/statement.parser.cppm -> C:/work/soul-mod/soul/cpp/soul.cpp.statement.parser.module
+==> C:/work/soul-mod/soul/cpp/debug/parsers.cppm.asm
+C:/work/soul-mod/soul/cpp/parsers.cppm -> C:/work/soul-mod/soul/cpp/soul.cpp.parser.module
+==> C:/work/soul-mod/soul/cpp/debug/declaration.parser.cpp.asm
+C:/work/soul-mod/soul/cpp/declaration.parser.cpp -> C:/work/soul-mod/soul/cpp/soul.cpp.declaration.parser.declaration.parser.cpp.module
+==> C:/work/soul-mod/soul/cpp/debug/declarator.parser.cpp.asm
+C:/work/soul-mod/soul/cpp/declarator.parser.cpp -> C:/work/soul-mod/soul/cpp/soul.cpp.declarator.parser.declarator.parser.cpp.module
+==> C:/work/soul-mod/soul/cpp/debug/expression.parser.cpp.asm
+C:/work/soul-mod/soul/cpp/expression.parser.cpp -> C:/work/soul-mod/soul/cpp/soul.cpp.expression.parser.expression.parser.cpp.module
+==> C:/work/soul-mod/soul/cpp/debug/identifier.parser.cpp.asm
+C:/work/soul-mod/soul/cpp/identifier.parser.cpp -> C:/work/soul-mod/soul/cpp/soul.cpp.identifier.parser.identifier.parser.cpp.module
+==> C:/work/soul-mod/soul/cpp/debug/literal.parser.cpp.asm
+C:/work/soul-mod/soul/cpp/literal.parser.cpp -> C:/work/soul-mod/soul/cpp/soul.cpp.literal.parser.literal.parser.cpp.module
+==> C:/work/soul-mod/soul/cpp/debug/statement.parser.cpp.asm
+C:/work/soul-mod/soul/cpp/statement.parser.cpp -> C:/work/soul-mod/soul/cpp/soul.cpp.statement.parser.statement.parser.cpp.module
+==> C:/work/soul-mod/soul/cpp/debug/soul.cpp.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling declaration.parser.cppm.asm...
+  Assembling declarator.parser.cppm.asm...
+  Assembling expression.parser.cppm.asm...
+  Assembling identifier.parser.cppm.asm...
+  Assembling literal.parser.cppm.asm...
+  Assembling statement.parser.cppm.asm...
+  Assembling parsers.cppm.asm...
+  Assembling declaration.parser.cpp.asm...
+  Assembling declarator.parser.cpp.asm...
+  Assembling expression.parser.cpp.asm...
+  Assembling identifier.parser.cpp.asm...
+  Assembling literal.parser.cpp.asm...
+  Assembling statement.parser.cpp.asm...
+  soul.cpp.vcxproj -> C:\work\soul-mod\soul\cpp\debug\soul.cpp.lib
+
+project 'soul.cpp' built successfully
+> building project 'soul.slg'...
+==> C:/work/soul-mod/soul/slg/debug/classmap.cppm.asm
+C:/work/soul-mod/soul/slg/classmap.cppm -> C:/work/soul-mod/soul/slg/soul.slg.classmap.module
+==> C:/work/soul-mod/soul/slg/debug/expression_file.parser.cppm.asm
+C:/work/soul-mod/soul/slg/expression_file.parser.cppm -> C:/work/soul-mod/soul/slg/soul.slg.expression.file.parser.module
+==> C:/work/soul-mod/soul/slg/debug/file_parsers.cppm.asm
+C:/work/soul-mod/soul/slg/file_parsers.cppm -> C:/work/soul-mod/soul/slg/soul.slg.file.parsers.module
+==> C:/work/soul-mod/soul/slg/debug/keyword_file.parser.cppm.asm
+C:/work/soul-mod/soul/slg/keyword_file.parser.cppm -> C:/work/soul-mod/soul/slg/soul.slg.keyword.file.parser.module
+==> C:/work/soul-mod/soul/slg/debug/lexer_file.parser.cppm.asm
+C:/work/soul-mod/soul/slg/lexer_file.parser.cppm -> C:/work/soul-mod/soul/slg/soul.slg.lexer.file.parser.module
+==> C:/work/soul-mod/soul/slg/debug/lexer_generator.cppm.asm
+C:/work/soul-mod/soul/slg/lexer_generator.cppm -> C:/work/soul-mod/soul/slg/soul.slg.lexer.generator.module
+==> C:/work/soul-mod/soul/slg/debug/regular_expression_parser.cppm.asm
+C:/work/soul-mod/soul/slg/regular_expression_parser.cppm -> C:/work/soul-mod/soul/slg/soul.slg.regular.expression.parser.module
+==> C:/work/soul-mod/soul/slg/debug/slg_file.parser.cppm.asm
+C:/work/soul-mod/soul/slg/slg_file.parser.cppm -> C:/work/soul-mod/soul/slg/soul.slg.slg.file.parser.module
+==> C:/work/soul-mod/soul/slg/debug/slg_parsers_rules.cppm.asm
+C:/work/soul-mod/soul/slg/slg_parsers_rules.cppm -> C:/work/soul-mod/soul/slg/soul.slg.parsers.rules.module
+==> C:/work/soul-mod/soul/slg/debug/token_file.parser.cppm.asm
+C:/work/soul-mod/soul/slg/token_file.parser.cppm -> C:/work/soul-mod/soul/slg/soul.slg.token.file.parser.module
+==> C:/work/soul-mod/soul/slg/debug/token_generator.cppm.asm
+C:/work/soul-mod/soul/slg/token_generator.cppm -> C:/work/soul-mod/soul/slg/soul.slg.token.generator.module
+==> C:/work/soul-mod/soul/slg/debug/classmap.cpp.asm
+C:/work/soul-mod/soul/slg/classmap.cpp -> C:/work/soul-mod/soul/slg/soul.slg.classmap.classmap.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/expression_file.parser.cpp.asm
+C:/work/soul-mod/soul/slg/expression_file.parser.cpp -> C:/work/soul-mod/soul/slg/soul.slg.expression.file.parser.expression_file.parser.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/file_parsers.cpp.asm
+C:/work/soul-mod/soul/slg/file_parsers.cpp -> C:/work/soul-mod/soul/slg/soul.slg.file.parsers.file_parsers.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/keyword_file.parser.cpp.asm
+C:/work/soul-mod/soul/slg/keyword_file.parser.cpp -> C:/work/soul-mod/soul/slg/soul.slg.keyword.file.parser.keyword_file.parser.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/lexer_file.parser.cpp.asm
+C:/work/soul-mod/soul/slg/lexer_file.parser.cpp -> C:/work/soul-mod/soul/slg/soul.slg.lexer.file.parser.lexer_file.parser.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/lexer_generator.cpp.asm
+C:/work/soul-mod/soul/slg/lexer_generator.cpp -> C:/work/soul-mod/soul/slg/soul.slg.lexer.generator.lexer_generator.cpp.module
+foo==> C:/work/soul-mod/soul/slg/debug/regular_expression_parser.cpp.asm
+C:/work/soul-mod/soul/slg/regular_expression_parser.cpp -> C:/work/soul-mod/soul/slg/soul.slg.regular.expression.parser.regular_expression_parser.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/slg_file.parser.cpp.asm
+C:/work/soul-mod/soul/slg/slg_file.parser.cpp -> C:/work/soul-mod/soul/slg/soul.slg.slg.file.parser.slg_file.parser.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/slg_parsers_rules.cpp.asm
+C:/work/soul-mod/soul/slg/slg_parsers_rules.cpp -> C:/work/soul-mod/soul/slg/soul.slg.parsers.rules.slg_parsers_rules.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/token_file.parser.cpp.asm
+C:/work/soul-mod/soul/slg/token_file.parser.cpp -> C:/work/soul-mod/soul/slg/soul.slg.token.file.parser.token_file.parser.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/token_generator.cpp.asm
+C:/work/soul-mod/soul/slg/token_generator.cpp -> C:/work/soul-mod/soul/slg/soul.slg.token.generator.token_generator.cpp.module
+==> C:/work/soul-mod/soul/slg/debug/main.cpp.asm
+C:/work/soul-mod/soul/slg/main.cpp -> C:/work/soul-mod/soul/slg/soul.slg.main.module
+==> C:/work/soul-mod/soul/slg/debug/__main__.cpp.asm
+==> C:/work/soul-mod/soul/slg/debug/soul.slg.vcxproj
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.5.3
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
+
+  Assembling classmap.cppm.asm...
+  Assembling expression_file.parser.cppm.asm...
+  Assembling file_parsers.cppm.asm...
+  Assembling keyword_file.parser.cppm.asm...
+  Assembling lexer_file.parser.cppm.asm...
+  Assembling lexer_generator.cppm.asm...
+  Assembling regular_expression_parser.cppm.asm...
+  Assembling slg_file.parser.cppm.asm...
+  Assembling slg_parsers_rules.cppm.asm...
+  Assembling token_file.parser.cppm.asm...
+  Assembling token_generator.cppm.asm...
+  Assembling classmap.cpp.asm...
+  Assembling expression_file.parser.cpp.asm...
+  Assembling file_parsers.cpp.asm...
+  Assembling keyword_file.parser.cpp.asm...
+  Assembling lexer_file.parser.cpp.asm...
+  Assembling lexer_generator.cpp.asm...
+  Assembling regular_expression_parser.cpp.asm...
+  Assembling slg_file.parser.cpp.asm...
+  Assembling slg_parsers_rules.cpp.asm...
+  Assembling token_file.parser.cpp.asm...
+  Assembling token_generator.cpp.asm...
+  Assembling main.cpp.asm...
+  Assembling __main__.cpp.asm...
+  __main__.cpp
+LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/FORCE' specification [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+regular_expression_parser.cpp.obj : warning LNK4006: variable_classmap_global_22149820ECF59EB2772756F5118694158320BB81_83C122E2EF54F37ED409355CB7A64CC48183BC88 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+regular_expression_parser.cpp.obj : warning LNK4006: variable_classmap_initialized_22149820ECF59EB2772756F5118694158320BB81_AEFAF0234D0CF631E9BB75A47D9F7AA906E10675 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(re.cpp.obj) : warning LNK4006: move_ctor_class_Nfa_AEC7FA12998FD3F6F714688D1300D72B88ACA002_AEC7FA12998FD3F6F714688D1300D72B88ACA002 already defined in regular_expression_parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cppm.obj) : warning LNK4006: function_get_BE597DFF034E0ACEF687D935744CEB0A5A38F6E7 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: default_ctor_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_B31B4335943CE48853DBD793960E86C634212607_F17D2753953D1F0CE982ADB3CB3D56D8D4D362C3 already defined in slg_parsers_rules.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: op_apply_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_B31B4335943CE48853DBD793960E86C634212607_AB24E5020882A30EC1EE6787B0A46D8CF67C337A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_A7F6CAA257A50C50BC4F8C17C48F072E597C2BB9_3384287939380C60B6E3C7E4A3949BB931845D02 already defined in token_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: function_reset_12A9B318323DDADA0ABB3AE43A8D01203DE31BA8 already defined in token_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_A7F6CAA257A50C50BC4F8C17C48F072E597C2BB9_2F16BA8D17308A39B0D5342841062AF7EE638D2D already defined in token_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_201D88883691496D3B8AEF0FA3EA33C3E77637E2_4B002979AE614CE7564BC3205B206CFC8663E3CA already defined in keyword_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: function_reset_1B30ACC68C323A336A78BB9CEDF94EF229AEEAF6 already defined in keyword_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_201D88883691496D3B8AEF0FA3EA33C3E77637E2_B113B32031D7EB5C00EE229C4B077379B5B6E132 already defined in keyword_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_DD514DA5120EF00E2D8BC5222D949F82E9B0DC26_18B8A1CE39EAC08EA6AEA59AB3CE702283A0EDD7 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: function_reset_5A549D0B7B02EE2BC181EA05D26F28E466B46ADE already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_DD514DA5120EF00E2D8BC5222D949F82E9B0DC26_71D34E539DCE8F90E8FCAFC7DA90C103AA4138DD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_C4920481C87F400E38316769A30196E8ED97973A_C1C644122B87727B5DE803F503881B5DDE009BD5 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_899E8D9767C6965D2289F642EEFF772455134B50_BA725C4910AF81CF0FCB97CFC50962630355EF32 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: function_reset_52F9709815E84941E2188D77E8CC9A09FA789FC0 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: function_reset_DA32A0295B3C37C4240B887EE6A61960E62D8930 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_B646DB1DEB9F1B2FCBF7DD34056489BE73668586_9B03C47B37C8B57DA71BB6368470933700A1B0A2 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_B570464E0EC6453A34D1B76D3CCAAF87E2BA68F0_AA634F8752BF47F57F4CA06EAE58D2D5A95A1FE0 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_FE7C08A2A212E9BB4C8D52C89252C57CE6CD5EA8_4F974D99A827D1609B891D1C8865A1811A9321F6 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(slg.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_569A06C671AA3FE88A6AD84A4FB4A4FB22CA992E_4EEA71BFB49E9FEEAE1B909C39498F1F8E5E34EC already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_Value_AA7640FBF70D673FA3FD2E8BCAEC4BD0DB1F4F48_9511634062FB4EAE331D2B84A961FAC815C24E32_D6DB07D592240A0D779F730C01F9098CE6AC711E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_80402F60DD042881F6B143225AE3CBE6FDA7CCC5 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_LexerBase_6FE193F69567B1284316E846C15ACD353C1403FC_958693B1D2C15EAA5FF15DA7634777798AE09179_F6195343DF17807858703D40D89BA5174B584CA0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_78C07E5B9AFC0070BAD11230759BA49877BA8CFA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_2D23120558C0364F2824B05DE9211B3D702C1A4F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_92A19561A2F374E748A1EF02EB04A9DFBE88E6E2_CA220A39F2E4781845C7E1E488F9B205AFB4C5A2 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_5ABC1E0A459C073CA507119A71ABD80EB1976475 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_3E5638263DB90B438A602EC4ED36ECAB4CEE0A73 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_E3F4B1F18B2CC93BDC0A7DCBFE3ECA8AACC87413_04EDBC113F2995C971E302B68DDC653C27B50E66 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_B88A19B33BF4035810476EDEF4F4A248AD04EFB7 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_98A4EF11D52726AA4D5EF893CA4FF97F462041DA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_D9AFB6F473AE8A99A1E56D0622AAC64A051EF967_D56870C85BE9AD32C2A2D3A84FABD132221333D9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_F93125D6578F899044A1F0BBCD4D93C3B45CF0F4 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_destroy_ACD50A26EC4CDAC51158BB7E3BDB7173480DDCF3 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_9EECC11265993B98799177F473C2F19EE608567E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_pop_back_915C1C4E4C7230C52868F061D60240DB10E84406 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_PopRule_C1C0912525281848B4DD1F217AB623EF538DF2B9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: dtor_class_RuleGuard_C54A6B662B85F57796EBA118B43A81AE9D462F33_ED2B5E6C1EAC0C4173D762749EF2366FC353A43D_29C9C83E6CCFD5CD887C19814FFC780DF67860E3 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_constructive_move_3B38E98E5FF45D1BA926D6FA2204A1F04650F2FD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_grow_84B3E2332BEA7A13B935A304C79F39F0BEEF5F56 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_reserve_79763D2333532C811B25E71722C4D01797326FA0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_push_back_8DEE339E6D3449243C6027E2E307289FDAE80FAF already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_PushRule_9E942D80B6B2F9788EA51B513F0BF273A9A65B93 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_RuleGuard_C54A6B662B85F57796EBA118B43A81AE9D462F33_ED2B5E6C1EAC0C4173D762749EF2366FC353A43D_F2661557EC43FA460AB2AAE21FF166CF87A74442 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_begin_B0322F2D6D112734FC231C7B27ADD283D2394E3A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetPos_643FFC24A7AFFA2D7A82E7B40F1FAD548C4471AA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_star_class_Lexer_4EA4B48D031DACB945B5990BE987BAA3D2B10541_3209907EEC83667DD3BB75F998731DAB58BE6494_3843B006671F9FFD08F2499A11C31539FD7DD2DE already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetFlag_73C8095EFB4CCD51DEF7662FC0D596D0C60D8B97 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_end_BB1AE8731D19140A5C99F44234E72F48205D9346 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_back_806748E18CEE745DFC8A774E21C3E6D0BC61D949 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetClass_DA34740020C9635D5C0EC31419BD2DD48AB15959 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: copy_ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: copy_assignment_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetTokenId_A7A81872EEF4E985A5064B0B2A0C4A74604C24B2 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_NextState_61B5A0F087840EBCAFB55FB09270A47B9E845980 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: move_ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: move_ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_046E358ADA31964B26631D4B3A5A171B3639B85B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_grow_5D951DD4595F85665E93484A4DCEA594DAF97FFD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_reserve_77CE4E2BB172E79C47CF22505FDE18289314BFBC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: copy_ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_046E358ADA31964B26631D4B3A5A171B3639B85B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_push_back_2708E9B85CB8FCDF5F06E67D65BB5ACC19C6012C already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_6FD97D66A1DB1D88468FF944415F0F4794DD01F1 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_E76CDA7EDFB2A9531D684FCBBCEC8A1743CA06A1 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_SetPos_E83AB22614D8427A42BA01A152E298CF0D098347 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_NextToken_40BC2D66CF57D535D40FE4D7964493AAA7F7333F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_constructive_copy_67E29D7A0688130B55DA45DA6F9526070C479676 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: copy_assignment_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_86D6D7FBB419ADF80BF6E9D2726367198095EF1B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_plus_plus_class_Lexer_4EA4B48D031DACB945B5990BE987BAA3D2B10541_3209907EEC83667DD3BB75F998731DAB58BE6494_BE28D45F8DEE7DE99C1D7F265C4CAD9CE82870F4 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_size_6489990F2B09B92CAD88888E17E7A402A14B7302 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_92A19561A2F374E748A1EF02EB04A9DFBE88E6E2_EB56604B0C40A72CAFE2E54AD8E66C6631A4B6CC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetToken_729AB8245900FE44FBAD44686A0710AB7FB183C0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_ToString_2640F541A2628D38B3ED974EE89AA316C95D4740 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_ToString_49E3010173F8F45514A409721CC1DB05A8954027 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: copy_assignment_class_Match_5B662C24A2F058AE450A4660C8150ABD6D434ECB_5B662C24A2F058AE450A4660C8150ABD6D434ECB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: move_ctor_class_Match_5B662C24A2F058AE450A4660C8150ABD6D434ECB_5B662C24A2F058AE450A4660C8150ABD6D434ECB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_C4920481C87F400E38316769A30196E8ED97973A_C1C644122B87727B5DE803F503881B5DDE009BD5 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_2E67D80755DD2C79381DE333CF9DA9345CA91058 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_reset_54BD8F0833C05D6E79ACFEFC7AF5D0CE48D9A4CD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_E76C4B70120E60336222282F644A0BED3CFB6713 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_reset_52F9709815E84941E2188D77E8CC9A09FA789FC0 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetTokenCollection_2FBBE0B1AFC76592B71CEA99EB6F323F039C616F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetTokenInfo_EFFA92242D31DA3BC1120DB59E82455CDE8DF9DB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetLine_076C1A3ABE27A2F12A1A2059E663892500F2F439 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_size_2B5547C573EC5E33EEABC1C6FCDFD90D6AECBDBF already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_E3F4B1F18B2CC93BDC0A7DCBFE3ECA8AACC87413_5C0230027B2F0555D3730F47CB86362B93990564 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: move_ctor_class_SourcePos_3CE2712832619CD286569E912EB5735DF0662397_3CE2712832619CD286569E912EB5735DF0662397 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetSourcePos_B8489A670CA8AA275013F090EC1865AA730D2ABC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_size_53F2B37F1B31C33005FC0F3ADAF721D289A0ED2F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_132D783130FC10CAAF91BC5E3E7CB782507163A7 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_empty_4EA568C2267F1ECD0F925E7998AB6D86ADEB0753 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_F611612D2CC181712FF0ED9E8322A2BB0FC62D35 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: move_ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_78AB8D0280DDB542250985B206DCF646908B3451 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_end_E9593C6C79DED70D3808E3DD6B71D91C14E09864 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_value_7FE5CCF20A5C61CE41585F799E32435700DCECB0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_apply_class_select_first_017DFA43C40F011915C076BA0220A6D522B71956_BC5D6795DF77BDC238DFFA95CD566391DD087AA7_E2AA3D56A2F06B55AA65D7ABD8821DBF4FDEA018 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_apply_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_B31B4335943CE48853DBD793960E86C634212607_AB24E5020882A30EC1EE6787B0A46D8CF67C337A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_node_919D2ABEB387244EBD2F4AD7737E50057E76853E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_find_B42B3C7A1CD5956317376DF57232931357BEF179 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_find_256327298A45B16BACC665FD11E3B503ECE4A60D already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_DF2063918253F7F212C2F48B6F60168FF77442E8_0BB2402B723DDFA0AA9E6F4CE605FA9145AD006E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: move_ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_DF2063918253F7F212C2F48B6F60168FF77442E8_53F781F6CBAE71542BC9EF03BB63C2A7C7AF8AE9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_cend_BA3C2EA67960D546F0D190E287092CB900FA4488 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_cend_F19AA75F864027AB2DF04E8B07634B0E1D175B13 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_value_ptr_C16C08074379D9F44C12F5D767301B874723EE77 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: op_arrow_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_0EA43C79EABDB4A5249B550414CDB784006D130A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_GetParserStateStr_42DC26F4A38E6423B60E9A29D5BC2D58B1CE963F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_ErrorLines_1D371A8A214AAEBAC6CC23B1C01BCEF15CC89074 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_ThrowExpectationFailure_597CD09F635A42D3C7BB366F761ADE4396F9DE97 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_release_C00554F06FF54E1A883E3D0712795DD7BC9845C3 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_D66A2D38A40AB879674EFFBED0CD53CB25D0E1AF_73D4A00179764C194BBACC344DB438E2DB1DD931 already defined in keyword_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_D66A2D38A40AB879674EFFBED0CD53CB25D0E1AF_205CFA942FD1F998F3CBAD7A79F44277E3697295 already defined in soul.ast.lib(slg.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_reset_07D8593BD7E559DDF657F4902ED84DD8D5279C31 already defined in keyword_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_release_468F6F251E89E96655122E015DF93B00DB62C92A already defined in keyword_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: function_FileName_2B884B33BEF6BF5E6758A58109DC7E75D69FCA3D already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.common.lib(common.parser.cpp.obj) : warning LNK4006: move_assignment_class_Match_5B662C24A2F058AE450A4660C8150ABD6D434ECB_5B662C24A2F058AE450A4660C8150ABD6D434ECB already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(statement.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_63D214BBC8BCE9EF9FF83D56B0D072A182715944_2EDAE45D303BB7EF9C7F6589F549F0A968C4F378 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(statement.parser.cpp.obj) : warning LNK4006: function_reset_E68AE06244011265541B15DAC13482716A6DCE81 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(statement.parser.cpp.obj) : warning LNK4006: function_reset_F7F41317EBAECF5F66AC5B1E1A5CEEF0778790B1 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(statement.parser.cpp.obj) : warning LNK4006: function_release_2EDE41708808E0E0297C76E5EFA997689F635B1A already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(statement.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_63D214BBC8BCE9EF9FF83D56B0D072A182715944_5EDD162F50350ED482507A65783C75D6CCADCD93 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(statement.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_DACAC8CB680A1C28316E681A2B6629096EC229FF_B91ECCBA74BC1D7D602F0AE9DB8138C87ED8D700 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(statement.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_A5617CC4E7159099508A5637B523C1A8D1E54E36_A26505A9EDE86AC141F93AD4987328C8C7BE176C already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declarator.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_24650911340C7A5C172969497CBED294AF0FAC39_1C5CDB9488C52E75FE9111506E65CB4502269323 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declarator.parser.cpp.obj) : warning LNK4006: ctor_class_Value_AA7640FBF70D673FA3FD2E8BCAEC4BD0DB1F4F48_9511634062FB4EAE331D2B84A961FAC815C24E32_4925150FC3A15097A9F3C15C77C3E635D0E7E404 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declarator.parser.cpp.obj) : warning LNK4006: function_get_673D5E673417882151082460C2500B586F6A98B7 already defined in soul.ast.lib(cpp.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declarator.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F4D8B58531F79830DBE655871FF32186DB98F59A_20C66C2F5175C6B76DD6BD1645CBB44FCD6EA190 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declarator.parser.cpp.obj) : warning LNK4006: function_get_B3E70C478181B4AFCB55559C0138AC61D4106A9F already defined in soul.ast.lib(cpp.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declarator.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_D23D46D9379B834592C1E833D9B022A5354633AB_BEF631B0032EE8B9F3864CFA33FC90A8DC580B13 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declarator.parser.cpp.obj) : warning LNK4006: function_get_8B363DCC20BD5A2936145ED8E82FFDC599B5ADF7 already defined in soul.ast.lib(cpp.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_4626C8342A31AB20615F26DFC89070834727CC5A_3895F531E2CC4F978D4A38E8C4917DD31F5C3441 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_size_53F2B37F1B31C33005FC0F3ADAF721D289A0ED2F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_132D783130FC10CAAF91BC5E3E7CB782507163A7 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_empty_4EA568C2267F1ECD0F925E7998AB6D86ADEB0753 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_F611612D2CC181712FF0ED9E8322A2BB0FC62D35 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_move_29511FF27D6871A23F10DE7D03AC21D02922244F already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: move_ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_78AB8D0280DDB542250985B206DCF646908B3451 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_end_E9593C6C79DED70D3808E3DD6B71D91C14E09864 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_value_7FE5CCF20A5C61CE41585F799E32435700DCECB0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: op_apply_class_select_first_017DFA43C40F011915C076BA0220A6D522B71956_BC5D6795DF77BDC238DFFA95CD566391DD087AA7_E2AA3D56A2F06B55AA65D7ABD8821DBF4FDEA018 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: op_apply_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_B31B4335943CE48853DBD793960E86C634212607_AB24E5020882A30EC1EE6787B0A46D8CF67C337A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_node_919D2ABEB387244EBD2F4AD7737E50057E76853E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: op_eq_1AE3F1DD29590309E66D8F8189AE5651A089AA85 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_move_00736A0658B2E6F9A86B9E6920F3420D5A842D18 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_find_B42B3C7A1CD5956317376DF57232931357BEF179 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_find_256327298A45B16BACC665FD11E3B503ECE4A60D already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_DF2063918253F7F212C2F48B6F60168FF77442E8_0BB2402B723DDFA0AA9E6F4CE605FA9145AD006E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: move_ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_DF2063918253F7F212C2F48B6F60168FF77442E8_53F781F6CBAE71542BC9EF03BB63C2A7C7AF8AE9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_cend_BA3C2EA67960D546F0D190E287092CB900FA4488 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_cend_F19AA75F864027AB2DF04E8B07634B0E1D175B13 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_value_ptr_C16C08074379D9F44C12F5D767301B874723EE77 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: op_arrow_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_0EA43C79EABDB4A5249B550414CDB784006D130A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_GetParserStateStr_42DC26F4A38E6423B60E9A29D5BC2D58B1CE963F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_LineStart_15C0C553A498C0D60B526D84D172BFB057B27619 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_LineEnd_88BE2F3E3E4168B7B97BD6E3BF96BFC2F22E310F already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_ToString_2640F541A2628D38B3ED974EE89AA316C95D4740 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_max_16202C0D82D8366B2CBA7131479123870A563ED6 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_ErrorLines_1D371A8A214AAEBAC6CC23B1C01BCEF15CC89074 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_ThrowExpectationFailure_597CD09F635A42D3C7BB366F761ADE4396F9DE97 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_GetTokenCollection_2FBBE0B1AFC76592B71CEA99EB6F323F039C616F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_GetTokenInfo_EFFA92242D31DA3BC1120DB59E82455CDE8DF9DB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_get_4B6746CEEAAC408DEA4F068AB24FF70C1CC81689 already defined in soul.ast.lib(cpp.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_GetParserStateStr_06DBB5D79875A6053AF52329E33504FF01AE636E already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_ErrorLines_B2A3967D4F6A763535AC6E44FC46C92C99777BBA already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_ThrowExpectationFailure_3AA87238361E0AC5C171406B0BC148496033AC78 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_GetTokenCollection_BBB74DB6B3AD68E9B9927D04B57995C5D7F8F5FB already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(expression.parser.cpp.obj) : warning LNK4006: function_GetTokenInfo_BCF715ACB5A67DBB917AC78F4F301899622FFFBF already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_Value_AA7640FBF70D673FA3FD2E8BCAEC4BD0DB1F4F48_9511634062FB4EAE331D2B84A961FAC815C24E32_D6DB07D592240A0D779F730C01F9098CE6AC711E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_80402F60DD042881F6B143225AE3CBE6FDA7CCC5 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_pair_FC7B978EE4D74D225DC467F464EE9AE893B76CC3_14423EE90E5BADD76D2140E1D00F369A02F37784_4C08938BBD64CBF442DA9D3ECACF25EF76A5DE9F already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_rb_node_1A230528F6B961082F6B1F0CD4CFC22EA4AF3BA4_1CEEDC9C82B9B746E56664B9B57738B7FEE9E68A_8E79BC53E234EE25BB47ACC8E819BEBA81137D26 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_4FC452B40298602864C589FD4C4ABB44CFB6BDAC_37A07B5A53E6D5282476CFA0A30DB81C337255F7 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_operator_bool_FF6E61FD6D67A4CE81EAFA4232645BA681316CAD already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_4FC452B40298602864C589FD4C4ABB44CFB6BDAC_4B3C26D605F08ED4369D59D3D0F58324FF139E82 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_root_AEA50296CF35F643696577110B776D3AC24936DA already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_set_root_543A60D4668E543C694ED77451BD98C8EA652BC7 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_get_1CF8FC59AF09F966AD14D4AECD55A0F0CB82CA86 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_set_leftmost_BEA9559A182244AF6A3EA1321FC55E020EEAFA91 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_set_rightmost_E841862BF8D8AEAC6E317D225FB58FF5A2842A60 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_clear_E82D6E0618F14C9F4FAE7E0CA23F3773C80067B7 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_rb_tree_3D530A987F2E861E54406B9B09247AE227831E20_77BF21C4805F1AC155A7C2E5F2102013E25C2AAC_779B983BC2E2274F58E259CCBC934CD553ED455A already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_LexerBase_6FE193F69567B1284316E846C15ACD353C1403FC_958693B1D2C15EAA5FF15DA7634777798AE09179_F6195343DF17807858703D40D89BA5174B584CA0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_78C07E5B9AFC0070BAD11230759BA49877BA8CFA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_2D23120558C0364F2824B05DE9211B3D702C1A4F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_92A19561A2F374E748A1EF02EB04A9DFBE88E6E2_CA220A39F2E4781845C7E1E488F9B205AFB4C5A2 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_5ABC1E0A459C073CA507119A71ABD80EB1976475 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_3E5638263DB90B438A602EC4ED36ECAB4CEE0A73 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_E3F4B1F18B2CC93BDC0A7DCBFE3ECA8AACC87413_04EDBC113F2995C971E302B68DDC653C27B50E66 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_B88A19B33BF4035810476EDEF4F4A248AD04EFB7 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_98A4EF11D52726AA4D5EF893CA4FF97F462041DA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_D9AFB6F473AE8A99A1E56D0622AAC64A051EF967_D56870C85BE9AD32C2A2D3A84FABD132221333D9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_F93125D6578F899044A1F0BBCD4D93C3B45CF0F4 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_destroy_ACD50A26EC4CDAC51158BB7E3BDB7173480DDCF3 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_9EECC11265993B98799177F473C2F19EE608567E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_pop_back_915C1C4E4C7230C52868F061D60240DB10E84406 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_PopRule_C1C0912525281848B4DD1F217AB623EF538DF2B9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_RuleGuard_C54A6B662B85F57796EBA118B43A81AE9D462F33_ED2B5E6C1EAC0C4173D762749EF2366FC353A43D_29C9C83E6CCFD5CD887C19814FFC780DF67860E3 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_move_7A8FD8F9E96D1F203A2C9DFD13A959950E129D95 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_constructive_move_3B38E98E5FF45D1BA926D6FA2204A1F04650F2FD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_grow_84B3E2332BEA7A13B935A304C79F39F0BEEF5F56 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_reserve_79763D2333532C811B25E71722C4D01797326FA0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_push_back_8DEE339E6D3449243C6027E2E307289FDAE80FAF already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_PushRule_9E942D80B6B2F9788EA51B513F0BF273A9A65B93 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_RuleGuard_C54A6B662B85F57796EBA118B43A81AE9D462F33_ED2B5E6C1EAC0C4173D762749EF2366FC353A43D_F2661557EC43FA460AB2AAE21FF166CF87A74442 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_begin_B0322F2D6D112734FC231C7B27ADD283D2394E3A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetPos_643FFC24A7AFFA2D7A82E7B40F1FAD548C4471AA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: move_ctor_class_Match_5B662C24A2F058AE450A4660C8150ABD6D434ECB_5B662C24A2F058AE450A4660C8150ABD6D434ECB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: copy_assignment_class_Match_5B662C24A2F058AE450A4660C8150ABD6D434ECB_5B662C24A2F058AE450A4660C8150ABD6D434ECB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_SetPos_E83AB22614D8427A42BA01A152E298CF0D098347 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_24650911340C7A5C172969497CBED294AF0FAC39_07C75CDFB69593EDDB5CE6C670959A3E9540BD71 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetLine_076C1A3ABE27A2F12A1A2059E663892500F2F439 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_size_2B5547C573EC5E33EEABC1C6FCDFD90D6AECBDBF already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_E3F4B1F18B2CC93BDC0A7DCBFE3ECA8AACC87413_5C0230027B2F0555D3730F47CB86362B93990564 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_size_6489990F2B09B92CAD88888E17E7A402A14B7302 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_92A19561A2F374E748A1EF02EB04A9DFBE88E6E2_EB56604B0C40A72CAFE2E54AD8E66C6631A4B6CC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetToken_729AB8245900FE44FBAD44686A0710AB7FB183C0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_move_713CFE70B6F87C30D9BC999AFFC4ACB280AAFE8B already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: move_ctor_class_SourcePos_3CE2712832619CD286569E912EB5735DF0662397_3CE2712832619CD286569E912EB5735DF0662397 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetSourcePos_B8489A670CA8AA275013F090EC1865AA730D2ABC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_get_ED4C9907FDDE4566AF5E6F461653824D2019004F already defined in soul.ast.lib(cpp.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_reset_2CDC5FF26ACBEC59FE59003B3F3191347055FC9D already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_90B60D0258EB449F806870CD7370B61A9D06D5A4_7C255F73835A3660E192D18F78A74D29EAF1FC5F already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_star_class_Lexer_4EA4B48D031DACB945B5990BE987BAA3D2B10541_3209907EEC83667DD3BB75F998731DAB58BE6494_3843B006671F9FFD08F2499A11C31539FD7DD2DE already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetFlag_73C8095EFB4CCD51DEF7662FC0D596D0C60D8B97 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_end_BB1AE8731D19140A5C99F44234E72F48205D9346 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_back_806748E18CEE745DFC8A774E21C3E6D0BC61D949 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetClass_DA34740020C9635D5C0EC31419BD2DD48AB15959 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: copy_ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: copy_assignment_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetTokenId_A7A81872EEF4E985A5064B0B2A0C4A74604C24B2 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_NextState_61B5A0F087840EBCAFB55FB09270A47B9E845980 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_move_7E561BEECD5E1783439277721B41B3DFA1920E31 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_plus_9F4CF48359CF05407E3F1E431772BA954B532D9B already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_plus_62D4FB142DE81EC0447DCC5DD3A2379742257D32 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_plus_78F28BC2DA6984092570B1839610070782E11CF1 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_move_C088865BDDEBF1178AEDD959F10ECB4DA4B7838E already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_move_BCF014DE9247ADA370D66BCBBC2907428CC13437 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_move_E6CD116E48657BCC6A55129DE0AED16CA69F4269 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: move_ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_move_7342EDA61F206337DCCF92C4484FD2BFBC31BF40 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: move_ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_046E358ADA31964B26631D4B3A5A171B3639B85B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_constructive_move_411D0F8770EC48EBB928C34F92BA960FCE338382 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_grow_5D951DD4595F85665E93484A4DCEA594DAF97FFD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_reserve_77CE4E2BB172E79C47CF22505FDE18289314BFBC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: copy_ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_046E358ADA31964B26631D4B3A5A171B3639B85B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_push_back_2708E9B85CB8FCDF5F06E67D65BB5ACC19C6012C already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_6FD97D66A1DB1D88468FF944415F0F4794DD01F1 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_E76CDA7EDFB2A9531D684FCBBCEC8A1743CA06A1 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_NextToken_40BC2D66CF57D535D40FE4D7964493AAA7F7333F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_constructive_copy_67E29D7A0688130B55DA45DA6F9526070C479676 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: copy_assignment_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_86D6D7FBB419ADF80BF6E9D2726367198095EF1B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_plus_plus_class_Lexer_4EA4B48D031DACB945B5990BE987BAA3D2B10541_3209907EEC83667DD3BB75F998731DAB58BE6494_BE28D45F8DEE7DE99C1D7F265C4CAD9CE82870F4 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_2E67D80755DD2C79381DE333CF9DA9345CA91058 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_reset_54BD8F0833C05D6E79ACFEFC7AF5D0CE48D9A4CD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_E76C4B70120E60336222282F644A0BED3CFB6713 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetVariables_E5430E45F6A72DB249A0C175E7053BC793E6E8F6 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_4626C8342A31AB20615F26DFC89070834727CC5A_B366EB9E38D33B310830EB017164762D04BCAA06 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_reset_EF74300B911FD6612C8AAD27829ACA82B5B9ADEB already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F4D8B58531F79830DBE655871FF32186DB98F59A_DF6A82C02FFB3B301EC2F184E541A343B8BB7CC0 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_reset_3C0D8DD64A018B56AC0A8E8A9389ACF4875A1327 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_release_9F9DD0A87878D2647B0F925C4F41F21381B4CBF3 already defined in lexer_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_PopRule_13AD8B6671D3DD94D43D29374A81718E48367D8B already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: dtor_class_RuleGuard_C54A6B662B85F57796EBA118B43A81AE9D462F33_3FD061A24EB560EC54F15088568A6DD88B15FADC_246C8A4A769403D328445EFCE3F474316016F713 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_PushRule_FE5812052A937050CA8CC05BB96E51B9D96F883F already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: ctor_class_RuleGuard_C54A6B662B85F57796EBA118B43A81AE9D462F33_3FD061A24EB560EC54F15088568A6DD88B15FADC_D52836B1D3726E98D15DC55151C708F784538BF8 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetPos_6150C5FBF717E9F630622E729218B7BC7656FE27 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_SetPos_3960602B31D37AF608DD7C43407ADE54AFBDD531 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetLine_4AD4EED456E7F9EACA8390F22DB8DE3C9E6E9DAA already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetToken_82332FDFB6BC841DC5F63049B46B0C78250B17D0 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetSourcePos_19B4E0D16B7B6360831B2A44234CDD9ADB411654 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_star_class_Lexer_4EA4B48D031DACB945B5990BE987BAA3D2B10541_94967CD012219DFC380C37501368AA20F6C9FAF0_5E3F5DB1BFD8716A709D96FD942257B2EF9A448A already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetFlag_5FF24206C1C04BA6EA8F2EC439889CB2A12C4001 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_GetTokenId_239D979FBDBCA9D25DF0909D026CBB3E0FC77395 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_NextState_BB55847D5315615CC32E8552BF550D333EE84A08 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: function_NextToken_10839ED27B988ACCA104DE3565650AC0E5ABF4FD already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(declaration.parser.cpp.obj) : warning LNK4006: op_plus_plus_class_Lexer_4EA4B48D031DACB945B5990BE987BAA3D2B10541_94967CD012219DFC380C37501368AA20F6C9FAF0_107043496999A76B90B1AC1370076EE7B1A9640A already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.cpp.lib(identifier.parser.cpp.obj) : warning LNK4006: function_ToString_49E3010173F8F45514A409721CC1DB05A8954027 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: dtor_class_pair_FC7B978EE4D74D225DC467F464EE9AE893B76CC3_14423EE90E5BADD76D2140E1D00F369A02F37784_4C08938BBD64CBF442DA9D3ECACF25EF76A5DE9F already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: dtor_class_rb_node_1A230528F6B961082F6B1F0CD4CFC22EA4AF3BA4_1CEEDC9C82B9B746E56664B9B57738B7FEE9E68A_8E79BC53E234EE25BB47ACC8E819BEBA81137D26 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: dtor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_4FC452B40298602864C589FD4C4ABB44CFB6BDAC_37A07B5A53E6D5282476CFA0A30DB81C337255F7 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: function_operator_bool_FF6E61FD6D67A4CE81EAFA4232645BA681316CAD already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_4FC452B40298602864C589FD4C4ABB44CFB6BDAC_4B3C26D605F08ED4369D59D3D0F58324FF139E82 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: function_root_AEA50296CF35F643696577110B776D3AC24936DA already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: function_set_root_543A60D4668E543C694ED77451BD98C8EA652BC7 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: function_get_1CF8FC59AF09F966AD14D4AECD55A0F0CB82CA86 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: function_set_leftmost_BEA9559A182244AF6A3EA1321FC55E020EEAFA91 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: function_set_rightmost_E841862BF8D8AEAC6E317D225FB58FF5A2842A60 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: function_clear_E82D6E0618F14C9F4FAE7E0CA23F3773C80067B7 already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: dtor_class_rb_tree_3D530A987F2E861E54406B9B09247AE227831E20_77BF21C4805F1AC155A7C2E5F2102013E25C2AAC_779B983BC2E2274F58E259CCBC934CD553ED455A already defined in slg_parsers_rules.cppm.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cppm.obj) : warning LNK4006: dtor_class_lock_guard_FFF9CB8517359437160D72C702F15663B943AB0A_FFACC755BD676CBF555584B833DE4468179EB9D3_29CEA03165B5A713B920BF0B9BD2738805FC60B9 already defined in slg_parsers_rules.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cpp.obj) : warning LNK4006: dtor_class_lock_guard_FFF9CB8517359437160D72C702F15663B943AB0A_AA1B6CC9F98F994EE9DA8574261FDD36C297CA2C_C0DA0DE536FB6A1618A3D8B7963A026AA89823A1 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cpp.obj) : warning LNK4006: ctor_class_lock_guard_FFF9CB8517359437160D72C702F15663B943AB0A_AA1B6CC9F98F994EE9DA8574261FDD36C297CA2C_D6118AB587EFE690A5EBB80F8D3585EFAB0FC66C already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cpp.obj) : warning LNK4006: ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_6FD97D66A1DB1D88468FF944415F0F4794DD01F1 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lex.lib(re.lexer.cpp.obj) : warning LNK4006: copy_ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: dtor_class_Value_AA7640FBF70D673FA3FD2E8BCAEC4BD0DB1F4F48_9511634062FB4EAE331D2B84A961FAC815C24E32_D6DB07D592240A0D779F730C01F9098CE6AC711E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: dtor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_80402F60DD042881F6B143225AE3CBE6FDA7CCC5 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: dtor_class_LexerBase_6FE193F69567B1284316E846C15ACD353C1403FC_958693B1D2C15EAA5FF15DA7634777798AE09179_F6195343DF17807858703D40D89BA5174B584CA0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_78C07E5B9AFC0070BAD11230759BA49877BA8CFA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_2D23120558C0364F2824B05DE9211B3D702C1A4F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_92A19561A2F374E748A1EF02EB04A9DFBE88E6E2_CA220A39F2E4781845C7E1E488F9B205AFB4C5A2 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_5ABC1E0A459C073CA507119A71ABD80EB1976475 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_3E5638263DB90B438A602EC4ED36ECAB4CEE0A73 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_E3F4B1F18B2CC93BDC0A7DCBFE3ECA8AACC87413_04EDBC113F2995C971E302B68DDC653C27B50E66 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_B88A19B33BF4035810476EDEF4F4A248AD04EFB7 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_98A4EF11D52726AA4D5EF893CA4FF97F462041DA already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_D9AFB6F473AE8A99A1E56D0622AAC64A051EF967_D56870C85BE9AD32C2A2D3A84FABD132221333D9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_begin_B0322F2D6D112734FC231C7B27ADD283D2394E3A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_GetPos_BBCE3F2EC35EF754E70D993F8AE25D92E83B1117 already defined in regular_expression_parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_end_BB1AE8731D19140A5C99F44234E72F48205D9346 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_back_806748E18CEE745DFC8A774E21C3E6D0BC61D949 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_GetClass_DA34740020C9635D5C0EC31419BD2DD48AB15959 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: copy_ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: copy_assignment_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: move_ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_1F9D0AB537527BA39CFF7A6846C47B674B8BB558 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_move_7A8FD8F9E96D1F203A2C9DFD13A959950E129D95 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: move_ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_046E358ADA31964B26631D4B3A5A171B3639B85B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_grow_5D951DD4595F85665E93484A4DCEA594DAF97FFD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_reserve_77CE4E2BB172E79C47CF22505FDE18289314BFBC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: copy_ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_046E358ADA31964B26631D4B3A5A171B3639B85B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_push_back_2708E9B85CB8FCDF5F06E67D65BB5ACC19C6012C already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: ctor_class_Lexeme_800554214EF91BDD9848FFC7E69F54762E1FFED6_958693B1D2C15EAA5FF15DA7634777798AE09179_6FD97D66A1DB1D88468FF944415F0F4794DD01F1 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: ctor_class_Token_58AAC3E22FFCE980603C28AC912E088AA1ACBA6F_DDDEC9BA7AF7465E863BA5878E4DC948FDA95528_E76CDA7EDFB2A9531D684FCBBCEC8A1743CA06A1 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_F93125D6578F899044A1F0BBCD4D93C3B45CF0F4 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_destroy_ACD50A26EC4CDAC51158BB7E3BDB7173480DDCF3 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_constructive_move_3B38E98E5FF45D1BA926D6FA2204A1F04650F2FD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_grow_84B3E2332BEA7A13B935A304C79F39F0BEEF5F56 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_reserve_79763D2333532C811B25E71722C4D01797326FA0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_constructive_copy_67E29D7A0688130B55DA45DA6F9526070C479676 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: copy_assignment_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_86D6D7FBB419ADF80BF6E9D2726367198095EF1B already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: move_ctor_class_Match_5B662C24A2F058AE450A4660C8150ABD6D434ECB_5B662C24A2F058AE450A4660C8150ABD6D434ECB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: copy_ctor_class_Nfa_AEC7FA12998FD3F6F714688D1300D72B88ACA002_AEC7FA12998FD3F6F714688D1300D72B88ACA002 already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_flush_44661513DF84A530473E19B0A4FF6C96221B77B6 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_size_2B5547C573EC5E33EEABC1C6FCDFD90D6AECBDBF already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_E3F4B1F18B2CC93BDC0A7DCBFE3ECA8AACC87413_5C0230027B2F0555D3730F47CB86362B93990564 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_size_6489990F2B09B92CAD88888E17E7A402A14B7302 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_92A19561A2F374E748A1EF02EB04A9DFBE88E6E2_EB56604B0C40A72CAFE2E54AD8E66C6631A4B6CC already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: move_ctor_class_SourcePos_3CE2712832619CD286569E912EB5735DF0662397_3CE2712832619CD286569E912EB5735DF0662397 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_size_53F2B37F1B31C33005FC0F3ADAF721D289A0ED2F already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_132D783130FC10CAAF91BC5E3E7CB782507163A7 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_empty_4EA568C2267F1ECD0F925E7998AB6D86ADEB0753 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_F611612D2CC181712FF0ED9E8322A2BB0FC62D35 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: move_ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_78AB8D0280DDB542250985B206DCF646908B3451 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_end_E9593C6C79DED70D3808E3DD6B71D91C14E09864 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_value_7FE5CCF20A5C61CE41585F799E32435700DCECB0 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: op_apply_class_select_first_017DFA43C40F011915C076BA0220A6D522B71956_BC5D6795DF77BDC238DFFA95CD566391DD087AA7_E2AA3D56A2F06B55AA65D7ABD8821DBF4FDEA018 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: op_apply_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_B31B4335943CE48853DBD793960E86C634212607_AB24E5020882A30EC1EE6787B0A46D8CF67C337A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_node_919D2ABEB387244EBD2F4AD7737E50057E76853E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_find_B42B3C7A1CD5956317376DF57232931357BEF179 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_find_256327298A45B16BACC665FD11E3B503ECE4A60D already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_DF2063918253F7F212C2F48B6F60168FF77442E8_0BB2402B723DDFA0AA9E6F4CE605FA9145AD006E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: move_ctor_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_DF2063918253F7F212C2F48B6F60168FF77442E8_53F781F6CBAE71542BC9EF03BB63C2A7C7AF8AE9 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_cend_BA3C2EA67960D546F0D190E287092CB900FA4488 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_cend_F19AA75F864027AB2DF04E8B07634B0E1D175B13 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_value_ptr_C16C08074379D9F44C12F5D767301B874723EE77 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: op_arrow_class_rb_node_iterator_1BC9A8F84753E1205BEC326CF4C4AB81713545F8_122FA8CE255466523A2DC55577BCF63AB8E94EE1_0EA43C79EABDB4A5249B550414CDB784006D130A already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_ToString_2640F541A2628D38B3ED974EE89AA316C95D4740 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_9EECC11265993B98799177F473C2F19EE608567E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_pop_back_915C1C4E4C7230C52868F061D60240DB10E84406 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_push_back_8DEE339E6D3449243C6027E2E307289FDAE80FAF already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: copy_assignment_class_Match_5B662C24A2F058AE450A4660C8150ABD6D434ECB_5B662C24A2F058AE450A4660C8150ABD6D434ECB already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: move_ctor_class_Nfa_AEC7FA12998FD3F6F714688D1300D72B88ACA002_AEC7FA12998FD3F6F714688D1300D72B88ACA002 already defined in regular_expression_parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: ctor_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_2E67D80755DD2C79381DE333CF9DA9345CA91058 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_ToString_49E3010173F8F45514A409721CC1DB05A8954027 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: function_reset_54BD8F0833C05D6E79ACFEFC7AF5D0CE48D9A4CD already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: op_arrow_class_unique_ptr_453218F5D5BE6B81D5ED263381A7C01652DBABD1_F98C3871183E65D65D456517130B020DF83082A0_E76C4B70120E60336222282F644A0BED3CFB6713 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.re.lib(re.parser.cpp.obj) : warning LNK4006: ctor_class_Value_AA7640FBF70D673FA3FD2E8BCAEC4BD0DB1F4F48_9511634062FB4EAE331D2B84A961FAC815C24E32_4925150FC3A15097A9F3C15C77C3E635D0E7E404 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(lexer_class.cppm.obj) : warning LNK4006: function_destroy_ACD50A26EC4CDAC51158BB7E3BDB7173480DDCF3 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(lexer_class.cppm.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_B31B4335943CE48853DBD793960E86C634212607_9EECC11265993B98799177F473C2F19EE608567E already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(error.cpp.obj) : warning LNK4006: copy_ctor_class_SourcePos_3CE2712832619CD286569E912EB5735DF0662397_3CE2712832619CD286569E912EB5735DF0662397 already defined in soul.ast.lib(cpp.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(error.cpp.obj) : warning LNK4006: function_move_7E561BEECD5E1783439277721B41B3DFA1920E31 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: default_ctor_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_FECE1C1DA2625D66A86246B9D32C55296678A5D2_C14468F9A096969F18A6FD459075D497A780929A already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: ctor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_FECE1C1DA2625D66A86246B9D32C55296678A5D2_1B159696166EE45C2220954991734583FDB1E7DE already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: function_move_713CFE70B6F87C30D9BC999AFFC4ACB280AAFE8B already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: function_grow_5B3A01E7BFD6CEBB77CF9765DE88438D2FCA8C4C already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: function_reserve_CB193F4B238D4ADD65AE112743A1F12EF0BAEB0F already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: ctor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_FECE1C1DA2625D66A86246B9D32C55296678A5D2_22A1E65A885B11C277233C4BF707306CAE187E2F already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: op_apply_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_FECE1C1DA2625D66A86246B9D32C55296678A5D2_40CCAB27950637ECA70B8F66F6DF0EB2421D51AE already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: op_plus_9F4CF48359CF05407E3F1E431772BA954B532D9B already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: op_plus_62D4FB142DE81EC0447DCC5DD3A2379742257D32 already defined in soul.common.lib(common.parser.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: ctor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_FECE1C1DA2625D66A86246B9D32C55296678A5D2_8BD63BA4E121B3F07AD6FCDC863B4ACA80C9B691 already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: function_push_back_305E262282B5629984F02C33AB30AA8DFB391394 already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cpp.obj) : warning LNK4006: function_size_D582ECD42EFDAC5819D5E7F60E76AC0C8BEC3B2D already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cppm.obj) : warning LNK4006: function_destroy_FB9A9D214CEB3587536286D9229780BB6D16DA82 already defined in soul.ast.lib(re.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cppm.obj) : warning LNK4006: function_destroy_EC7C28C6B7F7F0FEC20525868DC691DFCB2BD988 already defined in soul.ast.lib(re.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.lexer.lib(file_map.cppm.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_FECE1C1DA2625D66A86246B9D32C55296678A5D2_F1657C034B4C54A7C5B52CD6E370846BB2A5939F already defined in soul.ast.lib(re.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cppm.obj) : warning LNK4006: function_destroy_87770CFEED49B202D3E1AE2ACA75C9F511427C4D already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: function_destroy_FB9A9D214CEB3587536286D9229780BB6D16DA82 already defined in soul.ast.lib(re.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: function_destroy_EC7C28C6B7F7F0FEC20525868DC691DFCB2BD988 already defined in soul.ast.lib(re.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: dtor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_FECE1C1DA2625D66A86246B9D32C55296678A5D2_F1657C034B4C54A7C5B52CD6E370846BB2A5939F already defined in soul.ast.lib(re.cppm.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: ctor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_FECE1C1DA2625D66A86246B9D32C55296678A5D2_1B159696166EE45C2220954991734583FDB1E7DE already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: function_grow_5B3A01E7BFD6CEBB77CF9765DE88438D2FCA8C4C already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: function_reserve_CB193F4B238D4ADD65AE112743A1F12EF0BAEB0F already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: function_push_back_305E262282B5629984F02C33AB30AA8DFB391394 already defined in soul.ast.lib(re.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(time.cpp.obj) : warning LNK4006: op_subscript_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_FECE1C1DA2625D66A86246B9D32C55296678A5D2_F33BE8B5E78787A079016721758C8A509AF13B69 already defined in soul.lexer.lib(file_map.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(unicode.cpp.obj) : warning LNK4006: dtor_class_lock_guard_FFF9CB8517359437160D72C702F15663B943AB0A_AA1B6CC9F98F994EE9DA8574261FDD36C297CA2C_C0DA0DE536FB6A1618A3D8B7963A026AA89823A1 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(unicode.cpp.obj) : warning LNK4006: ctor_class_lock_guard_FFF9CB8517359437160D72C702F15663B943AB0A_AA1B6CC9F98F994EE9DA8574261FDD36C297CA2C_D6118AB587EFE690A5EBB80F8D3585EFAB0FC66C already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(unicode.cpp.obj) : warning LNK4006: op_apply_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_9511634062FB4EAE331D2B84A961FAC815C24E32_9C7FB8E5122A45BB1EC543D121DEE6FA4BF0E6D3 already defined in soul.ast.lib(slg.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(unicode.cpp.obj) : warning LNK4006: default_ctor_class_less_31C0A7F403B124E8753CFAD23131E284642D4238_9511634062FB4EAE331D2B84A961FAC815C24E32_237CDA2BF4E164C377F407FC2929B86A80BDBC95 already defined in soul.ast.lib(slg.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(unicode.cpp.obj) : warning LNK4006: dtor_class_lock_guard_FFF9CB8517359437160D72C702F15663B943AB0A_FFACC755BD676CBF555584B833DE4468179EB9D3_29CEA03165B5A713B920BF0B9BD2738805FC60B9 already defined in slg_parsers_rules.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(unicode.cpp.obj) : warning LNK4006: ctor_class_lock_guard_FFF9CB8517359437160D72C702F15663B943AB0A_FFACC755BD676CBF555584B833DE4468179EB9D3_AD9275547D32B4E08362E682992AC5D3CD9E9154 already defined in file_parsers.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(code_formatter.cpp.obj) : warning LNK4006: function_write_68C30F9ADD331709786BADB6E90A92C356D6CD84 already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(code_formatter.cpp.obj) : warning LNK4006: function_write_9865D53740945BF2622C11ADC0A7C2D91C087982 already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(code_formatter.cpp.obj) : warning LNK4006: function_flush_44661513DF84A530473E19B0A4FF6C96221B77B6 already defined in expression_file.parser.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cpp.obj) : warning LNK4006: ctor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_9511634062FB4EAE331D2B84A961FAC815C24E32_EDAA6E5EDE917B83CA94FE6501BBA72F0ABB69EA already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cpp.obj) : warning LNK4006: function_move_79057FA41BD752A40F742F6991CBF4C3BB0CE803 already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cpp.obj) : warning LNK4006: function_constructive_move_A2A5636A3A27F290162DE9094F7538EF142EB7D6 already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cpp.obj) : warning LNK4006: function_destroy_C8493E651EF2BE591DDD23374A162B57713E86BC already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cpp.obj) : warning LNK4006: function_grow_892B7F13FF94C58C6EA00E8E5672A6F4ADC583E7 already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cpp.obj) : warning LNK4006: function_reserve_0071DCB0FEDB68987754F745BF22729E4D59805B already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+util.lib(text_util.cpp.obj) : warning LNK4006: function_push_back_C01CCCC2229A4C025A08820ABDA5F504FCAAF327 already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(common.cpp.obj) : warning LNK4006: ctor_class_vector_B96923E27FC77D813C83CEAE5561392C3DA28BBC_9511634062FB4EAE331D2B84A961FAC815C24E32_9895B92A20937F691309271518EA421A4EE23176 already defined in util.lib(path.cpp.obj); second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(common.cpp.obj) : warning LNK4006: function_end_0E0990AD316B5E7D3EB3B6338D1057803B7B1E9D already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+soul.ast.lib(common.cpp.obj) : warning LNK4006: function_begin_ABF2D51B86A523F0C1C5942BA4049AFFCE43DF6B already defined in main.cpp.obj; second definition ignored [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+.\soul.slg.exe : warning LNK4088: image being generated due to /FORCE option; image may not run [C:\work\soul-mod\soul\slg\debug\soul.slg.vcxproj]
+  soul.slg.vcxproj -> C:\work\soul-mod\soul\slg\debug\soul.slg.exe
+
+project 'soul.slg' built successfully
+solution 'soul' built successfully

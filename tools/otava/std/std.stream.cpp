@@ -10,6 +10,11 @@ ios_base::~ios_base()
 {
 }
 
+fmtflags ios_base::flags() const
+{
+    return fl;
+}
+
 void ios_base::flags(fmtflags f_) 
 {
     fl = f_; 

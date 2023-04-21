@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -68,6 +68,7 @@ void ArrayTypeSymbol::Resolve(SymbolTable& symbolTable)
 {
     TypeSymbol::Resolve(symbolTable);
     elementType = symbolTable.GetType(elementTypeId);
+    symbolTable.AddArrayTypeToSet(this);
 }
 
 void ArrayTypeSymbol::Accept(Visitor& visitor)

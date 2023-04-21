@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -74,15 +74,11 @@ void Module::Import(ModuleMapper& moduleMapper)
 
 void Module::Import(Module* that, ModuleMapper& moduleMapper)
 {
-    if (Name() == "ns_import")
-    {
-        int x = 0;
-    }
     if (importSet.find(that) == importSet.cend())
     {
         importSet.insert(that);
         that->Import(moduleMapper);
-        symbolTable.Import(that->symbolTable);
+        symbolTable.Import(that->symbolTable, moduleMapper.GetFunctionDefinitionSymbolSet());
         evaluationContext.Init();
     }
 }
@@ -328,6 +324,7 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper)
 {
     reader.SetSymbolTable(&symbolTable);
     reader.SetSymbolMap(moduleMapper.GetSymbolMap());
+    reader.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
     symbolTable.SetNodeMap(moduleMapper.GetNodeMap());
     symbolTable.SetSymbolMap(moduleMapper.GetSymbolMap());
     symbolTable.Read(reader);
@@ -340,6 +337,11 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper)
     Import(moduleMapper);
     symbolTable.Resolve();
     evaluationContext.Resolve(symbolTable);
+    if (name == "std.stream")
+    {
+        int x = 0;
+    }
+    symbolTable.ImportAfterResolve();
     reading = false;
 }
 
@@ -408,6 +410,16 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
     module->CompleteRead(reader, *this);
     modules.push_back(std::move(module));
     return modulePtr;
+}
+
+void ModuleMapper::SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_)
+{
+    functionDefinitionSymbolSet = functionDefinitionSymbolSet_;
+}
+
+FunctionDefinitionSymbolSet* ModuleMapper::GetFunctionDefinitionSymbolSet() const
+{
+    return functionDefinitionSymbolSet;
 }
 
 #ifdef _WIN32

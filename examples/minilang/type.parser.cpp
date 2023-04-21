@@ -15,8 +15,8 @@ using namespace minilang::token;
 
 namespace minilang::parser::type {
 
-template<typename Lexer>
-soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match TypeParser<LexerT>::Type(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -27,7 +27,7 @@ soul::parser::Match TypeParser<Lexer>::Type(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Type");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 1020028859917008897);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1020028859917008897);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)

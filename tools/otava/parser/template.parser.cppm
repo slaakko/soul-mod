@@ -12,29 +12,29 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::templates {
 
-template<typename Lexer>
+template<typename LexerT>
 struct TemplateParser
 {
-    static soul::parser::Match TemplateDeclaration(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TemplateHead(Lexer& lexer, otava::symbols::Context* context, bool begin);
-    static soul::parser::Match TemplateParameterList(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TemplateParameter(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeParameter(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TypeParameterKey(Lexer& lexer);
-    static soul::parser::Match Typename(Lexer& lexer);
-    static soul::parser::Match Class(Lexer& lexer);
-    static soul::parser::Match TemplateId(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match SimpleTemplateId(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TemplateName(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TemplateArgumentList(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* templateIdNode);
-    static soul::parser::Match TemplateArgument(Lexer& lexer, otava::symbols::Context* context, otava::ast::Node* templateIdNode, int index);
-    static soul::parser::Match TemplateArgNext(Lexer& lexer);
-    static soul::parser::Match DeductionGuide(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Arrow(Lexer& lexer);
-    static soul::parser::Match ExplicitInstantiation(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ExplicitSpecialization(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Extern(Lexer& lexer);
-    static soul::parser::Match Template(Lexer& lexer);
+    static soul::parser::Match TemplateDeclaration(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TemplateHead(LexerT& lexer, otava::symbols::Context* context, bool begin);
+    static soul::parser::Match TemplateParameterList(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TemplateParameter(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeParameter(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TypeParameterKey(LexerT& lexer);
+    static soul::parser::Match Typename(LexerT& lexer);
+    static soul::parser::Match Class(LexerT& lexer);
+    static soul::parser::Match TemplateId(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match SimpleTemplateId(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TemplateName(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match TemplateArgumentList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* templateIdNode);
+    static soul::parser::Match TemplateArgument(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* templateIdNode, int index);
+    static soul::parser::Match TemplateArgNext(LexerT& lexer);
+    static soul::parser::Match DeductionGuide(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Arrow(LexerT& lexer);
+    static soul::parser::Match ExplicitInstantiation(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match ExplicitSpecialization(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Extern(LexerT& lexer);
+    static soul::parser::Match Template(LexerT& lexer);
 };
 
 } // namespace otava::parser::templates

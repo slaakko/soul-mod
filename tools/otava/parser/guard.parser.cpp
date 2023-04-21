@@ -11,8 +11,8 @@ using namespace otava::lexer;
 
 namespace otava::parser::guard {
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::ConceptGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::ConceptGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -23,7 +23,7 @@ soul::parser::Match GuardParser<Lexer>::ConceptGuard(Lexer& lexer, otava::symbol
         soul::lexer::WriteBeginRuleToLog(lexer, "ConceptGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366465);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366465);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -54,8 +54,8 @@ soul::parser::Match GuardParser<Lexer>::ConceptGuard(Lexer& lexer, otava::symbol
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::NotDefiningTypeSpecifierGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::NotDefiningTypeSpecifierGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -66,7 +66,7 @@ soul::parser::Match GuardParser<Lexer>::NotDefiningTypeSpecifierGuard(Lexer& lex
         soul::lexer::WriteBeginRuleToLog(lexer, "NotDefiningTypeSpecifierGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366466);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366466);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -97,8 +97,8 @@ soul::parser::Match GuardParser<Lexer>::NotDefiningTypeSpecifierGuard(Lexer& lex
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::AssumeTypeGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::AssumeTypeGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -109,7 +109,7 @@ soul::parser::Match GuardParser<Lexer>::AssumeTypeGuard(Lexer& lexer, otava::sym
         soul::lexer::WriteBeginRuleToLog(lexer, "AssumeTypeGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366467);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366467);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -140,8 +140,8 @@ soul::parser::Match GuardParser<Lexer>::AssumeTypeGuard(Lexer& lexer, otava::sym
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::MemberFunctionGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::MemberFunctionGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -152,7 +152,7 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionGuard(Lexer& lexer, otava:
         soul::lexer::WriteBeginRuleToLog(lexer, "MemberFunctionGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366468);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366468);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -183,8 +183,8 @@ soul::parser::Match GuardParser<Lexer>::MemberFunctionGuard(Lexer& lexer, otava:
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::SavedMemberFunctionBodyGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::SavedMemberFunctionBodyGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -195,7 +195,7 @@ soul::parser::Match GuardParser<Lexer>::SavedMemberFunctionBodyGuard(Lexer& lexe
         soul::lexer::WriteBeginRuleToLog(lexer, "SavedMemberFunctionBodyGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366469);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366469);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -226,8 +226,8 @@ soul::parser::Match GuardParser<Lexer>::SavedMemberFunctionBodyGuard(Lexer& lexe
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::SavedCtorInitializerGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::SavedCtorInitializerGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -238,7 +238,7 @@ soul::parser::Match GuardParser<Lexer>::SavedCtorInitializerGuard(Lexer& lexer, 
         soul::lexer::WriteBeginRuleToLog(lexer, "SavedCtorInitializerGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366470);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366470);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -269,8 +269,8 @@ soul::parser::Match GuardParser<Lexer>::SavedCtorInitializerGuard(Lexer& lexer, 
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDeclarationGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::NoDeclSpecFunctionDeclarationGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -281,7 +281,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDeclarationGuard(Lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDeclarationGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366471);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366471);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -312,8 +312,8 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDeclarationGuard(Lexer
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDefinitionGuard(Lexer& lexer, otava::symbols::Context* context)
+template<typename LexerT>
+soul::parser::Match GuardParser<LexerT>::NoDeclSpecFunctionDefinitionGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -324,7 +324,7 @@ soul::parser::Match GuardParser<Lexer>::NoDeclSpecFunctionDefinitionGuard(Lexer&
         soul::lexer::WriteBeginRuleToLog(lexer, "NoDeclSpecFunctionDefinitionGuard");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 3962850076434366472);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3962850076434366472);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {

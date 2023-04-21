@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -244,7 +244,7 @@ parser ClassParser
                 {
                     otava::ast::MemberDeclarationNode* memberDeclarationNode = new otava::ast::MemberDeclarationNode(sourcePos, attributes, declSpecifiersNode.release(), 
                         declaratorsNode.release(), semicolon);
-                    otava::symbols::ProcessMemberDeclaration(memberDeclarationNode, context);
+                    otava::symbols::ProcessMemberDeclaration(memberDeclarationNode, nullptr, context);
                     return memberDeclarationNode;
                 }
             }
@@ -255,7 +255,7 @@ parser ClassParser
             {
                 otava::ast::MemberDeclarationNode* memberDeclarationNode = new otava::ast::MemberDeclarationNode(sourcePos, attributes2, declSpecifiersNode.release(), 
                     declaratorsNode.release(), semicolon2);
-                otava::symbols::ProcessMemberDeclaration(memberDeclarationNode, context);
+                otava::symbols::ProcessMemberDeclaration(memberDeclarationNode, nullptr, context);
                 return memberDeclarationNode;
             }
         |   MemberFunctionDefinition(context):memberFunctionDefinition

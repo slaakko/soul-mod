@@ -12,14 +12,14 @@ using namespace otava::symbols::context;
 
 export namespace otava::parser::literal {
 
-template<typename Lexer>
+template<typename LexerT>
 struct LiteralParser
 {
-    static soul::parser::Match Literal(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match UserDefinedLiteral(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match UdSuffix(Lexer& lexer);
-    static soul::parser::Match LiteralOperatorId(Lexer& lexer, otava::symbols::Context* context);
-    static soul::parser::Match StringLiteral(Lexer& lexer, otava::symbols::Context* context);
+    static soul::parser::Match Literal(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match UserDefinedLiteral(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match UdSuffix(LexerT& lexer);
+    static soul::parser::Match LiteralOperatorId(LexerT& lexer, otava::symbols::Context* context);
+    static soul::parser::Match StringLiteral(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::literal

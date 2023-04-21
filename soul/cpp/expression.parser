@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -8,6 +8,7 @@ export module soul.cpp.expression.parser;
 [interface]import soul.ast.cpp;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
+[implementation]import soul.tool.token;
 [implementation]import soul.punctuation.token;
 [implementation]import soul.cpp.declarator.parser;
 [implementation]import soul.cpp.declaration.parser;

@@ -8,6 +8,7 @@ import soul.ast.spg;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
+import soul.tool.token;
 import soul.cpp.expression.parser;
 import soul.cpp.identifier.parser;
 import soul.cpp.declarator.parser;
@@ -17,6 +18,7 @@ import soul.lex.spg;
 using namespace soul::cpp::token;
 using namespace soul::cpp::op::token;
 using namespace soul::punctuation::token;
+using namespace soul::tool::token;
 using namespace soul::cpp::expression::parser;
 using namespace soul::cpp::identifier::parser;
 using namespace soul::cpp::declarator::parser;
@@ -25,8 +27,8 @@ using namespace soul::lex::spg;
 
 namespace soul::cpp::declaration::parser {
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::BlockDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -37,7 +39,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "BlockDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769537);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769537);
     std::unique_ptr<soul::ast::cpp::UsingObjectNode> nsAlias;
     std::unique_ptr<soul::ast::cpp::UsingObjectNode> usingDirective;
     std::unique_ptr<soul::ast::cpp::UsingObjectNode> usingDeclaration;
@@ -58,7 +60,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = DeclarationParser<Lexer>::NamespaceAliasDefinition(lexer);
+                    soul::parser::Match match = DeclarationParser<LexerT>::NamespaceAliasDefinition(lexer);
                     nsAlias.reset(static_cast<soul::ast::cpp::UsingObjectNode*>(match.value));
                     if (match.hit)
                     {
@@ -82,7 +84,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                         soul::parser::Match* parentMatch5 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = DeclarationParser<Lexer>::UsingDirective(lexer);
+                            soul::parser::Match match = DeclarationParser<LexerT>::UsingDirective(lexer);
                             usingDirective.reset(static_cast<soul::ast::cpp::UsingObjectNode*>(match.value));
                             if (match.hit)
                             {
@@ -111,7 +113,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                     soul::parser::Match* parentMatch7 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = DeclarationParser<Lexer>::UsingDeclaration(lexer);
+                        soul::parser::Match match = DeclarationParser<LexerT>::UsingDeclaration(lexer);
                         usingDeclaration.reset(static_cast<soul::ast::cpp::UsingObjectNode*>(match.value));
                         if (match.hit)
                         {
@@ -140,7 +142,7 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
                 soul::parser::Match* parentMatch9 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = DeclarationParser<Lexer>::SimpleDeclaration(lexer);
+                    soul::parser::Match match = DeclarationParser<LexerT>::SimpleDeclaration(lexer);
                     simpleDeclaration.reset(static_cast<soul::ast::cpp::SimpleDeclarationNode*>(match.value));
                     if (match.hit)
                     {
@@ -172,8 +174,8 @@ soul::parser::Match DeclarationParser<Lexer>::BlockDeclaration(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::SimpleDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -184,7 +186,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769538);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769538);
     std::unique_ptr<soul::ast::cpp::SimpleDeclarationNode> simpleDeclaration = std::unique_ptr<soul::ast::cpp::SimpleDeclarationNode>();
     std::unique_ptr<soul::ast::cpp::InitDeclaratorListNode> initDeclaratorList;
     soul::parser::Match match(false);
@@ -221,7 +223,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch6 = &match;
                         {
-                            soul::parser::Match match = DeclarationParser<Lexer>::DeclSpecifierSeq(lexer, simpleDeclaration.get());
+                            soul::parser::Match match = DeclarationParser<LexerT>::DeclSpecifierSeq(lexer, simpleDeclaration.get());
                             *parentMatch6 = match;
                         }
                         if (match.hit)
@@ -255,7 +257,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer)
                         soul::parser::Match* parentMatch10 = &match;
                         {
                             int64_t pos = lexer.GetPos();
-                            soul::parser::Match match = DeclaratorParser<Lexer>::InitDeclaratorList(lexer);
+                            soul::parser::Match match = DeclaratorParser<LexerT>::InitDeclaratorList(lexer);
                             initDeclaratorList.reset(static_cast<soul::ast::cpp::InitDeclaratorListNode*>(match.value));
                             if (match.hit)
                             {
@@ -324,8 +326,8 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleDeclaration(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, soul::ast::cpp::SimpleDeclarationNode* declaration)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::DeclSpecifierSeq(LexerT& lexer, soul::ast::cpp::SimpleDeclarationNode* declaration)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -336,7 +338,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, sou
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifierSeq");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769539);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769539);
     std::unique_ptr<soul::ast::cpp::DeclSpecifierNode> declSpecifier;
     std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName;
     soul::parser::Match match(false);
@@ -356,7 +358,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, sou
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = DeclarationParser<Lexer>::DeclSpecifier(lexer);
+                        soul::parser::Match match = DeclarationParser<LexerT>::DeclSpecifier(lexer);
                         declSpecifier.reset(static_cast<soul::ast::cpp::DeclSpecifierNode*>(match.value));
                         if (match.hit)
                         {
@@ -383,7 +385,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, sou
                             soul::parser::Match* parentMatch7 = &match;
                             {
                                 int64_t pos = lexer.GetPos();
-                                soul::parser::Match match = DeclarationParser<Lexer>::DeclSpecifier(lexer);
+                                soul::parser::Match match = DeclarationParser<LexerT>::DeclSpecifier(lexer);
                                 declSpecifier.reset(static_cast<soul::ast::cpp::DeclSpecifierNode*>(match.value));
                                 if (match.hit)
                                 {
@@ -416,7 +418,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, sou
                     soul::parser::Match* parentMatch9 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = DeclarationParser<Lexer>::TypeName(lexer);
+                        soul::parser::Match match = DeclarationParser<LexerT>::TypeName(lexer);
                         typeName.reset(static_cast<soul::ast::cpp::TypeNameNode*>(match.value));
                         if (match.hit)
                         {
@@ -445,8 +447,8 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifierSeq(Lexer& lexer, sou
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::DeclSpecifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -457,7 +459,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "DeclSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769540);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769540);
     std::unique_ptr<soul::ast::cpp::StorageClassSpecifierNode> storateClassSpecifier;
     std::unique_ptr<soul::ast::cpp::TypeSpecifierNode> typeSpecifier;
     std::unique_ptr<soul::ast::cpp::DeclSpecifierNode> tdef;
@@ -473,7 +475,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
             soul::parser::Match* parentMatch2 = &match;
             {
                 int64_t pos = lexer.GetPos();
-                soul::parser::Match match = DeclarationParser<Lexer>::StorageClassSpecifier(lexer);
+                soul::parser::Match match = DeclarationParser<LexerT>::StorageClassSpecifier(lexer);
                 storateClassSpecifier.reset(static_cast<soul::ast::cpp::StorageClassSpecifierNode*>(match.value));
                 if (match.hit)
                 {
@@ -497,7 +499,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         int64_t pos = lexer.GetPos();
-                        soul::parser::Match match = DeclarationParser<Lexer>::TypeSpecifier(lexer);
+                        soul::parser::Match match = DeclarationParser<LexerT>::TypeSpecifier(lexer);
                         typeSpecifier.reset(static_cast<soul::ast::cpp::TypeSpecifierNode*>(match.value));
                         if (match.hit)
                         {
@@ -526,7 +528,7 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
                 soul::parser::Match* parentMatch6 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = DeclarationParser<Lexer>::Typedef(lexer);
+                    soul::parser::Match match = DeclarationParser<LexerT>::Typedef(lexer);
                     tdef.reset(static_cast<soul::ast::cpp::DeclSpecifierNode*>(match.value));
                     if (match.hit)
                     {
@@ -558,8 +560,8 @@ soul::parser::Match DeclarationParser<Lexer>::DeclSpecifier(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::StorageClassSpecifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -570,7 +572,7 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
         soul::lexer::WriteBeginRuleToLog(lexer, "StorageClassSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769541);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769541);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -655,8 +657,8 @@ soul::parser::Match DeclarationParser<Lexer>::StorageClassSpecifier(Lexer& lexer
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::TypeSpecifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -667,7 +669,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769542);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769542);
     std::unique_ptr<soul::ast::cpp::TypeSpecifierNode> simpleTypeSpecifier;
     std::unique_ptr<soul::ast::cpp::TypeSpecifierNode> cvQualifier;
     soul::parser::Match match(false);
@@ -678,7 +680,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = DeclarationParser<Lexer>::SimpleTypeSpecifier(lexer);
+            soul::parser::Match match = DeclarationParser<LexerT>::SimpleTypeSpecifier(lexer);
             simpleTypeSpecifier.reset(static_cast<soul::ast::cpp::TypeSpecifierNode*>(match.value));
             if (match.hit)
             {
@@ -702,7 +704,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = DeclarationParser<Lexer>::CVQualifier(lexer);
+                    soul::parser::Match match = DeclarationParser<LexerT>::CVQualifier(lexer);
                     cvQualifier.reset(static_cast<soul::ast::cpp::TypeSpecifierNode*>(match.value));
                     if (match.hit)
                     {
@@ -734,8 +736,8 @@ soul::parser::Match DeclarationParser<Lexer>::TypeSpecifier(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::SimpleTypeSpecifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -746,7 +748,7 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "SimpleTypeSpecifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769543);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769543);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -948,8 +950,8 @@ soul::parser::Match DeclarationParser<Lexer>::SimpleTypeSpecifier(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::TypeName(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -960,7 +962,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TypeName");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769544);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769544);
     std::unique_ptr<soul::ast::cpp::TypeNameNode> typeName = std::unique_ptr<soul::ast::cpp::TypeNameNode>();
     std::unique_ptr<soul::parser::Value<std::string>> qid;
     soul::parser::Match match(false);
@@ -977,7 +979,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = CppIdentifierParser<Lexer>::QualifiedCppId(lexer);
+                    soul::parser::Match match = CppIdentifierParser<LexerT>::QualifiedCppId(lexer);
                     qid.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     if (match.hit)
                     {
@@ -1009,7 +1011,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
+                                        auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == LANGLE)
                                         {
@@ -1030,7 +1032,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch10 = &match;
                                     {
-                                        soul::parser::Match match = DeclarationParser<Lexer>::TemplateArgumentList(lexer, typeName.get());
+                                        soul::parser::Match match = DeclarationParser<LexerT>::TemplateArgumentList(lexer, typeName.get());
                                         *parentMatch10 = match;
                                     }
                                     *parentMatch8 = match;
@@ -1046,7 +1048,7 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
                                     soul::parser::Match* parentMatch12 = &match;
                                     {
                                         int64_t pos = lexer.GetPos();
-                                        auto vars = static_cast<typename Lexer::VariableClassType*>(lexer.GetVariables());
+                                        auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());
                                         soul::parser::Match match(false);
                                         if (*lexer == RANGLE)
                                         {
@@ -1105,8 +1107,8 @@ soul::parser::Match DeclarationParser<Lexer>::TypeName(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::TemplateArgumentList(Lexer& lexer, soul::ast::cpp::TypeNameNode* typeName)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::TemplateArgumentList(LexerT& lexer, soul::ast::cpp::TypeNameNode* typeName)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1117,7 +1119,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgumentList(Lexer& lexer,
         soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgumentList");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769545);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769545);
     std::unique_ptr<soul::ast::cpp::Node> arg;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1126,7 +1128,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgumentList(Lexer& lexer,
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = DeclarationParser<Lexer>::TemplateArgument(lexer);
+            soul::parser::Match match = DeclarationParser<LexerT>::TemplateArgument(lexer);
             arg.reset(static_cast<soul::ast::cpp::Node*>(match.value));
             if (match.hit)
             {
@@ -1168,7 +1170,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgumentList(Lexer& lexer,
                                 soul::parser::Match* parentMatch6 = &match;
                                 {
                                     int64_t pos = lexer.GetPos();
-                                    soul::parser::Match match = DeclarationParser<Lexer>::TemplateArgument(lexer);
+                                    soul::parser::Match match = DeclarationParser<LexerT>::TemplateArgument(lexer);
                                     arg.reset(static_cast<soul::ast::cpp::Node*>(match.value));
                                     if (match.hit)
                                     {
@@ -1210,8 +1212,8 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgumentList(Lexer& lexer,
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::TemplateArgument(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1222,7 +1224,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgument");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769546);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769546);
     std::unique_ptr<soul::ast::cpp::TypeIdNode> typeId;
     std::unique_ptr<soul::ast::cpp::Node> assignmentExpr;
     soul::parser::Match match(false);
@@ -1233,7 +1235,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
         soul::parser::Match* parentMatch1 = &match;
         {
             int64_t pos = lexer.GetPos();
-            soul::parser::Match match = DeclaratorParser<Lexer>::TypeId(lexer);
+            soul::parser::Match match = DeclaratorParser<LexerT>::TypeId(lexer);
             typeId.reset(static_cast<soul::ast::cpp::TypeIdNode*>(match.value));
             if (match.hit)
             {
@@ -1257,7 +1259,7 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     int64_t pos = lexer.GetPos();
-                    soul::parser::Match match = ExpressionParser<Lexer>::AssignmentExpression(lexer);
+                    soul::parser::Match match = ExpressionParser<LexerT>::AssignmentExpression(lexer);
                     assignmentExpr.reset(static_cast<soul::ast::cpp::Node*>(match.value));
                     if (match.hit)
                     {
@@ -1289,8 +1291,8 @@ soul::parser::Match DeclarationParser<Lexer>::TemplateArgument(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::Typedef(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::Typedef(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1301,7 +1303,7 @@ soul::parser::Match DeclarationParser<Lexer>::Typedef(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "Typedef");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769547);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769547);
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -1337,8 +1339,8 @@ soul::parser::Match DeclarationParser<Lexer>::Typedef(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::CVQualifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1349,7 +1351,7 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "CVQualifier");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769548);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769548);
     soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
@@ -1395,8 +1397,8 @@ soul::parser::Match DeclarationParser<Lexer>::CVQualifier(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::NamespaceAliasDefinition(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1407,7 +1409,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
         soul::lexer::WriteBeginRuleToLog(lexer, "NamespaceAliasDefinition");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769549);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769549);
     std::unique_ptr<soul::parser::Value<std::string>> id;
     std::unique_ptr<soul::parser::Value<std::string>> qid;
     soul::parser::Match match(false);
@@ -1442,7 +1444,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                soul::parser::Match match = CppIdentifierParser<Lexer>::CppIdentifier(lexer);
+                                soul::parser::Match match = CppIdentifierParser<LexerT>::CppIdentifier(lexer);
                                 id.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                 *parentMatch6 = match;
                             }
@@ -1472,7 +1474,7 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch8 = &match;
                     {
-                        soul::parser::Match match = CppIdentifierParser<Lexer>::QualifiedCppId(lexer);
+                        soul::parser::Match match = CppIdentifierParser<LexerT>::QualifiedCppId(lexer);
                         qid.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                         *parentMatch8 = match;
                     }
@@ -1522,8 +1524,8 @@ soul::parser::Match DeclarationParser<Lexer>::NamespaceAliasDefinition(Lexer& le
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::UsingDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1534,7 +1536,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDeclaration");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769550);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769550);
     std::unique_ptr<soul::parser::Value<std::string>> qid;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1555,7 +1557,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                soul::parser::Match match = CppIdentifierParser<Lexer>::QualifiedCppId(lexer);
+                soul::parser::Match match = CppIdentifierParser<LexerT>::QualifiedCppId(lexer);
                 qid.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                 *parentMatch2 = match;
             }
@@ -1607,8 +1609,8 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDeclaration(Lexer& lexer)
     return match;
 }
 
-template<typename Lexer>
-soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match DeclarationParser<LexerT>::UsingDirective(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -1619,7 +1621,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer)
         soul::lexer::WriteBeginRuleToLog(lexer, "UsingDirective");
     }
     #endif
-    soul::lexer::RuleGuard ruleGuard(lexer, 7462140351176769551);
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7462140351176769551);
     std::unique_ptr<soul::parser::Value<std::string>> ns;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
@@ -1660,7 +1662,7 @@ soul::parser::Match DeclarationParser<Lexer>::UsingDirective(Lexer& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch4 = &match;
             {
-                soul::parser::Match match = CppIdentifierParser<Lexer>::QualifiedCppId(lexer);
+                soul::parser::Match match = CppIdentifierParser<LexerT>::QualifiedCppId(lexer);
                 ns.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                 *parentMatch4 = match;
             }

@@ -165,33 +165,61 @@ template<typename charT>
 class basic_stringbuf;
 template<typename charT>
 class basic_istringstream;
-
 template<typename charT>
-class basic_ostringstream : public basic_ostream<charT>
-{
-public:
-    void write(const char* s_) override
-    {
-        s.append(s_);
-    }
-    std::basic_string<charT> str() const { return s; }
-    void str(std::basic_string<charT>&& s_) { s = std::move(s_); }
-private:
-    std::basic_string<charT> s;
-};
-
+class basic_ostringstream;
 template<typename charT>
-class basic_stringstream : public basic_ostringstream<charT>
-{
-public:
-};
-
+class basic_stringstream;
 template<typename charT>
 class basic_filebuf;
 template<typename charT>
 class basic_ifstream;
+
 template<typename charT>
-class basic_ofstream;
+class basic_ofstream : public basic_ostream<charT>
+{
+public:
+    basic_ofstream(const char* filename) : file(nullptr)
+    {
+        open(filename, std::ios_base::openmode::out);
+    }
+    basic_ofstream(const char* filename, std::ios_base::openmode mode) : file(nullptr)
+    {
+        open(filename, mode);
+    }
+    basic_ofstream(const std::string& filename) : file(nullptr)
+    {
+        open(filename.c_str(), std::ios_base::openmode::out);
+    }
+    basic_ofstream(const std::string& filename, std::ios_base::openmode mode) : file(nullptr)
+    {
+        open(filename.c_str(), mode);
+    }
+    ~basic_ofstream()
+    {
+        if (file)
+        {
+            fclose(file);
+        }
+    }
+    void write(const char* s) override
+    {
+        std::fputs(s, file);
+    }
+private:
+    void open(const char* filename, std::ios_base::openmode mode)
+    {
+        if (mode == std::ios_base::openmode::out)
+        {
+            file = std::fopen(filename, "w");
+        }
+        else if (mode == std::ios_base::openmode::app)
+        {
+            file = std::fopen(filename, "a");
+        }
+    }
+    FILE* file;
+};
+
 template<typename charT>
 class basic_fstream;
 template<typename charT>

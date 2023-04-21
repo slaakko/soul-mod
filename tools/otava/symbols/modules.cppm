@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2023 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,6 +18,7 @@ export namespace otava::symbols {
 class Writer;
 class Reader;
 class Visitor;
+class FunctionDefinitionSymbolSet;
 
 std::string MakeModuleFilePath(const std::string& root, const std::string& moduleName);
 
@@ -102,6 +103,8 @@ public:
     void AddRoot(const std::string& root);
     otava::ast::NodeMap* GetNodeMap() { return &nodeMap; }
     SymbolMap* GetSymbolMap() { return &symbolMap; }
+    void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
+    FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
 private:
     std::map<std::string, Module*> moduleMap;
     std::vector<std::unique_ptr<Module>> modules;
@@ -109,6 +112,7 @@ private:
     std::recursive_mutex mtx;
     otava::ast::NodeMap nodeMap;
     SymbolMap symbolMap;
+    FunctionDefinitionSymbolSet* functionDefinitionSymbolSet;
 };
 
 Module* GetCurrentModule();
