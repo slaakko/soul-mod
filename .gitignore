@@ -23,7 +23,6 @@ bind
 *.log
 *.ast
 *.classmap
-*.classmap.compressed
 *.org
 *.module
 *.ast.xml
