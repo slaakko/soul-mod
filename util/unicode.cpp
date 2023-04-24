@@ -100,7 +100,7 @@ std::string MakeCanonicalPropertyName(const std::string& s)
             propertyName.append(1, c);
         }
     }
-    return util::ToLower(propertyName);
+    return util::ToLowerNarrow(propertyName);
 }
 
 BinaryProperty::BinaryProperty(BinaryPropertyId id_, const std::string& shortName_, const std::string& longName_) : id(id_), shortName(shortName_), longName(longName_)
