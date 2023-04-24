@@ -7,11 +7,11 @@
       <action first="{PROJECT}">
        <nonterminal first="{PROJECT}" ruleName="ProjectDeclaration"/>
       </action>
-      <kleene first="{#, DEFINE, INTERFACE, REFERENCE, SOURCE, TARGET}">
-       <group first="{DEFINE, INTERFACE, REFERENCE, SOURCE, TARGET}">
-        <choice first="{DEFINE, INTERFACE, REFERENCE, SOURCE, TARGET}">
-         <choice first="{DEFINE, INTERFACE, REFERENCE, SOURCE}">
-          <nonterminal first="{INTERFACE, REFERENCE, SOURCE}" ruleName="FilePath"/>
+      <kleene first="{#, DEFINE, INTERFACE, REFERENCE, RESOURCE, SOURCE, TARGET}">
+       <group first="{DEFINE, INTERFACE, REFERENCE, RESOURCE, SOURCE, TARGET}">
+        <choice first="{DEFINE, INTERFACE, REFERENCE, RESOURCE, SOURCE, TARGET}">
+         <choice first="{DEFINE, INTERFACE, REFERENCE, RESOURCE, SOURCE}">
+          <nonterminal first="{INTERFACE, REFERENCE, RESOURCE, SOURCE}" ruleName="FilePath"/>
           <nonterminal first="{DEFINE}" ruleName="Define"/>
          </choice>
          <nonterminal first="{TARGET}" ruleName="TargetDeclaration"/>
@@ -89,15 +89,20 @@
     </action>
    </choice>
   </rule>
-  <rule first="{INTERFACE, REFERENCE, SOURCE}" name="FilePath">
-   <group first="{INTERFACE, REFERENCE, SOURCE}">
-    <choice first="{INTERFACE, REFERENCE, SOURCE}">
-     <choice first="{INTERFACE, SOURCE}">
-      <action first="{INTERFACE}">
-       <nonterminal first="{INTERFACE}" ruleName="InterfaceFilePath"/>
-      </action>
-      <action first="{SOURCE}">
-       <nonterminal first="{SOURCE}" ruleName="SourceFilePath"/>
+  <rule first="{INTERFACE, REFERENCE, RESOURCE, SOURCE}" name="FilePath">
+   <group first="{INTERFACE, REFERENCE, RESOURCE, SOURCE}">
+    <choice first="{INTERFACE, REFERENCE, RESOURCE, SOURCE}">
+     <choice first="{INTERFACE, RESOURCE, SOURCE}">
+      <choice first="{INTERFACE, SOURCE}">
+       <action first="{INTERFACE}">
+        <nonterminal first="{INTERFACE}" ruleName="InterfaceFilePath"/>
+       </action>
+       <action first="{SOURCE}">
+        <nonterminal first="{SOURCE}" ruleName="SourceFilePath"/>
+       </action>
+      </choice>
+      <action first="{RESOURCE}">
+       <nonterminal first="{RESOURCE}" ruleName="ResourceFilePath"/>
       </action>
      </choice>
      <action first="{REFERENCE}">
@@ -127,6 +132,21 @@
      <sequence first="{SOURCE}">
       <sequence first="{SOURCE}">
        <token first="{SOURCE}" name="SOURCE"/>
+       <action first="{FILEPATH}">
+        <token first="{FILEPATH}" name="FILEPATH"/>
+       </action>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{RESOURCE}" name="ResourceFilePath">
+   <action first="{RESOURCE}">
+    <group first="{RESOURCE}">
+     <sequence first="{RESOURCE}">
+      <sequence first="{RESOURCE}">
+       <token first="{RESOURCE}" name="RESOURCE"/>
        <action first="{FILEPATH}">
         <token first="{FILEPATH}" name="FILEPATH"/>
        </action>

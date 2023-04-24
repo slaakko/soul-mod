@@ -41,3 +41,4 @@ interface <token_parser.cppm>;
 interface <xml_printer.cppm>;
 source <xml_printer.cpp>;
 source <main.cpp>;
+resource <../lex/soul.lex.spg.classmap.rc>;

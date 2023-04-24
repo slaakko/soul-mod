@@ -1,0 +1,3 @@
+project fstream;
+target=program;
+source <fstream.cpp>;

@@ -1,0 +1,4 @@
+project fstream;
+target=program;
+reference <../../util.project>;
+source <fstream.cpp>;

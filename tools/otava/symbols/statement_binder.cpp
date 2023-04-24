@@ -1539,6 +1539,10 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
+    if (functionDefinitionSymbol->IrName(context) == "function_Size_40225C949E3926B45603C4AFA1E70439CC8751CE")
+    {
+        int x = 0;
+    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;

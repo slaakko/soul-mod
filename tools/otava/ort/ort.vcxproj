@@ -154,6 +154,8 @@
     <ClCompile Include="context_stack.cppm" />
     <ClCompile Include="filesystem.cpp" />
     <ClCompile Include="filesystem.cppm" />
+    <ClCompile Include="lexer_resource.cpp" />
+    <ClCompile Include="lexer_resource.cppm" />
     <ClCompile Include="ort.cpp" />
     <ClCompile Include="ort.cppm" />
     <ClCompile Include="threading.cpp" />
@@ -163,6 +165,9 @@
     <MASM Include="context.asm" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\soul\lexer\lexer.vcxproj">
+      <Project>{19e63f3e-0845-442b-b894-aed66b30662d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
       <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>

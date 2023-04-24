@@ -101,28 +101,23 @@ rb_node_base* get_next(rb_node_base* n)
 void rotate_left(rb_node_base* n, rb_node_base** root_ptr)
 {
     rb_node_base* u = n->get_right();
-    rb_node_base* left = u->get_left();
-    n->set_right(left);
-    if (left)
+    n->set_right(u->get_left());
+    if (u->get_left())
     {
-        left->set_parent(n);
+        u->get_left()->set_parent(n);
     }
-    rb_node_base* parent = n->get_parent();
-    u->set_parent(parent);
+    u->set_parent(n->get_parent());
     if (n == *root_ptr)
     {
         *root_ptr = u;
     }
+    else if (n == n->get_parent()->get_left())
+    {
+        n->get_parent()->set_left(u);
+    }
     else
     {
-        if (n == parent->get_left())
-        {
-            parent->set_left(u);
-        }
-        else
-        {
-            parent->set_right(u);
-        }
+        n->get_parent()->set_right(u);
     }
     u->set_left(n);
     n->set_parent(u);
@@ -131,31 +126,27 @@ void rotate_left(rb_node_base* n, rb_node_base** root_ptr)
 void rotate_right(rb_node_base* n, rb_node_base** root_ptr)
 {
     rb_node_base* u = n->get_left();
-    rb_node_base* right = u->get_right();
-    u->set_left(right);
-    if (right)
+    n->set_left(u->get_right());
+    if (u->get_right())
     {
-        right->set_parent(n);
+        u->get_right()->set_parent(n);
     }
-    rb_node_base* parent = n->get_parent();
-    u->set_parent(parent);
+    u->set_parent(n->get_parent());
     if (n == *root_ptr)
     {
         *root_ptr = u;
     }
+    else if (n == n->get_parent()->get_right())
+    {
+        n->get_parent()->set_right(u);
+    }
     else
     {
-        if (n == parent->get_right())
-        {
-            parent->set_right(u);
-        }
-        else
-        {
-            parent->set_left(u);
-        }
+        n->get_parent()->set_left(u);
     }
     u->set_right(n);
     n->set_parent(u);
+
 }
 
 void rebalance_after_insert(rb_node_base* n, rb_node_base** root_ptr)

@@ -255,6 +255,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     std::string projectFilePath = util::GetFullPath(util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(project->FilePath()), config), project->Name() + ".vcxproj"));
     std::vector<std::string> asmFileNames;
     std::vector<std::string> cppFileNames;
+    std::vector<std::string> resourceFileNames;
     std::vector<std::string> compileUnitInitFunctionNames;
     std::vector<std::string> allCompileUnitInitFunctionNames;
     moduleMapper.SetFunctionDefinitionSymbolSet(project->GetFunctionDefinitionSymbolSet());
@@ -487,7 +488,13 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             writer.Write(fileName);
         }
     }
-    MakeProjectFile(project, projectFilePath, asmFileNames, cppFileNames, libraryDirs, references, config, classIndexFilePath, projectTarget, (flags & BuildFlags::verbose) != BuildFlags::none);
+    for (const auto& resourceFilePath : project->ResourceFilePaths())
+    {
+        std::string absoluteRCFilePath = util::GetFullPath(util::Path::Combine(project->Root(), resourceFilePath));
+        resourceFileNames.push_back(absoluteRCFilePath);
+    }
+    MakeProjectFile(project, projectFilePath, asmFileNames, cppFileNames, resourceFileNames,
+        libraryDirs, references, config, classIndexFilePath, projectTarget, (flags& BuildFlags::verbose) != BuildFlags::none);
     MSBuild(projectFilePath, config);
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {

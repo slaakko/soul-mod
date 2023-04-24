@@ -87,6 +87,11 @@ void Project::AddSourceFilePath(const std::string& sourceFilePath)
     sourceFilePaths.push_back(sourceFilePath);
 }
 
+void Project::AddResourceFilePath(const std::string& resourceFilePath)
+{
+    resourceFilePaths.push_back(resourceFilePath);
+}
+
 const std::string& Project::GetModuleSourceFilePath(int32_t fileId) const
 {
     return fileMap->GetFilePath(fileId);

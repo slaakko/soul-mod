@@ -38,6 +38,8 @@ public:
     const std::vector<std::string>& InterfaceFilePaths() const { return interfaceFilePaths; }
     void AddSourceFilePath(const std::string& sourceFilePath);
     const std::vector<std::string>& SourceFilePaths() const { return sourceFilePaths; }
+    void AddResourceFilePath(const std::string& resourceFilePath);
+    const std::vector<std::string>& ResourceFilePaths() const { return resourceFilePaths; }
     void AddReferenceFilePath(const std::string& referenceFilePath);
     const std::vector<std::string>& ReferenceFilePaths() const { return referenceFilePaths; }
     soul::lexer::FileMap& GetFileMap() { return *fileMap; }
@@ -73,6 +75,7 @@ private:
     Target target;
     std::vector<std::string> interfaceFilePaths;
     std::vector<std::string> sourceFilePaths;
+    std::vector<std::string> resourceFilePaths;
     std::vector<std::string> referenceFilePaths;
     std::vector<std::unique_ptr<otava::symbols::Module>> modules;
     std::map<std::string, otava::symbols::Module*> moduleMap;

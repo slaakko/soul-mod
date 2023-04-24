@@ -301,7 +301,8 @@ int64_t FileStream::Tell()
 
 int64_t FileStream::Size() const
 {
-    return std::filesystem::file_size(filePath);
+    std::filesystem::path path(filePath);
+    return std::filesystem::file_size(path);
 }
 
 std::string ReadFile(const std::string& filePath)

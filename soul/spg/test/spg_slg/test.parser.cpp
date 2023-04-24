@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/spg/test/test.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/spg/test/spg_slg/test.parser' using soul parser generator spg version 4.1.0
 
 module test.parser;
 
@@ -8,8 +8,8 @@ import soul.ast.spg;
 
 namespace test::parser {
 
-template<typename Lexer>
-int TestParser<Lexer>::Parse(Lexer& lexer)
+template<typename LexerT>
+int TestParser<LexerT>::Parse(LexerT& lexer)
 {
     std::unique_ptr<soul::parser::Value<int>> value;
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
@@ -18,9 +18,9 @@ int TestParser<Lexer>::Parse(Lexer& lexer)
         lexer.Log()->WriteBeginRule("parse");
         lexer.Log()->IncIndent();
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     ++lexer;
-    soul::parser::Match match = TestParser<Lexer>::ClassKey(lexer);
+    soul::parser::Match match = TestParser<LexerT>::ClassKey(lexer);
     value.reset(static_cast<soul::parser::Value<int>*>(match.value));
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     if (lexer.Log())
@@ -28,7 +28,7 @@ int TestParser<Lexer>::Parse(Lexer& lexer)
         lexer.Log()->DecIndent();
         lexer.Log()->WriteEndRule("parse");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (match.hit)
     {
         if (*lexer == soul::lexer::END_TOKEN)
@@ -47,8 +47,8 @@ int TestParser<Lexer>::Parse(Lexer& lexer)
     return value->value;
 }
 
-template<typename Lexer>
-soul::parser::Match TestParser<Lexer>::ClassKey(Lexer& lexer)
+template<typename LexerT>
+soul::parser::Match TestParser<LexerT>::ClassKey(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
     int64_t parser_debug_match_pos = 0;
@@ -58,83 +58,48 @@ soul::parser::Match TestParser<Lexer>::ClassKey(Lexer& lexer)
         parser_debug_match_pos = lexer.GetPos();
         soul::lexer::WriteBeginRuleToLog(lexer, "ClassKey");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
-    soul::lexer::RuleGuard ruleGuard(lexer, 5305326204553789441);
+    #endif
+    soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5305326204553789441);
+    soul::parser::Match match(false);
     int64_t pos = lexer.GetPos();
     switch (*lexer)
     {
         case CLASS:
         {
-            soul::parser::Match match(false);
-            soul::parser::Match* parentMatch0 = &match;
+            ++lexer;
             {
-                int64_t pos = lexer.GetPos();
-                soul::parser::Match match(false);
-                if (*lexer == CLASS)
                 {
-                    ++lexer;
-                    match.hit = true;
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassKey");
+                    #endif
+                    return soul::parser::Match(true, new soul::parser::Value<int>(1));
                 }
-                if (match.hit)
-                {
-                    {
-                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassKey");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
-                        return soul::parser::Match(true, new soul::parser::Value<int>(1));
-                    }
-                }
-                *parentMatch0 = match;
             }
             break;
         }
         case STRUCT:
         {
-            soul::parser::Match match(false);
-            soul::parser::Match* parentMatch1 = &match;
+            ++lexer;
             {
-                int64_t pos = lexer.GetPos();
-                soul::parser::Match match(false);
-                if (*lexer == STRUCT)
                 {
-                    ++lexer;
-                    match.hit = true;
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassKey");
+                    #endif
+                    return soul::parser::Match(true, new soul::parser::Value<int>(2));
                 }
-                if (match.hit)
-                {
-                    {
-                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassKey");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
-                        return soul::parser::Match(true, new soul::parser::Value<int>(2));
-                    }
-                }
-                *parentMatch1 = match;
             }
             break;
         }
         case UNION:
         {
-            soul::parser::Match match(false);
-            soul::parser::Match* parentMatch2 = &match;
+            ++lexer;
             {
-                int64_t pos = lexer.GetPos();
-                soul::parser::Match match(false);
-                if (*lexer == UNION)
                 {
-                    ++lexer;
-                    match.hit = true;
+                    #ifdef SOUL_PARSER_DEBUG_SUPPORT
+                    if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassKey");
+                    #endif
+                    return soul::parser::Match(true, new soul::parser::Value<int>(3));
                 }
-                if (match.hit)
-                {
-                    {
-                        #ifdef SOUL_PARSER_DEBUG_SUPPORT
-                        if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassKey");
-                        #endif SOUL_PARSER_DEBUG_SUPPORT
-                        return soul::parser::Match(true, new soul::parser::Value<int>(3));
-                    }
-                }
-                *parentMatch2 = match;
             }
             break;
         }
@@ -145,7 +110,7 @@ soul::parser::Match TestParser<Lexer>::ClassKey(Lexer& lexer)
         if (match.hit) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ClassKey");
         else soul::lexer::WriteFailureToLog(lexer, "ClassKey");
     }
-    #endif // SOUL_PARSER_DEBUG_SUPPORT
+    #endif
     if (!match.hit)
     {
         match.value = nullptr;

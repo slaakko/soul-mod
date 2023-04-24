@@ -1,0 +1,4 @@
+project byteset;
+reference <C:/work/soul-mod/util/util.project>;
+target=program;
+source <byteset.cpp>;

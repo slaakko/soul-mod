@@ -24,6 +24,7 @@ struct ProjectParser
     static soul::parser::Match FilePath(LexerT& lexer, otava::build::Project* projectFile);
     static soul::parser::Match InterfaceFilePath(LexerT& lexer);
     static soul::parser::Match SourceFilePath(LexerT& lexer);
+    static soul::parser::Match ResourceFilePath(LexerT& lexer);
     static soul::parser::Match ReferenceFilePath(LexerT& lexer);
     static soul::parser::Match QualifiedId(LexerT& lexer);
 };

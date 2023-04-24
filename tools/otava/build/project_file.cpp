@@ -21,6 +21,7 @@ void MakeResourceFile(const std::string& resourceFilePath, const std::string& cl
 }
 
 void MakeProjectFile(Project* project, const std::string& projectFilePath, const std::vector<std::string> asmFiles, const std::vector<std::string>& cppFiles, 
+    const std::vector<std::string>& resourceFiles, 
     const std::string& libraryDirs, const std::vector<std::unique_ptr<Project>>& referencedProjects, const std::string& config, const std::string& classIndexFilePath,
     ProjectTarget target, bool verbose)
 {
@@ -357,12 +358,21 @@ void MakeProjectFile(Project* project, const std::string& projectFilePath, const
     }
     rootElement->AppendChild(clItemGroup);
 
-    if (target == ProjectTarget::program && !classIndexFilePath.empty())
+    if (target == ProjectTarget::program)
     {
         soul::xml::Element* rcItemGroup = soul::xml::MakeElement("ItemGroup");
         soul::xml::Element* rcCompile = soul::xml::MakeElement("ResourceCompile");
-        rcCompile->SetAttribute("Include", "class_index.rc");
-        rcItemGroup->AppendChild(rcCompile);
+        if (!classIndexFilePath.empty())
+        {
+            rcCompile->SetAttribute("Include", "class_index.rc");
+            rcItemGroup->AppendChild(rcCompile);
+        }
+        for (const auto& resourceFile : resourceFiles)
+        {
+            soul::xml::Element* rcCompile = soul::xml::MakeElement("ResourceCompile");
+            rcCompile->SetAttribute("Include", resourceFile);
+            rcItemGroup->AppendChild(rcCompile);
+        }
         rootElement->AppendChild(rcItemGroup);
     }
 

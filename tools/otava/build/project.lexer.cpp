@@ -19,6 +19,7 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(ASSIGN, "ASSIGN", "'='"));
         tokens.AddToken(new soul::ast::slg::Token(INTERFACE, "INTERFACE", "'interface'"));
         tokens.AddToken(new soul::ast::slg::Token(SOURCE, "SOURCE", "'source'"));
+        tokens.AddToken(new soul::ast::slg::Token(RESOURCE, "RESOURCE", "'resource'"));
         tokens.AddToken(new soul::ast::slg::Token(FILEPATH, "FILEPATH", "file path"));
         tokens.AddToken(new soul::ast::slg::Token(REFERENCE, "REFERENCE", "'reference'"));
         tokens.AddToken(new soul::ast::slg::Token(DEFINE, "DEFINE", "'define'"));
@@ -46,6 +47,7 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "interface", INTERFACE },
          { "source", SOURCE },
          { "reference", REFERENCE },
+         { "resource", RESOURCE },
          { "define", DEFINE },
          { "target", TARGET },
          { "program", PROGRAM },
@@ -64,6 +66,7 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"interface", INTERFACE },
          { u8"source", SOURCE },
          { u8"reference", REFERENCE },
+         { u8"resource", RESOURCE },
          { u8"define", DEFINE },
          { u8"target", TARGET },
          { u8"program", PROGRAM },
@@ -82,6 +85,7 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"interface", INTERFACE },
          { u"source", SOURCE },
          { u"reference", REFERENCE },
+         { u"resource", RESOURCE },
          { u"define", DEFINE },
          { u"target", TARGET },
          { u"program", PROGRAM },
@@ -100,6 +104,7 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"interface", INTERFACE },
          { U"source", SOURCE },
          { U"reference", REFERENCE },
+         { U"resource", RESOURCE },
          { U"define", DEFINE },
          { U"target", TARGET },
          { U"program", PROGRAM },

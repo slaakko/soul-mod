@@ -64,6 +64,7 @@ parser ProjectParser
         ::= 
         (   InterfaceFilePath:interfaceFilePath{ projectFile->AddInterfaceFilePath(interfaceFilePath); }
         |   SourceFilePath:sourceFilePath{ projectFile->AddSourceFilePath(sourceFilePath); }
+        |   ResourceFilePath:resourceFilePath{ projectFile->AddResourceFilePath(resourceFilePath); }
         |   ReferenceFilePath:referenceFilePath{ projectFile->AddReferenceFilePath(referenceFilePath); }
         )
 		;
@@ -82,6 +83,16 @@ parser ProjectParser
         ::= 
         (
             SOURCE FILEPATH{ filePath = otava::token_parser::ParseFilePath(lexer.FileName(), lexer.GetToken(pos)); } SEMICOLON
+        )
+        {
+            return filePath;
+        }
+        ;
+
+    ResourceFilePath(var std::string filePath) : std::string
+        ::= 
+        (
+            RESOURCE FILEPATH{ filePath = otava::token_parser::ParseFilePath(lexer.FileName(), lexer.GetToken(pos)); } SEMICOLON
         )
         {
             return filePath;

@@ -1001,7 +1001,7 @@ std::string FunctionSymbol::IrName(Context* context) const
     if (GetFlag(FunctionSymbolFlags::fixedIrName) && !fixedIrName.empty())
     {
         //if (fixedIrName == "function_IsTokenSwitch_4A3207E938F065A36BC11C118315FE2ADBA840FA")
-        if (fixedIrName == "function_IsTokenSwitch_F25D2CAAA061297AFCE87FBCDC295CE06AE11AD5")
+        if (fixedIrName == "ctor_class_basic_string_F543D526C7A23100FA8173AF0676E13456570B9A_06ABCC8031081C42059666F61DACD8F57BAC37AA_2EEAE4277C78319D71C8A4C1C0B193B4F197A8CA")
         {
             std::cout << "foo";
             int x = 0;
@@ -1059,7 +1059,7 @@ std::string FunctionSymbol::IrName(Context* context) const
         }
         irName.append("_").append(util::GetSha1MessageDigest(fullName));
         //if (irName == "function_IsTokenSwitch_4A3207E938F065A36BC11C118315FE2ADBA840FA")
-        if (irName == "function_IsTokenSwitch_F25D2CAAA061297AFCE87FBCDC295CE06AE11AD5")
+        if (irName == "ctor_class_basic_string_F543D526C7A23100FA8173AF0676E13456570B9A_06ABCC8031081C42059666F61DACD8F57BAC37AA_2EEAE4277C78319D71C8A4C1C0B193B4F197A8CA")
         {
             std::cout << "foo";
             int x = 0;
