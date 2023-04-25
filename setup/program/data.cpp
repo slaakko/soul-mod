@@ -9,7 +9,7 @@ std::string PackageResourceName()
 
 int64_t UncompressedPackageSize()
 {
-    return 330218126;
+    return 1503288678;
 }
 
 std::string UnicodeDBResourceName()
@@ -34,7 +34,7 @@ std::string AppName()
 
 std::string AppVersion()
 {
-    return "4.0.0";
+    return "4.1.0";
 }
 
 int Compression()
@@ -49,7 +49,7 @@ std::string DefaultContainingDirPath()
 
 std::string InstallDirName()
 {
-    return "soul-4.0.0";
+    return "soul-4.1.0";
 }
 
 

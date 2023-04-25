@@ -10,16 +10,16 @@
     <h1>Installation from the ZIP package</h1>
 
 	<ul>
-		<li>Extract the <span class="mono">soul-4.0.0.zip</span> package to a directory of your choice.</li>
-		<li>Create a SOUL_ROOT environment variable and set it to point to the <span class="mono">soul-4.0.0</span> directory that is under the directory where you extracted.</li>
+		<li>Extract the <span class="mono">soul-4.1.0.zip</span> package to a directory of your choice.</li>
+		<li>Create a SOUL_ROOT environment variable and set it to point to the <span class="mono">soul-4.1.0</span> directory that is under the directory where you extracted.</li>
 		<img src="../image/inst_soul_root_env.png"/>
-		<li>Add the <span class="mono">soul-4.0.0\bin</span> directory to your PATH environment variable.</li>
+		<li>Add the <span class="mono">soul-4.1.0\bin</span> directory to your PATH environment variable.</li>
 		<img src="../image/inst_zip_path.png"/>
 		<li>Open the <span class="mono">soul-mod\config\build.props</span> file with a text editor.</li>
 		<li>Change the value of the BOOST_INCLUDE_DIR and BOOST_LIB_DIR macros within the <span class="mono">PropertyGroup Label="UserMacros"</span> element
 		to contain the paths to your Boost include directory and Boost library directory.</li>
 		<img src="../image/build_props.png"/>
-		<li>Open a command prompt to the <span class="mono">soul-4.0.0\examples\minilang</span> directory and run <span class="mono">build.bat</span></li>
+		<li>Open a command prompt to the <span class="mono">soul-4.1.0\examples\minilang</span> directory and run <span class="mono">build.bat</span></li>
 		<img src="../image/inst_zip_test.png"/>
 		<li>The bat runs <span class="mono">slg</span> and <span class="mono">spg</span> with the minilang project files.</li>
 		<li>If the programs run and print:<br/>

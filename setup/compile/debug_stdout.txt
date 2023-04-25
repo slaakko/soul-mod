@@ -1,5 +1,4 @@
-Microsoft (R) Build Engine version 17.2.1+52cd2da31 for .NET Framework
-Copyright (C) Microsoft Corporation. All rights reserved.
+MSBuild version 17.5.1+f6fdcf537 for .NET Framework
 
   data.cpp
   main.cpp

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Parser Optimizations</title>
+    <link href="../style/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>5 Parser Optimizations</h1>
+
+    <h2>5.1 Switch Optimization</h2>
+    <p>
+        The switch optimization is enabled by running the <em>spg</em> command with the --<em>optimize</em> option.
+    </p>
+    <p>
+        In a switch-optimized parser a group of <a href="../syntax/parser.html#choice">choice</a> parsing expressions is implemented as a switch statement
+        whose condition is current input token and cases are token ids included in the FIRST sets of the 
+        choice parsers. The precondition of applying this optimization is that the FIRST sets are distinct.
+    </p>
+</body>
+</html>

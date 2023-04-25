@@ -45,14 +45,6 @@ int main(int argc, const char** argv)
     try
     {
         Init();
-
-/*
-        std::string root = util::GetFullPath("C:\\work\\soul-mod\\soul\\lex");
-        std::string classMapName = "soul.lex.slg.classmap";
-        //std::string classMapName = "soul.lex.re.classmap";
-        soul::slg::MakeCompressedClassMap(root, classMapName);
-        soul::slg::MakeResourceFile(root, classMapName);
-*/
         bool verbose = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
