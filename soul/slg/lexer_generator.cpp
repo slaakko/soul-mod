@@ -321,9 +321,17 @@ void WriteVariables(soul::ast::re::LexerContext& lexerContext, util::CodeFormatt
     sourceFormatter.WriteLine("}");
 }
 
-void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFile* slgFile, const std::string& root, bool verbose)
+void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFile* slgFile, const std::string& root, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
-    std::string interfaceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".cppm"));
+    std::string interfaceFilePath;
+    if (ppstyle)
+    {
+        interfaceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".hpp"));
+    }
+    else
+    {
+        interfaceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".cppm"));
+    }
     std::string sourceFilePath = util::GetFullPath(util::Path::Combine(root, lexerContext.FileName() + ".cpp"));
     std::ofstream interfaceStream(interfaceFilePath);
     util::CodeFormatter interfaceFormatter(interfaceStream);
@@ -344,24 +352,75 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
         lexerFile = static_cast<soul::ast::slg::LexerFile*>(file);
         soul::ast::common::ExportModule* mod = lexerFile->GetExportModule();
         moduleName = mod->ModuleName();
+        moduleMap.MapModule(moduleName, interfaceFilePath);
     }
     else
     {
         throw std::runtime_error("lexer file expected");
     }
-    sourceFormatter.WriteLine("module " + moduleName + ";");
+    if (ppstyle)
+    {
+        std::string headerFilePath = moduleMap.GetHeaderFilePath(moduleName, root);
+        if (!headerFilePath.empty())
+        {
+            sourceFormatter.WriteLine("#include <" + headerFilePath + ">");
+        }
+        sourceFormatter.WriteLine();
+        sourceFormatter.WriteLine("// module " + moduleName + ";");
+    }
+    else
+    {
+        sourceFormatter.WriteLine("module " + moduleName + ";");
+    }
     sourceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("export module " + moduleName + ";");
-    interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("import std.core;");
-    interfaceFormatter.WriteLine("import soul.lexer;");
-    interfaceFormatter.WriteLine("import soul.ast.slg;");
+    std::string includeGuard;
+    if (ppstyle)
+    {
+        includeGuard = "INCLUDE_GUARD_" + util::GetSha1MessageDigest(moduleName);
+        interfaceFormatter.WriteLine("#ifndef " + includeGuard);
+        interfaceFormatter.WriteLine("#define " + includeGuard);
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("// export module " + moduleName + ";");
+        interfaceFormatter.WriteLine();
+        std::string soulLexerHeaderFilePath = moduleMap.GetHeaderFilePath("soul.lexer", root);
+        if (!soulLexerHeaderFilePath.empty())
+        {
+            interfaceFormatter.WriteLine("#include <" + soulLexerHeaderFilePath + ">");
+        }
+        std::string soulAstSlgHeaderFilePath = moduleMap.GetHeaderFilePath("soul.ast.slg", root);
+        if (!soulAstSlgHeaderFilePath.empty())
+        {
+            interfaceFormatter.WriteLine("#include <" + soulAstSlgHeaderFilePath + ">");
+        }
+        interfaceFormatter.WriteLine("#include <util/binary_resource_ptr.hpp>");
+        interfaceFormatter.WriteLine("#include <mutex>");
+    }
+    else
+    {
+        interfaceFormatter.WriteLine("export module " + moduleName + ";");
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("import std.core;");
+        interfaceFormatter.WriteLine("import soul.lexer;");
+        interfaceFormatter.WriteLine("import soul.ast.slg;");
+        interfaceFormatter.WriteLine("import util;");
+    }
     for (const auto& imprt : lexerFile->Imports())
     {
         soul::ast::slg::Collection* collection = slgFile->GetCollection(imprt->ModuleName());
         if (collection->Kind() == soul::ast::slg::CollectionKind::tokenCollection)
         {
-            interfaceFormatter.WriteLine("import " + collection->Name() + ";");
+            if (ppstyle)
+            {
+                std::string tokenCollectionHeader = moduleMap.GetHeaderFilePath(collection->Name(), root);
+                if (!tokenCollectionHeader.empty())
+                {
+                    interfaceFormatter.WriteLine("#include <" + tokenCollectionHeader + ">");
+                }
+            }
+            else
+            {
+                interfaceFormatter.WriteLine("import " + collection->Name() + ";");
+            }
         }
     }
     interfaceFormatter.WriteLine();
@@ -378,7 +437,14 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     }
     interfaceFormatter.WriteLine();
     sourceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
+    if (ppstyle)
+    {
+        interfaceFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
+    }
+    else
+    {
+        interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
+    }
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("std::mutex& MakeLexerMtx();");
     interfaceFormatter.WriteLine();
@@ -387,6 +453,10 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
     interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);");
+    interfaceFormatter.WriteLine();
+    interfaceFormatter.WriteLine("template<typename Char>");
+    interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + 
+        "<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("soul::ast::slg::TokenCollection* GetTokens();");
     interfaceFormatter.WriteLine();
@@ -570,6 +640,15 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<typename Char>");
+    interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)");
+    interfaceFormatter.WriteLine("{");
+    interfaceFormatter.IncIndent();
+    interfaceFormatter.WriteLine("static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, \"" + moduleName + ".classmap\", resourceFlags);");
+    interfaceFormatter.WriteLine("return classmap;");
+    interfaceFormatter.DecIndent();
+    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.WriteLine();
+    interfaceFormatter.WriteLine("template<typename Char>");
     interfaceFormatter.WriteLine("soul::lexer::KeywordMap<Char>* GetKeywords();");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("template<>");
@@ -584,6 +663,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.WriteLine("template<>");
     interfaceFormatter.WriteLine("soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();");
     interfaceFormatter.WriteLine();
+
     interfaceFormatter.WriteLine("template<typename Char>");
     interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)");
     interfaceFormatter.WriteLine("{");
@@ -597,7 +677,28 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
+    
+    interfaceFormatter.WriteLine("template<typename Char>");
+    interfaceFormatter.WriteLine("soul::lexer::Lexer<" + lexer->Name() + 
+        "<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName)");
+    interfaceFormatter.WriteLine("{");
+    interfaceFormatter.IncIndent();
+    interfaceFormatter.WriteLine("std::lock_guard<std::mutex> lock(MakeLexerMtx());");
+    interfaceFormatter.WriteLine("auto lexer = soul::lexer::Lexer<" + lexer->Name() + "<Char>, Char>(start, end, fileName);");
+    interfaceFormatter.WriteLine("lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));");
+    interfaceFormatter.WriteLine("lexer.SetTokenCollection(GetTokens());");
+    interfaceFormatter.WriteLine("lexer.SetKeywordMap(GetKeywords<Char>());");
+    interfaceFormatter.WriteLine("return lexer;");
+    interfaceFormatter.DecIndent();
+    interfaceFormatter.WriteLine("}");
+    interfaceFormatter.WriteLine();
+    
     interfaceFormatter.WriteLine("} // namespace " + soul::ast::common::ToNamespaceName(moduleName));
+    if (ppstyle)
+    {
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("#endif // " + includeGuard);
+    }
     if (verbose)
     {
         std::cout << "==> " << interfaceFilePath << std::endl;
@@ -756,7 +857,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     }
 }
 
-void GenerateLexer(soul::ast::slg::SlgFile* slgFile, soul::ast::slg::LexerFile* lexerFile, bool verbose)
+void GenerateLexer(soul::ast::slg::SlgFile* slgFile, soul::ast::slg::LexerFile* lexerFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
     soul::ast::re::LexerContext lexerContext;
     lexerContext.SetFileName(lexerFile->FilePath());
@@ -811,11 +912,13 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, soul::ast::slg::LexerFile* 
     CompressClassMap(lexerContext, root, verbose);
     MakeMasterNfa(lexerContext);
     MakeDfa(lexerContext);
-    WriteLexer(lexerContext, slgFile, root, verbose);
+    WriteLexer(lexerContext, slgFile, root, verbose, moduleMap, ppstyle);
 }
 
-void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
+void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
+    moduleMap.MapModule("soul.lexer", "../lexer/lexer.hpp");
+    moduleMap.MapModule("soul.ast.slg", "../ast/slg.hpp");
     if (verbose)
     {
         std::cout << "generating lexers for project '" << slgFile->ProjectName() << "'..." << std::endl;
@@ -835,7 +938,7 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
                     std::cout << "> " << tokenFilePath << std::endl;
                 }
                 std::unique_ptr<soul::ast::slg::TokenFile> tokenFile = ParseTokenFile(tokenFilePath, tokenFileDeclaration->External());
-                GenerateTokenModule(tokenFile.get(), verbose);
+                GenerateTokenModule(tokenFile.get(), verbose, moduleMap, ppstyle);
                 slgFile->AddTokenFile(tokenFile.release());
                 break;
             }
@@ -876,7 +979,7 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
     }
     for (const auto& lexerFile : slgFile->LexerFiles())
     {
-        GenerateLexer(slgFile, lexerFile.get(), verbose);
+        GenerateLexer(slgFile, lexerFile.get(), verbose, moduleMap, ppstyle);
     }
     if (verbose)
     {
@@ -886,7 +989,7 @@ void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
 
 #else
 
-void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose)
+void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
 }
 

@@ -1,10 +1,11 @@
-// this file has been automatically generated from 'C:/work/soul-mod/soul/lex/re.lexer' using soul lexer generator slg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/lex/re.lexer' using soul lexer generator slg version 5.0.0
 
 export module soul.lex.re;
 
 import std.core;
 import soul.lexer;
 import soul.ast.slg;
+import util;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;
@@ -26,6 +27,9 @@ struct RegExLexer;
 
 template<typename Char>
 soul::lexer::Lexer<RegExLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
+
+template<typename Char>
+soul::lexer::Lexer<RegExLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
 soul::ast::slg::TokenCollection* GetTokens();
 
@@ -3264,6 +3268,13 @@ soul::lexer::ClassMap<Char>* GetClassMap()
 }
 
 template<typename Char>
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+{
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "soul.lex.re.classmap", resourceFlags);
+    return classmap;
+}
+
+template<typename Char>
 soul::lexer::KeywordMap<Char>* GetKeywords();
 
 template<>
@@ -3284,6 +3295,17 @@ soul::lexer::Lexer<RegExLexer<Char>, Char> MakeLexer(const Char* start, const Ch
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<RegExLexer<Char>, Char>(start, end, fileName);
     lexer.SetClassMap(GetClassMap<Char>());
+    lexer.SetTokenCollection(GetTokens());
+    lexer.SetKeywordMap(GetKeywords<Char>());
+    return lexer;
+}
+
+template<typename Char>
+soul::lexer::Lexer<RegExLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName)
+{
+    std::lock_guard<std::mutex> lock(MakeLexerMtx());
+    auto lexer = soul::lexer::Lexer<RegExLexer<Char>, Char>(start, end, fileName);
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
     lexer.SetTokenCollection(GetTokens());
     lexer.SetKeywordMap(GetKeywords<Char>());
     return lexer;

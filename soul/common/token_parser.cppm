@@ -6,7 +6,6 @@
 export module soul.common.token.parser;
 
 import std.core;
-
 import soul.lexer.token;
 import soul.lexer.base;
 import util.unicode;

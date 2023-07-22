@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/source_file.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/examples/minilang/source_file.parser' using soul parser generator spg version 5.0.0
 
 export module minilang.parser.source.file;
 

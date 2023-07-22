@@ -54,6 +54,25 @@ ClassMap<Char>* MakeClassMap(const std::string& classMapName)
     return classMap;
 }
 
+template<typename Char>
+ClassMap<Char>* MakeClassMap(const std::string& moduleFileName, const std::string& classMapName, util::ResourceFlags resourceFlags)
+{
+    util::BinaryResourcePtr resource(moduleFileName, classMapName, resourceFlags);
+    util::MemoryStream memoryStream(resource.Data(), resource.Size());
+    util::BinaryStreamReader rawReader(memoryStream);
+    int32_t size = rawReader.ReadInt();
+    int32_t* data = new int32_t[size];
+    util::DeflateStream compressedStream(util::CompressionMode::decompress, memoryStream);
+    util::BinaryStreamReader reader(compressedStream);
+    for (int64_t i = 0; i < size; ++i)
+    {
+        int32_t x = reader.ReadInt();
+        data[i] = x;
+    }
+    ClassMap<Char>* classMap = new ClassMap<Char>(data, size);
+    return classMap;
+}
+
 #else
 
 extern "C" int32_t* read_lexer_resource(const char* resource_name, int32_t& size);

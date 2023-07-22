@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'C:/work/soul-mod/examples/book_server/book_msg.xmlser' by xmlsergen version 4.0.0
+// this file has been automatically generated from 'C:/work/soul-mod/examples/book_server/book_msg.xmlser' by xmlsergen version 4.1.0
 
 export module book_msg;
 

@@ -12,7 +12,7 @@ namespace soul::slg {
 
 #ifndef OTAVA
 
-void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
+void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
     if (tokenFile->IsExternal())
     {
@@ -22,20 +22,54 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
         }
         return;
     }
-    std::string cppmFilePath = tokenFile->FilePath() + ".cppm";
-    std::ofstream cppmFile(cppmFilePath);
-    util::CodeFormatter formatter(cppmFile);
+    std::string interfaceFilePath;
+    if (ppstyle)
+    {
+        interfaceFilePath = tokenFile->FilePath() + ".hpp";
+    }
+    else
+    {
+        interfaceFilePath = tokenFile->FilePath() + ".cppm";
+    }
+    std::ofstream interfaceFile(interfaceFilePath);
+    util::CodeFormatter formatter(interfaceFile);
     soul::ast::slg::TokenCollection* tokenCollection = tokenFile->GetTokenCollection();
+    if (ppstyle)
+    {
+        moduleMap.MapModule(tokenCollection->Name(), interfaceFilePath);
+    }
     formatter.WriteLine();
-    formatter.WriteLine("// this file has been automatically generated from '" + tokenFile->FilePath() + "' using soul lexer generator version 4.0.0");
+    formatter.WriteLine("// this file has been automatically generated from '" + tokenFile->FilePath() + "' using soul lexer generator version " + util::SoulVersionStr());
     formatter.WriteLine();
-    formatter.WriteLine("export module " + tokenCollection->Name() + ";");
-    formatter.WriteLine();
-    formatter.WriteLine("import std.core;");
-    formatter.WriteLine();
+    std::string includeGuard;
+    if (ppstyle)
+    {
+        includeGuard = "INCLUDE_GUARD_" + util::GetSha1MessageDigest(tokenCollection->Name());
+        formatter.WriteLine("#ifndef " + includeGuard);
+        formatter.WriteLine("#define " + includeGuard);
+        formatter.WriteLine("#include <stdint.h>");
+        formatter.WriteLine();
+        formatter.WriteLine("// export module " + tokenCollection->Name() + ";");
+        formatter.WriteLine();
+    }
+    else
+    {
+        formatter.WriteLine("export module " + tokenCollection->Name() + ";");
+        formatter.WriteLine();
+        formatter.WriteLine("import std.core;");
+        formatter.WriteLine();
+    }
     std::string tokenNamespaceName = soul::ast::common::ToNamespaceName(tokenCollection->Name());
-    formatter.WriteLine("export namespace " + tokenNamespaceName + " {");
-    formatter.WriteLine();
+    if (ppstyle)
+    {
+        formatter.WriteLine("namespace " + tokenNamespaceName + " {");
+        formatter.WriteLine();
+    }
+    else
+    {
+        formatter.WriteLine("export namespace " + tokenNamespaceName + " {");
+        formatter.WriteLine();
+    }
     formatter.WriteLine("constexpr int32_t tokenSetID = " + std::to_string(tokenCollection->Id()) + ";");
     formatter.WriteLine();
     int n = tokenCollection->Tokens().size();
@@ -45,16 +79,25 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
         formatter.WriteLine("constexpr int64_t " + token->Name() + " = (static_cast<int64_t>(tokenSetID) << 32) | " + std::to_string(i + 1) + ";");
     }
     formatter.WriteLine();
-    formatter.WriteLine("} // " + tokenNamespaceName);
+    if (ppstyle)
+    {
+        formatter.WriteLine("} // " + tokenNamespaceName); 
+        formatter.WriteLine();
+        formatter.WriteLine("#endif // " + includeGuard);
+    }
+    else
+    {
+        formatter.WriteLine("} // " + tokenNamespaceName);
+    }
     if (verbose)
     {
-        std::cout << "==> " << cppmFilePath << std::endl;
+        std::cout << "==> " << interfaceFilePath << std::endl;
     }
 }
 
 #else
 
-void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose)
+void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
 }
 

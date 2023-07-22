@@ -160,6 +160,8 @@
     <ClCompile Include="array_generator.cppm" />
     <ClCompile Include="code_generator.cpp" />
     <ClCompile Include="code_generator.cppm" />
+    <ClCompile Include="code_generator_visitor.cpp" />
+    <ClCompile Include="code_generator_visitor.cppm" />
     <ClCompile Include="code_modifier.cpp" />
     <ClCompile Include="code_modifier.cppm" />
     <ClCompile Include="error.cpp" />
@@ -168,6 +170,10 @@
     <ClCompile Include="file_parsers.cppm" />
     <ClCompile Include="first_set_computer.cppm" />
     <ClCompile Include="first_set_computer.cpp" />
+    <ClCompile Include="pp_style_code_generator_visitor.cpp" />
+    <ClCompile Include="pp_style_code_generator_visitor.cppm" />
+    <ClCompile Include="pp_style_code_generator.cppm" />
+    <ClCompile Include="pp_style_code_generator.cpp" />
     <ClCompile Include="xml_printer.cpp" />
     <ClCompile Include="xml_printer.cppm" />
     <ClCompile Include="linking.cpp" />
@@ -208,6 +214,9 @@
     <ProjectReference Include="..\lex\lex.vcxproj">
       <Project>{69f93e57-1621-43b9-8b9b-c33c1c079da9}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\module_map\module_map.vcxproj">
+      <Project>{0500542e-3281-4220-81be-3357d614d1c0}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\parser\parser.vcxproj">
       <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
     </ProjectReference>
@@ -220,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\lex\soul.lex.spg.classmap.rc" />
+    <ResourceCompile Include="..\xml\xpath\soul.xml.xpath.lexer.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

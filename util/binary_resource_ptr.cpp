@@ -17,11 +17,19 @@ namespace util {
 
 #ifdef _WIN32
 
-BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::string& resourceName_) : resourceName(resourceName_), size(0)
+BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::string& resourceName_, ResourceFlags flags) : resourceName(resourceName_), size(0)
 {
     std::u16string moduleNameStr = ToUtf16(moduleName);
     std::u16string resourceNameStr = ToUtf16(resourceName);
-    HMODULE moduleHandle = GetModuleHandleW((LPCWSTR)moduleNameStr.c_str());
+    HMODULE moduleHandle = nullptr;
+    if ((flags & ResourceFlags::loadLibraryAsDataFile) != ResourceFlags::none)
+    {
+        moduleHandle = LoadLibraryExW((LPCWSTR)moduleNameStr.c_str(), 0, LOAD_LIBRARY_AS_DATAFILE);
+    }
+    else
+    {
+        moduleHandle = GetModuleHandleW((LPCWSTR)moduleNameStr.c_str());
+    }
     if (!moduleHandle)
     {
         WindowsException windowsException(GetLastError());
@@ -36,16 +44,20 @@ BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::s
         throw std::runtime_error("error: error getting resource '" + resourceName + "' from module '" + moduleName + "': could not find resource: " +
             windowsException.ErrorMessage() + ": note: please add resource file '" + resourceFileName + "' to the C++ project that makes executable '" + moduleName + "'");
     }
-    HGLOBAL handle = LoadResource(nullptr, res);
+    HGLOBAL handle = LoadResource(moduleHandle, res);
     if (!handle)
     {
         std::string resourceFileName = resourceName + ".rc";
         WindowsException windowsException(GetLastError());
-        throw std::runtime_error("error: error loading resource '" + resourceName + "' from module '" + moduleName + ": " + 
+        throw std::runtime_error("error: error loading resource '" + resourceName + "' from module '" + moduleName + ": " +
             windowsException.ErrorMessage() + ": note: please add resource file '" + resourceFileName + "' to the C++ project that makes executable '" + moduleName + "'");
     }
     data = static_cast<uint8_t*>(LockResource(handle));
-    size = SizeofResource(nullptr, res);
+    size = SizeofResource(moduleHandle, res);
+}
+
+BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::string& resourceName_) : BinaryResourcePtr(moduleName, resourceName_, ResourceFlags::none)
+{
 }
 
 #endif

@@ -176,6 +176,9 @@
     <ProjectReference Include="..\lex\lex.vcxproj">
       <Project>{69f93e57-1621-43b9-8b9b-c33c1c079da9}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\module_map\module_map.vcxproj">
+      <Project>{0500542e-3281-4220-81be-3357d614d1c0}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\parser\parser.vcxproj">
       <Project>{e4328f76-bce3-454b-be03-63b78a11170a}</Project>
     </ProjectReference>
@@ -223,6 +226,7 @@
   <ItemGroup>
     <ResourceCompile Include="..\lex\soul.lex.re.classmap.rc" />
     <ResourceCompile Include="..\lex\soul.lex.slg.classmap.rc" />
+    <ResourceCompile Include="..\xml\xpath\soul.xml.xpath.lexer.classmap.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

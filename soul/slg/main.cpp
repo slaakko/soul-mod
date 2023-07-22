@@ -4,11 +4,13 @@
 // =================================
 
 import std.core;
+import std.filesystem;
 import util;
 import soul.ast.slg;
 import soul.slg.file.parsers;
 import soul.slg.lexer.generator;
 import soul.slg.classmap;
+import soul.common.module_map;
 
 void Init()
 {
@@ -38,6 +40,9 @@ void PrintHelp()
     std::cout << "--verbose | -v" << std::endl;
     std::cout << "  Be verbose." << std::endl;
     std::cout << std::endl;
+    std::cout << "--ppstyle | -p" << std::endl;
+    std::cout << "  Generate old preprocessor style code." << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -46,6 +51,7 @@ int main(int argc, const char** argv)
     {
         Init();
         bool verbose = false;
+        bool ppstyle = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
         {
@@ -60,6 +66,10 @@ int main(int argc, const char** argv)
                 else if (arg == "--verbose")
                 {
                     verbose = true;
+                }
+                else if (arg == "--ppstyle")
+                {
+                    ppstyle = true;
                 }
                 else
                 {
@@ -83,6 +93,11 @@ int main(int argc, const char** argv)
                             verbose = true;
                             break;
                         }
+                        case 'p':
+                        {
+                            ppstyle = true;
+                            break;
+                        }
                         default:
                         {
                             throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
@@ -102,7 +117,23 @@ int main(int argc, const char** argv)
                 std::cout << "> " << file << std::endl;
             }
             std::unique_ptr<soul::ast::slg::SlgFile> slgFile = soul::slg::ParseSlgFile(file);
-            soul::slg::GenerateLexer(slgFile.get(), verbose);
+            soul::common::ModuleMap moduleMap;
+            std::string moduleMapFilePath;
+            if (ppstyle)
+            {
+                moduleMapFilePath = util::Path::ChangeExtension(file, ".mm");
+                std::string root = util::Path::GetDirectoryName(util::GetFullPath(moduleMapFilePath));
+                moduleMap.SetRoot(root);
+                if (std::filesystem::exists(moduleMapFilePath))
+                {
+                    moduleMap.Read(moduleMapFilePath);
+                }
+            }
+            soul::slg::GenerateLexer(slgFile.get(), verbose, moduleMap, ppstyle);
+            if (ppstyle)
+            {
+                moduleMap.Write(moduleMapFilePath);
+            }
         }
     }
     catch (const std::exception& ex)

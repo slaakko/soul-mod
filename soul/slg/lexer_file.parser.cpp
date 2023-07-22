@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/lexer_file.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/lexer_file.parser' using soul parser generator spg version 5.0.0
 
 module soul.slg.lexer.file.parser;
 

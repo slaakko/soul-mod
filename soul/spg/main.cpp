@@ -3,12 +3,14 @@
 // Distributed under the MIT license
 // =================================
 
-import std.core;
-import util;
 import soul.ast.spg;
 import soul.spg.file.parsers;
 import soul.lexer.file.map;
 import soul.spg.parser.generator;
+import soul.common.module_map;
+import std.core;
+import std.filesystem;
+import util;
 
 void Init()
 {
@@ -22,7 +24,7 @@ void Done()
 
 std::string Version()
 {
-    return "4.1.0";
+    return "5.0.0";
 }
 
 void PrintHelp()
@@ -44,6 +46,12 @@ void PrintHelp()
     std::cout << "--optimize | -o" << std::endl;
     std::cout << "  Do switch optimization." << std::endl;
     std::cout << std::endl;
+    std::cout << "--xml | -x" << std::endl;
+    std::cout << "  Generate XML info documents." << std::endl;
+    std::cout << std::endl;
+    std::cout << "--ppstyle | -p" << std::endl;
+    std::cout << "  Generate old preprocessor style code." << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -55,6 +63,7 @@ int main(int argc, const char** argv)
         bool noDebugSupport = false;
         bool optimize = false;
         bool xml = false;
+        bool ppstyle = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
         {
@@ -78,9 +87,13 @@ int main(int argc, const char** argv)
                 {
                     optimize = true;
                 }
-                else if (arg == "xml")
+                else if (arg == "--xml")
                 {
                     xml = true;
+                }
+                else if (arg == "--ppstyle")
+                {
+                    ppstyle = true;
                 }
                 else
                 {
@@ -119,6 +132,11 @@ int main(int argc, const char** argv)
                             xml = true;
                             break;
                         }
+                        case 'p':
+                        {
+                            ppstyle = true;
+                            break;
+                        }
                         default:
                         {
                             throw std::runtime_error("unknown option '-" + std::string(1, o) + "'");
@@ -135,7 +153,23 @@ int main(int argc, const char** argv)
         for (const std::string& file : files)
         {
             std::unique_ptr<soul::ast::spg::SpgFile> spgFile = soul::spg::ParseSpgFile(file, fileMap, verbose);
-            soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, optimize, xml, Version());
+            soul::common::ModuleMap moduleMap;
+            std::string moduleMapFilePath;
+            if (ppstyle)
+            {
+                moduleMapFilePath = util::Path::ChangeExtension(file, ".mm");
+                std::string root = util::Path::GetDirectoryName(util::GetFullPath(moduleMapFilePath));
+                moduleMap.SetRoot(root);
+                if (std::filesystem::exists(moduleMapFilePath))
+                {
+                    moduleMap.Read(moduleMapFilePath);
+                }
+            }
+            soul::spg::GenerateParsers(spgFile.get(), fileMap, verbose, noDebugSupport, optimize, xml, ppstyle, Version(), moduleMap);
+            if (ppstyle)
+            {
+                moduleMap.Write(moduleMapFilePath);
+            }
         }
     }
     catch (const std::exception& ex)

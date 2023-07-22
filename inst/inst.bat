@@ -15,7 +15,3 @@ soul_inst -v ..\soul\xml\xpath\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\xpath\*.classmap.rc ..\rc
 soul_inst -v ..\soul\xml\serialization\*.classmap.compressed ..\rc
 soul_inst -v ..\soul\xml\serialization\*.classmap.rc ..\rc
-soul_inst -v ..\soul\cpp20\lexer\*.classmap.compressed ..\rc
-soul_inst -v ..\soul\cpp20\lexer\*.classmap.rc ..\rc
-soul_inst -v ..\soul\cpp20\project\*.classmap.compressed ..\rc
-soul_inst -v ..\soul\cpp20\project\*.classmap.rc ..\rc

@@ -11,12 +11,13 @@ import soul.spg.file.parsers;
 import soul.spg.linking;
 import soul.spg.optimizer;
 import soul.spg.code.generator;
+import soul.spg.pp.style.code.generator;
 import soul.spg.xml.printer;
 import soul.ast.common;
 
 namespace soul::spg {
 
-void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
+void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
     if (verbose)
     {
@@ -24,19 +25,51 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
     }
     std::filesystem::path spgFilePath = spgFile->FilePath();
     std::filesystem::path root = spgFilePath.parent_path();
-    std::filesystem::path interfaceFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cppm");
+    std::filesystem::path interfaceFilePath;
+    if (ppstyle)
+    {
+        interfaceFilePath = root / (spgFilePath.stem().generic_string() + "_rules.hpp");
+    }
+    else
+    {
+        interfaceFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cppm");
+    }
     std::ofstream interfaceFile(interfaceFilePath.generic_string());
     util::CodeFormatter interfaceFormatter(interfaceFile);
     std::string moduleName = spgFile->ProjectName() + ".rules";
-    interfaceFormatter.WriteLine("export module " + moduleName + ";");
-    interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("import std.core;");
-    interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
+    moduleMap.MapModule(moduleName, interfaceFilePath.generic_string());
+    std::string includeGuard;
+    if (ppstyle)
+    {
+        includeGuard = "INCLUDE_GUARD_" + util::GetSha1MessageDigest(moduleName);
+        interfaceFormatter.WriteLine("#ifndef " + includeGuard);
+        interfaceFormatter.WriteLine("#define " + includeGuard);
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("// export module " + moduleName + ";");
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("#include <stdint.h>");
+        interfaceFormatter.WriteLine("#include <string>");
+        interfaceFormatter.WriteLine("#include <map>");
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
+    }
+    else
+    {
+        interfaceFormatter.WriteLine("export module " + moduleName + ";");
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("import std.core;");
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
+    }
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("std::map<int64_t, std::string>* GetRuleNameMapPtr();");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("} // " + soul::ast::common::ToNamespaceName(moduleName));
+    if (ppstyle)
+    {
+        interfaceFormatter.WriteLine();
+        interfaceFormatter.WriteLine("#endif // " + includeGuard);
+    }
     if (verbose)
     {
         std::cout << "==> " << interfaceFilePath.generic_string() << std::endl;
@@ -45,7 +78,21 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
     std::filesystem::path implementationFilePath = root / (spgFilePath.stem().generic_string() + "_rules.cpp");
     std::ofstream implementationFile(implementationFilePath.generic_string());
     util::CodeFormatter implementationFormatter(implementationFile);
-    implementationFormatter.WriteLine("module " + moduleName + ";");
+    if (ppstyle)
+    {
+        std::string headerFilePath = moduleMap.GetHeaderFilePath(moduleName, root.generic_string());
+        if (!headerFilePath.empty())
+        {
+            implementationFormatter.WriteLine("#include <" + headerFilePath + ">");
+            implementationFormatter.WriteLine("#include <mutex>");
+            implementationFormatter.WriteLine();
+        }
+        implementationFormatter.WriteLine("// module " + moduleName + ";");
+    }
+    else
+    {
+        implementationFormatter.WriteLine("module " + moduleName + ";");
+    }
     implementationFormatter.WriteLine();
     implementationFormatter.WriteLine("namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     implementationFormatter.WriteLine();
@@ -82,7 +129,8 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose)
     }
 }
 
-void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fileMap, bool verbose, bool noDebugSupport, bool optimize, bool xml, const std::string& version)
+void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fileMap, bool verbose, bool noDebugSupport, bool optimize, bool xml, bool ppstyle, 
+    const std::string& version, soul::common::ModuleMap& moduleMap)
 {
     std::cout << "generating parsers for project '" << spgFile->ProjectName() << "'..." << std::endl;
     std::string root = util::Path::GetDirectoryName(spgFile->FilePath());
@@ -112,10 +160,18 @@ void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fil
     {
         PrintXml(spgFile, verbose, optimize);
     }
-    GenerateCode(spgFile, verbose, noDebugSupport, version, fileMap);
-    GenerateRuleNameModule(spgFile, verbose);
+    if (ppstyle)
+    {
+        GeneratePPCode(spgFile, verbose, noDebugSupport, version, fileMap, moduleMap);
+    }
+    else
+    {
+        GenerateCode(spgFile, verbose, noDebugSupport, version, fileMap);
+    }
+    GenerateRuleNameModule(spgFile, verbose, moduleMap, ppstyle);
     optimizedSpg.reset();
     std::cout << "parsers for project '" << spgFile->ProjectName() << "' generated successfully." << std::endl;
 }
 
 } // namespace soul::spg
+

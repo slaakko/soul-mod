@@ -23,7 +23,7 @@ void SetEx()
 
 std::string SoulVersionStr()
 {
-    return "4.1.0";
+    return "5.0.0";
 }
 
 std::string SoulRoot()
