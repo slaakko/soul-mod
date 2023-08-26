@@ -83,25 +83,24 @@ std::u16string JsonString::JsonCharStr(char32_t c) const
     {
         switch (x)
         {
-        case '"': result.append(u"\\\""); break;
-        case '\\': result.append(u"\\\\"); break;
-        case '/': result.append(u"\\/"); break;
-        case '\b': result.append(u"\\b"); break;
-        case '\f': result.append(u"\\f"); break;
-        case '\n': result.append(u"\\n"); break;
-        case '\r': result.append(u"\\r"); break;
-        case '\t': result.append(u"\\t"); break;
-        default:
-        {
-            if (x >= 32 && x <= 126)
+            case '"': result.append(u"\\\""); break;
+            case '\\': result.append(u"\\\\"); break;
+            case '\b': result.append(u"\\b"); break;
+            case '\f': result.append(u"\\f"); break;
+            case '\n': result.append(u"\\n"); break;
+            case '\r': result.append(u"\\r"); break;
+            case '\t': result.append(u"\\t"); break;
+            default:
             {
-                result.append(1, x);
+                if (x >= 32 && x <= 126)
+                {
+                    result.append(1, x);
+                }
+                else
+                {
+                    result.append(u"\\u").append(ToUtf16(ToHexString(static_cast<uint16_t>(x))));
+                }
             }
-            else
-            {
-                result.append(u"\\u").append(ToUtf16(ToHexString(static_cast<uint16_t>(x))));
-            }
-        }
         }
     }
     return result;
