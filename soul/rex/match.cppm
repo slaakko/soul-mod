@@ -8,6 +8,7 @@ export module soul.rex.match;
 import std.core;
 import soul.rex.nfa;
 import soul.rex.context;
+import util;
 
 export namespace soul::rex {
 
@@ -38,6 +39,9 @@ bool FilePatternMatch(const std::string& lexerModuleFileName, const std::string&
 bool PatternMatch(const std::string& lexerModuleFileName, const std::u32string& str, const std::u32string& regularExpressionPattern);
 
 bool PatternMatch(const std::string& lexerModuleFileName, const std::string& str, const std::string& regularExpressionPattern);
+
+soul::rex::nfa::Nfa CompileRegularExpressionPattern(const std::string& lexerModuleFileName, util::ResourceFlags resourceFlags,
+    soul::rex::context::Context& context, const std::u32string& regularExpressionPattern);
 
 soul::rex::nfa::Nfa CompileRegularExpressionPattern(const std::string& lexerModuleFileName, soul::rex::context::Context& context, const std::u32string& regularExpressionPattern);
 

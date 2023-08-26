@@ -11,6 +11,7 @@ import util.binary.resource.ptr;
 import util.memory.stream;
 import util.binary.stream.reader;
 import util.deflate.stream;
+import util.compression;
 import soul.lexer.classmap;
 
 int32_t* read_lexer_resource(const char* resource_name, int32_t& size)

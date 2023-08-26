@@ -10,6 +10,7 @@ import std.core;
 import soul.lexer.token;
 import soul.lexer.base;
 import soul.ast.spg;
+import soul.ast.source.pos;
 import soul.common.token.parser;
 
 export namespace soul::spg::token::parser {

@@ -14,6 +14,8 @@ import otava.ast.function;
 import otava.intermediate.value;
 import otava.symbols.instantiation_queue;
 import otava.symbols.function_definition_symbol_set;
+import otava.symbols.templates;
+import otava.symbols.template_param_compare;
 
 export namespace otava::symbols {
 

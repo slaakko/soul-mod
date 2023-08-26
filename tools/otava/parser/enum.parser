@@ -6,13 +6,15 @@
 export module otava.parser.enums;
 
 [interface]import otava.symbols.context;
+[interface]import otava.ast;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.lexer.pos.pair;
 [implementation]import otava.parser.attribute;
 [implementation]import otava.parser.expression;
 [implementation]import otava.parser.identifier;
 [implementation]import otava.parser.punctuation;
 [implementation]import otava.parser.type;
 [implementation]import otava.symbols;
-[implementation]import otava.ast;
 [implementation]import otava.token;
 [implementation]import otava.lexer;
 

@@ -5,6 +5,7 @@ module soul.spg.parser.file.parser;
 
 import util;
 import soul.ast.spg;
+import soul.ast.common;
 import soul.cpp.token;
 import soul.cpp.op.token;
 import soul.punctuation.token;

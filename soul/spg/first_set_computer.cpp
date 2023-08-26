@@ -5,6 +5,8 @@
 
 module soul.spg.first.set.computer;
 
+import std.core;
+
 namespace soul::spg {
 
 class FirstSetComputer : public soul::ast::spg::DefaultVisitor

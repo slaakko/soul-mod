@@ -8,6 +8,8 @@ export module otava.symbols.overload.resolution;
 import std.core;
 import soul.ast.source.pos;
 import otava.symbols.templates;
+import otava.symbols.template_param_compare;
+import otava.symbols.scope;
 
 export namespace otava::symbols {
 

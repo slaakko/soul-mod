@@ -167,6 +167,7 @@
     <ClCompile Include="function.cppm" />
     <ClCompile Include="instruction.cpp" />
     <ClCompile Include="instruction.cppm" />
+    <ClCompile Include="intermediate.cppm" />
     <ClCompile Include="intermediate.lexer.cpp" />
     <ClCompile Include="intermediate.lexer.cppm" />
     <ClCompile Include="intermediate.parser.cpp" />

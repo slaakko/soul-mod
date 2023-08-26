@@ -5,16 +5,8 @@
 
 module otava.symbols.emitter;
 
-import otava.intermediate.register_allocator;
-import otava.intermediate.metadata;
-import otava.intermediate.code;
-import otava.intermediate.compile.unit;
-import otava.intermediate.instruction;
-import otava.intermediate.function;
-import otava.intermediate.type;
-import otava.intermediate.data;
-import otava.intermediate.reference_resolver;
 import otava.symbols.bound.tree;
+import otava.intermediate;
 
 namespace otava::symbols {
 

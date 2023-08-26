@@ -10,6 +10,7 @@ import otava.intermediate.register_allocator;
 import otava.assembly.instruction;
 import otava.assembly.literal;
 import otava.assembly.file;
+import otava.assembly.reg;
 import soul.ast.source.pos;
 import std.core;
 

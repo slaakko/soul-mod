@@ -149,6 +149,9 @@
     <ClCompile Include="codegen.cppm" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\soul\ast\ast.vcxproj">
+      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
       <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>

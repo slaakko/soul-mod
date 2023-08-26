@@ -10,7 +10,7 @@ import util;
 
 std::string Version()
 {
-    return "4.0.0";
+    return "5.0.0";
 }
 
 void PrintHelp()

@@ -32,6 +32,8 @@ import otava.symbols.type_compare;
 import otava.symbols.type.symbol;
 import otava.symbols.value;
 import otava.symbols.function.templates;
+import otava.symbols.argument.conversion.table;
+import otava.symbols.operation.repository;
 import otava.ast.error;
 import otava.ast.attribute;
 import otava.ast.visitor;

@@ -7,6 +7,7 @@ export module otava.build_project;
 
 import std.core;
 import soul.lexer.file.map;
+import class_info_index;
 import otava.symbols;
 import otava.symbols.function_definition_symbol_set;
 

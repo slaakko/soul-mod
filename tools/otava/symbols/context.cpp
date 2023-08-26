@@ -12,6 +12,9 @@ import otava.symbols.scope;
 import otava.symbols.symbol;
 import otava.symbols.bound.tree;
 import otava.symbols.function.symbol;
+import otava.symbols.function.templates;
+import otava.symbols.argument.conversion.table;
+import otava.symbols.operation.repository;
 
 namespace otava::symbols {
 

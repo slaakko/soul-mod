@@ -6,6 +6,7 @@
 module otava.symbols.exception;
 
 import otava.symbols.context;
+import soul.lexer;
 import util.unicode;
 
 namespace otava::symbols {

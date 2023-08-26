@@ -17,6 +17,8 @@ import otava.symbols.type.resolver;
 import otava.symbols.instantiator;
 import otava.symbols.statement.binder;
 import otava.symbols.modules;
+import otava.symbols.argument.conversion.table;
+import otava.symbols.operation.repository;
 import otava.ast.function;
 import util.unicode;
 

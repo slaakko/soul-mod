@@ -8,6 +8,7 @@ export module util.unicode;
 import std.core;
 import util.binary.stream.writer;
 import util.binary.stream.reader;
+import util.stream;
 import util.text.util;
 
 export namespace util {

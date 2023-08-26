@@ -12,6 +12,7 @@ import otava.symbols.value;
 import otava.symbols.symbol_map;
 import otava.ast.file;
 import otava.ast.node.map;
+import otava.ast.node;
 
 export namespace otava::symbols {
 

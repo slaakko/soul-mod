@@ -9,6 +9,9 @@ import std.core;
 import soul.ast.source.pos;
 import otava.ast.node;
 import otava.symbols.emitter;
+import otava.intermediate;
+import otava.symbols.class_templates;
+import util;
 
 export namespace otava::symbols {
 
@@ -61,7 +64,6 @@ class BoundFunctionCallNode;
 class OperationRepository;
 class ArgumentConversionTable;
 class FunctionTemplateRepository;
-class ClassTemplateRepository;
 
 enum class BoundNodeKind
 {

@@ -2,6 +2,7 @@ export module project_file.ast;
 
 import std.core;
 import source_file.ast;
+import counters;
 
 export namespace project_file::ast {
 

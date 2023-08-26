@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/enum.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/enum.parser' using soul parser generator spg version 5.0.0
 
 export module otava.parser.enums;
 
@@ -7,8 +7,10 @@ import std.core;
 import soul.lexer;
 import soul.parser;
 import otava.symbols.context;
+import otava.ast;
 
 using namespace otava::symbols::context;
+using namespace otava::ast;
 
 export namespace otava::parser::enums {
 

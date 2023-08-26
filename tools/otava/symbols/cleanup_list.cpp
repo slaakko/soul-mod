@@ -7,6 +7,7 @@ module otava.symbols.cleanup_list;
 
 import otava.symbols.bound.tree;
 import otava.symbols.emitter;
+import otava.intermediate;
 
 namespace otava::symbols {
 

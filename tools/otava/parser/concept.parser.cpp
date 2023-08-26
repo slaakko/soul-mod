@@ -1,12 +1,11 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/concept.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/concept.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.concepts;
 
 import util;
 import soul.ast.spg;
 import soul.ast.source.pos;
-import otava.ast;
 import otava.token;
 import otava.lexer;
 import otava.symbols;
@@ -18,7 +17,6 @@ import otava.parser.punctuation;
 import otava.parser.templates;
 
 using namespace soul::ast::source::pos;
-using namespace otava::ast;
 using namespace otava::token;
 using namespace otava::lexer;
 using namespace otava::symbols;

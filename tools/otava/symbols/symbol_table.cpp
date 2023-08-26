@@ -44,6 +44,9 @@ import otava.symbols.fundamental.type.operation;
 import otava.symbols.symbol_map;
 import otava.symbols.conversion.table;
 import otava.symbols.friends;
+import otava.symbols.function.templates;
+import otava.symbols.argument.conversion.table;
+import otava.symbols.operation.repository;
 
 namespace otava::symbols {
 

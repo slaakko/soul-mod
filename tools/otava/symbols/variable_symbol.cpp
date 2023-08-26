@@ -16,6 +16,10 @@ import otava.symbols.visitor;
 import otava.symbols.context;
 import otava.symbols.declaration;
 import otava.symbols.bound.tree;
+import otava.symbols.function.templates;
+import otava.symbols.argument.conversion.table;
+import otava.symbols.operation.repository;
+import otava.symbols.function.symbol;
 import util.unicode;
 import util.sha1;
 

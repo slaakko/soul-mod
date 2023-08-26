@@ -161,6 +161,9 @@
     <ProjectReference Include="..\..\..\util\util.vcxproj">
       <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\ast\ast.vcxproj">
+      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\dom\dom.vcxproj">
       <Project>{c7d66fce-6e85-4f03-9c35-200f53f37800}</Project>
     </ProjectReference>

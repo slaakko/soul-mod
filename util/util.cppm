@@ -27,6 +27,7 @@ export import util.file.util;
 export import util.init.done;
 export import util.time;
 export import util.socket;
+export import util.socket_stream;
 export import util.json;
 export import util.intrusive.list;
 export import util.log;

@@ -6,7 +6,9 @@
 export module otava.parser.lambda;
 
 [interface]import otava.symbols.context;
-[implementation]import otava.ast;
+[interface]import otava.ast;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.lexer.pos.pair;
 [implementation]import otava.token;
 [implementation]import otava.lexer;
 [implementation]import otava.parser.attribute;

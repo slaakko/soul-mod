@@ -27,16 +27,15 @@ import otava.symbols.exception;
 import otava.symbols.function.symbol;
 import otava.symbols.classes;
 import otava.symbols.function_definition_symbol_set;
+import otava.symbols.function.templates;
+import otava.symbols.argument.conversion.table;
+import otava.symbols.operation.repository;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
 import soul.lexer.xml.parsing.log;
 import class_info_index;
-import util.path;
-import util.unicode;
-import util.file.stream;
-import util.sha1;
-import util.buffered.stream;
+import util;
 
 namespace otava::build {
 

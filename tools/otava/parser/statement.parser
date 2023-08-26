@@ -6,6 +6,8 @@
 export module otava.parser.statement;
 
 [interface]import otava.symbols.context;
+[implementation]import soul.ast.source.pos;
+[implementation]import soul.ast.lexer.pos.pair;
 [implementation]import otava.ast;
 [implementation]import otava.token;
 [implementation]import otava.lexer;

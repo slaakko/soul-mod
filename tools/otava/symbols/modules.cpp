@@ -17,6 +17,7 @@ import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.conversion.table;
 import otava.symbols.templates;
+import otava.symbols.function.symbol;
 import otava.ast.reader;
 import otava.ast.writer;
 import otava.ast.error;

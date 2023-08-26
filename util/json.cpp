@@ -10,6 +10,34 @@ import util.text.util;
 
 namespace util {
 
+std::string JsonValueTypeStr(JsonValueType type)
+{
+    switch (type)
+    {
+        case JsonValueType::object:
+        {
+            return "object";
+        }
+        case JsonValueType::array:
+        {
+            return "array";
+        }
+        case JsonValueType::string:
+        {
+            return "string";
+        }
+        case JsonValueType::number:
+        {
+            return "number";
+        }
+        case JsonValueType::boolean:
+        {
+            return "boolean";
+        }
+    }
+    return std::string();
+}
+
 JsonValue::JsonValue(JsonValueType type_) : type(type_)
 {
 }
@@ -104,7 +132,14 @@ JsonValue* JsonNumber::Clone() const
 
 std::string JsonNumber::ToString() const
 {
-    return ToUtf8(std::to_string(value));
+    if (value == static_cast<int64_t>(value))
+    {
+        return ToUtf8(std::to_string(static_cast<int64_t>(value)));
+    }
+    else
+    {
+        return ToUtf8(std::to_string(value));
+    }
 }
 
 JsonBool::JsonBool() : JsonValue(JsonValueType::boolean), value(false)
@@ -135,7 +170,7 @@ void JsonObject::AddField(const std::u32string& fieldName, std::unique_ptr<JsonV
     fieldValues.push_back(std::move(fieldValue));
 }
 
-JsonValue* JsonObject::GetField(const std::u32string& fieldName)
+JsonValue* JsonObject::GetField(const std::u32string& fieldName) const
 {
     auto it = fieldMap.find(fieldName);
     if (it != fieldMap.cend())
@@ -148,24 +183,113 @@ JsonValue* JsonObject::GetField(const std::u32string& fieldName)
     }
 }
 
-std::string JsonObject::GetStringField(const std::u32string& fieldName)
+bool JsonObject::HasField(const std::u32string& fieldName) const
+{
+    return GetField(fieldName) != nullptr;
+}
+
+JsonString* JsonObject::GetStringField(const std::u32string& fieldName) const
 {
     JsonValue* value = GetField(fieldName);
     if (value)
     {
-        if (value->Type() == JsonValueType::string)
+        if (value->IsString())
         {
             JsonString* str = static_cast<JsonString*>(value);
-            return ToUtf8(str->Value());
+            return str;
         }
         else
         {
-            throw std::runtime_error("error getting field " + Utf8StringToPlatformString(ToUtf8(fieldName)) + ": string field expected");
+            throw std::runtime_error("error getting field " + ToUtf8(fieldName) + ": string field expected");
         }
     }
     else
     {
-        return std::string();
+        return nullptr;
+    }
+}
+
+JsonNumber* JsonObject::GetNumberField(const std::u32string& fieldName) const
+{
+    JsonValue* value = GetField(fieldName);
+    if (value)
+    {
+        if (value->IsNumber())
+        {
+            JsonNumber* number = static_cast<JsonNumber*>(value);
+            return number;
+        }
+        else
+        {
+            throw std::runtime_error("error getting field " + ToUtf8(fieldName) + ": number field expected");
+        }
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+JsonBool* JsonObject::GetBooleanField(const std::u32string& fieldName) const
+{
+    JsonValue* value = GetField(fieldName);
+    if (value)
+    {
+        if (value->IsBoolean())
+        {
+            JsonBool* boolean = static_cast<JsonBool*>(value);
+            return boolean;
+        }
+        else
+        {
+            throw std::runtime_error("error getting field " + ToUtf8(fieldName) + ": boolean field expected");
+        }
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+JsonObject* JsonObject::GetObjectField(const std::u32string& fieldName) const
+{
+    JsonValue* value = GetField(fieldName);
+    if (value)
+    {
+        if (value->IsObject())
+        {
+            JsonObject* object = static_cast<JsonObject*>(value);
+            return object;
+        }
+        else
+        {
+            throw std::runtime_error("error getting field " + ToUtf8(fieldName) + ": object field expected");
+        }
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+JsonArray* JsonObject::GetArrayField(const std::u32string& fieldName) const
+{
+    JsonValue* value = GetField(fieldName);
+    if (value)
+    {
+        if (value->IsArray())
+        {
+            JsonArray* array = static_cast<JsonArray*>(value);
+            return array;
+        }
+        else
+        {
+            throw std::runtime_error("error getting field " + ToUtf8(fieldName) + ": array field expected");
+        }
+    }
+    else
+    {
+        return nullptr;
     }
 }
 
@@ -217,13 +341,14 @@ void JsonObject::Write(CodeFormatter& formatter)
         }
         else
         {
-            formatter.WriteLine(", ");
+            formatter.WriteLine(",");
         }
         s.Write(formatter);
-        formatter.Write(" : ");
-        if (v->Type() == JsonValueType::array || v->Type() == JsonValueType::object)
+        formatter.Write(": ");
+        if (v->IsObject())
         {
             formatter.WriteLine();
+            formatter.IncIndent();
         }
         if (s.Value() == U"content")
         {
@@ -233,6 +358,10 @@ void JsonObject::Write(CodeFormatter& formatter)
         if (s.Value() == U"content")
         {
             formatter.EndContent();
+        }
+        if (v->IsObject())
+        {
+            formatter.DecIndent();
         }
         lastItemType = v->Type();
     }
@@ -263,9 +392,21 @@ JsonValue* JsonArray::Clone() const
     return clone;
 }
 
+JsonValue* JsonArray::GetItem(int index) const
+{
+    if (index >= 0 && index < items.size())
+    {
+        return items[index].get();
+    }
+    else
+    {
+        throw std::runtime_error("invalid JSON array index");
+    }
+}
+
 JsonValue* JsonArray::operator[](int index) const
 {
-    return items[index].get();
+    return GetItem(index);
 }
 
 std::string JsonArray::ToString() const
@@ -302,7 +443,7 @@ void JsonArray::Write(CodeFormatter& formatter)
         }
         else
         {
-            formatter.WriteLine(", ");
+            formatter.WriteLine(",");
         }
         item->Write(formatter);
         lastItemType = item->Type();

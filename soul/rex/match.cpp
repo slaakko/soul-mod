@@ -116,6 +116,11 @@ soul::rex::nfa::Nfa CompileRegularExpressionPattern(const std::string& lexerModu
     return soul::rex::parser::RexParser<LexerType>::Parse(lexer, &context);
 }
 
+soul::rex::nfa::Nfa CompileRegularExpressionPattern(const std::string& lexerModuleFileName, soul::rex::context::Context& context, const std::u32string& regularExpressionPattern)
+{
+    return CompileRegularExpressionPattern(lexerModuleFileName, util::ResourceFlags::none, context, regularExpressionPattern);
+}
+
 soul::rex::nfa::Nfa CompileRegularExpressionPattern(const std::string& lexerModuleFileName, soul::rex::context::Context& context, const std::string& regularExpressionPattern)
 {
     return CompileRegularExpressionPattern(lexerModuleFileName, context, util::ToUtf32(regularExpressionPattern));

@@ -6,6 +6,10 @@
 module otava.symbols.bound.tree.visitor;
 
 import otava.symbols.bound.tree;
+import otava.symbols.function.templates;
+import otava.symbols.argument.conversion.table;
+import otava.symbols.operation.repository;
+import otava.symbols.function.symbol;
 
 namespace otava::symbols {
 

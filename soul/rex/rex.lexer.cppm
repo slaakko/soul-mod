@@ -3225,7 +3225,8 @@ soul::lexer::Lexer<RexLexer<Char>, Char> MakeLexer(const Char* start, const Char
 }
 
 template<typename Char>
-soul::lexer::Lexer<RexLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName)
+soul::lexer::Lexer<RexLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, 
+    const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
     auto lexer = soul::lexer::Lexer<RexLexer<Char>, Char>(start, end, fileName);

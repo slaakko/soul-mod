@@ -10,6 +10,7 @@ import util.code.formatter;
 import util.component;
 import soul.ast.source.pos;
 import otava.intermediate.value;
+import otava.intermediate.instruction;
 
 export namespace otava::intermediate::function {}
 
@@ -23,7 +24,6 @@ class Visitor;
 class Code;
 class BasicBlock;
 class Context;
-class RegValue;
 class Type;
 class Instruction;
 

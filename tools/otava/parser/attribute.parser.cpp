@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/attribute.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/attribute.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.attribute;
 
@@ -11,7 +11,6 @@ import otava.parser.expression;
 import otava.parser.identifier;
 import otava.parser.punctuation;
 import otava.parser.type;
-import otava.ast;
 
 using namespace otava::token;
 using namespace otava::lexer;
@@ -19,7 +18,6 @@ using namespace otava::parser::expression;
 using namespace otava::parser::identifier;
 using namespace otava::parser::punctuation;
 using namespace otava::parser::type;
-using namespace otava::ast;
 
 namespace otava::parser::attribute {
 

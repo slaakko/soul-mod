@@ -8,13 +8,13 @@ export module otava.intermediate.code;
 import std.core;
 import otava.intermediate.data;
 import otava.intermediate.metadata;
+import otava.intermediate.basic.block;
 import util.code.formatter;
 import util.component;
 
 export namespace otava::intermediate {
 
 class Instruction;
-class BasicBlock;
 class FunctionType;
 class Visitor;
 

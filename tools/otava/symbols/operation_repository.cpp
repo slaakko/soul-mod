@@ -20,6 +20,7 @@ import otava.symbols.overload.resolution;
 import otava.symbols.exception;
 import otava.symbols.expression.binder;
 import otava.symbols.type_compare;
+import otava.symbols.function.templates;
 import otava.ast.expression;
 import util.unicode;
 import util.sha1;

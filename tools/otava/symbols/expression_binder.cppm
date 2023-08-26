@@ -8,6 +8,7 @@ export module otava.symbols.expression.binder;
 import std.core;
 import otava.ast.node;
 import otava.symbols.symbol;
+import soul.ast.source.pos;
 
 export namespace otava::symbols {
 

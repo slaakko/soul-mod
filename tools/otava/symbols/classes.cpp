@@ -26,6 +26,8 @@ import otava.symbols.argument.conversion.table;
 import otava.symbols.class_templates;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.function.group.symbol;
+import otava.symbols.function.templates;
+import otava.symbols.operation.repository;
 import otava.symbols.declaration;
 import otava.symbols.type_compare;
 import util.unicode;

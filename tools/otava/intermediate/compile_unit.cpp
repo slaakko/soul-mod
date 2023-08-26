@@ -5,11 +5,13 @@
 
 module otava.intermediate.compile.unit;
 
+import otava.intermediate.basic.block;
 import otava.intermediate.context;
 import otava.intermediate.type;
 import otava.intermediate.code;
 import otava.intermediate.data;
 import otava.intermediate.function;
+import otava.intermediate.value;
 import util.code.formatter;
 
 namespace otava::intermediate {
