@@ -18,8 +18,8 @@ int main()
         std::unique_ptr<util::JsonValue> request = soul::json::rpc::MakePositionalParamRequest("add", params.get(), 1);
         util::CodeFormatter formatter(std::cout);
         request->Write(formatter);
-        std::unique_ptr<util::JsonValue> result = soul::json::rpc::SendReceive(57000, request.get());
-        result->Write(formatter);
+        std::unique_ptr<util::JsonValue> response = soul::json::rpc::SendReceive(57000, request.get());
+        response->Write(formatter);
         util::Done();
     }
     catch (const std::exception& ex)

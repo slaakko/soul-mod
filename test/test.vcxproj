@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings>5050;4267;4244</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>
@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
+      <DisableSpecificWarnings>5050;4267;4244</DisableSpecificWarnings>
       <EnableModules>true</EnableModules>
     </ClCompile>
     <Link>

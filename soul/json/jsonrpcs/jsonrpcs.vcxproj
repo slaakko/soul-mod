@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b949b5b8-685f-41a1-87e4-68352f8333e4}</ProjectGuid>
-    <RootNamespace>jsonrpcc</RootNamespace>
+    <ProjectGuid>{0b7e2ecc-2887-4d0b-b0d8-0cb098e50c88}</ProjectGuid>
+    <RootNamespace>jsonrpcs</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,10 +71,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>jsonrpccd</TargetName>
+    <TargetName>jsonrpcsd</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>jsonrpcc</TargetName>
+    <TargetName>jsonrpcs</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -147,13 +147,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="server.cpp" />
+    <ClCompile Include="server.cppm" />
+  </ItemGroup>
+  <ItemGroup>
     <ResourceCompile Include="..\json\soul.json.lexer.classmap.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\util\util.vcxproj">
+    <ProjectReference Include="..\..\..\util\util.vcxproj">
       <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\jsonrpc\jsonrpc.vcxproj">

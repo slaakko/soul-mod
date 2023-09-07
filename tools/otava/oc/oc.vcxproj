@@ -146,8 +146,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\soul\ast\ast.vcxproj">
+      <Project>{376cc61c-9b71-491d-a62c-b08926b38ddb}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\util\util.vcxproj">
-      <Project>{9dbb759c-7e26-4339-a413-7dd1454ee5ae}</Project>
+      <Project>{7b253db2-2fa2-4958-83a0-36847b99e78c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\build\build.vcxproj">
       <Project>{633d5849-cd60-4c05-805c-d6b7e5fef3a7}</Project>

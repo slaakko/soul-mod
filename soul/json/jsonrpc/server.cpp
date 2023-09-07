@@ -36,7 +36,7 @@ std::unique_ptr<util::JsonValue> HandleRequestMethod(util::JsonString* methodNam
     }
     Method* method = GetMethod(util::ToUtf8(methodName->Value()));
     method->Validate(params);
-    std::unique_ptr<util::JsonValue> result = method->Exec(params);
+    std::unique_ptr<util::JsonValue> result = method->Execute(params);
     return result;
 }
 
@@ -55,7 +55,7 @@ void HandleNotificationMethod(util::JsonString* methodName, util::JsonValue* par
     }
     Method* method = GetMethod(util::ToUtf8(methodName->Value()));
     method->Validate(params);
-    std::unique_ptr<util::JsonValue> result = method->Exec(params);
+    std::unique_ptr<util::JsonValue> result = method->Execute(params);
 }
 
 std::unique_ptr<util::JsonValue> HandleRequest(util::JsonValue* request)
