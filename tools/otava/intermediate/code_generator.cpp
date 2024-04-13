@@ -1267,6 +1267,7 @@ void EmitNot(NotInstruction& inst, CodeGenerator& codeGen)
         {
             otava::assembly::Instruction* notInst = new otava::assembly::Instruction(otava::assembly::OpCode::NOT);
             notInst->AddOperand(resultReg);
+            codeGen.Emit(notInst);
         }
     }
     else

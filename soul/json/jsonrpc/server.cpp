@@ -10,6 +10,7 @@ import soul.json.rpc.method;
 import soul.json.rpc.method.registry;
 import soul.json.rpc.io;
 import soul.json.rpc.context;
+import soul.json.rpc.config;
 
 namespace soul::json::rpc {
 
@@ -21,7 +22,7 @@ void GetRequestFields(util::JsonObject* request, util::JsonString*& version, uti
     params = request->GetField(U"params");
 }
 
-std::unique_ptr<util::JsonValue> HandleRequestMethod(util::JsonString* methodName, util::JsonValue* params)
+std::unique_ptr<util::JsonValue> HandleRequestMethod(ExecutionContext& context, util::JsonString* methodName, util::JsonValue* params)
 {
     if (!methodName)
     {
@@ -36,11 +37,11 @@ std::unique_ptr<util::JsonValue> HandleRequestMethod(util::JsonString* methodNam
     }
     Method* method = GetMethod(util::ToUtf8(methodName->Value()));
     method->Validate(params);
-    std::unique_ptr<util::JsonValue> result = method->Execute(params);
+    std::unique_ptr<util::JsonValue> result = method->Execute(context, params);
     return result;
 }
 
-void HandleNotificationMethod(util::JsonString* methodName, util::JsonValue* params)
+void HandleNotificationMethod(ExecutionContext& context, util::JsonString* methodName, util::JsonValue* params)
 {
     if (!methodName)
     {
@@ -55,10 +56,10 @@ void HandleNotificationMethod(util::JsonString* methodName, util::JsonValue* par
     }
     Method* method = GetMethod(util::ToUtf8(methodName->Value()));
     method->Validate(params);
-    std::unique_ptr<util::JsonValue> result = method->Execute(params);
+    std::unique_ptr<util::JsonValue> result = method->Execute(context, params);
 }
 
-std::unique_ptr<util::JsonValue> HandleRequest(util::JsonValue* request)
+std::unique_ptr<util::JsonValue> HandleRequest(ExecutionContext& context, util::JsonValue* request)
 {
     if (request->IsArray())
     {
@@ -68,7 +69,7 @@ std::unique_ptr<util::JsonValue> HandleRequest(util::JsonValue* request)
         for (int i = 0; i < n; ++i)
         {
             util::JsonValue* req = requestArray->GetItem(i);
-            std::unique_ptr<util::JsonValue> response = HandleRequest(req);
+            std::unique_ptr<util::JsonValue> response = HandleRequest(context, req);
             if (response)
             {
                 responseArray->AddItem(std::move(response));
@@ -82,7 +83,7 @@ std::unique_ptr<util::JsonValue> HandleRequest(util::JsonValue* request)
     }
     util::JsonObject* requestObject = static_cast<util::JsonObject*>(request);
     util::JsonString* version = nullptr;
-    util::JsonValue* id = nullptr; 
+    util::JsonValue* id = nullptr;
     util::JsonString* method = nullptr;
     util::JsonValue* params = nullptr;
     try
@@ -102,13 +103,13 @@ std::unique_ptr<util::JsonValue> HandleRequest(util::JsonValue* request)
             std::unique_ptr<util::JsonObject> response(new util::JsonObject());
             response->AddField(U"jsonrpc", std::unique_ptr<util::JsonValue>(new util::JsonString(U"2.0")));
             response->AddField(U"id", std::unique_ptr<util::JsonValue>(id->Clone()));
-            std::unique_ptr<util::JsonValue> result = HandleRequestMethod(method, params);
+            std::unique_ptr<util::JsonValue> result = HandleRequestMethod(context, method, params);
             response->AddField(U"result", std::move(result));
             return response;
         }
         else
         {
-            HandleNotificationMethod(method, params);
+            HandleNotificationMethod(context, method, params);
             return std::unique_ptr<util::JsonObject>();
         }
     }
@@ -137,15 +138,21 @@ std::unique_ptr<util::JsonValue> HandleRequest(util::JsonValue* request)
     }
 }
 
-void ProcessRequest(util::Stream& stream)
+bool ProcessRequest(util::Stream& stream, bool& wait)
 {
+    ExecutionContext context;
+    if (wait)
+    {
+        wait = false;
+        context.SetWait();
+    }
     std::unique_ptr<util::JsonValue> response;
     try
     {
         std::vector<std::string> headers = ReadHeaders(stream);
         if (headers.empty())
         {
-            throw JsonRpcException(invalidRequest, "at least one JSON-RPC header required");
+            return true;
         }
         Context inputContext;
         ParseHeaders(inputContext, headers);
@@ -155,7 +162,13 @@ void ProcessRequest(util::Stream& stream)
         }
         std::string requestContent = ReadContent(stream, inputContext);
         std::unique_ptr<util::JsonValue> request = ParseContent(requestContent);
-        response = HandleRequest(request.get());
+        if (Config::Instance().GetFlag(Flags::log))
+        {
+            std::ofstream file(util::Path::Combine(Config::Instance().LogDir(), "request.json"));
+            util::CodeFormatter formatter(file);
+            request->Write(formatter);
+        }
+        response = HandleRequest(context, request.get());
     }
     catch (JsonRpcException& ex)
     {
@@ -173,7 +186,14 @@ void ProcessRequest(util::Stream& stream)
     if (response)
     {
         WriteJsonValue(response.get(), stream);
+        if (Config::Instance().GetFlag(Flags::log))
+        {
+            std::ofstream file(util::Path::Combine(Config::Instance().LogDir(), "response.json"));
+            util::CodeFormatter formatter(file);
+            response->Write(formatter);
+        }
     }
+    return context.Exit();
 }
 
 } // namespace soul::json::rpc

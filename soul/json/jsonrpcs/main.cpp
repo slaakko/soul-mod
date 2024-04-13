@@ -3,22 +3,21 @@
 // Distributed under the MIT license
 // =================================
 
-import soul.json.rpc.socket_server;
+import soul.json.rpc;
 import json.rpc.math.server;
 import util;
 import std.core;
+import std.filesystem;
 
 int main()
 {
     try
     {
         util::Init();
+        soul::json::rpc::Config::Instance().SetLogDir(util::GetFullPath(util::Path::Combine(util::SoulRoot(), "log")));
+        std::filesystem::create_directories(soul::json::rpc::Config::Instance().LogDir());
         json::rpc::math::server::Init();
-        soul::json::rpc::StartServer(57000);
-        std::string line;
-        std::getline(std::cin, line);
-        soul::json::rpc::StopServer();
-        util::Done();
+        soul::json::rpc::RunServer(57000, false);
     }
     catch (const std::exception& ex)
     {

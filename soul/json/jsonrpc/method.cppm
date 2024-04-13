@@ -13,17 +13,27 @@ export namespace soul::json::rpc {
 class Parameter
 {
 public:
-    Parameter(util::JsonValueType type_, const std::string& name_);
+    Parameter(util::JsonValueType type_, const std::string& name_, bool optional_);
     util::JsonValueType Type() const { return type; }
     const std::string& Name() const { return name; }
+    bool IsOptional() const { return optional; }
 private:
-    util::JsonValueType type; 
+    util::JsonValueType type;
     std::string name;
+    bool optional;
 };
 
-enum class MethodKind
+class ExecutionContext
 {
-    positionalParamMethod, namedParamMethod
+public:
+    ExecutionContext();
+    void SetWait() { wait = true; }
+    bool Wait() const { return wait; }
+    void SetExit() { exit = true; }
+    bool Exit() const { return exit; }
+private:
+    bool wait;
+    bool exit;
 };
 
 class Method
@@ -32,18 +42,20 @@ public:
     Method(const std::string& name_);
     virtual ~Method();
     void Validate(util::JsonValue* params);
-    std::unique_ptr<util::JsonValue> Execute(util::JsonValue* params);
-    virtual std::unique_ptr<util::JsonValue> ExecutePositional(util::JsonArray* params) = 0;
-    virtual std::unique_ptr<util::JsonValue> ExecuteNamed(util::JsonObject* params) = 0;
+    std::unique_ptr<util::JsonValue> Execute(ExecutionContext& context, util::JsonValue* params);
+    virtual std::unique_ptr<util::JsonValue> ExecutePositional(ExecutionContext& context, util::JsonArray* params);
+    virtual std::unique_ptr<util::JsonValue> ExecuteNamed(ExecutionContext& context, util::JsonObject* params);
     const std::string& Name() const { return name; }
     void AddParameter(const Parameter& parameter);
     int Arity() const { return parameters.size(); }
+    int MinArity() const { return minArity; }
     const std::vector<Parameter>& Parameters() const { return parameters; }
 private:
     void ValidatePositional(util::JsonArray* params);
     void ValidateNamed(util::JsonObject* params);
     std::string name;
     std::vector<Parameter> parameters;
+    int minArity;
 };
 
 } // namespace soul::json::rpc

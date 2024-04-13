@@ -12,30 +12,48 @@ namespace util {
 
 std::string JsonValueTypeStr(JsonValueType type)
 {
-    switch (type)
+    std::string str;
+    if ((type & JsonValueType::object) != JsonValueType::none)
     {
-        case JsonValueType::object:
+        if (!str.empty())
         {
-            return "object";
+            str.append(" | ");
         }
-        case JsonValueType::array:
-        {
-            return "array";
-        }
-        case JsonValueType::string:
-        {
-            return "string";
-        }
-        case JsonValueType::number:
-        {
-            return "number";
-        }
-        case JsonValueType::boolean:
-        {
-            return "boolean";
-        }
+        str.append("object");
     }
-    return std::string();
+    if ((type & JsonValueType::array) != JsonValueType::none)
+    {
+        if (!str.empty())
+        {
+            str.append(" | ");
+        }
+        str.append("array");
+    }
+    if ((type & JsonValueType::string) != JsonValueType::none)
+    {
+        if (!str.empty())
+        {
+            str.append(" | ");
+        }
+        str.append("string");
+    }
+    if ((type & JsonValueType::number) != JsonValueType::none)
+    {
+        if (!str.empty())
+        {
+            str.append(" | ");
+        }
+        str.append("number");
+    }
+    if ((type & JsonValueType::boolean) != JsonValueType::none)
+    {
+        if (!str.empty())
+        {
+            str.append(" | ");
+        }
+        str.append("boolean");
+    }
+    return str;
 }
 
 JsonValue::JsonValue(JsonValueType type_) : type(type_)

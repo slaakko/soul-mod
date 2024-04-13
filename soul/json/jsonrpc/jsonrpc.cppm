@@ -14,3 +14,4 @@ export import soul.json.rpc.server;
 export import soul.json.rpc.socket_server;
 export import soul.json.rpc.client;
 export import soul.json.rpc.socket_client;
+export import soul.json.rpc.config;

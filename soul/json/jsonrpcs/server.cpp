@@ -13,17 +13,17 @@ class AddMethod : public soul::json::rpc::Method
 {
 public:
     AddMethod();
-    std::unique_ptr<util::JsonValue> ExecutePositional(util::JsonArray* params) override;
-    std::unique_ptr<util::JsonValue> ExecuteNamed(util::JsonObject* params) override;
+    std::unique_ptr<util::JsonValue> ExecutePositional(soul::json::rpc::ExecutionContext& context, util::JsonArray* params) override;
+    std::unique_ptr<util::JsonValue> ExecuteNamed(soul::json::rpc::ExecutionContext& context, util::JsonObject* params) override;
 };
 
 AddMethod::AddMethod() : soul::json::rpc::Method("add")
 {
-    AddParameter(soul::json::rpc::Parameter(util::JsonValueType::number, "x"));
-    AddParameter(soul::json::rpc::Parameter(util::JsonValueType::number, "y"));
+    AddParameter(soul::json::rpc::Parameter(util::JsonValueType::number, "x", false));
+    AddParameter(soul::json::rpc::Parameter(util::JsonValueType::number, "y", false));
 }
 
-std::unique_ptr<util::JsonValue> AddMethod::ExecutePositional(util::JsonArray* params)
+std::unique_ptr<util::JsonValue> AddMethod::ExecutePositional(soul::json::rpc::ExecutionContext& context, util::JsonArray* params)
 {
     if (params)
     {
@@ -40,7 +40,7 @@ std::unique_ptr<util::JsonValue> AddMethod::ExecutePositional(util::JsonArray* p
     throw soul::json::rpc::JsonRpcException(soul::json::rpc::invalidParams, Name() + " method got invalid prameters");
 }
 
-std::unique_ptr<util::JsonValue> AddMethod::ExecuteNamed(util::JsonObject* params)
+std::unique_ptr<util::JsonValue> AddMethod::ExecuteNamed(soul::json::rpc::ExecutionContext& context, util::JsonObject* params)
 {
     if (params)
     {

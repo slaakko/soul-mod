@@ -9,11 +9,15 @@ import soul.json.rpc.error;
 
 namespace soul::json::rpc {
 
-Parameter::Parameter(util::JsonValueType type_, const std::string& name_) : type(type_), name(name_)
+Parameter::Parameter(util::JsonValueType type_, const std::string& name_, bool optional_) : type(type_), name(name_), optional(optional_)
 {
 }
 
-Method::Method(const std::string& name_) : name(name_)
+ExecutionContext::ExecutionContext() : wait(false), exit(false)
+{
+}
+
+Method::Method(const std::string& name_) : name(name_), minArity(0)
 {
 }
 
@@ -24,6 +28,10 @@ Method::~Method()
 void Method::AddParameter(const Parameter& parameter)
 {
     parameters.push_back(parameter);
+    if (!parameter.IsOptional())
+    {
+        ++minArity;
+    }
 }
 
 void Method::Validate(util::JsonValue* params)
@@ -55,7 +63,7 @@ void Method::ValidatePositional(util::JsonArray* params)
 {
     if (params)
     {
-        if (params->Count() != Arity())
+        if (params->Count() < MinArity() || params->Count() > Arity())
         {
             JsonRpcException(invalidParams, "method '" + Name() + "': wrong arity: " + std::to_string(Arity()) + " parameters expected, " +
                 std::to_string(params->Count()) + " arguments supplied");
@@ -64,7 +72,7 @@ void Method::ValidatePositional(util::JsonArray* params)
         for (int i = 0; i < n; ++i)
         {
             const Parameter& parameter = Parameters()[i];
-            if (params->GetItem(i)->Type() != parameter.Type())
+            if ((params->GetItem(i)->Type() & parameter.Type()) == util::JsonValueType::none)
             {
                 throw JsonRpcException(invalidParams, "method '" + Name() + "': parameter " + std::to_string(i) + ": " + util::JsonValueTypeStr(parameter.Type()) + " expected, " +
                     util::JsonValueTypeStr(params->GetItem(i)->Type()) + " argument supplied");
@@ -83,7 +91,7 @@ void Method::ValidatePositional(util::JsonArray* params)
 
 void Method::ValidateNamed(util::JsonObject* params)
 {
-    if (params->FieldCount() != Arity())
+    if (params->FieldCount() < MinArity() || params->FieldCount() > Arity())
     {
         throw JsonRpcException(invalidParams, "method '" + Name() + "': wrong arity: " + std::to_string(Arity()) + " parameters expected, " +
             std::to_string(params->FieldCount()) + " arguments supplied");
@@ -93,9 +101,12 @@ void Method::ValidateNamed(util::JsonObject* params)
         util::JsonValue* fieldValue = params->GetField(util::ToUtf32(parameter.Name()));
         if (!fieldValue)
         {
-            throw JsonRpcException(invalidParams, "method '" + Name() + "': parameter '" + parameter.Name() + "' is missing");
+            if (!parameter.IsOptional())
+            {
+                throw JsonRpcException(invalidParams, "method '" + Name() + "': parameter '" + parameter.Name() + "' is missing");
+            }
         }
-        if (fieldValue->Type() != parameter.Type())
+        if (fieldValue && (fieldValue->Type() & parameter.Type()) == util::JsonValueType::none)
         {
             throw JsonRpcException(invalidParams, "method '" + Name() + "': parameter '" + parameter.Name() + "': " + util::JsonValueTypeStr(parameter.Type()) + " expected, " +
                 util::JsonValueTypeStr(fieldValue->Type()) + " argument supplied");
@@ -103,19 +114,19 @@ void Method::ValidateNamed(util::JsonObject* params)
     }
 }
 
-std::unique_ptr<util::JsonValue> Method::Execute(util::JsonValue* params)
+std::unique_ptr<util::JsonValue> Method::Execute(ExecutionContext& context, util::JsonValue* params)
 {
     if (params)
     {
         if (params->IsArray())
         {
             util::JsonArray* paramsArray = static_cast<util::JsonArray*>(params);
-            return ExecutePositional(paramsArray);
+            return ExecutePositional(context, paramsArray);
         }
         else if (params->IsObject())
         {
             util::JsonObject* paramsObject = static_cast<util::JsonObject*>(params);
-            return ExecuteNamed(paramsObject);
+            return ExecuteNamed(context, paramsObject);
         }
         else
         {
@@ -124,8 +135,18 @@ std::unique_ptr<util::JsonValue> Method::Execute(util::JsonValue* params)
     }
     else
     {
-        return ExecutePositional(nullptr);
+        return ExecutePositional(context, nullptr);
     }
+}
+
+std::unique_ptr<util::JsonValue> Method::ExecutePositional(ExecutionContext& context, util::JsonArray* params)
+{
+    return std::unique_ptr<util::JsonValue>(new util::JsonBool(false));
+}
+
+std::unique_ptr<util::JsonValue> Method::ExecuteNamed(ExecutionContext& context, util::JsonObject* params)
+{
+    return std::unique_ptr<util::JsonValue>(new util::JsonBool(false));
 }
 
 } // namespace soul::json::rpc

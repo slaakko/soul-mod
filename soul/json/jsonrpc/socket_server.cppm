@@ -9,7 +9,6 @@ import std.core;
 
 export namespace soul::json::rpc {
 
-void StartServer(int port);
-void StopServer();
+void RunServer(int port, bool wait);
 
 } // namespace soul::json::rpc

@@ -10,6 +10,6 @@ import std.core;
 
 export namespace soul::json::rpc {
 
-void ProcessRequest(util::Stream& stream);
+bool ProcessRequest(util::Stream& stream, bool& wait);
 
 } // namespace soul::json::rpc

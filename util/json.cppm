@@ -12,10 +12,32 @@ export namespace util {
 
 export namespace json {}
 
-enum class JsonValueType
+enum class JsonValueType : int
 {
-    object, array, string, number, boolean, null
+    none = 0,
+    object = 1 << 0,
+    array = 1 << 1,
+    string = 1 << 2,
+    number = 1 << 3,
+    boolean = 1 << 4,
+    null = 1 << 5,
+    any = object | array | string | number | boolean | null
 };
+
+constexpr JsonValueType operator|(JsonValueType left, JsonValueType right)
+{
+    return JsonValueType(int(left) | int(right));
+}
+
+constexpr JsonValueType operator&(JsonValueType left, JsonValueType right)
+{
+    return JsonValueType(int(left) & int(right));
+}
+
+constexpr JsonValueType operator~(JsonValueType type)
+{
+    return JsonValueType(~int(type));
+}
 
 std::string JsonValueTypeStr(JsonValueType type);
 

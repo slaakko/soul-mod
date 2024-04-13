@@ -151,10 +151,12 @@
   <ItemGroup>
     <ClCompile Include="client.cpp" />
     <ClCompile Include="client.cppm" />
+    <ClCompile Include="config.cpp" />
     <ClCompile Include="context.cpp" />
     <ClCompile Include="context.cppm" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="error.cppm" />
+    <ClCompile Include="config.cppm" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="io.cppm" />
     <ClCompile Include="jsonrpc.cppm" />
