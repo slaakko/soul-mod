@@ -1,6 +1,6 @@
 export module soul.xml.parser.rules;
 
-import std.core;
+import std;
 
 export namespace soul::xml::parser::rules {
 

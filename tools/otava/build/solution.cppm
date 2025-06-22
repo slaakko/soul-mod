@@ -5,7 +5,7 @@
 
 export module otava.build_solution;
 
-import std.core;
+import std;
 
 export namespace otava::build_solution {}
 

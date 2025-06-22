@@ -1,6 +1,6 @@
 export module otava.symbols.type_compare;
 
-import std.core;
+import std;
 
 export namespace otava::symbols {
 

@@ -5,7 +5,7 @@
 
 export module util.file.stream;
 
-import std.core;
+import std;
 import util.stream;
 
 export namespace util {
@@ -51,7 +51,7 @@ public:
     std::int64_t Size() const;
 private:
     std::string filePath;
-    FILE* file;
+    std::FILE* file;
     bool needToClose;
 };
 

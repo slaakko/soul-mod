@@ -5,7 +5,7 @@
 
 export module soul.slg.regular.expression.parser;
 
-import std.core;
+import std;
 import soul.ast.re;
 
 export namespace soul::slg {

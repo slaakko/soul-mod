@@ -5,12 +5,12 @@
 
 module;
 #include <cstdio>
-#include <errno.h>
+#include <cerrno>
+#include <string.h>
 
 module util.file.stream;
 
-import std.core;
-import std.filesystem;
+import std;
 import util.text.util;
 import util.error;
 

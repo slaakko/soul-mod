@@ -1119,7 +1119,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ParserFile& parserFile)
     soul::ast::common::ExportModule* mod = parserFile.ExportModule();
     formatter->WriteLine("export module " + mod->ModuleName() + ";");
     formatter->WriteLine();
-    formatter->WriteLine("import std.core;");
+    formatter->WriteLine("import std;");
     formatter->WriteLine("import soul.lexer;");
     formatter->WriteLine("import soul.parser;");
     bool hasInterfaceImports = false;

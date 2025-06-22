@@ -5,7 +5,7 @@
 
 export module otava.build.parser;
 
-import std.core;
+import std;
 
 export namespace otava::build {
 

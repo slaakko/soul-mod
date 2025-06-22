@@ -5,7 +5,7 @@
 
 export module soul.xml.error;
 
-import std.core;
+import std;
 import soul.lexer.file.map;
 import soul.ast.source.pos;
 

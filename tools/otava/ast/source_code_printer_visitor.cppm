@@ -5,7 +5,7 @@
 
 export module otava.ast.source.code.printer.visitor;
 
-import std.core;
+import std;
 import otava.ast.visitor;
 import util.code.formatter;
 

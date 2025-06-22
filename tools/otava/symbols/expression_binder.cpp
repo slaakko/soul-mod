@@ -48,7 +48,7 @@ import otava.ast.simple.type;
 import otava.ast.function;
 import util.unicode;
 import util.text.util;
-import std.core;
+import std;
 
 namespace otava::symbols {
 

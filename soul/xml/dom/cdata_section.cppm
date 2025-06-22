@@ -5,7 +5,7 @@
 
 export module soul.xml.cdata.section;
 
-import std.core;
+import std;
 import soul.xml.text;
 
 export namespace soul::xml {

@@ -5,7 +5,7 @@
 
 export module soul.ast.span;
 
-import std.core;
+import std;
 
 export namespace soul::ast {
 

@@ -5,7 +5,7 @@
 
 export module soul.spg.parsing.util;
 
-import std.core;
+import std;
 import soul.ast.cpp;
 import soul.ast.spg;
 import soul.ast.source.pos;

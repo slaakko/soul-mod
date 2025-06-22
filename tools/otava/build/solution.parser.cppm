@@ -3,7 +3,7 @@
 
 export module otava.solution_parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import otava.build_solution;

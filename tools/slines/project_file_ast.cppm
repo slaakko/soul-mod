@@ -1,6 +1,6 @@
 export module project_file.ast;
 
-import std.core;
+import std;
 import source_file.ast;
 import counters;
 

@@ -5,7 +5,7 @@
 
 export module soul.xml.serialization.ast;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 
 export namespace soul::xml::serialization::ast {

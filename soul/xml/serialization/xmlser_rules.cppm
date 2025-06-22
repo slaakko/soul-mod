@@ -1,6 +1,6 @@
 export module soul.xml.serialization.spg.rules;
 
-import std.core;
+import std;
 
 export namespace soul::xml::serialization::spg::rules {
 

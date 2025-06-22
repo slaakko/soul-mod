@@ -12,7 +12,7 @@ module;
 
 module util.path;
 
-import std.core;
+import std;
 import util.text.util;
 
 namespace util {

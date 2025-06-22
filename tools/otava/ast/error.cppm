@@ -5,7 +5,7 @@
 
 export module otava.ast.error;
 
-import std.core;
+import std;
 
 export namespace otava::ast {
 

@@ -57,7 +57,7 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose, soul
     {
         interfaceFormatter.WriteLine("export module " + moduleName + ";");
         interfaceFormatter.WriteLine();
-        interfaceFormatter.WriteLine("import std.core;");
+        interfaceFormatter.WriteLine("import std;");
         interfaceFormatter.WriteLine();
         interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     }

@@ -5,7 +5,7 @@
 
 export module otava.symbols.scope;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import otava.symbols.lookup;
 

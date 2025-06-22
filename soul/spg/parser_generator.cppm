@@ -5,7 +5,7 @@
 
 export module soul.spg.parser.generator;
 
-import std.core;
+import std;
 import soul.lexer.file.map;
 import soul.ast.spg;
 import soul.common.module_map;

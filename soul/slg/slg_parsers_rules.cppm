@@ -1,6 +1,6 @@
 export module soul.slg.parsers.rules;
 
-import std.core;
+import std;
 
 export namespace soul::slg::parsers::rules {
 

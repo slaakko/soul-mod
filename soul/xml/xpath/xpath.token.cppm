@@ -3,7 +3,7 @@
 
 export module soul.xml.xpath.token;
 
-import std.core;
+import std;
 
 export namespace soul::xml::xpath::token {
 

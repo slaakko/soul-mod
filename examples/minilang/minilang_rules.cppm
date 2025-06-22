@@ -1,6 +1,6 @@
 export module minilang.spg.rules;
 
-import std.core;
+import std;
 
 export namespace minilang::spg::rules {
 

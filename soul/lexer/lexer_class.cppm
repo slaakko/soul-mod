@@ -5,7 +5,7 @@
 
 export module soul.lexer.cls;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import util.unicode;
 import soul.ast.slg;

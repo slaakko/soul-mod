@@ -6,7 +6,7 @@
 export module soul.json.rpc.server;
 
 import util;
-import std.core;
+import std;
 
 export namespace soul::json::rpc {
 

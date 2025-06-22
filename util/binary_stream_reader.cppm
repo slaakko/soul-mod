@@ -5,7 +5,7 @@
 
 export module util.binary.stream.reader;
 
-import std.core;
+import std;
 import util.stream;
 import util.uuid;
 
@@ -39,7 +39,7 @@ public:
     std::int32_t ReadSLEB128Int();
     std::int64_t ReadSLEB128Long();
     void ReadUuid(uuid& uuid);
-    time_t ReadTime();
+    std::time_t ReadTime();
     std::int64_t Position() const { return stream.Position(); }
 private:
     Stream& stream;

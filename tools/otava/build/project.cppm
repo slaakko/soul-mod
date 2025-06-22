@@ -5,7 +5,7 @@
 
 export module otava.build_project;
 
-import std.core;
+import std;
 import soul.lexer.file.map;
 import class_info_index;
 import otava.symbols;

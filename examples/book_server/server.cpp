@@ -1,6 +1,6 @@
 module server;
 
-import std.core;
+import std;
 import util;
 import soul.xml.document;
 import soul.xml.dom.parser;

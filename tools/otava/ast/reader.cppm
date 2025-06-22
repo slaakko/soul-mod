@@ -5,7 +5,7 @@
 
 export module otava.ast.reader;
 
-import std.core;
+import std;
 import util;
 import soul.ast.source.pos;
 import otava.ast.node;

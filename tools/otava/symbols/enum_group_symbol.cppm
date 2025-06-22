@@ -5,7 +5,7 @@
 
 export module otava.symbols.enum_group.symbol;
 
-import std.core;
+import std;
 import otava.symbols.symbol;
 
 export namespace otava::symbols {

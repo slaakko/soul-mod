@@ -5,7 +5,7 @@
 
 export module util.binary.resource.ptr;
 
-import std.core;
+import std;
 
 export namespace util {
 

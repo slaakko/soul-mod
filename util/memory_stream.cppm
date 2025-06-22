@@ -5,7 +5,7 @@
 
 export module util.memory.stream;
 
-import std.core;
+import std;
 import util.stream;
 
 export namespace util {

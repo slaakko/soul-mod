@@ -5,7 +5,7 @@
 
 export module otava.symbols.expression.binder;
 
-import std.core;
+import std;
 import otava.ast.node;
 import otava.symbols.symbol;
 import soul.ast.source.pos;

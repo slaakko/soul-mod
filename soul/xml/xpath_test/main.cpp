@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-import std.core;
+import std;
 import soul.xml.document;
 import soul.xml.xpath;
 import util;

@@ -12,7 +12,7 @@ import otava.assembly.literal;
 import otava.assembly.file;
 import otava.assembly.reg;
 import soul.ast.source.pos;
-import std.core;
+import std;
 
 export namespace otava::intermediate {
 

@@ -1,6 +1,6 @@
 export module soul.cpp20.lexer.line_tokenizer;
 
-import std.core;
+import std;
 import soul.lexer;
 
 export namespace soul::cpp20::lexer {

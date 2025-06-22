@@ -1,6 +1,6 @@
 export module source_file.ast;
 
-import std.core;
+import std;
 import counters;
 
 export namespace source_file::ast {

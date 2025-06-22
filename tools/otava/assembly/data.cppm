@@ -5,7 +5,7 @@
 
 export module otava.assembly.data;
 
-import std.core;
+import std;
 import util.code.formatter;
 import otava.assembly.declaration;
 

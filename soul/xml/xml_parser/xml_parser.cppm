@@ -5,7 +5,7 @@
 
 export module soul.xml.parser;
 
-import std.core;
+import std;
 import soul.xml.content.handler;
 import soul.lexer.file.map;
 

@@ -7,7 +7,7 @@ export module soul.lexer.file.map;
 
 import soul.lexer.base;
 import soul.lexer.token;
-import std.core;
+import std;
 
 export namespace soul::lexer {
 

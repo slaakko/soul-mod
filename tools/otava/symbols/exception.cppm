@@ -5,7 +5,7 @@
 
 export module otava.symbols.exception;
 
-import std.core;
+import std;
 import otava.symbols.context;
 import soul.ast.source.pos;
 

@@ -4,7 +4,7 @@
 // =================================
 
 export module util.binary.stream.writer;
-import std.core;
+import std;
 import util.stream;
 import util.uuid;
 
@@ -39,7 +39,7 @@ public:
     void WriteSLEB128Int(std::int32_t x);
     void WriteSLEB128Long(std::int64_t x);
     void Write(const uuid& uuid);
-    void WriteTime(time_t time);
+    void WriteTime(std::time_t time);
     std::int64_t Position() const { return stream.Position(); }
 private:
     Stream& stream;

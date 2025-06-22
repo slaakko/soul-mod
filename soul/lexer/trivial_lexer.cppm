@@ -5,7 +5,7 @@
 
 export module soul.lexer.trivial;
 
-import std.core;
+import std;
 import soul.lexer.cls;
 import soul.lexer.variables;
 

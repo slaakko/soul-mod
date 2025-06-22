@@ -2,7 +2,7 @@
 
 export module book_msg;
 
-import std.core;
+import std;
 import util.uuid;
 import util.time;
 import soul.xml.element;

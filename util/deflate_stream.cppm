@@ -5,7 +5,7 @@
 
 export module util.deflate.stream;
 
-import std.core;
+import std;
 import util.compression;
 import util.stream;
 

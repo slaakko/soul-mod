@@ -5,7 +5,7 @@
 
 export module otava.symbols.class_templates;
 
-import std.core;
+import std;
 import otava.ast.node;
 import otava.ast.templates;
 import otava.symbols.classes;

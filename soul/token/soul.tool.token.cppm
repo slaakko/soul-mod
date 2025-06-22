@@ -3,7 +3,7 @@
 
 export module soul.tool.token;
 
-import std.core;
+import std;
 
 export namespace soul::tool::token {
 

@@ -5,7 +5,6 @@
 
 module util.file.util;
 
-import std.filesystem;
 import util.file.stream;
 import util.buffered.stream;
 import util.binary.stream.reader;

@@ -3,7 +3,7 @@
 
 export module minilang.parser.identifier;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 

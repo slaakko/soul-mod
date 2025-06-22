@@ -5,7 +5,7 @@
 
 export module otava.assembly.value;
 
-import std.core;
+import std;
 
 export namespace otava::assembly {
 

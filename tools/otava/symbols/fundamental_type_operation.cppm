@@ -9,7 +9,7 @@ import otava.symbols.emitter;
 import otava.symbols.function.symbol;
 import otava.symbols.context;
 import otava.intermediate.value;
-import std.core;
+import std;
 
 export namespace otava::symbols {
 

@@ -6,7 +6,7 @@
 import soul.json.rpc;
 import json.rpc.math.server;
 import util;
-import std.core;
+import std;
 import std.filesystem;
 
 int main()

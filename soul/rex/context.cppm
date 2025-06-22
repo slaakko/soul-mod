@@ -5,7 +5,7 @@
 
 export module soul.rex.context;
 
-import std.core;
+import std;
 import soul.rex.nfa;
 import soul.rex.symbol;
 

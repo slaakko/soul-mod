@@ -36,7 +36,7 @@ import otava.symbols.modules;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol.table;
 import otava.symbols.enums;
-import std.core;
+import std;
 import std.filesystem;
 import util;
 

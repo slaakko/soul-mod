@@ -7,7 +7,7 @@ export module soul.json.rpc.io;
 
 import soul.json.rpc.context;
 import util;
-import std.core;
+import std;
 
 export namespace soul::json::rpc {
 

@@ -399,7 +399,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     {
         interfaceFormatter.WriteLine("export module " + moduleName + ";");
         interfaceFormatter.WriteLine();
-        interfaceFormatter.WriteLine("import std.core;");
+        interfaceFormatter.WriteLine("import std;");
         interfaceFormatter.WriteLine("import soul.lexer;");
         interfaceFormatter.WriteLine("import soul.ast.slg;");
         interfaceFormatter.WriteLine("import util;");

@@ -5,7 +5,7 @@
 
 export module util.sha1;
 
-import std.core;
+import std;
 
 export namespace util {
 

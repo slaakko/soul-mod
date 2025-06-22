@@ -1,3 +1,3 @@
 export module soul.lex;
 
-import std.core;
+import std;

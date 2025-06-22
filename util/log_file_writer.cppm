@@ -5,7 +5,7 @@
 
 export module util.log.file.writer;
 
-import std.core;
+import std;
 
 export namespace util {
 

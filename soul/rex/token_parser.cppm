@@ -5,7 +5,7 @@
 
 export module soul.rex.token.parser;
 
-import std.core;
+import std;
 import soul.lexer.token;
 import soul.lexer.base;
 import util.unicode;

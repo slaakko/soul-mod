@@ -5,7 +5,7 @@
 
 export module otava.filesystem;
 
-import std.core;
+import std;
 
 export extern "C" void* fs_path_default_ctor();
 export extern "C" void* fs_path_copy_ctor(void* p);

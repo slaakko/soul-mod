@@ -1,6 +1,6 @@
 export module msg;
 
-import std.core;
+import std;
 import book_msg;
 
 export namespace msg {

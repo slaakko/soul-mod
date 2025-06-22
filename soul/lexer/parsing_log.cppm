@@ -5,7 +5,7 @@
 
 export module soul.lexer.parsing.log;
 
-import std.core;
+import std;
 
 export namespace soul::lexer {
 

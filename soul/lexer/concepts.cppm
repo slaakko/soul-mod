@@ -5,7 +5,7 @@
 
 export module soul.lexer.concepts;
 
-import std.core;
+import std;
 import soul.lexer.base;
 
 export namespace soul::lexer {

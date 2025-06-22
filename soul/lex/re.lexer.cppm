@@ -2,7 +2,7 @@
 
 export module soul.lex.re;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.ast.slg;
 import util;

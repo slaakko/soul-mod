@@ -7,7 +7,7 @@ export module otava.intermediate.data;
 
 import otava.intermediate.value;
 import util.code.formatter;
-import std.core;
+import std;
 
 export namespace otava::intermediate::data {}
 

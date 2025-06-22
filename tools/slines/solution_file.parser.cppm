@@ -3,7 +3,7 @@
 
 export module solution_file.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import solution_file.ast;

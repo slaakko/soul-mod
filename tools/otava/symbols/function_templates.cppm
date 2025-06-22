@@ -5,7 +5,7 @@
 
 export module otava.symbols.function.templates;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import otava.ast.node;
 import otava.symbols.template_param_compare;

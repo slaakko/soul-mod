@@ -6,7 +6,7 @@
 export module soul.spg.token.parser;
 
 import util;
-import std.core;
+import std;
 import soul.lexer.token;
 import soul.lexer.base;
 import soul.ast.spg;

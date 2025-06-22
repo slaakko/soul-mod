@@ -5,7 +5,7 @@
 
 export module soul.lexer.classmap;
 
-import std.core;
+import std;
 import util;
 
 export namespace soul::lexer {

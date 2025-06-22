@@ -5,7 +5,7 @@
 
 export module soul.xml.node;
 
-import std.core;
+import std;
 import util.code.formatter;
 import soul.ast.source.pos;
 import soul.xml.axis;

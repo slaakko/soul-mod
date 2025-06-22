@@ -5,7 +5,7 @@
 
 export module otava.intermediate.data_item_adder;
 
-import std.core;
+import std;
 import otava.intermediate.visitor;
 import otava.assembly.data;
 

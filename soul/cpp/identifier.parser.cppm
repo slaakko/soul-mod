@@ -3,7 +3,7 @@
 
 export module soul.cpp.identifier.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 

@@ -9,7 +9,7 @@ import soul.spg.nonterminal.info;
 import soul.ast.spg;
 import soul.lexer.file.map;
 import util;
-import std.core;
+import std;
 
 export namespace soul::spg {
 

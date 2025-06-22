@@ -5,7 +5,7 @@
 
 export module otava.intermediate.code;
 
-import std.core;
+import std;
 import otava.intermediate.data;
 import otava.intermediate.metadata;
 import otava.intermediate.basic.block;

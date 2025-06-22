@@ -5,7 +5,7 @@
 
 export module otava.symbols.scope.resolver;
 
-import std.core;
+import std;
 import otava.ast;
 
 export namespace otava::symbols {

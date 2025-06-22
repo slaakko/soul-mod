@@ -5,7 +5,7 @@
 
 export module soul.slg.token.generator;
 
-import std.core;
+import std;
 import soul.ast.slg;
 import soul.common.module_map;
 

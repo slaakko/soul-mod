@@ -5,7 +5,7 @@
 
 export module otava.symbols.enums;
 
-import std.core;
+import std;
 import otava.symbols.scope;
 import otava.symbols.function.symbol;
 import otava.symbols.type.symbol;

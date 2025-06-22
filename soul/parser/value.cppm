@@ -5,7 +5,7 @@
 
 export module soul.parser.value;
 
-import std.core;
+import std;
 
 export namespace soul::parser {
 

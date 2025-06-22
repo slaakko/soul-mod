@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-import std.core;
+import std;
 import otava.build.parser;
 import otava.build.build;
 import otava.build_project;

@@ -7,7 +7,7 @@ export module util.socket_stream;
 
 import util.stream;
 import util.socket;
-import std.core;
+import std;
 
 export namespace util {
 

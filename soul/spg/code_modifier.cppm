@@ -5,7 +5,7 @@
 
 export module soul.spg.code.modifier;
 
-import std.core;
+import std;
 import soul.spg.nonterminal.info;
 import soul.ast.cpp;
 import soul.lexer.file.map;

@@ -1,4 +1,4 @@
-import std.core;
+import std;
 import util;
 import test.lexer;
 import test.parser;

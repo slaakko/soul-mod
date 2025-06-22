@@ -1,6 +1,6 @@
 export module soul.rex.spg.rules;
 
-import std.core;
+import std;
 
 export namespace soul::rex::spg::rules {
 

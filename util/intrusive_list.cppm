@@ -5,7 +5,7 @@
 
 export module util.intrusive.list;
 
-import std.core;
+import std;
 
 export namespace util {
 

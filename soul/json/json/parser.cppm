@@ -6,7 +6,7 @@
 export module soul.json.parser;
 
 import util.json;
-import std.core;
+import std;
 
 export namespace soul::json {
 

@@ -3,7 +3,7 @@
 
 export module test.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 

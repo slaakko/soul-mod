@@ -5,7 +5,7 @@
 
 export module otava.symbols.using_directive;
 
-import std.core;
+import std;
 import otava.ast;
 
 export namespace otava::symbols {

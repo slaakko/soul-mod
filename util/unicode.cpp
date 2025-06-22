@@ -10,7 +10,6 @@ import util.path;
 import util.memory.stream;
 import util.buffered.stream;
 import util.file.stream;
-import std.filesystem;
 
 namespace util {
 

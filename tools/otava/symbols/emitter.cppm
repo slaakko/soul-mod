@@ -5,7 +5,7 @@
 
 export module otava.symbols.emitter;
 
-import std.core;
+import std;
 import otava.symbols.ir_value_stack;
 import otava.symbols.eh;
 import otava.symbols.cleanup_list;

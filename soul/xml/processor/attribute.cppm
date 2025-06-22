@@ -5,7 +5,7 @@
 
 export module soul.xml.processor.attribute;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 
 export namespace soul::xml::processor {

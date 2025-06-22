@@ -3,7 +3,7 @@
 
 export module solution_file.token;
 
-import std.core;
+import std;
 
 export namespace solution_file::token {
 

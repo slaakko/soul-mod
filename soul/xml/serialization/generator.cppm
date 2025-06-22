@@ -5,7 +5,7 @@
 
 export module soul.xml.serialization.generator;
 
-import std.core;
+import std;
 
 export namespace soul::xml::serialization {
 

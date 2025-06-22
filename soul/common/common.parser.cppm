@@ -3,7 +3,7 @@
 
 export module soul.common.common.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import soul.ast.common;

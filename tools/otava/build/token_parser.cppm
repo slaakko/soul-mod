@@ -5,7 +5,7 @@
 
 export module otava.token_parser;
 
-import std.core;
+import std;
 import soul.lexer.base;
 import soul.lexer.token;
 import util.unicode;

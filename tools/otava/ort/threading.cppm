@@ -5,7 +5,7 @@
 
 export module ort.threading;
 
-import std.core;
+import std;
 
 export extern "C" void* create_mutex();
 export extern "C" void destroy_mutex(void* mtx);

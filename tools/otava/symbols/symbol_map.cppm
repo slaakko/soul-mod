@@ -5,7 +5,7 @@
 
 export module otava.symbols.symbol_map;
 
-import std.core;
+import std;
 import util.uuid;
 
 export namespace otava::symbols {

@@ -5,7 +5,7 @@
 
 export module otava.symbols.function.symbol;
 
-import std.core;
+import std;
 import otava.symbols.symbol;
 import otava.symbols.container.symbol;
 import otava.symbols.bound.tree;

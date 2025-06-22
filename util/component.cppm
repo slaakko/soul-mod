@@ -5,7 +5,7 @@
 
 export module util.component;
 
-import std.core;
+import std;
 
 export namespace util {
 

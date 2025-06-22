@@ -5,7 +5,7 @@
 
 export module otava.intermediate.token_parser;
 
-import std.core;
+import std;
 
 export namespace otava::intermediate::token_parser {
 

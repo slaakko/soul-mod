@@ -5,7 +5,7 @@
 
 export module soul.ast.lexer.pos.pair;
 
-import std.core;
+import std;
 
 export namespace soul::ast::lexer::pos::pair {
 

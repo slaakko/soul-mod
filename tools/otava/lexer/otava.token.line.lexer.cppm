@@ -2,7 +2,7 @@
 
 export module soul.cpp20.token.line.lexer;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.ast.slg;
 import otava.token;

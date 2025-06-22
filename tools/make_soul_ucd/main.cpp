@@ -1,4 +1,4 @@
-import std.core;
+import std;
 import std.filesystem;
 import util;
 import soul.xml.content.handler;

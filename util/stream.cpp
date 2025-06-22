@@ -5,7 +5,7 @@
 
 module util.stream;
 
-import std.core;
+import std;
 
 namespace util {
 
@@ -59,7 +59,7 @@ void Stream::CopyTo(Stream& destination)
 
 void Stream::CopyTo(Stream& destination, std::int64_t bufferSize)
 {
-    std::unique_ptr<std::uint8_t> buf(static_cast<std::uint8_t*>(malloc(bufferSize)));
+    std::unique_ptr<std::uint8_t> buf(static_cast<std::uint8_t*>(std::malloc(bufferSize)));
     std::int64_t bytesRead = Read(buf.get(), bufferSize);
     while (bytesRead > 0)
     {

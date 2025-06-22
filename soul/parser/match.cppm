@@ -5,7 +5,7 @@
 
 export module soul.parser.match;
 
-import std.core;
+import std;
 
 export namespace soul::parser {
 

@@ -5,7 +5,7 @@
 
 export module soul.slg.classmap;
 
-import std.core;
+import std;
 
 export namespace soul::slg {
 

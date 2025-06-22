@@ -8,7 +8,7 @@ export module soul.spg.pp.style.code.generator;
 import soul.ast.spg;
 import soul.lexer.file.map;
 import soul.common.module_map;
-import std.core;
+import std;
 
 export namespace soul::spg {
 

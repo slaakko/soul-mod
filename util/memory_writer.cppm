@@ -5,7 +5,7 @@
 
 export module util.memory.writer;
 
-import std.core;
+import std;
 import util.time;
 
 export namespace util {

@@ -3,7 +3,7 @@
 
 export module otava.intermediate.token;
 
-import std.core;
+import std;
 
 export namespace otava::intermediate::token {
 

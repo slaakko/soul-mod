@@ -1,4 +1,4 @@
-import std.core;
+import std;
 import std.filesystem;
 import soul.xml.dom;
 import soul.xml.dom.parser;

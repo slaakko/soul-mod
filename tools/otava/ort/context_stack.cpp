@@ -5,7 +5,7 @@
 
 module context_stack;
 
-import std.core;
+import std;
 import ort;
 
 const int nctx = 1024;
@@ -26,7 +26,7 @@ struct context_buffer
     context_buffer* next;
 };
 
-context_buffer::context_buffer(context_buffer* prev_) : mem(static_cast<std::uint8_t*>(malloc(nctx * ctxsz))), top(0), prev(prev_), next(nullptr)
+context_buffer::context_buffer(context_buffer* prev_) : mem(static_cast<std::uint8_t*>(std::malloc(nctx* ctxsz))), top(0), prev(prev_), next(nullptr)
 {
 }
 

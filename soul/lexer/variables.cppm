@@ -5,7 +5,7 @@
 
 export module soul.lexer.variables;
 
-import std.core;
+import std;
 
 export namespace soul::lexer {
 

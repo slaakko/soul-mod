@@ -6,7 +6,7 @@
 export module otava.symbols.alias.type.templates;
 
 import otava.symbols.alias.type.symbol;
-import std.core;
+import std;
 import otava.ast.templates;
 
 export namespace otava::symbols {

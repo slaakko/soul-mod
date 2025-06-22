@@ -5,7 +5,7 @@
 
 export module otava.assembly.context;
 
-import std.core;
+import std;
 import otava.assembly.reg;
 import otava.assembly.value;
 

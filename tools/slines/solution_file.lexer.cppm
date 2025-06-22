@@ -2,7 +2,7 @@
 
 export module solution_file.lexer;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.ast.slg;
 import solution_file.token;

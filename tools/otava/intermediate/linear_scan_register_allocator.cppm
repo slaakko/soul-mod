@@ -5,7 +5,7 @@
 
 export module otava.intermediate.linear_scan_register_allocator;
 
-import std.core;
+import std;
 import otava.intermediate.register_allocator;
 
 export namespace otava::intermediate {

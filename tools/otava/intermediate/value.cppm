@@ -5,7 +5,7 @@
 
 export module otava.intermediate.value;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 
 export namespace otava::intermediate {

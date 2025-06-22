@@ -1,6 +1,6 @@
 export module counters;
 
-import std.core;
+import std;
 
 export struct Counters
 {

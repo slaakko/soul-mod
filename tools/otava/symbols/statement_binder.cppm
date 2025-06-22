@@ -5,7 +5,7 @@
 
 export module otava.symbols.statement.binder;
 
-import std.core;
+import std;
 import otava.ast.node;
 import otava.ast.visitor;
 

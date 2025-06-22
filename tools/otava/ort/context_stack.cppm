@@ -5,7 +5,7 @@
 
 export module context_stack;
 
-import std.core;
+import std;
 
 export extern "C" void* push_context();
 export extern "C" void* pop_context();

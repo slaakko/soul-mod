@@ -3,7 +3,7 @@
 
 export module minilang.token;
 
-import std.core;
+import std;
 
 export namespace minilang::token {
 

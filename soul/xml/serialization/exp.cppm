@@ -5,7 +5,7 @@
 
 export module soul.xml.serialization.exp;
 
-import std.core;
+import std;
 import util.time;
 import util.uuid;
 import soul.xml.element;

@@ -5,7 +5,7 @@
 
 export module util.align;
 
-import std.core;
+import std;
 
 export namespace util {
 

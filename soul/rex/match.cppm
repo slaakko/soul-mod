@@ -5,7 +5,7 @@
 
 export module soul.rex.match;
 
-import std.core;
+import std;
 import soul.rex.nfa;
 import soul.rex.context;
 import util;

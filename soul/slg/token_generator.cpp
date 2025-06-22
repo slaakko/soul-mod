@@ -56,7 +56,7 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, sou
     {
         formatter.WriteLine("export module " + tokenCollection->Name() + ";");
         formatter.WriteLine();
-        formatter.WriteLine("import std.core;");
+        formatter.WriteLine("import std;");
         formatter.WriteLine();
     }
     std::string tokenNamespaceName = soul::ast::common::ToNamespaceName(tokenCollection->Name());

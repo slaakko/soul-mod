@@ -5,7 +5,7 @@
 
 export module otava.ast.attribute;
 
-import std.core;
+import std;
 import otava.ast.node;
 
 export namespace otava::ast {

@@ -5,7 +5,7 @@
 
 export module soul.rex.algorithm;
 
-import std.core;
+import std;
 import soul.rex.nfa;
 
 export namespace soul::rex::algorithm {

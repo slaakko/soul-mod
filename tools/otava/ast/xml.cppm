@@ -5,7 +5,7 @@
 
 export module otava.ast.xml;
 
-import std.core;
+import std;
 
 export namespace otava::ast {
 

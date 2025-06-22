@@ -5,7 +5,7 @@
 
 export module soul.xml.serialization.version;
 
-import std.core;
+import std;
 
 export namespace soul::xml::serialization::version {
 

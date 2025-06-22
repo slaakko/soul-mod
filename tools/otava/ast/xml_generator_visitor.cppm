@@ -5,7 +5,7 @@
 
 export module otava.ast.xml.generator.visitor;
 
-import std.core;
+import std;
 import otava.ast.visitor;
 import soul.xml.element;
 

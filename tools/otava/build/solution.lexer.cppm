@@ -2,7 +2,7 @@
 
 export module otava.solution_lexer;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.ast.slg;
 import otava.solution_token;

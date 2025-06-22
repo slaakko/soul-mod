@@ -5,7 +5,7 @@
 
 export module otava.ast.classes;
 
-import std.core;
+import std;
 import otava.ast.node;
 import soul.ast.lexer.pos.pair;
 

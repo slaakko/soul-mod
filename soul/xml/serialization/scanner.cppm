@@ -5,7 +5,7 @@
 
 export module soul.xml.serialization.scanner;
 
-import std.core;
+import std;
 import util;
 import soul.lexer;
 

@@ -5,7 +5,7 @@
 
 module soul.xml.index;
 
-import std.core;
+import std;
 import soul.xml.visitor;
 import soul.xml.document;
 import soul.xml.element;

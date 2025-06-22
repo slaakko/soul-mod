@@ -5,7 +5,7 @@
 
 export module soul.xml.attribute.node;
 
-import std.core;
+import std;
 import soul.xml.node;
 
 export namespace soul::xml {

@@ -6,7 +6,7 @@
 export module otava.assembly.function;
 
 import otava.assembly.declaration;
-import std.core;
+import std;
 import util.code.formatter;
 
 export namespace otava::assembly {

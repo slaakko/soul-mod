@@ -1,4 +1,4 @@
-import std.core;
+import std;
 import util;
 import soul.lexer;
 import soul.lexer.xml.parsing.log;

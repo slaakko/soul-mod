@@ -441,7 +441,7 @@ void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::SourceFileN
     formatter.WriteLine();
     formatter.WriteLine("export module " + node.Module()->ModuleName() + ";");
     formatter.WriteLine();
-    formatter.WriteLine("import std.core;");
+    formatter.WriteLine("import std;");
     formatter.WriteLine("import util.uuid;");
     formatter.WriteLine("import util.time;");
     formatter.WriteLine("import soul.xml.element;");

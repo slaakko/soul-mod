@@ -5,7 +5,7 @@
 
 export module otava.build.gen_main_unit;
 
-import std.core;
+import std;
 import otava.symbols.modules;
 
 export namespace otava::build {

@@ -5,7 +5,7 @@
 
 export module otava.ast.punctuation;
 
-import std.core;
+import std;
 import otava.ast.node;
 
 export namespace otava::ast {

@@ -5,7 +5,7 @@
 
 export module class_info_index;
 
-import std.core;
+import std;
 import util.binary.stream.reader;
 import util.binary.stream.writer;
 

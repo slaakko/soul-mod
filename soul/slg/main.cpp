@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-import std.core;
+import std;
 import std.filesystem;
 import util;
 import soul.ast.slg;

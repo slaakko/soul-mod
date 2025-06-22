@@ -5,7 +5,7 @@
 
 export module soul.rex.symbol;
 
-import std.core;
+import std;
 
 export namespace soul::rex::symbol {
 

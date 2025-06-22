@@ -1,6 +1,6 @@
 export module otava.intermediate.spg.rules;
 
-import std.core;
+import std;
 
 export namespace otava::intermediate::spg::rules {
 

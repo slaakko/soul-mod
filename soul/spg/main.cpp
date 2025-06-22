@@ -8,7 +8,7 @@ import soul.spg.file.parsers;
 import soul.lexer.file.map;
 import soul.spg.parser.generator;
 import soul.common.module_map;
-import std.core;
+import std;
 import std.filesystem;
 import util;
 

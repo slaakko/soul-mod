@@ -3,7 +3,7 @@
 
 export module otava.parser.initialization;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import otava.symbols.context;

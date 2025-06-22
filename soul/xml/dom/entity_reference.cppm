@@ -5,7 +5,7 @@
 
 export module soul.xml.entity.reference;
 
-import std.core;
+import std;
 import soul.xml.character.data;
 
 export namespace soul::xml {

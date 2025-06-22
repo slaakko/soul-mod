@@ -5,7 +5,7 @@
 
 export module otava.intermediate.instruction;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import util.code.formatter;
 import util.component;

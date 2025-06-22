@@ -5,7 +5,7 @@
 
 export module soul.xml.xpath.expr;
 
-import std.core;
+import std;
 import soul.xml.xpath.object;
 import soul.xml.xpath.context;
 import soul.xml.axis;

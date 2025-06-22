@@ -5,7 +5,7 @@
 
 export module soul.xml.axis;
 
-import std.core;
+import std;
 
 export namespace soul::xml {
 

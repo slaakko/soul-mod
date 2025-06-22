@@ -5,7 +5,7 @@
 
 export module otava.symbols.visitor;
 
-import std.core;
+import std;
 
 export namespace otava::symbols {
 

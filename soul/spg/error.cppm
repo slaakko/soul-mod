@@ -5,7 +5,7 @@
 
 export module soul.spg.error;
 
-import std.core;
+import std;
 import soul.ast.spg;
 
 export namespace soul::spg::error {

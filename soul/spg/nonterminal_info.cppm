@@ -5,7 +5,7 @@
 
 export module soul.spg.nonterminal.info;
 
-import std.core;
+import std;
 import soul.ast.spg;
 import soul.ast.source.pos;
 

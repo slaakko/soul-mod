@@ -5,7 +5,7 @@
 
 export module soul.xml.comment;
 
-import std.core;
+import std;
 import soul.xml.character.data;
 
 export namespace soul::xml {

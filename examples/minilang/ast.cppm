@@ -1,6 +1,6 @@
 export module minilang.ast;
 
-import std.core;
+import std;
 
 export namespace minilang::visitor {
 

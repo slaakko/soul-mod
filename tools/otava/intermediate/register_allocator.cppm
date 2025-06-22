@@ -5,7 +5,7 @@
 
 export module otava.intermediate.register_allocator;
 
-import std.core;
+import std;
 import otava.assembly.literal;
 import otava.assembly.reg;
 

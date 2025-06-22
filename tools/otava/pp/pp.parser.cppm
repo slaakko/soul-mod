@@ -3,7 +3,7 @@
 
 export module otava.pp.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import otava.pp.state;

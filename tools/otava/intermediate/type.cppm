@@ -6,7 +6,7 @@
 export module otava.intermediate.type;
 
 import otava.assembly.data;
-import std.core;
+import std;
 import soul.ast.source.pos;
 import util.code.formatter;
 import util.uuid;

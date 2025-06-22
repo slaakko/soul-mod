@@ -1,6 +1,6 @@
 export module json.parser.rules;
 
-import std.core;
+import std;
 
 export namespace json::parser::rules {
 

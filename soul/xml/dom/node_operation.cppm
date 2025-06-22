@@ -5,7 +5,7 @@
 
 export module soul.xml.node.operation;
 
-import std.core;
+import std;
 import soul.xml.node;
 
 export namespace soul::xml {

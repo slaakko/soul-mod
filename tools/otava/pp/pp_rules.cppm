@@ -1,6 +1,6 @@
 export module otava.pp.parser.spg.rules;
 
-import std.core;
+import std;
 
 export namespace otava::pp::parser::spg::rules {
 

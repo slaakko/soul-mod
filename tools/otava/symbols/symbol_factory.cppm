@@ -5,7 +5,7 @@
 
 export module otava.symbols.symbol.factory;
 
-import std.core;
+import std;
 
 export namespace otava::symbols {
 

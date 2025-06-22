@@ -5,7 +5,7 @@
 
 export module otava.parser.token;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import otava.ast.identifier;
 import otava.ast.literal;

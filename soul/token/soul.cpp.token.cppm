@@ -3,7 +3,7 @@
 
 export module soul.cpp.token;
 
-import std.core;
+import std;
 
 export namespace soul::cpp::token {
 

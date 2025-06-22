@@ -2,7 +2,7 @@
 
 export module minilang.lexer;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.ast.slg;
 import util;

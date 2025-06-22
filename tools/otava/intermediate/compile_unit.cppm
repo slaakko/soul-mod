@@ -5,7 +5,7 @@
 
 export module otava.intermediate.compile.unit;
 
-import std.core;
+import std;
 import otava.intermediate.metadata;
 
 export namespace otava::intermediate {

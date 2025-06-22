@@ -3,7 +3,7 @@
 
 export module soul.json.content.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import util.json;

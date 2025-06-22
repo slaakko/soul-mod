@@ -5,7 +5,7 @@
 
 export module soul.json.rpc.method;
 
-import std.core;
+import std;
 import util;
 
 export namespace soul::json::rpc {

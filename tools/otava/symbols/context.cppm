@@ -5,7 +5,7 @@
 
 export module otava.symbols.context;
 
-import std.core;
+import std;
 import soul.lexer.base;
 import soul.lexer.file.map;
 import soul.ast.source.pos;

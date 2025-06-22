@@ -5,7 +5,7 @@
 
 module soul.spg.first.set.computer;
 
-import std.core;
+import std;
 
 namespace soul::spg {
 

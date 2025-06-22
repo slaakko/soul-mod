@@ -1,6 +1,6 @@
 export module re.rules;
 
-import std.core;
+import std;
 
 export namespace re::rules {
 

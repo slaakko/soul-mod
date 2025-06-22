@@ -5,7 +5,7 @@
 
 module otava.intermediate.value;
 
-import std.core;
+import std;
 import otava.intermediate.data;
 
 namespace otava::intermediate {

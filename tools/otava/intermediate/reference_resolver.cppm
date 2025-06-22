@@ -5,7 +5,7 @@
 
 export module otava.intermediate.reference_resolver;
 
-import std.core;
+import std;
 
 export namespace otava::intermediate {
 

@@ -1,6 +1,6 @@
 export module soul.xml.xpath.parser.rules;
 
-import std.core;
+import std;
 
 export namespace soul::xml::xpath::parser::rules {
 

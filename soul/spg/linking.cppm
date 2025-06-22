@@ -5,7 +5,7 @@
 
 export module soul.spg.linking;
 
-import std.core;
+import std;
 import soul.ast.spg;
 import soul.lexer.file.map;
 

@@ -1,6 +1,6 @@
 export module test.rules;
 
-import std.core;
+import std;
 
 export namespace test::rules {
 

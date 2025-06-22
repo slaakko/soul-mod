@@ -5,7 +5,7 @@
 
 export module otava.intermediate.context;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import soul.lexer.base;
 import soul.lexer.file.map;

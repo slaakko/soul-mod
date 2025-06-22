@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-import std.core;
+import std;
 import solution_file.ast;
 import util.path;
 

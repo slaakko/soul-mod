@@ -5,7 +5,7 @@
 
 export module otava.symbols.bound.tree;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import otava.ast.node;
 import otava.symbols.emitter;

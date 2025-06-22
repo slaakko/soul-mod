@@ -5,7 +5,7 @@
 
 export module otava.symbols.fundamental.type.conversion;
 
-import std.core;
+import std;
 import otava.symbols.emitter;
 import otava.symbols.function.symbol;
 import otava.symbols.writer;

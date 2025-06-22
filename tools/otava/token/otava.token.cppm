@@ -3,7 +3,7 @@
 
 export module otava.token;
 
-import std.core;
+import std;
 
 export namespace otava::token {
 

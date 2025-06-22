@@ -5,7 +5,7 @@
 
 import soul.json.rpc;
 import util;
-import std.core;
+import std;
 
 int main()
 {

@@ -5,7 +5,7 @@
 
 export module soul.xml.serialization.class_registry;
 
-import std.core;
+import std;
 
 export namespace soul::xml::serialization {
 

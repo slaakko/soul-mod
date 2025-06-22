@@ -3,7 +3,7 @@
 
 export module soul.punctuation.token;
 
-import std.core;
+import std;
 
 export namespace soul::punctuation::token {
 

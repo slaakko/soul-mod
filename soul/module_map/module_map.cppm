@@ -5,7 +5,7 @@
 
 export module soul.common.module_map;
 
-import std.core;
+import std;
 
 export namespace soul::common {
 

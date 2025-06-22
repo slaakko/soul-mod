@@ -5,7 +5,7 @@
 
 export module otava.symbols.type.symbol;
 
-import std.core;
+import std;
 import otava.symbols.container.symbol;
 import otava.symbols.derivations;
 import otava.symbols.template_param_compare;

@@ -5,7 +5,7 @@
 
 module util.unicode;
 
-import std.core;
+import std;
 
 namespace util {
 

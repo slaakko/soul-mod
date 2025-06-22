@@ -1,6 +1,6 @@
 export module soul.spg.parsers.rules;
 
-import std.core;
+import std;
 
 export namespace soul::spg::parsers::rules {
 

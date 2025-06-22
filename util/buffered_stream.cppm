@@ -5,7 +5,7 @@
 
 export module util.buffered.stream;
 
-import std.core;
+import std;
 import util.stream;
 
 export namespace util {

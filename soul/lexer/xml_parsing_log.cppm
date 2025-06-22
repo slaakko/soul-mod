@@ -5,7 +5,7 @@
 
 export module soul.lexer.xml.parsing.log;
 
-import std.core;
+import std;
 import util;
 import soul.lexer.parsing.log;
 

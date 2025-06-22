@@ -5,7 +5,7 @@
 
 export module soul.lexer.token;
 
-import std.core;
+import std;
 import soul.lexer.lexeme;
 import soul.lexer.token.parser;
 

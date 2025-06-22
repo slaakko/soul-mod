@@ -5,7 +5,7 @@
 
 export module otava.ast.node;
 
-import std.core;
+import std;
 import soul.ast.source.pos;
 import otava.ast.node.list;
 

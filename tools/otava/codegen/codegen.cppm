@@ -5,7 +5,7 @@
 
 export module otava.codegen;
 
-import std.core;
+import std;
 import otava.symbols.context;
 
 export namespace otava::codegen {

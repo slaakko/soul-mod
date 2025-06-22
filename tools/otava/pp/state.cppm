@@ -5,7 +5,7 @@
 
 export module otava.pp.state;
 
-import std.core;
+import std;
 import otava.lexer;
 import soul.lexer;
 

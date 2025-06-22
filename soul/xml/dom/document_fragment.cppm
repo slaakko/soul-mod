@@ -5,7 +5,7 @@
 
 export module soul.xml.document.fragment;
 
-import std.core;
+import std;
 import soul.xml.parent.node;
 
 export namespace soul::xml {

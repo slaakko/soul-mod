@@ -3,7 +3,7 @@
 
 export module soul.rex.token;
 
-import std.core;
+import std;
 
 export namespace soul::rex::token {
 

@@ -3,7 +3,7 @@
 
 export module soul.slg.expression.file.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import soul.ast.slg;

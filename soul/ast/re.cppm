@@ -5,7 +5,7 @@
 
 export module soul.ast.re;
 
-import std.core;
+import std;
 import util;
 import soul.ast.slg;
 

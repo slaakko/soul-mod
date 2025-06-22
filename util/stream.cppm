@@ -5,7 +5,7 @@
 
 export module util.stream;
 
-import std.core;
+import std;
 
 export namespace util {
 

@@ -5,7 +5,7 @@
 
 export module soul.lexer.base;
 
-import std.core;
+import std;
 import soul.lexer.lexeme;
 import soul.lexer.token;
 import soul.lexer.keyword;

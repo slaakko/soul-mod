@@ -3,7 +3,7 @@
 
 export module soul.json.token;
 
-import std.core;
+import std;
 
 export namespace soul::json::token {
 

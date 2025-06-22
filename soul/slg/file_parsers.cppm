@@ -5,7 +5,7 @@
 
 export module soul.slg.file.parsers;
 
-import std.core;
+import std;
 import soul.ast.slg;
 
 export namespace soul::slg {

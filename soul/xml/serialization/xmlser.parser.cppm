@@ -3,7 +3,7 @@
 
 export module soul.xml.serialization.parser;
 
-import std.core;
+import std;
 import soul.lexer;
 import soul.parser;
 import soul.xml.serialization.ast;

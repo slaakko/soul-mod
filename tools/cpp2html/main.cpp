@@ -3,7 +3,7 @@
 // Distributed under the MIT license
 // =================================
 
-import std.core;
+import std;
 import util;
 import soul.xml.dom;
 import cpp.token.lexer;

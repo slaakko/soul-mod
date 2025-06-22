@@ -5,7 +5,7 @@
 
 export module util.code.formatter;
 
-import std.core;
+import std;
 
 export namespace util {
 

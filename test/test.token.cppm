@@ -3,7 +3,7 @@
 
 export module test.token;
 
-import std.core;
+import std;
 
 export namespace test::token {
 

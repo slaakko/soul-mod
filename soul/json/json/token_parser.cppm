@@ -5,7 +5,7 @@
 
 export module soul.json.token.parser;
 
-import std.core;
+import std;
 import util;
 import soul.lexer.token;
 import soul.lexer.base;

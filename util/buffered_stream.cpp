@@ -14,7 +14,7 @@ BufferedStream::BufferedStream(Stream& baseStream_) : BufferedStream(baseStream_
 }
 
 BufferedStream::BufferedStream(Stream& baseStream_, std::int64_t bufferSize_) :
-    Stream(), baseStream(baseStream_), bufferSize(bufferSize_), buffer(static_cast<std::uint8_t*>(malloc(bufferSize))), pos(bufferSize), bytesAvailable(0), end(0)
+    Stream(), baseStream(baseStream_), bufferSize(bufferSize_), buffer(static_cast<std::uint8_t*>(std::malloc(bufferSize))), pos(bufferSize), bytesAvailable(0), end(0)
 {
 }
 

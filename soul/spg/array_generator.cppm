@@ -5,7 +5,7 @@
 
 export module soul.spg.array.generator;
 
-import std.core;
+import std;
 import soul.ast.spg;
 import util.code.formatter;
 

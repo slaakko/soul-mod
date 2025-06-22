@@ -5,7 +5,7 @@
 
 export module ort;
 
-import std.core;
+import std;
 
 export extern "C" void prints(const char* s, int handle);
 export extern "C" void flush_handle(int handle);
