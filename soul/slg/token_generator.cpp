@@ -47,7 +47,7 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, sou
         includeGuard = "INCLUDE_GUARD_" + util::GetSha1MessageDigest(tokenCollection->Name());
         formatter.WriteLine("#ifndef " + includeGuard);
         formatter.WriteLine("#define " + includeGuard);
-        formatter.WriteLine("#include <stdint.h>");
+        formatter.WriteLine("#include <cstdint");
         formatter.WriteLine();
         formatter.WriteLine("// export module " + tokenCollection->Name() + ";");
         formatter.WriteLine();

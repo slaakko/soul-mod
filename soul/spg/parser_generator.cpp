@@ -47,7 +47,7 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose, soul
         interfaceFormatter.WriteLine();
         interfaceFormatter.WriteLine("// export module " + moduleName + ";");
         interfaceFormatter.WriteLine();
-        interfaceFormatter.WriteLine("#include <stdint.h>");
+        interfaceFormatter.WriteLine("#include <cstdint>");
         interfaceFormatter.WriteLine("#include <string>");
         interfaceFormatter.WriteLine("#include <map>");
         interfaceFormatter.WriteLine();
