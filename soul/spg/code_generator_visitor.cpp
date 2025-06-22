@@ -753,7 +753,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
             formatter->WriteLine("{");
             formatter->IncIndent();
             formatter->WriteLine("parser_debug_match_pos = lexer.GetPos();");
-            formatter->WriteLine("soul::lexer::WriteBeginRuleToLog(lexer, \"" + parser.Name() + "\");");
+            formatter->WriteLine("soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, \"" + parser.Name() + "\");");
             formatter->DecIndent();
             formatter->WriteLine("}");
             formatter->WriteLine("#endif");
