@@ -56,7 +56,7 @@ template<typename LexerT>
 soul::parser::Match TestParser<LexerT>::ClassKey(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -66,7 +66,7 @@ soul::parser::Match TestParser<LexerT>::ClassKey(LexerT& lexer)
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5305326204553789441);
     soul::parser::Match match(false);
-    int64_t pos = lexer.GetPos();
+    std::int64_t pos = lexer.GetPos();
     switch (*lexer)
     {
         case CLASS:

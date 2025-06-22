@@ -60,7 +60,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::ProjectFile(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -74,7 +74,7 @@ soul::parser::Match ProjectParser<LexerT>::ProjectFile(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -84,7 +84,7 @@ soul::parser::Match ProjectParser<LexerT>::ProjectFile(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ProjectParser<LexerT>::ProjectDeclaration(lexer);
                     projectDeclaration.reset(static_cast<otava::build::Project*>(match.value));
                     if (match.hit)
@@ -105,7 +105,7 @@ soul::parser::Match ProjectParser<LexerT>::ProjectFile(LexerT& lexer)
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -194,7 +194,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::ProjectDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -207,7 +207,7 @@ soul::parser::Match ProjectParser<LexerT>::ProjectDeclaration(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -284,7 +284,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::Project* projectFile)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -294,7 +294,7 @@ soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::P
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906435);
     std::string symbol = std::string();
-    int64_t value = int64_t();
+    std::int64_t value = std::int64_t();
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -320,7 +320,7 @@ soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::P
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == ID)
                         {
@@ -350,7 +350,7 @@ soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::P
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch7 = &match;
                     {
-                        int64_t save = lexer.GetPos();
+                        std::int64_t save = lexer.GetPos();
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch8 = &match;
                         {
@@ -370,7 +370,7 @@ soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::P
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     if (*lexer == VALUE)
                                     {
@@ -397,7 +397,7 @@ soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::P
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch12 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(true);
                                     if (match.hit)
                                     {
@@ -426,7 +426,7 @@ soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::P
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch14 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == SEMICOLON)
                 {
@@ -461,7 +461,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::TargetDeclaration(LexerT& lexer, otava::build::Project* projectFile)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -474,7 +474,7 @@ soul::parser::Match ProjectParser<LexerT>::TargetDeclaration(LexerT& lexer, otav
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -566,7 +566,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::Target(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -584,7 +584,7 @@ soul::parser::Match ProjectParser<LexerT>::Target(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == PROGRAM)
                 {
@@ -613,7 +613,7 @@ soul::parser::Match ProjectParser<LexerT>::Target(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == LIBRARY)
                 {
@@ -656,7 +656,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::FilePath(LexerT& lexer, otava::build::Project* projectFile)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -681,7 +681,7 @@ soul::parser::Match ProjectParser<LexerT>::FilePath(LexerT& lexer, otava::build:
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch2 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ProjectParser<LexerT>::InterfaceFilePath(lexer);
                     interfaceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     if (match.hit)
@@ -701,7 +701,7 @@ soul::parser::Match ProjectParser<LexerT>::FilePath(LexerT& lexer, otava::build:
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ProjectParser<LexerT>::SourceFilePath(lexer);
                     sourceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     if (match.hit)
@@ -721,7 +721,7 @@ soul::parser::Match ProjectParser<LexerT>::FilePath(LexerT& lexer, otava::build:
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch4 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ProjectParser<LexerT>::ResourceFilePath(lexer);
                     resourceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     if (match.hit)
@@ -741,7 +741,7 @@ soul::parser::Match ProjectParser<LexerT>::FilePath(LexerT& lexer, otava::build:
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch5 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = ProjectParser<LexerT>::ReferenceFilePath(lexer);
                     referenceFilePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                     if (match.hit)
@@ -777,7 +777,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::InterfaceFilePath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -790,7 +790,7 @@ soul::parser::Match ProjectParser<LexerT>::InterfaceFilePath(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -816,7 +816,7 @@ soul::parser::Match ProjectParser<LexerT>::InterfaceFilePath(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == FILEPATH)
                             {
@@ -881,7 +881,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::SourceFilePath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -894,7 +894,7 @@ soul::parser::Match ProjectParser<LexerT>::SourceFilePath(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -920,7 +920,7 @@ soul::parser::Match ProjectParser<LexerT>::SourceFilePath(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == FILEPATH)
                             {
@@ -985,7 +985,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::ResourceFilePath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -998,7 +998,7 @@ soul::parser::Match ProjectParser<LexerT>::ResourceFilePath(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1024,7 +1024,7 @@ soul::parser::Match ProjectParser<LexerT>::ResourceFilePath(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == FILEPATH)
                             {
@@ -1089,7 +1089,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::ReferenceFilePath(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1102,7 +1102,7 @@ soul::parser::Match ProjectParser<LexerT>::ReferenceFilePath(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1128,7 +1128,7 @@ soul::parser::Match ProjectParser<LexerT>::ReferenceFilePath(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == FILEPATH)
                             {
@@ -1193,7 +1193,7 @@ template<typename LexerT>
 soul::parser::Match ProjectParser<LexerT>::QualifiedId(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1206,7 +1206,7 @@ soul::parser::Match ProjectParser<LexerT>::QualifiedId(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1216,7 +1216,7 @@ soul::parser::Match ProjectParser<LexerT>::QualifiedId(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
                     if (*lexer == ID)
                     {
@@ -1241,7 +1241,7 @@ soul::parser::Match ProjectParser<LexerT>::QualifiedId(LexerT& lexer)
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1265,7 +1265,7 @@ soul::parser::Match ProjectParser<LexerT>::QualifiedId(LexerT& lexer)
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
                                                 if (*lexer == ID)
                                                 {

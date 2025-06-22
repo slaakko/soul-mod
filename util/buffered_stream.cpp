@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,8 +13,8 @@ BufferedStream::BufferedStream(Stream& baseStream_) : BufferedStream(baseStream_
 {
 }
 
-BufferedStream::BufferedStream(Stream& baseStream_, int64_t bufferSize_) :
-    Stream(), baseStream(baseStream_), bufferSize(bufferSize_), buffer(static_cast<uint8_t*>(malloc(bufferSize))), pos(bufferSize), bytesAvailable(0), end(0)
+BufferedStream::BufferedStream(Stream& baseStream_, std::int64_t bufferSize_) :
+    Stream(), baseStream(baseStream_), bufferSize(bufferSize_), buffer(static_cast<std::uint8_t*>(malloc(bufferSize))), pos(bufferSize), bytesAvailable(0), end(0)
 {
 }
 
@@ -40,25 +40,25 @@ int BufferedStream::ReadByte()
             return -1;
         }
     }
-    uint8_t* b = buffer.get();
-    uint8_t value = b[pos++];
+    std::uint8_t* b = buffer.get();
+    std::uint8_t value = b[pos++];
     --bytesAvailable;
     SetPosition(Position() + 1);
     return value;
 }
 
-int64_t BufferedStream::Read(uint8_t* buf, int64_t count)
+std::int64_t BufferedStream::Read(std::uint8_t* buf, std::int64_t count)
 {
     Flush();
     if (bytesAvailable == 0)
     {
         FillBuf();
     }
-    int64_t bytesRead = 0;
-    int64_t n = std::min(bytesAvailable, count);
-    for (int64_t i = 0; i < n; ++i)
+    std::int64_t bytesRead = 0;
+    std::int64_t n = std::min(bytesAvailable, count);
+    for (std::int64_t i = 0; i < n; ++i)
     {
-        uint8_t* b = buffer.get();
+        std::uint8_t* b = buffer.get();
         buf[i] = b[pos++];
         ++bytesRead;
         --bytesAvailable;
@@ -67,20 +67,20 @@ int64_t BufferedStream::Read(uint8_t* buf, int64_t count)
     return bytesRead;
 }
 
-void BufferedStream::Write(uint8_t x)
+void BufferedStream::Write(std::uint8_t x)
 {
     if (end >= bufferSize)
     {
         Flush();
     }
-    uint8_t* b = buffer.get();
+    std::uint8_t* b = buffer.get();
     b[end++] = x;
     SetPosition(Position() + 1);
 }
 
-void BufferedStream::Write(uint8_t* buf, int64_t count)
+void BufferedStream::Write(std::uint8_t* buf, std::int64_t count)
 {
-    for (int64_t i = 0; i < count; ++i)
+    for (std::int64_t i = 0; i < count; ++i)
     {
         Write(buf[i]);
     }
@@ -96,14 +96,14 @@ void BufferedStream::Flush()
     }
 }
 
-void BufferedStream::Seek(int64_t pos, Origin origin)
+void BufferedStream::Seek(std::int64_t pos, Origin origin)
 {
     Flush();
     bytesAvailable = 0;
     baseStream.Seek(pos, origin);
 }
 
-int64_t BufferedStream::Tell()
+std::int64_t BufferedStream::Tell()
 {
     Flush();
     return baseStream.Tell() - bytesAvailable;

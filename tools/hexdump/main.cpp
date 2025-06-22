@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -19,7 +19,7 @@ void PrintHelp()
 
 const int bytesInLine = 16;
 
-std::string HexDumpLine(uint64_t addr, uint8_t* bytes, int64_t numBytes)
+std::string HexDumpLine(std::uint64_t addr, std::uint8_t* bytes, std::int64_t numBytes)
 {
     std::string line(util::ToHexString(addr));
     line.append(": ");
@@ -59,7 +59,7 @@ std::string HexDumpLine(uint64_t addr, uint8_t* bytes, int64_t numBytes)
 
 void HexDump(const std::string& file, bool verbose)
 {
-    int64_t fileSize = std::filesystem::file_size(file);
+    std::int64_t fileSize = std::filesystem::file_size(file);
     if (verbose)
     {
         std::cout << file << ": " << fileSize << " bytes" << std::endl;
@@ -67,10 +67,10 @@ void HexDump(const std::string& file, bool verbose)
     util::FileStream fileStream(file, util::OpenMode::read | util::OpenMode::binary);
     util::BufferedStream bufferedStream(fileStream);
     util::BinaryStreamReader reader(bufferedStream);
-    uint8_t bytes[bytesInLine];
-    uint64_t addr = 0;
-    int64_t numRows = fileSize / bytesInLine;
-    for (int64_t i = 0; i < numRows; ++i)
+    std::uint8_t bytes[bytesInLine];
+    std::uint64_t addr = 0;
+    std::int64_t numRows = fileSize / bytesInLine;
+    for (std::int64_t i = 0; i < numRows; ++i)
     {
         for (int j = 0; j < bytesInLine; ++j)
         {
@@ -79,7 +79,7 @@ void HexDump(const std::string& file, bool verbose)
         std::cout << HexDumpLine(addr, &bytes[0], bytesInLine) << std::endl;
         addr = addr + bytesInLine;
     }
-    int64_t rest = fileSize % bytesInLine;
+    std::int64_t rest = fileSize % bytesInLine;
     for (int j = 0; j < rest; ++j)
     {
         bytes[j] = reader.ReadByte();

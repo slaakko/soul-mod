@@ -8,6 +8,6 @@ lexer TestLexer
 {
 	rules
 	{
-		"{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
+		"{id}" { std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
 	}
 }

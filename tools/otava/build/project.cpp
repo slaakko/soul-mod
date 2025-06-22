@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,12 +13,12 @@ import util;
 
 namespace otava::build {
 
-int32_t MakeFileId(int16_t projectId, int16_t fileIndex)
+std::int32_t MakeFileId(std::int16_t projectId, std::int16_t fileIndex)
 {
-    return static_cast<int32_t>(projectId) << 16 | static_cast<int32_t>(fileIndex);
+    return static_cast<std::int32_t>(projectId) << 16 | static_cast<std::int32_t>(fileIndex);
 }
 
-Define::Define(const std::string& symbol_, int64_t value_) : symbol(symbol_), value(value_)
+Define::Define(const std::string& symbol_, std::int64_t value_) : symbol(symbol_), value(value_)
 {
 }
 
@@ -58,12 +58,12 @@ Project::Project(const std::string& filePath_, const std::string& name_) :
     root = util::Path::GetDirectoryName(filePath);
 }
 
-int16_t Project::Id() const
+std::int16_t Project::Id() const
 {
-    return static_cast<int16_t>(std::hash<std::string>()(name) & 0x7FFF);
+    return static_cast<std::int16_t>(std::hash<std::string>()(name) & 0x7FFF);
 }
 
-void Project::AddDefine(const std::string& symbol, int64_t value)
+void Project::AddDefine(const std::string& symbol, std::int64_t value)
 {
     defines.push_back(Define(symbol, value));
 }
@@ -92,7 +92,7 @@ void Project::AddResourceFilePath(const std::string& resourceFilePath)
     resourceFilePaths.push_back(resourceFilePath);
 }
 
-const std::string& Project::GetModuleSourceFilePath(int32_t fileId) const
+const std::string& Project::GetModuleSourceFilePath(std::int32_t fileId) const
 {
     return fileMap->GetFilePath(fileId);
 }
@@ -160,7 +160,7 @@ void Project::LoadModules(otava::symbols::ModuleMapper& moduleMapper)
     }
 }
 
-void Project::SetModule(int32_t fileId, otava::symbols::Module* module)
+void Project::SetModule(std::int32_t fileId, otava::symbols::Module* module)
 {
     module->SetIndex(modules.size());
     modules.push_back(std::unique_ptr<otava::symbols::Module>(module));
@@ -180,7 +180,7 @@ otava::symbols::Module* Project::GetModule(const std::string& moduleName) const
     }
 }
 
-otava::symbols::Module* Project::GetModule(int32_t fileId) const
+otava::symbols::Module* Project::GetModule(std::int32_t fileId) const
 {
     auto it = fileIdModuleMap.find(fileId);
     if (it != fileIdModuleMap.end())
@@ -194,7 +194,7 @@ otava::symbols::Module* Project::GetModule(int32_t fileId) const
     }
 }
 
-otava::symbols::Module* Project::ReleaseModule(int32_t fileId)
+otava::symbols::Module* Project::ReleaseModule(std::int32_t fileId)
 {
     otava::symbols::Module* module = GetModule(fileId);
     return modules[module->Index()].release();
@@ -203,18 +203,18 @@ otava::symbols::Module* Project::ReleaseModule(int32_t fileId)
 void Project::MapFiles()
 {
     root = util::Path::GetDirectoryName(filePath);
-    int16_t fileIndex = 0;
+    std::int16_t fileIndex = 0;
     for (const auto& interfaceFileName : interfaceFilePaths)
     {
         std::string interfaceFilePath = util::GetFullPath(util::Path::Combine(root, interfaceFileName));
-        int32_t interfaceFileId = MakeFileId(Id(), fileIndex++);
+        std::int32_t interfaceFileId = MakeFileId(Id(), fileIndex++);
         fileMap->MapFile(interfaceFilePath, interfaceFileId);
         interfaceFiles.push_back(interfaceFileId);
     }
     for (const auto& sourceFileName : sourceFilePaths)
     {
         std::string sourceFilePath = util::GetFullPath(util::Path::Combine(root, sourceFileName));
-        int32_t sourceFileId = MakeFileId(Id(), fileIndex++);
+        std::int32_t sourceFileId = MakeFileId(Id(), fileIndex++);
         fileMap->MapFile(sourceFilePath, sourceFileId);
         sourceFiles.push_back(sourceFileId);
     }

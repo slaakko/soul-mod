@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -16,7 +16,7 @@ import util.unicode;
 
 namespace otava::symbols {
 
-std::u32string MakeArrayTypeName(TypeSymbol* elementType, int64_t size)
+std::u32string MakeArrayTypeName(TypeSymbol* elementType, std::int64_t size)
 {
     std::u32string arrayTypeName;
     arrayTypeName.append(elementType->FullName()).append(U" [").append(util::ToUtf32(std::to_string(size))).append(U"]");
@@ -28,7 +28,7 @@ ArrayTypeSymbol::ArrayTypeSymbol(const std::u32string& name_) : TypeSymbol(Symbo
     GetScope()->SetKind(ScopeKind::arrayScope);
 }
 
-ArrayTypeSymbol::ArrayTypeSymbol(TypeSymbol* elementType_, int64_t size_) : 
+ArrayTypeSymbol::ArrayTypeSymbol(TypeSymbol* elementType_, std::int64_t size_) : 
     TypeSymbol(SymbolKind::arrayTypeSymbol, MakeArrayTypeName(elementType_, size_)), elementType(elementType_), size(size_), bound(false)
 {
     GetScope()->SetKind(ScopeKind::arrayScope);

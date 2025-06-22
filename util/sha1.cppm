@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,7 +14,7 @@ class Sha1
 public:
     Sha1();
     void Reset();
-    void Process(uint8_t x)
+    void Process(std::uint8_t x)
     {
         ProcessByte(x);
         bitCount = bitCount + 8u;
@@ -22,12 +22,12 @@ public:
     void Process(void* begin, void* end);
     void Process(void* buf, int count)
     {
-        uint8_t* b = static_cast<uint8_t*>(buf);
+        std::uint8_t* b = static_cast<std::uint8_t*>(buf);
         Process(b, b + count);
     }
     std::string GetDigest();
 private:
-    void ProcessByte(uint8_t x)
+    void ProcessByte(std::uint8_t x)
     {
         block[byteIndex++] = x;
         if (byteIndex == 64u)
@@ -37,10 +37,10 @@ private:
         }
     }
     void ProcessBlock();
-    uint32_t digest[5];
-    uint8_t block[64];
-    uint8_t byteIndex;
-    uint64_t bitCount;
+    std::uint32_t digest[5];
+    std::uint8_t block[64];
+    std::uint8_t byteIndex;
+    std::uint64_t bitCount;
 };
 
 std::string GetSha1MessageDigest(const std::string& message);

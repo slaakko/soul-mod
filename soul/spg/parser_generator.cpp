@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -62,7 +62,7 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose, soul
         interfaceFormatter.WriteLine("export namespace " + soul::ast::common::ToNamespaceName(moduleName) + " {");
     }
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("std::map<int64_t, std::string>* GetRuleNameMapPtr();");
+    interfaceFormatter.WriteLine("std::map<std::int64_t, std::string>* GetRuleNameMapPtr();");
     interfaceFormatter.WriteLine();
     interfaceFormatter.WriteLine("} // " + soul::ast::common::ToNamespaceName(moduleName));
     if (ppstyle)
@@ -98,11 +98,11 @@ void GenerateRuleNameModule(soul::ast::spg::SpgFile* spgFile, bool verbose, soul
     implementationFormatter.WriteLine();
     implementationFormatter.WriteLine("std::mutex ruleMtx;");
     implementationFormatter.WriteLine();
-    implementationFormatter.WriteLine("std::map<int64_t, std::string>* GetRuleNameMapPtr()");
+    implementationFormatter.WriteLine("std::map<std::int64_t, std::string>* GetRuleNameMapPtr()");
     implementationFormatter.WriteLine("{");
     implementationFormatter.IncIndent();
     implementationFormatter.WriteLine("std::lock_guard<std::mutex> lock(ruleMtx);");
-    implementationFormatter.WriteLine("static std::map<int64_t, std::string> ruleNameMap = {");
+    implementationFormatter.WriteLine("static std::map<std::int64_t, std::string> ruleNameMap = {");
     implementationFormatter.IncIndent();
     int n = spgFile->Rules().size();
     for (int i = 0; i < n; ++i)

@@ -4,10 +4,10 @@ namespace soul::rex::spg::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 7261371920241655809, "RexParser.RegularExpression" },
         { 7261371920241655810, "RexParser.Alternative" },
         { 7261371920241655811, "RexParser.Catenation" },

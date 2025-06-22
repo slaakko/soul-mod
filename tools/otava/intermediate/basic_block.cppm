@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -21,20 +21,20 @@ class Visitor;
 class Instruction;
 class MetadataRef;
 
-const int32_t entryBlockId = -1;
-const int32_t exitBlockId = -2;
+const std::int32_t entryBlockId = -1;
+const std::int32_t exitBlockId = -2;
 
 class BasicBlock : public util::Component
 {
 public:
-    BasicBlock(const SourcePos& sourcePos_, int32_t id_);
+    BasicBlock(const SourcePos& sourcePos_, std::int32_t id_);
     void Write(util::CodeFormatter& formatter);
     void Accept(Visitor& visitor);
     void VisitInstructions(Visitor& visitor);
     const SourcePos& GetSourcePos() const { return sourcePos; }
     std::string Name() const;
-    int32_t Id() const { return id; }
-    void SetId(int32_t id_) { id = id_; }
+    std::int32_t Id() const { return id; }
+    void SetId(std::int32_t id_) { id = id_; }
     bool IsEmpty() const { return instructions.IsEmpty(); }
     Function* Parent() const;
     BasicBlock* Next() { return static_cast<BasicBlock*>(NextSibling()); }
@@ -61,7 +61,7 @@ public:
 private:
     void AddInst(Instruction* inst);
     SourcePos sourcePos;
-    int32_t id;
+    std::int32_t id;
     std::vector<BasicBlock*> successors;
     std::vector<BasicBlock*> predecessors;
     util::Container instructions;

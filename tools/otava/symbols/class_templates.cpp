@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -101,8 +101,8 @@ void ClassTemplateSpecializationSymbol::Read(Reader& reader)
     util::uuid id;
     reader.GetBinaryStreamReader().ReadUuid(id);
     ids.push_back(std::make_pair(id, true));
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         util::uuid id;
         bool isType = reader.GetBinaryStreamReader().ReadBool();
@@ -110,8 +110,8 @@ void ClassTemplateSpecializationSymbol::Read(Reader& reader)
         ids.push_back(std::make_pair(id, isType));
     }
     reader.GetBinaryStreamReader().ReadUuid(destructorId);
-    uint32_t nfids = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nfids; ++i)
+    std::uint32_t nfids = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nfids; ++i)
     {
         util::uuid vfid;
         reader.GetBinaryStreamReader().ReadUuid(vfid);

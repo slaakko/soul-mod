@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -56,7 +56,7 @@ void FunctionDeclarator::SetTemplateArgs(const std::vector<TypeSymbol*>& templat
     templateArgs = templateArgs_;
 }
 
-ArrayDeclarator::ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, int64_t size_) : Declarator(DeclaratorKind::arrayDeclarator, name_, node_), size(size_)
+ArrayDeclarator::ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, std::int64_t size_) : Declarator(DeclaratorKind::arrayDeclarator, name_, node_), size(size_)
 {
 }
 
@@ -91,8 +91,8 @@ DeclaratorListProcessor::DeclaratorListProcessor(Context* context_, TypeSymbol* 
 
 void DeclaratorListProcessor::Visit(otava::ast::InitDeclaratorListNode& node)
 {
-    int32_t n = node.Items().size();
-    for (int32_t i = 0; i < n; ++i)
+    std::int32_t n = node.Items().size();
+    for (std::int32_t i = 0; i < n; ++i)
     {
         otava::ast::Node* declarator = node.Items()[i];
         Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, FunctionQualifiers::none, context);
@@ -105,8 +105,8 @@ void DeclaratorListProcessor::Visit(otava::ast::InitDeclaratorListNode& node)
 
 void DeclaratorListProcessor::Visit(otava::ast::MemberDeclaratorListNode& node)
 {
-    int32_t n = node.Items().size();
-    for (int32_t i = 0; i < n; ++i)
+    std::int32_t n = node.Items().size();
+    for (std::int32_t i = 0; i < n; ++i)
     {
         otava::ast::Node* declarator = node.Items()[i];
         Declaration declaration = ProcessDeclarator(baseType, declarator, declarationNode, flags, FunctionQualifiers::none, context);
@@ -841,7 +841,7 @@ void DeclaratorProcessor::Visit(otava::ast::ArrayDeclaratorNode& node)
     processArrayId = true;
     node.Child()->Accept(*this);
     processArrayId = false;
-    int64_t size = -1;
+    std::int64_t size = -1;
     if (node.Dimension())
     {
         Value* sizeValue = Evaluate(node.Dimension(), context);

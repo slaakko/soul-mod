@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -11,7 +11,7 @@ import soul.lexer.base;
 export namespace soul::lexer {
 
 template<typename T>
-concept LexicalIterator = requires(T it, int64_t pos)
+concept LexicalIterator = requires(T it, std::int64_t pos)
 {
     *it;                                        // returns current token id
     ++it;                                       // advances the lexer iterator ('eats' current token)

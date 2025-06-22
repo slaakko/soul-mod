@@ -1,6 +1,6 @@
 // =================================
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -917,8 +917,8 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         else if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
             otava::intermediate::Value* value = emitter.EmitLoad(static_cast<otava::intermediate::Value*>(variable->IrObject(emitter, sourcePos, context)));
-            uint8_t derefCount = GetDerefCount(flags);
-            for (uint8_t i = 0; i < derefCount; ++i)
+            std::uint8_t derefCount = GetDerefCount(flags);
+            for (std::uint8_t i = 0; i < derefCount; ++i)
             {
                 value = emitter.EmitLoad(value);
             }
@@ -945,8 +945,8 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
             else if ((flags & OperationFlags::deref) != OperationFlags::none)
             {
                 otava::intermediate::Value* value = emitter.EmitLoad(ptr);
-                uint8_t n = GetDerefCount(flags);
-                for (uint8_t i = 0; i < n; ++i)
+                std::uint8_t n = GetDerefCount(flags);
+                for (std::uint8_t i = 0; i < n; ++i)
                 {
                     value = emitter.EmitLoad(value);
                 }
@@ -965,7 +965,7 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
             }
             thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
             otava::intermediate::Value* ptr = emitter.Stack().Pop();
-            int32_t layoutIndex = variable->LayoutIndex();
+            std::int32_t layoutIndex = variable->LayoutIndex();
             otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
             if ((flags & OperationFlags::addr) != OperationFlags::none)
             {
@@ -974,8 +974,8 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
             else if ((flags & OperationFlags::deref) != OperationFlags::none)
             {
                 otava::intermediate::Value* value = emitter.EmitLoad(elementPtr);
-                uint8_t n = GetDerefCount(flags);
-                for (uint8_t i = 0; i < n; ++i)
+                std::uint8_t n = GetDerefCount(flags);
+                for (std::uint8_t i = 0; i < n; ++i)
                 {
                     value = emitter.EmitLoad(value);
                 }
@@ -1001,8 +1001,8 @@ void BoundVariableNode::Load(Emitter& emitter, OperationFlags flags, const soul:
         else if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
             otava::intermediate::Value* value = emitter.EmitLoad(ptr);
-            uint8_t n = GetDerefCount(flags);
-            for (uint8_t i = 0; i < n; ++i)
+            std::uint8_t n = GetDerefCount(flags);
+            for (std::uint8_t i = 0; i < n; ++i)
             {
                 value = emitter.EmitLoad(value);
             }
@@ -1028,8 +1028,8 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
             ptr = emitter.EmitLoad(ptr);
-            uint8_t n = GetDerefCount(flags);
-            for (uint8_t i = 1; i < n; ++i)
+            std::uint8_t n = GetDerefCount(flags);
+            for (std::uint8_t i = 1; i < n; ++i)
             {
                 ptr = emitter.EmitLoad(ptr);
             }
@@ -1057,13 +1057,13 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
         }
         thisPtr->Load(emitter, OperationFlags::none, sourcePos, context);
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
-        int32_t layoutIndex = variable->LayoutIndex();
+        std::int32_t layoutIndex = variable->LayoutIndex();
         otava::intermediate::Value* elementPtr = emitter.EmitElemAddr(ptr, emitter.EmitLong(layoutIndex));
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
             elementPtr = emitter.EmitLoad(elementPtr);
-            uint8_t n = GetDerefCount(flags);
-            for (uint8_t i = 1; i < n; ++i)
+            std::uint8_t n = GetDerefCount(flags);
+            for (std::uint8_t i = 1; i < n; ++i)
             {
                 elementPtr = emitter.EmitLoad(elementPtr);
             }
@@ -1093,8 +1093,8 @@ void BoundVariableNode::Store(Emitter& emitter, OperationFlags flags, const soul
         if ((flags & OperationFlags::deref) != OperationFlags::none)
         {
             ptr = emitter.EmitLoad(ptr);
-            uint8_t n = GetDerefCount(flags);
-            for (uint8_t i = 1; i < n; ++i)
+            std::uint8_t n = GetDerefCount(flags);
+            for (std::uint8_t i = 1; i < n; ++i)
             {
                 ptr = emitter.EmitLoad(ptr);
             }
@@ -1165,8 +1165,8 @@ void BoundParameterNode::Load(Emitter& emitter, OperationFlags flags, const soul
     {
         otava::intermediate::Value* ptr = static_cast<otava::intermediate::Value*>(parameter->IrObject(emitter, sourcePos, context));
         otava::intermediate::Value* value = emitter.EmitLoad(ptr);
-        uint8_t n = GetDerefCount(flags);
-        for (uint8_t i = 0; i < n; ++i)
+        std::uint8_t n = GetDerefCount(flags);
+        for (std::uint8_t i = 0; i < n; ++i)
         {
             value = emitter.EmitLoad(value);
         }
@@ -1189,8 +1189,8 @@ void BoundParameterNode::Store(Emitter& emitter, OperationFlags flags, const sou
     else if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
         ptr = emitter.EmitLoad(ptr);
-        uint8_t n = GetDerefCount(flags);
-        for (uint8_t i = 1; i < n; ++i)
+        std::uint8_t n = GetDerefCount(flags);
+        for (std::uint8_t i = 1; i < n; ++i)
         {
             ptr = emitter.EmitLoad(ptr);
         }
@@ -1357,8 +1357,8 @@ void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const s
     if ((flags & OperationFlags::deref) != OperationFlags::none)
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        uint8_t n = GetDerefCount(flags);
-        for (uint8_t i = 0; i < n; ++i)
+        std::uint8_t n = GetDerefCount(flags);
+        for (std::uint8_t i = 0; i < n; ++i)
         {
             value = emitter.EmitLoad(value);
         }
@@ -1389,8 +1389,8 @@ void BoundFunctionCallNode::Store(Emitter& emitter, OperationFlags flags, const 
         otava::intermediate::Value* ptr = emitter.Stack().Pop();
         if ((flags & OperationFlags::deref) != OperationFlags::none || GetFlag(BoundExpressionFlags::deref))
         {
-            uint8_t n = GetDerefCount(flags);
-            for (uint8_t i = 1; i < n; ++i)
+            std::uint8_t n = GetDerefCount(flags);
+            for (std::uint8_t i = 1; i < n; ++i)
             {
                 ptr = emitter.EmitLoad(ptr);
             }
@@ -1737,8 +1737,8 @@ void BoundConversionNode::Load(Emitter& emitter, OperationFlags flags, const sou
     if ((flags & OperationFlags::derefAfterConv) != OperationFlags::none)
     {
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        uint8_t derefCount = GetDerefCount(flags);
-        for (uint8_t i = 0; i < derefCount; ++i)
+        std::uint8_t derefCount = GetDerefCount(flags);
+        for (std::uint8_t i = 0; i < derefCount; ++i)
         {
             value = emitter.EmitLoad(value);
         }
@@ -2125,8 +2125,8 @@ void BoundThrowExpressionNode::Load(Emitter& emitter, OperationFlags flags, cons
     {
         exception->Load(emitter, flags, sourcePos, context);
         otava::intermediate::Value* exceptionValue = emitter.Stack().Pop();
-        uint64_t eth = 0;
-        uint64_t etl = 0;
+        std::uint64_t eth = 0;
+        std::uint64_t etl = 0;
         util::UuidToInts(exception->GetType()->GetBaseType()->Id(), eth, etl);
         std::vector<otava::intermediate::Value*> setExceptionArgs;
         setExceptionArgs.push_back(exceptionValue);

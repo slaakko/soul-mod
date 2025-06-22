@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -41,14 +41,14 @@ public:
 void GenerateCode(Context& context, CodeGenerator& codeGenerator, bool verbose);
 
 void EmitParam(ParamInstruction& inst, CodeGenerator& codeGen);
-void EmitLoad(int64_t size, const FrameLocation& frameLocation, otava::assembly::RegisterGroup* regGroup, CodeGenerator& codeGen);
-void EmitStore(int64_t size, const FrameLocation& frameLocation, otava::assembly::RegisterGroup* regGroup, CodeGenerator& codeGen);
+void EmitLoad(std::int64_t size, const FrameLocation& frameLocation, otava::assembly::RegisterGroup* regGroup, CodeGenerator& codeGen);
+void EmitStore(std::int64_t size, const FrameLocation& frameLocation, otava::assembly::RegisterGroup* regGroup, CodeGenerator& codeGen);
 void EmitLoad(LoadInstruction& inst, CodeGenerator& codeGen);
 void EmitStore(StoreInstruction& inst, CodeGenerator& codeGen);
 void EmitElemAddr(ElemAddrInstruction& inst, CodeGenerator& codeGen);
 void EmitPtrOffset(PtrOffsetInstruction& inst, CodeGenerator& codeGen);
 void EmitPtrDiff(PtrDiffInstruction& inst, CodeGenerator& codeGen);
-void EmitArg(ArgInstruction& inst, CallFrame* callFrame, int32_t index, CodeGenerator& codeGen);
+void EmitArg(ArgInstruction& inst, CallFrame* callFrame, std::int32_t index, CodeGenerator& codeGen);
 void EmitArgs(const std::vector<ArgInstruction*>& args, CodeGenerator& codeGen);
 void EmitSignExtend(SignExtendInstruction& inst, CodeGenerator& codeGen);
 void EmitZeroExtend(ZeroExtendInstruction& inst, CodeGenerator& codeGen);

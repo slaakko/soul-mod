@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -31,7 +31,7 @@ RegisterGroup::RegisterGroup(RegisterGroupKind kind_) : kind(kind_), nonvolatile
 {
 }
 
-const Register* RegisterGroup::GetReg(int64_t size) const
+const Register* RegisterGroup::GetReg(std::int64_t size) const
 {
     if (size >= 1 && size <= 8)
     {
@@ -43,7 +43,7 @@ const Register* RegisterGroup::GetReg(int64_t size) const
     }
 }
 
-Register* RegisterGroup::GetReg(int64_t size)
+Register* RegisterGroup::GetReg(std::int64_t size)
 {
     if (size >= 1 && size <= 8)
     {
@@ -55,7 +55,7 @@ Register* RegisterGroup::GetReg(int64_t size)
     }
 }
 
-void RegisterGroup::SetReg(int64_t size, const Register& reg)
+void RegisterGroup::SetReg(std::int64_t size, const Register& reg)
 {
     if (size >= 1 && size <= 8)
     {

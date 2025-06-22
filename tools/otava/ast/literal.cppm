@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -10,7 +10,7 @@ import otava.ast.node;
 
 export namespace otava::ast {
 
-enum class Suffix : uint8_t
+enum class Suffix : std::uint8_t
 {
     none = 0,
     u = 1 << 0,
@@ -22,25 +22,25 @@ enum class Suffix : uint8_t
 
 inline Suffix operator|(Suffix left, Suffix right)
 {
-    return Suffix(uint8_t(left) | uint8_t(right));
+    return Suffix(std::uint8_t(left) | std::uint8_t(right));
 }
 
 inline Suffix operator&(Suffix left, Suffix right)
 {
-    return Suffix(uint8_t(left) & uint8_t(right));
+    return Suffix(std::uint8_t(left) & std::uint8_t(right));
 }
 
 inline Suffix operator~(Suffix suffix)
 {
-    return Suffix(~uint8_t(suffix));
+    return Suffix(~std::uint8_t(suffix));
 }
 
-enum class Base : uint8_t
+enum class Base : std::uint8_t
 {
     binary, octal, decimal, hexadecimal
 };
 
-enum class EncodingPrefix : uint8_t
+enum class EncodingPrefix : std::uint8_t
 {
     none, u8, u, U, L
 };
@@ -61,16 +61,16 @@ class IntegerLiteralNode : public LiteralNode
 {
 public:
     IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_);
-    IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_);
+    IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    uint64_t Value() const { return value; }
+    std::uint64_t Value() const { return value; }
     Suffix GetSuffix() const { return suffix; }
     Base GetBase() const { return base; }
 private:
-    uint64_t value;
+    std::uint64_t value;
     Suffix suffix;
     Base base;
 };

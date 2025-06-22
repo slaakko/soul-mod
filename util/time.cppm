@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,7 +9,7 @@ import std.core;
 
 export namespace util {
 
-enum class Month : int8_t
+enum class Month : std::int8_t
 {
     january = 1, february, march, april, may, june, july, august, september, october, november, december
 };
@@ -22,10 +22,10 @@ public:
     Date() : year(0), month(Month::january), day(1)
     {
     }
-    Date(short year_, Month month_, int8_t day_) : year(year_), month(month_), day(day_)
+    Date(short year_, Month month_, std::int8_t day_) : year(year_), month(month_), day(day_)
     {
     }
-    int16_t Year() const
+    std::int16_t Year() const
     {
         return year;
     }
@@ -33,7 +33,7 @@ public:
     {
         return month;
     }
-    int8_t Day() const
+    std::int8_t Day() const
     {
         return day;
     }
@@ -43,9 +43,9 @@ public:
     std::string ToString() const;
     std::string ToString(bool omitDashes) const;
 private:
-    int16_t year;
+    std::int16_t year;
     Month month;
-    int8_t day;
+    std::int8_t day;
 };
 
 Date GetCurrentDate();
@@ -85,22 +85,22 @@ public:
     DateTime(const Date& date_) : date(date_), secs(0)
     {
     }
-    DateTime(const Date& date_, int32_t secs_) : date(date_), secs(secs_)
+    DateTime(const Date& date_, std::int32_t secs_) : date(date_), secs(secs_)
     {
     }
     Date GetDate() const
     {
         return date;
     }
-    int32_t Hours() const
+    std::int32_t Hours() const
     {
         return secs / 3600;
     }
-    int32_t Minutes() const
+    std::int32_t Minutes() const
     {
         return secs / 60;
     }
-    int32_t Seconds() const
+    std::int32_t Seconds() const
     {
         return secs;
     }
@@ -108,7 +108,7 @@ public:
     std::string ToString(bool omitDashes, bool omitColons, bool omitMins, bool omitSecs) const;
 private:
     Date date;
-    int32_t secs;
+    std::int32_t secs;
 };
 
 DateTime GetCurrentDateTime();
@@ -141,11 +141,11 @@ DateTime ParseDateTime(const std::string& dateTimeStr);
 
 const int secsInDay = 24 * 3600;
 
-std::string FormatTimeMs(int32_t milliseconds);
+std::string FormatTimeMs(std::int32_t milliseconds);
 
 std::int64_t CurrentMs();
 
-int64_t GetCurrentTime();
+std::int64_t GetCurrentTime();
 
 std::string DurationStr(const std::chrono::nanoseconds& duration);
 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -56,7 +56,7 @@ BinaryResourcePtr::BinaryResourcePtr(const std::string& moduleName, const std::s
         throw std::runtime_error("error: error loading resource '" + resourceName + "' from module '" + moduleName + ": " +
             windowsException.ErrorMessage() + ": note: please add resource file '" + resourceFileName + "' to the C++ project that makes executable '" + moduleName + "'");
     }
-    data = static_cast<uint8_t*>(LockResource(handle));
+    data = static_cast<std::uint8_t*>(LockResource(handle));
     size = SizeofResource(moduleHandle, res);
 }
 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -20,24 +20,24 @@ import soul.ast.span;
 
 export namespace soul::lexer {
 
-enum class LexerFlags : int32_t
+enum class LexerFlags : std::int32_t
 {
     none = 0, synchronize = 1 << 0, synchronized = 1 << 1, synchronizedAtLeastOnce = 1 << 2, cursorSeen = 1 << 3, recordedParse = 1 << 4, farthestError = 1 << 5
 };
 
 constexpr LexerFlags operator|(LexerFlags left, LexerFlags right)
 {
-    return static_cast<LexerFlags>(static_cast<int32_t>(left) | static_cast<int32_t>(right));
+    return static_cast<LexerFlags>(static_cast<std::int32_t>(left) | static_cast<std::int32_t>(right));
 }
 
 constexpr LexerFlags operator&(LexerFlags left, LexerFlags right)
 {
-    return static_cast<LexerFlags>(static_cast<int32_t>(left) & static_cast<int32_t>(right));
+    return static_cast<LexerFlags>(static_cast<std::int32_t>(left) & static_cast<std::int32_t>(right));
 }
 
 constexpr LexerFlags operator~(LexerFlags flag)
 {
-    return static_cast<LexerFlags>(~static_cast<int32_t>(flag));
+    return static_cast<LexerFlags>(~static_cast<std::int32_t>(flag));
 }
 
 bool parsing_error_thrown = false;
@@ -55,17 +55,17 @@ struct LexerState
     std::vector<soul::lexer::Token<Char, LexerBaseT>> tokens;
     LexerFlags flags;
     soul::ast::lexer::pos::pair::LexerPosPair recordedPosPair;
-    int64_t farthestPos;
-    std::vector<int64_t> ruleContext;
-    std::vector<int64_t> farthestRuleContext;
-    int64_t currentPos;
+    std::int64_t farthestPos;
+    std::vector<std::int64_t> ruleContext;
+    std::vector<std::int64_t> farthestRuleContext;
+    std::int64_t currentPos;
 };
 
 template<typename Stack>
     requires RuleStack<Stack>
 struct RuleGuard
 {
-    RuleGuard(Stack& stack_, int64_t ruleId) : stack(stack_)
+    RuleGuard(Stack& stack_, std::int64_t ruleId) : stack(stack_)
     {
         stack.PushRule(ruleId);
     }
@@ -138,7 +138,7 @@ public:
     {
         ComputeLineStarts();
     }
-    int64_t operator*() const
+    std::int64_t operator*() const
     {
         return current->id;
     }
@@ -147,7 +147,7 @@ public:
         if (GetFlag(LexerFlags::recordedParse))
         {
             // precondition: !tokens.empty() && tokens.back().id == END_TOKEN
-            int64_t currentPos = GetPos();
+            std::int64_t currentPos = GetPos();
             if (currentPos == recordedPosPair.end)
             {
                 current = tokens.end() - 1; // set current to last token whose id is END_TOKEN
@@ -174,7 +174,7 @@ public:
             {
                 line = current->line;
             }
-            int64_t p = GetPos();
+            std::int64_t p = GetPos();
             if (p > farthestPos)
             {
                 farthestPos = p;
@@ -182,28 +182,28 @@ public:
             }
         }
     }
-    int64_t GetPos() const override
+    std::int64_t GetPos() const override
     {
-        int32_t p = static_cast<int32_t>(current - tokens.begin());
-        return (static_cast<int64_t>(line) << 32) | static_cast<int64_t>(p);
+        std::int32_t p = static_cast<std::int32_t>(current - tokens.begin());
+        return (static_cast<std::int64_t>(line) << 32) | static_cast<std::int64_t>(p);
     }
-    void SetPos(int64_t pos)
+    void SetPos(std::int64_t pos)
     {
-        current = tokens.begin() + static_cast<int32_t>(pos);
-        line = static_cast<int32_t>(pos >> 32);
+        current = tokens.begin() + static_cast<std::int32_t>(pos);
+        line = static_cast<std::int32_t>(pos >> 32);
     }
     soul::ast::Span GetSpan() const override
     {
         return GetSpan(GetPos());
     }
-    soul::ast::Span GetSpan(int64_t pos) const override
+    soul::ast::Span GetSpan(std::int64_t pos) const override
     {
         const auto& token = GetToken(pos);
         return soul::ast::Span(static_cast<int>(token.match.begin - start), token.match.Length());
     }
-    const soul::lexer::Token<Char, LexerBase<Char>>& GetToken(int64_t pos) const override
+    const soul::lexer::Token<Char, LexerBase<Char>>& GetToken(std::int64_t pos) const override
     {
-        int32_t tokenIndex = static_cast<int32_t>(pos);
+        std::int32_t tokenIndex = static_cast<std::int32_t>(pos);
         if (tokenIndex >= 0 && tokenIndex < tokens.size())
         {
             return tokens[tokenIndex];
@@ -229,7 +229,7 @@ public:
     {
         return line;
     }
-    void SetLine(int32_t line_) override
+    void SetLine(std::int32_t line_) override
     {
         line = line_;
     }
@@ -257,11 +257,11 @@ public:
     {
         keywordMap = keywordMap_;
     }
-    std::map<int64_t, std::string>* GetRuleNameMapPtr() const override
+    std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const override
     {
         return ruleNameMapPtr;
     }
-    void SetRuleNameMapPtr(std::map<int64_t, std::string>* ruleNameMapPtr_) override
+    void SetRuleNameMapPtr(std::map<std::int64_t, std::string>* ruleNameMapPtr_) override
     {
         ruleNameMapPtr = ruleNameMapPtr_;
     }
@@ -269,7 +269,7 @@ public:
     bool GetFlag(LexerFlags flag) const { return (flags & flag) != LexerFlags::none; }
     void SetFlag(LexerFlags flag) { flags = flags | flag; }
     void ResetFlag(LexerFlags flag) { flags = flags & ~flag; }
-    void PushRule(int64_t ruleId)
+    void PushRule(std::int64_t ruleId)
     {
         ruleContext.push_back(ruleId);
     }
@@ -277,7 +277,7 @@ public:
     {
         ruleContext.pop_back();
     }
-    int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const override
+    std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const override
     {
         if (keywordMap)
         {
@@ -308,7 +308,7 @@ public:
     {
         return lexeme;
     }
-    std::string GetTokenName(int64_t tokenID) const
+    std::string GetTokenName(std::int64_t tokenID) const
     {
         soul::ast::slg::TokenCollection* tokenCollection = GetTokenCollection();
         auto token = tokenCollection->GetToken(tokenID);
@@ -321,7 +321,7 @@ public:
             return "<unknown token>";
         }
     }
-    std::string GetTokenInfo(int64_t tokenID) const
+    std::string GetTokenInfo(std::int64_t tokenID) const
     {
         soul::ast::slg::TokenCollection* tokenCollection = GetTokenCollection();
         auto token = tokenCollection->GetToken(tokenID);
@@ -334,11 +334,11 @@ public:
             return "<unknown token>";
         }
     }
-    inline int GetLine(int64_t pos) const
+    inline int GetLine(std::int64_t pos) const
     {
         return pos >> 32;
     }
-    soul::ast::SourcePos GetSourcePos(int64_t pos) const
+    soul::ast::SourcePos GetSourcePos(std::int64_t pos) const
     {
         const Char* s = start;
         int line = GetLine(pos);
@@ -350,7 +350,7 @@ public:
         int col = static_cast<int>(token.match.begin - s + 1);
         return soul::ast::SourcePos(pos, file, line, col);
     }
-    std::string ErrorLines(int64_t pos) const override
+    std::string ErrorLines(std::int64_t pos) const override
     {
         auto token = GetToken(pos);
         std::basic_string<Char> lines;
@@ -370,14 +370,14 @@ public:
         {
             lines.append(token.match.begin - lineStart, ' ');
         }
-        lines.append(std::max(static_cast<int64_t>(1), token.match.end - token.match.begin), '^');
+        lines.append(std::max(static_cast<std::int64_t>(1), token.match.end - token.match.begin), '^');
         if (lineEnd > token.match.end)
         {
             lines.append(lineEnd - token.match.end, ' ');
         }
         return util::ToUtf8(lines);
     }
-    void ThrowExpectationFailure(int64_t pos, const std::string& name)
+    void ThrowExpectationFailure(std::int64_t pos, const std::string& name)
     {
         soul::ast::SourcePos sourcePos = GetSourcePos(pos);
         std::string parserStateStr = GetParserStateStr();
@@ -393,7 +393,7 @@ public:
             parserStateStr.append("\nParser state:\n");
             for (int i = 0; i < n; ++i)
             {
-                int64_t ruleId = farthestRuleContext[i];
+                std::int64_t ruleId = farthestRuleContext[i];
                 auto it = (*ruleNameMapPtr).find(ruleId);
                 if (it != (*ruleNameMapPtr).cend())
                 {
@@ -404,7 +404,7 @@ public:
         }
         return parserStateStr;
     }
-    std::string GetError(int64_t pos) const
+    std::string GetError(std::int64_t pos) const
     {
         std::string parserStateStr = GetParserStateStr();
         return "parsing error at '" + fileName + ":" + std::to_string(GetLine(pos)) + "':\n" + ErrorLines(pos) + parserStateStr;
@@ -563,7 +563,7 @@ public:
     {
         return skip;
     }
-    void SetCommentTokenId(int64_t commentTokenId_)
+    void SetCommentTokenId(std::int64_t commentTokenId_)
     {
         commentTokenId = commentTokenId_;
     }
@@ -738,7 +738,7 @@ private:
         }
         token.id = soul::lexer::INVALID_TOKEN;
         state = Machine::NextState(state, '\0', *this);
-        int64_t p = -1;
+        std::int64_t p = -1;
         if (token.id != soul::lexer::INVALID_TOKEN && token.id != soul::lexer::CONTINUE_TOKEN)
         {
             tokens.push_back(token);
@@ -779,8 +779,8 @@ private:
     std::vector<soul::lexer::Token<Char, LexerBase<Char>>>::iterator current;
     soul::lexer::Token<Char, LexerBase<Char>> token;
     Lexeme<Char> lexeme;
-    int32_t file;
-    int32_t line;
+    std::int32_t file;
+    std::int32_t line;
     const Char* start;
     const Char* end;
     const Char* pos;
@@ -789,18 +789,18 @@ private:
     soul::lexer::ClassMap<Char>* classMap;
     soul::ast::slg::TokenCollection* tokenCollection;
     KeywordMap<Char>* keywordMap;
-    int64_t farthestPos;
-    std::vector<int64_t> ruleContext;
-    std::vector<int64_t> farthestRuleContext;
+    std::int64_t farthestPos;
+    std::vector<std::int64_t> ruleContext;
+    std::vector<std::int64_t> farthestRuleContext;
     std::vector<const Char*> lineStarts;
-    std::map<int64_t, std::string>* ruleNameMapPtr;
+    std::map<std::int64_t, std::string>* ruleNameMapPtr;
     ParsingLog* log;
     Machine::Variables vars;
     LexerState<Char, LexerBase<Char>> state;
     std::stack<LexerState<Char, LexerBase<Char>>> stateStack;
     PPHook ppHook;
     bool skip;
-    int64_t commentTokenId;
+    std::int64_t commentTokenId;
     std::set<int> blockCommentStates;
 };
 
@@ -819,7 +819,7 @@ void WriteBeginRuleToLog(Lexer& lexer, const std::string& ruleName)
 }
 
 template<typename Lexer>
-void WriteSuccessToLog(Lexer& lexer, int64_t matchPos, const std::string& ruleName)
+void WriteSuccessToLog(Lexer& lexer, std::int64_t matchPos, const std::string& ruleName)
 {
     lexer.Log()->DecIndent();
     lexer.Log()->WriteSuccess(util::ToUtf8(lexer.GetToken(matchPos).ToString()));

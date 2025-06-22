@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -346,7 +346,7 @@ void ExplicitInstantiationSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(specialization->Id());
-    int32_t n = functionDefinitionSymbols.size();
+    std::int32_t n = functionDefinitionSymbols.size();
     writer.GetBinaryStreamWriter().Write(n);
     for (auto& funDefSymbol : functionDefinitionSymbols)
     {
@@ -358,8 +358,8 @@ void ExplicitInstantiationSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(specializationId);
-    int32_t n = reader.GetBinaryStreamReader().ReadInt();
-    for (int32_t i = 0; i < n; ++i)
+    std::int32_t n = reader.GetBinaryStreamReader().ReadInt();
+    for (std::int32_t i = 0; i < n; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsExplicitlyInstantiatedFunctionDefinitionSymbol())

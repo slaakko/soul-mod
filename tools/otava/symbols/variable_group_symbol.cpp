@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -67,7 +67,7 @@ VariableSymbol* VariableGroupSymbol::GetVariable(int arity) const
 void VariableGroupSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
-    uint32_t count = variables.size();
+    std::uint32_t count = variables.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (VariableSymbol* variable : variables)
     {
@@ -78,8 +78,8 @@ void VariableGroupSymbol::Write(Writer& writer)
 void VariableGroupSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         util::uuid variableId;
         reader.GetBinaryStreamReader().ReadUuid(variableId);

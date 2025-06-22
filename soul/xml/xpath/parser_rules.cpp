@@ -4,10 +4,10 @@ namespace soul::xml::xpath::parser::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 6774979419569127425, "XPathParser.Expr" },
         { 6774979419569127426, "XPathParser.OrExpr" },
         { 6774979419569127427, "XPathParser.AndExpr" },

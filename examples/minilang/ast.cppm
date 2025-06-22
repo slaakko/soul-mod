@@ -69,11 +69,11 @@ private:
 class IntegerLiteralNode : public Node
 {
 public:
-	IntegerLiteralNode(int64_t value_);
-	int64_t Value() const { return value; }
+	IntegerLiteralNode(std::int64_t value_);
+	std::int64_t Value() const { return value; }
 	void Accept(minilang::visitor::Visitor& visitor) override;
 private:
-	int64_t value;
+	std::int64_t value;
 };
 
 class IdentifierNode : public Node

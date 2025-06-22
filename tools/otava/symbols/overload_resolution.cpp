@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -41,9 +41,9 @@ ArgumentMatch::ArgumentMatch() :
 {
 }
 
-int32_t ArgumentConversionValue(const ArgumentMatch& match)
+std::int32_t ArgumentConversionValue(const ArgumentMatch& match)
 {
-    int32_t argumentConversionValue = 0;
+    std::int32_t argumentConversionValue = 0;
     if (match.conversionFun)
     {
         argumentConversionValue = 100;
@@ -363,7 +363,7 @@ bool FindQualificationConversion(TypeSymbol* argType, TypeSymbol* paramType, Bou
     if (paramType->IsFundamentalTypeSymbol())
     {
         FundamentalTypeSymbol* fundamentalTypeSymbol = static_cast<FundamentalTypeSymbol*>(paramType);
-        fundamentalTypeDistance = static_cast<int32_t>(fundamentalTypeSymbol->GetFundamentalTypeKind());
+        fundamentalTypeDistance = static_cast<std::int32_t>(fundamentalTypeSymbol->GetFundamentalTypeKind());
         argumentMatch.fundamentalTypeDistance = fundamentalTypeDistance;
     }
     if (argumentMatch.conversionFun)

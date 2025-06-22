@@ -64,7 +64,7 @@ template<typename LexerT>
 soul::parser::Match SlgFileParser<LexerT>::SlgFile(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -79,7 +79,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFile(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -108,11 +108,11 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFile(LexerT& lexer)
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(true);
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = CommonParser<LexerT>::QualifiedId(lexer);
                                     projectName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                     if (match.hit)
@@ -144,7 +144,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFile(LexerT& lexer)
                         soul::parser::Match match(true);
                         soul::parser::Match* parentMatch9 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == SEMICOLON)
                             {
@@ -176,7 +176,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFile(LexerT& lexer)
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch12 = &match;
@@ -184,7 +184,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFile(LexerT& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch13 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = SlgFileParser<LexerT>::SlgFileDeclaration(lexer);
                                         declaration.reset(static_cast<soul::ast::slg::SlgFileDeclaration*>(match.value));
                                         if (match.hit)
@@ -242,7 +242,7 @@ template<typename LexerT>
 soul::parser::Match SlgFileParser<LexerT>::SlgFileDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -258,19 +258,19 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFileDeclaration(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t save = lexer.GetPos();
+        std::int64_t save = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            int64_t save = lexer.GetPos();
+            std::int64_t save = lexer.GetPos();
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t save = lexer.GetPos();
+                std::int64_t save = lexer.GetPos();
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = SlgFileParser<LexerT>::TokenFileDeclaration(lexer);
                     tokenFileDeclaration.reset(static_cast<soul::ast::slg::SlgFileDeclaration*>(match.value));
                     if (match.hit)
@@ -294,7 +294,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFileDeclaration(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = SlgFileParser<LexerT>::KeywordFileDeclaration(lexer);
                             keywordFileDeclaration.reset(static_cast<soul::ast::slg::SlgFileDeclaration*>(match.value));
                             if (match.hit)
@@ -323,7 +323,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFileDeclaration(LexerT& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch7 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match = SlgFileParser<LexerT>::ExpressionFileDeclaration(lexer);
                         expressionFileDeclaration.reset(static_cast<soul::ast::slg::SlgFileDeclaration*>(match.value));
                         if (match.hit)
@@ -352,7 +352,7 @@ soul::parser::Match SlgFileParser<LexerT>::SlgFileDeclaration(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch9 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = SlgFileParser<LexerT>::LexerFileDeclaration(lexer);
                     lexerFileDeclaration.reset(static_cast<soul::ast::slg::SlgFileDeclaration*>(match.value));
                     if (match.hit)
@@ -389,7 +389,7 @@ template<typename LexerT>
 soul::parser::Match SlgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -403,7 +403,7 @@ soul::parser::Match SlgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -422,11 +422,11 @@ soul::parser::Match SlgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                int64_t save = lexer.GetPos();
+                                std::int64_t save = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     if (*lexer == EXTERN)
                                     {
@@ -449,7 +449,7 @@ soul::parser::Match SlgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch9 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(true);
                                             if (match.hit)
                                             {
@@ -504,7 +504,7 @@ soul::parser::Match SlgFileParser<LexerT>::TokenFileDeclaration(LexerT& lexer)
                     soul::parser::Match match(true);
                     soul::parser::Match* parentMatch13 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == SEMICOLON)
                         {
@@ -555,7 +555,7 @@ template<typename LexerT>
 soul::parser::Match SlgFileParser<LexerT>::KeywordFileDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -568,7 +568,7 @@ soul::parser::Match SlgFileParser<LexerT>::KeywordFileDeclaration(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -607,7 +607,7 @@ soul::parser::Match SlgFileParser<LexerT>::KeywordFileDeclaration(LexerT& lexer)
                     soul::parser::Match match(true);
                     soul::parser::Match* parentMatch6 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == SEMICOLON)
                         {
@@ -658,7 +658,7 @@ template<typename LexerT>
 soul::parser::Match SlgFileParser<LexerT>::ExpressionFileDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -671,7 +671,7 @@ soul::parser::Match SlgFileParser<LexerT>::ExpressionFileDeclaration(LexerT& lex
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -710,7 +710,7 @@ soul::parser::Match SlgFileParser<LexerT>::ExpressionFileDeclaration(LexerT& lex
                     soul::parser::Match match(true);
                     soul::parser::Match* parentMatch6 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == SEMICOLON)
                         {
@@ -761,7 +761,7 @@ template<typename LexerT>
 soul::parser::Match SlgFileParser<LexerT>::LexerFileDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -774,7 +774,7 @@ soul::parser::Match SlgFileParser<LexerT>::LexerFileDeclaration(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -808,7 +808,7 @@ soul::parser::Match SlgFileParser<LexerT>::LexerFileDeclaration(LexerT& lexer)
                     soul::parser::Match match(true);
                     soul::parser::Match* parentMatch6 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == SEMICOLON)
                         {

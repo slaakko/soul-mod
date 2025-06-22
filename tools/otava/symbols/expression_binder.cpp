@@ -1,6 +1,6 @@
 // =================================
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -1453,7 +1453,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfTypeExprNode& node)
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
     Emitter emitter(nullptr);
     otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
-    int64_t size = irType->Size();
+    std::int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"ssize_t");
     TypeSymbol* size_t_type = ResolveType(&size_t_node, DeclarationFlags::none, context);
     while (size_t_type->IsAliasTypeSymbol())
@@ -1471,7 +1471,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfUnaryExprNode& node)
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
     Emitter emitter(nullptr);
     otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
-    int64_t size = irType->Size();
+    std::int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"size_t");
     TypeSymbol* size_t_type = ResolveType(&size_t_node, DeclarationFlags::none, context);
     while (size_t_type->IsAliasTypeSymbol())

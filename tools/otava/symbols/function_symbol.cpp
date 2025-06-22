@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -632,7 +632,7 @@ void FunctionSymbol::SetConversionKind(ConversionKind conversionKind_)
     conversionKind = conversionKind_;
 }
 
-void FunctionSymbol::SetConversionDistance(int32_t conversionDistance_)
+void FunctionSymbol::SetConversionDistance(std::int32_t conversionDistance_)
 {
     conversionDistance = conversionDistance_;
 }
@@ -717,11 +717,11 @@ void FunctionSymbol::SetReturnValueParam(ParameterSymbol* returnValueParam_)
 void FunctionSymbol::Write(Writer& writer)
 {
     ContainerSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(kind));
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(qualifiers));
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(linkage));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(kind));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(qualifiers));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(linkage));
     writer.GetBinaryStreamWriter().Write(index);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(flags));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(flags));
     if (returnType)
     {
         writer.GetBinaryStreamWriter().Write(returnType->Id());
@@ -741,7 +741,7 @@ void FunctionSymbol::Write(Writer& writer)
     }
     if (IsConversion())
     {
-        writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(GetConversionKind()));
+        writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(GetConversionKind()));
         TypeSymbol* convParamType = ConversionParamType();
         if (convParamType)
         {
@@ -766,9 +766,9 @@ void FunctionSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(fixedIrName);
     }
-    uint32_t ns = specialization.size();
+    std::uint32_t ns = specialization.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(ns);
-    for (uint32_t i = 0; i < ns; ++i)
+    for (std::uint32_t i = 0; i < ns; ++i)
     {
         writer.GetBinaryStreamWriter().Write(specialization[i]->Id());
     }
@@ -803,8 +803,8 @@ void FunctionSymbol::Read(Reader& reader)
     {
         fixedIrName = reader.GetBinaryStreamReader().ReadUtf8String();
     }
-    uint32_t ns = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < ns; ++i)
+    std::uint32_t ns = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < ns; ++i)
     {
         util::uuid sid;
         reader.GetBinaryStreamReader().ReadUuid(sid);
@@ -1316,7 +1316,7 @@ bool FunctionDefinitionSymbol::IsFinal() const
     }
 }
 
-int32_t FunctionDefinitionSymbol::VTabIndex() const
+std::int32_t FunctionDefinitionSymbol::VTabIndex() const
 {
     if (declaration)
     {
@@ -1376,7 +1376,7 @@ TypeSymbol* FunctionDefinitionSymbol::ConversionArgType() const
     }
 }
 
-int32_t FunctionDefinitionSymbol::ConversionDistance() const
+std::int32_t FunctionDefinitionSymbol::ConversionDistance() const
 {
     if (declaration)
     {

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -139,14 +139,14 @@ void LinearScanRegisterAllocator::AllocateFrameLocation(Instruction* inst)
     if (inst->IsParamInstruction())
     {
         ParamInstruction* paramInst = static_cast<ParamInstruction*>(inst);
-        int64_t size = util::Align(paramInst->GetType()->Size(), 8);
+        std::int64_t size = util::Align(paramInst->GetType()->Size(), 8);
         frameLocations[paramInst] = frame.GetFrameLocation(size);
         locations[paramInst] = locations[paramInst] | Locations::frame;
     }
     else if (inst->IsLocalInstruction())
     {
         LocalInstruction* localInst = static_cast<LocalInstruction*>(inst);
-        int64_t size = util::Align(localInst->LocalType()->Size(), 8);
+        std::int64_t size = util::Align(localInst->LocalType()->Size(), 8);
         frameLocations[localInst] = frame.GetFrameLocation(size);
         locations[localInst] = locations[localInst] | Locations::frame;
     }

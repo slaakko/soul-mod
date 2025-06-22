@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -68,9 +68,9 @@ public:
     void SetNext(Function* next_) { SetNextSibling(next_); }
     Function* Prev() { return static_cast<Function*>(PrevSibling()); }
     void SetPrev(Function* prev_) { SetPrevSibling(prev_); }
-    BasicBlock* GetBasicBlock(int32_t id) const;
+    BasicBlock* GetBasicBlock(std::int32_t id) const;
     BasicBlock* CreateBasicBlock();
-    BasicBlock* AddBasicBlock(const SourcePos& sourcePos, int32_t id, Context* context);
+    BasicBlock* AddBasicBlock(const SourcePos& sourcePos, std::int32_t id, Context* context);
     std::unique_ptr<BasicBlock> RemoveBasicBlock(BasicBlock* bb);
     bool DoRemoveBasicBlock(BasicBlock* block);
     BasicBlock* FirstBasicBlock();
@@ -80,18 +80,18 @@ public:
     const std::string& Name() const { return name; }
     std::string ToString() const override { return name; }
     MetadataRef* GetMetadataRef() const { return metadataRef; }
-    RegValue* GetRegValue(int32_t reg) const;
-    RegValue* GetRegRef(const SourcePos& sourcePos, Type* type, int32_t reg, Context* context) const;
-    RegValue* MakeRegValue(const SourcePos& sourcePos, Type* type, int32_t reg, Context* context);
-    Instruction* GetInstruction(int32_t reg) const;
-    void MapInstruction(int32_t reg, Instruction* inst, Context* context);
+    RegValue* GetRegValue(std::int32_t reg) const;
+    RegValue* GetRegRef(const SourcePos& sourcePos, Type* type, std::int32_t reg, Context* context) const;
+    RegValue* MakeRegValue(const SourcePos& sourcePos, Type* type, std::int32_t reg, Context* context);
+    Instruction* GetInstruction(std::int32_t reg) const;
+    void MapInstruction(std::int32_t reg, Instruction* inst, Context* context);
     int NumBasicBlocks() const;
     const std::vector<BasicBlock*>& RetBlocks() const { return retBlocks; }
     void AddRetBlock(BasicBlock* retBlock);
     void AddEntryAndExitBlocks();
     void RemoveEntryAndExitBlocks();
     void SetRegNumbers();
-    int32_t NextRegNumber() { return nextRegNumber++; }
+    std::int32_t NextRegNumber() { return nextRegNumber++; }
     Value* GetParam(int index) const;
 private:
     void AddBasicBlock(BasicBlock* bb);
@@ -103,14 +103,14 @@ private:
     std::vector<Instruction*> params;
     std::unique_ptr<BasicBlock> entryBlock;
     MetadataRef* metadataRef;
-    std::map<int32_t, BasicBlock*> basicBlockMap;
-    std::map<int32_t, RegValue*> regValueMap;
-    std::map<int32_t, Instruction*> instructionMap;
+    std::map<std::int32_t, BasicBlock*> basicBlockMap;
+    std::map<std::int32_t, RegValue*> regValueMap;
+    std::map<std::int32_t, Instruction*> instructionMap;
     std::vector<std::unique_ptr<RegValue>> regValues;
     std::vector<BasicBlock*> retBlocks;
-    int32_t nextRegNumber;
+    std::int32_t nextRegNumber;
     util::Container basicBlocks;
-    int32_t nextBasicBlockId;
+    std::int32_t nextBasicBlockId;
 };
 
 } // otava::intermediate

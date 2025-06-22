@@ -27,9 +27,9 @@ std::set<std::string> unseenPropertyNames;
 std::vector<std::unique_ptr<util::Block>> blocks;
 std::map<std::string, util::Block*>  blockMap;
 
-uint32_t FromHex(const std::string& hex)
+std::uint32_t FromHex(const std::string& hex)
 {
-    uint32_t c = 0;
+    std::uint32_t c = 0;
     std::stringstream s;
     s.str(hex);
     s >> std::hex >> c;
@@ -53,7 +53,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
         const std::string* cp = attributes.GetAttributeValue("cp");
         util::CharacterInfo* characterInfo = nullptr;
         extendedCharacterInfo = nullptr;
-        uint32_t c = 0;
+        std::uint32_t c = 0;
         if (cp)
         {
             std::string hex = *cp;
@@ -111,7 +111,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                     }
                     else
                     {
-                        uint32_t upper = FromHex(attributeValue);
+                        std::uint32_t upper = FromHex(attributeValue);
                         characterInfo->SetUpper(upper);
                     }
                 }
@@ -123,7 +123,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                     }
                     else
                     {
-                        uint32_t lower = FromHex(attributeValue);
+                        std::uint32_t lower = FromHex(attributeValue);
                         characterInfo->SetLower(lower);
                     }
                 }
@@ -135,7 +135,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                     }
                     else
                     {
-                        uint32_t title = FromHex(attributeValue);
+                        std::uint32_t title = FromHex(attributeValue);
                         characterInfo->SetTitle(title);
                     }
                 }
@@ -147,7 +147,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                     }
                     else
                     {
-                        uint32_t folding = FromHex(attributeValue);
+                        std::uint32_t folding = FromHex(attributeValue);
                         characterInfo->SetFolding(folding);
                     }
                 }
@@ -172,7 +172,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                         std::vector<std::string> v = util::Split(attributeValue, ' ');
                         for (const std::string& s : v)
                         {
-                            uint32_t u = FromHex(s);
+                            std::uint32_t u = FromHex(s);
                             extendedCharacterInfo->FullUpper().append(1, u);
                         }
                     }
@@ -188,7 +188,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                         std::vector<std::string> v = util::Split(attributeValue, ' ');
                         for (const std::string& s : v)
                         {
-                            uint32_t u = FromHex(s);
+                            std::uint32_t u = FromHex(s);
                             extendedCharacterInfo->FullLower().append(1, u);
                         }
                     }
@@ -204,7 +204,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                         std::vector<std::string> v = util::Split(attributeValue, ' ');
                         for (const std::string& s : v)
                         {
-                            uint32_t u = FromHex(s);
+                            std::uint32_t u = FromHex(s);
                             extendedCharacterInfo->FullTitle().append(1, u);
                         }
                     }
@@ -220,7 +220,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                         std::vector<std::string> v = util::Split(attributeValue, ' ');
                         for (const std::string& s : v)
                         {
-                            uint32_t u = FromHex(s);
+                            std::uint32_t u = FromHex(s);
                             extendedCharacterInfo->FullFolding().append(1, u);
                         }
                     }
@@ -232,7 +232,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                     {
                         throw std::runtime_error("invalid ccc attribute value");
                     }
-                    extendedCharacterInfo->SetCanonicalCombiningClass(static_cast<uint8_t>(value));
+                    extendedCharacterInfo->SetCanonicalCombiningClass(static_cast<std::uint8_t>(value));
                 }
                 else if (propertyName == "na")
                 {
@@ -255,7 +255,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                 }
                 else if (propertyName == "bmg")
                 {
-                    uint32_t bmg = FromHex(attributeValue);
+                    std::uint32_t bmg = FromHex(attributeValue);
                     extendedCharacterInfo->SetBidiMirroringGlyph(bmg);
                 }
                 else if (propertyName == "bpt")
@@ -264,7 +264,7 @@ void UnicodeCharacterDatabaseContentHandler::StartElement(
                 }
                 else if (propertyName == "bpb")
                 {
-                    uint32_t bpb = FromHex(attributeValue);
+                    std::uint32_t bpb = FromHex(attributeValue);
                     extendedCharacterInfo->SetBidiPairedBracket(bpb);
                 }
                 else

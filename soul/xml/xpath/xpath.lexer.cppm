@@ -37,10 +37,10 @@ struct XPathLexer
 {
     using Variables = XPathLexer_Variables;
 
-    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
+    static std::int32_t NextState(std::int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
         soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
-        int32_t cls = classmap->GetClass(chr);
+        std::int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
             case 0:
@@ -157,7 +157,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(27, lexer);
+                std::int64_t tokenId = GetTokenId(27, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -178,7 +178,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(26, lexer);
+                std::int64_t tokenId = GetTokenId(26, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -199,7 +199,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(25, lexer);
+                std::int64_t tokenId = GetTokenId(25, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -220,7 +220,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(24, lexer);
+                std::int64_t tokenId = GetTokenId(24, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -241,7 +241,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(23, lexer);
+                std::int64_t tokenId = GetTokenId(23, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -262,7 +262,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(22, lexer);
+                std::int64_t tokenId = GetTokenId(22, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -283,7 +283,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(21, lexer);
+                std::int64_t tokenId = GetTokenId(21, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -304,7 +304,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(20, lexer);
+                std::int64_t tokenId = GetTokenId(20, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -335,7 +335,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(19, lexer);
+                std::int64_t tokenId = GetTokenId(19, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -356,7 +356,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(16, lexer);
+                std::int64_t tokenId = GetTokenId(16, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -387,7 +387,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(15, lexer);
+                std::int64_t tokenId = GetTokenId(15, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -408,7 +408,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(14, lexer);
+                std::int64_t tokenId = GetTokenId(14, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -429,7 +429,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(13, lexer);
+                std::int64_t tokenId = GetTokenId(13, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -450,7 +450,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(11, lexer);
+                std::int64_t tokenId = GetTokenId(11, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -471,7 +471,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(10, lexer);
+                std::int64_t tokenId = GetTokenId(10, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -502,7 +502,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(8, lexer);
+                std::int64_t tokenId = GetTokenId(8, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -523,7 +523,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(9, lexer);
+                std::int64_t tokenId = GetTokenId(9, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -554,7 +554,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(7, lexer);
+                std::int64_t tokenId = GetTokenId(7, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -589,7 +589,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(6, lexer);
+                std::int64_t tokenId = GetTokenId(6, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -610,7 +610,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(5, lexer);
+                std::int64_t tokenId = GetTokenId(5, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -631,7 +631,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lexer);
+                std::int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -666,7 +666,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lexer);
+                std::int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -697,7 +697,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lexer);
+                std::int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -728,7 +728,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(18, lexer);
+                std::int64_t tokenId = GetTokenId(18, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -763,7 +763,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lexer);
+                std::int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -794,7 +794,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(17, lexer);
+                std::int64_t tokenId = GetTokenId(17, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -815,7 +815,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(12, lexer);
+                std::int64_t tokenId = GetTokenId(12, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -836,7 +836,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lexer);
+                std::int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -879,7 +879,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lexer);
+                std::int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -922,7 +922,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lexer);
+                std::int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -965,7 +965,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1050,7 +1050,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lexer);
+                std::int64_t tokenId = GetTokenId(3, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1224,7 +1224,7 @@ struct XPathLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lexer);
+                std::int64_t tokenId = GetTokenId(4, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1244,7 +1244,7 @@ struct XPathLexer
         return -1;
     }
 
-    static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
+    static std::int64_t GetTokenId(std::int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
     {
         switch (ruleIndex)
         {

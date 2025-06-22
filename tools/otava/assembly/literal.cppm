@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,19 +15,19 @@ class UniqueLiteral;
 class Literal : public Value
 {
 public:
-    Literal(int64_t value_, int size_);
-    int64_t GetValue() const { return value; }
+    Literal(std::int64_t value_, int size_);
+    std::int64_t GetValue() const { return value; }
     friend class UniqueLiteral;
 private:
-    int64_t value;
+    std::int64_t value;
     int size;
 };
 
 class UniqueLiteral : public Literal
 {
 public:
-    UniqueLiteral(int64_t value_, int size_);
-    void SetValue(int64_t value_);
+    UniqueLiteral(std::int64_t value_, int size_);
+    void SetValue(std::int64_t value_);
     std::string ToString() const override;
 };
 

@@ -15,7 +15,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::ConceptGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -27,7 +27,7 @@ soul::parser::Match GuardParser<LexerT>::ConceptGuard(LexerT& lexer, otava::symb
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)
@@ -58,7 +58,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::NotDefiningTypeSpecifierGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -70,7 +70,7 @@ soul::parser::Match GuardParser<LexerT>::NotDefiningTypeSpecifierGuard(LexerT& l
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)
@@ -101,7 +101,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::AssumeTypeGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -113,7 +113,7 @@ soul::parser::Match GuardParser<LexerT>::AssumeTypeGuard(LexerT& lexer, otava::s
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)
@@ -144,7 +144,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::MemberFunctionGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -156,7 +156,7 @@ soul::parser::Match GuardParser<LexerT>::MemberFunctionGuard(LexerT& lexer, otav
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)
@@ -187,7 +187,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::SavedMemberFunctionBodyGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -199,7 +199,7 @@ soul::parser::Match GuardParser<LexerT>::SavedMemberFunctionBodyGuard(LexerT& le
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)
@@ -230,7 +230,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::SavedCtorInitializerGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -242,7 +242,7 @@ soul::parser::Match GuardParser<LexerT>::SavedCtorInitializerGuard(LexerT& lexer
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)
@@ -273,7 +273,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::NoDeclSpecFunctionDeclarationGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -285,7 +285,7 @@ soul::parser::Match GuardParser<LexerT>::NoDeclSpecFunctionDeclarationGuard(Lexe
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)
@@ -316,7 +316,7 @@ template<typename LexerT>
 soul::parser::Match GuardParser<LexerT>::NoDeclSpecFunctionDefinitionGuard(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -328,7 +328,7 @@ soul::parser::Match GuardParser<LexerT>::NoDeclSpecFunctionDefinitionGuard(Lexer
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         bool pass = true;
         soul::parser::Match match(true);
         if (match.hit)

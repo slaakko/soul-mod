@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -43,9 +43,9 @@ public:
     RegisterGroup();
     RegisterGroup(RegisterGroupKind kind_);
     RegisterGroupKind Kind() const { return kind; }
-    const Register* GetReg(int64_t size) const;
-    Register* GetReg(int64_t size);
-    void SetReg(int64_t size, const Register& reg);
+    const Register* GetReg(std::int64_t size) const;
+    Register* GetReg(std::int64_t size);
+    void SetReg(std::int64_t size, const Register& reg);
     bool IsLocal() const;
     bool IsVolatile() const { return !nonvolatile; }
     bool IsNonvolatile() const { return nonvolatile; }

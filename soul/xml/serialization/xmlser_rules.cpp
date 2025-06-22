@@ -4,10 +4,10 @@ namespace soul::xml::serialization::spg::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 9203395559845527553, "XmlSerParser.SourceFile" },
         { 9203395559845527554, "XmlSerParser.NamespaceContent" },
         { 9203395559845527555, "XmlSerParser.Declaration" },

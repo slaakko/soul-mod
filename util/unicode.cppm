@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -42,14 +42,14 @@ class Utf8ToUtf32Engine
 {
 public:
     Utf8ToUtf32Engine();
-    void Put(uint8_t x);
+    void Put(std::uint8_t x);
     bool ResultReady() const { return resultReady; }
     char32_t Result() const { return result; }
 private:
     int state;
     bool resultReady;
     char32_t result;
-    uint8_t bytes[4];
+    std::uint8_t bytes[4];
 };
 
 std::u32string ToUpper(const std::u32string& s);
@@ -60,7 +60,7 @@ std::u16string ToLower(const std::u16string& s);
 std::string ToLower(const std::string& s);
 std::string MakeCanonicalPropertyName(const std::string& s);
 
-enum class BinaryPropertyId : uint8_t
+enum class BinaryPropertyId : std::uint8_t
 {
     asciiHexDigit,
     alphabetic,
@@ -169,7 +169,7 @@ inline const BinaryProperty& GetBinaryPropertyByLongName(const std::string& long
     return BinaryPropertyTable::Instance().GetBinaryPropertyByLongName(longName);
 }
 
-enum class BlockId : uint16_t
+enum class BlockId : std::uint16_t
 {
     none = 0,
     adlam, aegeanNumbers, ahom, alchemical, alphabeticPf, anatolianHieroglyphs, ancientGreekMusic, ancientGreekNumbers, ancientSymbols,
@@ -251,7 +251,7 @@ inline const Block& GetBlockByLongName(const std::string& longName)
     return BlockTable::Instance().GetBlockByLongName(longName);
 }
 
-enum class GeneralCategoryId : int32_t
+enum class GeneralCategoryId : std::int32_t
 {
     none = 0,
     Lu = 1 << 0, Ll = 1 << 1, Lt = 1 << 2, Lm = 1 << 3, Lo = 1 << 4,
@@ -275,12 +275,12 @@ enum class GeneralCategoryId : int32_t
 
 inline GeneralCategoryId operator&(GeneralCategoryId left, GeneralCategoryId right)
 {
-    return GeneralCategoryId(int32_t(left) & int32_t(right));
+    return GeneralCategoryId(std::int32_t(left) & std::int32_t(right));
 }
 
 inline GeneralCategoryId operator|(GeneralCategoryId left, GeneralCategoryId right)
 {
-    return GeneralCategoryId(int32_t(left) | int32_t(right));
+    return GeneralCategoryId(std::int32_t(left) | std::int32_t(right));
 }
 
 class GeneralCategory
@@ -327,7 +327,7 @@ inline const GeneralCategory& GetGeneralCategoryByLongName(const std::string& lo
     return GeneralCategoryTable::Instance().GetGeneralCategoryByLongName(longName);
 }
 
-enum class AgeId : uint8_t
+enum class AgeId : std::uint8_t
 {
     age_unassigned = 0,
     age_1_1,
@@ -379,7 +379,7 @@ inline const Age& GetAge(const std::string& version)
     return AgeTable::Instance().GetAge(version);
 }
 
-enum class ScriptId : uint8_t
+enum class ScriptId : std::uint8_t
 {
     none = 0,
     adlm, aghb, ahom, arab, armi, armn, avst,
@@ -460,12 +460,12 @@ public:
     CharacterInfo();
     bool GetBinaryProperty(BinaryPropertyId binaryPropertyId) const
     {
-        uint64_t mask = static_cast<uint64_t>(1) << static_cast<uint64_t>(static_cast<uint8_t>(binaryPropertyId));
+        std::uint64_t mask = static_cast<std::uint64_t>(1) << static_cast<std::uint64_t>(static_cast<std::uint8_t>(binaryPropertyId));
         return (binaryProperties & mask) != 0;
     }
     void SetBinaryPropery(BinaryPropertyId binaryPropertyId, bool value)
     {
-        uint64_t bit = static_cast<uint64_t>(1) << static_cast<uint64_t>(static_cast<uint8_t>(binaryPropertyId));
+        std::uint64_t bit = static_cast<std::uint64_t>(1) << static_cast<std::uint64_t>(static_cast<std::uint8_t>(binaryPropertyId));
         if (value)
         {
             binaryProperties = binaryProperties | bit;
@@ -546,7 +546,7 @@ public:
     void Write(BinaryStreamWriter& writer);
     void Read(BinaryStreamReader& reader);
 private:
-    uint64_t binaryProperties;
+    std::uint64_t binaryProperties;
     GeneralCategoryId generalCategory;
     char32_t upper;
     char32_t lower;
@@ -558,11 +558,11 @@ private:
 };
 
 constexpr int numInfosInPage = 128;
-constexpr size_t characterInfoSize = sizeof(uint64_t) + sizeof(BlockId) + sizeof(GeneralCategoryId) + sizeof(AgeId) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) +
-sizeof(uint32_t) + sizeof(ScriptId);
+constexpr size_t characterInfoSize = sizeof(std::uint64_t) + sizeof(BlockId) + sizeof(GeneralCategoryId) + sizeof(AgeId) + sizeof(std::uint32_t) + sizeof(std::uint32_t) + sizeof(std::uint32_t) +
+sizeof(std::uint32_t) + sizeof(ScriptId);
 constexpr size_t characterInfoPageSize = numInfosInPage * characterInfoSize;
 
-enum class NumericTypeId : uint8_t
+enum class NumericTypeId : std::uint8_t
 {
     none = 0,
     de, di, nu
@@ -612,7 +612,7 @@ inline const NumericType& GetNumericTypeByLongName(const std::string& longName)
     return NumericTypeTable::Instance().GetNumericTypeByLongName(longName);
 }
 
-enum class BidiClassId : uint8_t
+enum class BidiClassId : std::uint8_t
 {
     none = 0,
     al, an, b, bn, cs, en, es, et, fsi, l, lre, lri, lro, nsm, on, pdf, pdi, r, rle, rli, rlo, s, ws
@@ -662,7 +662,7 @@ inline const BidiClass& GetBidiClassByLongName(const std::string& longtName)
     return BidiClassTable::Instance().GetBidiClassByLongName(longtName);
 }
 
-enum class BidiPairedBracketTypeId : uint8_t
+enum class BidiPairedBracketTypeId : std::uint8_t
 {
     none = 0,
     o, c
@@ -712,7 +712,7 @@ inline const BidiPairedBracketType& GetBidiPairedBracketTypeByLongName(const std
     return BidiPairedBracketTypeTable::Instance().GetBidiPairedBracketTypeByLongName(longName);
 }
 
-enum class AliasTypeId : uint8_t
+enum class AliasTypeId : std::uint8_t
 {
     none = 0,
     correction, control, alternate, figment, abbreviation
@@ -781,11 +781,11 @@ public:
         return unicode1Name;
     }
     void SetUnicode1Name(const std::string& unicode1Name_);
-    uint8_t GetCanonicalCombiningClass() const
+    std::uint8_t GetCanonicalCombiningClass() const
     {
         return canonicalCombiningClass;
     }
-    void SetCanonicalCombiningClass(uint8_t canonicalCombiningClass_)
+    void SetCanonicalCombiningClass(std::uint8_t canonicalCombiningClass_)
     {
         canonicalCombiningClass = canonicalCombiningClass_;
     }
@@ -882,7 +882,7 @@ public:
 private:
     std::string characterName;
     std::string unicode1Name;
-    uint8_t canonicalCombiningClass;
+    std::uint8_t canonicalCombiningClass;
     std::u32string fullUpper;
     std::u32string fullLower;
     std::u32string fullTitle;
@@ -930,10 +930,10 @@ public:
     void AllocatePages(int numExtendedPages);
     void Write(BinaryStreamWriter& writer);
     void Read(BinaryStreamReader& reader);
-    uint32_t GetPageStart(int pageIndex) const;
-    void SetPageStart(int pageIndex, uint32_t extendedPageStart);
+    std::uint32_t GetPageStart(int pageIndex) const;
+    void SetPageStart(int pageIndex, std::uint32_t extendedPageStart);
 private:
-    std::vector<uint32_t> extendedPageStarts;
+    std::vector<std::uint32_t> extendedPageStarts;
 };
 
 const int soul_ucd_version_1 = 1;
@@ -955,7 +955,7 @@ public:
     static CharacterTable& Instance();
     std::string FilePath() const;
     std::string DeflateFilePath() const;
-    int64_t GetUncompressedFileSize() const;
+    std::int64_t GetUncompressedFileSize() const;
     const CharacterInfo& GetCharacterInfo(char32_t codePoint);
     CharacterInfo& CreateCharacterInfo(char32_t codePoint);
     const ExtendedCharacterInfo& GetExtendedCharacterInfo(char32_t codePoint);
@@ -964,9 +964,9 @@ public:
 #ifdef _WIN32	
     void WriteDeflate();
 #endif	
-    void SetData(uint8_t* data_, int64_t size_);
+    void SetData(std::uint8_t* data_, std::int64_t size_);
 #ifdef _WIN32
-    void SetDeflateData(uint8_t* deflateData, int64_t deflateSize, int64_t uncompressedSize);
+    void SetDeflateData(std::uint8_t* deflateData, std::int64_t deflateSize, std::int64_t uncompressedSize);
 #endif	
 private:
     CharacterTable();
@@ -975,13 +975,13 @@ private:
     void ReadHeader(BinaryStreamReader& reader);
     void ReadExtendedHeader(BinaryStreamReader& reader);
     CharacterTableDataSource dataSource;
-    uint8_t* data;
-    int64_t size;
-    std::vector<uint8_t> memory;
+    std::uint8_t* data;
+    std::int64_t size;
+    std::vector<std::uint8_t> memory;
     bool headerRead;
     std::vector<std::unique_ptr<CharacterInfoPage>> pages;
-    uint32_t extendedHeaderStart;
-    uint32_t extendedHeaderEnd;
+    std::uint32_t extendedHeaderStart;
+    std::uint32_t extendedHeaderEnd;
     bool extendedHeaderRead;
     ExtendedCharacterInfoHeader extendedHeader;
     std::vector<std::unique_ptr<ExtendedCharacterInfoPage>> extendedPages;

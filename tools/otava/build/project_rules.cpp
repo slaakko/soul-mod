@@ -4,10 +4,10 @@ namespace otava::project_spg::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 3083016289157906433, "ProjectParser.ProjectFile" },
         { 3083016289157906434, "ProjectParser.ProjectDeclaration" },
         { 3083016289157906435, "ProjectParser.Define" },

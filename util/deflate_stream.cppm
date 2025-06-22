@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -25,27 +25,27 @@ class DeflateStream : public Stream
 {
 public:
     DeflateStream(CompressionMode mode_, Stream& underlyingStream_);
-    DeflateStream(CompressionMode mode_, Stream& underlyingStream_, int64_t bufferSize_);
-    DeflateStream(CompressionMode mode_, Stream& underlyingStream_, int64_t bufferSize_, int compressionLevel_);
+    DeflateStream(CompressionMode mode_, Stream& underlyingStream_, std::int64_t bufferSize_);
+    DeflateStream(CompressionMode mode_, Stream& underlyingStream_, std::int64_t bufferSize_, int compressionLevel_);
     ~DeflateStream() override;
     int ReadByte() override;
-    int64_t Read(uint8_t* buf, int64_t count) override;
-    void Write(uint8_t x) override;
-    void Write(uint8_t* buf, int64_t count) override;
+    std::int64_t Read(std::uint8_t* buf, std::int64_t count) override;
+    void Write(std::uint8_t x) override;
+    void Write(std::uint8_t* buf, std::int64_t count) override;
 private:
     void Finish();
     CompressionMode mode;
     Stream& underlyingStream;
-    int64_t bufferSize;
+    std::int64_t bufferSize;
     int compressionLevel;
-    uint32_t inAvail;
-    std::unique_ptr<uint8_t[]> in;
-    uint32_t outAvail;
-    int64_t outPos;
-    uint32_t outHave;
+    std::uint32_t inAvail;
+    std::unique_ptr<std::uint8_t[]> in;
+    std::uint32_t outAvail;
+    std::int64_t outPos;
+    std::uint32_t outHave;
     bool endOfInput;
     bool endOfStream;
-    std::unique_ptr<uint8_t[]> out;
+    std::unique_ptr<std::uint8_t[]> out;
     void* handle;
 };
 

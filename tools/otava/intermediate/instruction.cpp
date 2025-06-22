@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -515,7 +515,7 @@ void ArgInstruction::AddToUses(std::vector<Use>& uses)
     uses.push_back(Use(this, arg));
 }
 
-JmpInstruction::JmpInstruction(const SourcePos& sourcePos_, int32_t targetLabelId_) :
+JmpInstruction::JmpInstruction(const SourcePos& sourcePos_, std::int32_t targetLabelId_) :
     Instruction(sourcePos_, nullptr, OpCode::jmp), targetLabelId(targetLabelId_), targetBasicBlock(nullptr)
 {
 }
@@ -532,7 +532,7 @@ void JmpInstruction::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-BranchInstruction::BranchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t trueTargetLabelId_, int32_t falseTargetLabelId_) :
+BranchInstruction::BranchInstruction(const SourcePos& sourcePos_, Value* cond_, std::int32_t trueTargetLabelId_, std::int32_t falseTargetLabelId_) :
     Instruction(sourcePos_, nullptr, OpCode::branch),
     cond(cond_), trueTargetLabelId(trueTargetLabelId_), trueTargetBasicBlock(nullptr), falseTargetLabelId(falseTargetLabelId_), falseTargetBasicBlock(nullptr)
 {
@@ -671,7 +671,7 @@ void RetInstruction::AddToUses(std::vector<Use>& uses)
     }
 }
 
-SwitchInstruction::SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t defaultTargetId_) : 
+SwitchInstruction::SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, std::int32_t defaultTargetId_) : 
     Instruction(sourcePos_, nullptr, OpCode::switch_), cond(cond_), defaultTargetId(defaultTargetId_), defaultTargetBlock()
 {
 }

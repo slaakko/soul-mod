@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -35,7 +35,7 @@ void Writer::Write(const soul::ast::SourcePos& sourcePos)
 
 void Writer::Write(NodeKind nodeKind)
 {
-    writerPtr->WriteULEB128UInt(static_cast<uint32_t>(nodeKind));
+    writerPtr->WriteULEB128UInt(static_cast<std::uint32_t>(nodeKind));
 }
 
 void Writer::Write(const std::u32string& str)

@@ -58,7 +58,7 @@ template<typename LexerT>
 soul::parser::Match SourceFileParser<LexerT>::SourceFile(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -72,7 +72,7 @@ soul::parser::Match SourceFileParser<LexerT>::SourceFile(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -82,7 +82,7 @@ soul::parser::Match SourceFileParser<LexerT>::SourceFile(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(true);
                     if (match.hit)
                     {
@@ -102,7 +102,7 @@ soul::parser::Match SourceFileParser<LexerT>::SourceFile(LexerT& lexer)
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -110,7 +110,7 @@ soul::parser::Match SourceFileParser<LexerT>::SourceFile(LexerT& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = FunctionParser<LexerT>::Function(lexer);
                                         function.reset(static_cast<minilang::ast::FunctionNode*>(match.value));
                                         if (match.hit)

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,7 +15,7 @@ class ArrayTypeSymbol : public TypeSymbol
 {
 public:
     ArrayTypeSymbol(const std::u32string& name_);
-    ArrayTypeSymbol(TypeSymbol* elementType_, int64_t size_);
+    ArrayTypeSymbol(TypeSymbol* elementType_, std::int64_t size_);
     std::string SymbolKindStr() const override { return "array type symbol"; }
     std::string SymbolDocKindStr() const override { return "array_type"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
@@ -24,8 +24,8 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     TypeSymbol* ElementType() const { return elementType; }
-    int64_t Size() const { return size; }
-    void SetSize(int64_t size_) { size = size_; }
+    std::int64_t Size() const { return size; }
+    void SetSize(std::int64_t size_) { size = size_; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsBound() const { return bound; }
     void SetBound() { bound = true; }
@@ -34,7 +34,7 @@ private:
     bool bound;
     TypeSymbol* elementType;
     util::uuid elementTypeId;
-    int64_t size;
+    std::int64_t size;
 };
 
 class ArrayTypeDefaultCtor : public FunctionSymbol

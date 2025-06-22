@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -25,7 +25,7 @@ void Init()
     
 soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>& lexer)
 {
-    int64_t start = lexer.GetPos();
+    std::int64_t start = lexer.GetPos();
     int braceCount = 0;
     while (*lexer != soul::lexer::END_TOKEN)
     {
@@ -41,7 +41,7 @@ soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::L
                 if (braceCount == 0)
                 {
                     ++lexer;
-                    int64_t end = lexer.GetPos();
+                    std::int64_t end = lexer.GetPos();
                     return soul::ast::lexer::pos::pair::LexerPosPair(start, end);
                 }
             }
@@ -64,12 +64,12 @@ soul::ast::lexer::pos::pair::LexerPosPair RecordCompoundStatement(soul::lexer::L
 
 soul::ast::lexer::pos::pair::LexerPosPair RecordCtorInitializer(soul::lexer::Lexer<otava::lexer::OtavaLexer<char32_t>, char32_t>& lexer)
 {
-    int64_t start = lexer.GetPos();
+    std::int64_t start = lexer.GetPos();
     while (*lexer != soul::lexer::END_TOKEN)
     {
         if (*lexer == otava::token::LBRACE)
         {
-            int64_t end = lexer.GetPos();
+            std::int64_t end = lexer.GetPos();
             return soul::ast::lexer::pos::pair::LexerPosPair(start, end);
         }
         else

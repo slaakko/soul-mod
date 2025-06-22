@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,38 +18,38 @@ class BoundExpressionNode;
 class Context;
 class Exception;
 
-enum class OverloadResolutionFlags : int32_t
+enum class OverloadResolutionFlags : std::int32_t
 {
     none = 0, dontInstantiate = 1 << 0, dontSearchArgumentScopes = 1 << 1
 };
 
 constexpr OverloadResolutionFlags operator|(OverloadResolutionFlags left, OverloadResolutionFlags right)
 {
-    return OverloadResolutionFlags(int32_t(left) | int32_t(right));
+    return OverloadResolutionFlags(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr OverloadResolutionFlags operator&(OverloadResolutionFlags left, OverloadResolutionFlags right)
 {
-    return OverloadResolutionFlags(int32_t(left) & int32_t(right));
+    return OverloadResolutionFlags(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr OverloadResolutionFlags operator~(OverloadResolutionFlags flags)
 {
-    return OverloadResolutionFlags(~int32_t(flags));
+    return OverloadResolutionFlags(~std::int32_t(flags));
 }
 
 class FunctionSymbol;
 class ClassTemplateSpecializationSymbol;
-enum class ConversionKind : int32_t;
-enum class OperationFlags : int32_t;
+enum class ConversionKind : std::int32_t;
+enum class OperationFlags : std::int32_t;
 
 struct ArgumentMatch
 {
     ArgumentMatch();
     FunctionSymbol* conversionFun;
     ConversionKind conversionKind;
-    int32_t distance;
-    int32_t fundamentalTypeDistance;
+    std::int32_t distance;
+    std::int32_t fundamentalTypeDistance;
     OperationFlags preConversionFlags;
     OperationFlags postConversionFlags;
 };

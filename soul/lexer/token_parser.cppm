@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -339,9 +339,9 @@ bool ParseFloating(const Char* begin, const Char* end, Value& value)
 }
 
 template<typename Char, typename LexerBaseT>
-int8_t ParseSByte(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::int8_t ParseSByte(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    int8_t value = 0;
+    std::int8_t value = 0;
     if (ParseSigned(begin, end, value))
     {
         return value;
@@ -353,9 +353,9 @@ int8_t ParseSByte(const Char* begin, const Char* end, LexerBaseT* lexer, int lin
 }
 
 template<typename Char, typename LexerBaseT>
-uint8_t ParseByte(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::uint8_t ParseByte(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    uint8_t value = 0;
+    std::uint8_t value = 0;
     if (ParseUnsigned(begin, end, value))
     {
         return value;
@@ -367,9 +367,9 @@ uint8_t ParseByte(const Char* begin, const Char* end, LexerBaseT* lexer, int lin
 }
 
 template<typename Char, typename LexerBaseT>
-int16_t ParseShort(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::int16_t ParseShort(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    int16_t value = 0;
+    std::int16_t value = 0;
     if (ParseSigned(begin, end, value))
     {
         return value;
@@ -381,9 +381,9 @@ int16_t ParseShort(const Char* begin, const Char* end, LexerBaseT* lexer, int li
 }
 
 template<typename Char, typename LexerBaseT>
-uint16_t ParseUShort(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::uint16_t ParseUShort(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    uint16_t value = 0;
+    std::uint16_t value = 0;
     if (ParseUnsigned(begin, end, value))
     {
         return value;
@@ -395,9 +395,9 @@ uint16_t ParseUShort(const Char* begin, const Char* end, LexerBaseT* lexer, int 
 }
 
 template<typename Char, typename LexerBaseT>
-int32_t ParseInt(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::int32_t ParseInt(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    int32_t value = 0;
+    std::int32_t value = 0;
     if (ParseSigned(begin, end, value))
     {
         return value;
@@ -409,9 +409,9 @@ int32_t ParseInt(const Char* begin, const Char* end, LexerBaseT* lexer, int line
 }
 
 template<typename Char, typename LexerBaseT>
-uint32_t ParseUInt(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::uint32_t ParseUInt(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    uint32_t value = 0;
+    std::uint32_t value = 0;
     if (ParseUnsigned(begin, end, value))
     {
         return value;
@@ -423,9 +423,9 @@ uint32_t ParseUInt(const Char* begin, const Char* end, LexerBaseT* lexer, int li
 }
 
 template<typename Char, typename LexerBaseT>
-int64_t ParseLong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::int64_t ParseLong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    int64_t value = 0;
+    std::int64_t value = 0;
     if (ParseSigned(begin, end, value))
     {
         return value;
@@ -437,9 +437,9 @@ int64_t ParseLong(const Char* begin, const Char* end, LexerBaseT* lexer, int lin
 }
 
 template<typename Char, typename LexerBaseT>
-uint64_t ParseULong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::uint64_t ParseULong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    uint64_t value = 0;
+    std::uint64_t value = 0;
     if (ParseUnsigned(begin, end, value))
     {
         return value;
@@ -451,9 +451,9 @@ uint64_t ParseULong(const Char* begin, const Char* end, LexerBaseT* lexer, int l
 }
 
 template<typename Char, typename LexerBaseT>
-uint64_t ParseHexULong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::uint64_t ParseHexULong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    uint64_t value = 0;
+    std::uint64_t value = 0;
     if (ParseHex(begin, end, value))
     {
         return value;
@@ -465,9 +465,9 @@ uint64_t ParseHexULong(const Char* begin, const Char* end, LexerBaseT* lexer, in
 }
 
 template<typename Char, typename LexerBaseT>
-uint64_t ParseOctalULong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
+std::uint64_t ParseOctalULong(const Char* begin, const Char* end, LexerBaseT* lexer, int line)
 {
-    uint64_t value = 0;
+    std::uint64_t value = 0;
     if (ParseOctal(begin, end, value))
     {
         return value;

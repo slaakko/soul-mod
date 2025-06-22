@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,19 +13,19 @@ FileMap::FileMap() : nextFileId(0)
 {
 }
 
-int32_t FileMap::MapFile(const std::string& filePath)
+std::int32_t FileMap::MapFile(const std::string& filePath)
 {
-    int32_t fileId = nextFileId++;
+    std::int32_t fileId = nextFileId++;
     MapFile(filePath, fileId);
     return fileId;
 }
 
-void FileMap::MapFile(const std::string& filePath, int32_t fileId)
+void FileMap::MapFile(const std::string& filePath, std::int32_t fileId)
 {
     filePathMap[fileId] = filePath;
 }
 
-const std::string& FileMap::GetFilePath(int32_t fileId) const
+const std::string& FileMap::GetFilePath(std::int32_t fileId) const
 {
     auto it = filePathMap.find(fileId);
     if (it != filePathMap.end())
@@ -38,17 +38,17 @@ const std::string& FileMap::GetFilePath(int32_t fileId) const
     }
 }
 
-void FileMap::AddFileContent(int32_t fileId, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces)
+void FileMap::AddFileContent(std::int32_t fileId, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces)
 {
     fileContentsMap[fileId] = std::make_pair(std::move(fileContent), std::move(lineStartIndeces));
 }
 
-bool FileMap::HasFileContent(int32_t fileId) const
+bool FileMap::HasFileContent(std::int32_t fileId) const
 {
     return fileContentsMap.find(fileId) != fileContentsMap.end();
 }
 
-const std::pair<std::u32string, std::vector<int>>& FileMap::GetFileContent(int32_t fileId) const
+const std::pair<std::u32string, std::vector<int>>& FileMap::GetFileContent(std::int32_t fileId) const
 {
     auto it = fileContentsMap.find(fileId);
     if (it != fileContentsMap.end())
@@ -82,7 +82,7 @@ std::vector<int> ComputeLineStartIndeces(const std::u32string& content)
     return indeces;
 }
 
-void FileMap::ReadFile(int32_t fileId) 
+void FileMap::ReadFile(std::int32_t fileId) 
 {
     std::string filePath = GetFilePath(fileId);
     std::string fileContent = util::ReadFile(filePath);
@@ -91,7 +91,7 @@ void FileMap::ReadFile(int32_t fileId)
     AddFileContent(fileId, std::move(ucontent), std::move(lineStartIndeces));
 }
 
-std::u32string FileMap::GetFileLine(int32_t fileId, int line) 
+std::u32string FileMap::GetFileLine(std::int32_t fileId, int line) 
 {
     if (fileId == -1) return std::u32string();
     if (!HasFileContent(fileId))
@@ -122,13 +122,13 @@ std::u32string FileMap::GetFileLine(int32_t fileId, int line)
 
 std::mutex tokenMapMutex;
 
-void FileMap::SetTokens(int32_t fileId, TokenVec&& tokens)
+void FileMap::SetTokens(std::int32_t fileId, TokenVec&& tokens)
 {
     std::lock_guard<std::mutex> lock(tokenMapMutex);
     tokenMap[fileId] = std::move(tokens);
 }
 
-const TokenVec& FileMap::GetTokens(int32_t fileId) const
+const TokenVec& FileMap::GetTokens(std::int32_t fileId) const
 {
     std::lock_guard<std::mutex> lock(tokenMapMutex);
     static TokenVec empty;

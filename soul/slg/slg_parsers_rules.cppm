@@ -4,6 +4,6 @@ import std.core;
 
 export namespace soul::slg::parsers::rules {
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr();
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr();
 
 } // soul::slg::parsers::rules

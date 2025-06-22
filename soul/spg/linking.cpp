@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -82,7 +82,7 @@ void LinkingVisitor::Visit(soul::ast::spg::RuleParser& parser)
     currentRule = &parser;
     if (stage == LinkingStage::resolveRules)
     {
-        int64_t ruleId = (int64_t(parser.Grammar()->Id()) << 32) | int64_t(parser.Index() + 1);
+        std::int64_t ruleId = (std::int64_t(parser.Grammar()->Id()) << 32) | std::int64_t(parser.Index() + 1);
         parser.SetId(ruleId);
         spgFile->AddRule(&parser);
     }
@@ -101,7 +101,7 @@ void LinkingVisitor::Visit(soul::ast::spg::GrammarParser& parser)
     {
         std::string fullGrammarName = parser.GetParserFile()->ExportModule()->ModuleName();
         fullGrammarName.append(1, '.').append(parser.Name());
-        int32_t grammarId = std::hash<std::string>()(fullGrammarName) & 0x7FFFFFFF;
+        std::int32_t grammarId = std::hash<std::string>()(fullGrammarName) & 0x7FFFFFFF;
         parser.SetId(grammarId);
     }
     if (stage == LinkingStage::addParsers)

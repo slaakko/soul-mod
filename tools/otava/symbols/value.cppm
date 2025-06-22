@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -16,7 +16,7 @@ class Emitter;
 class EvaluationContext;
 class TypeSymbol;
 
-enum class ValueKind : int32_t
+enum class ValueKind : std::int32_t
 {
     none, boolValue, integerValue, floatingValue, nullPtrValue, stringValue, charValue, symbolValue, invokeValue, arrayValue
 };
@@ -76,10 +76,10 @@ class IntegerValue : public Value
 public:
     IntegerValue(TypeSymbol* type_);
     IntegerValue(const std::u32string& rep_, TypeSymbol* type_);
-    IntegerValue(int64_t value_, const std::u32string& rep_, TypeSymbol* type_);
+    IntegerValue(std::int64_t value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "integer value"; }
     std::string SymbolDocKindStr() const override { return "integer_value"; }
-    int64_t GetValue() const { return value; }
+    std::int64_t GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
@@ -87,7 +87,7 @@ public:
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
 private:
-    int64_t value;
+    std::int64_t value;
 };
 
 class FloatingValue : public Value
@@ -242,7 +242,7 @@ public:
     void Write(Writer& writer);
     void Read(Reader& reader);
     BoolValue* GetBoolValue(bool value);
-    IntegerValue* GetIntegerValue(int64_t value, const std::u32string& rep, TypeSymbol* type);
+    IntegerValue* GetIntegerValue(std::int64_t value, const std::u32string& rep, TypeSymbol* type);
     FloatingValue* GetFloatingValue(double value, const std::u32string& rep, TypeSymbol* type);
     NullPtrValue* GetNullPtrValue() { return &nullPtrValue; }
     StringValue* GetStringValue(const std::string& value, TypeSymbol* type);
@@ -262,7 +262,7 @@ private:
     BoolValue trueValue;
     BoolValue falseValue;
     NullPtrValue nullPtrValue;
-    std::map<std::pair<std::pair<int64_t, std::u32string>, TypeSymbol*>, IntegerValue*> integerValueMap;
+    std::map<std::pair<std::pair<std::int64_t, std::u32string>, TypeSymbol*>, IntegerValue*> integerValueMap;
     std::map<std::pair<std::pair<double, std::u32string>, TypeSymbol*>, FloatingValue*> floatingValueMap;
     std::map<std::pair<std::string, TypeSymbol*>, StringValue*> stringValueMap;
     std::map<std::pair<char32_t, TypeSymbol*>, CharValue*> charValueMap;

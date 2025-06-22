@@ -25,7 +25,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeSpecifierSeq(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -40,7 +40,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifierSeq(LexerT& lexer
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -50,7 +50,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifierSeq(LexerT& lexer
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifier(lexer, context);
                     first.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
@@ -72,7 +72,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifierSeq(LexerT& lexer
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -80,7 +80,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifierSeq(LexerT& lexer
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = AttributeParser<LexerT>::AttributeSpecifier(lexer, context);
                                         next.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
@@ -138,7 +138,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -182,7 +182,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
                                         if (*lexer == LBRACKET)
                                         {
@@ -206,7 +206,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch9 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(false);
                                             if (*lexer == LBRACKET)
                                             {
@@ -233,7 +233,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
                                     soul::parser::Match match(true);
-                                    int64_t save = lexer.GetPos();
+                                    std::int64_t save = lexer.GetPos();
                                     soul::parser::Match* parentMatch11 = &match;
                                     {
                                         soul::parser::Match match(false);
@@ -242,7 +242,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch13 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = AttributeParser<LexerT>::AttributeUsingPrefix(lexer, context);
                                                 usingPrefix.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
@@ -288,7 +288,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch16 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 if (*lexer == RBRACKET)
                                 {
@@ -315,7 +315,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch18 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == RBRACKET)
                             {
@@ -350,7 +350,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch19 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = AttributeParser<LexerT>::AlignmentSpecifier(lexer, context);
                     alignmentSpecifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
@@ -391,7 +391,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava::symbols::Context* context, otava::ast::Node* container)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -413,12 +413,12 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            int64_t save = lexer.GetPos();
+            std::int64_t save = lexer.GetPos();
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
                 soul::parser::Match match(true);
-                int64_t save = lexer.GetPos();
+                std::int64_t save = lexer.GetPos();
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     soul::parser::Match match(false);
@@ -427,7 +427,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = AttributeParser<LexerT>::Attribute(lexer, context);
                             firstOpt.reset(static_cast<otava::ast::Node*>(match.value));
                             if (match.hit)
@@ -459,7 +459,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch8 = &match;
@@ -470,7 +470,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch10 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match = PunctuationParser<LexerT>::Comma(lexer);
                                             comma1.reset(static_cast<otava::ast::Node*>(match.value));
                                             if (match.hit)
@@ -487,7 +487,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                                         soul::parser::Match* parentMatch11 = &match;
                                         {
                                             soul::parser::Match match(true);
-                                            int64_t save = lexer.GetPos();
+                                            std::int64_t save = lexer.GetPos();
                                             soul::parser::Match* parentMatch12 = &match;
                                             {
                                                 soul::parser::Match match(false);
@@ -496,7 +496,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch14 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = AttributeParser<LexerT>::Attribute(lexer, context);
                                                         nextOpt.reset(static_cast<otava::ast::Node*>(match.value));
                                                         if (match.hit)
@@ -554,7 +554,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch18 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(true);
                                 if (match.hit)
                                 {
@@ -572,7 +572,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch20 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = AttributeParser<LexerT>::Attribute(lexer, context);
                                     first.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
@@ -597,7 +597,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                             {
                                 while (true)
                                 {
-                                    int64_t save = lexer.GetPos();
+                                    std::int64_t save = lexer.GetPos();
                                     {
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch23 = &match;
@@ -611,7 +611,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch26 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PunctuationParser<LexerT>::Comma(lexer);
                                                         comma2.reset(static_cast<otava::ast::Node*>(match.value));
                                                         if (match.hit)
@@ -630,7 +630,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                                                         soul::parser::Match match(false);
                                                         soul::parser::Match* parentMatch28 = &match;
                                                         {
-                                                            int64_t pos = lexer.GetPos();
+                                                            std::int64_t pos = lexer.GetPos();
                                                             soul::parser::Match match = AttributeParser<LexerT>::Attribute(lexer, context);
                                                             next.reset(static_cast<otava::ast::Node*>(match.value));
                                                             if (match.hit)
@@ -653,7 +653,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch30 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PunctuationParser<LexerT>::Ellipsis(lexer);
                                                         ellipsis.reset(static_cast<otava::ast::Node*>(match.value));
                                                         if (match.hit)
@@ -709,7 +709,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeUsingPrefix(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -724,7 +724,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeUsingPrefix(LexerT& lexer,
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -737,7 +737,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeUsingPrefix(LexerT& lexer,
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == USING)
                         {
@@ -773,7 +773,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeUsingPrefix(LexerT& lexer,
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch7 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == COLON)
                         {
@@ -821,7 +821,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeNamespace(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -834,7 +834,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeNamespace(LexerT& lexer, o
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
         ns.reset(static_cast<otava::ast::Node*>(match.value));
         if (match.hit)
@@ -866,7 +866,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::Attribute(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -881,7 +881,7 @@ soul::parser::Match AttributeParser<LexerT>::Attribute(LexerT& lexer, otava::sym
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -891,7 +891,7 @@ soul::parser::Match AttributeParser<LexerT>::Attribute(LexerT& lexer, otava::sym
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = AttributeParser<LexerT>::AttributeToken(lexer, context);
                     attributeToken.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
@@ -908,7 +908,7 @@ soul::parser::Match AttributeParser<LexerT>::Attribute(LexerT& lexer, otava::sym
                 soul::parser::Match* parentMatch4 = &match;
                 {
                     soul::parser::Match match(true);
-                    int64_t save = lexer.GetPos();
+                    std::int64_t save = lexer.GetPos();
                     soul::parser::Match* parentMatch5 = &match;
                     {
                         soul::parser::Match match = AttributeParser<LexerT>::AttributeArgumentClause(lexer, context);
@@ -957,7 +957,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeToken(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -971,11 +971,11 @@ soul::parser::Match AttributeParser<LexerT>::AttributeToken(LexerT& lexer, otava
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t save = lexer.GetPos();
+        std::int64_t save = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            int64_t pos = lexer.GetPos();
+            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match = AttributeParser<LexerT>::AttributeScopedToken(lexer, context);
             scopedToken.reset(static_cast<otava::ast::Node*>(match.value));
             if (match.hit)
@@ -999,7 +999,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeToken(LexerT& lexer, otava
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer, context);
                     identifier.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
@@ -1036,7 +1036,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeScopedToken(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1052,7 +1052,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeScopedToken(LexerT& lexer,
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1065,7 +1065,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeScopedToken(LexerT& lexer,
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match = AttributeParser<LexerT>::AttributeNamespace(lexer, context);
                         ns.reset(static_cast<otava::ast::Node*>(match.value));
                         if (match.hit)
@@ -1131,7 +1131,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AttributeArgumentClause(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1147,7 +1147,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeArgumentClause(LexerT& lex
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1160,7 +1160,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeArgumentClause(LexerT& lex
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == LPAREN)
                         {
@@ -1181,7 +1181,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeArgumentClause(LexerT& lex
                     soul::parser::Match* parentMatch5 = &match;
                     {
                         soul::parser::Match match(true);
-                        int64_t save = lexer.GetPos();
+                        std::int64_t save = lexer.GetPos();
                         soul::parser::Match* parentMatch6 = &match;
                         {
                             soul::parser::Match match = AttributeParser<LexerT>::BalancedTokenSeq(lexer, context);
@@ -1209,7 +1209,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeArgumentClause(LexerT& lex
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch8 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == RPAREN)
                         {
@@ -1257,7 +1257,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::BalancedTokenSeq(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1272,7 +1272,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedTokenSeq(LexerT& lexer, ota
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1282,7 +1282,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedTokenSeq(LexerT& lexer, ota
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = AttributeParser<LexerT>::BalancedToken(lexer, context);
                     first.reset(static_cast<otava::ast::Node*>(match.value));
                     if (match.hit)
@@ -1304,7 +1304,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedTokenSeq(LexerT& lexer, ota
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1312,7 +1312,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedTokenSeq(LexerT& lexer, ota
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = AttributeParser<LexerT>::BalancedToken(lexer, context);
                                         next.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
@@ -1370,7 +1370,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1392,14 +1392,14 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t save = lexer.GetPos();
+                std::int64_t save = lexer.GetPos();
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 switch (*lexer)
@@ -1415,7 +1415,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = PunctuationParser<LexerT>::LParen(lexer);
                                     lp.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
@@ -1435,7 +1435,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = AttributeParser<LexerT>::BalancedTokenSeq(lexer, context);
                                         c1.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
@@ -1458,7 +1458,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = PunctuationParser<LexerT>::RParen(lexer);
                                     rp.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
@@ -1488,7 +1488,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch13 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = PunctuationParser<LexerT>::LBracket(lexer);
                                     lb.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
@@ -1508,7 +1508,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch15 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = AttributeParser<LexerT>::BalancedTokenSeq(lexer, context);
                                         c2.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
@@ -1531,7 +1531,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch17 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = PunctuationParser<LexerT>::RBracket(lexer);
                                     rb.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
@@ -1561,7 +1561,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch20 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = PunctuationParser<LexerT>::LBrace(lexer);
                                     lbr.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
@@ -1581,7 +1581,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch22 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = AttributeParser<LexerT>::BalancedTokenSeq(lexer, context);
                                         c3.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
@@ -1604,7 +1604,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch24 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = PunctuationParser<LexerT>::RBrace(lexer);
                                     rbr.reset(static_cast<otava::ast::Node*>(match.value));
                                     if (match.hit)
@@ -1634,13 +1634,13 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch26 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch27 = &match;
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch28 = &match;
-                                int64_t save = lexer.GetPos();
+                                std::int64_t save = lexer.GetPos();
                                 {
                                     soul::parser::Match match(false);
                                     if (*lexer != soul::lexer::END_TOKEN)
@@ -1655,7 +1655,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch29 = &match;
                                     {
-                                        int64_t tmp = lexer.GetPos();
+                                        std::int64_t tmp = lexer.GetPos();
                                         lexer.SetPos(save);
                                         save = tmp;
                                         soul::parser::Match match(false);
@@ -1664,23 +1664,23 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch31 = &match;
                                             {
-                                                int64_t save = lexer.GetPos();
+                                                std::int64_t save = lexer.GetPos();
                                                 soul::parser::Match match(false);
                                                 soul::parser::Match* parentMatch32 = &match;
                                                 {
-                                                    int64_t save = lexer.GetPos();
+                                                    std::int64_t save = lexer.GetPos();
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch33 = &match;
                                                     {
-                                                        int64_t save = lexer.GetPos();
+                                                        std::int64_t save = lexer.GetPos();
                                                         soul::parser::Match match(false);
                                                         soul::parser::Match* parentMatch34 = &match;
                                                         {
-                                                            int64_t save = lexer.GetPos();
+                                                            std::int64_t save = lexer.GetPos();
                                                             soul::parser::Match match(false);
                                                             soul::parser::Match* parentMatch35 = &match;
                                                             {
-                                                                int64_t save = lexer.GetPos();
+                                                                std::int64_t save = lexer.GetPos();
                                                                 soul::parser::Match match(false);
                                                                 if (*lexer == LPAREN)
                                                                 {
@@ -1831,7 +1831,7 @@ template<typename LexerT>
 soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, otava::symbols::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1850,7 +1850,7 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1869,7 +1869,7 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 if (*lexer == ALIGNAS)
                                 {
@@ -1892,7 +1892,7 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch8 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     if (*lexer == LPAREN)
                                     {
@@ -1922,11 +1922,11 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch11 = &match;
                                 {
-                                    int64_t save = lexer.GetPos();
+                                    std::int64_t save = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch12 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = TypeParser<LexerT>::TypeId(lexer, context);
                                         typeId.reset(static_cast<otava::ast::Node*>(match.value));
                                         if (match.hit)
@@ -1945,7 +1945,7 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch14 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = ExpressionParser<LexerT>::ConstantExpression(lexer, context);
                                                 constantExpr.reset(static_cast<otava::ast::Node*>(match.value));
                                                 if (match.hit)
@@ -1973,7 +1973,7 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
                     soul::parser::Match* parentMatch15 = &match;
                     {
                         soul::parser::Match match(true);
-                        int64_t save = lexer.GetPos();
+                        std::int64_t save = lexer.GetPos();
                         soul::parser::Match* parentMatch16 = &match;
                         {
                             soul::parser::Match match = PunctuationParser<LexerT>::Ellipsis(lexer);
@@ -2001,7 +2001,7 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch18 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == RPAREN)
                         {

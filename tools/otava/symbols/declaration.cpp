@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -701,7 +701,7 @@ void ProcessFunctionDeclarator(FunctionDeclarator* functionDeclarator, TypeSymbo
     ClassTypeSymbol* classType = functionSymbol->ParentClassType();
     if (classType)
     {
-        int32_t functionIndex = 0;
+        std::int32_t functionIndex = 0;
         SpecialFunctionKind specialFunctionKind = functionSymbol->GetSpecialFunctionKind(context);
         if (specialFunctionKind != SpecialFunctionKind::none)
         {
@@ -970,7 +970,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
             ClassTypeSymbol* classType = functionDefinitionSymbol->ParentClassType();
             if (classType)
             {
-                int32_t functionIndex = 0;
+                std::int32_t functionIndex = 0;
                 SpecialFunctionKind specialFunctionKind = functionDefinitionSymbol->GetSpecialFunctionKind(context);
                 if (specialFunctionKind != SpecialFunctionKind::none)
                 {
@@ -1029,7 +1029,7 @@ void ProcessMemberFunctionDefinition(otava::ast::Node* node, Context* context)
 
 void Write(Writer& writer, DeclarationFlags flags)
 {
-    writer.GetBinaryStreamWriter().Write(static_cast<int32_t>(flags));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(flags));
 }
 
 void Read(Reader& reader, DeclarationFlags& flags)

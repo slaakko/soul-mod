@@ -59,7 +59,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::RegularExpression(LexerT& lexer, soul::rex::context::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -72,7 +72,7 @@ soul::parser::Match RexParser<LexerT>::RegularExpression(LexerT& lexer, soul::re
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -109,7 +109,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::Alternative(LexerT& lexer, soul::rex::context::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -124,7 +124,7 @@ soul::parser::Match RexParser<LexerT>::Alternative(LexerT& lexer, soul::rex::con
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -134,7 +134,7 @@ soul::parser::Match RexParser<LexerT>::Alternative(LexerT& lexer, soul::rex::con
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = RexParser<LexerT>::Catenation(lexer, context);
                     left.reset(static_cast<soul::parser::Value<soul::rex::nfa::Nfa>*>(match.value));
                     if (match.hit)
@@ -155,7 +155,7 @@ soul::parser::Match RexParser<LexerT>::Alternative(LexerT& lexer, soul::rex::con
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -179,11 +179,11 @@ soul::parser::Match RexParser<LexerT>::Alternative(LexerT& lexer, soul::rex::con
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(true);
                                                 soul::parser::Match* parentMatch10 = &match;
                                                 {
-                                                    int64_t pos = lexer.GetPos();
+                                                    std::int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match = RexParser<LexerT>::Catenation(lexer, context);
                                                     right.reset(static_cast<soul::parser::Value<soul::rex::nfa::Nfa>*>(match.value));
                                                     if (match.hit)
@@ -254,7 +254,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::Catenation(LexerT& lexer, soul::rex::context::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -269,7 +269,7 @@ soul::parser::Match RexParser<LexerT>::Catenation(LexerT& lexer, soul::rex::cont
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -279,7 +279,7 @@ soul::parser::Match RexParser<LexerT>::Catenation(LexerT& lexer, soul::rex::cont
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = RexParser<LexerT>::Repetition(lexer, context);
                     left.reset(static_cast<soul::parser::Value<soul::rex::nfa::Nfa>*>(match.value));
                     if (match.hit)
@@ -300,7 +300,7 @@ soul::parser::Match RexParser<LexerT>::Catenation(LexerT& lexer, soul::rex::cont
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -308,7 +308,7 @@ soul::parser::Match RexParser<LexerT>::Catenation(LexerT& lexer, soul::rex::cont
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = RexParser<LexerT>::Repetition(lexer, context);
                                         right.reset(static_cast<soul::parser::Value<soul::rex::nfa::Nfa>*>(match.value));
                                         if (match.hit)
@@ -366,7 +366,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::Repetition(LexerT& lexer, soul::rex::context::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -380,7 +380,7 @@ soul::parser::Match RexParser<LexerT>::Repetition(LexerT& lexer, soul::rex::cont
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -390,7 +390,7 @@ soul::parser::Match RexParser<LexerT>::Repetition(LexerT& lexer, soul::rex::cont
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = RexParser<LexerT>::Primary(lexer, context);
                     left.reset(static_cast<soul::parser::Value<soul::rex::nfa::Nfa>*>(match.value));
                     if (match.hit)
@@ -407,7 +407,7 @@ soul::parser::Match RexParser<LexerT>::Repetition(LexerT& lexer, soul::rex::cont
                 soul::parser::Match* parentMatch4 = &match;
                 {
                     soul::parser::Match match(true);
-                    int64_t save = lexer.GetPos();
+                    std::int64_t save = lexer.GetPos();
                     soul::parser::Match* parentMatch5 = &match;
                     {
                         soul::parser::Match match(false);
@@ -416,15 +416,15 @@ soul::parser::Match RexParser<LexerT>::Repetition(LexerT& lexer, soul::rex::cont
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch7 = &match;
                             {
-                                int64_t save = lexer.GetPos();
+                                std::int64_t save = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch8 = &match;
                                 {
-                                    int64_t save = lexer.GetPos();
+                                    std::int64_t save = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch9 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
                                         if (*lexer == STAR)
                                         {
@@ -447,7 +447,7 @@ soul::parser::Match RexParser<LexerT>::Repetition(LexerT& lexer, soul::rex::cont
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch11 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
                                                 if (*lexer == PLUS)
                                                 {
@@ -475,7 +475,7 @@ soul::parser::Match RexParser<LexerT>::Repetition(LexerT& lexer, soul::rex::cont
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch13 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(false);
                                             if (*lexer == QUEST)
                                             {
@@ -539,7 +539,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -554,34 +554,34 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t save = lexer.GetPos();
+                std::int64_t save = lexer.GetPos();
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t save = lexer.GetPos();
+                    std::int64_t save = lexer.GetPos();
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        int64_t save = lexer.GetPos();
+                        std::int64_t save = lexer.GetPos();
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                int64_t save = lexer.GetPos();
+                                std::int64_t save = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
-                                    int64_t save = lexer.GetPos();
+                                    std::int64_t save = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
@@ -604,11 +604,11 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                                                 soul::parser::Match match(false);
                                                 soul::parser::Match* parentMatch11 = &match;
                                                 {
-                                                    int64_t pos = lexer.GetPos();
+                                                    std::int64_t pos = lexer.GetPos();
                                                     soul::parser::Match match(true);
                                                     soul::parser::Match* parentMatch12 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = RexParser<LexerT>::Alternative(lexer, context);
                                                         alt.reset(static_cast<soul::parser::Value<soul::rex::nfa::Nfa>*>(match.value));
                                                         if (match.hit)
@@ -640,7 +640,7 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                                             soul::parser::Match match(true);
                                             soul::parser::Match* parentMatch14 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
                                                 if (*lexer == RPAREN)
                                                 {
@@ -670,7 +670,7 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch16 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
                                                 if (*lexer == ESCAPE)
                                                 {
@@ -698,7 +698,7 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch18 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(false);
                                             if (*lexer == INVERSE)
                                             {
@@ -726,7 +726,7 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch20 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
                                         if (*lexer == MINUS)
                                         {
@@ -754,7 +754,7 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch22 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     if (*lexer == CHAR)
                                     {
@@ -783,7 +783,7 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch24 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 if (*lexer == DOT)
                                 {
@@ -811,7 +811,7 @@ soul::parser::Match RexParser<LexerT>::Primary(LexerT& lexer, soul::rex::context
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch26 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = RexParser<LexerT>::Class(lexer, context);
                             cls.reset(static_cast<soul::rex::symbol::Class*>(match.value));
                             if (match.hit)
@@ -856,7 +856,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -870,7 +870,7 @@ soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -883,7 +883,7 @@ soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch4 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == LBRACKET)
                         {
@@ -910,7 +910,7 @@ soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::
                             soul::parser::Match* parentMatch7 = &match;
                             {
                                 soul::parser::Match match(true);
-                                int64_t save = lexer.GetPos();
+                                std::int64_t save = lexer.GetPos();
                                 soul::parser::Match* parentMatch8 = &match;
                                 {
                                     soul::parser::Match match(false);
@@ -919,7 +919,7 @@ soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch10 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(false);
                                             if (*lexer == INVERSE)
                                             {
@@ -955,7 +955,7 @@ soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::
                                     {
                                         while (true)
                                         {
-                                            int64_t save = lexer.GetPos();
+                                            std::int64_t save = lexer.GetPos();
                                             {
                                                 soul::parser::Match match(false);
                                                 soul::parser::Match* parentMatch13 = &match;
@@ -963,7 +963,7 @@ soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch14 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = RexParser<LexerT>::Range(lexer, context);
                                                         r.reset(static_cast<soul::rex::symbol::Symbol*>(match.value));
                                                         if (match.hit)
@@ -1006,7 +1006,7 @@ soul::parser::Match RexParser<LexerT>::Class(LexerT& lexer, soul::rex::context::
                     soul::parser::Match match(true);
                     soul::parser::Match* parentMatch16 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == RBRACKET)
                         {
@@ -1057,7 +1057,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::Range(LexerT& lexer, soul::rex::context::Context* context)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1072,7 +1072,7 @@ soul::parser::Match RexParser<LexerT>::Range(LexerT& lexer, soul::rex::context::
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1094,7 +1094,7 @@ soul::parser::Match RexParser<LexerT>::Range(LexerT& lexer, soul::rex::context::
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch5 = &match;
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
@@ -1114,7 +1114,7 @@ soul::parser::Match RexParser<LexerT>::Range(LexerT& lexer, soul::rex::context::
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = RexParser<LexerT>::Char(lexer);
                                         e.reset(static_cast<soul::parser::Value<char32_t>*>(match.value));
                                         if (match.hit)
@@ -1137,7 +1137,7 @@ soul::parser::Match RexParser<LexerT>::Range(LexerT& lexer, soul::rex::context::
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch10 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(true);
                                         if (match.hit)
                                         {
@@ -1187,7 +1187,7 @@ template<typename LexerT>
 soul::parser::Match RexParser<LexerT>::Char(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1197,7 +1197,7 @@ soul::parser::Match RexParser<LexerT>::Char(LexerT& lexer)
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 7261371920241655816);
     soul::parser::Match match(false);
-    int64_t pos = lexer.GetPos();
+    std::int64_t pos = lexer.GetPos();
     switch (*lexer)
     {
         case LPAREN:

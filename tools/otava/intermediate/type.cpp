@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,7 +14,7 @@ import util;
 
 namespace otava::intermediate {
 
-Type::Type(const SourcePos& sourcePos_, TypeKind kind_, int32_t id_) : sourcePos(sourcePos_), kind(kind_), id(id_), defaultValue(nullptr)
+Type::Type(const SourcePos& sourcePos_, TypeKind kind_, std::int32_t id_) : sourcePos(sourcePos_), kind(kind_), id(id_), defaultValue(nullptr)
 {
 }
 
@@ -324,7 +324,7 @@ TypeRef::TypeRef() : sourcePos(), id(-1), type(nullptr)
 {
 }
 
-TypeRef::TypeRef(const SourcePos& sourcePos_, int32_t id_) : sourcePos(sourcePos_), id(id_), type(nullptr)
+TypeRef::TypeRef(const SourcePos& sourcePos_, std::int32_t id_) : sourcePos(sourcePos_), id(id_), type(nullptr)
 {
 }
 
@@ -338,7 +338,7 @@ bool operator<(const TypeRef& left, const TypeRef& right)
     return left.GetType() < right.GetType();
 }
 
-StructureType::StructureType(const SourcePos& sourcePos_, int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
+StructureType::StructureType(const SourcePos& sourcePos_, std::int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
     Type(sourcePos_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false), size()
 {
 }
@@ -375,7 +375,7 @@ bool StructureType::IsWeakType() const
     return true;
 }
 
-int64_t StructureType::Size() const
+std::int64_t StructureType::Size() const
 {
     if (!sizeAndOffsetsComputed)
     {
@@ -386,15 +386,15 @@ int64_t StructureType::Size() const
 
 void StructureType::ComputeSizeAndOffsets() const
 {
-    int64_t offset = 0;
+    std::int64_t offset = 0;
     int n = FieldCount();
     for (int i = 0; i < n; ++i)
     {
         Type* fieldType = FieldType(i);
-        int64_t memberOffset = offset;
+        std::int64_t memberOffset = offset;
         if (i > 0)
         {
-            int64_t alignment = fieldType->Alignment();
+            std::int64_t alignment = fieldType->Alignment();
             if (!(offset > 0))
             {
                 throw std::runtime_error("structure type: invalid offset");
@@ -415,7 +415,7 @@ void StructureType::ComputeSizeAndOffsets() const
     sizeAndOffsetsComputed = true;
 }
 
-int64_t StructureType::GetFieldOffset(int64_t index) const
+std::int64_t StructureType::GetFieldOffset(std::int64_t index) const
 {
     if (!sizeAndOffsetsComputed)
     {
@@ -470,7 +470,7 @@ Value* StructureType::MakeDefaultValue(Context& context) const
     return context.MakeStructureValue(soul::ast::SourcePos(), fieldValues);
 }
 
-FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& id_, int32_t typeId_) : Type(soul::ast::SourcePos(), TypeKind::fwdDeclaredStructureType, typeId_), id(id_)
+FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& id_, std::int32_t typeId_) : Type(soul::ast::SourcePos(), TypeKind::fwdDeclaredStructureType, typeId_), id(id_)
 {
 }
 
@@ -479,7 +479,7 @@ void FwdDeclaredStructureType::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ArrayType::ArrayType(const SourcePos& sourcePos_, int32_t typeId_, int64_t elementCount_, const TypeRef& elementTypeRef_) :
+ArrayType::ArrayType(const SourcePos& sourcePos_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_) :
     Type(sourcePos_, TypeKind::arrayType, typeId_), elementCount(elementCount_), elementTypeRef(elementTypeRef_)
 {
 }
@@ -504,7 +504,7 @@ void ArrayType::Resolve(Types* types, Context* context)
     types->ResolveType(elementTypeRef, context);
 }
 
-int64_t ArrayType::Size() const
+std::int64_t ArrayType::Size() const
 {
     return util::Align(elementCount * ElementType()->Size(), 8);
 }
@@ -535,7 +535,7 @@ Value* ArrayType::MakeDefaultValue(Context& context) const
     return context.MakeArrayValue(soul::ast::SourcePos(), elements);
 }
 
-FunctionType::FunctionType(const SourcePos& sourcePos_, int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_) :
+FunctionType::FunctionType(const SourcePos& sourcePos_, std::int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_) :
     Type(sourcePos_, TypeKind::functionType, typeId_), returnTypeRef(returnTypeRef_), paramTypeRefs(paramTypeRefs_)
 {
 }
@@ -600,7 +600,7 @@ void FunctionType::WriteDeclaration(util::CodeFormatter& formatter)
     formatter.Write(")");
 }
 
-PointerType::PointerType(const SourcePos& sourcePos_, int32_t typeId_, int8_t pointerCount_, int32_t baseTypeId_) :
+PointerType::PointerType(const SourcePos& sourcePos_, std::int32_t typeId_, std::int8_t pointerCount_, std::int32_t baseTypeId_) :
     Type(sourcePos_, TypeKind::pointerType, typeId_), pointerCount(pointerCount_), baseTypeRef(sourcePos_, baseTypeId_)
 {
 }
@@ -635,7 +635,7 @@ Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context*
         {
             if (index->IsLongValue())
             {
-                int64_t idx = static_cast<LongValue*>(index)->GetValue();
+                std::int64_t idx = static_cast<LongValue*>(index)->GetValue();
                 StructureType* structureType = static_cast<StructureType*>(aggregateType);
                 return context->MakePtrType(structureType->FieldType(static_cast<int>(idx)));
             }
@@ -704,9 +704,9 @@ void Types::Write(util::CodeFormatter& formatter)
     formatter.WriteLine();
 }
 
-StructureType* Types::GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+StructureType* Types::GetStructureType(const SourcePos& sourcePos, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
-    std::vector<int32_t> fieldTypeIds;
+    std::vector<std::int32_t> fieldTypeIds;
     for (const auto& fieldTypeRef : fieldTypeRefs)
     {
         fieldTypeIds.push_back(fieldTypeRef.Id());
@@ -735,7 +735,7 @@ StructureType* Types::GetStructureType(const SourcePos& sourcePos, int32_t typeI
     return structureType;
 }
 
-ArrayType* Types::GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
+ArrayType* Types::GetArrayType(const SourcePos& sourcePos, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
 {
     auto key = std::make_pair(size, elementTypeRef.Id());
     auto it = arrayTypeMap.find(key);
@@ -752,10 +752,10 @@ ArrayType* Types::GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64
     return arrayType;
 }
 
-FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
-    int32_t returnTypeId = returnTypeRef.Id();
-    std::vector<int32_t> paramTypeIds;
+    std::int32_t returnTypeId = returnTypeRef.Id();
+    std::vector<std::int32_t> paramTypeIds;
     for (const auto& paramTypeRef : paramTypeRefs)
     {
         paramTypeIds.push_back(paramTypeRef.Id());
@@ -788,7 +788,7 @@ FwdDeclaredStructureType* Types::GetFwdDeclaredStructureType(const util::uuid& i
     }
 }
 
-FwdDeclaredStructureType* Types::MakeFwdDeclaredStructureType(const util::uuid& id, int32_t typeId)
+FwdDeclaredStructureType* Types::MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId)
 {
     FwdDeclaredStructureType* fwdDeclaredType = new FwdDeclaredStructureType(id, typeId);
     fwdDeclaredStructureTypes[id] = fwdDeclaredType;
@@ -830,7 +830,7 @@ void Types::Add(Type* type, Context* context)
     declaredTypes.push_back(type);
 }
 
-Type* Types::Get(int32_t id) const
+Type* Types::Get(std::int32_t id) const
 {
     if (IsFundamentalTypeId(id))
     {
@@ -847,7 +847,7 @@ Type* Types::Get(int32_t id) const
     }
 }
 
-Type* Types::GetFundamentalType(int32_t id) const
+Type* Types::GetFundamentalType(std::int32_t id) const
 {
     switch (id)
     {
@@ -880,7 +880,7 @@ void Types::VisitTypeDeclarations(Visitor& visitor)
     }
 }
 
-PointerType* Types::MakePointerType(const SourcePos& sourcePos, int32_t baseTypeId, int8_t pointerCount, Context* context)
+PointerType* Types::MakePointerType(const SourcePos& sourcePos, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context)
 {
     auto it = pointerTypeMap.find(std::make_pair(baseTypeId, pointerCount));
     if (it != pointerTypeMap.cend())

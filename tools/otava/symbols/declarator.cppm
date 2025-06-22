@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,7 +13,7 @@ export namespace otava::symbols {
 
 enum class FunctionKind;
 enum class FunctionQualifiers;
-enum class DeclarationFlags : int32_t;
+enum class DeclarationFlags : std::int32_t;
 
 enum class DeclaratorKind
 {
@@ -85,10 +85,10 @@ private:
 class ArrayDeclarator : public Declarator
 {
 public:
-    ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, int64_t size_);
-    int64_t Size() const { return size; }
+    ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, std::int64_t size_);
+    std::int64_t Size() const { return size; }
 private:
-    int64_t size;
+    std::int64_t size;
 };
 
 class Context;

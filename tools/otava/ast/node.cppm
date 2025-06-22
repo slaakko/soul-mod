@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -27,9 +27,9 @@ using NodeDestroyedFunc = void(*)(Node*);
 
 void SetNodeDestroyedFunc(NodeDestroyedFunc func);
 
-constexpr int32_t internallyMappedFlag = 0x40000000;
+constexpr std::int32_t internallyMappedFlag = 0x40000000;
 
-enum class NodeKind : uint16_t
+enum class NodeKind : std::uint16_t
 {
     nullNode,
     translationUnitNode, moduleUnitNode,
@@ -97,7 +97,7 @@ public:
     virtual ~Node();
     virtual Node* Clone() const = 0;
     NodeKind Kind() const { return kind; }
-    void SetId(int64_t id_) { id = id_; }
+    void SetId(std::int64_t id_) { id = id_; }
     virtual std::u32string Str() const { return std::u32string(); }
     virtual NodeType Type() const { return NodeType::single; }
     virtual int Count() const { return 0; }
@@ -110,7 +110,7 @@ public:
     virtual void Clear();
     Node* Parent() const { return parent; }
     void SetParent(Node* parent_) { parent = parent_; }
-    int64_t Id() const { return id & ~internallyMappedFlag; }
+    std::int64_t Id() const { return id & ~internallyMappedFlag; }
     bool IsInternallyMapped() const { return (id & internallyMappedFlag) != 0; }
     bool IsImportDeclarationNode() const { return kind == NodeKind::importDeclarationNode; }
     bool IsClassNode() const { return kind == NodeKind::classNode; }
@@ -142,7 +142,7 @@ private:
     NodeKind kind;
     soul::ast::SourcePos sourcePos;
     Node* parent;
-    int64_t id;
+    std::int64_t id;
 };
 
 class CompoundNode : public Node
@@ -224,17 +224,17 @@ public:
     NodeIdFactory();
     void SetInternallyMapped(bool internallyMapped_);
     bool IsInternallyMapped() const;
-    void SetModuleId(int32_t moduleId_) { moduleId = moduleId_; }
-    int64_t GetNextNodeId();
+    void SetModuleId(std::int32_t moduleId_) { moduleId = moduleId_; }
+    std::int64_t GetNextNodeId();
 private:
-    int32_t moduleId;
-    int32_t nodeId;
-    int32_t internallyMappedBit;
+    std::int32_t moduleId;
+    std::int32_t nodeId;
+    std::int32_t internallyMappedBit;
 };
 
 void MakeNodeFactoryCollection();
 void SetNodeIdFactory(NodeIdFactory* factory);
 Node* CreateNode(NodeKind nodeKind, const soul::ast::SourcePos& sourcePos);
-int64_t GetNextNodeId();
+std::int64_t GetNextNodeId();
 
 } // namespace otava::ast

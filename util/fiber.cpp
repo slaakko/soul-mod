@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -20,7 +20,7 @@ void* ConvertThreadToFiber(void* param)
     return ::ConvertThreadToFiber(param);
 }
 
-void* CreateFiber(uint64_t stackSize, void* startAddress, void* param)
+void* CreateFiber(std::uint64_t stackSize, void* startAddress, void* param)
 {
     return ::CreateFiber(stackSize, (LPFIBER_START_ROUTINE)startAddress, param);
 }

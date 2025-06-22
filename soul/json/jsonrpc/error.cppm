@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -22,6 +22,7 @@ class JsonRpcException
 {
 public:
     JsonRpcException(int code_, const std::string& message_);
+    JsonRpcException(const JsonRpcException& that);
     const int Code() const { return code; }
     const std::string& Message() const { return message; }
     void SetInfo(std::unique_ptr<util::JsonValue>&& info_);

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -71,11 +71,11 @@ public:
     Type* GetFloatType();
     Type* GetDoubleType();
     Type* MakePtrType(Type* baseType);
-    StructureType* GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
-    ArrayType* GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef);
-    FunctionType* GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    StructureType* GetStructureType(const SourcePos& sourcePos, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    ArrayType* GetArrayType(const SourcePos& sourcePos, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
+    FunctionType* GetFunctionType(const SourcePos& sourcePos, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id);
-    FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, int32_t typeId);
+    FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId);
     void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
     void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
     GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, Type* globalType, const std::string& variableName, Value* initializer, bool once);
@@ -86,15 +86,15 @@ public:
     Value* GetTrueValue();
     Value* GetFalseValue();
     Value* GetBooleanLiteral(const SourcePos& sourcePos, Type* type, bool value);
-    Value* GetSByteValue(int8_t value);
-    Value* GetByteValue(uint8_t value);
-    Value* GetShortValue(int16_t value);
-    Value* GetUShortValue(uint16_t value);
-    Value* GetIntValue(int32_t value);
-    Value* GetUIntValue(uint32_t value);
-    Value* GetLongValue(int64_t value);
-    Value* GetULongValue(uint64_t value);
-    Value* GetIntegerValue(Type* type, int64_t value);
+    Value* GetSByteValue(std::int8_t value);
+    Value* GetByteValue(std::uint8_t value);
+    Value* GetShortValue(std::int16_t value);
+    Value* GetUShortValue(std::uint16_t value);
+    Value* GetIntValue(std::int32_t value);
+    Value* GetUIntValue(std::uint32_t value);
+    Value* GetLongValue(std::int64_t value);
+    Value* GetULongValue(std::uint64_t value);
+    Value* GetIntegerValue(Type* type, std::int64_t value);
     Value* GetFloatValue(float value);
     Value* GetDoubleValue(double value);
     Value* GetFloatingValue(Type* type, double value);
@@ -113,11 +113,11 @@ public:
     Function* GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
     Function* AddFunctionDefinition(const SourcePos& sourcePos, Type* type, const std::string& functionId, bool once, MetadataRef* metadataRef);
     Function* AddFunctionDeclaration(const SourcePos& sourcePos, Type* type, const std::string& functionId);
-    MetadataStruct* AddMetadataStruct(const SourcePos& sourcePos, int32_t id, Context* context);
+    MetadataStruct* AddMetadataStruct(const SourcePos& sourcePos, std::int32_t id, Context* context);
     MetadataBool* CreateMetadataBool(bool value);
-    MetadataLong* CreateMetadataLong(int64_t value);
+    MetadataLong* CreateMetadataLong(std::int64_t value);
     MetadataString* CreateMetadataString(const std::string& value);
-    MetadataRef* CreateMetadataRef(const SourcePos& sourcePos, int32_t nodeId);
+    MetadataRef* CreateMetadataRef(const SourcePos& sourcePos, std::int32_t nodeId);
     MetadataStruct* CreateMetadataStruct();
     void ResolveMetadataReferences();
     void SetCurrentBasicBlock(BasicBlock* bb);
@@ -162,7 +162,7 @@ public:
     Instruction* CreateTrap(const std::vector<Value*>& args);
     Instruction* CreateNop();
     soul::lexer::FileMap& GetFileMap() { return fileMap; }
-    int32_t NextTypeId();
+    std::int32_t NextTypeId();
     std::string GetNextStringValueId();
     void AddLineInfo(Instruction* inst);
     otava::assembly::Context& AssemblyContext() { return assemblyContext; }

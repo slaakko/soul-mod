@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,21 +13,21 @@ export namespace util {
 class MemoryReader
 {
 public:
-    MemoryReader(const uint8_t* ptr_, int64_t count_);
-    uint8_t ReadByte();
-    int8_t ReadSByte();
-    uint16_t ReadUShort();
-    int16_t ReadShort();
-    uint32_t ReadUInt();
-    int32_t ReadInt();
-    uint64_t ReadULong();
-    int64_t ReadLong();
+    MemoryReader(const std::uint8_t* ptr_, std::int64_t count_);
+    std::uint8_t ReadByte();
+    std::int8_t ReadSByte();
+    std::uint16_t ReadUShort();
+    std::int16_t ReadShort();
+    std::uint32_t ReadUInt();
+    std::int32_t ReadInt();
+    std::uint64_t ReadULong();
+    std::int64_t ReadLong();
     DateTime ReadDateTime();
     std::string ReadString();
 private:
-    const uint8_t* ptr;
-    const uint8_t* pos;
-    int64_t count;
+    const std::uint8_t* ptr;
+    const std::uint8_t* pos;
+    std::int64_t count;
 };
 
 } // namespace util

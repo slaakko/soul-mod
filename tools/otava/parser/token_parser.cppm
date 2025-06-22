@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -22,7 +22,7 @@ Suffix ParseIntegerSuffix(const char32_t*& p, const char32_t* e);
 Suffix ParseFloatingSuffix(const char32_t*& p, const char32_t* e);
 EncodingPrefix ParseEncodingPrefix(const char32_t*& p, const char32_t* e);
 bool IsHexChar(char32_t c);
-uint64_t ParseHexChar(char32_t c);
+std::uint64_t ParseHexChar(char32_t c);
 char32_t ParseEscape(const char32_t*& p, const char32_t* e, bool& valid);
 otava::ast::IntegerLiteralNode* ParseIntegerLiteral(const soul::ast::SourcePos& sourcePos, const std::string& fileName,
     const soul::lexer::Token<char32_t, soul::lexer::LexerBase<char32_t>>& token);

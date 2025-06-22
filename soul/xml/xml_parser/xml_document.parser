@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -277,7 +277,7 @@ parser XmlParser
         |   EntityRef(processor):entityRef
         ;
 
-    CharRef(soul::xml::processor::XmlProcessor* processor, var int32_t codePoint)
+    CharRef(soul::xml::processor::XmlProcessor* processor, var std::int32_t codePoint)
         ::= 
         (   "&#" DecCodePoint:decCodePoint ';'{ codePoint = decCodePoint; }
         |   "&#x" HexCodePoint:hexCodePoint ';'{ codePoint = hexCodePoint; }
@@ -287,7 +287,7 @@ parser XmlParser
         }
         ;
 
-    DecCodePoint(var int32_t val) : int32_t
+    DecCodePoint(var std::int32_t val) : std::int32_t
         ::= 
         (
             (
@@ -299,7 +299,7 @@ parser XmlParser
         }
         ;
 
-    HexCodePoint(var int32_t val) : int32_t
+    HexCodePoint(var std::int32_t val) : std::int32_t
         ::=
         (
             (

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -47,7 +47,7 @@ void WriteClassIndex(const std::string& classIndexFilePath, info::class_index& i
     index.write(writer, true);
 }
 
-void Visit(int32_t fileId, Project* project, std::vector<int>& topologicalOrder, std::set<int>& visited)
+void Visit(std::int32_t fileId, Project* project, std::vector<int>& topologicalOrder, std::set<int>& visited)
 {
     otava::symbols::Module* module = project->GetModule(fileId);
     for (otava::symbols::Module* dependsOnModule : module->DependsOnModules())
@@ -68,11 +68,11 @@ void Visit(int32_t fileId, Project* project, std::vector<int>& topologicalOrder,
     topologicalOrder.push_back(fileId);
 }
 
-std::vector<int32_t> MakeTopologicalOrder(const std::vector<int32_t>& files, Project* project)
+std::vector<std::int32_t> MakeTopologicalOrder(const std::vector<std::int32_t>& files, Project* project)
 {
-    std::set<int32_t> visited;
-    std::vector<int32_t> topologicalOrder;
-    for (int32_t file : files)
+    std::set<std::int32_t> visited;
+    std::vector<std::int32_t> topologicalOrder;
+    for (std::int32_t file : files)
     {
         if (visited.find(file) == visited.cend())
         {
@@ -85,7 +85,7 @@ std::vector<int32_t> MakeTopologicalOrder(const std::vector<int32_t>& files, Pro
 class ModuleDependencyVisitor : public otava::ast::DefaultVisitor
 {
 public:
-    ModuleDependencyVisitor(int32_t file_, Project* project_, const std::string& fileName_, bool implementationUnit_);
+    ModuleDependencyVisitor(std::int32_t file_, Project* project_, const std::string& fileName_, bool implementationUnit_);
     otava::symbols::Module* GetModule() { return module.release(); }
     const std::string& InterfaceUnitName() const { return interfaceUnitName; }
     void Visit(otava::ast::ModuleDeclarationNode& node);
@@ -96,7 +96,7 @@ public:
 private:
     Project* project;
     std::string fileName;
-    int32_t file;
+    std::int32_t file;
     bool implementationUnit;
     bool exp;
     bool expimp;
@@ -106,7 +106,7 @@ private:
     std::unique_ptr<otava::symbols::Module> module;
 };
 
-ModuleDependencyVisitor::ModuleDependencyVisitor(int32_t file_, Project* project_, const std::string& fileName_, bool implementationUnit_) :
+ModuleDependencyVisitor::ModuleDependencyVisitor(std::int32_t file_, Project* project_, const std::string& fileName_, bool implementationUnit_) :
     fileName(fileName_),
     file(file_),
     implementationUnit(implementationUnit_),
@@ -195,7 +195,7 @@ void ModuleDependencyVisitor::Visit(otava::ast::ModuleNameNode& node)
     }
 }
 
-void ScanDependencies(Project* project, int32_t fileId, bool implementationUnit, std::string& interfaceUnitName)
+void ScanDependencies(Project* project, std::int32_t fileId, bool implementationUnit, std::string& interfaceUnitName)
 {
     std::string filePath = project->GetFileMap().GetFilePath(fileId);
     std::string fileName = util::Path::GetFileNameWithoutExtension(filePath);
@@ -220,21 +220,21 @@ void ReadFilesFile(const std::string& projectFilesPath, soul::lexer::FileMap& fi
     util::FileStream filesFile(projectFilesPath, util::OpenMode::read | util::OpenMode::binary);
     util::BufferedStream filesBufStream(filesFile);
     util::BinaryStreamReader filesReader(filesBufStream);
-    int32_t fileCount = filesReader.ReadInt();
-    for (int32_t i = 0; i < fileCount; ++i)
+    std::int32_t fileCount = filesReader.ReadInt();
+    for (std::int32_t i = 0; i < fileCount; ++i)
     {
-        int32_t fileId = filesReader.ReadInt();
+        std::int32_t fileId = filesReader.ReadInt();
         std::string filePath = filesReader.ReadUtf8String();
         fileMap.MapFile(filePath, fileId);
     }
 }
 
-void WriteFilesFile(const std::string& projectFilesPath, const std::vector<std::pair<int32_t, std::string>>& files)
+void WriteFilesFile(const std::string& projectFilesPath, const std::vector<std::pair<std::int32_t, std::string>>& files)
 {
     util::FileStream filesFile(projectFilesPath, util::OpenMode::write | util::OpenMode::binary);
     util::BufferedStream filesBufStream(filesFile);
     util::BinaryStreamWriter filesWriter(filesBufStream);
-    int32_t fileCount = files.size();
+    std::int32_t fileCount = files.size();
     filesWriter.Write(fileCount);
     for (const auto& file : files)
     {
@@ -278,12 +278,12 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     if (!project->Scanned())
     {
         project->SetScanned();
-        for (int32_t file : project->InterfaceFiles())
+        for (std::int32_t file : project->InterfaceFiles())
         {
             std::string interfaceUnitName;
             ScanDependencies(project, file, false, interfaceUnitName);
         }
-        for (int32_t file : project->SourceFiles())
+        for (std::int32_t file : project->SourceFiles())
         {
             std::string interfaceUnitName;
             ScanDependencies(project, file, true, interfaceUnitName);
@@ -327,9 +327,9 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         std::string referenceFilesPath = util::GetFullPath(util::Path::Combine(reference->Root(), reference->Name() + ".files"));
         ReadFilesFile(referenceFilesPath, project->GetFileMap());
     }
-    std::vector<std::pair<int32_t, std::string>> files;
-    std::vector<int32_t> topologicalOrder = MakeTopologicalOrder(project->InterfaceFiles(), project);
-    for (int32_t file : topologicalOrder)
+    std::vector<std::pair<std::int32_t, std::string>> files;
+    std::vector<std::int32_t> topologicalOrder = MakeTopologicalOrder(project->InterfaceFiles(), project);
+    for (std::int32_t file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
         files.push_back(std::make_pair(file, filePath));
@@ -393,7 +393,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             compileUnitInitFunctionNames.push_back(initFn->GetFunctionDefinitionSymbol()->IrName(&context));
         }
     }
-    for (int32_t file : project->SourceFiles())
+    for (std::int32_t file : project->SourceFiles())
     {
         std::string interfaceUnitName;
         ScanDependencies(project, file, true, interfaceUnitName);
@@ -480,7 +480,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         std::string compileUnitInitFileName = util::Path::Combine(project->Root(), "cu.init");
         util::FileStream compileUnitInitFile(compileUnitInitFileName, util::OpenMode::write | util::OpenMode::binary);
         util::BinaryStreamWriter writer(compileUnitInitFile);
-        int32_t n = compileUnitInitFunctionNames.size();
+        std::int32_t n = compileUnitInitFunctionNames.size();
         writer.Write(n);
         for (const auto& fileName : compileUnitInitFunctionNames)
         {

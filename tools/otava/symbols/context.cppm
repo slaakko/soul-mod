@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -23,7 +23,7 @@ using Lexer = soul::lexer::LexerBase<char32_t>;
 
 struct DeclarationList;
 
-enum class ContextFlags : int32_t
+enum class ContextFlags : std::int32_t
 {
     none = 0,
     hasDefiningTypeSpecifier = 1 << 0,
@@ -60,17 +60,17 @@ enum class ContextFlags : int32_t
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
 {
-    return ContextFlags(int32_t(left) | int32_t(right));
+    return ContextFlags(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr  ContextFlags operator&(ContextFlags left, ContextFlags right)
 {
-    return ContextFlags(int32_t(left) & int32_t(right));
+    return ContextFlags(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr  ContextFlags operator~(ContextFlags flags)
 {
-    return ContextFlags(~int32_t(flags));
+    return ContextFlags(~std::int32_t(flags));
 }
 
 class SymbolTable;

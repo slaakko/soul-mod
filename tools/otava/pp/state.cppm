@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -38,17 +38,17 @@ public:
     void Ifndef(const std::string& symbol);
     void Else();
     void  Endif();
-    void Define(const std::string& symbol, int64_t value);
+    void Define(const std::string& symbol, std::int64_t value);
     void Undef(const std::string& symbol);
     bool Defined(const std::string& symbol) const;
     void Include();
-    int64_t GetSymbolValue(const std::string& symbol) const;
+    std::int64_t GetSymbolValue(const std::string& symbol) const;
 private:
     void PushSection();
     void PopSection();
     void SkipSection();
     Lexer* lexer;
-    std::map<std::string, int64_t> symbolMap;
+    std::map<std::string, std::int64_t> symbolMap;
     std::unique_ptr<Section> currentSection;
     std::stack<std::unique_ptr<Section>> sectionStack;
 };

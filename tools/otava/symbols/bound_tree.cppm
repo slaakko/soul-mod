@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,7 +15,7 @@ import util;
 
 export namespace otava::symbols {
 
-enum class OperationFlags : int32_t
+enum class OperationFlags : std::int32_t
 {
     none = 0, addr = 1 << 0, deref = 1 << 1, defaultInit = 1 << 2, virtualCall = 1 << 3, setPtr = 1 << 4, dup = 1 << 5, storeDeref = 1 << 6, derefAfterConv = 1 << 7, 
     derefCount = 0xFF << 8
@@ -23,27 +23,27 @@ enum class OperationFlags : int32_t
 
 constexpr OperationFlags operator|(OperationFlags left, OperationFlags right)
 {
-    return OperationFlags(int32_t(left) | int32_t(right));
+    return OperationFlags(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr OperationFlags operator&(OperationFlags left, OperationFlags right)
 {
-    return OperationFlags(int32_t(left) & int32_t(right));
+    return OperationFlags(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr OperationFlags operator~(OperationFlags flags)
 {
-    return OperationFlags(~int32_t(flags));
+    return OperationFlags(~std::int32_t(flags));
 }
 
-constexpr uint8_t GetDerefCount(OperationFlags flags)
+constexpr std::uint8_t GetDerefCount(OperationFlags flags)
 {
-    return uint8_t(uint16_t(flags & OperationFlags::derefCount) >> 8);
+    return std::uint8_t(std::uint16_t(flags & OperationFlags::derefCount) >> 8);
 }
 
-constexpr OperationFlags SetDerefCount(OperationFlags flags, uint8_t n)
+constexpr OperationFlags SetDerefCount(OperationFlags flags, std::uint8_t n)
 {
-    return OperationFlags(flags | OperationFlags(uint16_t(n) << 8));
+    return OperationFlags(flags | OperationFlags(std::uint16_t(n) << 8));
 }
 
 class FunctionSymbol;

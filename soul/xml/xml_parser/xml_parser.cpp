@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -50,7 +50,7 @@ void ParseXmlContent(std::u32string&& xmlContent, const std::string& systemId, X
 {
     auto lexer = soul::lexer::trivial::MakeLexer(xmlContent.c_str(), xmlContent.c_str() + xmlContent.length(), systemId);
     lexer.SetRuleNameMapPtr(soul::xml::parser::rules::GetRuleNameMapPtr());
-    int32_t fileId = fileMap.MapFile(systemId);
+    std::int32_t fileId = fileMap.MapFile(systemId);
     lexer.SetFile(fileId);
     soul::xml::processor::XmlProcessor processor(contentHandler);
     using LexerType = decltype(lexer);

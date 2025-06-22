@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,7 +9,7 @@ import std.core;
 
 export namespace otava::symbols {
 
-enum class SymbolKind : int32_t;
+enum class SymbolKind : std::int32_t;
 
 class Symbol;
 class SymbolTable;

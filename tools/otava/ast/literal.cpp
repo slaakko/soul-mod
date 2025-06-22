@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -35,7 +35,7 @@ IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_) :
 {
 }
 
-IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_) :
+IntegerLiteralNode::IntegerLiteralNode(const soul::ast::SourcePos& sourcePos_, std::uint64_t value_, Suffix suffix_, Base base_, const std::u32string& rep_) :
     LiteralNode(NodeKind::integerLiteralNode, sourcePos_, rep_), value(value_), suffix(suffix_), base(base_)
 {
 }
@@ -55,8 +55,8 @@ void IntegerLiteralNode::Write(Writer& writer)
 {
     LiteralNode::Write(writer);
     writer.GetBinaryStreamWriter().Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(suffix));
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(base));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(suffix));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(base));
 }
 
 void IntegerLiteralNode::Read(Reader& reader)
@@ -91,8 +91,8 @@ void FloatingLiteralNode::Write(Writer& writer)
 {
     LiteralNode::Write(writer);
     writer.GetBinaryStreamWriter().Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(suffix));
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(base));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(suffix));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(base));
 }
 
 void FloatingLiteralNode::Read(Reader& reader)
@@ -127,7 +127,7 @@ void CharacterLiteralNode::Write(Writer& writer)
 {
     LiteralNode::Write(writer);
     writer.GetBinaryStreamWriter().Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(encodingPrefix));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(encodingPrefix));
     writer.GetBinaryStreamWriter().Write(hasMultipleCharacters);
 }
 
@@ -172,7 +172,7 @@ void StringLiteralNode::Write(Writer& writer)
 {
     LiteralNode::Write(writer);
     writer.Write(value);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(encodingPrefix));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(encodingPrefix));
 }
 
 void StringLiteralNode::Read(Reader& reader)

@@ -7,22 +7,22 @@ import std.core;
 
 export namespace otava::project_token {
 
-constexpr int32_t tokenSetID = 1923497641;
+constexpr std::int32_t tokenSetID = 1923497641;
 
-constexpr int64_t PROJECT = (static_cast<int64_t>(tokenSetID) << 32) | 1;
-constexpr int64_t ID = (static_cast<int64_t>(tokenSetID) << 32) | 2;
-constexpr int64_t DOT = (static_cast<int64_t>(tokenSetID) << 32) | 3;
-constexpr int64_t SEMICOLON = (static_cast<int64_t>(tokenSetID) << 32) | 4;
-constexpr int64_t ASSIGN = (static_cast<int64_t>(tokenSetID) << 32) | 5;
-constexpr int64_t INTERFACE = (static_cast<int64_t>(tokenSetID) << 32) | 6;
-constexpr int64_t SOURCE = (static_cast<int64_t>(tokenSetID) << 32) | 7;
-constexpr int64_t RESOURCE = (static_cast<int64_t>(tokenSetID) << 32) | 8;
-constexpr int64_t FILEPATH = (static_cast<int64_t>(tokenSetID) << 32) | 9;
-constexpr int64_t REFERENCE = (static_cast<int64_t>(tokenSetID) << 32) | 10;
-constexpr int64_t DEFINE = (static_cast<int64_t>(tokenSetID) << 32) | 11;
-constexpr int64_t VALUE = (static_cast<int64_t>(tokenSetID) << 32) | 12;
-constexpr int64_t TARGET = (static_cast<int64_t>(tokenSetID) << 32) | 13;
-constexpr int64_t PROGRAM = (static_cast<int64_t>(tokenSetID) << 32) | 14;
-constexpr int64_t LIBRARY = (static_cast<int64_t>(tokenSetID) << 32) | 15;
+constexpr std::int64_t PROJECT = (static_cast<std::int64_t>(tokenSetID) << 32) | 1;
+constexpr std::int64_t ID = (static_cast<std::int64_t>(tokenSetID) << 32) | 2;
+constexpr std::int64_t DOT = (static_cast<std::int64_t>(tokenSetID) << 32) | 3;
+constexpr std::int64_t SEMICOLON = (static_cast<std::int64_t>(tokenSetID) << 32) | 4;
+constexpr std::int64_t ASSIGN = (static_cast<std::int64_t>(tokenSetID) << 32) | 5;
+constexpr std::int64_t INTERFACE = (static_cast<std::int64_t>(tokenSetID) << 32) | 6;
+constexpr std::int64_t SOURCE = (static_cast<std::int64_t>(tokenSetID) << 32) | 7;
+constexpr std::int64_t RESOURCE = (static_cast<std::int64_t>(tokenSetID) << 32) | 8;
+constexpr std::int64_t FILEPATH = (static_cast<std::int64_t>(tokenSetID) << 32) | 9;
+constexpr std::int64_t REFERENCE = (static_cast<std::int64_t>(tokenSetID) << 32) | 10;
+constexpr std::int64_t DEFINE = (static_cast<std::int64_t>(tokenSetID) << 32) | 11;
+constexpr std::int64_t VALUE = (static_cast<std::int64_t>(tokenSetID) << 32) | 12;
+constexpr std::int64_t TARGET = (static_cast<std::int64_t>(tokenSetID) << 32) | 13;
+constexpr std::int64_t PROGRAM = (static_cast<std::int64_t>(tokenSetID) << 32) | 14;
+constexpr std::int64_t LIBRARY = (static_cast<std::int64_t>(tokenSetID) << 32) | 15;
 
 } // otava::project_token

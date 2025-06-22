@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -71,7 +71,7 @@ AliasTypeSymbol* AliasGroupSymbol::GetAliasTypeSymbol(int arity) const
 void AliasGroupSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
-    uint32_t count = aliasTypeSymbols.size();
+    std::uint32_t count = aliasTypeSymbols.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (AliasTypeSymbol* aliasType : aliasTypeSymbols)
     {
@@ -82,8 +82,8 @@ void AliasGroupSymbol::Write(Writer& writer)
 void AliasGroupSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         util::uuid aliasTypeId;
         reader.GetBinaryStreamReader().ReadUuid(aliasTypeId);

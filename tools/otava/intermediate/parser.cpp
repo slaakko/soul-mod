@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -19,7 +19,7 @@ void ParseIntermediateCodeFile(const std::string& filePath, Context& context)
     std::u32string content = util::ToUtf32(codeFileContent);
     auto lexer = otava::intermediate::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);
     lexer.SetRuleNameMapPtr(otava::intermediate::spg::rules::GetRuleNameMapPtr());
-    int32_t fileId = context.GetFileMap().MapFile(filePath);
+    std::int32_t fileId = context.GetFileMap().MapFile(filePath);
     lexer.SetFile(fileId);
     using LexerType = decltype(lexer);
     otava::intermediate::code::parser::IntermediateCodeParser<LexerType>::Parse(lexer, &context);

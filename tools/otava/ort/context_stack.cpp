@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -20,13 +20,13 @@ struct context_buffer
     void push();
     void pop();
     void clear();
-    uint8_t* mem;
+    std::uint8_t* mem;
     int top;
     context_buffer* prev;
     context_buffer* next;
 };
 
-context_buffer::context_buffer(context_buffer* prev_) : mem(static_cast<uint8_t*>(malloc(nctx * ctxsz))), top(0), prev(prev_), next(nullptr)
+context_buffer::context_buffer(context_buffer* prev_) : mem(static_cast<std::uint8_t*>(malloc(nctx * ctxsz))), top(0), prev(prev_), next(nullptr)
 {
 }
 

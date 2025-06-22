@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -40,7 +40,7 @@ parser ProjectParser
         }
         ;
 
-    Define(otava::build::Project* projectFile, var std::string symbol, var int64_t value)
+    Define(otava::build::Project* projectFile, var std::string symbol, var std::int64_t value)
         ::= DEFINE ID{ symbol = util::ToUtf8(lexer.GetToken(pos).ToString()); } 
             (   ASSIGN VALUE{ value = std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString())); }
             |   empty{ value = 1; }

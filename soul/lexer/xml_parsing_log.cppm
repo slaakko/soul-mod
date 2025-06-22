@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -33,7 +33,7 @@ private:
 template<typename Char>
 std::string XmlHexEscape(Char c)
 {
-    return "&#x" + util::ToHexString(uint32_t(c)) + ";";
+    return "&#x" + util::ToHexString(std::uint32_t(c)) + ";";
 }
 
 template<typename Char>
@@ -53,7 +53,7 @@ std::string XmlCharStr(Char c)
         case '\v': return "\\v";
         default:
         {
-            if ((int32_t(c) >= 32 && int32_t(c) <= 126))
+            if ((std::int32_t(c) >= 32 && std::int32_t(c) <= 126))
             {
                 return std::string(1, char(c));
             }

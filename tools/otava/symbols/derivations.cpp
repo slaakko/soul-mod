@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -207,21 +207,21 @@ int CountMatchingDerivations(const Derivations& left, const Derivations& right)
 
 void Write(Writer& writer, const Derivations& derivations)
 {
-    uint8_t count = static_cast<uint8_t>(derivations.vec.size());
+    std::uint8_t count = static_cast<std::uint8_t>(derivations.vec.size());
     writer.GetBinaryStreamWriter().Write(count);
     for (const auto d : derivations.vec)
     {
-        writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(d));
+        writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(d));
     }
 }
 
 void Read(Reader& reader, Derivations& derivations)
 {
     derivations.vec.clear();
-    uint8_t count = reader.GetBinaryStreamReader().ReadByte();
-    for (uint8_t i = 0; i < count; ++i)
+    std::uint8_t count = reader.GetBinaryStreamReader().ReadByte();
+    for (std::uint8_t i = 0; i < count; ++i)
     {
-        uint8_t b = reader.GetBinaryStreamReader().ReadByte();
+        std::uint8_t b = reader.GetBinaryStreamReader().ReadByte();
         Derivation d = static_cast<Derivation>(b);
         derivations.vec.push_back(d);
     }

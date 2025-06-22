@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -63,8 +63,8 @@ export extern "C" bool fs_equivalent(void* p1, void* p2);
 export extern "C" bool fs_equivalent_error(void* p1, void* p2, int* error, char** msg);
 export extern "C" bool fs_exists(void* p);
 export extern "C" bool fs_exists_error(void* p, int* error, char** msg);
-export extern "C" uint64_t fs_file_size(void* p);
-export extern "C" uint64_t fs_file_size_error(void* p, int* error, char** msg);
+export extern "C" std::uint64_t fs_file_size(void* p);
+export extern "C" std::uint64_t fs_file_size_error(void* p, int* error, char** msg);
 export extern "C" bool fs_is_block_file(void* p);
 export extern "C" bool fs_is_block_file_error(void* p, int* error, char** msg);
 export extern "C" bool fs_is_character_file(void* p);
@@ -83,17 +83,17 @@ export extern "C" bool fs_is_socket(void* p);
 export extern "C" bool fs_is_socket_error(void* p, int* error, char** msg);
 export extern "C" bool fs_is_symlink(void* p);
 export extern "C" bool fs_is_symlink_error(void* p, int* error, char** msg);
-export extern "C" int64_t fs_last_write_time(void* p);
-export extern "C" int64_t fs_last_write_time_error(void* p, int* error, char** msg);
+export extern "C" std::int64_t fs_last_write_time(void* p);
+export extern "C" std::int64_t fs_last_write_time_error(void* p, int* error, char** msg);
 export extern "C" void* fs_relative(void* p);
 export extern "C" void* fs_relative_error(void* p, int* error, char** msg);
 export extern "C" void* fs_relative_base(void* p, void* base);
 export extern "C" void* fs_relative_base_error(void* p, void* base, int* error, char** msg);
 export extern "C" bool fs_remove(void* p);
 export extern "C" bool fs_remove_error(void* p, int* error, char** msg);
-export extern "C" uint64_t fs_remove_all(void* p);
-export extern "C" uint64_t fs_remove_all_error(void* p, int* error, char** msg);
+export extern "C" std::uint64_t fs_remove_all(void* p);
+export extern "C" std::uint64_t fs_remove_all_error(void* p, int* error, char** msg);
 export extern "C" void fs_rename(void* from, void* to);
 export extern "C" void fs_rename_error(void* from, void* to, int* error, char** msg);
-export extern "C" void fs_resize_file(void* p, uint64_t size);
-export extern "C" void fs_resize_file_error(void* p, uint64_t size, int* error, char** msg);
+export extern "C" void fs_resize_file(void* p, std::uint64_t size);
+export extern "C" void fs_resize_file_error(void* p, std::uint64_t size, int* error, char** msg);

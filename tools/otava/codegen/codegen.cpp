@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -170,7 +170,7 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& nod
     otava::intermediate::Value* value = emitter.Stack().Pop();
     if (value->IsIntegerValue())
     {
-        int64_t val = value->GetIntegerValue();
+        std::int64_t val = value->GetIntegerValue();
         otava::intermediate::Type* type = node.GetType()->IrType(emitter, sourcePos, &context);
         if (type->IsIntegerType())
         {
@@ -178,42 +178,42 @@ void ConstantExpressionEvaluator::Visit(otava::symbols::BoundConversionNode& nod
             {
                 case otava::intermediate::sbyteTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetSByteValue(static_cast<int8_t>(val));
+                    value = emitter.GetIntermediateContext()->GetSByteValue(static_cast<std::int8_t>(val));
                     break;
                 }
                 case otava::intermediate::byteTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetByteValue(static_cast<uint8_t>(val));
+                    value = emitter.GetIntermediateContext()->GetByteValue(static_cast<std::uint8_t>(val));
                     break;
                 }
                 case otava::intermediate::shortTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetShortValue(static_cast<int16_t>(val));
+                    value = emitter.GetIntermediateContext()->GetShortValue(static_cast<std::int16_t>(val));
                     break;
                 }
                 case otava::intermediate::ushortTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetUShortValue(static_cast<uint16_t>(val));
+                    value = emitter.GetIntermediateContext()->GetUShortValue(static_cast<std::uint16_t>(val));
                     break;
                 }
                 case otava::intermediate::intTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetIntValue(static_cast<int32_t>(val));
+                    value = emitter.GetIntermediateContext()->GetIntValue(static_cast<std::int32_t>(val));
                     break;
                 }
                 case otava::intermediate::uintTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetUIntValue(static_cast<uint32_t>(val));
+                    value = emitter.GetIntermediateContext()->GetUIntValue(static_cast<std::uint32_t>(val));
                     break;
                 }
                 case otava::intermediate::longTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetLongValue(static_cast<int64_t>(val));
+                    value = emitter.GetIntermediateContext()->GetLongValue(static_cast<std::int64_t>(val));
                     break;
                 }
                 case otava::intermediate::ulongTypeId:
                 {
-                    value = emitter.GetIntermediateContext()->GetULongValue(static_cast<uint64_t>(val));
+                    value = emitter.GetIntermediateContext()->GetULongValue(static_cast<std::uint64_t>(val));
                     break;
                 }
                 default:
@@ -452,8 +452,8 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
     otava::intermediate::Type* arrayPtrType = emitter.MakePtrType(arrayType);
     std::vector<otava::intermediate::Value*> elements;
     util::uuid classId = cls->Id();
-    uint64_t classIdFirst;
-    uint64_t classIdSecond;
+    std::uint64_t classIdFirst;
+    std::uint64_t classIdSecond;
     util::UuidToInts(classId, classIdFirst, classIdSecond);
     otava::intermediate::Value* classIdFirstValue = emitter.EmitConversionValue(voidPtrIrType, emitter.EmitULong(classIdFirst));
     elements.push_back(classIdFirstValue);
@@ -1195,7 +1195,7 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
     if (thisPtrType->IsClassTypeSymbol())
     {
         otava::symbols::ClassTypeSymbol* classType = static_cast<otava::symbols::ClassTypeSymbol*>(thisPtrType);
-        int32_t vptrIndex = classType->VPtrIndex();
+        std::int32_t vptrIndex = classType->VPtrIndex();
         otava::symbols::ClassTypeSymbol* forClass = node.GetClass();
         otava::intermediate::Value* ptr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrIndex));
         otava::intermediate::Value* vptr = emitter.EmitBitcast(forClass->GetVTabVariable(emitter, &context), emitter.MakePtrType(emitter.GetVoidType()));
@@ -1241,8 +1241,8 @@ void CodeGenerator::Visit(otava::symbols::BoundTryStatementNode& node)
 
 void CodeGenerator::Visit(otava::symbols::BoundHandlerNode& node)
 {
-    uint64_t hth = 0;
-    uint64_t htl = 0;
+    std::uint64_t hth = 0;
+    std::uint64_t htl = 0;
     util::UuidToInts(node.ExceptionTypeId(), hth, htl);
     std::vector<otava::intermediate::Value*> handleExceptionArgs;
     handleExceptionArgs.push_back(emitter.EmitULong(hth));

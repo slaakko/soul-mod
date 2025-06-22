@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -28,7 +28,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
 private:
     otava::ast::Node* constraintExprNode;
-    int64_t constraintEprNodeId;
+    std::int64_t constraintEprNodeId;
 };
 
 class ConceptSymbol : public Symbol

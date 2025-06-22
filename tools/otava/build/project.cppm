@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -17,12 +17,12 @@ export namespace otava::build {
 
 struct Define
 {
-    Define(const std::string& symbol_, int64_t value_);
+    Define(const std::string& symbol_, std::int64_t value_);
     std::string symbol;
-    int64_t value;
+    std::int64_t value;
 };
 
-enum class Target : int32_t
+enum class Target : std::int32_t
 {
     program, library
 };
@@ -34,7 +34,7 @@ public:
     void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
     const std::string& FilePath() const { return filePath; }
     const std::string& Name() const { return name; }
-    int16_t Id() const;
+    std::int16_t Id() const;
     void AddInterfaceFilePath(const std::string& interfaceFilePath);
     const std::vector<std::string>& InterfaceFilePaths() const { return interfaceFilePaths; }
     void AddSourceFilePath(const std::string& sourceFilePath);
@@ -44,16 +44,16 @@ public:
     void AddReferenceFilePath(const std::string& referenceFilePath);
     const std::vector<std::string>& ReferenceFilePaths() const { return referenceFilePaths; }
     soul::lexer::FileMap& GetFileMap() { return *fileMap; }
-    void SetModule(int32_t fileId, otava::symbols::Module* module);
+    void SetModule(std::int32_t fileId, otava::symbols::Module* module);
     otava::symbols::Module* GetModule(const std::string& moduleName) const;
     otava::symbols::Module* GetModule(int file) const;
     otava::symbols::Module* ReleaseModule(int file);
     void MapFiles();
     const std::string& Root() const { return root; }
     void AddRoots(otava::symbols::ModuleMapper& moduleMapper);
-    const std::vector<int32_t>& InterfaceFiles() const { return interfaceFiles; }
-    const std::vector<int32_t>& SourceFiles() const { return sourceFiles; }
-    const std::string& GetModuleSourceFilePath(int32_t fileId) const;
+    const std::vector<std::int32_t>& InterfaceFiles() const { return interfaceFiles; }
+    const std::vector<std::int32_t>& SourceFiles() const { return sourceFiles; }
+    const std::string& GetModuleSourceFilePath(std::int32_t fileId) const;
     void InitModules();
     void LoadModules(otava::symbols::ModuleMapper& moduleMapper);
     bool UpToDate() const;
@@ -62,7 +62,7 @@ public:
     const std::vector<std::unique_ptr<otava::symbols::Module>>& Modules() const { return modules; }
     const std::vector<std::string>& ModuleNames() const { return moduleNames; }
     const std::vector<Define>& Defines() const { return defines; }
-    void AddDefine(const std::string& symbol, int64_t value);
+    void AddDefine(const std::string& symbol, std::int64_t value);
     void ResolveForwardDeclarationsAndAddDerivedClasses(otava::symbols::ModuleMapper& moduleMapper);
     void SetTarget(Target target_) { target = target_; }
     Target GetTarget() const { return target; }
@@ -80,9 +80,9 @@ private:
     std::vector<std::string> referenceFilePaths;
     std::vector<std::unique_ptr<otava::symbols::Module>> modules;
     std::map<std::string, otava::symbols::Module*> moduleMap;
-    std::map<int32_t, otava::symbols::Module*> fileIdModuleMap;
-    std::vector<int32_t> interfaceFiles;
-    std::vector<int32_t> sourceFiles;
+    std::map<std::int32_t, otava::symbols::Module*> fileIdModuleMap;
+    std::vector<std::int32_t> interfaceFiles;
+    std::vector<std::int32_t> sourceFiles;
     bool initialized;
     bool scanned;
     bool loaded;

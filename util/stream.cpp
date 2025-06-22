@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -29,12 +29,12 @@ void Stream::Flush()
 {
 }
 
-void Stream::Seek(int64_t pos, Origin origin)
+void Stream::Seek(std::int64_t pos, Origin origin)
 {
     throw std::runtime_error("seek not supported");
 }
 
-int64_t Stream::Tell()
+std::int64_t Stream::Tell()
 {
     throw std::runtime_error("tell not supported");
 }
@@ -57,10 +57,10 @@ void Stream::CopyTo(Stream& destination)
     CopyTo(destination, 16384);
 }
 
-void Stream::CopyTo(Stream& destination, int64_t bufferSize)
+void Stream::CopyTo(Stream& destination, std::int64_t bufferSize)
 {
-    std::unique_ptr<uint8_t> buf(static_cast<uint8_t*>(malloc(bufferSize)));
-    int64_t bytesRead = Read(buf.get(), bufferSize);
+    std::unique_ptr<std::uint8_t> buf(static_cast<std::uint8_t*>(malloc(bufferSize)));
+    std::int64_t bytesRead = Read(buf.get(), bufferSize);
     while (bytesRead > 0)
     {
         destination.Write(buf.get(), bytesRead);
@@ -68,7 +68,7 @@ void Stream::CopyTo(Stream& destination, int64_t bufferSize)
     }
 }
 
-void Stream::SetPosition(int64_t position_)
+void Stream::SetPosition(std::int64_t position_)
 {
     if (position != position_)
     {

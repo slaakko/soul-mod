@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -23,7 +23,7 @@ Collection::~Collection()
 {
 }
 
-Token::Token(int64_t id_, const std::string& name_, const std::string& info_) : id(id_), name(name_), info(info_), collection(nullptr)
+Token::Token(std::int64_t id_, const std::string& name_, const std::string& info_) : id(id_), name(name_), info(info_), collection(nullptr)
 {
 }
 
@@ -39,7 +39,7 @@ void TokenCollection::AddToken(Token* token)
 {
     if (token->Id() == -1)
     {
-        int64_t tokenId = (int64_t(Id()) << 32) | (int64_t(tokens.size()) + 1);
+        std::int64_t tokenId = (std::int64_t(Id()) << 32) | (std::int64_t(tokens.size()) + 1);
         token->SetId(tokenId);
     }
     tokens.push_back(std::unique_ptr<Token>(token));
@@ -47,7 +47,7 @@ void TokenCollection::AddToken(Token* token)
     token->SetCollection(this);
 }
 
-Token* TokenCollection::GetToken(int64_t id) const
+Token* TokenCollection::GetToken(std::int64_t id) const
 {
     auto it = tokenMap.find(id);
     if (it != tokenMap.cend())
@@ -70,7 +70,7 @@ void TokenFile::SetTokenCollection(TokenCollection* tokenCollection_)
     tokenCollection->SetFile(this);
 }
 
-Keyword::Keyword(const std::string& str_, const std::string& tokenName_, int64_t tokenId_) : str(str_), tokenName(tokenName_), tokenId(tokenId_), collection(nullptr)
+Keyword::Keyword(const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_) : str(str_), tokenName(tokenName_), tokenId(tokenId_), collection(nullptr)
 {
 }
 

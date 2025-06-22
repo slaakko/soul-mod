@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -193,7 +193,7 @@ Value* BoolValue::Convert(ValueKind kind, EvaluationContext& context)
         case ValueKind::boolValue: return this;
         case ValueKind::integerValue: 
         {
-            return context.GetIntegerValue(static_cast<int64_t>(value), util::ToUtf32(std::to_string(value)),
+            return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(value)),
                 context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
         }
         case ValueKind::floatingValue: 
@@ -235,7 +235,7 @@ IntegerValue::IntegerValue(const std::u32string& rep_, TypeSymbol* type_) : Valu
 {
 }
 
-IntegerValue::IntegerValue(int64_t value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(value_)
+IntegerValue::IntegerValue(std::int64_t value_, const std::u32string& rep_, TypeSymbol* type_) : Value(SymbolKind::integerValueSymbol, rep_, type_), value(value_)
 {
 }
 
@@ -306,7 +306,7 @@ Value* FloatingValue::Convert(ValueKind kind, EvaluationContext& context)
         case ValueKind::boolValue: return ToBoolValue(context);
         case ValueKind::integerValue: 
         {
-            return context.GetIntegerValue(static_cast<int64_t>(value), util::ToUtf32(std::to_string(value)), 
+            return context.GetIntegerValue(static_cast<std::int64_t>(value), util::ToUtf32(std::to_string(value)), 
                 context.GetSymbolTable().GetFundamentalTypeSymbol(FundamentalTypeKind::intType));
         }
         case ValueKind::floatingValue: return this;
@@ -486,7 +486,7 @@ Value* SymbolValue::Convert(ValueKind kind, EvaluationContext& context)
                         case ValueKind::boolValue:
                         {
                             BoolValue* boolValue = static_cast<BoolValue*>(value);
-                            return context.GetIntegerValue(static_cast<int64_t>(boolValue->GetValue()), enumConstantSymbol->Name(), value->GetType());
+                            return context.GetIntegerValue(static_cast<std::int64_t>(boolValue->GetValue()), enumConstantSymbol->Name(), value->GetType());
                         }
                     }
                     break;
@@ -605,7 +605,7 @@ void ArrayValue::AddElementValue(Value* elementValue)
 void ArrayValue::Write(Writer& writer)
 {
     Value::Write(writer);
-    uint32_t count = elementValues.size();
+    std::uint32_t count = elementValues.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (const auto& elementValue : elementValues)
     {
@@ -616,8 +616,8 @@ void ArrayValue::Write(Writer& writer)
 void ArrayValue::Read(Reader& reader)
 {
     Value::Read(reader);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         SymbolTable* symbolTable = reader.GetSymbolTable();
@@ -664,7 +664,7 @@ void StructureValue::AddFieldValue(Value* fieldValue)
 void StructureValue::Write(Writer& writer)
 {
     Value::Write(writer);
-    uint32_t count = fieldValues.size();
+    std::uint32_t count = fieldValues.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (const auto& fieldValue : fieldValues)
     {
@@ -675,8 +675,8 @@ void StructureValue::Write(Writer& writer)
 void StructureValue::Read(Reader& reader)
 {
     Value::Read(reader);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         SymbolTable* symbolTable = reader.GetSymbolTable();
@@ -737,7 +737,7 @@ BoolValue* EvaluationContext::GetBoolValue(bool value)
     if (value) return &trueValue; else return &falseValue;
 }
 
-IntegerValue* EvaluationContext::GetIntegerValue(int64_t value, const std::u32string& rep, TypeSymbol* type)
+IntegerValue* EvaluationContext::GetIntegerValue(std::int64_t value, const std::u32string& rep, TypeSymbol* type)
 {
     auto it = integerValueMap.find(std::make_pair(std::make_pair(value, rep), type));
     if (it != integerValueMap.cend())
@@ -863,9 +863,9 @@ void EvaluationContext::Write(Writer& writer)
     trueValue.Write(writer);
     falseValue.Write(writer);
     nullPtrValue.Write(writer);
-    uint32_t count = values.size();
+    std::uint32_t count = values.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
-    for (uint32_t i = 0; i < count; ++i)
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         Symbol* value = values[i].get();
         writer.Write(value);
@@ -880,8 +880,8 @@ void EvaluationContext::Read(Reader& reader)
     MapValue(&nullPtrValue);
     MapValue(&trueValue);
     MapValue(&falseValue);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsValueSymbol())

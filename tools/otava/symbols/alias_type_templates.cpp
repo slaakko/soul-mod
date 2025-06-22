@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -55,8 +55,8 @@ void AliasTypeTemplateSpecializationSymbol::Read(Reader& reader)
     util::uuid id;
     reader.GetBinaryStreamReader().ReadUuid(id);
     ids.push_back(id);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         util::uuid id;
         reader.GetBinaryStreamReader().ReadUuid(id);

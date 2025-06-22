@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -26,12 +26,12 @@ class UsingDeclarationScope;
 class UsingDirectiveScope;
 class ClassTemplateSpecializationSymbol;
 
-enum class ScopeKind : int32_t
+enum class ScopeKind : std::int32_t
 {
     none, namespaceScope, templateDeclarationScope, classScope, enumerationScope, functionScope, arrayScope, blockScope, usingDeclarationScope, usingDirectiveScope, instantiationScope
 };
 
-enum class SymbolGroupKind : int32_t;
+enum class SymbolGroupKind : std::int32_t;
 
 std::string ScopeKindStr(ScopeKind kind);
 

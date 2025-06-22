@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,7 +14,7 @@ import util.unicode;
 
 namespace util {
 
-std::string WindowsErrorMessage(uint64_t errorCode)
+std::string WindowsErrorMessage(std::uint64_t errorCode)
 {
 #ifdef _WIN32
     char16_t buf[4096];
@@ -25,7 +25,7 @@ std::string WindowsErrorMessage(uint64_t errorCode)
 #endif
 }
 
-WindowsException::WindowsException(uint64_t errorCode_) : std::runtime_error(WindowsErrorMessage(errorCode_)), errorCode(errorCode_)
+WindowsException::WindowsException(std::uint64_t errorCode_) : std::runtime_error(WindowsErrorMessage(errorCode_)), errorCode(errorCode_)
 {
 }
 

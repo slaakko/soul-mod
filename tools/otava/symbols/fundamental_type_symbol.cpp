@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -96,7 +96,7 @@ FundamentalTypeKind FundamentalTypeFlagMapper::GetFundamentalTypeKind(Declaratio
 
 std::u32string MakeFundamentalTypeName(FundamentalTypeKind kind)
 {
-    return util::ToUtf32(fundamentalTypeNames[static_cast<int32_t>(kind)]);
+    return util::ToUtf32(fundamentalTypeNames[static_cast<std::int32_t>(kind)]);
 }
 
 FundamentalTypeSymbol::FundamentalTypeSymbol(const std::u32string& name_) : TypeSymbol(SymbolKind::fundamentalTypeSymbol, name_), fundamentalTypeKind()
@@ -135,9 +135,9 @@ bool FundamentalTypeSymbol::IsIntegralType() const
 
 void FundamentalTypeSymbol::Write(Writer& writer)
 {
-    static_assert(static_cast<int32_t>(FundamentalTypeKind::max) < 256);
+    static_assert(static_cast<std::int32_t>(FundamentalTypeKind::max) < 256);
     TypeSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(fundamentalTypeKind));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(fundamentalTypeKind));
 }
 
 void FundamentalTypeSymbol::Read(Reader& reader)

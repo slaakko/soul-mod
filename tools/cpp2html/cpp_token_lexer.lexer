@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,7 +18,7 @@ lexer CppTokenLexer
         "{linecomment}" { return LINECOMMENT; }
         "{blockcomment}" { return BLOCKCOMMENT; }
         "{blockcommentline}" $(1) { return BLOCKCOMMENTLINE; }
-        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return KEYWORD; }
+        "{id}" { std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return KEYWORD; }
         "{characterliteral}" { return CHARLIT; }
         "{beginrawstringliteral}" { return BEGINRAWSTRINGLIT; }
         "{stringliteral}" { return STRINGLIT; }

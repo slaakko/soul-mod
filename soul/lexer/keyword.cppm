@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -25,9 +25,9 @@ template<typename Char>
 struct Keyword
 {
     Keyword() : str(nullptr), tokenID(INVALID_TOKEN) {}
-    Keyword(const Char* str_, int64_t tokenID_) : str(str_), tokenID(tokenID_) { }
+    Keyword(const Char* str_, std::int64_t tokenID_) : str(str_), tokenID(tokenID_) { }
     const Char* str;
-    int64_t tokenID;
+    std::int64_t tokenID;
 };
 
 template<typename Char>
@@ -44,7 +44,7 @@ public:
             ++kw;
         }
     }
-    int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const
+    std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const
     {
         auto it = keywordMap.find(lexeme);
         if (it != keywordMap.cend())
@@ -58,7 +58,7 @@ public:
     }
 private:
     const soul::lexer::Keyword<Char>* keywords;
-    std::map<Lexeme<Char>, int64_t, LexemeCompare<Char>> keywordMap;
+    std::map<Lexeme<Char>, std::int64_t, LexemeCompare<Char>> keywordMap;
 };
 
 } // namespace soul::lexer

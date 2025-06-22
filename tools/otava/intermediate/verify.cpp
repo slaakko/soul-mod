@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -84,7 +84,7 @@ private:
     BasicBlock* currentBasicBlock;
     int numParams;
     std::vector<Value*> arguments;
-    int32_t regNumber;
+    std::int32_t regNumber;
     int index;
 };
 
@@ -300,7 +300,7 @@ void VerifierVisitor::Visit(ArgInstruction& inst)
 
 void VerifierVisitor::Visit(JmpInstruction& inst)
 {
-    int32_t target = inst.TargetLabelId();
+    std::int32_t target = inst.TargetLabelId();
     BasicBlock* basicBlock = inst.Parent();
     Function* function = basicBlock->Parent();
     BasicBlock* targetBasicBlock = function->GetBasicBlock(target);
@@ -319,7 +319,7 @@ void VerifierVisitor::Visit(JmpInstruction& inst)
 void VerifierVisitor::Visit(BranchInstruction& inst)
 {
     CheckSameType("condition type", inst.Cond()->GetType(), "Boolean type", GetContext()->GetTypes().GetBoolType(), inst.GetSourcePos());
-    int32_t trueTarget = inst.TrueTargetLabelId();
+    std::int32_t trueTarget = inst.TrueTargetLabelId();
     BasicBlock* trueBasicBlock = inst.Parent();
     Function* trueFunction = trueBasicBlock->Parent();
     BasicBlock* trueTargetBasicBlock = trueFunction->GetBasicBlock(trueTarget);
@@ -329,7 +329,7 @@ void VerifierVisitor::Visit(BranchInstruction& inst)
             inst.GetSourcePos(), GetContext());
     }
     inst.SetTrueTargetBasicBlock(trueTargetBasicBlock);
-    int32_t falseTarget = inst.FalseTargetLabelId();
+    std::int32_t falseTarget = inst.FalseTargetLabelId();
     BasicBlock* falseBasicBlock = inst.Parent();
     Function* falseFunction = falseBasicBlock->Parent();
     BasicBlock* falseTargetBasicBlock = falseFunction->GetBasicBlock(falseTarget);
@@ -417,7 +417,7 @@ void VerifierVisitor::Visit(SwitchInstruction& inst)
     {
         Error("code verification error: terminator in the middle of basic block " + std::to_string(inst.Parent()->Id()), inst.GetSourcePos(), GetContext());
     }
-    int32_t defaultTarget = inst.DefaultTargetId();
+    std::int32_t defaultTarget = inst.DefaultTargetId();
     BasicBlock* parent = inst.Parent();
     Function* function = parent->Parent();
     BasicBlock* defaultTargetBlock = function->GetBasicBlock(defaultTarget);
@@ -705,7 +705,7 @@ void VerifierVisitor::Visit(ElemAddrInstruction& inst)
         CheckValueInstruction(&inst);
         if (inst.Index()->IsIntegerValue())
         {
-            int64_t index = inst.Index()->GetIntegerValue();
+            std::int64_t index = inst.Index()->GetIntegerValue();
             if (index < 0 || index >= structureType->FieldCount())
             {
                 Error("code verification error: invalid index", inst.GetSourcePos(), GetContext());
@@ -719,7 +719,7 @@ void VerifierVisitor::Visit(ElemAddrInstruction& inst)
         CheckValueInstruction(&inst);
         if (inst.Index()->IsIntegerValue())
         {
-            int64_t index = inst.Index()->GetIntegerValue();
+            std::int64_t index = inst.Index()->GetIntegerValue();
             if (index < 0 || index > arrayType->ElementCount())
             {
                 Error("code verification error: invalid index", inst.GetSourcePos(), GetContext());
@@ -814,7 +814,7 @@ void VerifierVisitor::Visit(PhiInstruction& inst)
     for (BlockValue& blockValue : inst.BlockValues())
     {
         CheckSameType("value type", blockValue.value->GetType(), "result type", type, inst.GetSourcePos());
-        int32_t blockId = blockValue.blockId;
+        std::int32_t blockId = blockValue.blockId;
         BasicBlock* block = currentFunction->GetBasicBlock(blockId);
         if (!block)
         {

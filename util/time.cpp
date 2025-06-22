@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -46,7 +46,7 @@ int GetMonthDays(Month month, int year)
     {
         return 29;
     }
-    return monthDays[static_cast<int8_t>(month)];
+    return monthDays[static_cast<std::int8_t>(month)];
 }
 
 Date Date::AddDays(int n)
@@ -67,7 +67,7 @@ Date Date::AddDays(int n)
             }
             else
             {
-                m = static_cast<Month>(static_cast<int8_t>(static_cast<int8_t>(m) + 1));
+                m = static_cast<Month>(static_cast<std::int8_t>(static_cast<std::int8_t>(m) + 1));
             }
             md = GetMonthDays(m, y);
         }
@@ -87,7 +87,7 @@ Date Date::AddDays(int n)
             }
             else
             {
-                m = static_cast<Month>(static_cast<int8_t>(static_cast<int8_t>(m) - 1));
+                m = static_cast<Month>(static_cast<std::int8_t>(static_cast<std::int8_t>(m) - 1));
             }
             d = d + GetMonthDays(m, y);
         }
@@ -103,7 +103,7 @@ Date Date::AddMonths(int n)
 {
     if (n > 0)
     {
-        int m = static_cast<int8_t>(month) + n;
+        int m = static_cast<std::int8_t>(month) + n;
         int y = year;
         int d = day;
         while (m > 12)
@@ -111,7 +111,7 @@ Date Date::AddMonths(int n)
             m = m - 12;
             ++y;
         }
-        Month mnth = static_cast<Month>(static_cast<int8_t>(m));
+        Month mnth = static_cast<Month>(static_cast<std::int8_t>(m));
         int md = GetMonthDays(mnth, y);
         if (d > md)
         {
@@ -121,7 +121,7 @@ Date Date::AddMonths(int n)
     }
     else if (n < 0)
     {
-        int m = static_cast<int8_t>(month) + n;
+        int m = static_cast<std::int8_t>(month) + n;
         int y = year;
         int d = day;
         while (m < 1)
@@ -129,7 +129,7 @@ Date Date::AddMonths(int n)
             m = m + 12;
             --y;
         }
-        Month mnth = static_cast<Month>(static_cast<int8_t>(m));
+        Month mnth = static_cast<Month>(static_cast<std::int8_t>(m));
         int md = GetMonthDays(mnth, y);
         if (d > md)
         {
@@ -163,22 +163,22 @@ std::string Date::ToString() const
 std::string Date::ToString(bool omitDashes) const
 {
     std::string date;
-    date.append(1, static_cast<char>(static_cast<int16_t>('0') + ((year / 1000) % 10)));
-    date.append(1, static_cast<char>(static_cast<int16_t>('0') + ((year / 100) % 10)));
-    date.append(1, static_cast<char>(static_cast<int16_t>('0') + ((year / 10) % 10)));
-    date.append(1, static_cast<char>(static_cast<int16_t>('0') + (year % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int16_t>('0') + ((year / 1000) % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int16_t>('0') + ((year / 100) % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int16_t>('0') + ((year / 10) % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int16_t>('0') + (year % 10)));
     if (!omitDashes)
     {
         date.append(1, '-');
     }
-    date.append(1, static_cast<char>(static_cast<int8_t>('0') + ((static_cast<int8_t>(month) / 10) % 10)));
-    date.append(1, static_cast<char>(static_cast<int8_t>('0') + (static_cast<int8_t>(month) % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int8_t>('0') + ((static_cast<std::int8_t>(month) / 10) % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int8_t>('0') + (static_cast<std::int8_t>(month) % 10)));
     if (!omitDashes)
     {
         date.append(1, '-');
     }
-    date.append(1, static_cast<char>(static_cast<int8_t>('0') + ((day / 10) % 10)));
-    date.append(1, static_cast<char>(static_cast<int8_t>('0') + (day % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int8_t>('0') + ((day / 10) % 10)));
+    date.append(1, static_cast<char>(static_cast<std::int8_t>('0') + (day % 10)));
     return date;
 }
 
@@ -190,7 +190,7 @@ Date GetCurrentDate()
     int mm = 0;
     int dd = 0;
     current_date(yyyy, mm, dd);
-    return Date(yyyy, static_cast<Month>(static_cast<int8_t>(mm)), dd);
+    return Date(yyyy, static_cast<Month>(static_cast<std::int8_t>(mm)), dd);
 }
 
 #else
@@ -201,7 +201,7 @@ Date GetCurrentDate()
     std::time(&currentTime);
     struct tm* localTime = nullptr;
     localTime = std::localtime(&currentTime);
-    return Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<int8_t>(localTime->tm_mday));
+    return Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday));
 }
 
 #endif
@@ -241,7 +241,7 @@ Date ParseDate(const std::string& dateStr, int& dateEnd)
     {
         ThrowInvalidDate(dateStr);
     }
-    int16_t year = static_cast<int16_t>(std::stoi(dateStr.substr(0, 4)));
+    std::int16_t year = static_cast<std::int16_t>(std::stoi(dateStr.substr(0, 4)));
     int monthStart = 4;
     if (dateStr[4] == '-')
     {
@@ -251,7 +251,7 @@ Date ParseDate(const std::string& dateStr, int& dateEnd)
     {
         ThrowInvalidDate(dateStr);
     }
-    int8_t month = static_cast<int8_t>(std::stoi(dateStr.substr(monthStart, 2)));
+    std::int8_t month = static_cast<std::int8_t>(std::stoi(dateStr.substr(monthStart, 2)));
     if (month < 1 || month > 12)
     {
         ThrowInvalidDate(dateStr);
@@ -265,7 +265,7 @@ Date ParseDate(const std::string& dateStr, int& dateEnd)
     {
         ThrowInvalidDate(dateStr);
     }
-    int8_t day = static_cast<int8_t>(std::stoi(dateStr.substr(dayStart, 2)));
+    std::int8_t day = static_cast<std::int8_t>(std::stoi(dateStr.substr(dayStart, 2)));
     if (day < 1 || day > 31)
     {
         ThrowInvalidDate(dateStr);
@@ -290,18 +290,18 @@ std::string DateTime::ToString(bool omitDashes, bool omitColons, bool omitMins, 
     std::string dateTime;
     dateTime.append(date.ToString(omitDashes));
     dateTime.append(1, 'T');
-    int32_t hh = Hours() % 24;
-    int32_t mm = Minutes() % 60;
-    int32_t ss = Seconds() % 60;
-    dateTime.append(1, static_cast<char>(static_cast<int32_t>('0') + ((hh / 10) % 10)));
-    dateTime.append(1, static_cast<char>(static_cast<int32_t>('0') + (hh % 10)));
+    std::int32_t hh = Hours() % 24;
+    std::int32_t mm = Minutes() % 60;
+    std::int32_t ss = Seconds() % 60;
+    dateTime.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((hh / 10) % 10)));
+    dateTime.append(1, static_cast<char>(static_cast<std::int32_t>('0') + (hh % 10)));
     if (!omitMins)
     {
         if (!omitColons)
         {
             dateTime.append(1, ':');
         }
-        dateTime.append(1, static_cast<char>(static_cast<int32_t>('0') + ((mm / 10) % 10)));
+        dateTime.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((mm / 10) % 10)));
         dateTime.append(1, static_cast<char>(static_cast<int>('0') + (mm % 10)));
         if (!omitSecs)
         {
@@ -309,32 +309,32 @@ std::string DateTime::ToString(bool omitDashes, bool omitColons, bool omitMins, 
             {
                 dateTime.append(1, ':');
             }
-            dateTime.append(1, static_cast<char>(static_cast<int32_t>('0') + ((ss / 10) % 10)));
-            dateTime.append(1, static_cast<char>(static_cast<int32_t>('0') + (ss % 10)));
+            dateTime.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((ss / 10) % 10)));
+            dateTime.append(1, static_cast<char>(static_cast<std::int32_t>('0') + (ss % 10)));
         }
     }
     return dateTime;
 }
 
-std::string FormatTimeMs(int32_t milliseconds)
+std::string FormatTimeMs(std::int32_t milliseconds)
 {
-    int32_t hh = milliseconds / 3600000;
-    int32_t mm = milliseconds / 60000 % 60;
-    int32_t ss = milliseconds / 1000 % 60;
-    int32_t ms = milliseconds % 1000;
+    std::int32_t hh = milliseconds / 3600000;
+    std::int32_t mm = milliseconds / 60000 % 60;
+    std::int32_t ss = milliseconds / 1000 % 60;
+    std::int32_t ms = milliseconds % 1000;
     std::string time;
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + ((hh / 10) % 10)));
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + (hh % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((hh / 10) % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + (hh % 10)));
     time.append(1, ':');
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + ((mm / 10) % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((mm / 10) % 10)));
     time.append(1, static_cast<char>(static_cast<int>('0') + (mm % 10)));
     time.append(1, ':');
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + ((ss / 10) % 10)));
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + (ss % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((ss / 10) % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + (ss % 10)));
     time.append(1, '.');
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + ((ms / 100) % 10)));
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + ((ms / 10) % 10)));
-    time.append(1, static_cast<char>(static_cast<int32_t>('0') + (ms % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((ms / 100) % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + ((ms / 10) % 10)));
+    time.append(1, static_cast<char>(static_cast<std::int32_t>('0') + (ms % 10)));
     return time;
 }
 
@@ -347,7 +347,7 @@ DateTime GetCurrentDateTime()
     int day = 0;
     int seconds = 0;
     current_date_time(yyyy, month, day, seconds);
-    Date date(yyyy, static_cast<Month>(static_cast<int8_t>(month)), day);
+    Date date(yyyy, static_cast<Month>(static_cast<std::int8_t>(month)), day);
     DateTime dt(date, seconds);
     return dt;
 }
@@ -360,7 +360,7 @@ DateTime GetCurrentDateTime()
     std::time(&currentTime);
     struct tm* localTime = nullptr;
     localTime = std::localtime(&currentTime);
-    return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
+    return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
 
 #endif
@@ -433,7 +433,7 @@ std::int64_t CurrentMs()
     return current_ms();
 }
 
-int64_t GetCurrentTime()
+std::int64_t GetCurrentTime()
 {
     return current_time();
 }
@@ -445,7 +445,7 @@ std::int64_t CurrentMs()
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point()).count();
 }
 
-int64_t GetCurrentTime()
+std::int64_t GetCurrentTime()
 {
     std::time_t currentTime;
     std::time(&currentTime);
@@ -454,29 +454,29 @@ int64_t GetCurrentTime()
 
 #endif
 
-int64_t Hours(int64_t nanosecs)
+std::int64_t Hours(std::int64_t nanosecs)
 {
-    return nanosecs / (3600ll * int64_t(1000000000ll));
+    return nanosecs / (3600ll * std::int64_t(1000000000ll));
 }
 
-int64_t Minutes(int64_t nanosecs)
+std::int64_t Minutes(std::int64_t nanosecs)
 {
-    return nanosecs / (60ll * int64_t(1000000000ll));
+    return nanosecs / (60ll * std::int64_t(1000000000ll));
 }
 
-int64_t Seconds(int64_t nanosecs)
+std::int64_t Seconds(std::int64_t nanosecs)
 {
-    return nanosecs / int64_t(1000000000ll);
+    return nanosecs / std::int64_t(1000000000ll);
 }
 
-int64_t Milliseconds(int64_t nanosecs)
+std::int64_t Milliseconds(std::int64_t nanosecs)
 {
-    return nanosecs / int64_t(1000000ll);
+    return nanosecs / std::int64_t(1000000ll);
 }
 
-int64_t Microseconds(int64_t nanosecs)
+std::int64_t Microseconds(std::int64_t nanosecs)
 {
-    return nanosecs / int64_t(1000ll);
+    return nanosecs / std::int64_t(1000ll);
 }
 
 #ifndef OTAVA
@@ -484,27 +484,27 @@ int64_t Microseconds(int64_t nanosecs)
 std::string DurationStr(const std::chrono::nanoseconds& duration)
 {
     std::string s;
-    int64_t hh = Hours(duration.count()) % 24;
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(hh / 10 % 10)));
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(hh % 10)));
+    std::int64_t hh = Hours(duration.count()) % 24;
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(hh / 10 % 10)));
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(hh % 10)));
     s.append(1, ':');
-    int64_t mm = Minutes(duration.count()) % 60;
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(mm / 10 % 10)));
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(mm % 10)));
+    std::int64_t mm = Minutes(duration.count()) % 60;
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(mm / 10 % 10)));
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(mm % 10)));
     s.append(1, ':');
-    int64_t ss = Seconds(duration.count()) % 60;
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(ss / 10 % 10)));
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(ss % 10)));
+    std::int64_t ss = Seconds(duration.count()) % 60;
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(ss / 10 % 10)));
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(ss % 10)));
     s.append(1, '.');
-    int64_t ms = Milliseconds(duration.count()) % 1000;
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(ms / 100 % 10)));
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(ms / 10 % 10)));
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(ms % 10)));
+    std::int64_t ms = Milliseconds(duration.count()) % 1000;
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(ms / 100 % 10)));
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(ms / 10 % 10)));
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(ms % 10)));
     s.append(1, '.');
-    int64_t us = Microseconds(duration.count()) % 1000;
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(us / 100 % 10)));
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(us / 10 % 10)));
-    s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(us % 10)));
+    std::int64_t us = Microseconds(duration.count()) % 1000;
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(us / 100 % 10)));
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(us / 10 % 10)));
+    s.append(1, static_cast<char>(static_cast<std::uint8_t>('0') + static_cast<std::uint8_t>(us % 10)));
     return s;
 }
 
@@ -520,7 +520,7 @@ std::time_t Time()
 std::time_t MkTime(const DateTime& dt)
 {
     Date date = dt.GetDate();
-    return make_time(date.Year(), static_cast<int8_t>(date.GetMonth()), date.Day(), dt.Seconds());
+    return make_time(date.Year(), static_cast<std::int8_t>(date.GetMonth()), date.Day(), dt.Seconds());
 }
 
 #else
@@ -562,7 +562,7 @@ std::string TimeToString(std::time_t time)
 DateTime ToDateTime(time_t time)
 {
     struct tm* localTime = std::localtime(&time);
-    return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
+    return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
 
 #endif

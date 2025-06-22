@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -139,9 +139,9 @@ int FileStream::ReadByte()
     return result;
 }
 
-int64_t FileStream::Read(uint8_t* buf, int64_t count)
+std::int64_t FileStream::Read(std::uint8_t* buf, std::int64_t count)
 {
-    int64_t result = std::fread(buf, 1, count, file);
+    std::int64_t result = std::fread(buf, 1, count, file);
     if (std::ferror(file))
     {
 #ifdef _WIN32
@@ -160,7 +160,7 @@ int64_t FileStream::Read(uint8_t* buf, int64_t count)
     return result;
 }
 
-void FileStream::Write(uint8_t x)
+void FileStream::Write(std::uint8_t x)
 {
     int result = std::fputc(x, file);
     if (result == EOF)
@@ -180,9 +180,9 @@ void FileStream::Write(uint8_t x)
     SetPosition(Position() + 1);
 }
 
-void FileStream::Write(uint8_t* buf, int64_t count)
+void FileStream::Write(std::uint8_t* buf, std::int64_t count)
 {
-    int64_t result = std::fwrite(buf, 1, count, file);
+    std::int64_t result = std::fwrite(buf, 1, count, file);
     if (result != count)
     {
 #ifdef _WIN32
@@ -219,7 +219,7 @@ void FileStream::Flush()
     }
 }
 
-void FileStream::Seek(int64_t pos, Origin origin)
+void FileStream::Seek(std::int64_t pos, Origin origin)
 {
     int seekOrigin = SEEK_SET;
     switch (origin)
@@ -279,9 +279,9 @@ void FileStream::Seek(int64_t pos, Origin origin)
     }
 }
 
-int64_t FileStream::Tell()
+std::int64_t FileStream::Tell()
 {
-    int64_t result = std::ftell(file);
+    std::int64_t result = std::ftell(file);
     if (result == -1)
     {
 #ifdef _WIN32
@@ -299,7 +299,7 @@ int64_t FileStream::Tell()
     return result;
 }
 
-int64_t FileStream::Size() const
+std::int64_t FileStream::Size() const
 {
     std::filesystem::path path(filePath);
     return std::filesystem::file_size(path);
@@ -314,8 +314,8 @@ std::string ReadFile(const std::string& filePath, bool doNotSkipBOM)
 {
     std::string s;
     FileStream fs(filePath, OpenMode::read | OpenMode::binary);
-    int64_t n = fs.Size();
-    for (int64_t i = 0; i < n; ++i)
+    std::int64_t n = fs.Size();
+    for (std::int64_t i = 0; i < n; ++i)
     {
         int c = fs.ReadByte();
         bool skip = false;

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -70,13 +70,13 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, sou
         formatter.WriteLine("export namespace " + tokenNamespaceName + " {");
         formatter.WriteLine();
     }
-    formatter.WriteLine("constexpr int32_t tokenSetID = " + std::to_string(tokenCollection->Id()) + ";");
+    formatter.WriteLine("constexpr std::int32_t tokenSetID = " + std::to_string(tokenCollection->Id()) + ";");
     formatter.WriteLine();
     int n = tokenCollection->Tokens().size();
     for (int i = 0; i < n; ++i)
     {
         soul::ast::slg::Token* token = tokenCollection->Tokens()[i].get();
-        formatter.WriteLine("constexpr int64_t " + token->Name() + " = (static_cast<int64_t>(tokenSetID) << 32) | " + std::to_string(i + 1) + ";");
+        formatter.WriteLine("constexpr std::int64_t " + token->Name() + " = (static_cast<std::int64_t>(tokenSetID) << 32) | " + std::to_string(i + 1) + ";");
     }
     formatter.WriteLine();
     if (ppstyle)

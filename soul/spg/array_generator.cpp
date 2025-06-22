@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -26,7 +26,7 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
 {
     std::string s = "s" + std::to_string(sn++);
     parser.SetArrayName(s);
-    formatter.Write("static constexpr int32_t " + s + "[] = {");
+    formatter.Write("static constexpr std::int32_t " + s + "[] = {");
     bool first = true;
     for (char32_t c : parser.Str())
     {
@@ -38,7 +38,7 @@ void ArrayGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
         {
             formatter.Write(", ");
         }
-        formatter.Write(std::to_string(static_cast<int32_t>(c)));
+        formatter.Write(std::to_string(static_cast<std::int32_t>(c)));
     }
     formatter.WriteLine("};");
     formatter.WriteLine();

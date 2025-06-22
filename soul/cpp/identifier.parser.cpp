@@ -25,7 +25,7 @@ template<typename LexerT>
 soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -37,7 +37,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         if (*lexer == ID)
         {
@@ -73,7 +73,7 @@ template<typename LexerT>
 soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -86,7 +86,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -97,7 +97,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                 soul::parser::Match* parentMatch3 = &match;
                 {
                     soul::parser::Match match(true);
-                    int64_t save = lexer.GetPos();
+                    std::int64_t save = lexer.GetPos();
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         soul::parser::Match match(false);
@@ -106,7 +106,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 if (*lexer == COLON_COLON)
                                 {
@@ -140,7 +140,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch8 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == ID)
                             {
@@ -169,7 +169,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch11 = &match;
@@ -193,7 +193,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch14 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match(false);
                                                 if (*lexer == ID)
                                                 {

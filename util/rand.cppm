@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,8 +9,8 @@ import std.core;
 
 export namespace util {
 
-void set_rand_seed(uint64_t seed);
+void set_rand_seed(std::uint64_t seed);
 void reset_rng();
-uint8_t get_random_byte();
+std::uint8_t get_random_byte();
 
 } // namespace util

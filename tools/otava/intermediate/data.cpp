@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -28,7 +28,7 @@ std::string BoolValue::ToString() const
     return value ? "true" : "false";
 }
 
-SByteValue::SByteValue(int8_t value_, Type* type_) : Value(SourcePos(), ValueKind::sbyteValue, type_), value(value_)
+SByteValue::SByteValue(std::int8_t value_, Type* type_) : Value(SourcePos(), ValueKind::sbyteValue, type_), value(value_)
 {
 }
 
@@ -42,7 +42,7 @@ void SByteValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ByteValue::ByteValue(uint8_t value_, Type* type_) : Value(SourcePos(), ValueKind::byteValue, type_), value(value_)
+ByteValue::ByteValue(std::uint8_t value_, Type* type_) : Value(SourcePos(), ValueKind::byteValue, type_), value(value_)
 {
 }
 
@@ -56,7 +56,7 @@ void ByteValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ShortValue::ShortValue(int16_t value_, Type* type_) : Value(SourcePos(), ValueKind::shortValue, type_), value(value_)
+ShortValue::ShortValue(std::int16_t value_, Type* type_) : Value(SourcePos(), ValueKind::shortValue, type_), value(value_)
 {
 }
 
@@ -70,7 +70,7 @@ void ShortValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-UShortValue::UShortValue(uint16_t value_, Type* type_) : Value(SourcePos(), ValueKind::ushortValue, type_), value(value_)
+UShortValue::UShortValue(std::uint16_t value_, Type* type_) : Value(SourcePos(), ValueKind::ushortValue, type_), value(value_)
 {
 }
 
@@ -84,7 +84,7 @@ void UShortValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-IntValue::IntValue(int32_t value_, Type* type_) : Value(SourcePos(), ValueKind::intValue, type_), value(value_)
+IntValue::IntValue(std::int32_t value_, Type* type_) : Value(SourcePos(), ValueKind::intValue, type_), value(value_)
 {
 }
 
@@ -98,7 +98,7 @@ void IntValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-UIntValue::UIntValue(uint32_t value_, Type* type_) : Value(SourcePos(), ValueKind::uintValue, type_), value(value_)
+UIntValue::UIntValue(std::uint32_t value_, Type* type_) : Value(SourcePos(), ValueKind::uintValue, type_), value(value_)
 {
 }
 
@@ -112,7 +112,7 @@ void UIntValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-LongValue::LongValue(int64_t value_, Type* type_) : Value(SourcePos(), ValueKind::longValue, type_), value(value_)
+LongValue::LongValue(std::int64_t value_, Type* type_) : Value(SourcePos(), ValueKind::longValue, type_), value(value_)
 {
 }
 
@@ -126,7 +126,7 @@ void LongValue::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ULongValue::ULongValue(uint64_t value_, Type* type_) : Value(SourcePos(), ValueKind::ulongValue, type_), value(value_)
+ULongValue::ULongValue(std::uint64_t value_, Type* type_) : Value(SourcePos(), ValueKind::ulongValue, type_), value(value_)
 {
 }
 
@@ -319,11 +319,11 @@ std::string StringValue::ToString() const
     {
         if (c == '"')
         {
-            name.append("\\").append(util::ToHexString(static_cast<uint8_t>(c)));
+            name.append("\\").append(util::ToHexString(static_cast<std::uint8_t>(c)));
         }
         else if (c == '\\')
         {
-            name.append("\\").append(util::ToHexString(static_cast<uint8_t>(c)));
+            name.append("\\").append(util::ToHexString(static_cast<std::uint8_t>(c)));
         }
         else if (c >= 32 && c < 127)
         {
@@ -331,10 +331,10 @@ std::string StringValue::ToString() const
         }
         else
         {
-            name.append("\\").append(util::ToHexString(static_cast<uint8_t>(c)));
+            name.append("\\").append(util::ToHexString(static_cast<std::uint8_t>(c)));
         }
     }
-    name.append("\\").append(util::ToHexString(static_cast<uint8_t>(0)));
+    name.append("\\").append(util::ToHexString(static_cast<std::uint8_t>(0)));
     name.append("\"");
     return name;
 }
@@ -548,42 +548,42 @@ Value* Data::GetFalseValue(const Types& types)
     return falseValue.get();
 }
 
-Value* Data::GetSByteValue(int8_t value, const Types& types)
+Value* Data::GetSByteValue(std::int8_t value, const Types& types)
 {
     return sbyteValueMap.Get(value, this, types);
 }
 
-Value* Data::GetByteValue(uint8_t value, const Types& types)
+Value* Data::GetByteValue(std::uint8_t value, const Types& types)
 {
     return byteValueMap.Get(value, this, types);
 }
 
-Value* Data::GetShortValue(int16_t value, const Types& types)
+Value* Data::GetShortValue(std::int16_t value, const Types& types)
 {
     return shortValueMap.Get(value, this, types);
 }
 
-Value* Data::GetUShortValue(uint16_t value, const Types& types)
+Value* Data::GetUShortValue(std::uint16_t value, const Types& types)
 {
     return ushortValueMap.Get(value, this, types);
 }
 
-Value* Data::GetIntValue(int32_t value, const Types& types)
+Value* Data::GetIntValue(std::int32_t value, const Types& types)
 {
     return intValueMap.Get(value, this, types);
 }
 
-Value* Data::GetUIntValue(uint32_t value, const Types& types)
+Value* Data::GetUIntValue(std::uint32_t value, const Types& types)
 {
     return uintValueMap.Get(value, this, types);
 }
 
-Value* Data::GetLongValue(int64_t value, const Types& types)
+Value* Data::GetLongValue(std::int64_t value, const Types& types)
 {
     return longValueMap.Get(value, this, types);
 }
 
-Value* Data::GetULongValue(uint64_t value, const Types& types)
+Value* Data::GetULongValue(std::uint64_t value, const Types& types)
 {
     return ulongValueMap.Get(value, this, types);
 }
@@ -614,56 +614,56 @@ Value* Data::GetNullValue(Type* type)
     }
 }
 
-Value* Data::MakeValue(int8_t value, const Types& types)
+Value* Data::MakeValue(std::int8_t value, const Types& types)
 {
     SByteValue* constantValue = new SByteValue(value, types.Get(sbyteTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-Value* Data::MakeValue(uint8_t value, const Types& types)
+Value* Data::MakeValue(std::uint8_t value, const Types& types)
 {
     ByteValue* constantValue = new ByteValue(value, types.Get(byteTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-Value* Data::MakeValue(int16_t value, const Types& types)
+Value* Data::MakeValue(std::int16_t value, const Types& types)
 {
     ShortValue* constantValue = new ShortValue(value, types.Get(shortTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-Value* Data::MakeValue(uint16_t value, const Types& types)
+Value* Data::MakeValue(std::uint16_t value, const Types& types)
 {
     UShortValue* constantValue = new UShortValue(value, types.Get(ushortTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-Value* Data::MakeValue(int32_t value, const Types& types)
+Value* Data::MakeValue(std::int32_t value, const Types& types)
 {
     IntValue* constantValue = new IntValue(value, types.Get(intTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-Value* Data::MakeValue(uint32_t value, const Types& types)
+Value* Data::MakeValue(std::uint32_t value, const Types& types)
 {
     UIntValue* constantValue = new UIntValue(value, types.Get(uintTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-Value* Data::MakeValue(int64_t value, const Types& types)
+Value* Data::MakeValue(std::int64_t value, const Types& types)
 {
     LongValue* constantValue = new LongValue(value, types.Get(longTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
     return constantValue;
 }
 
-Value* Data::MakeValue(uint64_t value, const Types& types)
+Value* Data::MakeValue(std::uint64_t value, const Types& types)
 {
     ULongValue* constantValue = new ULongValue(value, types.Get(ulongTypeId));
     values.push_back(std::unique_ptr<Value>(constantValue));
@@ -684,41 +684,41 @@ Value* Data::MakeValue(double value, const Types& types)
     return constantValue;
 }
 
-Value* Data::GetIntegerValue(Type* type, int64_t value, const Types& types)
+Value* Data::GetIntegerValue(Type* type, std::int64_t value, const Types& types)
 {
     switch (type->Id())
     {
         case sbyteTypeId:
         {
-            return GetSByteValue(static_cast<int8_t>(value), types);
+            return GetSByteValue(static_cast<std::int8_t>(value), types);
         }
         case byteTypeId:
         {
-            return GetByteValue(static_cast<uint8_t>(value), types);
+            return GetByteValue(static_cast<std::uint8_t>(value), types);
         }
         case shortTypeId:
         {
-            return GetShortValue(static_cast<int16_t>(value), types);
+            return GetShortValue(static_cast<std::int16_t>(value), types);
         }
         case ushortTypeId:
         {
-            return GetUShortValue(static_cast<uint16_t>(value), types);
+            return GetUShortValue(static_cast<std::uint16_t>(value), types);
         }
         case intTypeId:
         {
-            return GetIntValue(static_cast<int32_t>(value), types);
+            return GetIntValue(static_cast<std::int32_t>(value), types);
         }
         case uintTypeId:
         {
-            return GetUIntValue(static_cast<uint32_t>(value), types);
+            return GetUIntValue(static_cast<std::uint32_t>(value), types);
         }
         case longTypeId:
         {
-            return GetLongValue(static_cast<int64_t>(value), types);
+            return GetLongValue(static_cast<std::int64_t>(value), types);
         }
         case ulongTypeId:
         {
-            return GetULongValue(static_cast<uint64_t>(value), types);
+            return GetULongValue(static_cast<std::uint64_t>(value), types);
         }
     }
     Error("integer type expected", SourcePos(), context);
@@ -819,70 +819,70 @@ Value* Data::MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const st
     }
     case sbyteTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<int8_t>::min() || value > std::numeric_limits<int8_t>::max())
+        std::int64_t value = std::stoll(strValue);
+        if (value < std::numeric_limits<std::int8_t>::min() || value > std::numeric_limits<std::int8_t>::max())
         {
             Error("error making literal: range error: sbyte value expected", sourcePos, context);
         }
-        return GetSByteValue(static_cast<int8_t>(value), types);
+        return GetSByteValue(static_cast<std::int8_t>(value), types);
     }
     case byteTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<uint8_t>::min() || value > std::numeric_limits<uint8_t>::max())
+        std::int64_t value = std::stoll(strValue);
+        if (value < std::numeric_limits<std::uint8_t>::min() || value > std::numeric_limits<std::uint8_t>::max())
         {
             Error("error making literal: range error: byte value expected", sourcePos, context);
         }
-        return GetByteValue(static_cast<uint8_t>(value), types);
+        return GetByteValue(static_cast<std::uint8_t>(value), types);
     }
     case shortTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<int16_t>::min() || value > std::numeric_limits<int16_t>::max())
+        std::int64_t value = std::stoll(strValue);
+        if (value < std::numeric_limits<std::int16_t>::min() || value > std::numeric_limits<std::int16_t>::max())
         {
             Error("error making literal: range error: short value expected", sourcePos, context);
         }
-        return GetShortValue(static_cast<int16_t>(value), types);
+        return GetShortValue(static_cast<std::int16_t>(value), types);
     }
     case ushortTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<uint16_t>::min() || value > std::numeric_limits<uint16_t>::max())
+        std::int64_t value = std::stoll(strValue);
+        if (value < std::numeric_limits<std::uint16_t>::min() || value > std::numeric_limits<std::uint16_t>::max())
         {
             Error("error making literal: range error: ushort value expected", sourcePos, context);
         }
-        return GetUShortValue(static_cast<uint16_t>(value), types);
+        return GetUShortValue(static_cast<std::uint16_t>(value), types);
     }
     case intTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<int32_t>::min() || value > std::numeric_limits<int32_t>::max())
+        std::int64_t value = std::stoll(strValue);
+        if (value < std::numeric_limits<std::int32_t>::min() || value > std::numeric_limits<std::int32_t>::max())
         {
             Error("error making literal: range error: int value expected", sourcePos, context);
         }
-        return GetIntValue(static_cast<int32_t>(value), types);
+        return GetIntValue(static_cast<std::int32_t>(value), types);
     }
     case uintTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<uint32_t>::min() || value > std::numeric_limits<uint32_t>::max())
+        std::int64_t value = std::stoll(strValue);
+        if (value < std::numeric_limits<std::uint32_t>::min() || value > std::numeric_limits<std::uint32_t>::max())
         {
             Error("error making literal: range error: uint value expected", sourcePos, context);
         }
-        return GetUIntValue(static_cast<uint32_t>(value), types);
+        return GetUIntValue(static_cast<std::uint32_t>(value), types);
     }
     case longTypeId:
     {
-        int64_t value = std::stoll(strValue);
-        if (value < std::numeric_limits<int64_t>::min() || value > std::numeric_limits<int64_t>::max())
+        std::int64_t value = std::stoll(strValue);
+        if (value < std::numeric_limits<std::int64_t>::min() || value > std::numeric_limits<std::int64_t>::max())
         {
             Error("error making literal: range error: long value expected", sourcePos, context);
         }
-        return GetLongValue(static_cast<int64_t>(value), types);
+        return GetLongValue(static_cast<std::int64_t>(value), types);
     }
     case ulongTypeId:
     {
-        uint64_t value = std::stoull(strValue);
+        std::uint64_t value = std::stoull(strValue);
         return GetULongValue(value, types);
     }
     case floatTypeId:
@@ -940,7 +940,7 @@ void Data::VisitGlobalVariables(Visitor& visitor)
 
 std::string Data::GetNextStringValueId()
 {
-    int32_t id = nextStringValueId++;
+    std::int32_t id = nextStringValueId++;
     return "string_" + std::to_string(id) + "_" + context->GetCompileUnit().Id();
 }
 

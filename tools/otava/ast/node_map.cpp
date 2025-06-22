@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -16,7 +16,7 @@ void NodeMap::AddNode(Node* node)
     nodeMap[node->Id()] = node;
 }
 
-Node* NodeMap::GetNode(int64_t nodeId) const
+Node* NodeMap::GetNode(std::int64_t nodeId) const
 {
     auto it = nodeMap.find(nodeId);
     if (it != nodeMap.cend())

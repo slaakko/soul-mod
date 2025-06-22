@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -50,7 +50,7 @@ private:
     util::uuid constraintId;
     int index;
     otava::ast::Node* defaultTemplateArgNode;
-    int64_t defaultTemplateArgNodeId;
+    std::int64_t defaultTemplateArgNodeId;
     ParameterSymbol* parameterSymbol;
 };
 

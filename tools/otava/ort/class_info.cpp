@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -43,34 +43,34 @@ void class_info::add_base(const class_id& id)
 
 void class_info::read(util::BinaryStreamReader& reader)
 {
-    uint64_t h = reader.ReadULong();
-    uint64_t l = reader.ReadULong();
+    std::uint64_t h = reader.ReadULong();
+    std::uint64_t l = reader.ReadULong();
     id = std::make_pair(h, l);
     key = static_cast<class_key>(reader.ReadByte());
     name = reader.ReadUtf8String();
-    int32_t nb = reader.ReadInt();
+    std::int32_t nb = reader.ReadInt();
     for (int i = 0; i < nb; ++i)
     {
-        uint64_t h = reader.ReadULong();
-        uint64_t l = reader.ReadULong();
+        std::uint64_t h = reader.ReadULong();
+        std::uint64_t l = reader.ReadULong();
         add_base(std::make_pair(h, l));
     }
 }
 
 void class_info::write(util::BinaryStreamWriter& writer)
 {
-    uint64_t h = id.first;
-    uint64_t l = id.second;
+    std::uint64_t h = id.first;
+    std::uint64_t l = id.second;
     writer.Write(h);
     writer.Write(l);
-    writer.Write(static_cast<uint8_t>(key));
+    writer.Write(static_cast<std::uint8_t>(key));
     writer.Write(name);
-    int32_t nb = bases.size();
+    std::int32_t nb = bases.size();
     writer.Write(nb);
     for (int i = 0; i < nb; ++i)
     {
-        uint64_t h = bases[i].first;
-        uint64_t l = bases[i].second;
+        std::uint64_t h = bases[i].first;
+        std::uint64_t l = bases[i].second;
         writer.Write(h);
         writer.Write(l);
     }
@@ -108,8 +108,8 @@ void class_index::map_class(const class_info& info)
 
 void class_index::read(util::BinaryStreamReader& reader)
 {
-    int32_t n = reader.ReadInt();
-    for (int32_t i = 0; i < n; ++i)
+    std::int32_t n = reader.ReadInt();
+    for (std::int32_t i = 0; i < n; ++i)
     {
         class_info info;
         info.read(reader);
@@ -121,7 +121,7 @@ void class_index::write(util::BinaryStreamWriter& writer, bool write_mapped)
 {
     if (write_mapped)
     {
-        int32_t n = map.size();
+        std::int32_t n = map.size();
         writer.Write(n);
         for (auto& id_info_pair : map)
         {
@@ -131,9 +131,9 @@ void class_index::write(util::BinaryStreamWriter& writer, bool write_mapped)
     }
     else
     {
-        int32_t n = infos.size();
+        std::int32_t n = infos.size();
         writer.Write(n);
-        for (int32_t i = 0; i < n; ++i)
+        for (std::int32_t i = 0; i < n; ++i)
         {
             class_info& info = infos[i];
             info.write(writer);
@@ -156,7 +156,7 @@ const class_info* class_index::get_class_info(const class_id& id) const
     return nullptr;
 }
 
-bool is_same_or_has_base(uint64_t derived_high, uint64_t derived_low, uint64_t base_high, uint64_t base_low)
+bool is_same_or_has_base(std::uint64_t derived_high, std::uint64_t derived_low, std::uint64_t base_high, std::uint64_t base_low)
 {
     if (derived_high == base_high && derived_low == base_low)
     {

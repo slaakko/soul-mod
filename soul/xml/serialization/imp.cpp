@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -27,44 +27,44 @@ void Parse(const std::string& str, bool& value)
     }
 }
 
-void Parse(const std::string& str, int8_t& value)
+void Parse(const std::string& str, std::int8_t& value)
 {
-    value = static_cast<int8_t>(std::stoi(str));
+    value = static_cast<std::int8_t>(std::stoi(str));
 }
 
-void Parse(const std::string& str, uint8_t& value)
+void Parse(const std::string& str, std::uint8_t& value)
 {
-    value = static_cast<uint8_t>(std::stoi(str));
+    value = static_cast<std::uint8_t>(std::stoi(str));
 }
 
-void Parse(const std::string& str, int16_t& value)
+void Parse(const std::string& str, std::int16_t& value)
 {
-    value = static_cast<int16_t>(std::stoi(str));
+    value = static_cast<std::int16_t>(std::stoi(str));
 }
 
-void Parse(const std::string& str, uint16_t& value)
+void Parse(const std::string& str, std::uint16_t& value)
 {
-    value = static_cast<uint16_t>(std::stoi(str));
+    value = static_cast<std::uint16_t>(std::stoi(str));
 }
 
-void Parse(const std::string& str, int32_t& value)
+void Parse(const std::string& str, std::int32_t& value)
 {
-    value = static_cast<int32_t>(std::stoi(str));
+    value = static_cast<std::int32_t>(std::stoi(str));
 }
 
-void Parse(const std::string& str, uint32_t& value)
+void Parse(const std::string& str, std::uint32_t& value)
 {
-    value = static_cast<uint32_t>(std::stoi(str));
+    value = static_cast<std::uint32_t>(std::stoi(str));
 }
 
-void Parse(const std::string& str, int64_t& value)
+void Parse(const std::string& str, std::int64_t& value)
 {
-    value = static_cast<int64_t>(std::stoll(str));
+    value = static_cast<std::int64_t>(std::stoll(str));
 }
 
-void Parse(const std::string& str, uint64_t& value)
+void Parse(const std::string& str, std::uint64_t& value)
 {
-    value = static_cast<uint64_t>(std::stoll(str));
+    value = static_cast<std::uint64_t>(std::stoll(str));
 }
 
 void Parse(const std::string& str, float& value)
@@ -127,14 +127,14 @@ void Parse(const std::string& str, datetime& value)
 
 void Parse(const std::string& str, time_point& value)
 {
-    int64_t v = 0;
+    std::int64_t v = 0;
     Parse(str, v);
     value = time_point(duration(v));
 }
 
 void Parse(const std::string& str, duration& value)
 {
-    int64_t v = 0;
+    std::int64_t v = 0;
     Parse(str, v);
     value = duration(v);
 }

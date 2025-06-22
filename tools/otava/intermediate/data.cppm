@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -34,89 +34,89 @@ private:
 class SByteValue : public Value
 {
 public:
-    SByteValue(int8_t value_, Type* type_);
-    int8_t GetValue() const { return value; }
+    SByteValue(std::int8_t value_, Type* type_);
+    std::int8_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    int8_t value;
+    std::int8_t value;
 };
 
 class ByteValue : public Value
 {
 public:
-    ByteValue(uint8_t value_, Type* type_);
-    uint8_t GetValue() const { return value; }
+    ByteValue(std::uint8_t value_, Type* type_);
+    std::uint8_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    uint8_t value;
+    std::uint8_t value;
 };
 
 class ShortValue : public Value
 {
 public:
-    ShortValue(int16_t value_, Type* type_);
-    int16_t GetValue() const { return value; }
+    ShortValue(std::int16_t value_, Type* type_);
+    std::int16_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    int16_t value;
+    std::int16_t value;
 };
 
 class UShortValue : public Value
 {
 public:
-    UShortValue(uint16_t value_, Type* type_);
-    uint16_t GetValue() const { return value; }
+    UShortValue(std::uint16_t value_, Type* type_);
+    std::uint16_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    uint16_t value;
+    std::uint16_t value;
 };
 
 class IntValue : public Value
 {
 public:
-    IntValue(int32_t value_, Type* type_);
-    int32_t GetValue() const { return value; }
+    IntValue(std::int32_t value_, Type* type_);
+    std::int32_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    int32_t value;
+    std::int32_t value;
 };
 
 class UIntValue : public Value
 {
 public:
-    UIntValue(uint32_t value_, Type* type_);
-    uint32_t GetValue() const { return value; }
+    UIntValue(std::uint32_t value_, Type* type_);
+    std::uint32_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    uint32_t value;
+    std::uint32_t value;
 };
 
 class LongValue : public Value
 {
 public:
-    LongValue(int64_t value_, Type* type_);
-    int64_t GetValue() const { return value; }
+    LongValue(std::int64_t value_, Type* type_);
+    std::int64_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    int64_t value;
+    std::int64_t value;
 };
 
 class ULongValue : public Value
 {
 public:
-    ULongValue(uint64_t value_, Type* type_);
-    uint64_t GetValue() const { return value; }
+    ULongValue(std::uint64_t value_, Type* type_);
+    std::uint64_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
-    uint64_t value;
+    std::uint64_t value;
 };
 
 class FloatValue : public Value
@@ -286,27 +286,27 @@ public:
     GlobalVariable* GetGlobalVariableForString(Value* stringValue);
     Value* GetTrueValue(const Types& types);
     Value* GetFalseValue(const Types& types);
-    Value* GetSByteValue(int8_t value, const Types& types);
-    Value* GetByteValue(uint8_t value, const Types& types);
-    Value* GetShortValue(int16_t value, const Types& types);
-    Value* GetUShortValue(uint16_t value, const Types& types);
-    Value* GetIntValue(int32_t value, const Types& types);
-    Value* GetUIntValue(uint32_t value, const Types& types);
-    Value* GetLongValue(int64_t value, const Types& types);
-    Value* GetULongValue(uint64_t value, const Types& types);
-    Value* GetIntegerValue(Type* type, int64_t value, const Types& types);
+    Value* GetSByteValue(std::int8_t value, const Types& types);
+    Value* GetByteValue(std::uint8_t value, const Types& types);
+    Value* GetShortValue(std::int16_t value, const Types& types);
+    Value* GetUShortValue(std::uint16_t value, const Types& types);
+    Value* GetIntValue(std::int32_t value, const Types& types);
+    Value* GetUIntValue(std::uint32_t value, const Types& types);
+    Value* GetLongValue(std::int64_t value, const Types& types);
+    Value* GetULongValue(std::uint64_t value, const Types& types);
+    Value* GetIntegerValue(Type* type, std::int64_t value, const Types& types);
     Value* GetFloatValue(float value, const Types& types);
     Value* GetDoubleValue(double value, const Types& types);
     Value* GetFloatingValue(Type* type, double value, const Types& types);
     Value* GetNullValue(Type* type);
-    Value* MakeValue(int8_t value, const Types& types);
-    Value* MakeValue(uint8_t value, const Types& types);
-    Value* MakeValue(int16_t value, const Types& types);
-    Value* MakeValue(uint16_t value, const Types& types);
-    Value* MakeValue(int32_t value, const Types& types);
-    Value* MakeValue(uint32_t value, const Types& types);
-    Value* MakeValue(int64_t value, const Types& types);
-    Value* MakeValue(uint64_t value, const Types& types);
+    Value* MakeValue(std::int8_t value, const Types& types);
+    Value* MakeValue(std::uint8_t value, const Types& types);
+    Value* MakeValue(std::int16_t value, const Types& types);
+    Value* MakeValue(std::uint16_t value, const Types& types);
+    Value* MakeValue(std::int32_t value, const Types& types);
+    Value* MakeValue(std::uint32_t value, const Types& types);
+    Value* MakeValue(std::int64_t value, const Types& types);
+    Value* MakeValue(std::uint64_t value, const Types& types);
     Value* MakeValue(float value, const Types& types);
     Value* MakeValue(double value, const Types& types);
     Value* MakeArrayValue(const SourcePos& sourcePos, const std::vector<Value*>& elements);
@@ -328,19 +328,19 @@ private:
     std::map<Value*, GlobalVariable*> globalStringVariableMap;
     std::unique_ptr<BoolValue> trueValue;
     std::unique_ptr<BoolValue> falseValue;
-    ValueMap<int8_t> sbyteValueMap;
-    ValueMap<uint8_t> byteValueMap;
-    ValueMap<int16_t> shortValueMap;
-    ValueMap<uint16_t> ushortValueMap;
-    ValueMap<int32_t> intValueMap;
-    ValueMap<uint32_t> uintValueMap;
-    ValueMap<int64_t> longValueMap;
-    ValueMap<uint64_t> ulongValueMap;
+    ValueMap<std::int8_t> sbyteValueMap;
+    ValueMap<std::uint8_t> byteValueMap;
+    ValueMap<std::int16_t> shortValueMap;
+    ValueMap<std::uint16_t> ushortValueMap;
+    ValueMap<std::int32_t> intValueMap;
+    ValueMap<std::uint32_t> uintValueMap;
+    ValueMap<std::int64_t> longValueMap;
+    ValueMap<std::uint64_t> ulongValueMap;
     ValueMap<float> floatValueMap;
     ValueMap<double> doubleValueMap;
     std::map<Type*, NullValue*> nullValueMap;
     std::map<std::string, StringValue*> stringValueMap;
-    int32_t nextStringValueId;
+    std::int32_t nextStringValueId;
 };
 
 template<class T>

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -54,16 +54,16 @@ private:
 class Token
 {
 public:
-    Token(int64_t id_, const std::string& name_, const std::string& info_);
+    Token(std::int64_t id_, const std::string& name_, const std::string& info_);
     Token(const std::string& name_, const std::string& info_);
     void SetCollection(Collection* collection_) { collection = collection_; }
     Collection* GetCollection() const { return collection; }
-    int64_t Id() const { return id; }
-    void SetId(int64_t id_) { id = id_; }
+    std::int64_t Id() const { return id; }
+    void SetId(std::int64_t id_) { id = id_; }
     const std::string& Name() const { return name; }
     const std::string& Info() const { return info; }
 private:
-    int64_t id;
+    std::int64_t id;
     std::string name;
     std::string info;
     Collection* collection;
@@ -77,13 +77,13 @@ public:
     void SetInitialized() { initialized = true; }
     void AddToken(Token* token);
     const std::vector<std::unique_ptr<Token>>& Tokens() const { return tokens; }
-    int32_t Id() const { return id; }
-    Token* GetToken(int64_t id) const;
+    std::int32_t Id() const { return id; }
+    Token* GetToken(std::int64_t id) const;
 private:
     bool initialized;
-    int32_t id;
+    std::int32_t id;
     std::vector<std::unique_ptr<Token>> tokens;
-    std::map<int64_t, Token*> tokenMap;
+    std::map<std::int64_t, Token*> tokenMap;
 };
 
 class TokenFile : public File
@@ -99,18 +99,18 @@ private:
 class Keyword
 {
 public:
-    Keyword(const std::string& str_, const std::string& tokenName_, int64_t tokenId_);
+    Keyword(const std::string& str_, const std::string& tokenName_, std::int64_t tokenId_);
     Keyword(const std::string& str_, const std::string& tokenName_);
     void SetCollection(Collection* collection_) { collection = collection_; }
     Collection* GetCollection() const { return collection; }
     const std::string& Str() const { return str; }
     const std::string& TokenName() const { return tokenName; }
-    int64_t TokenId() const { return tokenId; }
-    void SetTokenId(int64_t tokenId_) { tokenId = tokenId_; }
+    std::int64_t TokenId() const { return tokenId; }
+    void SetTokenId(std::int64_t tokenId_) { tokenId = tokenId_; }
 private:
     std::string str;
     std::string tokenName;
-    int64_t tokenId;
+    std::int64_t tokenId;
     Collection* collection;
 };
 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -26,53 +26,53 @@ enum class SpecialFunctionKind
 
 std::string SpecialFunctionKindPrefix(SpecialFunctionKind specialFunctionKind);
 
-enum class Linkage : int32_t
+enum class Linkage : std::int32_t
 {
     c_linkage, cpp_linkage
 };
 
-enum class FunctionQualifiers : int32_t
+enum class FunctionQualifiers : std::int32_t
 {
     none = 0, isConst = 1 << 0, isVolatile = 1 << 1, isOverride = 1 << 2, isFinal = 1 << 3, isPure = 1 << 4, isDefault = 1 << 5, isDeleted = 1 << 6, noreturn = 1 << 7
 };
 
-enum class ConversionKind : int32_t;
+enum class ConversionKind : std::int32_t;
 
 constexpr FunctionQualifiers operator|(FunctionQualifiers left, FunctionQualifiers right)
 {
-    return FunctionQualifiers(int32_t(left) | int32_t(right));
+    return FunctionQualifiers(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr FunctionQualifiers operator&(FunctionQualifiers left, FunctionQualifiers right)
 {
-    return FunctionQualifiers(int32_t(left) & int32_t(right));
+    return FunctionQualifiers(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr FunctionQualifiers operator~(FunctionQualifiers qualifiers)
 {
-    return FunctionQualifiers(~int32_t(qualifiers));
+    return FunctionQualifiers(~std::int32_t(qualifiers));
 }
 
 std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
 
-enum class FunctionSymbolFlags : int32_t
+enum class FunctionSymbolFlags : std::int32_t
 {
     none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3, conversion = 1 << 4, fixedIrName = 1 << 5
 };
 
 constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
 {
-    return FunctionSymbolFlags(int32_t(left) | int32_t(right));
+    return FunctionSymbolFlags(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr FunctionSymbolFlags operator&(FunctionSymbolFlags left, FunctionSymbolFlags right)
 {
-    return FunctionSymbolFlags(int32_t(left) & int32_t(right));
+    return FunctionSymbolFlags(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr FunctionSymbolFlags operator~(FunctionSymbolFlags flags)
 {
-    return FunctionSymbolFlags(~int32_t(flags));
+    return FunctionSymbolFlags(~std::int32_t(flags));
 }
 
 class TypeSymbol;
@@ -100,7 +100,7 @@ private:
     TypeSymbol* type;
     util::uuid typeId;
     otava::ast::Node* defaultValue;
-    int64_t defaultValueNodeId;
+    std::int64_t defaultValueNodeId;
 };
 
 class FunctionSymbol : public ContainerSymbol
@@ -142,8 +142,8 @@ public:
     void SetConversionArgType(TypeSymbol* conversionArgType_);
     virtual ConversionKind GetConversionKind() const { return conversionKind; }
     void SetConversionKind(ConversionKind conversionKind_);
-    virtual int32_t ConversionDistance() const { return conversionDistance; }
-    void SetConversionDistance(int32_t conversionDistance_);
+    virtual std::int32_t ConversionDistance() const { return conversionDistance; }
+    void SetConversionDistance(std::int32_t conversionDistance_);
     virtual bool IsCtorAssignmentOrArrow() const { return false; }
     virtual bool IsIdentityConversion() const { return false; }
     virtual bool IsDerivedToBaseConversion() const { return false; }
@@ -185,8 +185,8 @@ public:
     SpecialFunctionKind GetSpecialFunctionKind(Context* context) const;
     Linkage GetLinkage() const { return linkage; }
     void SetLinkage(Linkage linkage_) { linkage = linkage_; }
-    int32_t Index() const { return index; }
-    void SetIndex(int32_t index_) { index = index_; }
+    std::int32_t Index() const { return index; }
+    void SetIndex(std::int32_t index_) { index = index_; }
     bool GetFlag(FunctionSymbolFlags flag) const { return (flags & flag) != FunctionSymbolFlags::none; }
     void SetFlag(FunctionSymbolFlags flag) { flags = flags | flag; }
     bool IsBound() const { return GetFlag(FunctionSymbolFlags::bound); }
@@ -195,8 +195,8 @@ public:
     void SetSpecialization() { SetFlag(FunctionSymbolFlags::specialization); }
     bool IsTrivialDestructor() const { return GetFlag(FunctionSymbolFlags::trivialDestructor); }
     std::u32string NextTemporaryName();
-    void SetVTabIndex(int32_t vtabIndex_) { vtabIndex = vtabIndex_; }
-    virtual int32_t VTabIndex() const { return vtabIndex; }
+    void SetVTabIndex(std::int32_t vtabIndex_) { vtabIndex = vtabIndex_; }
+    virtual std::int32_t VTabIndex() const { return vtabIndex; }
     FunctionDefinitionSymbol* Destructor() const { return destructor; }
     void SetDestructor(FunctionDefinitionSymbol* destructor_) { destructor = destructor_; }
     bool IsDestructor() const;
@@ -211,7 +211,7 @@ private:
     FunctionKind kind;
     FunctionQualifiers qualifiers;
     Linkage linkage;
-    int32_t index;
+    std::int32_t index;
     FunctionSymbolFlags flags;
     TypeSymbol* returnType;
     util::uuid returnTypeId;
@@ -222,15 +222,15 @@ private:
     std::vector<VariableSymbol*> localVariables;
     std::vector<TypeSymbol*> specialization;
     std::vector<util::uuid> specializationIds;
-    int32_t nextTemporaryId;
-    int32_t vtabIndex;
+    std::int32_t nextTemporaryId;
+    std::int32_t vtabIndex;
     FunctionDefinitionSymbol* destructor;
     ConversionKind conversionKind;
     TypeSymbol* conversionParamType;
     util::uuid conversionParamTypeId;
     TypeSymbol* conversionArgType;
     util::uuid conversionArgTypeId;
-    int32_t conversionDistance;
+    std::int32_t conversionDistance;
     mutable std::string fixedIrName;
     FunctionGroupSymbol* group;
     std::vector<std::unique_ptr<ParameterSymbol>> temporaryParams;
@@ -251,25 +251,25 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
-    int32_t DefIndex() const { return defIndex; }
-    void SetDefIndex(int32_t defIndex_) { defIndex = defIndex_; }
+    std::int32_t DefIndex() const { return defIndex; }
+    void SetDefIndex(std::int32_t defIndex_) { defIndex = defIndex_; }
     bool IsConst() const override;
     bool IsVirtual() const override;
     bool IsPure() const override;
     bool IsOverride() const override;
     bool IsFinal() const override;
-    int32_t VTabIndex() const override;
+    std::int32_t VTabIndex() const override;
     bool IsStatic() const override;
     bool IsExplicit() const override;
     TypeSymbol* ConversionParamType() const override;
     TypeSymbol* ConversionArgType() const override;
-    int32_t ConversionDistance() const override;
+    std::int32_t ConversionDistance() const override;
     void AddDefinitionToGroup(Context* context) override;
     const std::string& GetIrName() const { return irName; }
 private:
     FunctionSymbol* declaration;
     util::uuid declarationId;
-    int32_t defIndex;
+    std::int32_t defIndex;
     mutable std::string irName;
 };
 

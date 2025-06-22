@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -10,7 +10,7 @@ import otava.intermediate.context;
 
 namespace otava::intermediate {
 
-ArgLocation::ArgLocation(int index_, int64_t offset_, int64_t size_) : index(index_), offset(offset_), size(size_)
+ArgLocation::ArgLocation(int index_, std::int64_t offset_, std::int64_t size_) : index(index_), offset(offset_), size(size_)
 {
 }
 
@@ -18,7 +18,7 @@ CallFrame::CallFrame() : top(56)
 {
 }
 
-void CallFrame::AllocateArgLocation(int64_t size)
+void CallFrame::AllocateArgLocation(std::int64_t size)
 {
     if (argLocations.empty())
     {
@@ -42,7 +42,7 @@ Frame::Frame() : top(8)
 {
 }
 
-FrameLocation Frame::GetFrameLocation(int64_t size)
+FrameLocation Frame::GetFrameLocation(std::int64_t size)
 {
     if (frameLocations.empty())
     {
@@ -59,7 +59,7 @@ FrameLocation Frame::GetFrameLocation(int64_t size)
     }
 }
 
-int64_t Frame::Size() const
+std::int64_t Frame::Size() const
 {
     if (frameLocations.empty())
     {

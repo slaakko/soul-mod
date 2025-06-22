@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,7 +18,7 @@ lexer SlgLexer
     rules
     {
         "{separators}" {}
-        "{id}" { auto& token = lexer.CurrentToken(); int64_t kw = lexer.GetKeywordToken(token.match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
+        "{id}" { auto& token = lexer.CurrentToken(); std::int64_t kw = lexer.GetKeywordToken(token.match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return kw; }
         "{integer_literal}" { return INTEGER_LITERAL; }
         "{floating_literal}" { return FLOATING_LITERAL; }
         "{char_literal}" { return CHAR_LITERAL; }

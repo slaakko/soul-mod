@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -36,7 +36,7 @@ LogFileWriter& operator<<(LogFileWriter& writer, char c);
 LogFileWriter& operator<<(LogFileWriter& writer, bool b);
 LogFileWriter& operator<<(LogFileWriter& writer, int x);
 LogFileWriter& operator<<(LogFileWriter& writer, double x);
-LogFileWriter& operator<<(LogFileWriter& writer, int64_t x);
-LogFileWriter& operator<<(LogFileWriter& writer, uint64_t x);
+LogFileWriter& operator<<(LogFileWriter& writer, std::int64_t x);
+LogFileWriter& operator<<(LogFileWriter& writer, std::uint64_t x);
 
 } // namespace util

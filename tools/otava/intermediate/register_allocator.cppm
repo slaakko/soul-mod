@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -37,42 +37,42 @@ constexpr Locations operator~(Locations locs)
 struct FrameLocation
 {
     FrameLocation() : index(-1), offset(0), size(0) {}
-    FrameLocation(int index_, int64_t offset_, int64_t size_) : index(index_), offset(offset_), size(size_) {}
+    FrameLocation(int index_, std::int64_t offset_, std::int64_t size_) : index(index_), offset(offset_), size(size_) {}
     bool Valid() const { return index != -1; }
-    int64_t ItemOffset() const { return offset + size; }
+    std::int64_t ItemOffset() const { return offset + size; }
     int index;
-    int64_t offset;
-    int64_t size;
+    std::int64_t offset;
+    std::int64_t size;
 };
 
 struct ArgLocation
 {
-    ArgLocation(int index_, int64_t offset_, int64_t size_);
-    int64_t ItemOffset() const { return offset + size; }
+    ArgLocation(int index_, std::int64_t offset_, std::int64_t size_);
+    std::int64_t ItemOffset() const { return offset + size; }
     int index;
-    int64_t offset;
-    int64_t size;
+    std::int64_t offset;
+    std::int64_t size;
 };
 
 class CallFrame
 {
 public:
     CallFrame();
-    void AllocateArgLocation(int64_t size);
+    void AllocateArgLocation(std::int64_t size);
     ArgLocation GetArgLocation(int index);
     std::vector<ArgLocation> argLocations;
 private:
-    int64_t top;
+    std::int64_t top;
 };
 
 class Frame
 {
 public:
     Frame();
-    FrameLocation GetFrameLocation(int64_t size);
-    int64_t Size() const;
+    FrameLocation GetFrameLocation(std::int64_t size);
+    std::int64_t Size() const;
 private:
-    int64_t top;
+    std::int64_t top;
     std::vector<FrameLocation> frameLocations;
 };
 

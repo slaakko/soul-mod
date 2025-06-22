@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,7 +9,7 @@ import std.core;
 
 export namespace util {
 
-inline uint64_t Align(uint64_t n, uint64_t alignment)
+inline std::uint64_t Align(std::uint64_t n, std::uint64_t alignment)
 {
     return (n + alignment - 1u) & -alignment;
 }

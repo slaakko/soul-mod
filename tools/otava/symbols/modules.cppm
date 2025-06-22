@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -44,11 +44,11 @@ public:
     void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
     void CompleteRead(Reader& reader, ModuleMapper& moduleMapper);
     void Init();
-    int32_t FileId() const { return fileId; }
-    void SetFileId(int32_t fileId_) { fileId = fileId_; }
-    int32_t Id() const;
-    int32_t Index() const { return index; }
-    void SetIndex(int32_t index_) { index = index_; }
+    std::int32_t FileId() const { return fileId; }
+    void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
+    std::int32_t Id() const;
+    std::int32_t Index() const { return index; }
+    void SetIndex(std::int32_t index_) { index = index_; }
     SymbolTable* GetSymbolTable() { return &symbolTable; }
     EvaluationContext* GetEvaluationContext() { return &evaluationContext; }
     void AddExportModuleName(const std::string& exportModuleName);
@@ -70,8 +70,8 @@ public:
     void LoadImplementationUnits(ModuleMapper& moduleMapper);
     otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
 private:
-    int32_t fileId;
-    int32_t index;
+    std::int32_t fileId;
+    std::int32_t index;
     std::string name;
     std::string filePath;
     std::vector<std::string> exportModuleNames;

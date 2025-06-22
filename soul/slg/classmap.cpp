@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,15 +18,15 @@ void MakeCompressedClassMap(const std::string& root, const std::string& classMap
     util::FileStream inputFileStream(classMapFileName, util::OpenMode::read | util::OpenMode::binary);
     util::BufferedStream bufferedInputFileStream(inputFileStream);
     util::BinaryStreamReader reader(bufferedInputFileStream);
-    int32_t size = reader.ReadInt();
+    std::int32_t size = reader.ReadInt();
     util::FileStream outputFileStream(compressedClassMapFileName, util::OpenMode::write | util::OpenMode::binary);
     util::BinaryStreamWriter rawWriter(outputFileStream);
     rawWriter.Write(size);
     util::DeflateStream compressedStream(util::CompressionMode::compress, outputFileStream);
     util::BinaryStreamWriter writer(compressedStream);
-    for (int64_t i = 0; i < size; ++i)
+    for (std::int64_t i = 0; i < size; ++i)
     {
-        uint32_t cls = reader.ReadInt();
+        std::uint32_t cls = reader.ReadInt();
         writer.Write(cls);
     }
     if (verbose)

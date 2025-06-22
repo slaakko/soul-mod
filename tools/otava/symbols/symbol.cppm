@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -28,16 +28,16 @@ class NamespaceSymbol;
 class TemplateDeclarationSymbol;
 class VariableSymbol;
 
-enum class DeclarationFlags : int32_t;
+enum class DeclarationFlags : std::int32_t;
 
-enum class Access : int32_t
+enum class Access : std::int32_t
 {
     none, public_, protected_, private_
 };
 
 std::string AccessStr(Access access);
 
-enum class SymbolGroupKind : int32_t
+enum class SymbolGroupKind : std::int32_t
 {
     none = 0,
     functionSymbolGroup = 1 << 0,
@@ -51,20 +51,20 @@ enum class SymbolGroupKind : int32_t
 
 constexpr SymbolGroupKind operator|(SymbolGroupKind left, SymbolGroupKind right)
 {
-    return SymbolGroupKind(int32_t(left) | int32_t(right));
+    return SymbolGroupKind(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr SymbolGroupKind operator&(SymbolGroupKind left, SymbolGroupKind right)
 {
-    return SymbolGroupKind(int32_t(left) & int32_t(right));
+    return SymbolGroupKind(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr SymbolGroupKind operator~(SymbolGroupKind kind)
 {
-    return SymbolGroupKind(~int32_t(kind));
+    return SymbolGroupKind(~std::int32_t(kind));
 }
 
-enum class SymbolKind : int32_t
+enum class SymbolKind : std::int32_t
 {
     null, 
     classGroupSymbol, conceptGroupSymbol, functionGroupSymbol, variableGroupSymbol, aliasGroupSymbol, enumGroupSymbol,
@@ -92,7 +92,7 @@ enum class SymbolKind : int32_t
     max
 };
 
-enum class SymbolGroupKind : int32_t;
+enum class SymbolGroupKind : std::int32_t;
 
 std::vector<SymbolGroupKind> SymbolGroupKindstoSymbolGroupKindVec(SymbolGroupKind symbolGroupKinds);
 

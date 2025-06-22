@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -494,7 +494,7 @@ void Evaluator::Visit(otava::ast::SizeOfTypeExprNode& node)
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
     Emitter emitter(nullptr);
     otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
-    int64_t size = irType->Size();
+    std::int64_t size = irType->Size();
     value = context->GetEvaluationContext()->GetIntegerValue(size, util::ToUtf32(std::to_string(size)), 
         context->GetSymbolTable()->GetFundamentalTypeSymbol(FundamentalTypeKind::unsignedLongLongIntType));
 }
@@ -508,7 +508,7 @@ void Evaluator::Visit(otava::ast::BracedInitListNode& node)
         {
             ArrayTypeSymbol* arrayTypeSymbol = static_cast<ArrayTypeSymbol*>(type);
             ArrayValue* arrayValue = context->GetSymbolTable()->GetModule()->GetEvaluationContext()->GetArrayValue(type);
-            int64_t count = 0;
+            std::int64_t count = 0;
             for (const auto& element : node.Items())
             {
                 if (element->IsLBraceNode() || element->IsRBraceNode()) continue;

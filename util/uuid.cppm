@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -11,7 +11,7 @@ export namespace util {
 
 struct uuid
 {
-    using value_type = uint8_t;
+    using value_type = std::uint8_t;
     uuid();
     uuid(const uuid& that);
     uuid& operator=(const uuid& that); 
@@ -30,8 +30,8 @@ bool operator==(const uuid& left, const uuid& right);
 inline bool operator!=(const uuid& left, const uuid& right) { return !(left == right); }
 bool operator<(const uuid& left, const uuid& right);
 
-void UuidToInts(const uuid& id, uint64_t& int1, uint64_t& int2);
-void IntsToUuid(uint64_t int1, uint64_t int2, uuid& id);
+void UuidToInts(const uuid& id, std::uint64_t& int1, std::uint64_t& int2);
+void IntsToUuid(std::uint64_t int1, std::uint64_t int2, uuid& id);
 void RandomUuid(uuid& id);
 std::string ToString(const uuid& uuid);
 uuid ParseUuid(const std::string& str);

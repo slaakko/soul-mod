@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -40,7 +40,7 @@ public:
     bool IsArrayValue() const { return kind == ValueKind::arrayValue; }
     bool IsStringValue() const { return kind == ValueKind::stringValue; }
     bool IsLongValue() const { return kind == ValueKind::longValue; }
-    int64_t GetIntegerValue() const;
+    std::int64_t GetIntegerValue() const;
     const SourcePos& GetSourcePos() const { return sourcePos; }
     ValueKind Kind() const { return kind; }
     std::string KindStr() const;

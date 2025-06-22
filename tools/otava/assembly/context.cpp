@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -11,7 +11,7 @@ import otava.assembly.symbol;
 
 namespace otava::assembly {
 
-void CheckSize(int64_t size, const std::string& message)
+void CheckSize(std::int64_t size, const std::string& message)
 {
     if (size < 1 || size > 8)
     {
@@ -28,21 +28,21 @@ void Context::ResetRegisterPool()
     registerPool.reset(new RegisterPool(registers));
 }
 
-Register* Context::GetLocalReg(int64_t size)
+Register* Context::GetLocalReg(std::int64_t size)
 {
     CheckSize(size, "otava.assembly.GetLocalReg: invalid size");
     RegisterGroup* regGroup = registerPool->GetLocalRegisterGroup();
     return regGroup->GetReg(static_cast<int>(size));
 }
 
-Register* Context::GetGlobalReg(int64_t size, RegisterGroupKind regGroupKind)
+Register* Context::GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind)
 {
     CheckSize(size, "otava.assembly.GetGlobalReg: invalid size");
     RegisterGroup* regGroup = registerPool->GetGlobalRegisterGroup(regGroupKind);
     return regGroup->GetReg(static_cast<int>(size));
 }
 
-Value* Context::MakeLiteral(int64_t value, int64_t size)
+Value* Context::MakeLiteral(std::int64_t value, std::int64_t size)
 {
     auto key = std::make_pair(value, static_cast<int>(size));
     auto it = literalValueMap.find(key);
@@ -59,7 +59,7 @@ Value* Context::MakeLiteral(int64_t value, int64_t size)
     }
 }
 
-UniqueLiteral* Context::MakeUniqueLiteral(int64_t value, int64_t size)
+UniqueLiteral* Context::MakeUniqueLiteral(std::int64_t value, std::int64_t size)
 {
     UniqueLiteral* literal = new UniqueLiteral(value, static_cast<int>(size));
     values.push_back(std::unique_ptr<Value>(literal));
@@ -82,7 +82,7 @@ Value* Context::MakeContent(Value* value)
     }
 }
 
-Value* Context::MakeSizePrefix(int64_t size, Value* value)
+Value* Context::MakeSizePrefix(std::int64_t size, Value* value)
 {
     CheckSize(size, "otava.assembly.MakeSizePrefix: invalid size");
     auto key = std::make_pair(static_cast<int>(size), value);

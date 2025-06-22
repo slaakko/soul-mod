@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -29,7 +29,7 @@ std::vector<std::string> Split(const std::string& s, const std::string& subStrin
 std::string Replace(const std::string& s, char oldChar, char newChar);
 std::string Replace(const std::string& s, const std::string& oldString, const std::string& newString);
 std::string HexEscape(char c);
-std::u32string HexEscape(uint32_t c);
+std::u32string HexEscape(std::uint32_t c);
 std::string CharStr(char c);
 std::u32string CharStr(char32_t c);
 std::string StringStr(const std::string& s);
@@ -48,14 +48,14 @@ std::string ToLowerNarrow(const std::string& s);
 std::string ToString(double x);
 std::string ToString(double x, int maxNumDecimals);
 std::string ToString(double x, int minNumDecimals, int maxNumDecimals);
-std::string ToHexString(uint8_t x);
-std::string ToHexString(uint16_t x);
-std::string ToHexString(uint32_t x);
-std::string ToHexString(uint64_t x);
-uint8_t ParseHexByte(const std::string& hexByteStr);
-uint64_t ParseHexULong(const std::string& hexByteStr);
-int32_t ParseOctal(const std::string& octalDigitStr);
-std::string ToOctalString(int32_t value, int numDigits);
+std::string ToHexString(std::uint8_t x);
+std::string ToHexString(std::uint16_t x);
+std::string ToHexString(std::uint32_t x);
+std::string ToHexString(std::uint64_t x);
+std::uint8_t ParseHexByte(const std::string& hexByteStr);
+std::uint64_t ParseHexULong(const std::string& hexByteStr);
+std::int32_t ParseOctal(const std::string& octalDigitStr);
+std::string ToOctalString(std::int32_t value, int numDigits);
 int Log10(int n);
 std::u32string FormatNumber(int n, int numDigits);
 #ifndef OTAVA

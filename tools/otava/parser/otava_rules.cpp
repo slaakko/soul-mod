@@ -4,10 +4,10 @@ namespace otava::parser::spg::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 4789400228853710849, "AttributeParser.AttributeSpecifierSeq" },
         { 4789400228853710850, "AttributeParser.AttributeSpecifier" },
         { 4789400228853710851, "AttributeParser.AttributeList" },

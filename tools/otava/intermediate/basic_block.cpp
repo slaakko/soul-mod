@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,7 +14,7 @@ import util.text.util;
 
 namespace otava::intermediate {
 
-BasicBlock::BasicBlock(const SourcePos& sourcePos_, int32_t id_) : sourcePos(sourcePos_), id(id_), instructions(this) 
+BasicBlock::BasicBlock(const SourcePos& sourcePos_, std::int32_t id_) : sourcePos(sourcePos_), id(id_), instructions(this) 
 {
 }
 

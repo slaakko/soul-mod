@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -37,7 +37,7 @@ namespace otava::symbols {
 
 Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
 
-int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
+std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind)
 {
     switch (specialFunctionKind)
     {
@@ -218,14 +218,14 @@ void ClassTypeSymbol::Accept(Visitor& visitor)
 void ClassTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(flags));
-    uint32_t nb = baseClasses.size();
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(flags));
+    std::uint32_t nb = baseClasses.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nb);
     for (const auto& baseClass : baseClasses)
     {
         writer.GetBinaryStreamWriter().Write(baseClass->Id());
     }
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(classKind));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(classKind));
     util::uuid specializationId = util::nil_uuid();
     if (specialization)
     {
@@ -238,7 +238,7 @@ void ClassTypeSymbol::Write(Writer& writer)
     {
         writer.GetBinaryStreamWriter().Write(type->Id());
     }
-    uint32_t nfm = functionMap.size();
+    std::uint32_t nfm = functionMap.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nfm);
     for (const auto& fn : functionMap)
     {
@@ -254,8 +254,8 @@ void ClassTypeSymbol::Read(Reader& reader)
 {
     TypeSymbol::Read(reader);
     flags = static_cast<ClassTypeSymbolFlags>(reader.GetBinaryStreamReader().ReadByte());
-    uint32_t nb = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nb; ++i)
+    std::uint32_t nb = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nb; ++i)
     {
         util::uuid baseClassId;
         reader.GetBinaryStreamReader().ReadUuid(baseClassId);
@@ -264,17 +264,17 @@ void ClassTypeSymbol::Read(Reader& reader)
     classKind = static_cast<ClassKind>(reader.GetBinaryStreamReader().ReadByte());
     reader.GetBinaryStreamReader().ReadUuid(specializationId);
     level = reader.GetBinaryStreamReader().ReadInt();
-    uint32_t nol = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nol; ++i)
+    std::uint32_t nol = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nol; ++i)
     {
         util::uuid tid;
         reader.GetBinaryStreamReader().ReadUuid(tid);
         objectLayoutIds.push_back(tid);
     }
-    uint32_t nfm = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nfm; ++i)
+    std::uint32_t nfm = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nfm; ++i)
     {
-        int32_t fnIndex = reader.GetBinaryStreamReader().ReadInt();
+        std::int32_t fnIndex = reader.GetBinaryStreamReader().ReadInt();
         util::uuid fnId;
         reader.GetBinaryStreamReader().ReadUuid(fnId);
         functionIdMap[fnIndex] = fnId;
@@ -363,7 +363,7 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
     }
     for (const auto& memberVar : memberVariables)
     {
-        int32_t layoutIndex = objectLayout.size();
+        std::int32_t layoutIndex = objectLayout.size();
         memberVar->SetLayoutIndex(layoutIndex);
         TypeSymbol* memberVarType = memberVar->GetType()->FinalType(sourcePos, context);
         if (memberVarType->IsForwardClassDeclarationSymbol())
@@ -658,7 +658,7 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
     return irType;
 }
 
-int32_t ClassTypeSymbol::NextFunctionIndex()
+std::int32_t ClassTypeSymbol::NextFunctionIndex()
 {
     return currentFunctionIndex++;
 }
@@ -668,7 +668,7 @@ void ClassTypeSymbol::MapFunction(FunctionSymbol* function)
     functionMap[function->Index()] = function;
 }
 
-FunctionSymbol* ClassTypeSymbol::GetFunction(int32_t functionIndex) const
+FunctionSymbol* ClassTypeSymbol::GetFunction(std::int32_t functionIndex) const
 {
     auto it = functionMap.find(functionIndex);
     if (it != functionMap.cend())
@@ -773,7 +773,7 @@ void ForwardClassDeclarationSymbol::Accept(Visitor& visitor)
 void ForwardClassDeclarationSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(classKind));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(classKind));
     writer.GetBinaryStreamWriter().Write(classTypeSymbol != nullptr);
     if (classTypeSymbol)
     {
@@ -1395,8 +1395,8 @@ void GenerateDestructors(BoundCompileUnitNode* boundCompileUnit, Context* contex
 
 void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)
 {
-    uint64_t clsidh = 0;
-    uint64_t clsidl = 0;
+    std::uint64_t clsidh = 0;
+    std::uint64_t clsidl = 0;
     util::UuidToInts(classTypeSymbol->Id(), clsidh, clsidl);
     ClassKind kind = classTypeSymbol->GetClassKind();
     info::class_id id = std::make_pair(clsidh, clsidl);
@@ -1410,8 +1410,8 @@ void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)
     info::class_info info(id, key, util::ToUtf8(classTypeSymbol->FullName()));
     for (const auto& base : classTypeSymbol->BaseClasses())
     {
-        uint64_t h = 0;
-        uint64_t l = 0;
+        std::uint64_t h = 0;
+        std::uint64_t l = 0;
         util::UuidToInts(base->Id(), h, l);
         info.add_base(std::make_pair(h, l));
     }

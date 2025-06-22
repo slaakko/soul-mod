@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -397,12 +397,12 @@ void SymbolTable::ImportClassIndex(const SymbolTable& that)
 
 void SymbolTable::WriteMaps(Writer& writer)
 {
-    uint32_t nns = nodeSymbolMap.size();
+    std::uint32_t nns = nodeSymbolMap.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nns);
     for (const auto& m : nodeSymbolMap)
     {
-        writer.GetBinaryStreamWriter().Write(static_cast<int32_t>(m.first->Kind()));
-        int64_t nodeId = m.first->Id();
+        writer.GetBinaryStreamWriter().Write(static_cast<std::int32_t>(m.first->Kind()));
+        std::int64_t nodeId = m.first->Id();
         if (m.first->IsInternallyMapped())
         {
             nodeId = -1;
@@ -411,35 +411,35 @@ void SymbolTable::WriteMaps(Writer& writer)
         const util::uuid& uuid = m.second->Id();
         writer.GetBinaryStreamWriter().Write(uuid);
     }
-    uint32_t nsn = symbolNodeMap.size();
+    std::uint32_t nsn = symbolNodeMap.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nsn);
     for (const auto& m : symbolNodeMap)
     {
         const util::uuid& uuid = m.first->Id();
         writer.GetBinaryStreamWriter().Write(uuid);
-        int64_t nodeId = m.second->Id();
+        std::int64_t nodeId = m.second->Id();
         if (m.second->IsInternallyMapped())
         {
             nodeId = -1;
         }
         writer.GetBinaryStreamWriter().Write(nodeId);
     }
-    uint32_t nfwd = forwardDeclarations.size();
+    std::uint32_t nfwd = forwardDeclarations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nfwd);
     for (const auto& fwd : forwardDeclarations)
     {
         writer.GetBinaryStreamWriter().Write(fwd->Id());
     }
-    uint32_t nspec = specifierNodeMap.size();
+    std::uint32_t nspec = specifierNodeMap.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nspec);
     for (const auto& spec : specifierNodeMap)
     {
         const util::uuid& uuid = spec.first->Id();
         writer.GetBinaryStreamWriter().Write(uuid);
-        int64_t nodeId = spec.second->Id();
+        std::int64_t nodeId = spec.second->Id();
         writer.GetBinaryStreamWriter().Write(nodeId);
     }
-    uint32_t nc = classes.size();
+    std::uint32_t nc = classes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(nc);
     for (auto cls : classes)
     {
@@ -450,11 +450,11 @@ void SymbolTable::WriteMaps(Writer& writer)
 
 void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolMap* symbolMap)
 {
-    uint32_t nns = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nns; ++i)
+    std::uint32_t nns = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nns; ++i)
     {
         otava::ast::NodeKind kind = static_cast<otava::ast::NodeKind>(reader.GetBinaryStreamReader().ReadInt());
-        int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
+        std::int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
         if (nodeId != -1)
@@ -465,12 +465,12 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
             allNodeSymbolMap[node] = symbol;
         }
     }
-    uint32_t nsn = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nsn; ++i)
+    std::uint32_t nsn = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nsn; ++i)
     {
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
-        int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
+        std::int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         if (nodeId != -1)
         {
             Symbol* symbol = symbolMap->GetSymbol(symbolId);
@@ -479,8 +479,8 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
             allSymbolNodeMap[symbol] = node;
         }
     }
-    uint32_t nfwd = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nfwd; ++i)
+    std::uint32_t nfwd = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nfwd; ++i)
     {
         util::uuid fwdId;
         reader.GetBinaryStreamReader().ReadUuid(fwdId);
@@ -488,19 +488,19 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
         forwardDeclarations.insert(symbol);
         allForwardDeclarations.insert(symbol);
     }
-    uint32_t nspec = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nspec; ++i)
+    std::uint32_t nspec = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nspec; ++i)
     {
         util::uuid symbolId;
         reader.GetBinaryStreamReader().ReadUuid(symbolId);
-        int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
+        std::int64_t nodeId = reader.GetBinaryStreamReader().ReadLong();
         Symbol* symbol = symbolMap->GetSymbol(symbolId);
         otava::ast::Node* node = nodeMap->GetNode(nodeId);
         specifierNodeMap[symbol] = node;
         allSpecifierNodeMap[symbol] = node;
     }
-    uint32_t nc = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < nc; ++i)
+    std::uint32_t nc = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < nc; ++i)
     {
         util::uuid clsId;
         reader.GetBinaryStreamReader().ReadUuid(clsId);
@@ -516,37 +516,37 @@ void SymbolTable::ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolM
 void SymbolTable::Write(Writer& writer)
 {
     globalNs->Write(writer);
-    uint32_t scount = classTemplateSpecializations.size();
+    std::uint32_t scount = classTemplateSpecializations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(scount);
     for (const auto& specialization : classTemplateSpecializations)
     {
         writer.Write(specialization.get());
     }
-    uint32_t acount = aliasTypeTemplateSpecializations.size();
+    std::uint32_t acount = aliasTypeTemplateSpecializations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(acount);
     for (const auto& specialization : aliasTypeTemplateSpecializations)
     {
         writer.Write(specialization.get());
     }
-    uint32_t arrayCount = arrayTypes.size();
+    std::uint32_t arrayCount = arrayTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(arrayCount);
     for (const auto& arrayType : arrayTypes)
     {
         writer.Write(arrayType.get());
     }
-    uint32_t ccount = compoundTypes.size();
+    std::uint32_t ccount = compoundTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(ccount);
     for (const auto& compoundType : compoundTypes)
     {
         writer.Write(compoundType.get());
     }
-    uint32_t ecount = explicitInstantiations.size();
+    std::uint32_t ecount = explicitInstantiations.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(ecount);
     for (const auto& explicitInstantiation : explicitInstantiations)
     {
         writer.Write(explicitInstantiation.get());
     }
-    uint32_t fcount = functionGroupTypes.size();
+    std::uint32_t fcount = functionGroupTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(fcount);
     for (const auto& functionGroupType : functionGroupTypes)
     {
@@ -562,8 +562,8 @@ void SymbolTable::Read(Reader& reader)
     context.SetSymbolTable(this);
     reader.SetContext(&context);
     globalNs->Read(reader);
-    uint32_t scount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < scount; ++i)
+    std::uint32_t scount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < scount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsClassTemplateSpecializationSymbol())
@@ -577,8 +577,8 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: class template specialization expected");
         }
     }
-    uint32_t acount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < acount; ++i)
+    std::uint32_t acount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < acount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsAliasTypeTemplateSpecializationSymbol())
@@ -592,8 +592,8 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: alias type template specialization expected");
         }
     }
-    uint32_t arrayCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < arrayCount; ++i)
+    std::uint32_t arrayCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < arrayCount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsArrayTypeSymbol())
@@ -607,8 +607,8 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: array type expected");
         }
     }
-    uint32_t ccount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < ccount; ++i)
+    std::uint32_t ccount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < ccount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsCompoundTypeSymbol())
@@ -622,8 +622,8 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: compound type expected");
         }
     }
-    uint32_t ecount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < ecount; ++i)
+    std::uint32_t ecount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < ecount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsExplicitInstantiationSymbol())
@@ -637,8 +637,8 @@ void SymbolTable::Read(Reader& reader)
             throw std::runtime_error("otava.symbols.symbol_table: explicit instantiation symbol expected");
         }
     }
-    uint32_t fcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < fcount; ++i)
+    std::uint32_t fcount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < fcount; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol->IsFunctionGroupTypeSymbol())
@@ -1525,7 +1525,7 @@ AliasTypeTemplateSpecializationSymbol* SymbolTable::MakeAliasTypeTemplateSpecial
     return sym;
 }
 
-ArrayTypeSymbol* SymbolTable::MakeArrayType(TypeSymbol* elementType, int64_t size)
+ArrayTypeSymbol* SymbolTable::MakeArrayType(TypeSymbol* elementType, std::int64_t size)
 {
     std::unique_ptr< ArrayTypeSymbol> symbol(new ArrayTypeSymbol(elementType, size));
     auto it = arrayTypeSet.find(symbol.get());
@@ -1585,12 +1585,12 @@ void SymbolTable::AddFundamentalTypeOperations()
 void SymbolTable::MapFundamentalType(FundamentalTypeSymbol* fundamentalTypeSymbol)
 {
     FundamentalTypeKind kind = fundamentalTypeSymbol->GetFundamentalTypeKind();
-    fundamentalTypeMap[static_cast<int32_t>(kind)] = fundamentalTypeSymbol;
+    fundamentalTypeMap[static_cast<std::int32_t>(kind)] = fundamentalTypeSymbol;
 }
 
 TypeSymbol* SymbolTable::GetFundamentalTypeSymbol(FundamentalTypeKind kind)
 {
-    auto it = fundamentalTypeMap.find(static_cast<int32_t>(kind));
+    auto it = fundamentalTypeMap.find(static_cast<std::int32_t>(kind));
     if (it != fundamentalTypeMap.cend())
     {
         return it->second;
@@ -1598,7 +1598,7 @@ TypeSymbol* SymbolTable::GetFundamentalTypeSymbol(FundamentalTypeKind kind)
     else
     {
         otava::ast::SetExceptionThrown();
-        throw std::runtime_error("fundamental type " + std::to_string(static_cast<int32_t>(kind)) + " not found");
+        throw std::runtime_error("fundamental type " + std::to_string(static_cast<std::int32_t>(kind)) + " not found");
     }
 }
 
@@ -1772,7 +1772,7 @@ void SymbolTable::RecomputeNames()
 
 TypeSymbol* SymbolTable::GetFundamentalType(FundamentalTypeKind kind) const
 {
-    auto it = fundamentalTypeMap.find(static_cast<int32_t>(kind));
+    auto it = fundamentalTypeMap.find(static_cast<std::int32_t>(kind));
     if (it != fundamentalTypeMap.cend())
     {
         return it->second;

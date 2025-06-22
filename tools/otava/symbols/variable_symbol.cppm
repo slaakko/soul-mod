@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -38,11 +38,11 @@ public:
     bool IsMemberVariable() const;
     bool IsGlobalVariable() const;
     bool IsStatic() const;
-    int32_t LayoutIndex() const { return layoutIndex; }
-    void SetLayoutIndex(int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
+    std::int32_t LayoutIndex() const { return layoutIndex; }
+    void SetLayoutIndex(std::int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
     std::string IrName(Context* context) const;
-    int32_t Index() const { return index; }
-    void SetIndex(int32_t index_) { index = index_; }
+    std::int32_t Index() const { return index; }
+    void SetIndex(std::int32_t index_) { index = index_; }
     VariableSymbol* Final() { if (global) return global; else return this; }
     void SetGlobal(VariableSymbol* global_) { global = global_; }
 private:
@@ -52,8 +52,8 @@ private:
     util::uuid initializerTypeId;
     Value* value;
     util::uuid valueId;
-    int32_t layoutIndex;
-    int32_t index;
+    std::int32_t layoutIndex;
+    std::int32_t index;
     VariableSymbol* global;
 };
 

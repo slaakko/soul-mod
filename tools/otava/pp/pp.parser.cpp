@@ -54,7 +54,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::PPLIne(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -102,7 +102,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::PPCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -114,7 +114,7 @@ soul::parser::Match PPParser<LexerT>::PPCommand(LexerT& lexer, otava::pp::state:
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t save = lexer.GetPos();
+        std::int64_t save = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         switch (*lexer)
@@ -222,7 +222,7 @@ soul::parser::Match PPParser<LexerT>::PPCommand(LexerT& lexer, otava::pp::state:
                 {
                     while (true)
                     {
-                        int64_t save = lexer.GetPos();
+                        std::int64_t save = lexer.GetPos();
                         {
                             soul::parser::Match match(false);
                             if (*lexer != soul::lexer::END_TOKEN)
@@ -265,7 +265,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::IfCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -274,7 +274,7 @@ soul::parser::Match PPParser<LexerT>::IfCommand(LexerT& lexer, otava::pp::state:
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113411);
-    std::unique_ptr<soul::parser::Value<int64_t>> value;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> value;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -294,9 +294,9 @@ soul::parser::Match PPParser<LexerT>::IfCommand(LexerT& lexer, otava::pp::state:
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = PPParser<LexerT>::Expression(lexer, state);
-                value.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                value.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                 if (match.hit)
                 {
                     state->If(value->value != 0);
@@ -325,7 +325,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::ElifCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -334,7 +334,7 @@ soul::parser::Match PPParser<LexerT>::ElifCommand(LexerT& lexer, otava::pp::stat
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113412);
-    std::unique_ptr<soul::parser::Value<int64_t>> value;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> value;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -354,9 +354,9 @@ soul::parser::Match PPParser<LexerT>::ElifCommand(LexerT& lexer, otava::pp::stat
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = PPParser<LexerT>::Expression(lexer, state);
-                value.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                value.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                 if (match.hit)
                 {
                     state->Elif(value->value != 0);
@@ -385,7 +385,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::IfdefCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -413,7 +413,7 @@ soul::parser::Match PPParser<LexerT>::IfdefCommand(LexerT& lexer, otava::pp::sta
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == ID)
                 {
@@ -448,7 +448,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::IfndefCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -476,7 +476,7 @@ soul::parser::Match PPParser<LexerT>::IfndefCommand(LexerT& lexer, otava::pp::st
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == ID)
                 {
@@ -511,7 +511,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::ElseCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -523,7 +523,7 @@ soul::parser::Match PPParser<LexerT>::ElseCommand(LexerT& lexer, otava::pp::stat
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         if (*lexer == ELSE)
         {
@@ -554,7 +554,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::EndifCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -566,7 +566,7 @@ soul::parser::Match PPParser<LexerT>::EndifCommand(LexerT& lexer, otava::pp::sta
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         if (*lexer == ENDIF)
         {
@@ -597,7 +597,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::DefineCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -629,7 +629,7 @@ soul::parser::Match PPParser<LexerT>::DefineCommand(LexerT& lexer, otava::pp::st
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match(false);
                     if (*lexer == ID)
                     {
@@ -659,11 +659,11 @@ soul::parser::Match PPParser<LexerT>::DefineCommand(LexerT& lexer, otava::pp::st
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch6 = &match;
                 {
-                    int64_t save = lexer.GetPos();
+                    std::int64_t save = lexer.GetPos();
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch7 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == INTEGER_LITERAL)
                         {
@@ -672,7 +672,7 @@ soul::parser::Match PPParser<LexerT>::DefineCommand(LexerT& lexer, otava::pp::st
                         }
                         if (match.hit)
                         {
-                            int64_t value = std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString()));
+                            std::int64_t value = std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString()));
                             state->Define(symbol, value);
                         }
                         *parentMatch7 = match;
@@ -687,7 +687,7 @@ soul::parser::Match PPParser<LexerT>::DefineCommand(LexerT& lexer, otava::pp::st
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch9 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(true);
                                 if (match.hit)
                                 {
@@ -724,7 +724,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::UndefCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -752,7 +752,7 @@ soul::parser::Match PPParser<LexerT>::UndefCommand(LexerT& lexer, otava::pp::sta
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == ID)
                 {
@@ -787,7 +787,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::IncludeCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -815,7 +815,7 @@ soul::parser::Match PPParser<LexerT>::IncludeCommand(LexerT& lexer, otava::pp::s
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = PPParser<LexerT>::Header(lexer);
                 if (match.hit)
                 {
@@ -845,7 +845,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::PragmaCommand(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -878,14 +878,14 @@ soul::parser::Match PPParser<LexerT>::PragmaCommand(LexerT& lexer, otava::pp::st
                 {
                     while (true)
                     {
-                        int64_t save = lexer.GetPos();
+                        std::int64_t save = lexer.GetPos();
                         {
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch4 = &match;
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch5 = &match;
-                                int64_t save = lexer.GetPos();
+                                std::int64_t save = lexer.GetPos();
                                 {
                                     soul::parser::Match match(false);
                                     if (*lexer != soul::lexer::END_TOKEN)
@@ -900,7 +900,7 @@ soul::parser::Match PPParser<LexerT>::PragmaCommand(LexerT& lexer, otava::pp::st
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch6 = &match;
                                     {
-                                        int64_t tmp = lexer.GetPos();
+                                        std::int64_t tmp = lexer.GetPos();
                                         lexer.SetPos(save);
                                         save = tmp;
                                         soul::parser::Match match(false);
@@ -970,7 +970,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::Header(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1030,7 +1030,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::Expression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1039,20 +1039,20 @@ soul::parser::Match PPParser<LexerT>::Expression(LexerT& lexer, otava::pp::state
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113422);
-    std::unique_ptr<soul::parser::Value<int64_t>> expr;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> expr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match = PPParser<LexerT>::LogicalOrExpr(lexer, state);
-        expr.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+        expr.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
         if (match.hit)
         {
             {
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "Expression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(expr->value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(expr->value));
             }
         }
         *parentMatch0 = match;
@@ -1075,7 +1075,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::LogicalOrExpr(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1084,13 +1084,13 @@ soul::parser::Match PPParser<LexerT>::LogicalOrExpr(LexerT& lexer, otava::pp::st
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113423);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> right;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1100,9 +1100,9 @@ soul::parser::Match PPParser<LexerT>::LogicalOrExpr(LexerT& lexer, otava::pp::st
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::LogicalAndExpr(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -1121,7 +1121,7 @@ soul::parser::Match PPParser<LexerT>::LogicalOrExpr(LexerT& lexer, otava::pp::st
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1145,12 +1145,12 @@ soul::parser::Match PPParser<LexerT>::LogicalOrExpr(LexerT& lexer, otava::pp::st
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = PPParser<LexerT>::LogicalAndExpr(lexer, state);
-                                                right.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                right.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    value = static_cast<int64_t>(value != 0 || right->value != 0);
+                                                    value = static_cast<std::int64_t>(value != 0 || right->value != 0);
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1184,7 +1184,7 @@ soul::parser::Match PPParser<LexerT>::LogicalOrExpr(LexerT& lexer, otava::pp::st
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LogicalOrExpr");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -1207,7 +1207,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::LogicalAndExpr(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1216,13 +1216,13 @@ soul::parser::Match PPParser<LexerT>::LogicalAndExpr(LexerT& lexer, otava::pp::s
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113424);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> right;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1232,9 +1232,9 @@ soul::parser::Match PPParser<LexerT>::LogicalAndExpr(LexerT& lexer, otava::pp::s
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::InclusiveOrExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -1253,7 +1253,7 @@ soul::parser::Match PPParser<LexerT>::LogicalAndExpr(LexerT& lexer, otava::pp::s
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1277,12 +1277,12 @@ soul::parser::Match PPParser<LexerT>::LogicalAndExpr(LexerT& lexer, otava::pp::s
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = PPParser<LexerT>::InclusiveOrExpression(lexer, state);
-                                                right.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                right.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                 if (match.hit)
                                                 {
-                                                    value = static_cast<int64_t>(value != 0 && right->value != 0);
+                                                    value = static_cast<std::int64_t>(value != 0 && right->value != 0);
                                                 }
                                                 *parentMatch9 = match;
                                             }
@@ -1316,7 +1316,7 @@ soul::parser::Match PPParser<LexerT>::LogicalAndExpr(LexerT& lexer, otava::pp::s
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "LogicalAndExpr");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -1339,7 +1339,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::InclusiveOrExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1348,13 +1348,13 @@ soul::parser::Match PPParser<LexerT>::InclusiveOrExpression(LexerT& lexer, otava
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113425);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> right;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1364,9 +1364,9 @@ soul::parser::Match PPParser<LexerT>::InclusiveOrExpression(LexerT& lexer, otava
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::ExclusiveOrExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -1385,7 +1385,7 @@ soul::parser::Match PPParser<LexerT>::InclusiveOrExpression(LexerT& lexer, otava
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1409,9 +1409,9 @@ soul::parser::Match PPParser<LexerT>::InclusiveOrExpression(LexerT& lexer, otava
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = PPParser<LexerT>::ExclusiveOrExpression(lexer, state);
-                                                right.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                right.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                 if (match.hit)
                                                 {
                                                     value = value | right->value;
@@ -1448,7 +1448,7 @@ soul::parser::Match PPParser<LexerT>::InclusiveOrExpression(LexerT& lexer, otava
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "InclusiveOrExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -1471,7 +1471,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::ExclusiveOrExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1480,13 +1480,13 @@ soul::parser::Match PPParser<LexerT>::ExclusiveOrExpression(LexerT& lexer, otava
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113426);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> right;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1496,9 +1496,9 @@ soul::parser::Match PPParser<LexerT>::ExclusiveOrExpression(LexerT& lexer, otava
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::AndExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -1517,7 +1517,7 @@ soul::parser::Match PPParser<LexerT>::ExclusiveOrExpression(LexerT& lexer, otava
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1541,9 +1541,9 @@ soul::parser::Match PPParser<LexerT>::ExclusiveOrExpression(LexerT& lexer, otava
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = PPParser<LexerT>::AndExpression(lexer, state);
-                                                right.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                right.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                 if (match.hit)
                                                 {
                                                     value = value ^ right->value;
@@ -1580,7 +1580,7 @@ soul::parser::Match PPParser<LexerT>::ExclusiveOrExpression(LexerT& lexer, otava
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ExclusiveOrExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -1603,7 +1603,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::AndExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1612,13 +1612,13 @@ soul::parser::Match PPParser<LexerT>::AndExpression(LexerT& lexer, otava::pp::st
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113427);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> right;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> right;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1628,9 +1628,9 @@ soul::parser::Match PPParser<LexerT>::AndExpression(LexerT& lexer, otava::pp::st
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::EqualityExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -1649,7 +1649,7 @@ soul::parser::Match PPParser<LexerT>::AndExpression(LexerT& lexer, otava::pp::st
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1673,9 +1673,9 @@ soul::parser::Match PPParser<LexerT>::AndExpression(LexerT& lexer, otava::pp::st
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = PPParser<LexerT>::EqualityExpression(lexer, state);
-                                                right.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                right.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                 if (match.hit)
                                                 {
                                                     value = value & right->value;
@@ -1712,7 +1712,7 @@ soul::parser::Match PPParser<LexerT>::AndExpression(LexerT& lexer, otava::pp::st
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AndExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -1735,7 +1735,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::EqualityExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1744,14 +1744,14 @@ soul::parser::Match PPParser<LexerT>::EqualityExpression(LexerT& lexer, otava::p
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113428);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightEq;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightNeq;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightEq;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightNeq;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1761,9 +1761,9 @@ soul::parser::Match PPParser<LexerT>::EqualityExpression(LexerT& lexer, otava::p
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::RelationalExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -1782,7 +1782,7 @@ soul::parser::Match PPParser<LexerT>::EqualityExpression(LexerT& lexer, otava::p
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -1812,12 +1812,12 @@ soul::parser::Match PPParser<LexerT>::EqualityExpression(LexerT& lexer, otava::p
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch10 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::RelationalExpression(lexer, state);
-                                                        rightEq.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightEq.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
-                                                            value = static_cast<int64_t>(value == rightEq->value);
+                                                            value = static_cast<std::int64_t>(value == rightEq->value);
                                                         }
                                                         *parentMatch10 = match;
                                                     }
@@ -1852,12 +1852,12 @@ soul::parser::Match PPParser<LexerT>::EqualityExpression(LexerT& lexer, otava::p
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch13 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::RelationalExpression(lexer, state);
-                                                        rightNeq.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightNeq.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
-                                                            value = static_cast<int64_t>(value != rightNeq->value);
+                                                            value = static_cast<std::int64_t>(value != rightNeq->value);
                                                         }
                                                         *parentMatch13 = match;
                                                     }
@@ -1898,7 +1898,7 @@ soul::parser::Match PPParser<LexerT>::EqualityExpression(LexerT& lexer, otava::p
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "EqualityExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -1921,7 +1921,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -1930,16 +1930,16 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113429);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightLess;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightGreater;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightLessEq;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightGreaterEq;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightLess;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightGreater;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightLessEq;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightGreaterEq;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -1949,9 +1949,9 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::ShiftExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -1970,7 +1970,7 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -2000,12 +2000,12 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch10 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::ShiftExpression(lexer, state);
-                                                        rightLess.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightLess.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
-                                                            value = static_cast<int64_t>(value < rightLess->value);
+                                                            value = static_cast<std::int64_t>(value < rightLess->value);
                                                         }
                                                         *parentMatch10 = match;
                                                     }
@@ -2040,12 +2040,12 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch13 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::ShiftExpression(lexer, state);
-                                                        rightGreater.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightGreater.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
-                                                            value = static_cast<int64_t>(value > rightGreater->value);
+                                                            value = static_cast<std::int64_t>(value > rightGreater->value);
                                                         }
                                                         *parentMatch13 = match;
                                                     }
@@ -2080,12 +2080,12 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch16 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::ShiftExpression(lexer, state);
-                                                        rightLessEq.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightLessEq.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
-                                                            value = static_cast<int64_t>(value <= rightLessEq->value);
+                                                            value = static_cast<std::int64_t>(value <= rightLessEq->value);
                                                         }
                                                         *parentMatch16 = match;
                                                     }
@@ -2120,12 +2120,12 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch19 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::ShiftExpression(lexer, state);
-                                                        rightGreaterEq.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightGreaterEq.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
-                                                            value = static_cast<int64_t>(value >= rightGreaterEq->value);
+                                                            value = static_cast<std::int64_t>(value >= rightGreaterEq->value);
                                                         }
                                                         *parentMatch19 = match;
                                                     }
@@ -2166,7 +2166,7 @@ soul::parser::Match PPParser<LexerT>::RelationalExpression(LexerT& lexer, otava:
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "RelationalExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -2189,7 +2189,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::ShiftExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -2198,14 +2198,14 @@ soul::parser::Match PPParser<LexerT>::ShiftExpression(LexerT& lexer, otava::pp::
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113430);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightLShift;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightRShift;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightLShift;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightRShift;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -2215,9 +2215,9 @@ soul::parser::Match PPParser<LexerT>::ShiftExpression(LexerT& lexer, otava::pp::
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::AdditiveExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -2236,7 +2236,7 @@ soul::parser::Match PPParser<LexerT>::ShiftExpression(LexerT& lexer, otava::pp::
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -2266,9 +2266,9 @@ soul::parser::Match PPParser<LexerT>::ShiftExpression(LexerT& lexer, otava::pp::
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch10 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::AdditiveExpression(lexer, state);
-                                                        rightLShift.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightLShift.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             value = value << rightLShift->value;
@@ -2306,9 +2306,9 @@ soul::parser::Match PPParser<LexerT>::ShiftExpression(LexerT& lexer, otava::pp::
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch13 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::AdditiveExpression(lexer, state);
-                                                        rightRShift.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightRShift.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             value = value >> rightRShift->value;
@@ -2352,7 +2352,7 @@ soul::parser::Match PPParser<LexerT>::ShiftExpression(LexerT& lexer, otava::pp::
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "ShiftExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -2375,7 +2375,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::AdditiveExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -2384,14 +2384,14 @@ soul::parser::Match PPParser<LexerT>::AdditiveExpression(LexerT& lexer, otava::p
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113431);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightPlus;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightMinus;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightPlus;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightMinus;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -2401,9 +2401,9 @@ soul::parser::Match PPParser<LexerT>::AdditiveExpression(LexerT& lexer, otava::p
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::MultiplicativeExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -2422,7 +2422,7 @@ soul::parser::Match PPParser<LexerT>::AdditiveExpression(LexerT& lexer, otava::p
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -2452,9 +2452,9 @@ soul::parser::Match PPParser<LexerT>::AdditiveExpression(LexerT& lexer, otava::p
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch10 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::MultiplicativeExpression(lexer, state);
-                                                        rightPlus.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightPlus.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             value = value + rightPlus->value;
@@ -2492,9 +2492,9 @@ soul::parser::Match PPParser<LexerT>::AdditiveExpression(LexerT& lexer, otava::p
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch13 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::MultiplicativeExpression(lexer, state);
-                                                        rightMinus.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightMinus.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             value = value - rightMinus->value;
@@ -2538,7 +2538,7 @@ soul::parser::Match PPParser<LexerT>::AdditiveExpression(LexerT& lexer, otava::p
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "AdditiveExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -2561,7 +2561,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -2570,15 +2570,15 @@ soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, ot
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113432);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> left;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightMul;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightDiv;
-    std::unique_ptr<soul::parser::Value<int64_t>> rightMod;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> left;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightMul;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightDiv;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> rightMod;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -2588,9 +2588,9 @@ soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, ot
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                    left.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    left.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         value = left->value;
@@ -2609,7 +2609,7 @@ soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, ot
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch6 = &match;
@@ -2639,9 +2639,9 @@ soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, ot
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch10 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                                                        rightMul.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightMul.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             value = value * rightMul->value;
@@ -2679,9 +2679,9 @@ soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, ot
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch13 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                                                        rightDiv.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightDiv.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             value = value / rightDiv->value;
@@ -2719,9 +2719,9 @@ soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, ot
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch16 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                                                        rightMod.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                                                        rightMod.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                                                         if (match.hit)
                                                         {
                                                             value = value / rightMod->value;
@@ -2765,7 +2765,7 @@ soul::parser::Match PPParser<LexerT>::MultiplicativeExpression(LexerT& lexer, ot
                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "MultiplicativeExpression");
                 #endif
-                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value));
+                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value));
             }
         }
         *parentMatch0 = match;
@@ -2788,7 +2788,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::UnaryExpression(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -2797,12 +2797,12 @@ soul::parser::Match PPParser<LexerT>::UnaryExpression(LexerT& lexer, otava::pp::
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113433);
-    int64_t value = int64_t();
-    std::unique_ptr<soul::parser::Value<int64_t>> plusExpr;
-    std::unique_ptr<soul::parser::Value<int64_t>> minusExpr;
-    std::unique_ptr<soul::parser::Value<int64_t>> notExpr;
-    std::unique_ptr<soul::parser::Value<int64_t>> complementExpr;
-    std::unique_ptr<soul::parser::Value<int64_t>> primaryExpr;
+    std::int64_t value = std::int64_t();
+    std::unique_ptr<soul::parser::Value<std::int64_t>> plusExpr;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> minusExpr;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> notExpr;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> complementExpr;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> primaryExpr;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
@@ -2831,16 +2831,16 @@ soul::parser::Match PPParser<LexerT>::UnaryExpression(LexerT& lexer, otava::pp::
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch4 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                            plusExpr.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                            plusExpr.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                             if (match.hit)
                             {
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
                                     #endif
-                                    return soul::parser::Match(true, new soul::parser::Value<int64_t>(plusExpr->value));
+                                    return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(plusExpr->value));
                                 }
                             }
                             *parentMatch4 = match;
@@ -2876,16 +2876,16 @@ soul::parser::Match PPParser<LexerT>::UnaryExpression(LexerT& lexer, otava::pp::
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch7 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                            minusExpr.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                            minusExpr.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                             if (match.hit)
                             {
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
                                     #endif
-                                    return soul::parser::Match(true, new soul::parser::Value<int64_t>(-minusExpr->value));
+                                    return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(-minusExpr->value));
                                 }
                             }
                             *parentMatch7 = match;
@@ -2921,16 +2921,16 @@ soul::parser::Match PPParser<LexerT>::UnaryExpression(LexerT& lexer, otava::pp::
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch10 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                            notExpr.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                            notExpr.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                             if (match.hit)
                             {
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
                                     #endif
-                                    return soul::parser::Match(true, new soul::parser::Value<int64_t>(static_cast<int64_t>(!(notExpr->value != 0))));
+                                    return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(static_cast<std::int64_t>(!(notExpr->value != 0))));
                                 }
                             }
                             *parentMatch10 = match;
@@ -2966,16 +2966,16 @@ soul::parser::Match PPParser<LexerT>::UnaryExpression(LexerT& lexer, otava::pp::
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch13 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = PPParser<LexerT>::UnaryExpression(lexer, state);
-                            complementExpr.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                            complementExpr.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                             if (match.hit)
                             {
                                 {
                                     #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                     if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
                                     #endif
-                                    return soul::parser::Match(true, new soul::parser::Value<int64_t>(~complementExpr->value));
+                                    return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(~complementExpr->value));
                                 }
                             }
                             *parentMatch13 = match;
@@ -2998,16 +2998,16 @@ soul::parser::Match PPParser<LexerT>::UnaryExpression(LexerT& lexer, otava::pp::
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch14 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = PPParser<LexerT>::PrimaryExpr(lexer, state);
-                    primaryExpr.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                    primaryExpr.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                     if (match.hit)
                     {
                         {
                             #ifdef SOUL_PARSER_DEBUG_SUPPORT
                             if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "UnaryExpression");
                             #endif
-                            return soul::parser::Match(true, new soul::parser::Value<int64_t>(primaryExpr->value));
+                            return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(primaryExpr->value));
                         }
                     }
                     *parentMatch14 = match;
@@ -3039,7 +3039,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -3048,8 +3048,8 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1180017559924113434);
-    std::unique_ptr<soul::parser::Value<int64_t>> defined;
-    std::unique_ptr<soul::parser::Value<int64_t>> value;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> defined;
+    std::unique_ptr<soul::parser::Value<std::int64_t>> value;
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     switch (*lexer)
@@ -3059,16 +3059,16 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = PPParser<LexerT>::DefinedExpr(lexer, state);
-                defined.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                defined.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                 if (match.hit)
                 {
                     {
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
                         #endif
-                        return soul::parser::Match(true, new soul::parser::Value<int64_t>(defined->value));
+                        return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(defined->value));
                     }
                 }
                 *parentMatch1 = match;
@@ -3101,7 +3101,7 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
                     soul::parser::Match* parentMatch4 = &match;
                     {
                         soul::parser::Match match = PPParser<LexerT>::Expression(lexer, state);
-                        value.reset(static_cast<soul::parser::Value<int64_t>*>(match.value));
+                        value.reset(static_cast<soul::parser::Value<std::int64_t>*>(match.value));
                         *parentMatch4 = match;
                     }
                     *parentMatch3 = match;
@@ -3116,7 +3116,7 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch6 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == RPAREN)
                         {
@@ -3129,7 +3129,7 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
                                 #endif
-                                return soul::parser::Match(true, new soul::parser::Value<int64_t>(value->value));
+                                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(value->value));
                             }
                         }
                         *parentMatch6 = match;
@@ -3149,7 +3149,7 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch7 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == INTEGER_LITERAL)
                 {
@@ -3162,7 +3162,7 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
                         #endif
-                        return soul::parser::Match(true, new soul::parser::Value<int64_t>(std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString()))));
+                        return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(std::stoll(util::ToUtf8(lexer.GetToken(pos).ToString()))));
                     }
                 }
                 *parentMatch7 = match;
@@ -3178,7 +3178,7 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch8 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == ID)
                 {
@@ -3191,7 +3191,7 @@ soul::parser::Match PPParser<LexerT>::PrimaryExpr(LexerT& lexer, otava::pp::stat
                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "PrimaryExpr");
                         #endif
-                        return soul::parser::Match(true, new soul::parser::Value<int64_t>(state->GetSymbolValue(util::ToUtf8(lexer.GetToken(pos).ToString()))));
+                        return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(state->GetSymbolValue(util::ToUtf8(lexer.GetToken(pos).ToString()))));
                     }
                 }
                 *parentMatch8 = match;
@@ -3221,7 +3221,7 @@ template<typename LexerT>
 soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::state::State* state)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -3278,7 +3278,7 @@ soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::stat
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch7 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
                                         if (*lexer == ID)
                                         {
@@ -3305,7 +3305,7 @@ soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::stat
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch9 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     if (*lexer == RPAREN)
                                     {
@@ -3320,7 +3320,7 @@ soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::stat
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
                                                 #endif
-                                                return soul::parser::Match(true, new soul::parser::Value<int64_t>(1));
+                                                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(1));
                                             }
                                         }
                                         else
@@ -3329,7 +3329,7 @@ soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::stat
                                                 #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                                 if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
                                                 #endif
-                                                return soul::parser::Match(true, new soul::parser::Value<int64_t>(0));
+                                                return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(0));
                                             }
                                         }
                                     }
@@ -3350,7 +3350,7 @@ soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::stat
                         soul::parser::Match match(false);
                         soul::parser::Match* parentMatch10 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == ID)
                             {
@@ -3366,7 +3366,7 @@ soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::stat
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
                                         #endif
-                                        return soul::parser::Match(true, new soul::parser::Value<int64_t>(1));
+                                        return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(1));
                                     }
                                 }
                                 else
@@ -3375,7 +3375,7 @@ soul::parser::Match PPParser<LexerT>::DefinedExpr(LexerT& lexer, otava::pp::stat
                                         #ifdef SOUL_PARSER_DEBUG_SUPPORT
                                         if (parser_debug_write_to_log) soul::lexer::WriteSuccessToLog(lexer, parser_debug_match_pos, "DefinedExpr");
                                         #endif
-                                        return soul::parser::Match(true, new soul::parser::Value<int64_t>(0));
+                                        return soul::parser::Match(true, new soul::parser::Value<std::int64_t>(0));
                                     }
                                 }
                             }

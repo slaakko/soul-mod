@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -126,11 +126,11 @@ void SimpleAssemblyCodeGenerator::PatchFrameLocations()
 {
 /*
     Frame& frame = registerAllocator->GetFrame();
-    int64_t frameSize = frame.Size();
+    std::int64_t frameSize = frame.Size();
     for (auto& frameLoc : frameLocations)
     {
-        int64_t offset = frameLoc->GetValue();
-        int64_t newOffset = frameSize - offset;
+        std::int64_t offset = frameLoc->GetValue();
+        std::int64_t newOffset = frameSize - offset;
         frameLoc->SetValue(newOffset);
     }
 */

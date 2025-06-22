@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -194,7 +194,7 @@ const BinaryProperty& BinaryPropertyTable::GetBinaryProperty(BinaryPropertyId bi
     else
     {
         std::string msg("binary property ");
-        msg.append(std::to_string(static_cast<uint8_t>(binaryPropertyId)));
+        msg.append(std::to_string(static_cast<std::uint8_t>(binaryPropertyId)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -568,7 +568,7 @@ const Block& BlockTable::GetBlock(BlockId blockId) const
     else
     {
         std::string msg("block id ");
-        msg.append(std::to_string(static_cast<uint16_t>(blockId)));
+        msg.append(std::to_string(static_cast<std::uint16_t>(blockId)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -676,7 +676,7 @@ const GeneralCategory& GeneralCategoryTable::GetGeneralCategory(GeneralCategoryI
     else
     {
         std::string msg("general category ");
-        msg.append(std::to_string(static_cast<int32_t>(generalCategoryId)));
+        msg.append(std::to_string(static_cast<std::int32_t>(generalCategoryId)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -765,7 +765,7 @@ const Age& AgeTable::GetAge(AgeId id) const
     else
     {
         std::string msg("Unicode age ");
-        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(std::to_string(static_cast<std::uint8_t>(id)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -972,7 +972,7 @@ const Script& ScriptTable::GetScript(ScriptId id) const
     else
     {
         std::string msg("script id ");
-        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(std::to_string(static_cast<std::uint8_t>(id)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -1026,14 +1026,14 @@ CharacterInfo::CharacterInfo() :
 void CharacterInfo::Write(BinaryStreamWriter& writer)
 {
     writer.Write(binaryProperties);
-    writer.Write(static_cast<int32_t>(generalCategory));
+    writer.Write(static_cast<std::int32_t>(generalCategory));
     writer.Write(upper);
     writer.Write(lower);
     writer.Write(title);
     writer.Write(folding);
-    writer.Write(static_cast<uint16_t>(block));
-    writer.Write(static_cast<uint8_t>(age));
-    writer.Write(static_cast<uint8_t>(script));
+    writer.Write(static_cast<std::uint16_t>(block));
+    writer.Write(static_cast<std::uint8_t>(age));
+    writer.Write(static_cast<std::uint8_t>(script));
 }
 
 void CharacterInfo::Read(BinaryStreamReader& reader)
@@ -1083,7 +1083,7 @@ const NumericType& NumericTypeTable::GetNumericType(NumericTypeId id) const
     else
     {
         std::string msg("numeric type ");
-        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(std::to_string(static_cast<std::uint8_t>(id)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -1175,7 +1175,7 @@ const BidiClass& BidiClassTable::GetBidiClass(BidiClassId id) const
     else
     {
         std::string msg("bidi class ");
-        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(std::to_string(static_cast<std::uint8_t>(id)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -1246,7 +1246,7 @@ const BidiPairedBracketType& BidiPairedBracketTypeTable::GetBidiPairedBracketTyp
     else
     {
         std::string msg("Bidi paired bracket type ");
-        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(std::to_string(static_cast<std::uint8_t>(id)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -1318,7 +1318,7 @@ const AliasType& AliasTypeTable::GetAliasType(AliasTypeId id) const
     else
     {
         std::string msg("alias type ");
-        msg.append(std::to_string(static_cast<uint8_t>(id)));
+        msg.append(std::to_string(static_cast<std::uint8_t>(id)));
         msg.append(" not found");
         throw UnicodeException(msg);
     }
@@ -1350,7 +1350,7 @@ Alias::Alias(AliasTypeId typeId_, const std::string& name_) : typeId(typeId_), n
 
 void Alias::Write(BinaryStreamWriter& writer)
 {
-    writer.Write(static_cast<uint8_t>(typeId));
+    writer.Write(static_cast<std::uint8_t>(typeId));
     writer.Write(name);
 }
 
@@ -1380,42 +1380,42 @@ void ExtendedCharacterInfo::Write(BinaryStreamWriter& writer)
 {
     writer.Write(characterName);
     writer.Write(unicode1Name);
-    writer.Write(static_cast<uint8_t>(canonicalCombiningClass));
-    uint8_t nu = static_cast<uint8_t>(fullUpper.length());
+    writer.Write(static_cast<std::uint8_t>(canonicalCombiningClass));
+    std::uint8_t nu = static_cast<std::uint8_t>(fullUpper.length());
     writer.Write(nu);
-    for (uint8_t i = 0; i < nu; ++i)
+    for (std::uint8_t i = 0; i < nu; ++i)
     {
         writer.Write(fullUpper[i]);
     }
-    uint8_t nl = static_cast<uint8_t>(fullLower.length());
+    std::uint8_t nl = static_cast<std::uint8_t>(fullLower.length());
     writer.Write(nl);
-    for (uint8_t i = 0; i < nl; ++i)
+    for (std::uint8_t i = 0; i < nl; ++i)
     {
         writer.Write(fullLower[i]);
     }
-    uint8_t nt = static_cast<uint8_t>(fullTitle.length());
+    std::uint8_t nt = static_cast<std::uint8_t>(fullTitle.length());
     writer.Write(nt);
-    for (uint8_t i = 0; i < nt; ++i)
+    for (std::uint8_t i = 0; i < nt; ++i)
     {
         writer.Write(fullTitle[i]);
     }
-    uint8_t nf = static_cast<uint8_t>(fullFolding.length());
+    std::uint8_t nf = static_cast<std::uint8_t>(fullFolding.length());
     writer.Write(nf);
-    for (uint8_t i = 0; i < nf; ++i)
+    for (std::uint8_t i = 0; i < nf; ++i)
     {
         writer.Write(fullFolding[i]);
     }
-    writer.Write(static_cast<uint8_t>(bidiClass));
-    writer.Write(static_cast<uint8_t>(numericType));
+    writer.Write(static_cast<std::uint8_t>(bidiClass));
+    writer.Write(static_cast<std::uint8_t>(numericType));
     writer.Write(numericValue);
-    uint8_t na = static_cast<uint8_t>(aliases.size());
+    std::uint8_t na = static_cast<std::uint8_t>(aliases.size());
     writer.Write(na);
-    for (uint8_t i = 0; i < na; ++i)
+    for (std::uint8_t i = 0; i < na; ++i)
     {
         aliases[i].Write(writer);
     }
     writer.Write(bidiMirroringGlyph);
-    writer.Write(static_cast<uint8_t>(bidiPairedBracketType));
+    writer.Write(static_cast<std::uint8_t>(bidiPairedBracketType));
     writer.Write(bidiPairedBracket);
 }
 
@@ -1424,31 +1424,31 @@ void ExtendedCharacterInfo::Read(BinaryStreamReader& reader)
     characterName = reader.ReadUtf8String();
     unicode1Name = reader.ReadUtf8String();
     canonicalCombiningClass = reader.ReadByte();
-    uint8_t nu = reader.ReadByte();
-    for (uint8_t i = 0; i < nu; ++i)
+    std::uint8_t nu = reader.ReadByte();
+    for (std::uint8_t i = 0; i < nu; ++i)
     {
         fullUpper.append(1, reader.ReadUChar());
     }
-    uint8_t nl = reader.ReadByte();
-    for (uint8_t i = 0; i < nl; ++i)
+    std::uint8_t nl = reader.ReadByte();
+    for (std::uint8_t i = 0; i < nl; ++i)
     {
         fullLower.append(1, reader.ReadUChar());
     }
-    uint8_t nt = reader.ReadByte();
-    for (uint8_t i = 0; i < nt; ++i)
+    std::uint8_t nt = reader.ReadByte();
+    for (std::uint8_t i = 0; i < nt; ++i)
     {
         fullTitle.append(1, reader.ReadUChar());
     }
-    uint8_t nf = reader.ReadByte();
-    for (uint8_t i = 0; i < nf; ++i)
+    std::uint8_t nf = reader.ReadByte();
+    for (std::uint8_t i = 0; i < nf; ++i)
     {
         fullFolding.append(1, reader.ReadUChar());
     }
     bidiClass = static_cast<BidiClassId>(reader.ReadByte());
     numericType = static_cast<NumericTypeId>(reader.ReadByte());
     numericValue = reader.ReadUtf8String();
-    uint8_t na = reader.ReadByte();
-    for (uint8_t i = 0; i < na; ++i)
+    std::uint8_t na = reader.ReadByte();
+    for (std::uint8_t i = 0; i < na; ++i)
     {
         Alias alias;
         alias.Read(reader);
@@ -1553,9 +1553,9 @@ void ExtendedCharacterInfoHeader::AllocatePages(int numExtendedPages)
 
 void ExtendedCharacterInfoHeader::Write(BinaryStreamWriter& writer)
 {
-    uint32_t n = extendedPageStarts.size();
+    std::uint32_t n = extendedPageStarts.size();
     writer.Write(n);
-    for (uint32_t i = 0; i < n; ++i)
+    for (std::uint32_t i = 0; i < n; ++i)
     {
         writer.Write(extendedPageStarts[i]);
     }
@@ -1563,15 +1563,15 @@ void ExtendedCharacterInfoHeader::Write(BinaryStreamWriter& writer)
 
 void ExtendedCharacterInfoHeader::Read(BinaryStreamReader& reader)
 {
-    uint32_t n = reader.ReadUInt();
-    for (uint32_t i = 0; i < n; ++i)
+    std::uint32_t n = reader.ReadUInt();
+    for (std::uint32_t i = 0; i < n; ++i)
     {
-        uint32_t start = reader.ReadUInt();
+        std::uint32_t start = reader.ReadUInt();
         extendedPageStarts.push_back(start);
     }
 }
 
-uint32_t ExtendedCharacterInfoHeader::GetPageStart(int pageIndex) const
+std::uint32_t ExtendedCharacterInfoHeader::GetPageStart(int pageIndex) const
 {
     if (pageIndex < 0 || pageIndex >= extendedPageStarts.size())
     {
@@ -1582,7 +1582,7 @@ uint32_t ExtendedCharacterInfoHeader::GetPageStart(int pageIndex) const
     return extendedPageStarts[pageIndex];
 }
 
-void ExtendedCharacterInfoHeader::SetPageStart(int pageIndex, uint32_t extendedPageStart)
+void ExtendedCharacterInfoHeader::SetPageStart(int pageIndex, std::uint32_t extendedPageStart)
 {
     if (pageIndex < 0 || pageIndex >= extendedPageStarts.size())
     {
@@ -1593,7 +1593,7 @@ void ExtendedCharacterInfoHeader::SetPageStart(int pageIndex, uint32_t extendedP
     extendedPageStarts[pageIndex] = extendedPageStart;
 }
 
-std::vector<uint8_t> headerMagic;
+std::vector<std::uint8_t> headerMagic;
 
 struct InitHeaderMagic
 {
@@ -1638,14 +1638,14 @@ std::string CharacterTable::DeflateFilePath() const
     return Path::ChangeExtension(FilePath(), ".deflate.bin");
 }
 
-void CharacterTable::SetData(uint8_t* data_, int64_t size_)
+void CharacterTable::SetData(std::uint8_t* data_, std::int64_t size_)
 {
     data = data_;
     size = size_;
     dataSource = CharacterTableDataSource::memory;
 }
 
-int64_t CharacterTable::GetUncompressedFileSize() const
+std::int64_t CharacterTable::GetUncompressedFileSize() const
 {
     std::string ucdFilePath = FilePath();
     return std::filesystem::file_size(ucdFilePath);
@@ -1681,14 +1681,14 @@ void CharacterTable::Write()
         CharacterInfoPage* page = pages[i].get();
         page->Write(writer);
     }
-    extendedHeaderStart = static_cast<uint32_t>(writer.Position());
+    extendedHeaderStart = static_cast<std::uint32_t>(writer.Position());
     int nx = extendedPages.size();
     extendedHeader.AllocatePages(nx);
     extendedHeader.Write(writer);
-    extendedHeaderEnd = static_cast<uint32_t>(writer.Position());
+    extendedHeaderEnd = static_cast<std::uint32_t>(writer.Position());
     for (int i = 0; i < nx; ++i)
     {
-        extendedHeader.SetPageStart(i, static_cast<uint32_t>(writer.Position()));
+        extendedHeader.SetPageStart(i, static_cast<std::uint32_t>(writer.Position()));
         ExtendedCharacterInfoPage* extendedPage = extendedPages[i].get();
         extendedPage->Write(writer);
     }
@@ -1704,14 +1704,14 @@ void CharacterTable::WriteHeader(BinaryStreamWriter& writer)
     {
         writer.Write(headerMagic[i]);
     }
-    writer.Write(uint32_t(extendedHeaderStart));
-    writer.Write(uint32_t(extendedHeaderEnd));
+    writer.Write(std::uint32_t(extendedHeaderStart));
+    writer.Write(std::uint32_t(extendedHeaderEnd));
 }
 
 void CharacterTable::ReadHeader(BinaryStreamReader& reader)
 {
     headerRead = true;
-    uint8_t magic[8];
+    std::uint8_t magic[8];
     for (int i = 0; i < 8; ++i)
     {
         magic[i] = reader.ReadByte();
@@ -1769,7 +1769,7 @@ const CharacterInfo& CharacterTable::GetCharacterInfo(char32_t codePoint)
         {
             Streams streams = GetReadStreams();
             BinaryStreamReader reader(streams.Back());
-            uint32_t pageStart = static_cast<uint32_t>(headerSize + characterInfoPageSize * pageIndex);
+            std::uint32_t pageStart = static_cast<std::uint32_t>(headerSize + characterInfoPageSize * pageIndex);
             if (!headerRead)
             {
                 ReadHeader(reader);
@@ -1836,7 +1836,7 @@ const ExtendedCharacterInfo& CharacterTable::GetExtendedCharacterInfo(char32_t c
                 reader.GetStream().Seek(extendedHeaderStart, Origin::seekSet);
                 ReadExtendedHeader(reader);
             }
-            uint32_t pageStart = extendedHeader.GetPageStart(pageIndex);
+            std::uint32_t pageStart = extendedHeader.GetPageStart(pageIndex);
             reader.GetStream().Seek(pageStart, Origin::seekSet);
             extendedPage = new ExtendedCharacterInfoPage();
             extendedPage->Read(reader);

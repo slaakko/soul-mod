@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -46,7 +46,7 @@ std::string ParseStringValue(const std::string& str)
             case 2:
             {
                 hexByteStr.append(1, c);
-                uint8_t hexByte = util::ParseHexByte(hexByteStr);
+                std::uint8_t hexByte = util::ParseHexByte(hexByteStr);
                 if (hexByte == 0)
                 {
                     ret = true;

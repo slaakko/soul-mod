@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,10 +14,10 @@ struct SourcePos
     SourcePos() : pos(-1), file(-1), line(0), col(0) {}
     SourcePos(int line_, int col_) : pos(-1), file(-1), line(line_), col(col_) {}
     SourcePos(int file_, int line_, int col_) : pos(-1), file(file_), line(line_), col(col_) {}
-    SourcePos(int64_t pos_, int line_, int col_) : pos(pos_), file(-1), line(line_), col(col_) {}
-    SourcePos(int64_t pos_, int file_, int line_, int col_) : pos(pos_), file(file_), line(line_), col(col_) {}
+    SourcePos(std::int64_t pos_, int line_, int col_) : pos(pos_), file(-1), line(line_), col(col_) {}
+    SourcePos(std::int64_t pos_, int file_, int line_, int col_) : pos(pos_), file(file_), line(line_), col(col_) {}
     bool IsValid() const { return line != 0; }
-    int64_t pos;
+    std::int64_t pos;
     int file;
     int line;
     int col;

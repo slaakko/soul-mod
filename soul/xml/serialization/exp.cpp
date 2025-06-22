@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,42 +14,42 @@ std::string ToString(bool value)
     if (value) return "true"; else return "false";
 }
 
-std::string ToString(int8_t value)
+std::string ToString(std::int8_t value)
 {
     return std::to_string(value);
 }
 
-std::string ToString(uint8_t value)
+std::string ToString(std::uint8_t value)
 {
     return std::to_string(value);
 }
 
-std::string ToString(int16_t value)
+std::string ToString(std::int16_t value)
 {
     return std::to_string(value);
 }
 
-std::string ToString(uint16_t value)
+std::string ToString(std::uint16_t value)
 {
     return std::to_string(value);
 }
 
-std::string ToString(int32_t value)
+std::string ToString(std::int32_t value)
 {
     return std::to_string(value);
 }
 
-std::string ToString(uint32_t value)
+std::string ToString(std::uint32_t value)
 {
     return std::to_string(value);
 }
 
-std::string ToString(int64_t value)
+std::string ToString(std::int64_t value)
 {
     return std::to_string(value);
 }
 
-std::string ToString(uint64_t value)
+std::string ToString(std::uint64_t value)
 {
     return std::to_string(value);
 }

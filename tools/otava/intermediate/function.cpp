@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -22,8 +22,8 @@ Function::Function(const SourcePos& sourcePos_, FunctionType* type_, const std::
     flags(FunctionFlags::none), sourcePos(sourcePos_), type(type_), name(name_), metadataRef(metadataRef_), nextRegNumber(0), basicBlocks(this), nextBasicBlockId(0)
 {
     entryBlock.reset(new BasicBlock(sourcePos_, nextBasicBlockId++));
-    int32_t n = type->ParamTypeRefs().size();
-    for (int32_t index = 0; index < n; ++index)
+    std::int32_t n = type->ParamTypeRefs().size();
+    for (std::int32_t index = 0; index < n; ++index)
     {
         const TypeRef& paramTypeRef = type->ParamTypeRefs()[index];
         RegValue* regValue = new RegValue(sourcePos_, paramTypeRef.GetType());
@@ -152,7 +152,7 @@ BasicBlock* Function::CreateBasicBlock()
     return bb;
 }
 
-BasicBlock* Function::GetBasicBlock(int32_t id) const
+BasicBlock* Function::GetBasicBlock(std::int32_t id) const
 {
     auto it = basicBlockMap.find(id);
     if (it != basicBlockMap.cend())
@@ -180,7 +180,7 @@ std::unique_ptr<BasicBlock> Function::RemoveBasicBlock(BasicBlock* bb)
     return std::unique_ptr<BasicBlock>(static_cast<BasicBlock*>(basicBlocks.RemoveChild(bb).release()));
 }
 
-BasicBlock* Function::AddBasicBlock(const SourcePos& sourcePos, int32_t id, Context* context)
+BasicBlock* Function::AddBasicBlock(const SourcePos& sourcePos, std::int32_t id, Context* context)
 {
     BasicBlock* prev = GetBasicBlock(id);
     if (prev)
@@ -210,7 +210,7 @@ bool Function::DoRemoveBasicBlock(BasicBlock* block)
     return true;
 }
 
-RegValue* Function::GetRegValue(int32_t reg) const
+RegValue* Function::GetRegValue(std::int32_t reg) const
 {
     auto it = regValueMap.find(reg);
     if (it != regValueMap.cend())
@@ -223,7 +223,7 @@ RegValue* Function::GetRegValue(int32_t reg) const
     }
 }
 
-RegValue* Function::GetRegRef(const SourcePos& sourcePos, Type* type, int32_t reg, Context* context) const
+RegValue* Function::GetRegRef(const SourcePos& sourcePos, Type* type, std::int32_t reg, Context* context) const
 {
     RegValue* regValue = GetRegValue(reg);
     if (regValue)
@@ -244,7 +244,7 @@ RegValue* Function::GetRegRef(const SourcePos& sourcePos, Type* type, int32_t re
     return nullptr;
 }
 
-RegValue* Function::MakeRegValue(const SourcePos& sourcePos, Type* type, int32_t reg, Context* context)
+RegValue* Function::MakeRegValue(const SourcePos& sourcePos, Type* type, std::int32_t reg, Context* context)
 {
     RegValue* prev = GetRegValue(reg);
     if (prev)
@@ -258,7 +258,7 @@ RegValue* Function::MakeRegValue(const SourcePos& sourcePos, Type* type, int32_t
     return regValue;
 }
 
-Instruction* Function::GetInstruction(int32_t reg) const
+Instruction* Function::GetInstruction(std::int32_t reg) const
 {
     auto it = instructionMap.find(reg);
     if (it != instructionMap.cend())
@@ -271,7 +271,7 @@ Instruction* Function::GetInstruction(int32_t reg) const
     }
 }
 
-void Function::MapInstruction(int32_t reg, Instruction* inst, Context* context)
+void Function::MapInstruction(std::int32_t reg, Instruction* inst, Context* context)
 {
     Instruction* prev = GetInstruction(reg);
     if (prev)

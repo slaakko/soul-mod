@@ -4,10 +4,10 @@ namespace otava::pp::parser::spg::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 1180017559924113409, "PPParser.PPLIne" },
         { 1180017559924113410, "PPParser.PPCommand" },
         { 1180017559924113411, "PPParser.IfCommand" },

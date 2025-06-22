@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -13,21 +13,21 @@ export namespace util {
 class MemoryWriter
 {
 public:
-    MemoryWriter(uint8_t* ptr_, int64_t count_);
-    void Write(uint8_t x);
-    void Write(int8_t x);
-    void Write(uint16_t x);
-    void Write(int16_t x);
-    void Write(uint32_t x);
-    void Write(int32_t x);
-    void Write(uint64_t x);
-    void Write(int64_t x);
+    MemoryWriter(std::uint8_t* ptr_, std::int64_t count_);
+    void Write(std::uint8_t x);
+    void Write(std::int8_t x);
+    void Write(std::uint16_t x);
+    void Write(std::int16_t x);
+    void Write(std::uint32_t x);
+    void Write(std::int32_t x);
+    void Write(std::uint64_t x);
+    void Write(std::int64_t x);
     void Write(const DateTime& dt);
     void Write(const std::string& str);
 private:
-    uint8_t* ptr;
-    uint8_t* pos;
-    int64_t count;
+    std::uint8_t* ptr;
+    std::uint8_t* pos;
+    std::int64_t count;
 };
 
 } // namespace util

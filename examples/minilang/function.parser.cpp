@@ -23,7 +23,7 @@ template<typename LexerT>
 soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -39,7 +39,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -70,7 +70,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                                     soul::parser::Match match(true);
                                     soul::parser::Match* parentMatch8 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = IdentifierParser<LexerT>::Identifier(lexer);
                                         functionName.reset(static_cast<minilang::ast::IdentifierNode*>(match.value));
                                         if (match.hit)
@@ -96,11 +96,11 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch10 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(true);
                                     soul::parser::Match* parentMatch11 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match(false);
                                         if (*lexer == LPAREN)
                                         {
@@ -134,7 +134,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                         soul::parser::Match* parentMatch12 = &match;
                         {
                             soul::parser::Match match(true);
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             soul::parser::Match* parentMatch13 = &match;
                             {
                                 soul::parser::Match match = FunctionParser<LexerT>::ParameterList(lexer, function.get());
@@ -161,7 +161,7 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                         soul::parser::Match match(true);
                         soul::parser::Match* parentMatch15 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == RPAREN)
                             {
@@ -191,11 +191,11 @@ soul::parser::Match FunctionParser<LexerT>::Function(LexerT& lexer)
                     soul::parser::Match match(false);
                     soul::parser::Match* parentMatch17 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(true);
                         soul::parser::Match* parentMatch18 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = StatementParser<LexerT>::CompoundStatement(lexer);
                             functionBody.reset(static_cast<minilang::ast::CompoundStatementNode*>(match.value));
                             if (match.hit)
@@ -248,7 +248,7 @@ template<typename LexerT>
 soul::parser::Match FunctionParser<LexerT>::ParameterList(LexerT& lexer, minilang::ast::FunctionNode* function)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -268,7 +268,7 @@ soul::parser::Match FunctionParser<LexerT>::ParameterList(LexerT& lexer, minilan
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = FunctionParser<LexerT>::Parameter(lexer);
                 left.reset(static_cast<minilang::ast::ParameterNode*>(match.value));
                 if (match.hit)
@@ -289,7 +289,7 @@ soul::parser::Match FunctionParser<LexerT>::ParameterList(LexerT& lexer, minilan
                 {
                     while (true)
                     {
-                        int64_t save = lexer.GetPos();
+                        std::int64_t save = lexer.GetPos();
                         {
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch5 = &match;
@@ -313,11 +313,11 @@ soul::parser::Match FunctionParser<LexerT>::ParameterList(LexerT& lexer, minilan
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch8 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(true);
                                             soul::parser::Match* parentMatch9 = &match;
                                             {
-                                                int64_t pos = lexer.GetPos();
+                                                std::int64_t pos = lexer.GetPos();
                                                 soul::parser::Match match = FunctionParser<LexerT>::Parameter(lexer);
                                                 right.reset(static_cast<minilang::ast::ParameterNode*>(match.value));
                                                 if (match.hit)
@@ -377,7 +377,7 @@ template<typename LexerT>
 soul::parser::Match FunctionParser<LexerT>::Parameter(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -391,7 +391,7 @@ soul::parser::Match FunctionParser<LexerT>::Parameter(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {

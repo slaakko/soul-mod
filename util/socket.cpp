@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -55,7 +55,7 @@ void Sockets::Done()
     WSACleanup();
 }
 
-int64_t CreateSocket()
+std::int64_t CreateSocket()
 {
     SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (s == INVALID_SOCKET)
@@ -64,10 +64,10 @@ int64_t CreateSocket()
         std::string errorMessage = GetSocketErrorMessage(errorCode);
         throw std::runtime_error(errorMessage);
     }
-    return static_cast<int64_t>(s);
+    return static_cast<std::int64_t>(s);
 }
 
-void BindSocket(int64_t socketHandle, int port)
+void BindSocket(std::int64_t socketHandle, int port)
 {
     int result = 0;
     SOCKET s = static_cast<SOCKET>(socketHandle);
@@ -85,7 +85,7 @@ void BindSocket(int64_t socketHandle, int port)
     }
 }
 
-void ListenSocket(int64_t socketHandle, int backlog)
+void ListenSocket(std::int64_t socketHandle, int backlog)
 {
     int result = 0;
     SOCKET s = static_cast<SOCKET>(socketHandle);
@@ -98,7 +98,7 @@ void ListenSocket(int64_t socketHandle, int backlog)
     }
 }
 
-int64_t AcceptSocket(int64_t socketHandle)
+std::int64_t AcceptSocket(std::int64_t socketHandle)
 {
     SOCKET s = static_cast<SOCKET>(socketHandle);
     SOCKET a = accept(s, NULL, NULL);
@@ -108,10 +108,10 @@ int64_t AcceptSocket(int64_t socketHandle)
         std::string errorMessage = GetSocketErrorMessage(errorCode);
         throw std::runtime_error(errorMessage);
     }
-    return static_cast<int64_t>(a);
+    return static_cast<std::int64_t>(a);
 }
 
-void CloseSocket(int64_t socketHandle)
+void CloseSocket(std::int64_t socketHandle)
 {
     int result = 0;
     SOCKET s = static_cast<SOCKET>(socketHandle);
@@ -124,7 +124,7 @@ void CloseSocket(int64_t socketHandle)
     }
 }
 
-void ShutdownSocket(int64_t socketHandle, ShutdownMode mode)
+void ShutdownSocket(std::int64_t socketHandle, ShutdownMode mode)
 {
     int result = 0;
     int how = SD_RECEIVE;
@@ -144,7 +144,7 @@ void ShutdownSocket(int64_t socketHandle, ShutdownMode mode)
     }
 }
 
-int64_t ConnectSocket(const std::string& node, const std::string& service)
+std::int64_t ConnectSocket(const std::string& node, const std::string& service)
 {
     struct addrinfo hint;
     struct addrinfo* rp;
@@ -178,7 +178,7 @@ int64_t ConnectSocket(const std::string& node, const std::string& service)
             if (result == 0)
             {
                 freeaddrinfo(res);
-                return static_cast<int64_t>(s);
+                return static_cast<std::int64_t>(s);
             }
             else
             {
@@ -193,7 +193,7 @@ int64_t ConnectSocket(const std::string& node, const std::string& service)
     throw std::runtime_error(errorMessage);
 }
 
-int SendSocket(int64_t socketHandle, const uint8_t* buf, int len, int flags)
+int SendSocket(std::int64_t socketHandle, const std::uint8_t* buf, int len, int flags)
 {
     int result = 0;
     SOCKET s = static_cast<SOCKET>(socketHandle);
@@ -207,7 +207,7 @@ int SendSocket(int64_t socketHandle, const uint8_t* buf, int len, int flags)
     return result;
 }
 
-int ReceiveSocket(int64_t socketHandle, uint8_t* buf, int len, int flags)
+int ReceiveSocket(std::int64_t socketHandle, std::uint8_t* buf, int len, int flags)
 {
     int result = 0;
     SOCKET s = static_cast<SOCKET>(socketHandle);
@@ -239,7 +239,7 @@ TcpSocket::TcpSocket(const std::string& node, const std::string& service) : hand
 {
 }
 
-TcpSocket::TcpSocket(int64_t handle_) noexcept : handle(handle_), connected(true), shutdown(false)
+TcpSocket::TcpSocket(std::int64_t handle_) noexcept : handle(handle_), connected(true), shutdown(false)
 {
 }
 
@@ -290,7 +290,7 @@ void TcpSocket::Close()
         {
             Shutdown(ShutdownMode::both);
         }
-        int64_t s = handle;
+        std::int64_t s = handle;
         handle = -1;
         connected = false;
         CloseSocket(s);
@@ -316,7 +316,7 @@ void TcpSocket::Listen(int backlog)
 
 TcpSocket TcpSocket::Accept()
 {
-    int64_t acceptedHandle = AcceptSocket(handle);
+    std::int64_t acceptedHandle = AcceptSocket(handle);
     return TcpSocket(acceptedHandle);
 }
 
@@ -326,13 +326,13 @@ void TcpSocket::Shutdown(ShutdownMode mode)
     ShutdownSocket(handle, mode);
 }
 
-void TcpSocket::Send(const uint8_t* buffer, int count)
+void TcpSocket::Send(const std::uint8_t* buffer, int count)
 {
     int offset = 0;
     int bytesToSend = count;
     while (bytesToSend > 0)
     {
-        int32_t result = SendSocket(handle, buffer + offset, count, 0);
+        std::int32_t result = SendSocket(handle, buffer + offset, count, 0);
         if (result >= 0)
         {
             bytesToSend = bytesToSend - result;
@@ -341,7 +341,7 @@ void TcpSocket::Send(const uint8_t* buffer, int count)
     }
 }
 
-int TcpSocket::Receive(uint8_t* buffer, int count)
+int TcpSocket::Receive(std::uint8_t* buffer, int count)
 {
     int result = ReceiveSocket(handle, buffer, count, 0);
     return result;
@@ -349,18 +349,18 @@ int TcpSocket::Receive(uint8_t* buffer, int count)
 
 void Write(TcpSocket& socket, const std::string& s)
 {
-    int32_t size = s.length();
-    uint8_t buffer[sizeof(size)];
+    std::int32_t size = s.length();
+    std::uint8_t buffer[sizeof(size)];
     MemoryWriter writer(&buffer[0], sizeof(size));
     writer.Write(size);
     socket.Send(&buffer[0], sizeof(size));
-    socket.Send(reinterpret_cast<const uint8_t*>(s.c_str()), size);
+    socket.Send(reinterpret_cast<const std::uint8_t*>(s.c_str()), size);
 }
 
 std::string ReadStr(TcpSocket& socket)
 {
-    int32_t size = 0;
-    uint8_t buffer[sizeof(size)];
+    std::int32_t size = 0;
+    std::uint8_t buffer[sizeof(size)];
     int offset = 0;
     int bytesToReceive = sizeof(size);
     int bytesReceived = socket.Receive(&buffer[offset], bytesToReceive);
@@ -386,7 +386,7 @@ std::string ReadStr(TcpSocket& socket)
     {
         return std::string();
     }
-    std::unique_ptr<uint8_t[]> mem(new uint8_t[size]);
+    std::unique_ptr<std::uint8_t[]> mem(new std::uint8_t[size]);
     offset = 0;
     bytesToReceive = size;
     bytesReceived = socket.Receive(mem.get() + offset, bytesToReceive);

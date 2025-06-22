@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,63 +15,63 @@ BinaryStreamWriter::BinaryStreamWriter(Stream& stream_) : stream(stream_)
 
 void BinaryStreamWriter::Write(bool x)
 {
-    Write(uint8_t(x));
+    Write(std::uint8_t(x));
 }
 
-void BinaryStreamWriter::Write(uint8_t x)
+void BinaryStreamWriter::Write(std::uint8_t x)
 {
     stream.Write(x);
 }
 
 #ifndef OTAVA
 
-void BinaryStreamWriter::Write(int8_t x)
+void BinaryStreamWriter::Write(std::int8_t x)
 {
-    Write(static_cast<uint8_t>(x));
+    Write(static_cast<std::uint8_t>(x));
 }
 
 #endif
 
-void BinaryStreamWriter::Write(uint16_t x)
+void BinaryStreamWriter::Write(std::uint16_t x)
 {
-    uint8_t b0 = static_cast<uint8_t>(x >> 8);
-    uint8_t b1 = static_cast<uint8_t>(x);
+    std::uint8_t b0 = static_cast<std::uint8_t>(x >> 8);
+    std::uint8_t b1 = static_cast<std::uint8_t>(x);
     Write(b0);
     Write(b1);
 }
 
-void BinaryStreamWriter::Write(int16_t x)
+void BinaryStreamWriter::Write(std::int16_t x)
 {
-    Write(static_cast<uint16_t>(x));
+    Write(static_cast<std::uint16_t>(x));
 }
 
-void BinaryStreamWriter::Write(uint32_t x)
+void BinaryStreamWriter::Write(std::uint32_t x)
 {
-    uint8_t b0 = static_cast<uint8_t>(x >> 24);
-    uint8_t b1 = static_cast<uint8_t>(x >> 16);
-    uint8_t b2 = static_cast<uint8_t>(x >> 8);
-    uint8_t b3 = static_cast<uint8_t>(x);
+    std::uint8_t b0 = static_cast<std::uint8_t>(x >> 24);
+    std::uint8_t b1 = static_cast<std::uint8_t>(x >> 16);
+    std::uint8_t b2 = static_cast<std::uint8_t>(x >> 8);
+    std::uint8_t b3 = static_cast<std::uint8_t>(x);
     Write(b0);
     Write(b1);
     Write(b2);
     Write(b3);
 }
 
-void BinaryStreamWriter::Write(int32_t x)
+void BinaryStreamWriter::Write(std::int32_t x)
 {
-    Write(static_cast<uint32_t>(x));
+    Write(static_cast<std::uint32_t>(x));
 }
 
-void BinaryStreamWriter::Write(uint64_t x)
+void BinaryStreamWriter::Write(std::uint64_t x)
 {
-    uint8_t b0 = static_cast<uint8_t>(x >> 56);
-    uint8_t b1 = static_cast<uint8_t>(x >> 48);
-    uint8_t b2 = static_cast<uint8_t>(x >> 40);
-    uint8_t b3 = static_cast<uint8_t>(x >> 32);
-    uint8_t b4 = static_cast<uint8_t>(x >> 24);
-    uint8_t b5 = static_cast<uint8_t>(x >> 16);
-    uint8_t b6 = static_cast<uint8_t>(x >> 8);
-    uint8_t b7 = static_cast<uint8_t>(x);
+    std::uint8_t b0 = static_cast<std::uint8_t>(x >> 56);
+    std::uint8_t b1 = static_cast<std::uint8_t>(x >> 48);
+    std::uint8_t b2 = static_cast<std::uint8_t>(x >> 40);
+    std::uint8_t b3 = static_cast<std::uint8_t>(x >> 32);
+    std::uint8_t b4 = static_cast<std::uint8_t>(x >> 24);
+    std::uint8_t b5 = static_cast<std::uint8_t>(x >> 16);
+    std::uint8_t b6 = static_cast<std::uint8_t>(x >> 8);
+    std::uint8_t b7 = static_cast<std::uint8_t>(x);
     Write(b0);
     Write(b1);
     Write(b2);
@@ -82,45 +82,45 @@ void BinaryStreamWriter::Write(uint64_t x)
     Write(b7);
 }
 
-void BinaryStreamWriter::Write(int64_t x)
+void BinaryStreamWriter::Write(std::int64_t x)
 {
-    Write(static_cast<uint64_t>(x));
+    Write(static_cast<std::uint64_t>(x));
 }
 
 #ifndef OTAVA
 
 void BinaryStreamWriter::Write(float x)
 {
-    uint32_t* u = reinterpret_cast<uint32_t*>(&x);
+    std::uint32_t* u = reinterpret_cast<std::uint32_t*>(&x);
     Write(*u);
 }
 
 void BinaryStreamWriter::Write(double x)
 {
-    uint64_t* u = reinterpret_cast<uint64_t*>(&x);
+    std::uint64_t* u = reinterpret_cast<std::uint64_t*>(&x);
     Write(*u);
 }
 
 void BinaryStreamWriter::Write(char x)
 {
-    Write(static_cast<uint8_t>(x));
+    Write(static_cast<std::uint8_t>(x));
 }
 
 #endif
 
 void BinaryStreamWriter::Write(char8_t x)
 {
-    Write(static_cast<uint8_t>(x));
+    Write(static_cast<std::uint8_t>(x));
 }
 
 void BinaryStreamWriter::Write(char16_t x)
 {
-    Write(static_cast<uint16_t>(x));
+    Write(static_cast<std::uint16_t>(x));
 }
 
 void BinaryStreamWriter::Write(char32_t x)
 {
-    Write(static_cast<uint32_t>(x));
+    Write(static_cast<std::uint32_t>(x));
 }
 
 void BinaryStreamWriter::Write(const std::string& s)
@@ -132,12 +132,12 @@ void BinaryStreamWriter::Write(const std::string& s, bool writeNull)
 {
     for (char c : s)
     {
-        uint8_t x = static_cast<uint8_t>(c);
+        std::uint8_t x = static_cast<std::uint8_t>(c);
         Write(x);
     }
     if (writeNull)
     {
-        Write(static_cast<uint8_t>(0));
+        Write(static_cast<std::uint8_t>(0));
     }
 }
 
@@ -153,45 +153,45 @@ void BinaryStreamWriter::Write(const std::u32string& s)
     Write(utf8_str);
 }
 
-void BinaryStreamWriter::WriteULEB128UInt(uint32_t x)
+void BinaryStreamWriter::WriteULEB128UInt(std::uint32_t x)
 {
     do
     {
-        uint8_t b = x & 0x7F;
+        std::uint8_t b = x & 0x7F;
         x >>= 7u;
         if (x != 0)
         {
-            b |= static_cast<uint8_t>(0x80);
+            b |= static_cast<std::uint8_t>(0x80);
         }
         Write(b);
     } while (x != 0);
 }
 
-void BinaryStreamWriter::WriteULEB128ULong(uint64_t x)
+void BinaryStreamWriter::WriteULEB128ULong(std::uint64_t x)
 {
     do
     {
-        uint8_t b = x & 0x7F;
+        std::uint8_t b = x & 0x7F;
         x >>= 7;
         if (x != 0)
         {
-            b |= static_cast<uint8_t>(0x80);
+            b |= static_cast<std::uint8_t>(0x80);
         }
         Write(b);
     } while (x != 0);
 }
 
-void BinaryStreamWriter::WriteSLEB128Int(int32_t x)
+void BinaryStreamWriter::WriteSLEB128Int(std::int32_t x)
 {
     bool more = true;
     bool negative = x < 0;
     while (more)
     {
-        uint8_t b = x & 0x7F;
+        std::uint8_t b = x & 0x7F;
         x >>= 7;
         if (negative)
         {
-            x |= ~int32_t(0) << (32 - 7);
+            x |= ~std::int32_t(0) << (32 - 7);
         }
         if (x == 0 && (b & 0x40) == 0 || x == -1 && (b & 0x40) != 0)
         {
@@ -199,23 +199,23 @@ void BinaryStreamWriter::WriteSLEB128Int(int32_t x)
         }
         else
         {
-            b |= static_cast<uint8_t>(0x80);
+            b |= static_cast<std::uint8_t>(0x80);
         }
         Write(b);
     }
 }
 
-void BinaryStreamWriter::WriteSLEB128Long(int64_t x)
+void BinaryStreamWriter::WriteSLEB128Long(std::int64_t x)
 {
     bool more = true;
     bool negative = x < 0;
     while (more)
     {
-        uint8_t b = x & 0x7F;
+        std::uint8_t b = x & 0x7F;
         x >>= 7;
         if (negative)
         {
-            x |= ~int64_t(0) << (64 - 7);
+            x |= ~std::int64_t(0) << (64 - 7);
         }
         if (x == 0 && (b & 0x40) == 0 || x == -1 && (b & 0x40) != 0)
         {
@@ -223,7 +223,7 @@ void BinaryStreamWriter::WriteSLEB128Long(int64_t x)
         }
         else
         {
-            b |= static_cast<uint8_t>(0x80);
+            b |= static_cast<std::uint8_t>(0x80);
         }
         Write(b);
     }
@@ -239,7 +239,7 @@ void BinaryStreamWriter::Write(const uuid& id)
 
 void BinaryStreamWriter::WriteTime(time_t time)
 {
-    Write(static_cast<int64_t>(time));
+    Write(static_cast<std::int64_t>(time));
 }
 
 } // namespace util

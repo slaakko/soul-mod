@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -185,7 +185,7 @@ void MakeClassPartition(soul::ast::re::LexerContext& lexerContext)
 
 void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& root, bool verbose)
 {
-    std::vector<int32_t> classMapVec(0x110000, -1);
+    std::vector<std::int32_t> classMapVec(0x110000, -1);
     for (soul::ast::re::Class* cls : lexerContext.Partition())
     {
         for (const soul::ast::re::Range& range : cls->Ranges())
@@ -194,7 +194,7 @@ void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& 
             {
                 if (classMapVec[i] == -1)
                 {
-                    classMapVec[static_cast<int32_t>(i)] = cls->Index();
+                    classMapVec[static_cast<std::int32_t>(i)] = cls->Index();
                 }
             }
         }
@@ -217,10 +217,10 @@ void MakeClassMap(soul::ast::re::LexerContext& lexerContext, const std::string& 
     util::FileStream fileStream(classMapFileName, util::OpenMode::binary | util::OpenMode::write);
     util::BufferedStream bufferedStream(fileStream);
     util::BinaryStreamWriter writer(bufferedStream);
-    int32_t size = static_cast<int32_t>(classMapVec.size());
+    std::int32_t size = static_cast<std::int32_t>(classMapVec.size());
     writer.Write(size);
     // size = 0x110000
-    for (int32_t x : classMapVec)
+    for (std::int32_t x : classMapVec)
     {
         writer.Write(x);
     }
@@ -488,11 +488,11 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("using Variables = " + lexer->VariableClassName() + ";");
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)");
+    interfaceFormatter.WriteLine("static std::int32_t NextState(std::int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();");
-    interfaceFormatter.WriteLine("int32_t cls = classmap->GetClass(chr);");
+    interfaceFormatter.WriteLine("std::int32_t cls = classmap->GetClass(chr);");
     interfaceFormatter.WriteLine("switch (state)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
@@ -506,7 +506,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
             interfaceFormatter.WriteLine("auto& token = lexer.CurrentToken();");
             interfaceFormatter.WriteLine("auto prevMatch = token.match;");
             interfaceFormatter.WriteLine("token.match = lexer.CurrentLexeme();");
-            interfaceFormatter.WriteLine("int64_t tokenId = GetTokenId(" + std::to_string(state->RuleIndex()) + ", lexer);");
+            interfaceFormatter.WriteLine("std::int64_t tokenId = GetTokenId(" + std::to_string(state->RuleIndex()) + ", lexer);");
             interfaceFormatter.WriteLine("if (tokenId == soul::lexer::CONTINUE_TOKEN)");
             interfaceFormatter.WriteLine("{");
             interfaceFormatter.IncIndent();
@@ -527,7 +527,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
             interfaceFormatter.DecIndent();
             interfaceFormatter.WriteLine("}");
         }
-        std::map<int32_t, std::set<int32_t>> m;
+        std::map<std::int32_t, std::set<std::int32_t>> m;
         for (soul::ast::re::Class* cls : lexerContext.Partition())
         {
             soul::ast::re::DfaState* next = state->Next(cls->Index());
@@ -547,9 +547,9 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
             interfaceFormatter.IncIndent();
             for (const auto& p : m)
             {
-                int32_t n = p.first;
-                const std::set<int32_t>& s = p.second;
-                for (int32_t k : s)
+                std::int32_t n = p.first;
+                const std::set<std::int32_t>& s = p.second;
+                for (std::int32_t k : s)
                 {
                     interfaceFormatter.WriteLine("case " + std::to_string(k) + ":");
                 }
@@ -577,7 +577,7 @@ void WriteLexer(soul::ast::re::LexerContext& lexerContext, soul::ast::slg::SlgFi
     interfaceFormatter.DecIndent();
     interfaceFormatter.WriteLine("}");
     interfaceFormatter.WriteLine();
-    interfaceFormatter.WriteLine("static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)");
+    interfaceFormatter.WriteLine("static std::int64_t GetTokenId(std::int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)");
     interfaceFormatter.WriteLine("{");
     interfaceFormatter.IncIndent();
     interfaceFormatter.WriteLine("switch (ruleIndex)");

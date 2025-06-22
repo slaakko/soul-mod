@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -479,7 +479,7 @@ bool fs_exists_error(void* p, int* error, char** msg)
     return retval;
 }
 
-uint64_t fs_file_size(void* p)
+std::uint64_t fs_file_size(void* p)
 {
     try
     {
@@ -492,10 +492,10 @@ uint64_t fs_file_size(void* p)
     return 0;
 }
 
-uint64_t fs_file_size_error(void* p, int* error, char** msg)
+std::uint64_t fs_file_size_error(void* p, int* error, char** msg)
 {
     std::error_code ec;
-    uint64_t retval = std::filesystem::file_size(*static_cast<std::filesystem::path*>(p), ec);
+    std::uint64_t retval = std::filesystem::file_size(*static_cast<std::filesystem::path*>(p), ec);
     if (ec)
     {
         *error = ec.value();
@@ -759,14 +759,14 @@ bool fs_is_symlink_error(void* p, int* error, char** msg)
     return retval;
 }
 
-int64_t fs_last_write_time(void* p)
+std::int64_t fs_last_write_time(void* p)
 {
     auto time = std::filesystem::last_write_time(*static_cast<std::filesystem::path*>(p));
-    int64_t nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
+    std::int64_t nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
     return nsecs;
 }
 
-int64_t fs_last_write_time_error(void* p, int* error, char** msg)
+std::int64_t fs_last_write_time_error(void* p, int* error, char** msg)
 {
     std::error_code ec;
     auto time = std::filesystem::last_write_time(*static_cast<std::filesystem::path*>(p), ec);
@@ -778,7 +778,7 @@ int64_t fs_last_write_time_error(void* p, int* error, char** msg)
 #pragma warning(suppress : 4996)
         strcpy(*msg, m.c_str());
     }
-    int64_t nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
+    std::int64_t nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
     return nsecs;
 }
 
@@ -842,15 +842,15 @@ bool fs_remove_error(void* p, int* error, char** msg)
     return retval;
 }
 
-uint64_t fs_remove_all(void* p)
+std::uint64_t fs_remove_all(void* p)
 {
     return std::filesystem::remove_all(*static_cast<std::filesystem::path*>(p));
 }
 
-uint64_t fs_remove_all_error(void* p, int* error, char** msg)
+std::uint64_t fs_remove_all_error(void* p, int* error, char** msg)
 {
     std::error_code ec;
-    uint64_t retval = std::filesystem::remove_all(*static_cast<std::filesystem::path*>(p), ec);
+    std::uint64_t retval = std::filesystem::remove_all(*static_cast<std::filesystem::path*>(p), ec);
     if (ec)
     {
         *error = ec.value();
@@ -881,12 +881,12 @@ void fs_rename_error(void* from, void* to, int* error, char** msg)
     }
 }
 
-void fs_resize_file(void* p, uint64_t size)
+void fs_resize_file(void* p, std::uint64_t size)
 {
     std::filesystem::resize_file(*static_cast<std::filesystem::path*>(p), size);
 }
 
-void fs_resize_file_error(void* p, uint64_t size, int* error, char** msg)
+void fs_resize_file_error(void* p, std::uint64_t size, int* error, char** msg)
 {
     std::error_code ec;
     std::filesystem::resize_file(*static_cast<std::filesystem::path*>(p), size, ec);

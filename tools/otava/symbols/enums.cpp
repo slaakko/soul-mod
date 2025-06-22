@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -48,7 +48,7 @@ void EnumeratedTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(bound);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(kind));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(kind));
     bool hasUnderlyingType = underlyingType != nullptr;
     writer.GetBinaryStreamWriter().Write(hasUnderlyingType);
     if (hasUnderlyingType)
@@ -127,7 +127,7 @@ void ForwardEnumDeclarationSymbol::Accept(Visitor& visitor)
 void ForwardEnumDeclarationSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(enumTypeKind));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(enumTypeKind));
     bool hasUnderlyingType = underlyingType != nullptr;
     writer.GetBinaryStreamWriter().Write(hasUnderlyingType);
     if (hasUnderlyingType)
@@ -250,7 +250,7 @@ private:
     TypeSymbol* underlyingType;
     Scope* scope;
     Value* value;
-    int64_t prevValue;
+    std::int64_t prevValue;
     bool first;
     bool createEnumeratedType;
     bool createEnumerators;

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -19,7 +19,7 @@ lexer OtavaTokenLineLexer
         "{line_comment}" { return LINE_COMMENT; }
         "{block_comment_start}" { return BLOCK_COMMENT_START; }
         "{block_comment_end}" { return BLOCK_COMMENT_END; }
-        "{id}" { int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return KEYWORD; }
+        "{id}" { std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match); if (kw == soul::lexer::INVALID_TOKEN) return ID; else return KEYWORD; }
         "{integer_literal}" { return INTEGER_LITERAL; }
         "{floating_literal}" { return FLOATING_LITERAL; }
         "{character_literal}" { return CHARACTER_LITERAL; }

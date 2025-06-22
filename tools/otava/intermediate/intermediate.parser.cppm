@@ -24,9 +24,9 @@ struct IntermediateCodeParser
     static soul::parser::Match TypeId(Lexer& lexer);
     static soul::parser::Match FundamentalTypeId(Lexer& lexer);
     static soul::parser::Match TypeRef(Lexer& lexer);
-    static soul::parser::Match StructureType(Lexer& lexer, otava::intermediate::Context* context, int32_t typeId);
-    static soul::parser::Match ArrayType(Lexer& lexer, otava::intermediate::Context* context, int32_t typeId);
-    static soul::parser::Match FunctionType(Lexer& lexer, otava::intermediate::Context* context, int32_t typeId);
+    static soul::parser::Match StructureType(Lexer& lexer, otava::intermediate::Context* context, std::int32_t typeId);
+    static soul::parser::Match ArrayType(Lexer& lexer, otava::intermediate::Context* context, std::int32_t typeId);
+    static soul::parser::Match FunctionType(Lexer& lexer, otava::intermediate::Context* context, std::int32_t typeId);
     static soul::parser::Match DataDefinitions(Lexer& lexer, otava::intermediate::Context* context);
     static soul::parser::Match DataDefinition(Lexer& lexer, otava::intermediate::Context* context);
     static soul::parser::Match Constant(Lexer& lexer, otava::intermediate::Context* context);

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -102,7 +102,7 @@ otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* 
     return context->GetFunctionType(soul::ast::SourcePos(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
 }
 
-otava::intermediate::Type* Emitter::MakeArrayType(int64_t size, otava::intermediate::Type* elementType)
+otava::intermediate::Type* Emitter::MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType)
 {
     otava::intermediate::TypeRef elementTypeRef = elementType->GetTypeRef();
     return context->GetArrayType(soul::ast::SourcePos(), context->NextTypeId(), size, elementTypeRef);
@@ -208,47 +208,47 @@ otava::intermediate::Value* Emitter::EmitBool(bool value)
     }
 }
 
-otava::intermediate::Value* Emitter::EmitSByte(int8_t value)
+otava::intermediate::Value* Emitter::EmitSByte(std::int8_t value)
 {
     return context->GetSByteValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitByte(uint8_t value)
+otava::intermediate::Value* Emitter::EmitByte(std::uint8_t value)
 {
     return context->GetByteValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitShort(int16_t value)
+otava::intermediate::Value* Emitter::EmitShort(std::int16_t value)
 {
     return context->GetShortValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitUShort(uint16_t value)
+otava::intermediate::Value* Emitter::EmitUShort(std::uint16_t value)
 {
     return context->GetUShortValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitInt(int32_t value)
+otava::intermediate::Value* Emitter::EmitInt(std::int32_t value)
 {
     return context->GetIntValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitUInt(uint32_t value)
+otava::intermediate::Value* Emitter::EmitUInt(std::uint32_t value)
 {
     return context->GetUIntValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitLong(int64_t value)
+otava::intermediate::Value* Emitter::EmitLong(std::int64_t value)
 {
     return context->GetLongValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitULong(uint64_t value)
+otava::intermediate::Value* Emitter::EmitULong(std::uint64_t value)
 {
     return context->GetULongValue(value);
 }
 
-otava::intermediate::Value* Emitter::EmitIntegerValue(otava::intermediate::Type* type, int64_t value)
+otava::intermediate::Value* Emitter::EmitIntegerValue(otava::intermediate::Type* type, std::int64_t value)
 {
     return context->GetIntegerValue(type, value);
 }
@@ -462,8 +462,8 @@ otava::intermediate::Value* Emitter::EmitPtrDiff(otava::intermediate::Value* lef
 
 otava::intermediate::Value* Emitter::EmitCall(otava::intermediate::Value* function, const std::vector<otava::intermediate::Value*>& args)
 {
-    int32_t n = args.size();
-    for (int32_t i = 0; i < n; ++i)
+    std::int32_t n = args.size();
+    for (std::int32_t i = 0; i < n; ++i)
     {
         otava::intermediate::Value* arg = args[i];
         context->CreateArg(arg);

@@ -64,7 +64,7 @@ template<typename LexerT>
 soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -79,7 +79,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -108,11 +108,11 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match(true);
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match = CommonParser<LexerT>::QualifiedId(lexer);
                                     projectName.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                                     if (match.hit)
@@ -144,7 +144,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
                         soul::parser::Match match(true);
                         soul::parser::Match* parentMatch9 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match(false);
                             if (*lexer == SEMICOLON)
                             {
@@ -176,7 +176,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
                     {
                         while (true)
                         {
-                            int64_t save = lexer.GetPos();
+                            std::int64_t save = lexer.GetPos();
                             {
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch12 = &match;
@@ -184,7 +184,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
                                     soul::parser::Match match(false);
                                     soul::parser::Match* parentMatch13 = &match;
                                     {
-                                        int64_t pos = lexer.GetPos();
+                                        std::int64_t pos = lexer.GetPos();
                                         soul::parser::Match match = SpgFileParser<LexerT>::SpgFileDeclaration(lexer);
                                         declaration.reset(static_cast<soul::ast::spg::SpgFileDeclaration*>(match.value));
                                         if (match.hit)
@@ -242,7 +242,7 @@ template<typename LexerT>
 soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -255,7 +255,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match = SpgFileParser<LexerT>::ParserFileDeclaration(lexer);
         parserFileDeclaration.reset(static_cast<soul::ast::spg::ParserFileDeclaration*>(match.value));
         if (match.hit)
@@ -287,7 +287,7 @@ template<typename LexerT>
 soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -301,7 +301,7 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
@@ -320,11 +320,11 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch6 = &match;
                             {
-                                int64_t save = lexer.GetPos();
+                                std::int64_t save = lexer.GetPos();
                                 soul::parser::Match match(false);
                                 soul::parser::Match* parentMatch7 = &match;
                                 {
-                                    int64_t pos = lexer.GetPos();
+                                    std::int64_t pos = lexer.GetPos();
                                     soul::parser::Match match(false);
                                     if (*lexer == EXTERN)
                                     {
@@ -347,7 +347,7 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
                                         soul::parser::Match match(false);
                                         soul::parser::Match* parentMatch9 = &match;
                                         {
-                                            int64_t pos = lexer.GetPos();
+                                            std::int64_t pos = lexer.GetPos();
                                             soul::parser::Match match(true);
                                             if (match.hit)
                                             {
@@ -384,7 +384,7 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
                         soul::parser::Match match(true);
                         soul::parser::Match* parentMatch12 = &match;
                         {
-                            int64_t pos = lexer.GetPos();
+                            std::int64_t pos = lexer.GetPos();
                             soul::parser::Match match = CommonParser<LexerT>::FilePath(lexer);
                             filePath.reset(static_cast<soul::parser::Value<std::string>*>(match.value));
                             if (match.hit)
@@ -410,7 +410,7 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
                     soul::parser::Match match(true);
                     soul::parser::Match* parentMatch14 = &match;
                     {
-                        int64_t pos = lexer.GetPos();
+                        std::int64_t pos = lexer.GetPos();
                         soul::parser::Match match(false);
                         if (*lexer == SEMICOLON)
                         {

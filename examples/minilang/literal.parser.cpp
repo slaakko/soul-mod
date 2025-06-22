@@ -19,7 +19,7 @@ template<typename LexerT>
 soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -33,11 +33,11 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t save = lexer.GetPos();
+        std::int64_t save = lexer.GetPos();
         soul::parser::Match match(false);
         soul::parser::Match* parentMatch1 = &match;
         {
-            int64_t pos = lexer.GetPos();
+            std::int64_t pos = lexer.GetPos();
             soul::parser::Match match = LiteralParser<LexerT>::BooleanLiteral(lexer);
             booleanLiteral.reset(static_cast<minilang::ast::Node*>(match.value));
             if (match.hit)
@@ -61,7 +61,7 @@ soul::parser::Match LiteralParser<LexerT>::Literal(LexerT& lexer)
                 soul::parser::Match match(false);
                 soul::parser::Match* parentMatch3 = &match;
                 {
-                    int64_t pos = lexer.GetPos();
+                    std::int64_t pos = lexer.GetPos();
                     soul::parser::Match match = LiteralParser<LexerT>::IntegerLiteral(lexer);
                     integerLiteral.reset(static_cast<minilang::ast::Node*>(match.value));
                     if (match.hit)
@@ -98,7 +98,7 @@ template<typename LexerT>
 soul::parser::Match LiteralParser<LexerT>::BooleanLiteral(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -108,7 +108,7 @@ soul::parser::Match LiteralParser<LexerT>::BooleanLiteral(LexerT& lexer)
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2710058753855586306);
     soul::parser::Match match(false);
-    int64_t pos = lexer.GetPos();
+    std::int64_t pos = lexer.GetPos();
     switch (*lexer)
     {
         case TRUE:
@@ -156,7 +156,7 @@ template<typename LexerT>
 soul::parser::Match LiteralParser<LexerT>::IntegerLiteral(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -168,7 +168,7 @@ soul::parser::Match LiteralParser<LexerT>::IntegerLiteral(LexerT& lexer)
     soul::parser::Match match(false);
     soul::parser::Match* parentMatch0 = &match;
     {
-        int64_t pos = lexer.GetPos();
+        std::int64_t pos = lexer.GetPos();
         soul::parser::Match match(false);
         if (*lexer == INTEGER_LITERAL)
         {

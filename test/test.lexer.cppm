@@ -37,10 +37,10 @@ struct TestLexer
 {
     using Variables = TestLexer_Variables;
 
-    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
+    static std::int32_t NextState(std::int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
         soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
-        int32_t cls = classmap->GetClass(chr);
+        std::int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
             case 0:
@@ -64,7 +64,7 @@ struct TestLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -99,7 +99,7 @@ struct TestLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -133,14 +133,14 @@ struct TestLexer
         return -1;
     }
 
-    static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
+    static std::int64_t GetTokenId(std::int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
     {
         switch (ruleIndex)
         {
             case 0:
             {
                 lexer.Retract();
-                int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
+                std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
                 if (kw == soul::lexer::INVALID_TOKEN) return ID;
                 else return kw;
                 break;

@@ -33,10 +33,10 @@ struct SolutionLexer
 {
     using Variables = SolutionLexer_Variables;
 
-    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
+    static std::int32_t NextState(std::int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
         soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
-        int32_t cls = classmap->GetClass(chr);
+        std::int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
             case 0:
@@ -83,7 +83,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(4, lexer);
+                std::int64_t tokenId = GetTokenId(4, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -104,7 +104,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(3, lexer);
+                std::int64_t tokenId = GetTokenId(3, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -156,7 +156,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(2, lexer);
+                std::int64_t tokenId = GetTokenId(2, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -208,7 +208,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lexer);
+                std::int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -243,7 +243,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(1, lexer);
+                std::int64_t tokenId = GetTokenId(1, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -363,7 +363,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -526,7 +526,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -584,7 +584,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -718,7 +718,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -776,7 +776,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -837,7 +837,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -898,7 +898,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1038,7 +1038,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1093,7 +1093,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1186,7 +1186,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1241,7 +1241,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1395,7 +1395,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1436,7 +1436,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1509,7 +1509,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1547,7 +1547,7 @@ struct SolutionLexer
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
                 token.match = lexer.CurrentLexeme();
-                int64_t tokenId = GetTokenId(0, lexer);
+                std::int64_t tokenId = GetTokenId(0, lexer);
                 if (tokenId == soul::lexer::CONTINUE_TOKEN)
                 {
                     token.id = soul::lexer::CONTINUE_TOKEN;
@@ -1584,7 +1584,7 @@ struct SolutionLexer
         return -1;
     }
 
-    static int64_t GetTokenId(int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
+    static std::int64_t GetTokenId(std::int32_t ruleIndex, soul::lexer::LexerBase<Char>& lexer)
     {
         switch (ruleIndex)
         {
@@ -1596,7 +1596,7 @@ struct SolutionLexer
             case 1:
             {
                 lexer.Retract();
-                int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
+                std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
                 if (kw == soul::lexer::INVALID_TOKEN) return ID;
                 else return kw;
                 break;

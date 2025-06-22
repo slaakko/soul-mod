@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -16,11 +16,11 @@ std::string UniversalCharacterName(char32_t c)
     s.append("\\");
     if (c >= 0 && c <= 0xFFFF)
     {
-        s.append("u").append(util::ToHexString(static_cast<uint16_t>(c)));
+        s.append("u").append(util::ToHexString(static_cast<std::uint16_t>(c)));
     }
     else
     {
-        s.append("U").append(util::ToHexString(static_cast<uint32_t>(c)));
+        s.append("U").append(util::ToHexString(static_cast<std::uint32_t>(c)));
     }
     return s;
 }

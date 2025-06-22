@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -206,7 +206,7 @@ std::string HexEscape(char c)
     return s;
 }
 
-std::u32string HexEscape(uint32_t c)
+std::u32string HexEscape(std::uint32_t c)
 {
     std::string s = "\\x";
     s.append(ToHexString(c));
@@ -216,7 +216,7 @@ std::u32string HexEscape(uint32_t c)
 std::u32string CharHexEscape(char32_t c)
 {
     std::string s = "\\U";
-    s.append(ToHexString(static_cast<uint32_t>(c)));
+    s.append(ToHexString(static_cast<std::uint32_t>(c)));
     return ToUtf32(s);
 }
 
@@ -457,67 +457,67 @@ std::string ToString(double x, int minNumDecimals, int maxNumDecimals)
     return result;
 }
 
-inline char HexNibble(uint8_t n)
+inline char HexNibble(std::uint8_t n)
 {
     const char* h = "0123456789ABCDEF";
     return h[n];
 }
 
-std::string ToHexString(uint8_t x)
+std::string ToHexString(std::uint8_t x)
 {
     std::string s;
     s.append(1, HexNibble(x >> 4)).append(1, HexNibble(x & 0x0F));
     return s;
 }
 
-std::string ToHexString(uint16_t x)
+std::string ToHexString(std::uint16_t x)
 {
     std::string s;
-    s.append(ToHexString(uint8_t((x >> 8) & 0xFF)));
-    s.append(ToHexString(uint8_t((x & 0xFF))));
+    s.append(ToHexString(std::uint8_t((x >> 8) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x & 0xFF))));
     return s;
 }
 
-std::string ToHexString(uint32_t x)
+std::string ToHexString(std::uint32_t x)
 {
     std::string s;
-    s.append(ToHexString(uint8_t((x >> 24) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 16) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 8) & 0xFF)));
-    s.append(ToHexString(uint8_t((x & 0xFF))));
+    s.append(ToHexString(std::uint8_t((x >> 24) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 16) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 8) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x & 0xFF))));
     return s;
 }
 
-std::string ToHexString(uint64_t x)
+std::string ToHexString(std::uint64_t x)
 {
     std::string s;
-    s.append(ToHexString(uint8_t((x >> 56) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 48) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 40) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 32) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 24) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 16) & 0xFF)));
-    s.append(ToHexString(uint8_t((x >> 8) & 0xFF)));
-    s.append(ToHexString(uint8_t((x & 0xFF))));
+    s.append(ToHexString(std::uint8_t((x >> 56) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 48) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 40) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 32) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 24) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 16) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x >> 8) & 0xFF)));
+    s.append(ToHexString(std::uint8_t((x & 0xFF))));
     return s;
 }
 
-uint8_t ParseHexByte(const std::string& hexByteStr)
+std::uint8_t ParseHexByte(const std::string& hexByteStr)
 {
-    return static_cast<uint8_t>(std::stoi(hexByteStr, nullptr, 16));
+    return static_cast<std::uint8_t>(std::stoi(hexByteStr, nullptr, 16));
 }
 
-uint64_t ParseHexULong(const std::string& hexByteStr)
+std::uint64_t ParseHexULong(const std::string& hexByteStr)
 {
     return std::stoull(hexByteStr, nullptr, 16);
 }
 
-int32_t ParseOctal(const std::string& octalDigitStr)
+std::int32_t ParseOctal(const std::string& octalDigitStr)
 {
     return std::stoi(octalDigitStr, nullptr, 8);
 }
 
-std::string ToOctalString(int32_t value, int numDigits)
+std::string ToOctalString(std::int32_t value, int numDigits)
 {
     std::string str;
     for (int i = 0; i < numDigits; ++i)

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -51,7 +51,7 @@ parser IntermediateCodeParser
         }
         ;
 
-    TypeDeclaration(otava::intermediate::Context* context, var int32_t tid)
+    TypeDeclaration(otava::intermediate::Context* context, var std::int32_t tid)
         ::= TypeId:typeId{ tid = typeId;} ASSIGN TYPE
         (   StructureType(context, tid):structureType
         |   ArrayType(context, tid):arrayType
@@ -59,14 +59,14 @@ parser IntermediateCodeParser
         )
         ;
 
-    TypeId : int32_t
+    TypeId : std::int32_t
         ::= 
         (
             TYPEID{ return otava::intermediate::MakeUserTypeId(util::ToUtf8(lexer.GetToken(pos).ToString())); }
         )
         ;
 
-    FundamentalTypeId : int32_t
+    FundamentalTypeId : std::int32_t
         ::= VOID{ return otava::intermediate::voidTypeId; }
         |   BOOL{ return otava::intermediate::boolTypeId; }
         |   SBYTE{ return otava::intermediate::sbyteTypeId; }
@@ -81,7 +81,7 @@ parser IntermediateCodeParser
         |   DOUBLE{ return otava::intermediate::doubleTypeId; }
         ;
 
-    TypeRef(var soul::ast::SourcePos sp, var int32_t baseTypeId, var int8_t pointerCount) : otava::intermediate::TypeRef
+    TypeRef(var soul::ast::SourcePos sp, var std::int32_t baseTypeId, var std::int8_t pointerCount) : otava::intermediate::TypeRef
         ::= 
         (
             (   TypeId:typeId{ sp = lexer.GetSourcePos(pos); baseTypeId = typeId; }
@@ -94,7 +94,7 @@ parser IntermediateCodeParser
         }
         ;
 
-    StructureType(otava::intermediate::Context* context, int32_t typeId, var soul::ast::SourcePos sp, var std::vector<otava::intermediate::TypeRef> fieldTypeRefs)
+    StructureType(otava::intermediate::Context* context, std::int32_t typeId, var soul::ast::SourcePos sp, var std::vector<otava::intermediate::TypeRef> fieldTypeRefs)
         ::= LBRACE{ sp = lexer.GetSourcePos(pos); } 
             (TypeRef:first{ fieldTypeRefs.push_back(first); } 
             (COMMA TypeRef:next{ fieldTypeRefs.push_back(next); })*)? 
@@ -104,7 +104,7 @@ parser IntermediateCodeParser
         }
         ;
 
-    ArrayType(otava::intermediate::Context* context, int32_t typeId, var soul::ast::SourcePos sp, var int64_t size)
+    ArrayType(otava::intermediate::Context* context, std::int32_t typeId, var soul::ast::SourcePos sp, var std::int64_t size)
         ::= LBRACKET { sp = lexer.GetSourcePos(pos); } 
             NUMBER{ size = lexer.GetToken(pos).ToLong(); } 
             ID{ pass = util::ToUtf8(lexer.GetToken(pos).ToString()) == "x"; } 
@@ -115,7 +115,7 @@ parser IntermediateCodeParser
         }
         ;
 
-    FunctionType(otava::intermediate::Context* context, int32_t typeId, var soul::ast::SourcePos sp, var std::vector<otava::intermediate::TypeRef> paramTypeRefs)
+    FunctionType(otava::intermediate::Context* context, std::int32_t typeId, var soul::ast::SourcePos sp, var std::vector<otava::intermediate::TypeRef> paramTypeRefs)
         ::= FUNCTION{ sp = lexer.GetSourcePos(pos); } 
             TypeRef:returnTypeRef 
             LPAREN 
@@ -293,11 +293,11 @@ parser IntermediateCodeParser
         ;
 
     RegValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::Value*
-        ::= DOLLAR{ sp = lexer.GetSourcePos(pos); } NUMBER{ int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->GetRegRef(sp, type, reg, context); }
+        ::= DOLLAR{ sp = lexer.GetSourcePos(pos); } NUMBER{ std::int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->GetRegRef(sp, type, reg, context); }
         ;
 
     ResultRegValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::RegValue*
-        ::= DOLLAR{ sp = lexer.GetSourcePos(pos); } NUMBER{ int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->MakeRegValue(sp, type, reg, context); }
+        ::= DOLLAR{ sp = lexer.GetSourcePos(pos); } NUMBER{ std::int32_t reg = lexer.GetToken(pos).ToInt(); return context->CurrentFunction()->MakeRegValue(sp, type, reg, context); }
         ;
 
     SymbolValue(otava::intermediate::Context* context, otava::intermediate::Type* type, var soul::ast::SourcePos sp) : otava::intermediate::Value*
@@ -354,7 +354,7 @@ parser IntermediateCodeParser
         ::= Label:id{ sp = lexer.GetSourcePos(pos); basicBlock = function->AddBasicBlock(sp, id, context); } Instructions(context, basicBlock):instructions
         ;
 
-    Label : int32_t
+    Label : std::int32_t
         ::= AT NUMBER{ return lexer.GetToken(pos).ToInt(); }
         ;
 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -157,7 +157,7 @@ std::vector<Range> operator~(const Range& that)
     {
         result.push_back(Range(static_cast<char32_t>(1), static_cast<char32_t>(that.Start() - 1)));
     }
-    if (static_cast<uint32_t>(that.End()) < 0x110000)
+    if (static_cast<std::uint32_t>(that.End()) < 0x110000)
     {
         result.push_back(Range(static_cast<char32_t>(that.End() + 1), static_cast<char32_t>(0x10FFFF)));
     }

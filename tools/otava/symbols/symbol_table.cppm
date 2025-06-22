@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -21,10 +21,10 @@ export namespace otava::symbols {
 enum class FunctionKind;
 enum class FunctionQualifiers;
 enum class EnumTypeKind;
-enum class DeclarationFlags : int32_t;
-enum class Linkage : int32_t;
+enum class DeclarationFlags : std::int32_t;
+enum class Linkage : std::int32_t;
 
-enum class MapKind : int32_t
+enum class MapKind : std::int32_t
 {
     none, nodeToSymbol = 1 << 0, symbolToNode = 1 << 1, both = nodeToSymbol | symbolToNode
 };
@@ -44,9 +44,9 @@ constexpr MapKind operator~(MapKind kind)
     return MapKind(~int(kind));
 }
 
-enum class FundamentalTypeKind : int32_t;
+enum class FundamentalTypeKind : std::int32_t;
 enum class ClassKind;
-enum class Access : int32_t;
+enum class Access : std::int32_t;
 
 class Context;
 class Module;
@@ -79,7 +79,7 @@ class Visitor;
 class ConversionTable;
 class FunctionDefinitionSymbolSet;
 
-enum class SymbolGroupKind : int32_t;
+enum class SymbolGroupKind : std::int32_t;
 
 void SetProjectReady(bool projectReady_);
 
@@ -162,7 +162,7 @@ public:
     ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
     ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
     AliasTypeTemplateSpecializationSymbol* MakeAliasTypeTemplateSpecialization(TypeSymbol* aliasTypeTemplate, const std::vector<Symbol*>& templateArguments);
-    ArrayTypeSymbol* MakeArrayType(TypeSymbol* elementType, int64_t size);
+    ArrayTypeSymbol* MakeArrayType(TypeSymbol* elementType, std::int64_t size);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context);
     Symbol* Lookup(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
     Symbol* LookupInScopeStack(const std::u32string& name, SymbolGroupKind symbolGroupKind, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags);
@@ -269,7 +269,7 @@ private:
     std::map<ClassTemplateSpecializationSymbol*, ExplicitInstantiationSymbol*, ClassTemplateNameLess> explicitInstantiationMap;
     std::vector<std::unique_ptr<FunctionGroupTypeSymbol>> functionGroupTypes;
     std::map<FunctionGroupSymbol*, FunctionGroupTypeSymbol*> functionGroupTypeMap;
-    std::map<int32_t, TypeSymbol*> fundamentalTypeMap;
+    std::map<std::int32_t, TypeSymbol*> fundamentalTypeMap;
     std::vector<Scope*> scopeStack;
     Scope* currentScope;
     std::map<otava::ast::Node*, Symbol*> nodeSymbolMap;

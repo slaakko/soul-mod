@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -18,9 +18,9 @@ public:
     const TcpSocket& Socket() const { return socket; }
     TcpSocket& Socket() { return socket; }
     int ReadByte() override;
-    int64_t Read(uint8_t* buf, int64_t count) override;
-    void Write(uint8_t x) override;
-    void Write(uint8_t* buf, int64_t count) override;
+    std::int64_t Read(std::uint8_t* buf, std::int64_t count) override;
+    void Write(std::uint8_t x) override;
+    void Write(std::uint8_t* buf, std::int64_t count) override;
 private:
     TcpSocket socket;
 };

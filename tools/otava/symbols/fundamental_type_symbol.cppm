@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,7 +15,7 @@ export namespace otava::symbols {
 
 class Context;
 
-enum class FundamentalTypeKind : int32_t
+enum class FundamentalTypeKind : std::int32_t
 {
     none, boolType, charType, signedCharType, unsignedCharType, char8Type, char16Type, 
     shortIntType, unsignedShortIntType, char32Type, wcharType, intType, unsignedIntType, longIntType, unsignedLongIntType, 
@@ -40,7 +40,7 @@ public:
     bool IsBoolType() const override { return fundamentalTypeKind == FundamentalTypeKind::boolType; }
     bool IsNullPtrType() const override { return fundamentalTypeKind == FundamentalTypeKind::nullPtrType; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    int32_t Score() const { return static_cast<int32_t>(fundamentalTypeKind); }
+    std::int32_t Score() const { return static_cast<std::int32_t>(fundamentalTypeKind); }
 private:
     FundamentalTypeKind fundamentalTypeKind;
 };

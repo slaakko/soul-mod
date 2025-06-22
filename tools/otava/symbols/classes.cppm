@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,23 +14,23 @@ import otava.ast.classes;
 
 export namespace otava::symbols {
 
-const int32_t undefinedIndex = 0;
-const int32_t defaultCtorIndex = -1;
-const int32_t copyCtorIndex = -2;
-const int32_t moveCtorIndex = -3;
-const int32_t copyAssignmentIndex = -4;
-const int32_t moveAssignmentIndex = -5;
-const int32_t destructorIndex = -6;
+const std::int32_t undefinedIndex = 0;
+const std::int32_t defaultCtorIndex = -1;
+const std::int32_t copyCtorIndex = -2;
+const std::int32_t moveCtorIndex = -3;
+const std::int32_t copyAssignmentIndex = -4;
+const std::int32_t moveAssignmentIndex = -5;
+const std::int32_t destructorIndex = -6;
 
-const int32_t vtabClassIdElementCount = 2;
-const int32_t vtabFunctionSectionOffset = 2;
+const std::int32_t vtabClassIdElementCount = 2;
+const std::int32_t vtabFunctionSectionOffset = 2;
 
 class FunctionDefinitionSymbol;
 class ClassGroupSymbol;
 
-enum class SpecialFunctionKind : int32_t;
+enum class SpecialFunctionKind : std::int32_t;
 
-int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
+std::int32_t GetSpecialFunctionIndex(SpecialFunctionKind specialFunctionKind);
 
 using RecordedParseCompoundStatementFn = void (*)(otava::ast::CompoundStatementNode* compoundStatementNode, Context* context);
 
@@ -49,24 +49,24 @@ enum class ClassKind
     class_, struct_, union_
 };
 
-enum class ClassTypeSymbolFlags : int32_t
+enum class ClassTypeSymbolFlags : std::int32_t
 {
     none = 0, objectLayoutComputed = 1 << 0, hasUserDefinedDestructor = 1 << 1, hasUserDefinedConstructor = 1 << 2, vtabInitialized = 1 << 3
 };
 
 constexpr ClassTypeSymbolFlags operator|(ClassTypeSymbolFlags left, ClassTypeSymbolFlags right)
 {
-    return static_cast<ClassTypeSymbolFlags>(int32_t(left) | int32_t(right));
+    return static_cast<ClassTypeSymbolFlags>(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr ClassTypeSymbolFlags operator&(ClassTypeSymbolFlags left, ClassTypeSymbolFlags right)
 {
-    return static_cast<ClassTypeSymbolFlags>(int32_t(left) & int32_t(right));
+    return static_cast<ClassTypeSymbolFlags>(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr ClassTypeSymbolFlags operator~(ClassTypeSymbolFlags flags)
 {
-    return static_cast<ClassTypeSymbolFlags>(~int32_t(flags));
+    return static_cast<ClassTypeSymbolFlags>(~std::int32_t(flags));
 }
 
 class ClassTypeSymbol : public TypeSymbol
@@ -90,8 +90,8 @@ public:
     std::string IrName(Context* context) const override;
     const std::string& VTabName(Context* context) const { return vtabName; }
     void ComputeVTabName(Context* context);
-    int32_t VPtrIndex() const { return vptrIndex; }
-    void SetVPtrIndex(int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
+    std::int32_t VPtrIndex() const { return vptrIndex; }
+    void SetVPtrIndex(std::int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
     otava::intermediate::Type* VPtrType(Emitter& emitter) const;
     otava::intermediate::Value* GetVTabVariable(Emitter& emitter, Context* context);
     ClassTypeSymbol* VPtrHolderClass() const;
@@ -118,8 +118,8 @@ public:
     const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
     void MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context);
     void MapFunction(FunctionSymbol* function);
-    FunctionSymbol* GetFunction(int32_t functionIndex) const;
-    int32_t NextFunctionIndex();
+    FunctionSymbol* GetFunction(std::int32_t functionIndex) const;
+    std::int32_t NextFunctionIndex();
     bool GetFlag(ClassTypeSymbolFlags flag) const { return (flags & flag) != ClassTypeSymbolFlags::none; }
     void SetFlag(ClassTypeSymbolFlags flag) { flags = flags | flag; }
     void ResetFlag(ClassTypeSymbolFlags flag) { flags = flags & ~flag; }
@@ -147,7 +147,7 @@ private:
     TypeSymbol* specialization;
     util::uuid specializationId;
     std::vector<ClassTypeSymbol*> derivedClasses;
-    int32_t level;
+    std::int32_t level;
     std::vector<VariableSymbol*> memberVariables;
     std::vector<VariableSymbol*> staticMemberVariables;
     std::vector<FunctionSymbol*> memberFunctions;
@@ -155,12 +155,12 @@ private:
     std::vector<TypeSymbol*> objectLayout;
     std::vector<util::uuid> objectLayoutIds;
     otava::intermediate::Type* irType;
-    std::map<int32_t, FunctionSymbol*> functionMap;
-    std::map<int32_t, util::uuid> functionIdMap;
-    int32_t currentFunctionIndex;
+    std::map<std::int32_t, FunctionSymbol*> functionMap;
+    std::map<std::int32_t, util::uuid> functionIdMap;
+    std::int32_t currentFunctionIndex;
     std::vector<FunctionSymbol*> vtab;
-    int32_t vtabSize;
-    int32_t vptrIndex;
+    std::int32_t vtabSize;
+    std::int32_t vptrIndex;
     std::vector<FunctionSymbol*> conversionFunctions;
     ClassGroupSymbol* group;
     std::string vtabName;

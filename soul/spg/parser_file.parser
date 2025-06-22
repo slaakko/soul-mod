@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -223,7 +223,7 @@ parser ParserFileParser
         }
         ;
 
-    RuleCall(var std::string ruleName, var int64_t nonterminalPos, var std::unique_ptr<soul::ast::cpp::ExprListNode> args) : soul::ast::spg::Parser*
+    RuleCall(var std::string ruleName, var std::int64_t nonterminalPos, var std::unique_ptr<soul::ast::cpp::ExprListNode> args) : soul::ast::spg::Parser*
         ::= 
         (
             Nonterminal:nt{ ruleName = nt; nonterminalPos = pos; }

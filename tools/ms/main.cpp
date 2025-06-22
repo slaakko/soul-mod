@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -28,7 +28,7 @@ int main(int argc, const char** argv)
         boost::process::system(command);
         auto end = std::chrono::steady_clock::now();
         std::chrono::steady_clock::duration elapsed = end - start;
-        int64_t ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
+        std::int64_t ms = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
         std::cout << ms << " milliseconds elapsed" << std::endl;
     }
     catch (const std::exception& ex)

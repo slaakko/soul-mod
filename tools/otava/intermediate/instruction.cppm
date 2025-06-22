@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -27,12 +27,12 @@ class RegValue : public Value
 {
 public:
     RegValue(const SourcePos& sourcePos_, Type* type_);
-    int32_t Reg() const { return reg; }
-    void SetReg(int32_t reg_) { reg = reg_; }
+    std::int32_t Reg() const { return reg; }
+    void SetReg(std::int32_t reg_) { reg = reg_; }
     void SetInst(Instruction* inst_) { inst = inst_; }
     Instruction* Inst() const { return inst; }
 private:
-    int32_t reg;
+    std::int32_t reg;
     Instruction* inst;
 };
 
@@ -136,37 +136,37 @@ private:
 class JmpInstruction : public Instruction
 {
 public:
-    JmpInstruction(const SourcePos& sourcePos_, int32_t targetLabelId_);
+    JmpInstruction(const SourcePos& sourcePos_, std::int32_t targetLabelId_);
     void Write(util::CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
-    int32_t TargetLabelId() const { return targetLabelId; }
+    std::int32_t TargetLabelId() const { return targetLabelId; }
     BasicBlock* TargetBasicBlock() const { return targetBasicBlock; }
     void SetTargetBasicBlock(BasicBlock* targetBasicBlock_) { targetBasicBlock = targetBasicBlock_; }
 private:
-    int32_t targetLabelId;
+    std::int32_t targetLabelId;
     BasicBlock* targetBasicBlock;
 };
 
 class BranchInstruction : public Instruction
 {
 public:
-    BranchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t trueTargetLabelId_, int32_t falseTargetLabelId_);
+    BranchInstruction(const SourcePos& sourcePos_, Value* cond_, std::int32_t trueTargetLabelId_, std::int32_t falseTargetLabelId_);
     void Write(util::CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
     Value* Cond() const { return cond; }
-    int32_t TrueTargetLabelId() const { return trueTargetLabelId; }
+    std::int32_t TrueTargetLabelId() const { return trueTargetLabelId; }
     BasicBlock* TrueTargetBasicBlock() const { return trueTargetBasicBlock; }
     void SetTrueTargetBasicBlock(BasicBlock* trueTargetBasicBlock_) { trueTargetBasicBlock = trueTargetBasicBlock_; }
-    int32_t FalseTargetLabelId() const { return falseTargetLabelId; }
+    std::int32_t FalseTargetLabelId() const { return falseTargetLabelId; }
     BasicBlock* FalseTargetBasicBlock() const { return falseTargetBasicBlock; }
     void SetFalseTargetBasicBlock(BasicBlock* falseTargetBasicBlock_) { falseTargetBasicBlock = falseTargetBasicBlock_; }
     void AddUse();
     void AddToUses(std::vector<Use>& uses);
 private:
     Value* cond;
-    int32_t trueTargetLabelId;
+    std::int32_t trueTargetLabelId;
     BasicBlock* trueTargetBasicBlock;
-    int32_t falseTargetLabelId;
+    std::int32_t falseTargetLabelId;
     BasicBlock* falseTargetBasicBlock;
 };
 
@@ -201,20 +201,20 @@ private:
 
 struct CaseTarget
 {
-    CaseTarget(Value* caseValue_, int32_t targetBlockId_) : caseValue(caseValue_), targetBlockId(targetBlockId_), targetBlock(nullptr) {}
+    CaseTarget(Value* caseValue_, std::int32_t targetBlockId_) : caseValue(caseValue_), targetBlockId(targetBlockId_), targetBlock(nullptr) {}
     Value* caseValue;
-    int32_t targetBlockId;
+    std::int32_t targetBlockId;
     BasicBlock* targetBlock;
 };
 
 class SwitchInstruction : public Instruction
 {
 public:
-    SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, int32_t defaultTargetId_);
+    SwitchInstruction(const SourcePos& sourcePos_, Value* cond_, std::int32_t defaultTargetId_);
     void Write(util::CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
     Value* Cond() const { return cond; }
-    int32_t DefaultTargetId() const { return defaultTargetId; }
+    std::int32_t DefaultTargetId() const { return defaultTargetId; }
     void SetDefaultTargetBlock(BasicBlock* defaultTargetBlock_);
     void AddCaseTarget(const CaseTarget& caseTarget);
     const std::vector<CaseTarget>& CaseTargets() const { return caseTargets; }
@@ -224,7 +224,7 @@ public:
     void AddToUses(std::vector<Use>& uses);
 private:
     Value* cond;
-    int32_t defaultTargetId;
+    std::int32_t defaultTargetId;
     BasicBlock* defaultTargetBlock;
     std::vector<CaseTarget> caseTargets;
 };
@@ -571,10 +571,10 @@ private:
 
 struct BlockValue
 {
-    BlockValue(Value* value_, int32_t blockId_) : value(value_), blockId(blockId_), block(nullptr) {}
+    BlockValue(Value* value_, std::int32_t blockId_) : value(value_), blockId(blockId_), block(nullptr) {}
     BlockValue(Value* value_, BasicBlock* block_);
     Value* value;
-    int32_t blockId;
+    std::int32_t blockId;
     BasicBlock* block;
 };
 

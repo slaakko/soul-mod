@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -53,7 +53,7 @@ void FunctionTypeSymbol::Write(Writer& writer)
 {
     TypeSymbol::Write(writer);
     writer.GetBinaryStreamWriter().Write(returnType->Id());
-    uint32_t paramTypeCount = parameterTypes.size();
+    std::uint32_t paramTypeCount = parameterTypes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(paramTypeCount);
     for (const auto& paramType : parameterTypes)
     {
@@ -65,8 +65,8 @@ void FunctionTypeSymbol::Read(Reader& reader)
 {
     TypeSymbol::Read(reader);
     reader.GetBinaryStreamReader().ReadUuid(returnTypeId);
-    uint32_t paramTypeCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < paramTypeCount; ++i)
+    std::uint32_t paramTypeCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < paramTypeCount; ++i)
     {
         util::uuid paramTypeId;
         reader.GetBinaryStreamReader().ReadUuid(paramTypeId);

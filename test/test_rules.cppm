@@ -4,6 +4,6 @@ import std.core;
 
 export namespace test::rules {
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr();
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr();
 
 } // test::rules

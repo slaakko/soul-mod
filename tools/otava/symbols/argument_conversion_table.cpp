@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -33,7 +33,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return type; }
     TypeSymbol* ConversionArgType() const override { return type; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 255; }
+    std::int32_t ConversionDistance() const override { return 255; }
     bool IsIdentityConversion() const override { return true; }
 private:
     TypeSymbol* type;
@@ -80,7 +80,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return baseTypePtr; }
     TypeSymbol* ConversionArgType() const override { return derivedTypePtr; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return distance; }
+    std::int32_t ConversionDistance() const override { return distance; }
 private:
     TypeSymbol* derivedTypePtr;
     TypeSymbol* baseTypePtr;
@@ -139,7 +139,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return derivedTypePtr; }
     TypeSymbol* ConversionArgType() const override { return baseTypePtr; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return distance; }
+    std::int32_t ConversionDistance() const override { return distance; }
 private:
     TypeSymbol* baseTypePtr;
     TypeSymbol* derivedTypePtr;
@@ -191,7 +191,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return pointerType; }
     TypeSymbol* ConversionArgType() const override { return argType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    int32_t ConversionDistance() const override { return 1; }
+    std::int32_t ConversionDistance() const override { return 1; }
 private:
     TypeSymbol* argType;
     TypeSymbol* pointerType;
@@ -240,7 +240,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return targetPointerType; }
     TypeSymbol* ConversionArgType() const override { return voidPtrType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 255; }
+    std::int32_t ConversionDistance() const override { return 255; }
 private:
     TypeSymbol* voidPtrType;
     TypeSymbol* targetPointerType;
@@ -289,7 +289,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return voidPtrType; }
     TypeSymbol* ConversionArgType() const override { return ptrType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    int32_t ConversionDistance() const override { return 10; }
+    std::int32_t ConversionDistance() const override { return 10; }
 private:
     TypeSymbol* ptrType;
     TypeSymbol* voidPtrType;
@@ -338,7 +338,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return targetPtrType; }
     TypeSymbol* ConversionArgType() const override { return sourcePtrType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 255; }
+    std::int32_t ConversionDistance() const override { return 255; }
 private:
     TypeSymbol* sourcePtrType;
     TypeSymbol* targetPtrType;
@@ -390,7 +390,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return uint64Type; }
     TypeSymbol* ConversionArgType() const override { return ptrType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 255; }
+    std::int32_t ConversionDistance() const override { return 255; }
 private:
     TypeSymbol* ptrType;
     TypeSymbol* uint64Type;
@@ -440,7 +440,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return ptrType; }
     TypeSymbol* ConversionArgType() const override { return uint64Type; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 255; }
+    std::int32_t ConversionDistance() const override { return 255; }
 private:
     TypeSymbol* uint64Type;
     TypeSymbol* ptrType;
@@ -490,7 +490,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return boolType; }
     TypeSymbol* ConversionArgType() const override { return ptrType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    int32_t ConversionDistance() const override { return 1; }
+    std::int32_t ConversionDistance() const override { return 1; }
 private:
     TypeSymbol* ptrType;
     TypeSymbol* boolType;
@@ -544,7 +544,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return elementPtrType; }
     TypeSymbol* ConversionArgType() const override { return arrayPtrType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
-    int32_t ConversionDistance() const override { return 1; }
+    std::int32_t ConversionDistance() const override { return 1; }
 private:
     ArrayTypeSymbol* arrayType;
     TypeSymbol* arrayPtrType;
@@ -642,7 +642,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return underlyingType; }
     TypeSymbol* ConversionArgType() const override { return enumType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 100; }
+    std::int32_t ConversionDistance() const override { return 100; }
 private:
     EnumeratedTypeSymbol* enumType;
     TypeSymbol* underlyingType;
@@ -701,7 +701,7 @@ public:
     TypeSymbol* ConversionParamType() const override { return enumType; }
     TypeSymbol* ConversionArgType() const override { return underlyingType; }
     ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
-    int32_t ConversionDistance() const override { return 255; }
+    std::int32_t ConversionDistance() const override { return 255; }
 private:
     EnumeratedTypeSymbol* enumType;
     TypeSymbol* underlyingType;

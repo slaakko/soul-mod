@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -26,11 +26,11 @@ struct TrivialLexer
 {
     using Variables = TrivialLexer_Variables;
 
-    static int32_t NextState(int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
+    static std::int32_t NextState(std::int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
         auto& token = lexer.CurrentToken();
         token.match = lexer.CurrentLexeme();
-        token.id = static_cast<int64_t>(chr);
+        token.id = static_cast<std::int64_t>(chr);
         if (chr == '\n')
         {
             lexer.SetLine(lexer.Line() + 1);

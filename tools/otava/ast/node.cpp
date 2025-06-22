@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -229,9 +229,9 @@ void SequenceNode::Clear()
 void SequenceNode::Write(Writer& writer)
 {
     Node::Write(writer);
-    uint32_t n = Nodes().Count();
+    std::uint32_t n = Nodes().Count();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
-    for (uint32_t i = 0; i < n; ++i)
+    for (std::uint32_t i = 0; i < n; ++i)
     {
         Node* node = nodes[i];
         writer.Write(node);
@@ -241,8 +241,8 @@ void SequenceNode::Write(Writer& writer)
 void SequenceNode::Read(Reader& reader)
 {
     Node::Read(reader);
-    uint32_t n = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < n; ++i)
+    std::uint32_t n = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < n; ++i)
     {
         Node* node = reader.ReadNode();
         AddNode(node);
@@ -272,9 +272,9 @@ void ListNode::Clear()
 void ListNode::Write(Writer& writer)
 {
     Node::Write(writer);
-    uint32_t n = Nodes().Count();
+    std::uint32_t n = Nodes().Count();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(n);
-    for (uint32_t i = 0; i < n; ++i)
+    for (std::uint32_t i = 0; i < n; ++i)
     {
         Node* node = nodes[i];
         writer.Write(node);
@@ -284,8 +284,8 @@ void ListNode::Write(Writer& writer)
 void ListNode::Read(Reader& reader)
 {
     Node::Read(reader);
-    uint32_t n = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < n; ++i)
+    std::uint32_t n = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < n; ++i)
     {
         Node* node = reader.ReadNode();
         AddNode(node);
@@ -716,9 +716,9 @@ bool NodeIdFactory::IsInternallyMapped() const
     return internallyMappedBit != 0;
 }
 
-int64_t NodeIdFactory::GetNextNodeId()
+std::int64_t NodeIdFactory::GetNextNodeId()
 {
-    int64_t nextNodeId = (static_cast<int64_t>(moduleId) << 32) | static_cast<int64_t>(nodeId) | static_cast<int64_t>(internallyMappedBit);
+    std::int64_t nextNodeId = (static_cast<std::int64_t>(moduleId) << 32) | static_cast<std::int64_t>(nodeId) | static_cast<std::int64_t>(internallyMappedBit);
     ++nodeId;
     return nextNodeId;
 }
@@ -738,7 +738,7 @@ void SetNodeIdFactory(NodeIdFactory* factory)
     nodeIdFactory = factory;
 }
 
-int64_t GetNextNodeId()
+std::int64_t GetNextNodeId()
 {
     return nodeIdFactory->GetNextNodeId();
 }

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -81,18 +81,18 @@ bool operator<(const uuid& left, const uuid& right)
     return false;
 }
 
-void UuidToInts(const uuid& id, uint64_t& int1, uint64_t& int2)
+void UuidToInts(const uuid& id, std::uint64_t& int1, std::uint64_t& int2)
 {
-    const uint8_t* i = &id.data[0];
-    const uint64_t* i64 = reinterpret_cast<const uint64_t*>(i);
+    const std::uint8_t* i = &id.data[0];
+    const std::uint64_t* i64 = reinterpret_cast<const std::uint64_t*>(i);
     int1 = *i64++;
     int2 = *i64;
 }
 
-void IntsToUuid(uint64_t int1, uint64_t int2, uuid& id)
+void IntsToUuid(std::uint64_t int1, std::uint64_t int2, uuid& id)
 {
-    uint8_t* i = &id.data[0];
-    uint64_t* i64 = reinterpret_cast<uint64_t*>(i);
+    std::uint8_t* i = &id.data[0];
+    std::uint64_t* i64 = reinterpret_cast<std::uint64_t*>(i);
     *i64++ = int1;
     *i64 = int2;
 }
@@ -106,7 +106,7 @@ std::string ToString(const uuid& id)
 {
     std::string s;
     int index = 0;
-    for (uint8_t x : id)
+    for (std::uint8_t x : id)
     {
         s.append(ToLowerNarrow(ToHexString(x)));
         if (index == 3 || index == 5 || index == 7 || index == 9)
@@ -131,7 +131,7 @@ uuid ParseUuid(const std::string& str)
     for (long i = 0; i < uuid::static_size(); ++i)
     {
         std::string hexByteStr = str.substr(index, 2);
-        uint8_t hexByte = ParseHexByte(hexByteStr);
+        std::uint8_t hexByte = ParseHexByte(hexByteStr);
         id.data[i] = hexByte;
         ++index;
         ++index;

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -39,7 +39,7 @@ public:
     void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb);
     otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
-    otava::intermediate::Type* MakeArrayType(int64_t size, otava::intermediate::Type* elementType);
+    otava::intermediate::Type* MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType);
     otava::intermediate::Type* MakeFwdDeclaredStructureType(const util::uuid& id);
     otava::intermediate::Type* GetOrInsertFwdDeclaredStructureType(const util::uuid& id);
     void ResolveForwardReferences(const util::uuid& id, otava::intermediate::StructureType* structureType);
@@ -57,15 +57,15 @@ public:
     otava::intermediate::Type* GetDoubleType();
     otava::intermediate::Type* MakePtrType(otava::intermediate::Type* baseType);
     otava::intermediate::Value* EmitBool(bool value);
-    otava::intermediate::Value* EmitSByte(int8_t value);
-    otava::intermediate::Value* EmitByte(uint8_t value);
-    otava::intermediate::Value* EmitShort(int16_t value);
-    otava::intermediate::Value* EmitUShort(uint16_t value);
-    otava::intermediate::Value* EmitInt(int32_t value);
-    otava::intermediate::Value* EmitUInt(uint32_t value);
-    otava::intermediate::Value* EmitLong(int64_t value);
-    otava::intermediate::Value* EmitULong(uint64_t value);
-    otava::intermediate::Value* EmitIntegerValue(otava::intermediate::Type* type, int64_t value);
+    otava::intermediate::Value* EmitSByte(std::int8_t value);
+    otava::intermediate::Value* EmitByte(std::uint8_t value);
+    otava::intermediate::Value* EmitShort(std::int16_t value);
+    otava::intermediate::Value* EmitUShort(std::uint16_t value);
+    otava::intermediate::Value* EmitInt(std::int32_t value);
+    otava::intermediate::Value* EmitUInt(std::uint32_t value);
+    otava::intermediate::Value* EmitLong(std::int64_t value);
+    otava::intermediate::Value* EmitULong(std::uint64_t value);
+    otava::intermediate::Value* EmitIntegerValue(otava::intermediate::Type* type, std::int64_t value);
     otava::intermediate::Value* EmitFloat(float value);
     otava::intermediate::Value* EmitDouble(double value);
     otava::intermediate::Value* EmitFloatingValue(otava::intermediate::Type* type, double value);

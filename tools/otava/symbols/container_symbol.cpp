@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -114,9 +114,9 @@ std::unique_ptr<Symbol> ContainerSymbol::RemoveSymbol(Symbol* symbol)
 void ContainerSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
-    uint32_t count = symbols.size();
+    std::uint32_t count = symbols.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
-    for (uint32_t i = 0; i < count; ++i)
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         Symbol* symbol = symbols[i].get();
         writer.Write(symbol);
@@ -126,8 +126,8 @@ void ContainerSymbol::Write(Writer& writer)
 void ContainerSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         Symbol* symbol = reader.ReadSymbol();
         if (symbol)

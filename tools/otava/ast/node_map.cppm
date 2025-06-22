@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,9 +15,9 @@ class NodeMap
 public:
     NodeMap();
     void AddNode(Node* node);
-    Node* GetNode(int64_t nodeId) const;
+    Node* GetNode(std::int64_t nodeId) const;
 private:
-    std::map<int64_t, Node*> nodeMap;
+    std::map<std::int64_t, Node*> nodeMap;
 };
 
 } // namespace otava::ast

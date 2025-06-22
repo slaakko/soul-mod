@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,7 +9,7 @@ import std.core;
 
 export namespace otava::symbols {
 
-enum class Derivation : uint8_t
+enum class Derivation : std::uint8_t
 {
     none = 0, constDerivation = 1, volatileDerivation = 2, lvalueRefDerivation = 3, rvalueRefDerivation = 4, pointerDerivation = 5, max
 };

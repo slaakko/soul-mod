@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -40,7 +40,7 @@ public:
 private:
     Context* context;
     otava::assembly::Data* data;
-    int64_t offset;
+    std::int64_t offset;
 };
 
 } // otava::intermediate

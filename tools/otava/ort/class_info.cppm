@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -11,9 +11,9 @@ import util.binary.stream.writer;
 
 export namespace info {
 
-using class_id = std::pair<uint64_t, uint64_t>;
+using class_id = std::pair<std::uint64_t, std::uint64_t>;
 
-enum class class_key : uint8_t
+enum class class_key : std::uint8_t
 {
     cls = 0, strct = 1, uni = 2
 };
@@ -55,6 +55,6 @@ private:
     std::map<class_id, class_info> map;
 };
 
-bool is_same_or_has_base(uint64_t derived_high, uint64_t derived_low, uint64_t base_high, uint64_t base_low);
+bool is_same_or_has_base(std::uint64_t derived_high, std::uint64_t derived_low, std::uint64_t base_high, std::uint64_t base_low);
 
 } // namespace info

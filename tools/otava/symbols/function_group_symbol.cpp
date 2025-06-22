@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -70,13 +70,13 @@ void FunctionGroupSymbol::AddFunction(FunctionSymbol* function)
 void FunctionGroupSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
-    uint32_t count = functions.size();
+    std::uint32_t count = functions.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (FunctionSymbol* function : functions)
     {
         writer.GetBinaryStreamWriter().Write(function->Id());
     }
-    uint32_t fdCount = definitions.size();
+    std::uint32_t fdCount = definitions.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(fdCount);
     for (FunctionDefinitionSymbol* definition : definitions)
     {
@@ -87,15 +87,15 @@ void FunctionGroupSymbol::Write(Writer& writer)
 void FunctionGroupSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         util::uuid functionId;
         reader.GetBinaryStreamReader().ReadUuid(functionId);
         functionIds.push_back(functionId);
     }
-    uint32_t fdCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < fdCount; ++i)
+    std::uint32_t fdCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < fdCount; ++i)
     {
         util::uuid functionDefinitionId;
         reader.GetBinaryStreamReader().ReadUuid(functionDefinitionId);

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -32,7 +32,7 @@ soul::ast::SourcePos Reader::ReadSourcePos()
 
 NodeKind Reader::ReadNodeKind()
 {
-    uint32_t kind = readerPtr->ReadULEB128UInt();
+    std::uint32_t kind = readerPtr->ReadULEB128UInt();
     return static_cast<NodeKind>(kind);
 }
 

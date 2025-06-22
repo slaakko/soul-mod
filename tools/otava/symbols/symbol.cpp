@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -146,7 +146,7 @@ void Symbol::Write(Writer& writer)
 {
     writer.GetBinaryStreamWriter().Write(id);
     otava::symbols::Write(writer, declarationFlags);
-    writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(access));
+    writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(access));
 }
 
 void Symbol::Read(Reader& reader)

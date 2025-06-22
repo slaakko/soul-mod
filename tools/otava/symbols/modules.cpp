@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -38,9 +38,9 @@ Module::~Module()
 {
 }
 
-int32_t Module::Id() const
+std::int32_t Module::Id() const
 {
-    return static_cast<int32_t>(std::hash<std::string>()(name) & 0x7FFFFFFF);
+    return static_cast<std::int32_t>(std::hash<std::string>()(name) & 0x7FFFFFFF);
 }
 
 void Module::SetFilePath(const std::string& filePath_)
@@ -269,19 +269,19 @@ void Module::Write(Writer& writer)
 {
     writer.GetBinaryStreamWriter().Write(name);
     writer.GetBinaryStreamWriter().Write(filePath);
-    uint32_t expCount = exportModuleNames.size();
+    std::uint32_t expCount = exportModuleNames.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(expCount);
     for (const auto& exportedModuleName : exportModuleNames)
     {
         writer.GetBinaryStreamWriter().Write(exportedModuleName);
     }
-    uint32_t impCount = importModuleNames.size();
+    std::uint32_t impCount = importModuleNames.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(impCount);
     for (const auto& importedModuleName : importModuleNames)
     {
         writer.GetBinaryStreamWriter().Write(importedModuleName);
     }
-    uint32_t implementationUnitNameCount = implementationUnitNames.size();
+    std::uint32_t implementationUnitNameCount = implementationUnitNames.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(implementationUnitNameCount);
     for (const auto& implementationUnitName : implementationUnitNames)
     {
@@ -304,18 +304,18 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
     reading = true;
     name = reader.GetBinaryStreamReader().ReadUtf8String();
     filePath = reader.GetBinaryStreamReader().ReadUtf8String();
-    uint32_t expCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < expCount; ++i)
+    std::uint32_t expCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < expCount; ++i)
     {
         AddExportModuleName(reader.GetBinaryStreamReader().ReadUtf8String());
     }
-    uint32_t impCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < impCount; ++i)
+    std::uint32_t impCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < impCount; ++i)
     {
         AddImportModuleName(reader.GetBinaryStreamReader().ReadUtf8String());
     }
-    uint32_t implementationUnitNameCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < implementationUnitNameCount; ++i)
+    std::uint32_t implementationUnitNameCount = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < implementationUnitNameCount; ++i)
     {
         implementationUnitNames.push_back(reader.GetBinaryStreamReader().ReadUtf8String());
     }

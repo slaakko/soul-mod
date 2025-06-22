@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -14,7 +14,7 @@ import soul.ast.source.pos;
 
 export namespace otava::symbols {
 
-enum class DeclarationFlags : int32_t
+enum class DeclarationFlags : std::int32_t
 {
     none = 0,
     staticFlag = 1 << 0,
@@ -62,17 +62,17 @@ enum class DeclarationFlags : int32_t
 
 constexpr DeclarationFlags operator|(DeclarationFlags left, DeclarationFlags right)
 {
-    return DeclarationFlags(int32_t(left) | int32_t(right));
+    return DeclarationFlags(std::int32_t(left) | std::int32_t(right));
 }
 
 constexpr DeclarationFlags operator&(DeclarationFlags left, DeclarationFlags right)
 {
-    return DeclarationFlags(int32_t(left) & int32_t(right));
+    return DeclarationFlags(std::int32_t(left) & std::int32_t(right));
 }
 
 constexpr DeclarationFlags operator~(DeclarationFlags flags)
 {
-    return DeclarationFlags(~int32_t(flags));
+    return DeclarationFlags(~std::int32_t(flags));
 }
 
 class Context;

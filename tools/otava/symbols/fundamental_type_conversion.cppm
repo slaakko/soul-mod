@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -16,7 +16,7 @@ import otava.intermediate.value;
 
 export namespace otava::symbols {
 
-enum class ConversionKind : int32_t
+enum class ConversionKind : std::int32_t
 {
     implicitConversion, explicitConversion
 };
@@ -59,7 +59,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         paramTypeId(util::nil_uuid()), argTypeId(util::nil_uuid())
     {
     }
-    FundamentalTypeConversion(SymbolKind kind_, int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
+    FundamentalTypeConversion(SymbolKind kind_, std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
         FunctionSymbol(kind_, U"@conversion"), distance(distance_), conversionKind(conversionKind_), paramType(paramType_), argType(argType_),
         paramTypeId(util::nil_uuid()), argTypeId(util::nil_uuid())
     {
@@ -81,7 +81,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
     {
         return conversionKind;
     }
-    int32_t ConversionDistance() const override
+    std::int32_t ConversionDistance() const override
     { 
         return distance;
     }
@@ -89,7 +89,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
     {
         FunctionSymbol::Write(writer);
         writer.GetBinaryStreamWriter().Write(distance);
-        writer.GetBinaryStreamWriter().Write(static_cast<uint8_t>(conversionKind));
+        writer.GetBinaryStreamWriter().Write(static_cast<std::uint8_t>(conversionKind));
         writer.GetBinaryStreamWriter().Write(paramType->Id());
         writer.GetBinaryStreamWriter().Write(argType->Id());
     }
@@ -113,7 +113,7 @@ struct FundamentalTypeConversion : public FunctionSymbol
         otava::intermediate::Value* value = emitter.Stack().Pop();
         emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(paramType->IrType(emitter, sourcePos, context))));
     }
-    int32_t distance;
+    std::int32_t distance;
     ConversionKind conversionKind;
     TypeSymbol* paramType;
     TypeSymbol* argType;
@@ -125,42 +125,42 @@ class FundamentalTypeSignExtendConversion : public FundamentalTypeConversion<Fun
 {
 public:
     FundamentalTypeSignExtendConversion();
-    FundamentalTypeSignExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+    FundamentalTypeSignExtendConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeZeroExtendConversion : public FundamentalTypeConversion<FundamentalTypeZeroExtension>
 {
 public:
     FundamentalTypeZeroExtendConversion();
-    FundamentalTypeZeroExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+    FundamentalTypeZeroExtendConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeTruncateConversion : public FundamentalTypeConversion<FundamentalTypeTruncate>
 {
 public:
     FundamentalTypeTruncateConversion();
-    FundamentalTypeTruncateConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+    FundamentalTypeTruncateConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeBitcastConversion : public FundamentalTypeConversion<FundamentalTypeBitcast>
 {
 public:
     FundamentalTypeBitcastConversion();
-    FundamentalTypeBitcastConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+    FundamentalTypeBitcastConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeIntToFloatConversion : public FundamentalTypeConversion<FundamentalTypeIntToFloat>
 {
 public:
     FundamentalTypeIntToFloatConversion();
-    FundamentalTypeIntToFloatConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+    FundamentalTypeIntToFloatConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeFloatToIntConversion : public FundamentalTypeConversion<FundamentalTypeFloatToInt>
 {
 public:
     FundamentalTypeFloatToIntConversion();
-    FundamentalTypeFloatToIntConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+    FundamentalTypeFloatToIntConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeBooleanConversion : public FunctionSymbol
@@ -171,7 +171,7 @@ public:
     TypeSymbol* ConversionParamType() const override;
     TypeSymbol* ConversionArgType() const override;
     ConversionKind GetConversionKind() const override;
-    int32_t ConversionDistance() const override;
+    std::int32_t ConversionDistance() const override;
     void Write(Writer& writer) override
     {
         FunctionSymbol::Write(writer);

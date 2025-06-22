@@ -53,7 +53,7 @@ void BooleanLiteralNode::Accept(minilang::visitor::Visitor& visitor)
 	visitor.Visit(*this);
 }
 
-IntegerLiteralNode::IntegerLiteralNode(int64_t value_) : Node(NodeKind::integerLiteralNode), value(value_)
+IntegerLiteralNode::IntegerLiteralNode(std::int64_t value_) : Node(NodeKind::integerLiteralNode), value(value_)
 {
 }
 

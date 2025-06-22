@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -212,13 +212,13 @@ CodeFormatter& operator<<(CodeFormatter& f, double x)
     return f;
 }
 
-CodeFormatter& operator<<(CodeFormatter& f, int64_t x)
+CodeFormatter& operator<<(CodeFormatter& f, std::int64_t x)
 {
     f.Write(std::to_string(x));
     return f;
 }
 
-CodeFormatter& operator<<(CodeFormatter& f, uint64_t x)
+CodeFormatter& operator<<(CodeFormatter& f, std::uint64_t x)
 {
     f.Write(std::to_string(x));
     return f;

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -58,7 +58,7 @@ parser StatementParser
         |   DeclarationStatement(context):declarationStatement{ return declarationStatement; }
         ;
 
-    LabeledStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos labelPos, var int64_t labelP, 
+    LabeledStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos labelPos, var std::int64_t labelP, 
         var soul::ast::SourcePos colonPos, var soul::ast::SourcePos casePos, var soul::ast::SourcePos defaultPos) : otava::ast::Node*
         ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
         (

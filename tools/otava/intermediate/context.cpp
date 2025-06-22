@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -134,17 +134,17 @@ Type* Context::MakePtrType(Type* baseType)
     return baseType->AddPointer(this);
 }
 
-StructureType* Context::GetStructureType(const SourcePos& sourcePos, int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+StructureType* Context::GetStructureType(const SourcePos& sourcePos, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
     return types->GetStructureType(sourcePos, typeId, fieldTypeRefs);
 }
 
-ArrayType* Context::GetArrayType(const SourcePos& sourcePos, int32_t typeId, int64_t size, const TypeRef& elementTypeRef)
+ArrayType* Context::GetArrayType(const SourcePos& sourcePos, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
 {
     return types->GetArrayType(sourcePos, typeId, size, elementTypeRef);
 }
 
-FunctionType* Context::GetFunctionType(const SourcePos& sourcePos, int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+FunctionType* Context::GetFunctionType(const SourcePos& sourcePos, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
     return types->GetFunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
 }
@@ -154,7 +154,7 @@ FwdDeclaredStructureType* Context::GetFwdDeclaredStructureType(const util::uuid&
     return types->GetFwdDeclaredStructureType(id);
 }
 
-FwdDeclaredStructureType* Context::MakeFwdDeclaredStructureType(const util::uuid& id, int32_t typeId)
+FwdDeclaredStructureType* Context::MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId)
 {
     return types->MakeFwdDeclaredStructureType(id, typeId);
 }
@@ -219,47 +219,47 @@ Value* Context::GetBooleanLiteral(const SourcePos& sourcePos, Type* type, bool v
     return nullptr;
 }
 
-Value* Context::GetSByteValue(int8_t value)
+Value* Context::GetSByteValue(std::int8_t value)
 {
     return data->GetSByteValue(value, *types);
 }
 
-Value* Context::GetByteValue(uint8_t value)
+Value* Context::GetByteValue(std::uint8_t value)
 {
     return data->GetByteValue(value, *types);
 }
 
-Value* Context::GetShortValue(int16_t value)
+Value* Context::GetShortValue(std::int16_t value)
 {
     return data->GetShortValue(value, *types);
 }
 
-Value* Context::GetUShortValue(uint16_t value)
+Value* Context::GetUShortValue(std::uint16_t value)
 {
     return data->GetUShortValue(value, *types);
 }
 
-Value* Context::GetIntValue(int32_t value)
+Value* Context::GetIntValue(std::int32_t value)
 {
     return data->GetIntValue(value, *types);
 }
 
-Value* Context::GetUIntValue(uint32_t value)
+Value* Context::GetUIntValue(std::uint32_t value)
 {
     return data->GetUIntValue(value, *types);
 }
 
-Value* Context::GetLongValue(int64_t value)
+Value* Context::GetLongValue(std::int64_t value)
 {
     return data->GetLongValue(value, *types);
 }
 
-Value* Context::GetULongValue(uint64_t value)
+Value* Context::GetULongValue(std::uint64_t value)
 {
     return data->GetULongValue(value, *types);
 }
 
-Value* Context::GetIntegerValue(Type* type, int64_t value)
+Value* Context::GetIntegerValue(Type* type, std::int64_t value)
 {
     return data->GetIntegerValue(type, value, *types);
 }
@@ -342,7 +342,7 @@ Function* Context::CurrentFunction() const
     return code->CurrentFunction();
 }
 
-int32_t Context::NextTypeId()
+std::int32_t Context::NextTypeId()
 {
     return types->NextTypeId();
 }
@@ -385,7 +385,7 @@ Function* Context::AddFunctionDeclaration(const SourcePos& sourcePos, Type* type
     return nullptr;
 }
 
-MetadataStruct* Context::AddMetadataStruct(const SourcePos& sourcePos, int32_t id, Context* context)
+MetadataStruct* Context::AddMetadataStruct(const SourcePos& sourcePos, std::int32_t id, Context* context)
 {
     return metadata->AddMetadataStruct(sourcePos, id, context);
 }
@@ -400,7 +400,7 @@ MetadataBool* Context::CreateMetadataBool(bool value)
     return metadata->CreateMetadataBool(value);
 }
 
-MetadataLong* Context::CreateMetadataLong(int64_t value)
+MetadataLong* Context::CreateMetadataLong(std::int64_t value)
 {
     return metadata->CreateMetadataLong(value);
 }
@@ -410,7 +410,7 @@ MetadataString* Context::CreateMetadataString(const std::string& value)
     return metadata->CreateMetadataString(value);
 }
 
-MetadataRef* Context::CreateMetadataRef(const SourcePos& sourcePos, int32_t nodeId)
+MetadataRef* Context::CreateMetadataRef(const SourcePos& sourcePos, std::int32_t nodeId)
 {
     return metadata->CreateMetadataRef(sourcePos, nodeId);
 }

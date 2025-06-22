@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -10,7 +10,7 @@ import util.text.util;
 
 namespace otava::intermediate {
 
-MetadataRef::MetadataRef(const SourcePos& sourcePos_, int32_t nodeId_) : MetadataItem(MetadataItemKind::metadataRef), sourcePos(sourcePos_), nodeId(nodeId_), metadataStruct(nullptr)
+MetadataRef::MetadataRef(const SourcePos& sourcePos_, std::int32_t nodeId_) : MetadataItem(MetadataItemKind::metadataRef), sourcePos(sourcePos_), nodeId(nodeId_), metadataStruct(nullptr)
 {
 }
 
@@ -43,7 +43,7 @@ void MetadataBool::Write(util::CodeFormatter& formatter)
     }
 }
 
-MetadataLong::MetadataLong(int64_t value_) : MetadataItem(MetadataItemKind::metadataLong), value(value_)
+MetadataLong::MetadataLong(std::int64_t value_) : MetadataItem(MetadataItemKind::metadataLong), value(value_)
 {
 }
 
@@ -63,7 +63,7 @@ void MetadataString::Write(util::CodeFormatter& formatter)
     formatter.Write("\"");
 }
 
-MetadataStruct::MetadataStruct(const SourcePos& sourcePos_, int32_t id_) : sourcePos(sourcePos_), id(id_)
+MetadataStruct::MetadataStruct(const SourcePos& sourcePos_, std::int32_t id_) : sourcePos(sourcePos_), id(id_)
 {
 }
 
@@ -125,7 +125,7 @@ void Metadata::Write(util::CodeFormatter& formatter)
     formatter.WriteLine("}");
 }
 
-MetadataStruct* Metadata::GetMetadataStruct(int32_t id) const
+MetadataStruct* Metadata::GetMetadataStruct(std::int32_t id) const
 {
     auto it = metadataMap.find(id);
     if (it != metadataMap.cend())
@@ -138,7 +138,7 @@ MetadataStruct* Metadata::GetMetadataStruct(int32_t id) const
     }
 }
 
-MetadataStruct* Metadata::AddMetadataStruct(const SourcePos& sourcePos, int32_t id, Context* context)
+MetadataStruct* Metadata::AddMetadataStruct(const SourcePos& sourcePos, std::int32_t id, Context* context)
 {
     MetadataStruct* prev = GetMetadataStruct(id);
     if (prev)
@@ -178,7 +178,7 @@ MetadataBool* Metadata::CreateMetadataBool(bool value)
     }
 }
 
-MetadataLong* Metadata::CreateMetadataLong(int64_t value)
+MetadataLong* Metadata::CreateMetadataLong(std::int64_t value)
 {
     auto it = longItemMap.find(value);
     if (it != longItemMap.cend())
@@ -210,7 +210,7 @@ MetadataString* Metadata::CreateMetadataString(const std::string& value)
     }
 }
 
-MetadataRef* Metadata::CreateMetadataRef(const SourcePos& sourcePos, int32_t nodeId)
+MetadataRef* Metadata::CreateMetadataRef(const SourcePos& sourcePos, std::int32_t nodeId)
 {
     auto it = referenceMap.find(nodeId);
     if (it != referenceMap.cend())
@@ -231,7 +231,7 @@ void Metadata::ResolveMetadataReferences(Context* context)
 {
     for (MetadataRef* metadataRef : metadataReferences)
     {
-        int32_t nodeId = metadataRef->NodeId();
+        std::int32_t nodeId = metadataRef->NodeId();
         MetadataStruct* metadataNode = GetMetadataStruct(nodeId);
         if (metadataNode)
         {

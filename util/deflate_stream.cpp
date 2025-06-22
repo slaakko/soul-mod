@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -21,17 +21,17 @@ DeflateStream::DeflateStream(CompressionMode mode_, Stream& underlyingStream_) :
 {
 }
 
-DeflateStream::DeflateStream(CompressionMode mode_, Stream& underlyingStream_, int64_t bufferSize_) : DeflateStream(mode_, underlyingStream_, bufferSize_, defaultDeflateCompressionLevel)
+DeflateStream::DeflateStream(CompressionMode mode_, Stream& underlyingStream_, std::int64_t bufferSize_) : DeflateStream(mode_, underlyingStream_, bufferSize_, defaultDeflateCompressionLevel)
 {
 }
 
-DeflateStream::DeflateStream(CompressionMode mode_, Stream& underlyingStream_, int64_t bufferSize_, int compressionLevel_) :
+DeflateStream::DeflateStream(CompressionMode mode_, Stream& underlyingStream_, std::int64_t bufferSize_, int compressionLevel_) :
     Stream(), mode(mode_), underlyingStream(underlyingStream_), bufferSize(bufferSize_), compressionLevel(compressionLevel_),
-    inAvail(0), in(new uint8_t[bufferSize]), outAvail(0), outPos(0), outHave(0), endOfInput(false), endOfStream(false), out(new uint8_t[bufferSize]),
+    inAvail(0), in(new std::uint8_t[bufferSize]), outAvail(0), outPos(0), outHave(0), endOfInput(false), endOfStream(false), out(new std::uint8_t[bufferSize]),
     handle(nullptr)
 {
     SetPosition(underlyingStream.Position());
-    int ret = zlib_init(int32_t(mode), compressionLevel, &handle);
+    int ret = zlib_init(std::int32_t(mode), compressionLevel, &handle);
     if (ret < 0)
     {
         throw std::runtime_error("could not create deflate stream: zlib initialization returned error code " + std::to_string(ret));
@@ -52,14 +52,14 @@ DeflateStream::~DeflateStream()
         catch (...)
         {
         }
-        zlib_done(int32_t(mode), handle);
+        zlib_done(std::int32_t(mode), handle);
     }
 }
 
 int DeflateStream::ReadByte()
 {
-    uint8_t x = 0;
-    int64_t bytesRead = Read(&x, 1);
+    std::uint8_t x = 0;
+    std::int64_t bytesRead = Read(&x, 1);
     if (bytesRead == 0)
     {
         return -1;
@@ -67,18 +67,18 @@ int DeflateStream::ReadByte()
     return x;
 }
 
-int64_t DeflateStream::Read(uint8_t* buf, int64_t count)
+std::int64_t DeflateStream::Read(std::uint8_t* buf, std::int64_t count)
 {
     if (mode != CompressionMode::decompress)
     {
         throw std::runtime_error("deflate stream: cannot read in 'compress' compression mode");
     }
-    int64_t bytesRead = 0;
+    std::int64_t bytesRead = 0;
     do
     {
         if (inAvail == 0 && !endOfInput)
         {
-            inAvail = static_cast<uint32_t>(underlyingStream.Read(in.get(), static_cast<uint32_t>(bufferSize)));
+            inAvail = static_cast<std::uint32_t>(underlyingStream.Read(in.get(), static_cast<std::uint32_t>(bufferSize)));
             if (inAvail == 0)
             {
                 endOfInput = true;
@@ -89,7 +89,7 @@ int64_t DeflateStream::Read(uint8_t* buf, int64_t count)
         {
             if (outHave == 0 && !endOfStream)
             {
-                int ret = zlib_inflate(out.get(), static_cast<uint32_t>(bufferSize), &outHave, &outAvail, &inAvail, handle);
+                int ret = zlib_inflate(out.get(), static_cast<std::uint32_t>(bufferSize), &outHave, &outAvail, &inAvail, handle);
                 if (ret < 0)
                 {
                     throw std::runtime_error("deflate stream: could not decompress: inflate returned error code " + std::to_string(ret));
@@ -102,7 +102,7 @@ int64_t DeflateStream::Read(uint8_t* buf, int64_t count)
             }
             while (count > 0 && outHave > 0)
             {
-                uint8_t* o = out.get();
+                std::uint8_t* o = out.get();
                 *buf++ = o[outPos++];
                 --count;
                 --outHave;
@@ -118,23 +118,23 @@ int64_t DeflateStream::Read(uint8_t* buf, int64_t count)
     return bytesRead;
 }
 
-void DeflateStream::Write(uint8_t x)
+void DeflateStream::Write(std::uint8_t x)
 {
     Write(&x, 1);
 }
 
-void DeflateStream::Write(uint8_t* buf, int64_t count)
+void DeflateStream::Write(std::uint8_t* buf, std::int64_t count)
 {
     if (mode != CompressionMode::compress)
     {
         throw std::runtime_error("deflate stream: cannot write in 'decompress' compression mode");
     }
-    int64_t bytesWritten = 0;
+    std::int64_t bytesWritten = 0;
     while (count > 0)
     {
-        uint8_t* inP = in.get();
+        std::uint8_t* inP = in.get();
         inAvail = 0;
-        while (count > 0 && inAvail < static_cast<uint32_t>(bufferSize))
+        while (count > 0 && inAvail < static_cast<std::uint32_t>(bufferSize))
         {
             *inP++ = *buf++;
             --count;
@@ -144,13 +144,13 @@ void DeflateStream::Write(uint8_t* buf, int64_t count)
         zlib_set_input(in.get(), inAvail, handle);
         do
         {
-            uint32_t have = 0;
-            int ret = zlib_deflate(out.get(), static_cast<uint32_t>(bufferSize), &have, &outAvail, handle, Z_NO_FLUSH);
+            std::uint32_t have = 0;
+            int ret = zlib_deflate(out.get(), static_cast<std::uint32_t>(bufferSize), &have, &outAvail, handle, Z_NO_FLUSH);
             if (ret < 0)
             {
                 throw std::runtime_error("deflate stream: could not compress: deflate returned error code " + std::to_string(ret));
             }
-            underlyingStream.Write(out.get(), static_cast<int64_t>(have));
+            underlyingStream.Write(out.get(), static_cast<std::int64_t>(have));
         } while (outAvail == 0);
     }
     SetPosition(Position() + bytesWritten);
@@ -160,13 +160,13 @@ void DeflateStream::Finish()
 {
     do
     {
-        uint32_t have = 0u;
-        int ret = zlib_deflate(out.get(), static_cast<uint32_t>(bufferSize), &have, &outAvail, handle, Z_FINISH);
+        std::uint32_t have = 0u;
+        int ret = zlib_deflate(out.get(), static_cast<std::uint32_t>(bufferSize), &have, &outAvail, handle, Z_FINISH);
         if (ret < 0)
         {
             throw std::runtime_error("deflate stream: could not compress: deflate returned error code " + std::to_string(ret));
         }
-        underlyingStream.Write(out.get(), static_cast<int64_t>(have));
+        underlyingStream.Write(out.get(), static_cast<std::int64_t>(have));
     } while (outAvail == 0);
 }
 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -9,6 +9,14 @@ namespace soul::json::rpc {
 
 JsonRpcException::JsonRpcException(int code_, const std::string& message_) : code(code_), message(message_), info()
 {
+}
+
+JsonRpcException::JsonRpcException(const JsonRpcException& that) : code(that.code), message(that.message), info()
+{
+    if (that.info)
+    {
+        SetInfo(std::unique_ptr<util::JsonValue>(that.info->Clone()));
+    }
 }
 
 void JsonRpcException::SetInfo(std::unique_ptr<util::JsonValue>&& info_)

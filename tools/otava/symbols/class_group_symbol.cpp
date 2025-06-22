@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -106,7 +106,7 @@ ForwardClassDeclarationSymbol* ClassGroupSymbol::GetForwardDeclaration(int arity
 void ClassGroupSymbol::Write(Writer& writer)
 {
     Symbol::Write(writer);
-    uint32_t count = classes.size();
+    std::uint32_t count = classes.size();
     writer.GetBinaryStreamWriter().WriteULEB128UInt(count);
     for (ClassTypeSymbol* cls : classes)
     {
@@ -117,8 +117,8 @@ void ClassGroupSymbol::Write(Writer& writer)
 void ClassGroupSymbol::Read(Reader& reader)
 {
     Symbol::Read(reader);
-    uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
-    for (uint32_t i = 0; i < count; ++i)
+    std::uint32_t count = reader.GetBinaryStreamReader().ReadULEB128UInt();
+    for (std::uint32_t i = 0; i < count; ++i)
     {
         util::uuid classId;
         reader.GetBinaryStreamReader().ReadUuid(classId);

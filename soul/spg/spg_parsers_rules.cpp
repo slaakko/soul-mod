@@ -4,10 +4,10 @@ namespace soul::spg::parsers::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 6146011665574920193, "ParserFileParser.ParserFile" },
         { 6146011665574920194, "ParserFileParser.Parser" },
         { 6146011665574920195, "ParserFileParser.ParserStatement" },

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -153,7 +153,7 @@ void State::Include()
     }
 }
 
-void State::Define(const std::string& symbol, int64_t value)
+void State::Define(const std::string& symbol, std::int64_t value)
 {
     if (!currentSection->Skip())
     {
@@ -186,7 +186,7 @@ bool State::Defined(const std::string& symbol) const
     }
 }
 
-int64_t State::GetSymbolValue(const std::string& symbol) const
+std::int64_t State::GetSymbolValue(const std::string& symbol) const
 {
     auto it = symbolMap.find(symbol);
     if (it != symbolMap.cend())

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -50,7 +50,7 @@ bool Value::IsIntegerValue() const
     }
 }
 
-int64_t Value::GetIntegerValue() const
+std::int64_t Value::GetIntegerValue() const
 {
     switch (kind)
     {
@@ -92,7 +92,7 @@ int64_t Value::GetIntegerValue() const
     case ValueKind::ulongValue:
     {
         const ULongValue* ulongValue = static_cast<const ULongValue*>(this);
-        return static_cast<int64_t>(ulongValue->GetValue());
+        return static_cast<std::int64_t>(ulongValue->GetValue());
     }
     default:
     {

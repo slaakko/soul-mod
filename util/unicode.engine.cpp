@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -12,7 +12,7 @@ Utf8ToUtf32Engine::Utf8ToUtf32Engine() : state(0), resultReady(false), result(U'
     std::memset(static_cast<void*>(&bytes[0]), 0, sizeof(bytes));
 }
 
-void Utf8ToUtf32Engine::Put(uint8_t x)
+void Utf8ToUtf32Engine::Put(std::uint8_t x)
 {
     switch (state)
     {
@@ -49,25 +49,25 @@ void Utf8ToUtf32Engine::Put(uint8_t x)
     {
         result = static_cast<char32_t>(0);
         bytes[1] = x;
-        uint8_t b1 = bytes[1];
+        std::uint8_t b1 = bytes[1];
         if ((b1 & 0xC0u) != 0x80u)
         {
             ThrowInvalidUtf8Sequence();
         }
-        uint8_t shift = 0u;
-        for (uint8_t i = 0u; i < 6u; ++i)
+        std::uint8_t shift = 0u;
+        for (std::uint8_t i = 0u; i < 6u; ++i)
         {
-            uint8_t bit = b1 & 1u;
+            std::uint8_t bit = b1 & 1u;
             b1 = b1 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
-        uint8_t b0 = bytes[0];
-        for (uint8_t i = 0u; i < 5u; ++i)
+        std::uint8_t b0 = bytes[0];
+        for (std::uint8_t i = 0u; i < 5u; ++i)
         {
-            uint8_t bit = b0 & 1u;
+            std::uint8_t bit = b0 & 1u;
             b0 = b0 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
         resultReady = true;
@@ -84,37 +84,37 @@ void Utf8ToUtf32Engine::Put(uint8_t x)
     {
         bytes[2] = x;
         result = static_cast<char32_t>(0);
-        uint8_t b2 = bytes[2];
+        std::uint8_t b2 = bytes[2];
         if ((b2 & 0xC0u) != 0x80u)
         {
             ThrowInvalidUtf8Sequence();
         }
-        uint8_t shift = 0u;
-        for (uint8_t i = 0u; i < 6u; ++i)
+        std::uint8_t shift = 0u;
+        for (std::uint8_t i = 0u; i < 6u; ++i)
         {
-            uint8_t bit = b2 & 1u;
+            std::uint8_t bit = b2 & 1u;
             b2 = b2 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
-        uint8_t b1 = bytes[1];
+        std::uint8_t b1 = bytes[1];
         if ((b1 & 0xC0u) != 0x80u)
         {
             ThrowInvalidUtf8Sequence();
         }
-        for (uint8_t i = 0u; i < 6u; ++i)
+        for (std::uint8_t i = 0u; i < 6u; ++i)
         {
-            uint8_t bit = b1 & 1u;
+            std::uint8_t bit = b1 & 1u;
             b1 = b1 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
-        uint8_t b0 = bytes[0];
-        for (uint8_t i = 0u; i < 4u; ++i)
+        std::uint8_t b0 = bytes[0];
+        for (std::uint8_t i = 0u; i < 4u; ++i)
         {
-            uint8_t bit = b0 & 1u;
+            std::uint8_t bit = b0 & 1u;
             b0 = b0 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
         resultReady = true;
@@ -137,49 +137,49 @@ void Utf8ToUtf32Engine::Put(uint8_t x)
     {
         bytes[3] = x;
         result = static_cast<char32_t>(0);
-        uint8_t b3 = bytes[3];
+        std::uint8_t b3 = bytes[3];
         if ((b3 & 0xC0u) != 0x80u)
         {
             ThrowInvalidUtf8Sequence();
         }
-        uint8_t shift = 0u;
-        for (uint8_t i = 0u; i < 6u; ++i)
+        std::uint8_t shift = 0u;
+        for (std::uint8_t i = 0u; i < 6u; ++i)
         {
-            uint8_t bit = b3 & 1u;
+            std::uint8_t bit = b3 & 1u;
             b3 = b3 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
-        uint8_t b2 = bytes[2];
+        std::uint8_t b2 = bytes[2];
         if ((b2 & 0xC0u) != 0x80u)
         {
             ThrowInvalidUtf8Sequence();
         }
-        for (uint8_t i = 0u; i < 6u; ++i)
+        for (std::uint8_t i = 0u; i < 6u; ++i)
         {
-            uint8_t bit = b2 & 1u;
+            std::uint8_t bit = b2 & 1u;
             b2 = b2 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
-        uint8_t b1 = bytes[1];
+        std::uint8_t b1 = bytes[1];
         if ((b1 & 0xC0u) != 0x80u)
         {
             ThrowInvalidUtf8Sequence();
         }
-        for (uint8_t i = 0u; i < 6u; ++i)
+        for (std::uint8_t i = 0u; i < 6u; ++i)
         {
-            uint8_t bit = b1 & 1u;
+            std::uint8_t bit = b1 & 1u;
             b1 = b1 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
-        uint8_t b0 = bytes[0];
-        for (uint8_t i = 0u; i < 3u; ++i)
+        std::uint8_t b0 = bytes[0];
+        for (std::uint8_t i = 0u; i < 3u; ++i)
         {
-            uint8_t bit = b0 & 1u;
+            std::uint8_t bit = b0 & 1u;
             b0 = b0 >> 1u;
-            result = static_cast<char32_t>(static_cast<uint32_t>(result) | (static_cast<uint32_t>(bit) << shift));
+            result = static_cast<char32_t>(static_cast<std::uint32_t>(result) | (static_cast<std::uint32_t>(bit) << shift));
             ++shift;
         }
         resultReady = true;

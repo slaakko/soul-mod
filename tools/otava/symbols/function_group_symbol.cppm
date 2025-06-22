@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -15,7 +15,7 @@ class FunctionDefinitionSymbol;
 class ParameterSymbol;
 class TypeSymbol;
 
-enum class FunctionQualifiers : int32_t;
+enum class FunctionQualifiers : std::int32_t;
 
 class FunctionGroupSymbol : public Symbol
 {

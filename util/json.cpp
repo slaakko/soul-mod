@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -116,7 +116,7 @@ std::u16string JsonString::JsonCharStr(char32_t c) const
                 }
                 else
                 {
-                    result.append(u"\\u").append(ToUtf16(ToHexString(static_cast<uint16_t>(x))));
+                    result.append(u"\\u").append(ToUtf16(ToHexString(static_cast<std::uint16_t>(x))));
                 }
             }
         }
@@ -149,9 +149,9 @@ JsonValue* JsonNumber::Clone() const
 
 std::string JsonNumber::ToString() const
 {
-    if (value == static_cast<int64_t>(value))
+    if (value == static_cast<std::int64_t>(value))
     {
-        return ToUtf8(std::to_string(static_cast<int64_t>(value)));
+        return ToUtf8(std::to_string(static_cast<std::int64_t>(value)));
     }
     else
     {

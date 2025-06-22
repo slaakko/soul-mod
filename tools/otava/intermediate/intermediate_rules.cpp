@@ -4,10 +4,10 @@ namespace otava::intermediate::spg::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 9185574142806589441, "IntermediateCodeParser.IntermediateCodeFile" },
         { 9185574142806589442, "IntermediateCodeParser.CompileUnitHeader" },
         { 9185574142806589443, "IntermediateCodeParser.CompileUnitId" },

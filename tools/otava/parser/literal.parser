@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -27,7 +27,7 @@ parser LiteralParser
         |   NULLPTR{ return new otava::ast::NullPtrLiteralNode(lexer.GetSourcePos(pos), lexer.GetToken(pos).ToString()); }
         ;
 
-    UserDefinedLiteral(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var int64_t p, var std::unique_ptr<otava::ast::Node> udLiteralNode) : 
+    UserDefinedLiteral(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::int64_t p, var std::unique_ptr<otava::ast::Node> udLiteralNode) : 
         otava::ast::Node*
         ::= 
         (   INTEGER_LITERAL{ sourcePos = lexer.GetSourcePos(pos); p = pos; }
@@ -65,7 +65,7 @@ parser LiteralParser
         ;
 
     LiteralOperatorId(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, 
-        var soul::ast::SourcePos stringLitPos, var soul::ast::SourcePos idPos, var int64_t idp) : otava::ast::Node*
+        var soul::ast::SourcePos stringLitPos, var soul::ast::SourcePos idPos, var std::int64_t idp) : otava::ast::Node*
         ::= 
         (
             OPERATOR{ sourcePos = lexer.GetSourcePos(pos); } 

@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -45,7 +45,7 @@ void ResolverVisitor::Visit(BasicBlock& basicBlock)
 
 void ResolverVisitor::Visit(JmpInstruction& inst)
 {
-    int32_t target = inst.TargetLabelId();
+    std::int32_t target = inst.TargetLabelId();
     BasicBlock* basicBlock = inst.Parent();
     Function* function = basicBlock->Parent();
     BasicBlock* targetBasicBlock = function->GetBasicBlock(target);
@@ -59,7 +59,7 @@ void ResolverVisitor::Visit(JmpInstruction& inst)
 void ResolverVisitor::Visit(BranchInstruction& inst)
 {
     BasicBlock* trueBasicBlock = inst.Parent();
-    int32_t trueTarget = inst.TrueTargetLabelId();
+    std::int32_t trueTarget = inst.TrueTargetLabelId();
     Function* trueFunction = trueBasicBlock->Parent();
     BasicBlock* trueTargetBasicBlock = trueFunction->GetBasicBlock(trueTarget);
     if (!trueTargetBasicBlock)
@@ -68,7 +68,7 @@ void ResolverVisitor::Visit(BranchInstruction& inst)
             inst.GetSourcePos(), GetContext());
     }
     inst.SetTrueTargetBasicBlock(trueTargetBasicBlock);
-    int32_t falseTarget = inst.FalseTargetLabelId();
+    std::int32_t falseTarget = inst.FalseTargetLabelId();
     BasicBlock* falseBasicBlock = inst.Parent();
     Function* falseFunction = falseBasicBlock->Parent();
     BasicBlock* falseTargetBasicBlock = falseFunction->GetBasicBlock(falseTarget);
@@ -82,7 +82,7 @@ void ResolverVisitor::Visit(BranchInstruction& inst)
 
 void ResolverVisitor::Visit(SwitchInstruction& inst)
 {
-    int32_t defaultTarget = inst.DefaultTargetId();
+    std::int32_t defaultTarget = inst.DefaultTargetId();
     BasicBlock* parent = inst.Parent();
     Function* function = parent->Parent();
     BasicBlock* defaultTargetBlock = function->GetBasicBlock(defaultTarget);

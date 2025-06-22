@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -31,7 +31,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ChoiceParser& parser)
         {
             CodeGenerationStage prevStage = stage;
             stage = CodeGenerationStage::generateTokenSwitch;
-            formatter->WriteLine("int64_t pos = lexer.GetPos();");
+            formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
             formatter->WriteLine("switch (*lexer)");
             formatter->WriteLine("{");
             formatter->IncIndent();
@@ -49,7 +49,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ChoiceParser& parser)
             formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
             formatter->WriteLine("{");
             formatter->IncIndent();
-            formatter->WriteLine("int64_t save = lexer.GetPos();");
+            formatter->WriteLine("std::int64_t save = lexer.GetPos();");
             parser.Left()->Accept(*this);
             formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
             formatter->WriteLine("if (!match.hit)");
@@ -158,7 +158,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::DifferenceParser& parser)
         int prevSetParentMatchNumber0 = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
         formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-        formatter->WriteLine("int64_t save = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Left()->Accept(*this);
@@ -174,7 +174,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::DifferenceParser& parser)
         formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
         formatter->WriteLine("{");
         formatter->IncIndent();
-        formatter->WriteLine("int64_t tmp = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t tmp = lexer.GetPos();");
         formatter->WriteLine("lexer.SetPos(save);");
         formatter->WriteLine("save = tmp;");
         parser.Right()->Accept(*this);
@@ -208,7 +208,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::LookaheadParser& parser)
     if (stage == CodeGenerationStage::generateImplementation)
     {
         formatter->WriteLine("soul::parser::Match match(true);");
-        formatter->WriteLine("int64_t save = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         int prevSetParentMatchNumber = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
         formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
@@ -248,7 +248,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::KleeneParser& parser)
         formatter->WriteLine("while (true)");
         formatter->WriteLine("{");
         formatter->IncIndent();
-        formatter->WriteLine("int64_t save = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
@@ -299,7 +299,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::PositiveParser& parser)
         formatter->WriteLine("while (true)");
         formatter->WriteLine("{");
         formatter->IncIndent();
-        formatter->WriteLine("int64_t save = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         formatter->WriteLine("{");
         formatter->IncIndent();
         parser.Child()->Accept(*this);
@@ -332,7 +332,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::OptionalParser& parser)
     if (stage == CodeGenerationStage::generateImplementation)
     {
         formatter->WriteLine("soul::parser::Match match(true);");
-        formatter->WriteLine("int64_t save = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         int prevSetParentMatchNumber = setParentMatchNumber;
         setParentMatchNumber = parentMatchNumber;
         formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
@@ -367,7 +367,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ExpectationParser& parser)
         formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
         formatter->WriteLine("{");
         formatter->IncIndent();
-        formatter->WriteLine("int64_t pos = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
         parser.Child()->Accept(*this);
         formatter->WriteLine("if (match.hit)");
         formatter->WriteLine("{");
@@ -458,7 +458,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
         formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
         formatter->WriteLine("{");
         formatter->IncIndent();
-        formatter->WriteLine("int64_t pos = lexer.GetPos();");
+        formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
         soul::ast::cpp::CodeEvaluationVisitor codeEvaluationVisitor;
         parser.SuccessCode()->Accept(codeEvaluationVisitor);
         if (codeEvaluationVisitor.HasReturn())
@@ -608,7 +608,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::TokenParser& parser)
 void CodeGeneratorVisitor::Visit(soul::ast::spg::CharParser& parser)
 {
     formatter->WriteLine("soul::parser::Match match(false);");
-    formatter->WriteLine("if (*lexer == " + std::to_string(static_cast<int32_t>(parser.Chr())) + ")");
+    formatter->WriteLine("if (*lexer == " + std::to_string(static_cast<std::int32_t>(parser.Chr())) + ")");
     formatter->WriteLine("{");
     formatter->IncIndent();
     formatter->WriteLine("++lexer;");
@@ -620,7 +620,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::CharParser& parser)
 void CodeGeneratorVisitor::Visit(soul::ast::spg::StringParser& parser)
 {
     formatter->WriteLine("soul::parser::Match match(true);");
-    formatter->WriteLine("for (int32_t i : " + parser.ArrayName() + ")");
+    formatter->WriteLine("for (std::int32_t i : " + parser.ArrayName() + ")");
     formatter->WriteLine("{");
     formatter->IncIndent();
     formatter->WriteLine("if (*lexer == i)");
@@ -747,7 +747,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
         if (!noDebugSupport)
         {
             formatter->WriteLine("#ifdef SOUL_PARSER_DEBUG_SUPPORT");
-            formatter->WriteLine("int64_t parser_debug_match_pos = 0;");
+            formatter->WriteLine("std::int64_t parser_debug_match_pos = 0;");
             formatter->WriteLine("bool parser_debug_write_to_log = lexer.Log() != nullptr;");
             formatter->WriteLine("if (parser_debug_write_to_log)");
             formatter->WriteLine("{");

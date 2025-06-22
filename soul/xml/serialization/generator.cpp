@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -131,42 +131,42 @@ void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::BoolNode& n
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::SByteNode& node)
 {
-    formatter.Write("int8_t");
+    formatter.Write("std::int8_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::ByteNode& node)
 {
-    formatter.Write("uint8_t");
+    formatter.Write("std::uint8_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::ShortNode& node)
 {
-    formatter.Write("int16_t");
+    formatter.Write("std::int16_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::UShortNode& node)
 {
-    formatter.Write("uint16_t");
+    formatter.Write("std::uint16_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::IntNode& node)
 {
-    formatter.Write("int32_t");
+    formatter.Write("std::int32_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::UIntNode& node)
 {
-    formatter.Write("uint32_t");
+    formatter.Write("std::uint32_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::LongNode& node)
 {
-    formatter.Write("int64_t");
+    formatter.Write("std::int64_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::ULongNode& node)
 {
-    formatter.Write("uint64_t");
+    formatter.Write("std::uint64_t");
 }
 
 void InterfaceGeneratorVisitor::Visit(soul::xml::serialization::ast::FloatNode& node)

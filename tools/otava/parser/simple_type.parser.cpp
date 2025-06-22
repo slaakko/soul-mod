@@ -19,7 +19,7 @@ template<typename LexerT>
 soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -37,7 +37,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == CHAR)
                 {
@@ -66,7 +66,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == CHAR8_T)
                 {
@@ -95,7 +95,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch3 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == CHAR16_T)
                 {
@@ -124,7 +124,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch4 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == CHAR32_T)
                 {
@@ -153,7 +153,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch5 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == WCHAR_T)
                 {
@@ -182,7 +182,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch6 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == BOOL)
                 {
@@ -211,7 +211,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch7 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == SHORT)
                 {
@@ -240,7 +240,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch8 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == INT)
                 {
@@ -269,7 +269,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch9 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == LONG)
                 {
@@ -298,7 +298,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch10 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == SIGNED)
                 {
@@ -327,7 +327,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch11 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == UNSIGNED)
                 {
@@ -356,7 +356,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch12 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == FLOAT)
                 {
@@ -385,7 +385,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch13 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == DOUBLE)
                 {
@@ -414,7 +414,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch14 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == VOID)
                 {

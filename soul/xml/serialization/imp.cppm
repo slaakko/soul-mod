@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -23,14 +23,14 @@ using duration = std::chrono::steady_clock::duration;
 using uuid = util::uuid;
 
 void Parse(const std::string& str, bool& value);
-void Parse(const std::string& str, int8_t& value);
-void Parse(const std::string& str, uint8_t& value);
-void Parse(const std::string& str, int16_t& value);
-void Parse(const std::string& str, uint16_t& value);
-void Parse(const std::string& str, int32_t& value);
-void Parse(const std::string& str, uint32_t& value);
-void Parse(const std::string& str, int64_t& value);
-void Parse(const std::string& str, uint64_t& value);
+void Parse(const std::string& str, std::int8_t& value);
+void Parse(const std::string& str, std::uint8_t& value);
+void Parse(const std::string& str, std::int16_t& value);
+void Parse(const std::string& str, std::uint16_t& value);
+void Parse(const std::string& str, std::int32_t& value);
+void Parse(const std::string& str, std::uint32_t& value);
+void Parse(const std::string& str, std::int64_t& value);
+void Parse(const std::string& str, std::uint64_t& value);
 void Parse(const std::string& str, float& value);
 void Parse(const std::string& str, double& value);
 void Parse(const std::string& str, char& value);

@@ -58,7 +58,7 @@ template<typename LexerT>
 soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -78,7 +78,7 @@ soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch1 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == STRING)
                 {
@@ -108,7 +108,7 @@ soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == NUMBER)
                 {
@@ -138,7 +138,7 @@ soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch3 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = JsonParser<LexerT>::Object(lexer);
                 o.reset(static_cast<util::JsonObject*>(match.value));
                 if (match.hit)
@@ -163,7 +163,7 @@ soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch4 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = JsonParser<LexerT>::Array(lexer);
                 a.reset(static_cast<util::JsonArray*>(match.value));
                 if (match.hit)
@@ -188,7 +188,7 @@ soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch5 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == TRUE)
                 {
@@ -217,7 +217,7 @@ soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch6 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == FALSE)
                 {
@@ -246,7 +246,7 @@ soul::parser::Match JsonParser<LexerT>::Value(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch7 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == NULL)
                 {
@@ -289,7 +289,7 @@ template<typename LexerT>
 soul::parser::Match JsonParser<LexerT>::Object(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -308,7 +308,7 @@ soul::parser::Match JsonParser<LexerT>::Object(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == LBRACE)
                 {
@@ -329,7 +329,7 @@ soul::parser::Match JsonParser<LexerT>::Object(LexerT& lexer)
             soul::parser::Match* parentMatch3 = &match;
             {
                 soul::parser::Match match(true);
-                int64_t save = lexer.GetPos();
+                std::int64_t save = lexer.GetPos();
                 soul::parser::Match* parentMatch4 = &match;
                 {
                     soul::parser::Match match(false);
@@ -351,7 +351,7 @@ soul::parser::Match JsonParser<LexerT>::Object(LexerT& lexer)
                                 {
                                     while (true)
                                     {
-                                        int64_t save = lexer.GetPos();
+                                        std::int64_t save = lexer.GetPos();
                                         {
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch9 = &match;
@@ -415,7 +415,7 @@ soul::parser::Match JsonParser<LexerT>::Object(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch12 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == RBRACE)
                 {
@@ -455,7 +455,7 @@ template<typename LexerT>
 soul::parser::Match JsonParser<LexerT>::Field(LexerT& lexer, util::JsonObject* o)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -475,7 +475,7 @@ soul::parser::Match JsonParser<LexerT>::Field(LexerT& lexer, util::JsonObject* o
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == STRING)
                 {
@@ -516,7 +516,7 @@ soul::parser::Match JsonParser<LexerT>::Field(LexerT& lexer, util::JsonObject* o
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch5 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match = JsonParser<LexerT>::Value(lexer);
                 v.reset(static_cast<util::JsonValue*>(match.value));
                 if (match.hit)
@@ -548,7 +548,7 @@ template<typename LexerT>
 soul::parser::Match JsonParser<LexerT>::Array(LexerT& lexer)
 {
     #ifdef SOUL_PARSER_DEBUG_SUPPORT
-    int64_t parser_debug_match_pos = 0;
+    std::int64_t parser_debug_match_pos = 0;
     bool parser_debug_write_to_log = lexer.Log() != nullptr;
     if (parser_debug_write_to_log)
     {
@@ -568,7 +568,7 @@ soul::parser::Match JsonParser<LexerT>::Array(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch2 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == LBRACKET)
                 {
@@ -589,7 +589,7 @@ soul::parser::Match JsonParser<LexerT>::Array(LexerT& lexer)
             soul::parser::Match* parentMatch3 = &match;
             {
                 soul::parser::Match match(true);
-                int64_t save = lexer.GetPos();
+                std::int64_t save = lexer.GetPos();
                 soul::parser::Match* parentMatch4 = &match;
                 {
                     soul::parser::Match match(false);
@@ -601,7 +601,7 @@ soul::parser::Match JsonParser<LexerT>::Array(LexerT& lexer)
                             soul::parser::Match match(false);
                             soul::parser::Match* parentMatch7 = &match;
                             {
-                                int64_t pos = lexer.GetPos();
+                                std::int64_t pos = lexer.GetPos();
                                 soul::parser::Match match = JsonParser<LexerT>::Value(lexer);
                                 v.reset(static_cast<util::JsonValue*>(match.value));
                                 if (match.hit)
@@ -623,7 +623,7 @@ soul::parser::Match JsonParser<LexerT>::Array(LexerT& lexer)
                                 {
                                     while (true)
                                     {
-                                        int64_t save = lexer.GetPos();
+                                        std::int64_t save = lexer.GetPos();
                                         {
                                             soul::parser::Match match(false);
                                             soul::parser::Match* parentMatch10 = &match;
@@ -644,7 +644,7 @@ soul::parser::Match JsonParser<LexerT>::Array(LexerT& lexer)
                                                     soul::parser::Match match(false);
                                                     soul::parser::Match* parentMatch12 = &match;
                                                     {
-                                                        int64_t pos = lexer.GetPos();
+                                                        std::int64_t pos = lexer.GetPos();
                                                         soul::parser::Match match = JsonParser<LexerT>::Value(lexer);
                                                         v.reset(static_cast<util::JsonValue*>(match.value));
                                                         if (match.hit)
@@ -699,7 +699,7 @@ soul::parser::Match JsonParser<LexerT>::Array(LexerT& lexer)
             soul::parser::Match match(false);
             soul::parser::Match* parentMatch14 = &match;
             {
-                int64_t pos = lexer.GetPos();
+                std::int64_t pos = lexer.GetPos();
                 soul::parser::Match match(false);
                 if (*lexer == RBRACKET)
                 {

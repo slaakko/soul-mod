@@ -4,10 +4,10 @@ namespace minilang::spg::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 3662973475552755713, "ExpressionParser.Expression" },
         { 3662973475552755714, "ExpressionParser.PrimaryExpression" },
         { 3662973475552755715, "ExpressionParser.PostfixExpression" },

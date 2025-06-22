@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -26,7 +26,7 @@ void CopyFile(const std::string& source, const std::string& dest, bool force, bo
     }
     if (force || !std::filesystem::exists(dest) || std::filesystem::last_write_time(source) > std::filesystem::last_write_time(dest))
     {
-        int64_t size = std::filesystem::file_size(source);
+        std::int64_t size = std::filesystem::file_size(source);
         {
             FileStream sourceFile(source, OpenMode::read | OpenMode::binary);
             BufferedStream bufferedSource(sourceFile);
@@ -34,9 +34,9 @@ void CopyFile(const std::string& source, const std::string& dest, bool force, bo
             FileStream destFile(dest, OpenMode::write | OpenMode::binary);
             BufferedStream bufferedDest(destFile);
             BinaryStreamWriter writer(bufferedDest);
-            for (int64_t i = 0; i < size; ++i)
+            for (std::int64_t i = 0; i < size; ++i)
             {
-                uint8_t x = reader.ReadByte();
+                std::uint8_t x = reader.ReadByte();
                 writer.Write(x);
             }
         }

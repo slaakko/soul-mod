@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2023 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -41,7 +41,7 @@ FundamentalTypeSignExtendConversion::FundamentalTypeSignExtendConversion() : Fun
 {
 }
 
-FundamentalTypeSignExtendConversion::FundamentalTypeSignExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+FundamentalTypeSignExtendConversion::FundamentalTypeSignExtendConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
     Context* context) :
     FundamentalTypeConversion<FundamentalTypeSignExtension>(SymbolKind::fundamentalTypeSignExtension, distance_, conversionKind_, paramType_, argType_, context)
 {
@@ -51,7 +51,7 @@ FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion() : Fun
 {
 }
 
-FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
     Context* context) :
     FundamentalTypeConversion<FundamentalTypeZeroExtension>(SymbolKind::fundamentalTypeZeroExtension, distance_, conversionKind_, paramType_, argType_, context)
 {
@@ -61,7 +61,7 @@ FundamentalTypeTruncateConversion::FundamentalTypeTruncateConversion() : Fundame
 {
 }
 
-FundamentalTypeTruncateConversion::FundamentalTypeTruncateConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
+FundamentalTypeTruncateConversion::FundamentalTypeTruncateConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
     FundamentalTypeConversion<FundamentalTypeTruncate>(SymbolKind::fundamentalTypeTruncate, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
@@ -70,7 +70,7 @@ FundamentalTypeBitcastConversion::FundamentalTypeBitcastConversion() : Fundament
 {
 }
     
-FundamentalTypeBitcastConversion::FundamentalTypeBitcastConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
+FundamentalTypeBitcastConversion::FundamentalTypeBitcastConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) :
     FundamentalTypeConversion<FundamentalTypeBitcast>(SymbolKind::fundamentalTypeBitcast, distance_, conversionKind_, paramType_, argType_, context)
 {
 }
@@ -79,7 +79,7 @@ FundamentalTypeIntToFloatConversion::FundamentalTypeIntToFloatConversion() : Fun
 {
 }
 
-FundamentalTypeIntToFloatConversion::FundamentalTypeIntToFloatConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+FundamentalTypeIntToFloatConversion::FundamentalTypeIntToFloatConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
     Context* context) :
     FundamentalTypeConversion<FundamentalTypeIntToFloat>(SymbolKind::fundamentalTypeIntToFloat, distance_, conversionKind_, paramType_, argType_, context)
 {
@@ -89,7 +89,7 @@ FundamentalTypeFloatToIntConversion::FundamentalTypeFloatToIntConversion() : Fun
 {
 }
 
-FundamentalTypeFloatToIntConversion::FundamentalTypeFloatToIntConversion(int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
+FundamentalTypeFloatToIntConversion::FundamentalTypeFloatToIntConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
     Context* context) :
     FundamentalTypeConversion<FundamentalTypeFloatToInt>(SymbolKind::fundamentalTypeFloatToInt, distance_, conversionKind_, paramType_, argType_, context)
 {
@@ -125,7 +125,7 @@ ConversionKind FundamentalTypeBooleanConversion::GetConversionKind() const
     return ConversionKind::implicitConversion;
 }
 
-int32_t FundamentalTypeBooleanConversion::ConversionDistance() const 
+std::int32_t FundamentalTypeBooleanConversion::ConversionDistance() const 
 {
     return 1;
 }
