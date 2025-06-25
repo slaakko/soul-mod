@@ -6,7 +6,7 @@
 module otava.symbols.modules;
 
 import util;
-import std.filesystem;
+// import std.filesystem;
 import otava.symbols.namespaces;
 import otava.symbols.classes;
 import otava.symbols.class_group.symbol;

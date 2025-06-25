@@ -14,7 +14,7 @@ module ort;
 
 import class_info_index;
 import context_stack;
-import std.filesystem;
+// import std.filesystem;
 import util;
 
 bool initialized = false;

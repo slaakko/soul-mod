@@ -5,7 +5,7 @@
 
 module otava.filesystem;
 
-import std.filesystem;
+// import std.filesystem;
 import util.text.util;
 
 void* fs_path_default_ctor()
@@ -112,9 +112,9 @@ const char* fs_path_c_str(void* p)
 {
     std::filesystem::path& path = *static_cast<std::filesystem::path*>(p);
     std::string s = path.string();
-    char* c_str = static_cast<char*>(malloc(s.length() + 1));
+    char* c_str = static_cast<char*>(std::malloc(s.length() + 1));
 #pragma warning(suppress : 4996)
-    strcpy(c_str, s.c_str());
+    std::strcpy(c_str, s.c_str());
     return c_str;
 }
 
@@ -122,9 +122,9 @@ const char* fs_path_generic_str(void* p)
 {
     std::filesystem::path& path = *static_cast<std::filesystem::path*>(p);
     std::string s = path.generic_string();
-    char* c_str = static_cast<char*>(malloc(s.length() + 1));
+    char* c_str = static_cast<char*>(std::malloc(s.length() + 1));
 #pragma warning(suppress : 4996)
-    strcpy(c_str, s.c_str());
+    std::strcpy(c_str, s.c_str());
     return c_str;
 }
 
@@ -248,9 +248,9 @@ void* fs_path_absolute_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return new std::filesystem::path(std::move(path));
 }
@@ -275,9 +275,9 @@ void* fs_path_canonical_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return new std::filesystem::path(std::move(path));
 }
@@ -303,9 +303,9 @@ void fs_copy_error(void* from, void* to, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
 }
 
@@ -330,9 +330,9 @@ bool fs_copy_file_error(void* from, void* to, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -358,9 +358,9 @@ bool fs_create_directories_error(void* path, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -385,9 +385,9 @@ void* fs_current_path_error(int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -413,9 +413,9 @@ void fs_set_current_path_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
 }
 
@@ -500,9 +500,9 @@ std::uint64_t fs_file_size_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -528,9 +528,9 @@ bool fs_is_block_file_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -556,9 +556,9 @@ bool fs_is_character_file_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -584,9 +584,9 @@ bool fs_is_directory_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -612,9 +612,9 @@ bool fs_is_empty_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -640,9 +640,9 @@ bool fs_is_fifo_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -668,9 +668,9 @@ bool fs_is_other_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -696,9 +696,9 @@ bool fs_is_regular_file_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -724,9 +724,9 @@ bool fs_is_socket_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -752,9 +752,9 @@ bool fs_is_symlink_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -774,9 +774,9 @@ std::int64_t fs_last_write_time_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     std::int64_t nsecs = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
     return nsecs;
@@ -795,9 +795,9 @@ void* fs_relative_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return new std::filesystem::path(std::move(path));
 }
@@ -815,9 +815,9 @@ void* fs_relative_base_error(void* p, void* base, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return new std::filesystem::path(std::move(path));
 }
@@ -835,9 +835,9 @@ bool fs_remove_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -855,9 +855,9 @@ std::uint64_t fs_remove_all_error(void* p, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
     return retval;
 }
@@ -875,9 +875,9 @@ void fs_rename_error(void* from, void* to, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
 }
 
@@ -894,8 +894,8 @@ void fs_resize_file_error(void* p, std::uint64_t size, int* error, char** msg)
     {
         *error = ec.value();
         std::string m = util::PlatformStringToUtf8(ec.message());
-        *msg = static_cast<char*>(malloc(m.length() + 1));
+        *msg = static_cast<char*>(std::malloc(m.length() + 1));
 #pragma warning(suppress : 4996)
-        strcpy(*msg, m.c_str());
+        std::strcpy(*msg, m.c_str());
     }
 }

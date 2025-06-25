@@ -5,7 +5,7 @@
 
 module soul.spg.parser.generator;
 
-import std.filesystem;
+// import std.filesystem;
 import util;
 import soul.spg.file.parsers;
 import soul.spg.linking;

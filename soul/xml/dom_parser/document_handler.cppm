@@ -8,6 +8,7 @@ export module soul.xml.document.handler;
 import std;
 import soul.xml.document;
 import soul.xml.element;
+import soul.xml.parent.node;
 import soul.xml.content.handler;
 import soul.xml.dom.parser;
 

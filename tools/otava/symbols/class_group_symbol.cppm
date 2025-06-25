@@ -7,6 +7,7 @@ export module otava.symbols.class_group.symbol;
 
 import std;
 import otava.symbols.type.symbol;
+import otava.symbols.symbol;
 import otava.symbols.template_param_compare;
 
 export namespace otava::symbols {

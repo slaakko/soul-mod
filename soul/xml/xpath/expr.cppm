@@ -8,6 +8,7 @@ export module soul.xml.xpath.expr;
 import std;
 import soul.xml.xpath.object;
 import soul.xml.xpath.context;
+import soul.xml.node;
 import soul.xml.axis;
 import soul.xml.element;
 

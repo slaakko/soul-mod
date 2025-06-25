@@ -37,7 +37,7 @@ import otava.symbols.overload.resolution;
 import otava.symbols.symbol.table;
 import otava.symbols.enums;
 import std;
-import std.filesystem;
+// import std.filesystem;
 import util;
 
 namespace otava::codegen {

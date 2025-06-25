@@ -38,7 +38,7 @@ import otava.ast.expression;
 import otava.ast.literal;
 import otava.ast.punctuation;
 import otava.ast.type;
-import std.filesystem;
+// import std.filesystem;
 
 namespace otava::build {
 
