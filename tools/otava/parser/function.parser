@@ -40,7 +40,6 @@ parser FunctionParser
     using PunctuationParser.Ellipsis;
     using PunctuationParser.Semicolon;
     using StatementParser.CompoundStatement;
-    using StatementParser.HandlerSeq;
     using TypeParser.DeclTypeSpecifier;
     using TypeParser.TypeSpecifierSeq;
     using TypeParser.TypeName;
@@ -126,10 +125,6 @@ parser FunctionParser
         |   CompoundStatement(context):compoundStatement2
             {   
                 return new otava::ast::FunctionBodyNode(lexer.GetSourcePos(pos), compoundStatement2); 
-            }
-        |   FunctionTryBlock(context):functionTryBlock
-            {
-                return functionTryBlock;
             }
         ;
 
@@ -301,18 +296,5 @@ parser FunctionParser
 
     Noexcept : otava::ast::Node*
         ::= NOEXCEPT{ return new otava::ast::NoexceptNode(lexer.GetSourcePos(pos)); }
-        ;
-
-    FunctionTryBlock(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= 
-        (
-            TRY{ sourcePos = lexer.GetSourcePos(pos); }
-            CtorInitializer(context):ctorInitializer?
-            CompoundStatement(context):tryBlock 
-            HandlerSeq(context):handlers
-        )
-        {
-            return new otava::ast::FunctionTryBlockNode(sourcePos, ctorInitializer, tryBlock, handlers);
-        }
         ;
 }

@@ -63,12 +63,14 @@ struct BetterArgumentMatch
 
 bool BetterArgumentMatch::operator()(const ArgumentMatch& left, const ArgumentMatch& right) const
 {
-    if (left.conversionFun == nullptr && right.conversionFun != nullptr) return true;
-    if (right.conversionFun == nullptr && left.conversionFun != nullptr) return false;
-    if (left.conversionKind == ConversionKind::implicitConversion && right.conversionKind == ConversionKind::explicitConversion) return true;
-    if (left.conversionKind == ConversionKind::explicitConversion && right.conversionKind == ConversionKind::implicitConversion) return false;
-    if (left.distance < right.distance) return true;
-    if (left.distance > right.distance) return false;
+    if (left.conversionFun == nullptr && right.conversionFun != nullptr) return true; 
+    if (right.conversionFun == nullptr && left.conversionFun != nullptr) return false; 
+    if (left.conversionKind == ConversionKind::implicitConversion && right.conversionKind == ConversionKind::explicitConversion) return true; 
+    if (left.conversionKind == ConversionKind::explicitConversion && right.conversionKind == ConversionKind::implicitConversion) return false; 
+    if (left.distance < right.distance) return true; 
+    if (left.distance > right.distance) return false; 
+    if (left.fundamentalTypeDistance < right.fundamentalTypeDistance) return true;
+    if (left.fundamentalTypeDistance > right.fundamentalTypeDistance) return false;
     return false;
 }
 
@@ -201,26 +203,19 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
     {
         return false;
     }
-    int leftFundamentalTypeDistance = 0;
-    int rightFundamentalTypeDistance = 0;
-    for (int i = 0; i < n; ++i)
-    {
-        leftFundamentalTypeDistance += left.argumentMatches[i].fundamentalTypeDistance;
-        rightFundamentalTypeDistance += right.argumentMatches[i].fundamentalTypeDistance;
-    }
-    if (leftFundamentalTypeDistance < rightFundamentalTypeDistance)
-    {
-        return true;
-    }
-    if (leftFundamentalTypeDistance > rightFundamentalTypeDistance)
-    {
-        return false;
-    }
     if (left.function->IsConst() && !right.function->IsConst())
     {
         return true;
     }
     if (!left.function->IsConst() && right.function->IsConst())
+    {
+        return false;
+    }
+    if (left.function->IsFunctionDefinitionSymbol() && !right.function->IsFunctionDefinitionSymbol())
+    {
+        return true;
+    }
+    if (!left.function->IsFunctionDefinitionSymbol() && right.function->IsFunctionDefinitionSymbol())
     {
         return false;
     }
@@ -1069,6 +1064,8 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
     const std::vector<std::unique_ptr<BoundExpressionNode>>& args, const std::u32string& groupName, const soul::ast::SourcePos& sourcePos, Context* context, Exception& ex)
 {
     std::vector<std::unique_ptr<FunctionMatch>> functionMatches;
+    std::set<FunctionSymbol*> viableFunctionSet;
+    std::set<std::u32string> viableFunctionFullNameSet;
     int n = viableFunctions.size();
     for (int i = 0; i < n; ++i)
     {
@@ -1076,6 +1073,19 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
         if ((viableFunction->Qualifiers() & FunctionQualifiers::isDeleted) != FunctionQualifiers::none)
         {
             continue;
+        }
+        if (viableFunctionSet.find(viableFunction) != viableFunctionSet.end())
+        {
+            continue;
+        }
+        if (viableFunction->IsFunctionDefinitionSymbol() && viableFunctionFullNameSet.find(viableFunction->FullName()) != viableFunctionFullNameSet.end())
+        {
+            continue;
+        }
+        viableFunctionSet.insert(viableFunction);
+        if (viableFunction->IsFunctionDefinitionSymbol())
+        {
+            viableFunctionFullNameSet.insert(viableFunction->FullName());
         }
         std::unique_ptr<FunctionMatch> functionMatch(new FunctionMatch(viableFunction, context));
         SetTemplateArgs(viableFunction, functionMatch->templateParameterMap, templateArgs);
@@ -1100,6 +1110,7 @@ std::unique_ptr<FunctionMatch> SelectBestMatchingFunction(const std::vector<Func
             ex = Exception("ambiguous function call, " + std::to_string(viableFunctions.size()) + " viable functions examined.", sourcePos, context);
             for (const auto& functionMatch : functionMatches)
             {
+                if (BetterFunctionMatch()(functionMatches[0], functionMatch)) break;
                 std::cout << util::ToUtf8(functionMatch->function->FullName()) << std::endl;
             }
             return std::unique_ptr<FunctionMatch>(nullptr);

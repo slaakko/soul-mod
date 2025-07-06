@@ -8,7 +8,7 @@ export module otava.symbols.fundamental.type.operation;
 import otava.symbols.emitter;
 import otava.symbols.function.symbol;
 import otava.symbols.context;
-import otava.intermediate.value;
+import otava.intermediate.data;
 import std;
 
 export namespace otava::symbols {

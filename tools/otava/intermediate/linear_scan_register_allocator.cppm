@@ -58,30 +58,33 @@ public:
     LinearScanRegisterAllocator(Function& function, Context* context_);
     void AddLiveRange(const LiveRange& liveRange, Instruction* inst);
     void AddFreeRegGroupToPool(Instruction* inst);
-    void RemoveFromActive(const LiveRange& range);
-    bool NoFreeRegs() const;
+    void RemoveFromActive(const LiveRange& range, bool integer);
+    bool NoFreeRegs(bool floatingPoint) const;
     const std::set<LiveRange, LiveRangeByStart>& LiveRanges() const { return liveRanges; }
-    const std::set<LiveRange, LiveRangeByEnd> Active() const { return active; }
-    FrameLocation GetFrameLocation(Instruction* inst) const;
+    const std::set<LiveRange, LiveRangeByEnd>& ActiveInteger() const { return activeInteger; }
+    const std::set<LiveRange, LiveRangeByEnd>& ActiveFP() const { return activeFP; }
+    FrameLocation GetFrameLocation(Instruction* inst) const override;
     otava::assembly::RegisterGroup* GetRegisterGroup(Instruction* inst) const override;
     void RemoveRegisterGroup(Instruction* inst);
     void AllocateRegister(Instruction* inst);
-    void AllocateFrameLocation(Instruction* inst);
+    void AllocateFrameLocation(Instruction* inst, bool spill);
     void Spill(Instruction* inst);
     LiveRange GetLiveRange(Instruction* inst) const;
     Frame& GetFrame() override { return frame; }
     const std::vector<Instruction*>& GetInstructions(const LiveRange& range) const;
     RegisterAllocationAction Run(Instruction* inst) override;
     Locations GetLocations(Instruction* inst) const override;
-    virtual void AddRegisterLocation(Instruction* inst, otava::assembly::RegisterGroup* regGroup) override;
+    void AddRegisterLocation(Instruction* inst, otava::assembly::RegisterGroup* regGroup) override;
     int LastActiveLocalRegGroup() const override;
     const std::vector<SpillData>& GetSpillData() const override;
+    void RemoveFromRegisterGroups(Instruction* inst) override;
 private:
     void ComputeLiveRanges(Function& function);
     void ExpireOldRanges(const LiveRange& range);
     Frame frame;
     std::set<LiveRange, LiveRangeByStart> liveRanges;
-    std::set<LiveRange, LiveRangeByEnd> active;
+    std::set<LiveRange, LiveRangeByEnd> activeInteger;
+    std::set<LiveRange, LiveRangeByEnd> activeFP;
     std::map<Instruction*, FrameLocation> frameLocations;
     std::map<Instruction*, otava::assembly::RegisterGroup*> registerGroups;
     std::map<Instruction*, LiveRange> instructionRangeMap;
@@ -91,6 +94,6 @@ private:
     Context* context;
 };
 
-std::unique_ptr<LinearScanRegisterAllocator> LinearScanRegisterAllocation(Function& function, Context* context);
+std::unique_ptr<LinearScanRegisterAllocator> CreateLinearScanRegisterAllocator(Function& function, Context* context);
 
 } // otava::intermediate

@@ -7,16 +7,9 @@ export module ort;
 
 import std;
 
-export extern "C" void prints(const char* s, int handle);
 export extern "C" void flush_handle(int handle);
 export extern "C" void set_rand_seed(std::uint64_t seed);
 export extern "C" std::uint8_t get_random_byte();
-export extern "C" int save_context(void* ctx);
-export extern "C" void restore_context(void* ctx, int retval);
-export extern "C" void set_exception(void* ex, std::uint64_t eth, std::uint64_t etl);
-export extern "C" void* get_exception();
-export extern "C" void throw_exception();
-export extern "C" bool handle_exception(std::uint64_t hth, std::uint64_t htl);
 export extern "C" bool is_space(int c);
 export extern "C" const char* get_env(const char* env);
 export extern "C" void* open_file(const char* path, const char* mode);

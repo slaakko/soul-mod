@@ -1,10 +1,11 @@
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/intermediate/intermediate.lexer' using soul lexer generator slg version 4.1.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/intermediate/intermediate.lexer' using soul lexer generator slg version 5.0.0
 
 export module otava.intermediate.lexer;
 
 import std;
 import soul.lexer;
 import soul.ast.slg;
+import util;
 import otava.intermediate.token;
 
 using namespace soul;
@@ -16,26 +17,29 @@ export namespace otava::intermediate::lexer {
 std::mutex& MakeLexerMtx();
 
 template<typename Char>
-struct IntermediateCodeLexer;
+struct IntermediateLexer;
 
 template<typename Char>
-soul::lexer::Lexer<IntermediateCodeLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
+soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
+
+template<typename Char>
+soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName);
 
 soul::ast::slg::TokenCollection* GetTokens();
 
-struct IntermediateCodeLexer_Variables : public soul::lexer::Variables
+struct IntermediateLexer_Variables : public soul::lexer::Variables
 {
-    IntermediateCodeLexer_Variables();
+    IntermediateLexer_Variables();
 };
 
 template<typename Char>
-struct IntermediateCodeLexer
+struct IntermediateLexer
 {
-    using Variables = IntermediateCodeLexer_Variables;
+    using Variables = IntermediateLexer_Variables;
 
     static std::int32_t NextState(std::int32_t state, Char chr, soul::lexer::LexerBase<Char>& lexer)
     {
-        ClassMap<Char>* classmap = lexer.GetClassMap();
+        soul::lexer::ClassMap<Char>* classmap = lexer.GetClassMap();
         std::int32_t cls = classmap->GetClass(chr);
         switch (state)
         {
@@ -56,10 +60,10 @@ struct IntermediateCodeLexer
                     }
                     case 3:
                     case 4:
-                    case 9:
-                    case 10:
                     case 11:
-                    case 16:
+                    case 12:
+                    case 13:
+                    case 18:
                     {
                         return 3;
                     }
@@ -67,43 +71,43 @@ struct IntermediateCodeLexer
                     {
                         return 4;
                     }
-                    case 12:
+                    case 9:
                     {
                         return 5;
                     }
-                    case 13:
+                    case 14:
                     {
                         return 6;
                     }
-                    case 14:
+                    case 15:
                     {
                         return 7;
                     }
-                    case 15:
+                    case 16:
                     {
                         return 8;
                     }
-                    case 18:
+                    case 17:
                     {
                         return 9;
                     }
                     case 19:
-                    case 20:
                     {
                         return 10;
                     }
+                    case 20:
                     case 21:
-                    case 23:
-                    case 24:
-                    case 25:
                     {
                         return 11;
                     }
                     case 22:
+                    case 24:
+                    case 25:
+                    case 26:
                     {
                         return 12;
                     }
-                    case 26:
+                    case 23:
                     {
                         return 13;
                     }
@@ -147,13 +151,17 @@ struct IntermediateCodeLexer
                     {
                         return 23;
                     }
+                    case 37:
+                    {
+                        return 24;
+                    }
                     default:
                     {
                         return -1;
                     }
                 }
             }
-            case 23:
+            case 24:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -174,7 +182,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 22:
+            case 23:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -195,7 +203,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 21:
+            case 22:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -216,7 +224,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 20:
+            case 21:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -237,7 +245,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 19:
+            case 20:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -258,7 +266,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 18:
+            case 19:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -279,7 +287,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 17:
+            case 18:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -300,7 +308,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 16:
+            case 17:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -321,7 +329,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 15:
+            case 16:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -342,7 +350,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 14:
+            case 15:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -363,7 +371,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 13:
+            case 14:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -384,24 +392,24 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
-                    case 26:
+                    case 27:
                     {
-                        return 13;
+                        return 14;
                     }
-                    case 18:
-                    {
-                        return 24;
-                    }
-                    case 21:
-                    case 22:
-                    case 23:
+                    case 19:
                     {
                         return 25;
                     }
+                    case 22:
+                    case 23:
                     case 24:
-                    case 25:
                     {
                         return 26;
+                    }
+                    case 25:
+                    case 26:
+                    {
+                        return 27;
                     }
                     default:
                     {
@@ -409,7 +417,7 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 26:
+            case 27:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -430,73 +438,20 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
+                    case 26:
                     {
-                        return 25;
+                        return 26;
                     }
-                    case 19:
                     case 20:
-                    {
-                        return 27;
-                    }
-                    case 26:
-                    {
-                        return 28;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 28:
-            {
-                auto& token = lexer.CurrentToken();
-                auto prevMatch = token.match;
-                token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == soul::lexer::CONTINUE_TOKEN)
-                {
-                    token.id = soul::lexer::CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != soul::lexer::INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
                     case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    {
-                        return 25;
-                    }
-                    case 26:
                     {
                         return 28;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 27:
-            {
-                switch (cls)
-                {
-                    case 26:
+                    case 27:
                     {
                         return 29;
                     }
@@ -527,7 +482,15 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
                     case 26:
+                    {
+                        return 26;
+                    }
+                    case 27:
                     {
                         return 29;
                     }
@@ -537,7 +500,52 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 25:
+            case 28:
+            {
+                switch (cls)
+                {
+                    case 27:
+                    {
+                        return 30;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 30:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(5, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 27:
+                    {
+                        return 30;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 26:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -558,14 +566,14 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
                     {
-                        return 25;
+                        return 26;
                     }
                     default:
                     {
@@ -573,7 +581,7 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 24:
+            case 25:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -594,14 +602,50 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
-                    case 24:
                     case 25:
-                    {
-                        return 30;
-                    }
                     case 26:
                     {
                         return 31;
+                    }
+                    case 27:
+                    {
+                        return 32;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 32:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(5, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 25:
+                    case 26:
+                    {
+                        return 31;
+                    }
+                    case 27:
+                    {
+                        return 32;
                     }
                     default:
                     {
@@ -611,60 +655,24 @@ struct IntermediateCodeLexer
             }
             case 31:
             {
-                auto& token = lexer.CurrentToken();
-                auto prevMatch = token.match;
-                token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(5, lexer);
-                if (tokenId == soul::lexer::CONTINUE_TOKEN)
-                {
-                    token.id = soul::lexer::CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != soul::lexer::INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
                 switch (cls)
                 {
-                    case 24:
-                    case 25:
+                    case 20:
+                    case 21:
+                    {
+                        return 28;
+                    }
+                    case 27:
                     {
                         return 30;
                     }
-                    case 26:
-                    {
-                        return 31;
-                    }
                     default:
                     {
                         return -1;
                     }
                 }
             }
-            case 30:
-            {
-                switch (cls)
-                {
-                    case 19:
-                    case 20:
-                    {
-                        return 27;
-                    }
-                    case 26:
-                    {
-                        return 29;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 12:
+            case 13:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -688,189 +696,30 @@ struct IntermediateCodeLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 10:
-                    case 11:
-                    case 16:
-                    {
-                        return 32;
-                    }
-                    case 6:
+                    case 12:
+                    case 13:
+                    case 18:
                     {
                         return 33;
                     }
-                    case 9:
+                    case 6:
                     {
                         return 34;
                     }
-                    case 14:
+                    case 11:
                     {
                         return 35;
                     }
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
+                    case 16:
                     {
                         return 36;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 36:
-            {
-                auto& token = lexer.CurrentToken();
-                auto prevMatch = token.match;
-                token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == soul::lexer::CONTINUE_TOKEN)
-                {
-                    token.id = soul::lexer::CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != soul::lexer::INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 16:
-                    {
-                        return 32;
-                    }
-                    case 6:
-                    {
-                        return 33;
-                    }
-                    case 14:
-                    {
-                        return 35;
-                    }
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
-                    {
-                        return 36;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 35:
-            {
-                auto& token = lexer.CurrentToken();
-                auto prevMatch = token.match;
-                token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == soul::lexer::CONTINUE_TOKEN)
-                {
-                    token.id = soul::lexer::CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != soul::lexer::INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 16:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
-                    {
-                        return 33;
-                    }
-                    case 14:
-                    {
-                        return 35;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 34:
-            {
-                auto& token = lexer.CurrentToken();
-                auto prevMatch = token.match;
-                token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == soul::lexer::CONTINUE_TOKEN)
-                {
-                    token.id = soul::lexer::CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != soul::lexer::INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 9:
-                    case 11:
-                    case 16:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
-                    {
-                        return 33;
-                    }
-                    case 14:
-                    {
-                        return 35;
-                    }
-                    case 10:
+                    case 27:
                     {
                         return 37;
                     }
@@ -904,27 +753,132 @@ struct IntermediateCodeLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 9:
-                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 18:
+                    {
+                        return 33;
+                    }
+                    case 6:
+                    {
+                        return 34;
+                    }
                     case 16:
-                    case 21:
+                    {
+                        return 36;
+                    }
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
                     {
-                        return 32;
+                        return 37;
                     }
-                    case 6:
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 36:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 18:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
                     {
                         return 33;
                     }
-                    case 14:
+                    case 6:
                     {
-                        return 35;
+                        return 34;
                     }
+                    case 16:
+                    {
+                        return 36;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 35:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 3:
+                    case 4:
+                    case 5:
                     case 11:
+                    case 13:
+                    case 18:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    {
+                        return 33;
+                    }
+                    case 6:
+                    {
+                        return 34;
+                    }
+                    case 16:
+                    {
+                        return 36;
+                    }
+                    case 12:
                     {
                         return 38;
                     }
@@ -958,27 +912,27 @@ struct IntermediateCodeLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 9:
-                    case 10:
                     case 11:
-                    case 16:
-                    case 21:
+                    case 12:
+                    case 18:
                     case 22:
+                    case 23:
                     case 24:
                     case 25:
                     case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
+                    case 27:
                     {
                         return 33;
                     }
-                    case 14:
+                    case 6:
                     {
-                        return 35;
+                        return 34;
                     }
-                    case 23:
+                    case 16:
+                    {
+                        return 36;
+                    }
+                    case 13:
                     {
                         return 39;
                     }
@@ -1012,28 +966,27 @@ struct IntermediateCodeLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 9:
-                    case 10:
                     case 11:
-                    case 16:
-                    case 21:
+                    case 12:
+                    case 13:
+                    case 18:
                     case 22:
                     case 23:
-                    case 24:
                     case 25:
                     case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
+                    case 27:
                     {
                         return 33;
                     }
-                    case 14:
+                    case 6:
                     {
-                        return 35;
+                        return 34;
                     }
-                    case 12:
+                    case 16:
+                    {
+                        return 36;
+                    }
+                    case 24:
                     {
                         return 40;
                     }
@@ -1045,20 +998,52 @@ struct IntermediateCodeLexer
             }
             case 40:
             {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
                 switch (cls)
                 {
-                    case 19:
-                    {
-                        return 41;
-                    }
-                    case 21:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 18:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
+                    case 27:
                     {
-                        return 42;
+                        return 33;
+                    }
+                    case 6:
+                    {
+                        return 34;
+                    }
+                    case 16:
+                    {
+                        return 36;
+                    }
+                    case 14:
+                    {
+                        return 41;
                     }
                     default:
                     {
@@ -1066,24 +1051,20 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 42:
+            case 41:
             {
                 switch (cls)
                 {
-                    case 19:
+                    case 20:
                     {
-                        return 41;
+                        return 42;
                     }
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
-                    {
-                        return 42;
-                    }
-                    case 13:
+                    case 27:
                     {
                         return 43;
                     }
@@ -1094,6 +1075,33 @@ struct IntermediateCodeLexer
                 }
             }
             case 43:
+            {
+                switch (cls)
+                {
+                    case 20:
+                    {
+                        return 42;
+                    }
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    {
+                        return 43;
+                    }
+                    case 15:
+                    {
+                        return 44;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 44:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1114,26 +1122,77 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 41:
+            case 42:
             {
                 switch (cls)
                 {
-                    case 19:
+                    case 20:
                     {
-                        return 41;
+                        return 42;
                     }
-                    case 21:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
-                    {
-                        return 42;
-                    }
-                    case 13:
+                    case 27:
                     {
                         return 43;
+                    }
+                    case 15:
+                    {
+                        return 44;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 34:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 18:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    {
+                        return 33;
+                    }
+                    case 6:
+                    {
+                        return 34;
+                    }
+                    case 16:
+                    {
+                        return 36;
                     }
                     default:
                     {
@@ -1165,129 +1224,24 @@ struct IntermediateCodeLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 9:
-                    case 10:
                     case 11:
-                    case 16:
-                    case 21:
+                    case 12:
+                    case 13:
+                    case 18:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
+                    case 27:
                     {
                         return 33;
                     }
-                    case 14:
+                    case 6:
                     {
-                        return 35;
+                        return 34;
                     }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 32:
-            {
-                auto& token = lexer.CurrentToken();
-                auto prevMatch = token.match;
-                token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == soul::lexer::CONTINUE_TOKEN)
-                {
-                    token.id = soul::lexer::CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != soul::lexer::INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 9:
-                    case 10:
-                    case 11:
                     case 16:
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
-                    {
-                        return 33;
-                    }
-                    case 14:
-                    {
-                        return 35;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 11:
-            {
-                auto& token = lexer.CurrentToken();
-                auto prevMatch = token.match;
-                token.match = lexer.CurrentLexeme();
-                std::int64_t tokenId = GetTokenId(2, lexer);
-                if (tokenId == soul::lexer::CONTINUE_TOKEN)
-                {
-                    token.id = soul::lexer::CONTINUE_TOKEN;
-                    return -1;
-                }
-                else if (tokenId != soul::lexer::INVALID_TOKEN)
-                {
-                    token.id = tokenId;
-                }
-                else
-                {
-                    token.match = prevMatch;
-                }
-                switch (cls)
-                {
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 16:
-                    {
-                        return 32;
-                    }
-                    case 6:
-                    {
-                        return 33;
-                    }
-                    case 14:
-                    {
-                        return 35;
-                    }
-                    case 21:
-                    case 22:
-                    case 23:
-                    case 24:
-                    case 25:
-                    case 26:
                     {
                         return 36;
                     }
@@ -1297,17 +1251,53 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 10:
+            case 12:
             {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(2, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
                 switch (cls)
                 {
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 11:
+                    case 12:
+                    case 13:
                     case 18:
                     {
-                        return 9;
+                        return 33;
                     }
-                    case 26:
+                    case 6:
                     {
-                        return 44;
+                        return 34;
+                    }
+                    case 16:
+                    {
+                        return 36;
+                    }
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    {
+                        return 37;
                     }
                     default:
                     {
@@ -1315,7 +1305,25 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 44:
+            case 11:
+            {
+                switch (cls)
+                {
+                    case 19:
+                    {
+                        return 10;
+                    }
+                    case 27:
+                    {
+                        return 45;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 45:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1336,18 +1344,32 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
-                    case 18:
+                    case 19:
                     {
-                        return 24;
+                        return 25;
                     }
-                    case 24:
                     case 25:
-                    {
-                        return 30;
-                    }
                     case 26:
                     {
-                        return 44;
+                        return 31;
+                    }
+                    case 27:
+                    {
+                        return 45;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 10:
+            {
+                switch (cls)
+                {
+                    case 27:
+                    {
+                        return 32;
                     }
                     default:
                     {
@@ -1356,20 +1378,6 @@ struct IntermediateCodeLexer
                 }
             }
             case 9:
-            {
-                switch (cls)
-                {
-                    case 26:
-                    {
-                        return 31;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 8:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1390,21 +1398,7 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
-                    case 16:
-                    {
-                        return 45;
-                    }
-                    default:
-                    {
-                        return -1;
-                    }
-                }
-            }
-            case 45:
-            {
-                switch (cls)
-                {
-                    case 26:
+                    case 18:
                     {
                         return 46;
                     }
@@ -1415,6 +1409,20 @@ struct IntermediateCodeLexer
                 }
             }
             case 46:
+            {
+                switch (cls)
+                {
+                    case 27:
+                    {
+                        return 47;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 47:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1435,9 +1443,9 @@ struct IntermediateCodeLexer
                 }
                 switch (cls)
                 {
-                    case 26:
+                    case 27:
                     {
-                        return 46;
+                        return 47;
                     }
                     default:
                     {
@@ -1445,7 +1453,7 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 7:
+            case 8:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1466,7 +1474,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 6:
+            case 7:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1487,7 +1495,7 @@ struct IntermediateCodeLexer
                 }
                 return -1;
             }
-            case 5:
+            case 6:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1507,6 +1515,251 @@ struct IntermediateCodeLexer
                     token.match = prevMatch;
                 }
                 return -1;
+            }
+            case 5:
+            {
+                switch (cls)
+                {
+                    case 9:
+                    {
+                        return 48;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 48:
+            {
+                switch (cls)
+                {
+                    case 0:
+                    {
+                        return 49;
+                    }
+                    case 1:
+                    {
+                        return 50;
+                    }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    {
+                        return 51;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 51:
+            {
+                switch (cls)
+                {
+                    case 0:
+                    {
+                        return 49;
+                    }
+                    case 1:
+                    {
+                        return 50;
+                    }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 23:
+                    case 24:
+                    case 25:
+                    case 26:
+                    case 27:
+                    case 28:
+                    case 29:
+                    case 30:
+                    case 31:
+                    case 32:
+                    case 33:
+                    case 34:
+                    case 35:
+                    case 36:
+                    case 37:
+                    {
+                        return 51;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 50:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 1:
+                    case 7:
+                    case 8:
+                    {
+                        return 1;
+                    }
+                    case 9:
+                    {
+                        return 5;
+                    }
+                    case 0:
+                    {
+                        return 52;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 52:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 0:
+                    case 1:
+                    case 7:
+                    case 8:
+                    {
+                        return 1;
+                    }
+                    case 9:
+                    {
+                        return 5;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
+            }
+            case 49:
+            {
+                auto& token = lexer.CurrentToken();
+                auto prevMatch = token.match;
+                token.match = lexer.CurrentLexeme();
+                std::int64_t tokenId = GetTokenId(0, lexer);
+                if (tokenId == soul::lexer::CONTINUE_TOKEN)
+                {
+                    token.id = soul::lexer::CONTINUE_TOKEN;
+                    return -1;
+                }
+                else if (tokenId != soul::lexer::INVALID_TOKEN)
+                {
+                    token.id = tokenId;
+                }
+                else
+                {
+                    token.match = prevMatch;
+                }
+                switch (cls)
+                {
+                    case 0:
+                    case 1:
+                    case 7:
+                    case 8:
+                    {
+                        return 1;
+                    }
+                    case 9:
+                    {
+                        return 5;
+                    }
+                    default:
+                    {
+                        return -1;
+                    }
+                }
             }
             case 4:
             {
@@ -1532,26 +1785,26 @@ struct IntermediateCodeLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 9:
-                    case 10:
                     case 11:
-                    case 16:
-                    case 21:
+                    case 12:
+                    case 13:
+                    case 18:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
+                    case 27:
                     {
                         return 33;
                     }
-                    case 14:
+                    case 6:
                     {
-                        return 35;
+                        return 34;
+                    }
+                    case 16:
+                    {
+                        return 36;
                     }
                     default:
                     {
@@ -1583,26 +1836,26 @@ struct IntermediateCodeLexer
                     case 3:
                     case 4:
                     case 5:
-                    case 9:
-                    case 10:
                     case 11:
-                    case 16:
-                    case 21:
+                    case 12:
+                    case 13:
+                    case 18:
                     case 22:
                     case 23:
                     case 24:
                     case 25:
                     case 26:
-                    {
-                        return 32;
-                    }
-                    case 6:
+                    case 27:
                     {
                         return 33;
                     }
-                    case 14:
+                    case 6:
                     {
-                        return 35;
+                        return 34;
+                    }
+                    case 16:
+                    {
+                        return 36;
                     }
                     default:
                     {
@@ -1616,7 +1869,7 @@ struct IntermediateCodeLexer
                 {
                     case 2:
                     {
-                        return 47;
+                        return 53;
                     }
                     case 3:
                     case 4:
@@ -1652,8 +1905,9 @@ struct IntermediateCodeLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
                     {
-                        return 48;
+                        return 54;
                     }
                     default:
                     {
@@ -1661,13 +1915,13 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 48:
+            case 54:
             {
                 switch (cls)
                 {
                     case 2:
                     {
-                        return 47;
+                        return 53;
                     }
                     case 3:
                     case 4:
@@ -1703,8 +1957,9 @@ struct IntermediateCodeLexer
                     case 34:
                     case 35:
                     case 36:
+                    case 37:
                     {
-                        return 48;
+                        return 54;
                     }
                     default:
                     {
@@ -1712,7 +1967,7 @@ struct IntermediateCodeLexer
                     }
                 }
             }
-            case 47:
+            case 53:
             {
                 auto& token = lexer.CurrentToken();
                 auto prevMatch = token.match;
@@ -1761,6 +2016,10 @@ struct IntermediateCodeLexer
                     {
                         return 1;
                     }
+                    case 9:
+                    {
+                        return 5;
+                    }
                     default:
                     {
                         return -1;
@@ -1789,7 +2048,8 @@ struct IntermediateCodeLexer
             case 2:
             {
                 lexer.Retract();
-                std::int64_t kw = lexer.GetKeywordToken(lexer.CurrentToken().match);
+                auto &token = lexer.CurrentToken();
+                std::int64_t kw = lexer.GetKeywordToken(token.match);
                 if (kw == INVALID_TOKEN) return ID;
                 else return kw;
                 break;
@@ -1908,9 +2168,16 @@ struct IntermediateCodeLexer
 };
 
 template<typename Char>
-ClassMap<Char>* GetClassMap()
+soul::lexer::ClassMap<Char>* GetClassMap()
 {
-    static ClassMap<Char>* classmap = MakeClassMap<Char>("otava.intermediate.lexer.classmap");
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>("otava.intermediate.lexer.classmap");
+    return classmap;
+}
+
+template<typename Char>
+soul::lexer::ClassMap<Char>* GetClassMap(const std::string& moduleFileName, util::ResourceFlags resourceFlags)
+{
+    static soul::lexer::ClassMap<Char>* classmap = soul::lexer::MakeClassMap<Char>(moduleFileName, "otava.intermediate.lexer.classmap", resourceFlags);
     return classmap;
 }
 
@@ -1930,11 +2197,22 @@ template<>
 soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>();
 
 template<typename Char>
-soul::lexer::Lexer<IntermediateCodeLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
+soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
 {
     std::lock_guard<std::mutex> lock(MakeLexerMtx());
-    auto lexer = soul::lexer::Lexer<IntermediateCodeLexer<Char>, Char>(start, end, fileName);
+    auto lexer = soul::lexer::Lexer<IntermediateLexer<Char>, Char>(start, end, fileName);
     lexer.SetClassMap(GetClassMap<Char>());
+    lexer.SetTokenCollection(GetTokens());
+    lexer.SetKeywordMap(GetKeywords<Char>());
+    return lexer;
+}
+
+template<typename Char>
+soul::lexer::Lexer<IntermediateLexer<Char>, Char> MakeLexer(const std::string& moduleFileName, util::ResourceFlags resourceFlags, const Char* start, const Char* end, const std::string& fileName)
+{
+    std::lock_guard<std::mutex> lock(MakeLexerMtx());
+    auto lexer = soul::lexer::Lexer<IntermediateLexer<Char>, Char>(start, end, fileName);
+    lexer.SetClassMap(GetClassMap<Char>(moduleFileName, resourceFlags));
     lexer.SetTokenCollection(GetTokens());
     lexer.SetKeywordMap(GetKeywords<Char>());
     return lexer;

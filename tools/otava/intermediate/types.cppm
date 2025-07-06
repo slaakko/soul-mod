@@ -3,28 +3,25 @@
 // Distributed under the MIT license
 // =================================
 
-export module otava.intermediate.type;
+export module otava.intermediate.types;
 
-import otava.assembly.data;
+import otava.assembly;
+import soul.ast.span;
+import util;
 import std;
-import soul.ast.source.pos;
-import util.code.formatter;
-import util.uuid;
-
-export namespace otava::intermediate::type {}
 
 export namespace otava::intermediate {
 
-using SourcePos = soul::ast::SourcePos;
+export namespace types {}
 
+class Value;
 class Context;
 class Types;
+class TypeRef;
 class Visitor;
 class ArrayType;
 class StructureType;
 class FwdDeclaredStructureType;
-class TypeRef;
-class Value;
 
 const std::int32_t voidTypeId = 0;
 const std::int32_t boolTypeId = 1;
@@ -83,60 +80,62 @@ constexpr std::int8_t GetPointerCount(std::int32_t typeId)
 
 enum class TypeKind : int
 {
-    fundamentalType, structureType, arrayType, functionType, pointerType, fwdDeclaredStructureType
+    fundamentalType, structureType, fwdDeclaredStructureType, arrayType, functionType, pointerType
 };
 
 class Type
 {
 public:
-    Type(const SourcePos& sourcePos_, TypeKind kind_, std::int32_t id_);
+    Type(const soul::ast::Span& span_, TypeKind kind_, std::int32_t id_);
     virtual ~Type();
     virtual void Accept(Visitor& visitor) {}
     virtual std::int64_t Size() const = 0;
     virtual std::int64_t Alignment() const = 0;
-    virtual otava::assembly::DataInst DataInstruction() const { return otava::assembly::DataInst::DB; }
+    virtual otava::assembly::OpCode DataOpCode() const { return otava::assembly::OpCode::DB; }
     TypeKind Kind() const { return kind; }
     bool IsFundamentalType() const { return kind == TypeKind::fundamentalType; }
     bool IsVoidType() const { return id == voidTypeId; }
     bool IsBooleanType() const { return id == boolTypeId; }
+    bool IsLongType() const { return id == longTypeId; }
     bool IsCompoundType() const { return !IsFundamentalType(); }
     bool IsArithmeticType() const { return IsIntegerType() || IsFloatingPointType(); }
     bool IsIntegerType() const;
     bool IsUnsignedType() const;
+    bool IsSignedType() const;
     bool IsFloatingPointType() const;
     bool IsFloatType() const { return id == floatTypeId; }
-    bool IsByteType() const { return id == byteTypeId; }
     bool IsDoubleType() const { return id == doubleTypeId; }
     bool IsPointerType() const { return kind == TypeKind::pointerType; }
-    bool IsAggregateType() const;
+    Type* AddPointer(Context* context) const;
+    Type* RemovePointer(const soul::ast::Span& span, Context* context) const;
     bool IsFwdDeclaredStructureType() const { return kind == TypeKind::fwdDeclaredStructureType; }
     virtual void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context);
-    Type* AddPointer(Context* context) const;
-    Type* RemovePointer(const SourcePos& sourcePos, Context* context) const;
+    std::int32_t NextTypeId() { return nextTypeId++; }
     virtual std::string Name() const = 0;
     bool IsStructureType() const { return kind == TypeKind::structureType; }
-    StructureType* GetStructurePointeeType(const SourcePos& sourcePos, Context* context) const;
-    ArrayType* GetArrayPointeeType(const SourcePos& sourcePos, Context* context) const;
+    StructureType* GetStructurePointeeType(const soul::ast::Span& span, Context* context) const;
+    ArrayType* GetArrayPointeeType(const soul::ast::Span& span, Context* context) const;
     bool IsArrayType() const { return kind == TypeKind::arrayType; }
     bool IsFunctionType() const { return kind == TypeKind::functionType; }
     bool IsFunctionPtrType() const;
-    bool IsBytePtrType() const;
-    virtual Type* BaseType() const { return const_cast<Type*>(this); }
     virtual bool IsWeakType() const { return true; }
     virtual void Add(Types* types, Context* context);
     virtual void Resolve(Types* types, Context* context);
-    const SourcePos& GetSourcePos() const { return sourcePos; }
+    const soul::ast::Span& Span() const { return span; }
     std::int32_t Id() const { return id; }
-    TypeRef GetTypeRef();
+    void Write(util::CodeFormatter& formatter);
     virtual void WriteDeclaration(util::CodeFormatter& formatter);
     Value* DefaultValue() { return defaultValue; }
-    void SetDefaultValue(Value* defaultValue_);
+    void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
     virtual Value* MakeDefaultValue(Context& context) const { return nullptr; }
+    TypeRef GetTypeRef();
+    virtual Type* BaseType() const { return const_cast<Type*>(this); }
 private:
-    Value* defaultValue;
-    SourcePos sourcePos;
+    soul::ast::Span span;
     TypeKind kind;
     std::int32_t id;
+    Value* defaultValue;
+    std::int32_t nextTypeId;
 };
 
 class VoidType : public Type
@@ -155,7 +154,6 @@ public:
     std::string Name() const override { return "bool"; }
     std::int64_t Size() const override { return 1; }
     std::int64_t Alignment() const override { return 1; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -166,7 +164,6 @@ public:
     std::string Name() const override { return "sbyte"; }
     std::int64_t Size() const override { return 1; }
     std::int64_t Alignment() const override { return 1; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -177,7 +174,6 @@ public:
     std::string Name() const override { return "byte"; }
     std::int64_t Size() const override { return 1; }
     std::int64_t Alignment() const override { return 1; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DB; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -188,7 +184,7 @@ public:
     std::string Name() const override { return "short"; }
     std::int64_t Size() const override { return 2; }
     std::int64_t Alignment() const override { return 2; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DW; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::DW; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -199,7 +195,7 @@ public:
     std::string Name() const override { return "ushort"; }
     std::int64_t Size() const override { return 2; }
     std::int64_t Alignment() const override { return 2; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DW; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::DW; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -210,7 +206,7 @@ public:
     std::string Name() const override { return "int"; }
     std::int64_t Size() const override { return 4; }
     std::int64_t Alignment() const override { return 4; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::DD; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -221,7 +217,7 @@ public:
     std::string Name() const override { return "uint"; }
     std::int64_t Size() const override { return 4; }
     std::int64_t Alignment() const override { return 4; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::DD; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -232,7 +228,7 @@ public:
     std::string Name() const override { return "long"; }
     std::int64_t Size() const override { return 8; }
     std::int64_t Alignment() const override { return 8; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::DQ; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -243,7 +239,7 @@ public:
     std::string Name() const override { return "ulong"; }
     std::int64_t Size() const override { return 8; }
     std::int64_t Alignment() const override { return 8; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::DQ; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -254,7 +250,7 @@ public:
     std::string Name() const override { return "float"; }
     std::int64_t Size() const override { return 4; }
     std::int64_t Alignment() const override { return 4; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DD; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::REAL4; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -265,7 +261,7 @@ public:
     std::string Name() const override { return "double"; }
     std::int64_t Size() const override { return 8; }
     std::int64_t Alignment() const override { return 8; }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    otava::assembly::OpCode DataOpCode() const override { return otava::assembly::OpCode::REAL8; }
     Value* MakeDefaultValue(Context& context) const override;
 };
 
@@ -273,35 +269,32 @@ class TypeRef
 {
 public:
     TypeRef();
-    TypeRef(const SourcePos& sourcePos_, std::int32_t id_);
-    const SourcePos& GetSourcePos() const { return sourcePos; }
+    TypeRef(const soul::ast::Span& span_, std::int32_t id_);
+    const soul::ast::Span& Span() const { return span; }
     std::int32_t Id() const { return id; }
     void SetType(Type* type_) { type = type_; }
     Type* GetType() const { return type; }
-    void Write(util::CodeFormatter& formatter);
 private:
-    SourcePos sourcePos;
+    soul::ast::Span span;
     std::int32_t id;
     Type* type;
 };
 
-bool operator<(const TypeRef& left, const TypeRef& right);
-
-inline TypeRef MakeTypeRef(const SourcePos& sourcePos, std::int32_t baseTypeId, std::int32_t pointerCount)
+inline TypeRef MakeTypeRef(const soul::ast::Span& span, std::int32_t baseTypeId, std::int32_t pointerCount)
 {
-    return TypeRef(sourcePos, MakeTypeId(baseTypeId, pointerCount));
+    return TypeRef(span, MakeTypeId(baseTypeId, pointerCount));
 }
 
 class StructureType : public Type
 {
 public:
-    StructureType(const SourcePos& sourcePos_, std::int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_);
+    StructureType(const soul::ast::Span& span_, std::int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_);
     void Accept(Visitor& visitor) override;
     void Add(Types* types, Context* context) override;
     void Resolve(Types* types, Context* context) override;
     std::int64_t Size() const override;
     std::int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "$T" + std::to_string(MakeUserTypeId(Id())); }
+    std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
     bool IsWeakType() const override;
     int FieldCount() const { return fieldTypeRefs.size(); }
     const std::vector<TypeRef>& FieldTypeRefs() const { return fieldTypeRefs; }
@@ -334,14 +327,13 @@ private:
 class ArrayType : public Type
 {
 public:
-    ArrayType(const SourcePos& sourcePos_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_);
+    ArrayType(const soul::ast::Span& span_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_);
     void Accept(Visitor& visitor) override;
     void Add(Types* types, Context* context) override;
     void Resolve(Types* types, Context* context) override;
     std::int64_t Size() const override;
     std::int64_t Alignment() const override { return 8; }
-    otava::assembly::DataInst DataInstruction() const override;
-    std::string Name() const override { return "$T" + std::to_string(MakeUserTypeId(Id())); }
+    std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
     bool IsWeakType() const override;
     std::int64_t ElementCount() const { return elementCount; }
     const TypeRef& ElementTypeRef() const { return elementTypeRef; }
@@ -356,7 +348,7 @@ private:
 class FunctionType : public Type
 {
 public:
-    FunctionType(const SourcePos& sourcePos_, std::int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_);
+    FunctionType(const soul::ast::Span& span_, std::int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_);
     void Accept(Visitor& visitor) override;
     void Add(Types* types, Context* context) override;
     void Resolve(Types* types, Context* context) override;
@@ -364,13 +356,13 @@ public:
     int Arity() const { return paramTypeRefs.size(); }
     std::int64_t Size() const override { return 8; }
     std::int64_t Alignment() const override { return 8; }
-    std::string Name() const override { return "$T" + std::to_string(MakeUserTypeId(Id())); }
+    std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
     const TypeRef& ReturnTypeRef() const { return returnTypeRef; }
     Type* ReturnType() const { return returnTypeRef.GetType(); }
     const std::vector<TypeRef>& ParamTypeRefs() const { return paramTypeRefs; }
     Type* ParamType(int index) const { return paramTypeRefs[index].GetType(); }
     void WriteDeclaration(util::CodeFormatter& formatter) override;
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
+    bool IsUnaryOperationType() const;
 private:
     TypeRef returnTypeRef;
     std::vector<TypeRef> paramTypeRefs;
@@ -379,7 +371,7 @@ private:
 class PointerType : public Type
 {
 public:
-    PointerType(const SourcePos& sourcePos_, std::int32_t typeId_, std::int8_t pointerCount_, std::int32_t baseTypeId_);
+    PointerType(const soul::ast::Span& span_, std::int32_t typeId_, std::int8_t pointerCount_, std::int32_t baseTypeId_);
     std::string Name() const override;
     std::int64_t Size() const override { return 8; }
     std::int64_t Alignment() const override { return 8; }
@@ -387,31 +379,26 @@ public:
     const TypeRef& BaseTypeRef() const { return baseTypeRef; }
     TypeRef& BaseTypeRef() { return baseTypeRef; }
     Type* BaseType() const override { return baseTypeRef.GetType(); }
-    otava::assembly::DataInst DataInstruction() const override { return otava::assembly::DataInst::DQ; }
-    void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
     Value* MakeDefaultValue(Context& context) const override;
 private:
     std::int8_t pointerCount;
     TypeRef baseTypeRef;
 };
 
-Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context* context);
+Type* GetElemType(Value* ptr, Value* index, const soul::ast::Span& span, Context* context);
 
 class Types
 {
 public:
     Types();
+    Types(const Types&) = delete;
     void Init();
-    void Write(util::CodeFormatter& formatter);
+    Types& operator=(const Types&) = delete;
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
-    StructureType* GetStructureType(const SourcePos& sourcePos, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
-    ArrayType* GetArrayType(const SourcePos& sourcePos, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
-    FunctionType* GetFunctionType(const SourcePos& sourcePos, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
-    FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id);
-    FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId);
-    void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
-    void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
+    void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
+    void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     void Resolve(Context* context);
     void ResolveType(TypeRef& typeRef, Context* context);
     void Add(Type* type, Context* context);
@@ -430,8 +417,16 @@ public:
     ULongType* GetULongType() const { return const_cast<ULongType*>(&ulongType); }
     FloatType* GetFloatType() const { return const_cast<FloatType*>(&floatType); }
     DoubleType* GetDoubleType() const { return const_cast<DoubleType*>(&doubleType); }
-    PointerType* MakePointerType(const SourcePos& sourcePos, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context);
+    PointerType* MakePointerType(const soul::ast::Span& span, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context);
+    StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    ArrayType* GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
+    FunctionType* GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id);
+    FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId);
+    void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
+    void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
     std::int32_t NextTypeId() { return nextTypeId++; }
+    void Write(util::CodeFormatter& formatter);
 private:
     Type* GetFundamentalType(std::int32_t id) const;
     Context* context;
@@ -456,7 +451,7 @@ private:
     ULongType ulongType;
     FloatType floatType;
     DoubleType doubleType;
-    std::int32_t nextTypeId;
+    int32_t nextTypeId;
 };
 
 } // otava::intermediate

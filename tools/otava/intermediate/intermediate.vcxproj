@@ -119,6 +119,7 @@
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BuildStlModules>true</BuildStlModules>
+      <AdditionalIncludeDirectories>.;..;../..;../../..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -139,6 +140,7 @@
       <DisableSpecificWarnings>5050;4267</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BuildStlModules>true</BuildStlModules>
+      <AdditionalIncludeDirectories>.;..;../..;../../..</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -149,8 +151,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="basic_block.cpp" />
-    <ClCompile Include="basic_block.cppm" />
     <ClCompile Include="code.cpp" />
     <ClCompile Include="code.cppm" />
     <ClCompile Include="code_generator.cpp" />
@@ -161,14 +161,8 @@
     <ClCompile Include="context.cppm" />
     <ClCompile Include="data.cpp" />
     <ClCompile Include="data.cppm" />
-    <ClCompile Include="data_item_adder.cpp" />
-    <ClCompile Include="data_item_adder.cppm" />
     <ClCompile Include="error.cpp" />
     <ClCompile Include="error.cppm" />
-    <ClCompile Include="function.cpp" />
-    <ClCompile Include="function.cppm" />
-    <ClCompile Include="instruction.cpp" />
-    <ClCompile Include="instruction.cppm" />
     <ClCompile Include="intermediate.cppm" />
     <ClCompile Include="intermediate.lexer.cpp" />
     <ClCompile Include="intermediate.lexer.cppm" />
@@ -179,23 +173,20 @@
     <ClCompile Include="intermediate_rules.cppm" />
     <ClCompile Include="linear_scan_register_allocator.cpp" />
     <ClCompile Include="linear_scan_register_allocator.cppm" />
+    <ClCompile Include="location.cpp" />
+    <ClCompile Include="location.cppm" />
     <ClCompile Include="metadata.cpp" />
     <ClCompile Include="metadata.cppm" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="parser.cppm" />
-    <ClCompile Include="reference_resolver.cppm" />
     <ClCompile Include="reference_resolver.cpp" />
+    <ClCompile Include="reference_resolver.cppm" />
     <ClCompile Include="register_allocator.cpp" />
     <ClCompile Include="register_allocator.cppm" />
-    <ClCompile Include="simple_assembly_code_generator.cpp" />
-    <ClCompile Include="simple_assembly_code_generator.cppm" />
-    <ClCompile Include="token_parser.cpp" />
-    <ClCompile Include="token_parser.cppm" />
-    <ClCompile Include="type.cpp" />
-    <ClCompile Include="type.cppm" />
+    <ClCompile Include="types.cpp" />
+    <ClCompile Include="types.cppm" />
+    <ClCompile Include="util.cpp" />
     <ClCompile Include="util.cppm" />
-    <ClCompile Include="value.cpp" />
-    <ClCompile Include="value.cppm" />
     <ClCompile Include="verify.cpp" />
     <ClCompile Include="verify.cppm" />
     <ClCompile Include="visitor.cpp" />

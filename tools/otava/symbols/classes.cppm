@@ -11,6 +11,7 @@ import otava.symbols.type.symbol;
 import otava.ast.node;
 import otava.ast.statement;
 import otava.ast.classes;
+import otava.intermediate.data;
 
 export namespace otava::symbols {
 
@@ -134,7 +135,7 @@ public:
     void SetVTabInitialized() { SetFlag(ClassTypeSymbolFlags::vtabInitialized); }
     const std::vector<FunctionSymbol*>& ConversionFunctions() const { return conversionFunctions; }
     FunctionSymbol* GetConversionFunction(TypeSymbol* type) const;
-    ClassGroupSymbol* Group() const { return group; }
+    virtual ClassGroupSymbol* Group() const { return group; }
     void SetGroup(ClassGroupSymbol* group_) { group = group_; }
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     FunctionSymbol* CopyCtor() const { return copyCtor; }
@@ -163,6 +164,7 @@ private:
     std::int32_t vptrIndex;
     std::vector<FunctionSymbol*> conversionFunctions;
     ClassGroupSymbol* group;
+    util::uuid groupId;
     std::string vtabName;
     FunctionSymbol* copyCtor;
     std::vector<std::unique_ptr<Symbol>> tempVars;

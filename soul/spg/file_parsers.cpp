@@ -5,7 +5,6 @@
 
 module soul.spg.file.parsers;
 
-// import std.filesystem;
 import util;
 import soul.lexer;
 import soul.lex.spg;

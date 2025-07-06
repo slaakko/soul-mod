@@ -23,6 +23,7 @@ struct uuid
     const std::uint8_t* end() const { return &data[static_size()]; }
     std::uint8_t* begin() { return &data[0]; }
     std::uint8_t* end() { return &data[static_size()]; }
+    bool is_nil() const;
     std::uint8_t data[16];
 };
 

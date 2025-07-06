@@ -76,7 +76,6 @@ parser ExpressionParser
         var soul::ast::SourcePos sourcePos) : otava::ast::Node*
         ::= 
         (   YieldExpression(context):yieldExpr{ expr.reset(yieldExpr); }
-        |   ThrowExpression(context):throwExpr{ expr.reset(throwExpr); }
         |   (LogicalOrExpression(context):left
             { 
                 sourcePos = lexer.GetSourcePos(pos); 
@@ -131,16 +130,6 @@ parser ExpressionParser
         (   AssignmentExpression(context):assignmentExpr{ return new otava::ast::YieldExprNode(sourcePos, assignmentExpr); }
         |   BracedInitList(context):bracedInitList{ return new otava::ast::YieldExprNode(sourcePos, bracedInitList); }
         )
-        ;
-
-    ThrowExpression(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos) : otava::ast::Node*
-        ::= 
-        (
-            THROW{ sourcePos = lexer.GetSourcePos(pos); } AssignmentExpression(context):exception?
-        )
-        {
-            return new otava::ast::ThrowExprNode(sourcePos, exception);
-        }
         ;
 
     LogicalOrExpression(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> expr, var soul::ast::SourcePos sourcePos, 

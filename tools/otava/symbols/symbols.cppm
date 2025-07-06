@@ -22,6 +22,7 @@ export import otava.symbols.enums;
 export import otava.symbols.enum_group.symbol;
 export import otava.symbols.exception;
 export import otava.symbols.function.symbol;
+export import otava.symbols.function_return_path_checker;
 export import otava.symbols.fundamental.type.symbol;
 export import otava.symbols.modules;
 export import otava.symbols.namespaces;

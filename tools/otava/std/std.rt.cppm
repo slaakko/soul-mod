@@ -1,9 +1,9 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
-export module std.crt;
+export module std.rt;
 
 import std.type.fundamental;
 
@@ -11,16 +11,8 @@ export {
 
 extern "C" void* malloc(ssize_t size);
 extern "C" void free(void* ptr);
-extern "C" void prints(const char* s, int handle);
+extern "C" void ort_io_write(int handle, const char* s);
 extern "C" void flush_handle(int handle);
-extern "C" int save_context(void* ctx);
-extern "C" void restore_context(void* ctx, int retval);
-extern "C" void* push_context();
-extern "C" void* pop_context();
-extern "C" void set_exception(void* ex, uint64_t eth, uint64_t etl);
-extern "C" void* get_exception();
-extern "C" void throw_exception();
-extern "C" bool handle_exception(uint64_t hth, uint64_t htl);
 extern "C" bool is_space(int c);
 extern "C" const char* get_env(const char* env);
 extern "C" void* create_mutex();
@@ -109,9 +101,9 @@ bool isalpha(int c);
 bool isdigit(int c);
 bool isatty(int handle);
 
-struct crt_init
+struct rt_init
 {
-    crt_init();
+    rt_init();
 };
 
 } // namespace std

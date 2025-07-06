@@ -3,18 +3,16 @@
 // Distributed under the MIT license
 // =================================
 
-module otava.intermediate.type;
+module otava.intermediate.types;
 
 import otava.intermediate.context;
 import otava.intermediate.error;
 import otava.intermediate.visitor;
-import otava.intermediate.value;
-import otava.intermediate.data;
 import util;
 
 namespace otava::intermediate {
 
-Type::Type(const SourcePos& sourcePos_, TypeKind kind_, std::int32_t id_) : sourcePos(sourcePos_), kind(kind_), id(id_), defaultValue(nullptr)
+Type::Type(const soul::ast::Span& span_, TypeKind kind_, std::int32_t id_) : span(span_), kind(kind_), id(id_), defaultValue(nullptr)
 {
 }
 
@@ -22,17 +20,151 @@ Type::~Type()
 {
 }
 
-bool Type::IsBytePtrType() const
+bool Type::IsIntegerType() const
+{
+    switch (id)
+    {
+    case sbyteTypeId:
+    case byteTypeId:
+    case shortTypeId:
+    case ushortTypeId:
+    case intTypeId:
+    case uintTypeId:
+    case longTypeId:
+    case ulongTypeId:
+    {
+        return true;
+    }
+    default:
+    {
+        return false;
+    }
+    }
+}
+
+bool Type::IsUnsignedType() const
+{
+    switch (id)
+    {
+    case byteTypeId:
+    case ushortTypeId:
+    case uintTypeId:
+    case ulongTypeId:
+    {
+        return true;
+    }
+    default:
+    {
+        return false;
+    }
+    }
+}
+
+bool Type::IsSignedType() const
+{
+    switch (id)
+    {
+    case sbyteTypeId:
+    case shortTypeId:
+    case intTypeId:
+    case longTypeId:
+    {
+        return true;
+    }
+    default:
+    {
+        return false;
+    }
+    }
+}
+
+bool Type::IsFloatingPointType() const
+{
+    switch (id)
+    {
+    case floatTypeId:
+    case doubleTypeId:
+    {
+        return true;
+    }
+    default:
+    {
+        return false;
+    }
+    }
+}
+
+Type* Type::AddPointer(Context* context) const
 {
     if (IsPointerType())
     {
         const PointerType* pointerType = static_cast<const PointerType*>(this);
-        if (pointerType->PointerCount() == 1 && pointerType->BaseType()->IsByteType())
+        return context->GetTypes().MakePointerType(Span(), GetBaseTypeId(pointerType->Id()), GetPointerCount(pointerType->Id()) + 1, context);
+    }
+    else
+    {
+        return context->GetTypes().MakePointerType(Span(), Id(), 1, context);
+    }
+}
+
+Type* Type::RemovePointer(const soul::ast::Span& span, Context* context) const
+{
+    if (IsPointerType())
+    {
+        const PointerType* pointerType = static_cast<const PointerType*>(this);
+        return pointerType->BaseType();
+    }
+    else
+    {
+        Error("pointer type expected", span, context);
+    }
+    return nullptr;
+}
+
+void Type::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
+{
+}
+
+StructureType* Type::GetStructurePointeeType(const soul::ast::Span& span, Context* context) const
+{
+    Type* pointeeType = RemovePointer(span, context);
+    if (pointeeType)
+    {
+        if (pointeeType->IsStructureType())
         {
-            return true;
+            return static_cast<StructureType*>(pointeeType);
+        }
+        else
+        {
+            Error("structure type expected", span, context);
         }
     }
-    return false;
+    else
+    {
+        Error("pointer type expected", span, context);
+    }
+    return nullptr;
+}
+
+ArrayType* Type::GetArrayPointeeType(const soul::ast::Span& span, Context* context) const
+{
+    Type* pointeeType = RemovePointer(span, context);
+    if (pointeeType)
+    {
+        if (pointeeType->IsArrayType())
+        {
+            return static_cast<ArrayType*>(pointeeType);
+        }
+        else
+        {
+            Error("array type expected", span, context);
+        }
+    }
+    else
+    {
+        Error("pointer type expected", span, context);
+    }
+    return nullptr;
 }
 
 bool Type::IsFunctionPtrType() const
@@ -48,149 +180,6 @@ bool Type::IsFunctionPtrType() const
     return false;
 }
 
-bool Type::IsIntegerType() const
-{
-    switch (id)
-    {
-        case sbyteTypeId:
-        case byteTypeId:
-        case shortTypeId:
-        case ushortTypeId:
-        case intTypeId:
-        case uintTypeId:
-        case longTypeId:
-        case ulongTypeId:
-        {
-            return true;
-        }
-        default:
-        {
-            return false;
-        }
-    }
-}
-
-bool Type::IsUnsignedType() const
-{
-    switch (id)
-    {
-        case byteTypeId:
-        case ushortTypeId:
-        case uintTypeId:
-        case ulongTypeId:
-        {
-            return true;
-        }
-        default:
-        {
-            return false;
-        }
-    }
-}
-
-bool Type::IsFloatingPointType() const
-{
-    switch (id)
-    {
-        case floatTypeId:
-        case doubleTypeId:
-        {
-            return true;
-        }
-        default:
-        {
-            return false;
-        }
-    }
-}
-
-bool Type::IsAggregateType() const
-{
-    switch (kind)
-    {
-        case TypeKind::structureType:
-        case TypeKind::arrayType:
-        case TypeKind::functionType:
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-void Type::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
-{
-}
-
-Type* Type::AddPointer(Context* context) const
-{
-    if (IsPointerType())
-    {
-        const PointerType* pointerType = static_cast<const PointerType*>(this);
-        return context->GetTypes().MakePointerType(GetSourcePos(), GetBaseTypeId(pointerType->Id()), GetPointerCount(pointerType->Id()) + 1, context);
-    }
-    else
-    {
-        return context->GetTypes().MakePointerType(GetSourcePos(), Id(), 1, context);
-    }
-}
-
-Type* Type::RemovePointer(const SourcePos& sourcePos, Context* context) const
-{
-    if (IsPointerType())
-    {
-        const PointerType* pointerType = static_cast<const PointerType*>(this);
-        return pointerType->BaseType();
-    }
-    else
-    {
-        Error("pointer type expected", sourcePos, context);
-    }
-    return nullptr;
-}
-
-StructureType* Type::GetStructurePointeeType(const SourcePos& sourcePos, Context* context) const
-{
-    Type* pointeeType = RemovePointer(sourcePos, context);
-    if (pointeeType)
-    {
-        if (pointeeType->IsStructureType())
-        {
-            return static_cast<StructureType*>(pointeeType);
-        }
-        else
-        {
-            Error("structure type expected", sourcePos, context);
-        }
-    }
-    else
-    {
-        Error("pointer type expected", sourcePos, context);
-    }
-    return nullptr;
-}
-
-ArrayType* Type::GetArrayPointeeType(const SourcePos& sourcePos, Context* context) const
-{
-    Type* pointeeType = RemovePointer(sourcePos, context);
-    if (pointeeType)
-    {
-        if (pointeeType->IsArrayType())
-        {
-            return static_cast<ArrayType*>(pointeeType);
-        }
-        else
-        {
-            Error("array type expected", sourcePos, context);
-        }
-    }
-    else
-    {
-        Error("pointer type expected", sourcePos, context);
-    }
-    return nullptr;
-}
-
 void Type::Add(Types* types, Context* context)
 {
 }
@@ -199,11 +188,9 @@ void Type::Resolve(Types* types, Context* context)
 {
 }
 
-TypeRef Type::GetTypeRef() 
+void Type::Write(util::CodeFormatter& formatter)
 {
-    TypeRef typeRef = MakeTypeRef(SourcePos(), id, GetPointerCount(id));
-    typeRef.SetType(this);
-    return typeRef;
+    formatter.Write(Name());
 }
 
 void Type::WriteDeclaration(util::CodeFormatter& formatter)
@@ -212,16 +199,18 @@ void Type::WriteDeclaration(util::CodeFormatter& formatter)
     formatter.Write(" = type ");
 }
 
-void Type::SetDefaultValue(Value* defaultValue_)
+TypeRef Type::GetTypeRef()
 {
-    defaultValue = defaultValue_;
+    TypeRef typeRef = MakeTypeRef(Span(), id, GetPointerCount(id));
+    typeRef.SetType(this);
+    return typeRef;
 }
 
-VoidType::VoidType() : Type(SourcePos(), TypeKind::fundamentalType, voidTypeId)
+VoidType::VoidType() : Type(soul::ast::Span(), TypeKind::fundamentalType, voidTypeId)
 {
 }
 
-BoolType::BoolType() : Type(SourcePos(), TypeKind::fundamentalType, boolTypeId)
+BoolType::BoolType() : Type(soul::ast::Span(), TypeKind::fundamentalType, boolTypeId)
 {
 }
 
@@ -230,7 +219,7 @@ Value* BoolType::MakeDefaultValue(Context& context) const
     return context.GetFalseValue();
 }
 
-SByteType::SByteType() : Type(SourcePos(), TypeKind::fundamentalType, sbyteTypeId)
+SByteType::SByteType() : Type(soul::ast::Span(), TypeKind::fundamentalType, sbyteTypeId)
 {
 }
 
@@ -239,16 +228,16 @@ Value* SByteType::MakeDefaultValue(Context& context) const
     return context.GetSByteValue(0);
 }
 
-ByteType::ByteType() : Type(SourcePos(), TypeKind::fundamentalType, byteTypeId)
+ByteType::ByteType() : Type(soul::ast::Span(), TypeKind::fundamentalType, byteTypeId)
 {
 }
 
 Value* ByteType::MakeDefaultValue(Context& context) const
 {
-    return context.GetByteValue(0);
+    return context.GetByteValue(0u);
 }
 
-ShortType::ShortType() : Type(SourcePos(), TypeKind::fundamentalType, shortTypeId)
+ShortType::ShortType() : Type(soul::ast::Span(), TypeKind::fundamentalType, shortTypeId)
 {
 }
 
@@ -257,16 +246,16 @@ Value* ShortType::MakeDefaultValue(Context& context) const
     return context.GetShortValue(0);
 }
 
-UShortType::UShortType() : Type(SourcePos(), TypeKind::fundamentalType, ushortTypeId)
+UShortType::UShortType() : Type(soul::ast::Span(), TypeKind::fundamentalType, ushortTypeId)
 {
 }
 
 Value* UShortType::MakeDefaultValue(Context& context) const
 {
-    return context.GetUShortValue(0);
+    return context.GetUShortValue(0u);
 }
 
-IntType::IntType() : Type(SourcePos(), TypeKind::fundamentalType, intTypeId)
+IntType::IntType() : Type(soul::ast::Span(), TypeKind::fundamentalType, intTypeId)
 {
 }
 
@@ -275,16 +264,16 @@ Value* IntType::MakeDefaultValue(Context& context) const
     return context.GetIntValue(0);
 }
 
-UIntType::UIntType() : Type(SourcePos(), TypeKind::fundamentalType, uintTypeId)
+UIntType::UIntType() : Type(soul::ast::Span(), TypeKind::fundamentalType, uintTypeId)
 {
 }
 
 Value* UIntType::MakeDefaultValue(Context& context) const
 {
-    return context.GetUIntValue(0);
+    return context.GetUIntValue(0u);
 }
 
-LongType::LongType() : Type(SourcePos(), TypeKind::fundamentalType, longTypeId)
+LongType::LongType() : Type(soul::ast::Span(), TypeKind::fundamentalType, longTypeId)
 {
 }
 
@@ -293,16 +282,16 @@ Value* LongType::MakeDefaultValue(Context& context) const
     return context.GetLongValue(0);
 }
 
-ULongType::ULongType() : Type(SourcePos(), TypeKind::fundamentalType, ulongTypeId)
+ULongType::ULongType() : Type(soul::ast::Span(), TypeKind::fundamentalType, ulongTypeId)
 {
 }
 
 Value* ULongType::MakeDefaultValue(Context& context) const
 {
-    return context.GetULongValue(0);
+    return context.GetULongValue(0u);
 }
 
-FloatType::FloatType() : Type(SourcePos(), TypeKind::fundamentalType, floatTypeId)
+FloatType::FloatType() : Type(soul::ast::Span(), TypeKind::fundamentalType, floatTypeId)
 {
 }
 
@@ -311,7 +300,7 @@ Value* FloatType::MakeDefaultValue(Context& context) const
     return context.GetFloatValue(0.0f);
 }
 
-DoubleType::DoubleType() : Type(SourcePos(), TypeKind::fundamentalType, doubleTypeId)
+DoubleType::DoubleType() : Type(soul::ast::Span(), TypeKind::fundamentalType, doubleTypeId)
 {
 }
 
@@ -320,26 +309,16 @@ Value* DoubleType::MakeDefaultValue(Context& context) const
     return context.GetDoubleValue(0.0);
 }
 
-TypeRef::TypeRef() : sourcePos(), id(-1), type(nullptr)
+TypeRef::TypeRef() : span(), id(-1), type(nullptr)
 {
 }
 
-TypeRef::TypeRef(const SourcePos& sourcePos_, std::int32_t id_) : sourcePos(sourcePos_), id(id_), type(nullptr)
+TypeRef::TypeRef(const soul::ast::Span& span_, std::int32_t id_) : span(span_), id(id_), type(nullptr)
 {
 }
 
-void TypeRef::Write(util::CodeFormatter& formatter)
-{
-    formatter.Write(type->Name());
-}
-
-bool operator<(const TypeRef& left, const TypeRef& right)
-{
-    return left.GetType() < right.GetType();
-}
-
-StructureType::StructureType(const SourcePos& sourcePos_, std::int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
-    Type(sourcePos_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false), size()
+StructureType::StructureType(const soul::ast::Span& span_, std::int32_t typeId_, const std::vector<TypeRef>& fieldTypeRefs_) :
+    Type(span_, TypeKind::structureType, typeId_), fieldTypeRefs(fieldTypeRefs_), sizeAndOffsetsComputed(false), size(0)
 {
 }
 
@@ -386,6 +365,7 @@ std::int64_t StructureType::Size() const
 
 void StructureType::ComputeSizeAndOffsets() const
 {
+    sizeAndOffsetsComputed = true;
     std::int64_t offset = 0;
     int n = FieldCount();
     for (int i = 0; i < n; ++i)
@@ -395,10 +375,6 @@ void StructureType::ComputeSizeAndOffsets() const
         if (i > 0)
         {
             std::int64_t alignment = fieldType->Alignment();
-            if (!(offset > 0))
-            {
-                throw std::runtime_error("structure type: invalid offset");
-            }
             memberOffset = alignment * ((offset - 1) / alignment + 1);
         }
         fieldOffsets.push_back(memberOffset);
@@ -412,7 +388,6 @@ void StructureType::ComputeSizeAndOffsets() const
     {
         size = 8 * ((offset - 1) / 8 + 1);
     }
-    sizeAndOffsetsComputed = true;
 }
 
 std::int64_t StructureType::GetFieldOffset(std::int64_t index) const
@@ -428,18 +403,15 @@ void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
 {
     Type::WriteDeclaration(formatter);
     formatter.Write("{ ");
-    bool first = true;
-    for (auto& fieldTypeRef : fieldTypeRefs)
+    int n = FieldCount();
+    for (int i = 0; i < n; ++i)
     {
-        if (first)
-        {
-            first = false;
-        }
-        else
+        Type* fieldType = FieldType(i);
+        if (i > 0)
         {
             formatter.Write(", ");
         }
-        fieldTypeRef.Write(formatter);
+        fieldType->Write(formatter);
     }
     formatter.Write(" }");
 }
@@ -452,7 +424,13 @@ void StructureType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclare
         Type* fieldType = FieldType(i);
         if (fieldType == fwdDeclaredType)
         {
-            fieldTypeRefs[i] = TypeRef(SourcePos(), structureType->Id());
+            fieldTypeRefs[i] = TypeRef(soul::ast::Span(), structureType->Id());
+            context->GetTypes().ResolveType(fieldTypeRefs[i], context);
+        }
+        else if (fieldType->IsPointerType() && fieldType->BaseType() == fwdDeclaredType)
+        {
+            PointerType* ptrFieldType = static_cast<PointerType*>(fieldType);
+            fieldTypeRefs[i] = TypeRef(soul::ast::Span(), MakePointerTypeId(structureType->Id(), ptrFieldType->PointerCount()));
             context->GetTypes().ResolveType(fieldTypeRefs[i], context);
         }
     }
@@ -467,10 +445,11 @@ Value* StructureType::MakeDefaultValue(Context& context) const
         Type* type = FieldType(i);
         fieldValues.push_back(type->MakeDefaultValue(context));
     }
-    return context.MakeStructureValue(soul::ast::SourcePos(), fieldValues);
+    return context.MakeStructureValue(soul::ast::Span(), fieldValues, const_cast<StructureType*>(this));
 }
 
-FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& id_, std::int32_t typeId_) : Type(soul::ast::SourcePos(), TypeKind::fwdDeclaredStructureType, typeId_), id(id_)
+FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& id_, std::int32_t typeId_) : 
+    Type(soul::ast::Span(), TypeKind::fwdDeclaredStructureType, typeId_), id(id_)
 {
 }
 
@@ -479,14 +458,9 @@ void FwdDeclaredStructureType::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ArrayType::ArrayType(const SourcePos& sourcePos_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_) :
-    Type(sourcePos_, TypeKind::arrayType, typeId_), elementCount(elementCount_), elementTypeRef(elementTypeRef_)
+ArrayType::ArrayType(const soul::ast::Span& span_, std::int32_t typeId_, std::int64_t elementCount_, const TypeRef& elementTypeRef_) :
+    Type(span_, TypeKind::arrayType, typeId_), elementCount(elementCount_), elementTypeRef(elementTypeRef_)
 {
-}
-
-otava::assembly::DataInst ArrayType::DataInstruction() const
-{
-    return ElementType()->DataInstruction();
 }
 
 void ArrayType::Accept(Visitor& visitor)
@@ -525,18 +499,18 @@ void ArrayType::WriteDeclaration(util::CodeFormatter& formatter)
     formatter.Write("[");
     formatter.Write(std::to_string(elementCount));
     formatter.Write(" x ");
-    elementTypeRef.Write(formatter);
+    ElementType()->Write(formatter);
     formatter.Write("]");
 }
 
 Value* ArrayType::MakeDefaultValue(Context& context) const
 {
     std::vector<Value*> elements;
-    return context.MakeArrayValue(soul::ast::SourcePos(), elements);
+    return context.MakeArrayValue(soul::ast::Span(), elements, const_cast<ArrayType*>(this));
 }
 
-FunctionType::FunctionType(const SourcePos& sourcePos_, std::int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_) :
-    Type(sourcePos_, TypeKind::functionType, typeId_), returnTypeRef(returnTypeRef_), paramTypeRefs(paramTypeRefs_)
+FunctionType::FunctionType(const soul::ast::Span& span_, std::int32_t typeId_, const TypeRef& returnTypeRef_, const std::vector<TypeRef>& paramTypeRefs_) :
+    Type(span_, TypeKind::functionType, typeId_), returnTypeRef(returnTypeRef_), paramTypeRefs(paramTypeRefs_)
 {
 }
 
@@ -582,27 +556,45 @@ void FunctionType::WriteDeclaration(util::CodeFormatter& formatter)
 {
     Type::WriteDeclaration(formatter);
     formatter.Write("function ");
-    returnTypeRef.Write(formatter);
+    ReturnType()->Write(formatter);
     formatter.Write("(");
-    bool first = true;
-    for (auto& paramTypeRef : paramTypeRefs)
+    int n = Arity();
+    for (int i = 0; i < n; ++i)
     {
-        if (first)
-        {
-            first = false;
-        }
-        else
+        if (i > 0)
         {
             formatter.Write(", ");
         }
-        paramTypeRef.Write(formatter);
+        ParamType(i)->Write(formatter);
     }
     formatter.Write(")");
 }
 
-PointerType::PointerType(const SourcePos& sourcePos_, std::int32_t typeId_, std::int8_t pointerCount_, std::int32_t baseTypeId_) :
-    Type(sourcePos_, TypeKind::pointerType, typeId_), pointerCount(pointerCount_), baseTypeRef(sourcePos_, baseTypeId_)
+bool FunctionType::IsUnaryOperationType() const
 {
+    if (Arity() == 1)
+    {
+        Type* returnType = ReturnType();
+        Type* paramType = ParamType(0);
+        if (paramType == returnType)
+        {
+            if (paramType->Size() <= 8)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+PointerType::PointerType(const soul::ast::Span& span_, std::int32_t typeId_, std::int8_t pointerCount_, std::int32_t baseTypeId_) :
+    Type(span_, TypeKind::pointerType, typeId_), pointerCount(pointerCount_), baseTypeRef(span_, baseTypeId_)
+{
+}
+
+Value* PointerType::MakeDefaultValue(Context& context) const
+{
+    return context.GetNullValue(soul::ast::Span(), const_cast<PointerType*>(this));
 }
 
 std::string PointerType::Name() const
@@ -610,21 +602,7 @@ std::string PointerType::Name() const
     return baseTypeRef.GetType()->Name() + "*";
 }
 
-void PointerType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
-{
-    if (BaseType() == fwdDeclaredType)
-    {
-        baseTypeRef = TypeRef(SourcePos(), structureType->Id());
-        context->GetTypes().ResolveType(baseTypeRef, context);
-    }
-}
-
-Value* PointerType::MakeDefaultValue(Context& context) const
-{
-    return context.GetNullValue(soul::ast::SourcePos(), const_cast<PointerType*>(this));
-}
-
-Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context* context)
+Type* GetElemType(Value* ptr, Value* index, const soul::ast::Span& span, Context* context)
 {
     Type* type = ptr->GetType();
     if (type->IsPointerType())
@@ -641,7 +619,7 @@ Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context*
             }
             else
             {
-                Error("long valued index expected", sourcePos, context);
+                Error("long valued index expected", span, context);
             }
         }
         else if (aggregateType->IsArrayType())
@@ -651,16 +629,16 @@ Type* GetElemType(Value* ptr, Value* index, const SourcePos& sourcePos, Context*
         }
         else if (aggregateType->IsFwdDeclaredStructureType())
         {
-            Error("forward declaration of structure type id " + std::to_string(aggregateType->Id()) + " not resolved", sourcePos, context);
+            Error("forward declaration of structure type id " + std::to_string(aggregateType->Id()) + " not resolved", span, context);
         }
         else
         {
-            Error("structure or array type expected", sourcePos, context);
+            Error("structure or array type expected", span, context);
         }
     }
     else
     {
-        Error("pointer type expected", sourcePos, context);
+        Error("pointer type expected", span, context);
     }
     return nullptr;
 }
@@ -673,38 +651,123 @@ void Types::Init()
 {
     boolType.SetDefaultValue(context->GetFalseValue());
     sbyteType.SetDefaultValue(context->GetSByteValue(0));
-    byteType.SetDefaultValue(context->GetByteValue(0));
+    byteType.SetDefaultValue(context->GetByteValue(0u));
     shortType.SetDefaultValue(context->GetShortValue(0));
-    ushortType.SetDefaultValue(context->GetUShortValue(0));
+    ushortType.SetDefaultValue(context->GetUShortValue(0u));
     intType.SetDefaultValue(context->GetIntValue(0));
-    uintType.SetDefaultValue(context->GetUIntValue(0));
+    uintType.SetDefaultValue(context->GetUIntValue(0u));
     longType.SetDefaultValue(context->GetLongValue(0));
-    ulongType.SetDefaultValue(context->GetULongValue(0));
+    ulongType.SetDefaultValue(context->GetULongValue(0u));
     floatType.SetDefaultValue(context->GetFloatValue(0.0f));
     doubleType.SetDefaultValue(context->GetDoubleValue(0.0));
 }
 
-void Types::Write(util::CodeFormatter& formatter)
+void Types::AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
-    if (types.empty()) return;
-    formatter.WriteLine("types");
-    formatter.WriteLine("{");
-    formatter.IncIndent();
-    for (const auto& type : types)
-    {
-        if (type->IsFwdDeclaredStructureType()) continue;
-        if (type->IsAggregateType())
-        {
-            type->WriteDeclaration(formatter);
-            formatter.WriteLine();
-        }
-    }
-    formatter.DecIndent();
-    formatter.WriteLine("}");
-    formatter.WriteLine();
+    types.push_back(std::unique_ptr<Type>(new StructureType(span, typeId, fieldTypeRefs)));
 }
 
-StructureType* Types::GetStructureType(const SourcePos& sourcePos, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
+void Types::AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
+{
+    types.push_back(std::unique_ptr<Type>(new ArrayType(span, typeId, size, elementTypeRef)));
+}
+
+void Types::AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+{
+    types.push_back(std::unique_ptr<Type>(new FunctionType(span, typeId, returnTypeRef, paramTypeRefs)));
+}
+
+void Types::Add(Type* type, Context* context)
+{
+    Type* prev = Get(type->Id());
+    if (prev)
+    {
+        Error("error adding type id " + std::to_string(type->Id()) + ": type id not unique", type->Span(), context, prev->Span());
+    }
+    Map(type);
+    declaredTypes.push_back(type);
+}
+
+Type* Types::Get(std::int32_t id) const
+{
+    if (IsFundamentalTypeId(id))
+    {
+        return GetFundamentalType(id);
+    }
+    auto it = typeMap.find(id);
+    if (it != typeMap.cend())
+    {
+        return it->second;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+Type* Types::GetFundamentalType(std::int32_t id) const
+{
+    switch (id)
+    {
+    case voidTypeId: return const_cast<VoidType*>(&voidType);
+    case boolTypeId: return const_cast<BoolType*>(&boolType);
+    case sbyteTypeId: return const_cast<SByteType*>(&sbyteType);
+    case byteTypeId: return const_cast<ByteType*>(&byteType);
+    case shortTypeId: return const_cast<ShortType*>(&shortType);
+    case ushortTypeId: return const_cast<UShortType*>(&ushortType);
+    case intTypeId: return const_cast<IntType*>(&intType);
+    case uintTypeId: return const_cast<UIntType*>(&uintType);
+    case longTypeId: return const_cast<LongType*>(&longType);
+    case ulongTypeId: return const_cast<ULongType*>(&ulongType);
+    case floatTypeId: return const_cast<FloatType*>(&floatType);
+    case doubleTypeId: return const_cast<DoubleType*>(&doubleType);
+    }
+    return nullptr;
+}
+
+void Types::Map(Type* type)
+{
+    typeMap[type->Id()] = type;
+}
+
+void Types::VisitTypeDeclarations(Visitor& visitor)
+{
+    for (Type* declaredType : declaredTypes)
+    {
+        declaredType->Accept(visitor);
+    }
+}
+
+PointerType* Types::MakePointerType(const soul::ast::Span& span, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context)
+{
+    auto it = pointerTypeMap.find(std::make_pair(baseTypeId, pointerCount));
+    if (it != pointerTypeMap.cend())
+    {
+        return it->second;
+    }
+    PointerType* type = nullptr;
+    if (pointerCount > 1)
+    {
+        type = new PointerType(span, MakePointerTypeId(baseTypeId, pointerCount), pointerCount, MakePointerTypeId(baseTypeId, pointerCount - 1));
+        type->SetDefaultValue(context->GetNullValue(soul::ast::Span(), type));
+    }
+    else if (pointerCount == 1)
+    {
+        type = new PointerType(span, MakePointerTypeId(baseTypeId, pointerCount), pointerCount, baseTypeId);
+        type->SetDefaultValue(context->GetNullValue(soul::ast::Span(), type));
+    }
+    else
+    {
+        Error("pointer count > 0 expected", span, context);
+    }
+    ResolveType(type->BaseTypeRef(), context);
+    types.push_back(std::unique_ptr<Type>(type));
+    Map(type);
+    pointerTypeMap[std::make_pair(baseTypeId, pointerCount)] = type;
+    return type;
+}
+
+StructureType* Types::GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs)
 {
     std::vector<std::int32_t> fieldTypeIds;
     for (const auto& fieldTypeRef : fieldTypeRefs)
@@ -718,24 +781,24 @@ StructureType* Types::GetStructureType(const SourcePos& sourcePos, std::int32_t 
         typeMap[typeId] = structureType;
         return structureType;
     }
-    StructureType* structureType = new StructureType(sourcePos, typeId, fieldTypeRefs);
+    StructureType* structureType = new StructureType(span, typeId, fieldTypeRefs);
     types.push_back(std::unique_ptr<Type>(structureType));
+    structureType->Add(this, context);
     structureTypeMap[fieldTypeIds] = structureType;
-    Map(structureType);
     int n = structureType->FieldCount();
     for (int i = 0; i < n; ++i)
     {
         Type* fieldType = structureType->FieldType(i);
-        if (fieldType && fieldType->IsFwdDeclaredStructureType())
+        if (fieldType && fieldType->BaseType()->IsFwdDeclaredStructureType())
         {
-            FwdDeclaredStructureType* fwdType = static_cast<FwdDeclaredStructureType*>(fieldType);
+            FwdDeclaredStructureType* fwdType = static_cast<FwdDeclaredStructureType*>(fieldType->BaseType());
             AddFwdDependentType(fwdType, structureType);
         }
     }
     return structureType;
 }
 
-ArrayType* Types::GetArrayType(const SourcePos& sourcePos, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
+ArrayType* Types::GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef)
 {
     auto key = std::make_pair(size, elementTypeRef.Id());
     auto it = arrayTypeMap.find(key);
@@ -745,14 +808,14 @@ ArrayType* Types::GetArrayType(const SourcePos& sourcePos, std::int32_t typeId, 
         typeMap[typeId] = arrayType;
         return arrayType;
     }
-    ArrayType* arrayType = new ArrayType(sourcePos, typeId, size, elementTypeRef);
+    ArrayType* arrayType = new ArrayType(span, typeId, size, elementTypeRef);
     types.push_back(std::unique_ptr<Type>(arrayType));
     arrayTypeMap[key] = arrayType;
-    Map(arrayType);
+    arrayType->Add(this, context);
     return arrayType;
 }
 
-FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
+FunctionType* Types::GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs)
 {
     std::int32_t returnTypeId = returnTypeRef.Id();
     std::vector<std::int32_t> paramTypeIds;
@@ -768,10 +831,10 @@ FunctionType* Types::GetFunctionType(const SourcePos& sourcePos, std::int32_t ty
         typeMap[typeId] = functionType;
         return functionType;
     }
-    FunctionType* functionType = new FunctionType(sourcePos, typeId, returnTypeRef, paramTypeRefs);
+    FunctionType* functionType = new FunctionType(span, typeId, returnTypeRef, paramTypeRefs);
     types.push_back(std::unique_ptr<Type>(functionType));
     functionTypeMap[key] = functionType;
-    Map(functionType);
+    functionType->Add(this, context);
     return functionType;
 }
 
@@ -824,96 +887,6 @@ void Types::ResolveForwardReferences(const util::uuid& id, StructureType* struct
     }
 }
 
-void Types::Add(Type* type, Context* context)
-{
-    Map(type);
-    declaredTypes.push_back(type);
-}
-
-Type* Types::Get(std::int32_t id) const
-{
-    if (IsFundamentalTypeId(id))
-    {
-        return GetFundamentalType(id);
-    }
-    auto it = typeMap.find(id);
-    if (it != typeMap.cend())
-    {
-        return it->second;
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
-Type* Types::GetFundamentalType(std::int32_t id) const
-{
-    switch (id)
-    {
-        case voidTypeId: return const_cast<VoidType*>(&voidType);
-        case boolTypeId: return const_cast<BoolType*>(&boolType);
-        case sbyteTypeId: return const_cast<SByteType*>(&sbyteType);
-        case byteTypeId: return const_cast<ByteType*>(&byteType);
-        case shortTypeId: return const_cast<ShortType*>(&shortType);
-        case ushortTypeId: return const_cast<UShortType*>(&ushortType);
-        case intTypeId: return const_cast<IntType*>(&intType);
-        case uintTypeId: return const_cast<UIntType*>(&uintType);
-        case longTypeId: return const_cast<LongType*>(&longType);
-        case ulongTypeId: return const_cast<ULongType*>(&ulongType);
-        case floatTypeId: return const_cast<FloatType*>(&floatType);
-        case doubleTypeId: return const_cast<DoubleType*>(&doubleType);
-    }
-    return nullptr;
-}
-
-void Types::Map(Type* type)
-{
-    typeMap[type->Id()] = type;
-}
-
-void Types::VisitTypeDeclarations(Visitor& visitor)
-{
-    for (Type* declaredType : declaredTypes)
-    {
-        declaredType->Accept(visitor);
-    }
-}
-
-PointerType* Types::MakePointerType(const SourcePos& sourcePos, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context)
-{
-    auto it = pointerTypeMap.find(std::make_pair(baseTypeId, pointerCount));
-    if (it != pointerTypeMap.cend())
-    {
-        return it->second;
-    }
-    PointerType* type = nullptr;
-    if (pointerCount > 1)
-    {
-        type = new PointerType(sourcePos, MakePointerTypeId(baseTypeId, pointerCount), pointerCount, MakePointerTypeId(baseTypeId, pointerCount - 1));
-        type->SetDefaultValue(context->GetNullValue(sourcePos, type));
-    }
-    else if (pointerCount == 1)
-    {
-        type = new PointerType(sourcePos, MakePointerTypeId(baseTypeId, pointerCount), pointerCount, baseTypeId);
-        type->SetDefaultValue(context->GetNullValue(sourcePos, type));
-    }
-    else
-    {
-        Error("pointer count > 0 expected", sourcePos, context);
-    }
-    ResolveType(type->BaseTypeRef(), context);
-    if (type->BaseType()->IsFwdDeclaredStructureType())
-    {
-        FwdDeclaredStructureType* fwdType = static_cast<FwdDeclaredStructureType*>(type->BaseType());
-        context->AddFwdDependentType(fwdType, type);
-    }
-    types.push_back(std::unique_ptr<Type>(type));
-    Map(type);
-    pointerTypeMap[std::make_pair(baseTypeId, pointerCount)] = type;
-    return type;
-}
-
 void Types::Resolve(Context* context)
 {
     for (const auto& type : types)
@@ -938,14 +911,30 @@ void Types::ResolveType(TypeRef& typeRef, Context* context)
     {
         if (IsPointerTypeId(typeRef.Id()))
         {
-            type = MakePointerType(typeRef.GetSourcePos(), GetBaseTypeId(typeRef.Id()), GetPointerCount(typeRef.Id()), context);
+            type = MakePointerType(typeRef.Span(), GetBaseTypeId(typeRef.Id()), GetPointerCount(typeRef.Id()), context);
         }
     }
     if (!type)
     {
-        Error("error resolving type: type id " + std::to_string(typeRef.Id()) + " not found", typeRef.GetSourcePos(), context);
+        Error("error resolving type: type id " + std::to_string(typeRef.Id()) + " not found", typeRef.Span(), context);
     }
     typeRef.SetType(type);
+}
+
+void Types::Write(util::CodeFormatter& formatter)
+{
+    if (types.empty()) return;
+    formatter.WriteLine("types");
+    formatter.WriteLine("{");
+    formatter.IncIndent();
+    for (const auto& type : declaredTypes)
+    {
+        type->WriteDeclaration(formatter);
+        formatter.WriteLine();
+    }
+    formatter.DecIndent();
+    formatter.WriteLine("}");
+    formatter.WriteLine();
 }
 
 } // otava::intermediate

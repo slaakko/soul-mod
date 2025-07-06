@@ -319,7 +319,7 @@ void AddFundamentalTypeConversionsToSymboTable(
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeIntToFloatConversion(3, ConversionKind::implicitConversion, doubleType, unsignedLongIntType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeIntToFloatConversion(2, ConversionKind::implicitConversion, doubleType, longLongIntType, context), context);
     context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeIntToFloatConversion(2, ConversionKind::implicitConversion, doubleType, unsignedLongIntType, context), context);
-    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeSignExtendConversion(1, ConversionKind::implicitConversion, doubleType, floatType, context), context);
+    context->GetSymbolTable()->AddFunctionSymbol(context->GetSymbolTable()->GlobalNs()->GetScope(), new FundamentalTypeFloatingPointExtendConversion(1, ConversionKind::implicitConversion, doubleType, floatType, context), context);
 }
 
 } // namespace otava::symbols

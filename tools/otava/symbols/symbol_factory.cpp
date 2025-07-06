@@ -346,6 +346,10 @@ Symbol* CreateSymbol(SymbolKind symbolKind, const std::u32string& name, SymbolTa
         {
             return new FundamentalTypeZeroExtendConversion();
         }
+        case SymbolKind::fundamentalTypeFloatingPointExtension:
+        {
+            return new FundamentalTypeFloatingPointExtendConversion();
+        }
         case SymbolKind::fundamentalTypeTruncate:
         {
             return new FundamentalTypeTruncateConversion();

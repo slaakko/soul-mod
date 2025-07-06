@@ -7,6 +7,7 @@ module otava.symbols.function.symbol;
 
 import otava.symbols.modules;
 import otava.symbols.classes;
+import otava.symbols.class_group.symbol;
 import otava.symbols.declaration;
 import otava.symbols.emitter;
 import otava.symbols.exception;
@@ -1003,23 +1004,18 @@ std::string FunctionSymbol::IrName(Context* context) const
 {
     if (GetFlag(FunctionSymbolFlags::fixedIrName) && !fixedIrName.empty())
     {
-        //if (fixedIrName == "function_IsTokenSwitch_4A3207E938F065A36BC11C118315FE2ADBA840FA")
-        if (fixedIrName == "ctor_class_basic_string_F543D526C7A23100FA8173AF0676E13456570B9A_06ABCC8031081C42059666F61DACD8F57BAC37AA_2EEAE4277C78319D71C8A4C1C0B193B4F197A8CA")
-        {
-            std::cout << "foo";
-            int x = 0;
-        }
         return fixedIrName;
     }
     if (linkage == Linkage::cpp_linkage)
     {
         std::string irName;
         SpecialFunctionKind specialFunctionKind = GetSpecialFunctionKind(context);
+        std::string digestSource;
         if (specialFunctionKind != SpecialFunctionKind::none)
         {
             irName.append(SpecialFunctionKindPrefix(specialFunctionKind));
             ClassTypeSymbol* classType = ParentClassType();
-            irName.append("_").append(classType->IrName(context));
+            digestSource.append(classType->IrName(context));
         }
         else
         {
@@ -1030,7 +1026,8 @@ std::string FunctionSymbol::IrName(Context* context) const
                 ClassTypeSymbol* classType = ParentClassType();
                 if (classType)
                 {
-                    irName.append("_").append(classType->IrName(context));
+                    digestSource.append(classType->IrName(context));
+                    irName.append("_").append(util::ToUtf8(classType->Group()->Name()));
                 }
             }
             else
@@ -1038,16 +1035,23 @@ std::string FunctionSymbol::IrName(Context* context) const
                 if (kind == FunctionKind::constructor && ParentClassType())
                 {
                     ClassTypeSymbol* classType = ParentClassType();
-                    irName.append("ctor_").append(classType->IrName(context));
+                    irName.append("ctor_").append(util::ToUtf8(classType->Group()->Name()));
+                    digestSource.append(classType->IrName(context));
                 }
                 else if (kind == FunctionKind::destructor && ParentClassType())
                 {
                     ClassTypeSymbol* classType = ParentClassType();
-                    irName.append("dtor_").append(classType->IrName(context));
+                    irName.append("dtor_").append(util::ToUtf8(classType->Group()->Name()));
+                    digestSource.append(classType->IrName(context));
+                }
+                else if (ParentClassType())
+                {
+                    ClassTypeSymbol* classType = ParentClassType();
+                    irName.append("mfn_").append(util::ToUtf8(classType->Group()->Name())).append("_").append(util::ToUtf8(Name()));
                 }
                 else
                 {
-                    irName.append("function_" + util::ToUtf8(Name()));
+                    irName.append("fn_" + util::ToUtf8(Name()));
                 }
             }
         }
@@ -1057,16 +1061,11 @@ std::string FunctionSymbol::IrName(Context* context) const
             int n = specialization.size();
             for (int i = 0; i < n; ++i)
             {
-                fullName.append(".").append(util::ToUtf8(specialization[i]->FullName()));
+                digestSource.append(".").append(util::ToUtf8(specialization[i]->FullName()));
             }
         }
-        irName.append("_").append(util::GetSha1MessageDigest(fullName));
-        //if (irName == "function_IsTokenSwitch_4A3207E938F065A36BC11C118315FE2ADBA840FA")
-        if (irName == "ctor_class_basic_string_F543D526C7A23100FA8173AF0676E13456570B9A_06ABCC8031081C42059666F61DACD8F57BAC37AA_2EEAE4277C78319D71C8A4C1C0B193B4F197A8CA")
-        {
-            std::cout << "foo";
-            int x = 0;
-        }
+        digestSource.append(fullName);
+        irName.append("_").append(util::GetSha1MessageDigest(digestSource));
         if (GetFlag(FunctionSymbolFlags::fixedIrName))
         {
             fixedIrName = irName;

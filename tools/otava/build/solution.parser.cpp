@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/build/solution.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/build/solution.parser' using soul parser generator spg version 5.0.0
 
 module otava.solution_parser;
 
@@ -67,7 +67,7 @@ soul::parser::Match SolutionParser<LexerT>::SolutionFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SolutionFile");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SolutionFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038593);
@@ -167,7 +167,7 @@ soul::parser::Match SolutionParser<LexerT>::SolutionDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SolutionDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SolutionDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038594);
@@ -257,7 +257,7 @@ soul::parser::Match SolutionParser<LexerT>::FilePath(LexerT& lexer, otava::build
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038595);
@@ -302,7 +302,7 @@ soul::parser::Match SolutionParser<LexerT>::ProjectFilePath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ProjectFilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ProjectFilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038596);
@@ -406,7 +406,7 @@ soul::parser::Match SolutionParser<LexerT>::QualifiedId(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1917470441149038597);

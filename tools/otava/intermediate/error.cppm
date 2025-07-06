@@ -5,17 +5,26 @@
 
 export module otava.intermediate.error;
 
+import soul.ast.span;
 import std;
-import soul.ast.source.pos;
 
 export namespace otava::intermediate {
 
+namespace error {}
+
+class IntermediateError : public std::runtime_error
+{
+public:
+    IntermediateError(const std::string& message_);
+    const std::string& Message() const { return message; }
+private:
+    std::string message;
+};
+
 class Context;
-using SourcePos = soul::ast::SourcePos;
 
 bool ExceptionThrown();
-void Error(const std::string& message, const SourcePos& sourcePos, Context* context);
-void Error(const std::string& message, const SourcePos& sourcePos, Context* context, const SourcePos& refSourcePos);
-void Warning(const std::string& message, const SourcePos& sourcePos, Context* context, const SourcePos& refSourcePos);
+void Error(const std::string& message, const soul::ast::Span& span, Context* context);
+void Error(const std::string& message, const soul::ast::Span& span, Context* context, const soul::ast::Span& refSpan);
 
 } // otava::intermediate

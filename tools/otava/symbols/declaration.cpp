@@ -73,7 +73,7 @@ void NoreturnAttributeMatcher::Visit(otava::ast::IdentifierNode& node)
     }
 }
 
-bool HashNoreturnAttribute(otava::ast::Node* attributes)
+bool HasNoreturnAttribute(otava::ast::Node* attributes)
 {
     if (!attributes) return false;
     NoreturnAttributeMatcher noreturnAttributeMatcher;
@@ -962,7 +962,7 @@ void EndFunctionDefinition(otava::ast::Node* node, int scopes, Context* context)
         if (symbol && symbol->IsFunctionDefinitionSymbol())
         {
             functionDefinitionSymbol = static_cast<FunctionDefinitionSymbol*>(symbol);
-            if (HashNoreturnAttribute(functionDefinitionNode->Attributes()))
+            if (HasNoreturnAttribute(functionDefinitionNode->Attributes()))
             {
                 functionDefinitionSymbol->SetFunctionQualifiers(functionDefinitionSymbol->Qualifiers() | FunctionQualifiers::noreturn);
             }

@@ -1097,17 +1097,6 @@ void DefaultVisitor::Visit(YieldExprNode& node)
     EndVisit(node);
 }
 
-void DefaultVisitor::Visit(ThrowExprNode& node)
-{
-    BeginVisit(node);
-    VisitKeyword("throw", node.GetSourcePos());
-    if (node.Exception())
-    {
-        node.Exception()->Accept(*this);
-    }
-    EndVisit(node);
-}
-
 void DefaultVisitor::Visit(ConditionalExprNode& node)
 {
     BeginVisit(node);

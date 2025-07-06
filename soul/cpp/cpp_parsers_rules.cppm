@@ -1,9 +1,9 @@
 export module cpp.parsers.rules;
 
-import std.core;
+import std;
 
 export namespace cpp::parsers::rules {
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr();
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr();
 
 } // cpp::parsers::rules

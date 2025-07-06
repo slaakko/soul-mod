@@ -13,17 +13,28 @@ namespace otava::assembly {
 
 void DeclarationSection::AddFunctionDeclaration(FunctionDeclaration* declaration)
 {
+    std::unique_ptr<Declaration> declarationPtr(declaration);
+    if (externalFunctionDeclarations.find(declaration->Name()) != externalFunctionDeclarations.end()) return;
+    externalFunctionDeclarations.insert(declaration->Name());
+    declarations.push_back(std::unique_ptr<Declaration>(declarationPtr.release()));
+}
+
+void DeclarationSection::AddPublicDeclaration(PublicDeclaration* declaration)
+{
     declarations.push_back(std::unique_ptr<Declaration>(declaration));
 }
 
-void DeclarationSection::AddPublicDataDeclaration(PublicDataDeclaration* declaration)
+void DeclarationSection::AddLinkOnceDeclaration(LinkOnceDeclaration* declaration)
 {
     declarations.push_back(std::unique_ptr<Declaration>(declaration));
 }
 
 void DeclarationSection::AddExternalDataDeclaration(ExternalDataDeclaration* declaration)
 {
-    declarations.push_back(std::unique_ptr<Declaration>(declaration));
+    std::unique_ptr<Declaration> declarationPtr(declaration);
+    if (externalDataDeclarations.find(declaration->Name()) != externalDataDeclarations.end()) return;
+    externalDataDeclarations.insert(declaration->Name());
+    declarations.push_back(std::unique_ptr<Declaration>(declarationPtr.release()));
 }
 
 void DeclarationSection::Write(util::CodeFormatter& formatter)
@@ -42,6 +53,7 @@ void DataSection::AddData(Data* data)
 
 void DataSection::Write(util::CodeFormatter& formatter)
 {
+    if (dataVec.empty()) return;
     formatter.WriteLine(".DATA");
     formatter.WriteLine();
     for (const auto& data : dataVec)
@@ -69,7 +81,12 @@ void CodeSection::Write(util::CodeFormatter& formatter)
     }
 }
 
-File::File(const std::string& filePath_) : filePath(filePath_), file(filePath), formatter(file)
+std::string MakeFileId(const std::string& filePath)
+{
+    return util::GetSha1MessageDigest(filePath);
+}
+
+File::File(const std::string& filePath_) : filePath(filePath_), file(filePath), formatter(file), id(MakeFileId(filePath))
 {
     formatter.SetIndentSize(8);
 }
@@ -82,4 +99,4 @@ void File::Write()
     formatter.WriteLine("END");
 }
 
-} // namespace otava::assembly
+} // otava::assembly

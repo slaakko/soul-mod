@@ -95,6 +95,7 @@ TypeSymbol* MapType(FunctionSymbol* functionSymbol, TypeSymbol* type, Context* c
 void GenerateDynamicInitialization(VariableSymbol* variable, BoundExpressionNode* initializer, const soul::ast::SourcePos& sourcePos, Context* context);
 std::unique_ptr<BoundFunctionCallNode> MakeAtExitForVariable(VariableSymbol* variable, const soul::ast::SourcePos& sourcePos, Context* context);
 void AddConvertingConstructorToConversionTable(FunctionSymbol* functionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
+bool HasNoreturnAttribute(otava::ast::Node* attributes);
 
 void Write(Writer& writer, DeclarationFlags flags);
 void Read(Reader& reader, DeclarationFlags& flags);

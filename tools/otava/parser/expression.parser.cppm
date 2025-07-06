@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/expression.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/expression.parser' using soul parser generator spg version 5.0.0
 
 export module otava.parser.expression;
 
@@ -23,7 +23,6 @@ struct ExpressionParser
     static soul::parser::Match AssignmentOp(LexerT& lexer);
     static soul::parser::Match ConditionalExpression(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match YieldExpression(LexerT& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ThrowExpression(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match LogicalOrExpression(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match LogicalAndExpression(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match InclusiveOrExpression(LexerT& lexer, otava::symbols::Context* context);

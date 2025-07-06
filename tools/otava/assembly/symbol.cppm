@@ -5,8 +5,8 @@
 
 export module otava.assembly.symbol;
 
-import std;
 import otava.assembly.value;
+import std;
 
 export namespace otava::assembly {
 
@@ -16,4 +16,4 @@ public:
     Symbol(const std::string& name_);
 };
 
-} // namespace otava::assembly
+} // otava::assembly

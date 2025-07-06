@@ -1,6 +1,6 @@
 module std.basic_string;
 
-import std.exception;
+import std.stream;
 import std.new_delete_op;
 
 namespace std {
@@ -40,7 +40,7 @@ string to_string_unsigned(T x)
     {
         s.append(1, static_cast<char>(static_cast<uint8_t>('0') + static_cast<uint8_t>(x % static_cast<T>(static_cast<uint8_t>(10)))));
         x /= static_cast<T>(static_cast<uint8_t>(10));
-    } while (x != static_cast<T>(static_cast<uint8_t>(10)));
+    } while (x != static_cast<T>(static_cast<uint8_t>(0)));
     reverse(s.begin(), s.end());
     return s;
 }
@@ -414,7 +414,8 @@ int stoi(const string& str, size_t* idx, int base)
         }
         default:
         {
-            throw std::runtime_error("stoi: unsupported base");
+            cerr << "stoi: unsupported base" << "\n";
+            return 0;
         }
     }
     if (idx)
@@ -448,7 +449,8 @@ long stol(const string& str, size_t* idx, int base)
         }
         default:
         {
-            throw std::runtime_error("stol: unsupported base");
+            cerr << "stol: unsupported base" << "\n";
+            return 0;
         }
     }
     if (idx)
@@ -482,7 +484,8 @@ unsigned long stoul(const string& str, size_t* idx, int base)
         }
         default:
         {
-            throw std::runtime_error("stoul: unsupported base");
+            cerr << "stoul: unsupported base" << "\n";
+            return 0;
         }
     }
     if (idx)
@@ -516,7 +519,8 @@ long long stoll(const string& str, size_t* idx, int base)
         }
         default:
         {
-            throw std::runtime_error("stoul: unsupported base");
+            cerr << "stoll: unsupported base" << "\n";
+            return 0;
         }
     }
     if (idx)
@@ -550,7 +554,8 @@ unsigned long long stoull(const string& str, size_t* idx, int base)
         }
         default:
         {
-            throw std::runtime_error("stoull: unsupported base");
+            cerr << "stoull: unsupported base" << "\n";
+            return 0;
         }
     }
     if (idx)

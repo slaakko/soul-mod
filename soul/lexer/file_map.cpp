@@ -15,6 +15,7 @@ FileMap::FileMap() : nextFileId(0)
 
 std::int32_t FileMap::MapFile(const std::string& filePath)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     std::int32_t fileId = nextFileId++;
     MapFile(filePath, fileId);
     return fileId;
@@ -22,11 +23,13 @@ std::int32_t FileMap::MapFile(const std::string& filePath)
 
 void FileMap::MapFile(const std::string& filePath, std::int32_t fileId)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     filePathMap[fileId] = filePath;
 }
 
-const std::string& FileMap::GetFilePath(std::int32_t fileId) const
+const std::string& FileMap::GetFilePath(std::int32_t fileId)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = filePathMap.find(fileId);
     if (it != filePathMap.end())
     {
@@ -34,22 +37,26 @@ const std::string& FileMap::GetFilePath(std::int32_t fileId) const
     }
     else
     {
-        throw std::runtime_error("file path for file id " + std::to_string(fileId) + " not found from file map");
+        static std::string empty;
+        return empty;
     }
 }
 
 void FileMap::AddFileContent(std::int32_t fileId, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     fileContentsMap[fileId] = std::make_pair(std::move(fileContent), std::move(lineStartIndeces));
 }
 
-bool FileMap::HasFileContent(std::int32_t fileId) const
+bool FileMap::HasFileContent(std::int32_t fileId)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     return fileContentsMap.find(fileId) != fileContentsMap.end();
 }
 
-const std::pair<std::u32string, std::vector<int>>& FileMap::GetFileContent(std::int32_t fileId) const
+const std::pair<std::u32string, std::vector<int>>& FileMap::GetFileContent(std::int32_t fileId)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = fileContentsMap.find(fileId);
     if (it != fileContentsMap.end())
     {
@@ -82,23 +89,35 @@ std::vector<int> ComputeLineStartIndeces(const std::u32string& content)
     return indeces;
 }
 
-void FileMap::ReadFile(std::int32_t fileId) 
+void FileMap::ReadFile(std::int32_t fileId)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     std::string filePath = GetFilePath(fileId);
+    if (filePath.empty()) return;
     std::string fileContent = util::ReadFile(filePath);
-    std::u32string ucontent = util::ToUtf32(fileContent);
+    std::u32string ucontent;
+    try
+    {
+        ucontent = util::ToUtf32(fileContent);
+    }
+    catch (const util::UnicodeException& ex)
+    {
+        util::ThrowUnicodeException(std::string(ex.what()) + ", file=" + filePath);
+    }
     std::vector<int> lineStartIndeces = ComputeLineStartIndeces(ucontent);
     AddFileContent(fileId, std::move(ucontent), std::move(lineStartIndeces));
 }
 
-std::u32string FileMap::GetFileLine(std::int32_t fileId, int line) 
+std::u32string FileMap::GetFileLine(std::int32_t fileId, int line)
 {
+    std::lock_guard<std::recursive_mutex> lock(mtx);
     if (fileId == -1) return std::u32string();
     if (!HasFileContent(fileId))
     {
         ReadFile(fileId);
     }
     const std::pair<std::u32string, std::vector<int>>& contents = GetFileContent(fileId);
+    if (line < 1 || line >= contents.second.size()) return std::u32string();
     std::u32string::size_type lineStart = contents.second[line];
     std::u32string::size_type lineLength = std::u32string::npos;
     if (line < contents.second.size() - 1)
@@ -120,24 +139,18 @@ std::u32string FileMap::GetFileLine(std::int32_t fileId, int line)
     return trimmedLine;
 }
 
-std::mutex tokenMapMutex;
-
-void FileMap::SetTokens(std::int32_t fileId, TokenVec&& tokens)
+const std::vector<int>* FileMap::LineStartIndeces(std::int32_t fileId)
 {
-    std::lock_guard<std::mutex> lock(tokenMapMutex);
-    tokenMap[fileId] = std::move(tokens);
-}
-
-const TokenVec& FileMap::GetTokens(std::int32_t fileId) const
-{
-    std::lock_guard<std::mutex> lock(tokenMapMutex);
-    static TokenVec empty;
-    auto it = tokenMap.find(fileId);
-    if (it != tokenMap.cend())
+    std::lock_guard<std::recursive_mutex> lock(mtx);
+    auto it = fileContentsMap.find(fileId);
+    if (it != fileContentsMap.end())
     {
-        return it->second;
+        return &it->second.second;
     }
-    return empty;
+    else
+    {
+        return nullptr;
+    }
 }
 
 FileMap* globalFileMap = nullptr;

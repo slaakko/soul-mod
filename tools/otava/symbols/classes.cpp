@@ -248,6 +248,12 @@ void ClassTypeSymbol::Write(Writer& writer)
     writer.GetBinaryStreamWriter().Write(vtabSize);
     writer.GetBinaryStreamWriter().Write(vptrIndex);
     writer.GetBinaryStreamWriter().Write(vtabName);
+    util::uuid groupId = util::nil_uuid();
+    if (group)
+    {
+        groupId = group->Id();
+    }
+    writer.GetBinaryStreamWriter().Write(groupId);
 }
 
 void ClassTypeSymbol::Read(Reader& reader)
@@ -282,6 +288,7 @@ void ClassTypeSymbol::Read(Reader& reader)
     vtabSize = reader.GetBinaryStreamReader().ReadInt();
     vptrIndex = reader.GetBinaryStreamReader().ReadInt();
     vtabName = reader.GetBinaryStreamReader().ReadUtf8String();
+    reader.GetBinaryStreamReader().ReadUuid(groupId);
 }
 
 void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
@@ -313,6 +320,14 @@ void ClassTypeSymbol::Resolve(SymbolTable& symbolTable)
             function = symbolTable.GetFunctionDefinition(fnIndexId.second);
         }
         functionMap[fnIndexId.first] = function;
+    }
+    if (groupId != util::nil_uuid())
+    {
+        TypeSymbol* groupSymbol = symbolTable.GetType(groupId);
+        if (groupSymbol->IsClassGroupSymbol())
+        {
+            group = static_cast<ClassGroupSymbol*>(groupSymbol);
+        }
     }
 }
 

@@ -644,12 +644,13 @@ void ArrayValue::Accept(Visitor& visitor)
 
 otava::intermediate::Value* ArrayValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    otava::intermediate::ArrayType* arrayType = static_cast<otava::intermediate::ArrayType*>(GetType()->IrType(emitter, sourcePos, context));
     std::vector<otava::intermediate::Value*> elements;
     for (const auto& elementValue : elementValues)
     {
         elements.push_back(elementValue->IrValue(emitter, sourcePos, context));
     }
-    return emitter.EmitArrayValue(elements);
+    return emitter.EmitArrayValue(elements, arrayType);
 }
 
 StructureValue::StructureValue(TypeSymbol* type_) : Value(SymbolKind::structureValueSymbol, std::u32string(), type_)
@@ -703,12 +704,13 @@ Value* StructureValue::Convert(ValueKind kind, EvaluationContext& context)
 
 otava::intermediate::Value* StructureValue::IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context)
 {
+    otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(GetType()->IrType(emitter, sourcePos, context));
     std::vector<otava::intermediate::Value*> fields;
     for (const auto& fieldValue : fieldValues)
     {
         fields.push_back(fieldValue->IrValue(emitter, sourcePos, context));
     }
-    return emitter.EmitStructureValue(fields);
+    return emitter.EmitStructureValue(fields, structureType);
 }
 
 EvaluationContext::EvaluationContext(SymbolTable& symbolTable_) : 

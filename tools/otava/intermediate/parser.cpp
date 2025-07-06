@@ -3,27 +3,38 @@
 // Distributed under the MIT license
 // =================================
 
-module otava.intermediate.parser;
+module otava.intermediate.main.parser;
 
 import otava.intermediate.lexer;
-import otava.intermediate.context;
-import otava.intermediate.spg.rules;
-import otava.intermediate.code.parser;
+import otava.intermediate.parser.rules;
+import otava.intermediate.parser;
 import util;
 
 namespace otava::intermediate {
 
-void ParseIntermediateCodeFile(const std::string& filePath, Context& context)
+void Parse(const std::string& filePath, Context& context, bool verbose)
 {
-    std::string codeFileContent = util::ReadFile(filePath);
-    std::u32string content = util::ToUtf32(codeFileContent);
+    if (verbose)
+    {
+        std::cout <<  "> " << filePath << "\n";
+    }
+    int fileIndex = context.GetFileMap().MapFile(filePath);
+    context.SetFileId(fileIndex);
+    std::u32string content;
+    try
+    {
+        content = util::ToUtf32(util::ReadFile(filePath));
+    }
+    catch (const util::UnicodeException& ex)
+    {
+        util::ThrowUnicodeException(std::string(ex.what()) + ", file=" + filePath);
+    }
     auto lexer = otava::intermediate::lexer::MakeLexer(content.c_str(), content.c_str() + content.length(), filePath);
-    lexer.SetRuleNameMapPtr(otava::intermediate::spg::rules::GetRuleNameMapPtr());
-    std::int32_t fileId = context.GetFileMap().MapFile(filePath);
-    lexer.SetFile(fileId);
+    lexer.SetFile(fileIndex);
     using LexerType = decltype(lexer);
-    otava::intermediate::code::parser::IntermediateCodeParser<LexerType>::Parse(lexer, &context);
-    context.GetFileMap().AddFileContent(fileId, std::move(content), std::move(lexer.GetLineStartIndeces()));
+    lexer.SetRuleNameMapPtr(otava::intermediate::parser::rules::GetRuleNameMapPtr());
+    otava::intermediate::parser::IntermediateParser<LexerType>::Parse(lexer, &context);
+    context.GetFileMap().AddFileContent(fileIndex, std::move(content), lexer.GetLineStartIndeces());
 }
 
-} // namespace otava::intermediate
+} // otava::intermediate

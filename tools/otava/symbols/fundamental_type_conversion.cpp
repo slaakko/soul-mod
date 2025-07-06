@@ -5,35 +5,147 @@
 
 module otava.symbols.fundamental.type.conversion;
 
+import otava.symbols.fundamental.type.symbol;
+import otava.symbols.context;
+import otava.symbols.symbol.table;
+import otava.symbols.conversion.table;
+
 namespace otava::symbols {
 
-otava::intermediate::Value* FundamentalTypeSignExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-{
-    return emitter.EmitSignExtend(value, destType);
-}
+    otava::intermediate::Value* FundamentalTypeSignExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context)
+    {
+        return emitter.EmitSignExtend(value, destType);
+    }
 
-otava::intermediate::Value* FundamentalTypeZeroExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-{
-    return emitter.EmitZeroExtend(value, destType);
-}
+    otava::intermediate::Value* FundamentalTypeZeroExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context)
+    {
+        return emitter.EmitZeroExtend(value, destType);
+    }
 
-otava::intermediate::Value* FundamentalTypeTruncate::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-{
-    return emitter.EmitTruncate(value, destType);
-}
+    otava::intermediate::Value* FundamentalTypeFloatingPointExtension::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context)
+    {
+        return emitter.EmitFPExtend(value, destType);
+    }
 
-otava::intermediate::Value* FundamentalTypeBitcast::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-{
-    return emitter.EmitBitcast(value, destType);
-}
+    otava::intermediate::Value* FundamentalTypeTruncate::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context)
+    {
+        return emitter.EmitTruncate(value, destType);
+    }
 
-otava::intermediate::Value* FundamentalTypeIntToFloat::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
-{
-    return emitter.EmitIntToFloat(value, destType);
-}
+    otava::intermediate::Value* FundamentalTypeBitcast::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context)
+    {
+        return emitter.EmitBitcast(value, destType);
+    }
 
-otava::intermediate::Value* FundamentalTypeFloatToInt::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType)
+    otava::intermediate::Value* FundamentalTypeIntToFloat::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context)
+    {
+        if (destType->Size() == 4)
+        {
+            if (value->GetType()->Size() < 4)
+            {
+                ConversionTable& conversionTable = context->GetSymbolTable()->GetConversionTable();
+                TypeSymbol* argType = context->ArgType();
+                TypeSymbol* paramType = nullptr;
+                if (value->GetType()->IsSignedType())
+                {
+                    paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::intType);
+                }
+                else if (value->GetType()->IsUnsignedType())
+                {
+                    paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedIntType);
+                }
+                FunctionSymbol* conversion = conversionTable.GetConversion(paramType, argType, context);
+                BoundValueExpressionNode* arg(new BoundValueExpressionNode(value, argType));
+                BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
+                boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+                value = emitter.Stack().Pop();
+            }
+        }
+        else if (destType->Size() == 8)
+        {
+            if (value->GetType()->Size() < 8)
+            {
+                ConversionTable& conversionTable = context->GetSymbolTable()->GetConversionTable();
+                TypeSymbol* argType = context->ArgType();
+                TypeSymbol* paramType = nullptr;
+                if (value->GetType()->IsSignedType())
+                {
+                    paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType);
+                }
+                else if (value->GetType()->IsUnsignedType())
+                {
+                    paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedLongLongIntType);
+                }
+                FunctionSymbol* conversion = conversionTable.GetConversion(paramType, argType, context);
+                BoundValueExpressionNode* arg(new BoundValueExpressionNode(value, argType));
+                BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
+                boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+                value = emitter.Stack().Pop();
+            }
+        }
+        return emitter.EmitIntToFloat(value, destType);
+    }
+
+otava::intermediate::Value* FundamentalTypeFloatToInt::Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context)
 {
+    if (value->GetType()->Size() == 4)
+    {
+        if (destType->Size() < 4)
+        {
+            ConversionTable& conversionTable = context->GetSymbolTable()->GetConversionTable();
+            TypeSymbol* argType = context->ArgType();
+            TypeSymbol* finalParamType = context->ParamType();
+            TypeSymbol* paramType = nullptr;
+            if (destType->IsSignedType())
+            {
+                paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::intType);
+            }
+            else if (destType->IsUnsignedType())
+            {
+                paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedIntType);
+            }
+            FunctionSymbol* firstConversion = conversionTable.GetConversion(paramType, argType, context);
+            BoundValueExpressionNode* firstArg(new BoundValueExpressionNode(value, argType));
+            BoundConversionNode firstConversionNode(firstArg, firstConversion, soul::ast::SourcePos());
+            firstConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            value = emitter.Stack().Pop();
+            BoundValueExpressionNode* arg(new BoundValueExpressionNode(value, paramType));
+            FunctionSymbol* conversion = conversionTable.GetConversion(finalParamType, paramType, context);
+            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
+            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            value = emitter.Stack().Pop();
+            return value;
+        }
+    }
+    else if (value->GetType()->Size() == 8)
+    {
+        if (destType->Size() < 8)
+        {
+            ConversionTable& conversionTable = context->GetSymbolTable()->GetConversionTable();
+            TypeSymbol* argType = context->ArgType();
+            TypeSymbol* finalParamType = context->ParamType();
+            TypeSymbol* paramType = nullptr;
+            if (destType->IsSignedType())
+            {
+                paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType);
+            }
+            else if (destType->IsUnsignedType())
+            {
+                paramType = context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::unsignedLongLongIntType);
+            }
+            FunctionSymbol* firstConversion = conversionTable.GetConversion(paramType, argType, context);
+            BoundValueExpressionNode* firstArg(new BoundValueExpressionNode(value, argType));
+            BoundConversionNode firstConversionNode(firstArg, firstConversion, soul::ast::SourcePos());
+            firstConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            value = emitter.Stack().Pop();
+            BoundValueExpressionNode* arg(new BoundValueExpressionNode(value, paramType));
+            FunctionSymbol* conversion = conversionTable.GetConversion(finalParamType, paramType, context);
+            BoundConversionNode boundConversionNode(arg, conversion, soul::ast::SourcePos());
+            boundConversionNode.Load(emitter, OperationFlags::none, soul::ast::SourcePos(), context);
+            value = emitter.Stack().Pop();
+            return value;
+        }
+    }
     return emitter.EmitFloatToInt(value, destType);
 }
 
@@ -54,6 +166,18 @@ FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion() : Fun
 FundamentalTypeZeroExtendConversion::FundamentalTypeZeroExtendConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, 
     Context* context) :
     FundamentalTypeConversion<FundamentalTypeZeroExtension>(SymbolKind::fundamentalTypeZeroExtension, distance_, conversionKind_, paramType_, argType_, context)
+{
+}
+
+FundamentalTypeFloatingPointExtendConversion::FundamentalTypeFloatingPointExtendConversion() : 
+    FundamentalTypeConversion<FundamentalTypeFloatingPointExtension>(SymbolKind::fundamentalTypeFloatingPointExtension) 
+{
+}
+
+FundamentalTypeFloatingPointExtendConversion::FundamentalTypeFloatingPointExtendConversion(std::int32_t distance_, ConversionKind conversionKind_,
+    TypeSymbol* paramType_, TypeSymbol* argType_, Context* context) : 
+    FundamentalTypeConversion<FundamentalTypeFloatingPointExtension>(SymbolKind::fundamentalTypeFloatingPointExtension, distance_, conversionKind_, paramType_, argType_, 
+        context)
 {
 }
 

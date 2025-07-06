@@ -5,7 +5,6 @@
 
 module soul.spg.parser.generator;
 
-// import std.filesystem;
 import util;
 import soul.spg.file.parsers;
 import soul.spg.linking;
@@ -169,8 +168,8 @@ void GenerateParsers(soul::ast::spg::SpgFile* spgFile, soul::lexer::FileMap& fil
         GenerateCode(spgFile, verbose, noDebugSupport, version, fileMap);
     }
     GenerateRuleNameModule(spgFile, verbose, moduleMap, ppstyle);
-    optimizedSpg.reset();
     std::cout << "parsers for project '" << spgFile->ProjectName() << "' generated successfully." << std::endl;
+    optimizedSpg.reset();
 }
 
 } // namespace soul::spg

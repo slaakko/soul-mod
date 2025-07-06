@@ -3,16 +3,10 @@
 // Distributed under the MIT license
 // =================================
 
-module otava.intermediate.compile.unit;
+module otava.intermediate.compile_unit;
 
-import otava.intermediate.basic.block;
 import otava.intermediate.context;
-import otava.intermediate.type;
-import otava.intermediate.code;
-import otava.intermediate.data;
-import otava.intermediate.function;
-import otava.intermediate.value;
-import util.code.formatter;
+import util;
 
 namespace otava::intermediate {
 
@@ -36,16 +30,24 @@ void CompileUnit::Write()
     std::ofstream file(filePath);
     util::CodeFormatter formatter(file);
     formatter.SetIndentSize(8);
-    formatter.Write("cu(");
-    formatter.Write(id);
-    formatter.Write(",");
-    metadataRef->Write(formatter);
-    formatter.WriteLine(")");
-    formatter.WriteLine();
     context->GetTypes().Write(formatter);
     context->GetData().Write(formatter);
-    context->GetCode().Write(formatter);
+    bool first = true;
+    Function* fn = context->GetCode().FirstFunction();
+    while (fn)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            formatter.WriteLine();
+        }
+        fn->Write(formatter);
+        fn = fn->Next();
+    }
     context->GetMetadata().Write(formatter);
 }
 
-} // namespace otava::intermediate
+} // otava::intermediate

@@ -7,7 +7,7 @@ module otava.assembly.value;
 
 namespace otava::assembly {
 
-Value::Value(const std::string& name_) : name(name_)
+Value::Value(ValueKind kind_, const std::string& name_) : kind(kind_), name(name_)
 {
 }
 
@@ -15,4 +15,9 @@ Value::~Value()
 {
 }
 
-} // namespace otava::ast
+void Value::SetName(const std::string& name_)
+{
+    name = name_;
+}
+
+} // otava::assembly

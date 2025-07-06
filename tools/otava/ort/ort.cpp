@@ -13,96 +13,9 @@ module;
 module ort;
 
 import class_info_index;
-import context_stack;
-// import std.filesystem;
 import util;
 
 bool initialized = false;
-bool stdout_tty = false;
-bool stderr_tty = false;
-util::Utf8ToUtf32Engine stdoutEngine;
-util::Utf8ToUtf32Engine stderrEngine;
-
-void init_console()
-{
-    stdout_tty = _isatty(1);
-    if (stdout_tty)
-    {
-        _setmode(1, _O_U16TEXT);
-    }
-    stderr_tty = _isatty(2);
-    if (stderr_tty)
-    {
-        _setmode(2, _O_U16TEXT);
-    }
-    initialized = true;
-}
-
-void print_unicode(const char* s, util::Utf8ToUtf32Engine& engine, FILE* file)
-{
-    std::u32string utf32Chars;
-    while (*s)
-    {
-        engine.Put(*s);
-        ++s;
-        if (engine.ResultReady())
-        {
-            utf32Chars.append(1, engine.Result());
-        }
-    }
-    std::u16string utf16Chars(util::ToUtf16(utf32Chars));
-    if (!utf16Chars.empty())
-    {
-        std::fwrite(utf16Chars.c_str(), sizeof(char16_t), utf16Chars.length(), file);
-    }
-}
-
-void prints(const char* s, int handle)
-{
-    if (!initialized)
-    {
-        init_console();
-    }
-    switch (handle)
-    {
-        case 1:
-        {
-            if (stdout_tty)
-            {
-                print_unicode(s, stdoutEngine, stdout);
-            }
-            else
-            {
-                std::fwrite(s, strlen(s), 1, stdout);
-            }
-            break;
-        }
-        case 2:
-        {
-            if (stderr_tty)
-            {
-                print_unicode(s, stderrEngine, stderr);
-            }
-            else
-            {
-                std::fwrite(s, strlen(s), 1, stderr);
-            }
-            break;
-        }
-        default:
-        {
-            if (stdout_tty)
-            {
-                print_unicode(s, stdoutEngine, stdout);
-            }
-            else
-            {
-                std::fwrite(s, strlen(s), 1, stdout);
-            }
-            break;
-        }
-    }
-}
 
 void flush_handle(int handle)
 {
@@ -183,48 +96,6 @@ std::uint8_t get_random_byte()
 void* current_exception = nullptr;
 std::uint64_t currentExceptionTypeIdHigh = 0;
 std::uint64_t currentExceptionTypeIdLow = 0;
-
-void set_exception(void* ex, std::uint64_t eth, std::uint64_t etl)
-{
-    current_exception = ex;
-    currentExceptionTypeIdHigh = eth;
-    currentExceptionTypeIdLow = etl;
-}
-
-void* get_exception()
-{
-    return current_exception;
-}
-
-void throw_exception()
-{
-    void* ctx = pop_context();
-    if (ctx)
-    {
-        restore_context(ctx, 1);
-    }
-    else
-    {
-        std::cerr << "could not throw exception: no context" << std::endl;
-        std::abort();
-    }
-}
-
-bool handle_exception(std::uint64_t hth, std::uint64_t htl)
-{
-    if (hth == 0 && htl == 0)
-    {
-        return true; 
-    }
-    else if (info::is_same_or_has_base(currentExceptionTypeIdHigh, currentExceptionTypeIdLow, hth, htl))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
 
 bool is_space(int c)
 {

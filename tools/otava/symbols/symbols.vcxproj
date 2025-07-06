@@ -177,8 +177,6 @@
     <ClCompile Include="class_group_symbol.cppm" />
     <ClCompile Include="class_templates.cpp" />
     <ClCompile Include="class_templates.cppm" />
-    <ClCompile Include="cleanup_list.cpp" />
-    <ClCompile Include="cleanup_list.cppm" />
     <ClCompile Include="compound_type_symbol.cpp" />
     <ClCompile Include="compound_type_symbol.cppm" />
     <ClCompile Include="concepts.cpp" />
@@ -197,8 +195,6 @@
     <ClCompile Include="declarator.cppm" />
     <ClCompile Include="derivations.cpp" />
     <ClCompile Include="derivations.cppm" />
-    <ClCompile Include="eh.cpp" />
-    <ClCompile Include="eh.cppm" />
     <ClCompile Include="emitter.cpp" />
     <ClCompile Include="emitter.cppm" />
     <ClCompile Include="enums.cpp" />
@@ -217,6 +213,8 @@
     <ClCompile Include="function_definition_symbol_set.cppm" />
     <ClCompile Include="function_group_symbol.cpp" />
     <ClCompile Include="function_group_symbol.cppm" />
+    <ClCompile Include="function_return_path_checker.cpp" />
+    <ClCompile Include="function_return_path_checker.cppm" />
     <ClCompile Include="function_symbol.cpp" />
     <ClCompile Include="function_symbol.cppm" />
     <ClCompile Include="function_templates.cpp" />

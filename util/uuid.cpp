@@ -62,6 +62,15 @@ uuid uuid::random()
     return rand_uuid;
 }
 
+bool uuid::is_nil() const
+{
+    for (const auto& x : data)
+    {
+        if (x != 0) return false;
+    }
+    return true;
+}
+
 bool operator==(const uuid& left, const uuid& right)
 {
     for (int i = 0; i < uuid::static_size(); ++i)

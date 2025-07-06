@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -11,7 +11,7 @@ export import std.algorithm;
 export import std.atomic;
 export import std.type.fundamental;
 export import std.basic_string;
-export import std.crt;
+export import std.rt;
 export import std.chrono;
 export import std.chrono.clock;
 export import std.chrono.duration;
@@ -24,7 +24,6 @@ export import std.container.stack;
 export import std.container.vector;
 // export import std.container.unordered_map;
 export import std.error;
-export import std.exception;
 export import std.functional;
 export import std.hash;
 // export import std.iterator.reverse;

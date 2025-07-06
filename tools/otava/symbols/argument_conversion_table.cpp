@@ -20,7 +20,7 @@ import otava.symbols.enums;
 import otava.symbols.overload.resolution;
 import otava.symbols.type_compare;
 import otava.symbols.type.symbol;
-import otava.intermediate.value;
+import otava.intermediate.data;
 
 namespace otava::symbols {
 

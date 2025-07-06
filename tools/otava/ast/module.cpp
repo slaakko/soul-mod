@@ -15,8 +15,10 @@ ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourceP
 {
 }
 
-ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* modle_, Node* moduleName_, Node* modulePartition_, Node* attributes_, Node* semicolon_) :
-    CompoundNode(NodeKind::moduleDeclarationNode, sourcePos_), exprt(exprt_), modle(modle_), moduleName(moduleName_), modulePartition(modulePartition_), attributes(attributes_), semicolon(semicolon_)
+ModuleDeclarationNode::ModuleDeclarationNode(const soul::ast::SourcePos& sourcePos_, Node* exprt_, Node* modle_, Node* moduleName_, Node* modulePartition_,
+    Node* attributes_, Node* semicolon_) :
+    CompoundNode(NodeKind::moduleDeclarationNode, sourcePos_), exprt(exprt_), modle(modle_), moduleName(moduleName_), modulePartition(modulePartition_), 
+    attributes(attributes_), semicolon(semicolon_)
 {
 }
 

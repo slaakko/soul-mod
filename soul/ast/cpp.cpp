@@ -780,51 +780,6 @@ std::string ConditionalNode::ToString() const
     return condition->ToString() + " ? " + thenExpr->ToString() + " : " + elseExpr->ToString();
 }
 
-ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* exception_) : Node(NodeKind::throwExprNode, sourcePos_), exception(exception_)
-{
-    if (exception)
-    {
-        exception->SetParent(this);
-    }
-}
-
-Node* ThrowExprNode::Clone() const
-{
-    if (exception)
-    {
-        return new ThrowExprNode(GetSourcePos(), exception->Clone());
-    }
-    else
-    {
-        return new ThrowExprNode(GetSourcePos(), nullptr);
-    }
-}
-
-void ThrowExprNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-void ThrowExprNode::Write(CodeFormatter& formatter)
-{
-    formatter.Write("throw");
-    if (exception)
-    {
-        formatter.Write(" ");
-        exception->Write(formatter);
-    }
-}
-
-std::string ThrowExprNode::ToString() const
-{
-    std::string str = "throw";
-    if (exception)
-    {
-        str.append(1, ' ').append(exception->ToString());
-    }
-    return str;
-}
-
 NewNode::NewNode(const soul::ast::SourcePos& sourcePos_, bool global_) : Node(NodeKind::newNode, sourcePos_), global(global_), parens(false), addToPlacement(false), addToInitializer(false)
 {
 }
@@ -1673,109 +1628,6 @@ void DeclarationStatementNode::Write(CodeFormatter& formatter)
 {
     declaration->Write(formatter);
     formatter.WriteLine(";");
-}
-
-ExceptionDeclarationNode::ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_) :
-    Node(NodeKind::exceptionDeclarationNode, sourcePos_), typeId(new TypeIdNode(sourcePos_)), declarator(), catchAll(false)
-{
-    typeId->SetParent(this);
-}
-
-void ExceptionDeclarationNode::SetDeclarator(const std::string& declarator_)
-{
-    declarator = declarator_;
-}
-
-Node* ExceptionDeclarationNode::Clone() const
-{
-    ExceptionDeclarationNode* clone = new ExceptionDeclarationNode(GetSourcePos());
-    clone->SetDeclarator(declarator);
-    if (catchAll)
-    {
-        clone->SetCatchAll();
-    }
-    return clone;
-}
-
-void ExceptionDeclarationNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-void ExceptionDeclarationNode::Write(CodeFormatter& formatter)
-{
-    if (catchAll)
-    {
-        formatter.Write("...");
-    }
-    else
-    { 
-        typeId->Write(formatter);
-        formatter.Write(" "); 
-        formatter.Write(declarator);
-    }
-}
-
-HandlerNode::HandlerNode(const soul::ast::SourcePos& sourcePos_, ExceptionDeclarationNode* exceptionDeclaration_, CompoundStatementNode* handlerBlock_) :
-    Node(NodeKind::handlerNode, sourcePos_), exceptionDeclaration(exceptionDeclaration_), handlerBlock(handlerBlock_)
-{
-    exceptionDeclaration->SetParent(this);
-    handlerBlock->SetParent(this);
-}
-
-Node* HandlerNode::Clone() const
-{
-    return new HandlerNode(GetSourcePos(), static_cast<ExceptionDeclarationNode*>(exceptionDeclaration->Clone()), static_cast<CompoundStatementNode*>(handlerBlock->Clone()));
-}
-
-void HandlerNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-void HandlerNode::Write(CodeFormatter& formatter)
-{
-    formatter.Write("catch ("); 
-    exceptionDeclaration->Write(formatter);
-    formatter.Write(")");
-    handlerBlock->Write(formatter);
-}
-
-TryStatementNode::TryStatementNode(const soul::ast::SourcePos& sourcePos_, CompoundStatementNode* tryBlock_) : 
-    StatementNode(NodeKind::tryStatementNode, sourcePos_), tryBlock(tryBlock_)
-{
-    tryBlock->SetParent(this);
-}
-
-void TryStatementNode::AddHandler(HandlerNode* handler)
-{
-    handler->SetParent(this);
-    handlers.push_back(std::unique_ptr<HandlerNode>(handler));
-}
-
-Node* TryStatementNode::Clone() const
-{
-    TryStatementNode* clone = new TryStatementNode(GetSourcePos(), static_cast<CompoundStatementNode*>(tryBlock->Clone()));
-    for (const auto& handler : handlers)
-    {
-        clone->AddHandler(static_cast<HandlerNode*>(handler->Clone()));
-    }
-    return clone;
-}
-
-void TryStatementNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-void TryStatementNode::Write(CodeFormatter& formatter)
-{
-    formatter.WriteLine("try");
-    tryBlock->Write(formatter);
-    for (const auto& handler : handlers)
-    {
-        handler->Write(formatter);
-    }
 }
 
 IfdefStatementNode::IfdefStatementNode(const soul::ast::SourcePos& sourcePos_, Node* symbol_) : StatementNode(NodeKind::ifdefStatementNode, sourcePos_), symbol(symbol_)
@@ -2644,11 +2496,6 @@ void DefaultVisitor::Visit(ConditionalNode& node)
     node.ElseExpr()->Accept(*this);
 }
 
-void DefaultVisitor::Visit(ThrowExprNode& node)
-{
-    node.Exception()->Accept(*this);
-}
-
 void DefaultVisitor::Visit(NewNode& node)
 {
     for (const auto& placementNode : node.Placement())
@@ -2775,29 +2622,6 @@ void DefaultVisitor::Visit(RangeForStatementNode& node)
 void DefaultVisitor::Visit(DeclarationStatementNode& node)
 {
     node.Declaration()->Accept(*this);
-}
-
-void DefaultVisitor::Visit(ExceptionDeclarationNode& node)
-{
-    if (node.TypeId())
-    {
-        node.TypeId()->Accept(*this);
-    }
-}
-
-void DefaultVisitor::Visit(HandlerNode& node)
-{
-    node.ExceptionDeclaration()->Accept(*this);
-    node.HandlerBlock()->Accept(*this);
-}
-
-void DefaultVisitor::Visit(TryStatementNode& node)
-{
-    node.TryBlock()->Accept(*this);
-    for (const auto& handler : node.Handlers())
-    {
-        handler->Accept(*this);
-    }
 }
 
 void DefaultVisitor::Visit(IfdefStatementNode& node)

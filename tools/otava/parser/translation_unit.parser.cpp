@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/translation_unit.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/translation_unit.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.translation.unit;
 
@@ -69,7 +69,7 @@ soul::parser::Match TranslationUnitParser<LexerT>::TranslationUnit(LexerT& lexer
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TranslationUnit");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TranslationUnit");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5945151541383004161);
@@ -185,7 +185,7 @@ soul::parser::Match TranslationUnitParser<LexerT>::ModuleUnit(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ModuleUnit");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ModuleUnit");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5945151541383004162);

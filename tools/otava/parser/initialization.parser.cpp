@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/initialization.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/initialization.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.initialization;
 
@@ -28,7 +28,7 @@ soul::parser::Match InitializationParser<LexerT>::Initializer(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Initializer");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Initializer");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744129);
@@ -175,7 +175,7 @@ soul::parser::Match InitializationParser<LexerT>::InitializerClause(LexerT& lexe
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "InitializerClause");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "InitializerClause");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744130);
@@ -254,7 +254,7 @@ soul::parser::Match InitializationParser<LexerT>::InitializerList(LexerT& lexer,
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "InitializerList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "InitializerList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744131);
@@ -422,7 +422,7 @@ soul::parser::Match InitializationParser<LexerT>::DesignatedInitializerList(Lexe
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744132);
@@ -545,7 +545,7 @@ soul::parser::Match InitializationParser<LexerT>::DesignatedInitializerClause(Le
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerClause");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "DesignatedInitializerClause");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744133);
@@ -623,7 +623,7 @@ soul::parser::Match InitializationParser<LexerT>::Designator(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Designator");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Designator");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744134);
@@ -704,7 +704,7 @@ soul::parser::Match InitializationParser<LexerT>::ExprOrBracedInitList(LexerT& l
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExprOrBracedInitList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExprOrBracedInitList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744135);
@@ -783,7 +783,7 @@ soul::parser::Match InitializationParser<LexerT>::BraceOrEqualInitializer(LexerT
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "BraceOrEqualInitializer");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "BraceOrEqualInitializer");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744136);
@@ -898,7 +898,7 @@ soul::parser::Match InitializationParser<LexerT>::BracedInitList(LexerT& lexer, 
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "BracedInitList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "BracedInitList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8049098643501744137);

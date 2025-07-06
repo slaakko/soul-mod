@@ -1,20 +1,18 @@
 module std.utf;
 
-import std.exception;
+import std.stream;
 import std.new_delete_op;
 
 namespace std {
 
-[[noreturn]]
-void throw_utf_exception(const char* msg)
+void print_utf_exception(const char* msg)
 {
-    throw utf_exception(msg);
+    cerr << msg << "\n";
 }
 
-[[noreturn]]
-void throw_invalid_utf8_sequence()
+void print_invalid_utf8_sequence()
 {
-    throw_utf_exception("invalid UTF8 sequence");
+    cerr << "invalid UTF8 sequence" << "\n";
 }
 
 string to_utf8(const u16string& s)
@@ -106,7 +104,8 @@ string to_utf8(const u32string& s)
         }
         else
         {
-            throw_utf_exception("invalid UTF-32 code point");
+            print_utf_exception("invalid UTF-32 code point");
+            break;
         }
     }
     return result;
@@ -124,13 +123,15 @@ u16string to_utf16(const u32string& s)
     {
         if (static_cast<uint32_t>(u) > 0x10FFFFu)
         {
-            throw_utf_exception("invalid UTF-32 code point");
+            print_utf_exception("invalid UTF-32 code point");
+            break;
         }
         if (static_cast<uint32_t>(u) < 0x10000u)
         {
             if (static_cast<uint32_t>(u) >= 0xD800u && static_cast<uint32_t>(u) <= 0xDFFFu)
             {
-                throw_utf_exception("invalid UTF-32 code point (reserved for UTF-16)");
+                print_utf_exception("invalid UTF-32 code point (reserved for UTF-16)");
+                break;
             }
             char16_t x = static_cast<char16_t>(u);
             result.append(1, x);
@@ -176,13 +177,15 @@ u32string to_utf32(const string& s)
         {
             if (bytesRemaining < 2)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             char32_t u = static_cast<char32_t>(static_cast<uint32_t>(0u));
             uint8_t b1 = static_cast<uint8_t>(p[1]);
             if ((b1 & 0xC0u) != 0x80u)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             uint8_t shift = 0u;
             for (uint8_t i = 0u; i < 6u; ++i)
@@ -208,13 +211,15 @@ u32string to_utf32(const string& s)
         {
             if (bytesRemaining < 3)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             char32_t u = static_cast<char32_t>(static_cast<uint32_t>(0u));
             uint8_t b2 = static_cast<uint8_t>(p[2]);
             if ((b2 & 0xC0u) != 0x80u)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             uint8_t shift = 0u;
             for (uint8_t i = 0u; i < 6u; ++i)
@@ -227,7 +232,8 @@ u32string to_utf32(const string& s)
             uint8_t b1 = static_cast<uint8_t>(p[1]);
             if ((b1 & 0xC0u) != 0x80u)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             for (uint8_t i = 0u; i < 6u; ++i)
             {
@@ -252,13 +258,15 @@ u32string to_utf32(const string& s)
         {
             if (bytesRemaining < 4)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             char32_t u = static_cast<char32_t>(static_cast<uint32_t>(0u));
             uint8_t b3 = static_cast<uint8_t>(p[3]);
             if ((b3 & 0xC0u) != 0x80u)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             uint8_t shift = 0u;
             for (uint8_t i = 0u; i < 6u; ++i)
@@ -271,7 +279,8 @@ u32string to_utf32(const string& s)
             uint8_t b2 = static_cast<uint8_t>(p[2]);
             if ((b2 & 0xC0u) != 0x80u)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             for (uint8_t i = 0u; i < 6u; ++i)
             {
@@ -283,7 +292,8 @@ u32string to_utf32(const string& s)
             uint8_t b1 = static_cast<uint8_t>(p[1]);
             if ((b1 & 0xC0u) != 0x80u)
             {
-                throw_invalid_utf8_sequence();
+                print_invalid_utf8_sequence();
+                break;
             }
             for (uint8_t i = 0u; i < 6u; ++i)
             {
@@ -306,7 +316,8 @@ u32string to_utf32(const string& s)
         }
         else
         {
-            throw_invalid_utf8_sequence();
+            print_invalid_utf8_sequence();
+            break;
         }
     }
     return result;
@@ -329,7 +340,8 @@ u32string to_utf32(const u16string& s)
         {
             if (static_cast<uint16_t>(w1) < 0xD800u || static_cast<uint16_t>(w1) > 0xDBFFu)
             {
-                throw_utf_exception("invalid UTF-16 sequence");
+                print_utf_exception("invalid UTF-16 sequence");
+                break;
             }
             if (remaining > 0)
             {
@@ -337,7 +349,8 @@ u32string to_utf32(const u16string& s)
                 --remaining;
                 if (static_cast<uint16_t>(w2) < 0xDC00u || static_cast<uint16_t>(w2) > 0xDFFFu)
                 {
-                    throw_utf_exception("invalid UTF-16 sequence");
+                    print_utf_exception("invalid UTF-16 sequence");
+                    break;
                 }
                 else
                 {
@@ -348,7 +361,8 @@ u32string to_utf32(const u16string& s)
             }
             else
             {
-                throw_utf_exception("invalid UTF-16 sequence");
+                print_utf_exception("invalid UTF-16 sequence");
+                break;
             }
         }
     }

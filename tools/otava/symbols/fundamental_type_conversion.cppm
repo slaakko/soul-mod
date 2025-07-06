@@ -6,13 +6,15 @@
 export module otava.symbols.fundamental.type.conversion;
 
 import std;
+import otava.symbols.context;
 import otava.symbols.emitter;
 import otava.symbols.function.symbol;
 import otava.symbols.writer;
 import otava.symbols.reader;
 import otava.symbols.symbol.table;
 import otava.symbols.type.symbol;
-import otava.intermediate.value;
+import otava.intermediate.data;
+import otava.intermediate.types;
 
 export namespace otava::symbols {
 
@@ -21,34 +23,49 @@ enum class ConversionKind : std::int32_t
     implicitConversion, explicitConversion
 };
 
+struct FundamentalTypeIdentity
+{
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context) { return value; }
+};
+
 struct FundamentalTypeSignExtension
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeZeroExtension
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+};
+
+struct FundamentalTypeFloatingPointExtension
+{
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeTruncate
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
+};
+
+struct FundamentalTypeFloatingPointTruncate
+{
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeBitcast
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeIntToFloat
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 struct FundamentalTypeFloatToInt
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType);
+    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context);
 };
 
 template<class Op>
@@ -110,8 +127,10 @@ struct FundamentalTypeConversion : public FunctionSymbol
     void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context) override
     {
+        context->SetArgType(argType);
+        context->SetParamType(paramType);
         otava::intermediate::Value* value = emitter.Stack().Pop();
-        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(paramType->IrType(emitter, sourcePos, context))));
+        emitter.Stack().Push(Op::Generate(emitter, value, static_cast<otava::intermediate::Type*>(paramType->IrType(emitter, sourcePos, context)), context));
     }
     std::int32_t distance;
     ConversionKind conversionKind;
@@ -133,6 +152,13 @@ class FundamentalTypeZeroExtendConversion : public FundamentalTypeConversion<Fun
 public:
     FundamentalTypeZeroExtendConversion();
     FundamentalTypeZeroExtendConversion(std::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
+};
+
+class FundamentalTypeFloatingPointExtendConversion : public FundamentalTypeConversion<FundamentalTypeFloatingPointExtension>
+{
+public:
+    FundamentalTypeFloatingPointExtendConversion();
+    FundamentalTypeFloatingPointExtendConversion(::int32_t distance_, ConversionKind conversionKind_, TypeSymbol* paramType_, TypeSymbol* argType_, Context* context);
 };
 
 class FundamentalTypeTruncateConversion : public FundamentalTypeConversion<FundamentalTypeTruncate>

@@ -9,7 +9,6 @@ import soul.xml.dom;
 import soul.xml.dom.parser;
 import soul.xml.xpath.evaluate;
 import soul.xml.xpath.object;
-// import std.filesystem;
 import util.unicode;
 import util.path;
 

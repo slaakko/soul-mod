@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/module.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/module.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.modules;
 
@@ -36,7 +36,7 @@ soul::parser::Match ModuleParser<LexerT>::ModuleDeclaration(LexerT& lexer, otava
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ModuleDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ModuleDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364481);
@@ -236,7 +236,7 @@ soul::parser::Match ModuleParser<LexerT>::ModuleName(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ModuleName");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ModuleName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364482);
@@ -376,7 +376,7 @@ soul::parser::Match ModuleParser<LexerT>::ExportDeclaration(LexerT& lexer, otava
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExportDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExportDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364483);
@@ -613,7 +613,7 @@ soul::parser::Match ModuleParser<LexerT>::ImportDeclaration(LexerT& lexer, otava
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ImportDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ImportDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364484);
@@ -810,7 +810,7 @@ soul::parser::Match ModuleParser<LexerT>::ModulePartition(LexerT& lexer, otava::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ModulePartition");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ModulePartition");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364485);
@@ -888,7 +888,7 @@ soul::parser::Match ModuleParser<LexerT>::ExportKeyword(LexerT& lexer, otava::sy
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364486);
@@ -955,7 +955,7 @@ soul::parser::Match ModuleParser<LexerT>::ImportKeyword(LexerT& lexer, otava::sy
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364487);
@@ -1022,7 +1022,7 @@ soul::parser::Match ModuleParser<LexerT>::ModuleKeyword(LexerT& lexer, otava::sy
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364488);
@@ -1089,7 +1089,7 @@ soul::parser::Match ModuleParser<LexerT>::GlobalModuleFragment(LexerT& lexer, ot
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "GlobalModuleFragment");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "GlobalModuleFragment");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364489);
@@ -1197,7 +1197,7 @@ soul::parser::Match ModuleParser<LexerT>::PrivateModuleFragment(LexerT& lexer, o
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "PrivateModuleFragment");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "PrivateModuleFragment");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364490);
@@ -1339,7 +1339,7 @@ soul::parser::Match ModuleParser<LexerT>::HeaderName(LexerT& lexer, otava::symbo
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "HeaderName");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "HeaderName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2774545673465364491);

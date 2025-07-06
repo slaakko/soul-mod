@@ -53,6 +53,7 @@ struct ArgumentMatch
     std::int32_t fundamentalTypeDistance;
     OperationFlags preConversionFlags;
     OperationFlags postConversionFlags;
+    int32_t value;
 };
 
 struct FunctionMatch
@@ -72,7 +73,7 @@ struct FunctionMatch
 
 struct BetterFunctionMatch
 {
-    bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const;
+    bool operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const { return operator()(*left, *right); }
     bool operator()(const FunctionMatch& left, const FunctionMatch& right) const;
 };
 

@@ -3,7 +3,7 @@ export module std.container.vector;
 import std.type.fundamental;
 import std.utilities.utility;
 import std.type_traits;
-import std.crt;
+import std.rt;
 import std.algorithm;
 import std.new_delete_op;
 

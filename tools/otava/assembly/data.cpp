@@ -5,84 +5,35 @@
 
 module otava.assembly.data;
 
-import otava.assembly.value;
+import otava.assembly.instruction;
 
 namespace otava::assembly {
 
-std::string DataInstStr(DataInst inst)
+Data::Data()
 {
-    switch (inst)
+}
+
+void Data::AddInstruction(std::unique_ptr<Instruction>&& instruction)
+{
+    if (instruction->HasOperands())
     {
-        case DataInst::DB: return "DB";
-        case DataInst::DW: return "DW";
-        case DataInst::DD: return "DD";
-        case DataInst::DQ: return "DQ";
+        instructions.push_back(std::move(instruction));
     }
-    return std::string();
 }
-
-Data::Data(const std::string& label_, DataInst commonInst_) : useCommonInst(false), label(label_), commonInst(commonInst_), insts()
-{
-}
-
-void Data::AddItem(DataInst inst, Value* item)
-{
-    insts.push_back(inst);
-    items.push_back(item);
-}
-
-const int maxItemsPerLine = 16;
 
 void Data::Write(util::CodeFormatter& formatter)
 {
-    if (!label.empty())
+    for (const auto& instruction : instructions)
     {
-        formatter.Write(label);
-        formatter.Write(" ");
+        instruction->Write(formatter);
     }
-    if (useCommonInst)
-    {
-        formatter.Write(DataInstStr(commonInst));
-        formatter.Write(" ");
-    }
-    int n = items.size();
-    for (int i = 0; i < n; ++i)
-    {
-        if (!useCommonInst)
-        {
-            if (i > 0)
-            {
-                formatter.WriteLine();
-            }
-            formatter.Write(DataInstStr(insts[i]));
-            formatter.Write(" ");
-        }
-        else
-        {
-            if ((i % maxItemsPerLine) == maxItemsPerLine - 1)
-            {
-                formatter.WriteLine();
-                formatter.Write(DataInstStr(insts[i]));
-                formatter.Write(" ");
-            }
-            else
-            {
-                if (i > 0)
-                {
-                    formatter.Write(", ");
-                }
-            }
-        }
-        formatter.Write(items[i]->ToString());
-    }
-    formatter.WriteLine();
 }
 
-PublicDataDeclaration::PublicDataDeclaration(const std::string& name_) : Declaration(name_)
+PublicDeclaration::PublicDeclaration(const std::string& name_) : Declaration(name_)
 {
 }
 
-void PublicDataDeclaration::Write(util::CodeFormatter& formatter)
+void PublicDeclaration::Write(util::CodeFormatter& formatter)
 {
     formatter.Write("PUBLIC ");
     formatter.WriteLine(Name());
@@ -99,5 +50,4 @@ void ExternalDataDeclaration::Write(util::CodeFormatter& formatter)
     formatter.WriteLine(":BYTE");
 }
 
-
-} // namespace otava::assembly
+} // otava::assembly

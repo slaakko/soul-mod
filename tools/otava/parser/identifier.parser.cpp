@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/identifier.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/identifier.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.identifier;
 
@@ -38,7 +38,7 @@ soul::parser::Match IdentifierParser<LexerT>::Identifier(LexerT& lexer, otava::s
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Identifier");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Identifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076097);
@@ -86,7 +86,7 @@ soul::parser::Match IdentifierParser<LexerT>::UnqualifiedId(LexerT& lexer, otava
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "UnqualifiedId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "UnqualifiedId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076098);
@@ -307,7 +307,7 @@ soul::parser::Match IdentifierParser<LexerT>::QualifiedId(LexerT& lexer, otava::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076099);
@@ -458,7 +458,7 @@ soul::parser::Match IdentifierParser<LexerT>::Template(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Template");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Template");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076100);
@@ -506,7 +506,7 @@ soul::parser::Match IdentifierParser<LexerT>::NestedNameSpecifier(LexerT& lexer,
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "NestedNameSpecifier");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "NestedNameSpecifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076101);
@@ -820,7 +820,7 @@ soul::parser::Match IdentifierParser<LexerT>::IdentifierList(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "IdentifierList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "IdentifierList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076102);
@@ -960,7 +960,7 @@ soul::parser::Match IdentifierParser<LexerT>::TypeIdentifier(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifier");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076103);
@@ -1054,7 +1054,7 @@ soul::parser::Match IdentifierParser<LexerT>::TypeIdentifierUnchecked(LexerT& le
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifierUnchecked");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifierUnchecked");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076104);
@@ -1101,7 +1101,7 @@ soul::parser::Match IdentifierParser<LexerT>::TypeIdentifierChecked(LexerT& lexe
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifierChecked");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TypeIdentifierChecked");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076105);
@@ -1164,7 +1164,7 @@ soul::parser::Match IdentifierParser<LexerT>::Unnamed(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Unnamed");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Unnamed");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 1087988986435076106);

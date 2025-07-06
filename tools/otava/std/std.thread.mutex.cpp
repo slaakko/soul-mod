@@ -1,6 +1,6 @@
 module std.thread.mutex;
 
-import std.crt;
+import std.rt;
 
 namespace std {
 

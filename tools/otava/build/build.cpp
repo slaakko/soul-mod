@@ -189,7 +189,7 @@ void ModuleDependencyVisitor::Visit(otava::ast::ModuleNameNode& node)
     else if (implementation)
     {
         interfaceUnitName = util::ToUtf8(node.Str());
-        module.reset(new otava::symbols::Module(util::ToUtf8(node.Str()) + "." + fileName + ".cpp"));
+        module.reset(new otava::symbols::Module(util::ToUtf8(node.Str()) + ".cpp"));
         module->AddImportModuleName("std.type.fundamental");
         module->AddImportModuleName(util::ToUtf8(node.Str()));
     }
@@ -243,7 +243,7 @@ void WriteFilesFile(const std::string& projectFilesPath, const std::vector<std::
     }
 }
 
-void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, BuildFlags flags)
+void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, int optLevel, BuildFlags flags)
 {
     otava::symbols::SetProjectReady(false);
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
@@ -291,12 +291,12 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
             implementationNameMap[interfaceUnitName].push_back(implementationModule->Name());
         }
     }
-    project->LoadModules(moduleMapper);
+    project->LoadModules(moduleMapper, config);
     std::vector<std::unique_ptr<Project>> references;
     std::vector<std::string> referenceFilePaths;
     if (project->Name() != "std")
     {
-        otava::symbols::Module* stdModule = moduleMapper.GetModule("std");
+        otava::symbols::Module* stdModule = moduleMapper.GetModule("std", config);
         referenceFilePaths.push_back(util::Path::Combine(util::Path::GetDirectoryName(stdModule->FilePath()), "std.project"));
     }
     for (const auto& referenceFilePath : project->ReferenceFilePaths())
@@ -352,6 +352,11 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         }
         lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
         otava::symbols::Context context;
+        if (config == "release")
+        {
+            context.SetReleaseConfig();
+        }
+        context.SetOptLevel(optLevel);
         context.SetFileMap(&project->GetFileMap());
         context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
         std::string compileUnitId = "compile_unit_" + util::GetSha1MessageDigest(filePath);
@@ -361,7 +366,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->SetFilePath(filePath);
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
-        module->Import(moduleMapper);
+        module->Import(moduleMapper, config);
         module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
@@ -376,15 +381,15 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         }
         module->SetFile(new otava::ast::File(util::Path::GetFileName(filePath), node.release()));
         module->SetImplementationUnitNames(implementationNameMap[module->Name()]);
-        projectModule.Import(module, moduleMapper);
+        projectModule.Import(module, moduleMapper, config);
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         moduleMapper.AddModule(project->ReleaseModule(file));
-        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false,
-            std::vector<std::string>());
-        module->Write(project->Root());
+        std::string asmFileName = otava::codegen::GenerateCode(
+            context, config, (flags & BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
+        module->Write(project->Root(), config);
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
-            std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
+            std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), config, module->Name()) << std::endl;
         }
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
@@ -410,6 +415,11 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         lexer.SetFile(file);
         lexer.SetRuleNameMapPtr(otava::parser::spg::rules::GetRuleNameMapPtr());
         otava::symbols::Context context;
+        if (config == "release")
+        {
+            context.SetReleaseConfig();
+        }
+        context.SetOptLevel(optLevel);
         context.SetFileMap(&project->GetFileMap());
         context.SetInstantiationQueue(&instantiationQueue);
         context.SetFunctionDefinitionSymbolSet(moduleMapper.GetFunctionDefinitionSymbolSet());
@@ -420,7 +430,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         module->SetFilePath(filePath);
         otava::symbols::SetCurrentModule(module);
         otava::ast::SetNodeIdFactory(module->GetNodeIdFactory());
-        module->Import(moduleMapper);
+        module->Import(moduleMapper, config);
         module->GetSymbolTable()->ResolveForwardDeclarations();
         context.SetLexer(&lexer);
         context.SetSymbolTable(module->GetSymbolTable());
@@ -436,16 +446,16 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         project->Index().imp(module->GetSymbolTable()->ClassIndex(), true);
         if (!interfaceUnitName.empty())
         {
-            otava::symbols::Module* interfaceUnitModule = moduleMapper.GetModule(interfaceUnitName);
+            otava::symbols::Module* interfaceUnitModule = moduleMapper.GetModule(interfaceUnitName, config);
             interfaceUnitModule->AddImplementationUnit(module);
             moduleMapper.AddModule(project->ReleaseModule(file));
         }
-        std::string asmFileName = otava::codegen::GenerateCode(context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, 
-            std::vector<std::string>());
-        module->Write(project->Root());
+        std::string asmFileName = otava::codegen::GenerateCode(
+            context, config, (flags& BuildFlags::verbose) != BuildFlags::none, mainFunctionIrName, mainFunctionParams, false, std::vector<std::string>());
+        module->Write(project->Root(), config);
         if ((flags & BuildFlags::verbose) != BuildFlags::none)
         {
-            std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), module->Name()) << std::endl;
+            std::cout << filePath << " -> " << otava::symbols::MakeModuleFilePath(project->Root(), config, module->Name()) << std::endl;
         }
         asmFileNames.push_back(asmFileName);
         otava::symbols::BoundFunctionNode* initFn = context.GetBoundCompileUnit()->GetCompileUnitInitializationFunction();
@@ -504,9 +514,9 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     otava::symbols::SetProjectReady(true);
 }
 
-otava::symbols::Module* GetModule(otava::symbols::ModuleMapper& moduleMapper, const std::string& moduleName)
+otava::symbols::Module* GetModule(otava::symbols::ModuleMapper& moduleMapper, const std::string& moduleName, const std::string& config)
 {
-    return moduleMapper.GetModule(moduleName);
+    return moduleMapper.GetModule(moduleName, config);
 }
 
 void Visit(Solution* solution, Project* project, std::vector<Project*>& topologicalOrder, std::set<Project*>& visited)
@@ -547,7 +557,8 @@ std::vector<Project*> MakeTopologicalOrder(Solution* solution)
     return topologicalOrder;
 }
 
-void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, BuildFlags flags)
+void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, int optLevel, 
+    BuildFlags flags)
 {
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -565,7 +576,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::
     for (Project* project : buildOrder)
     {
         moduleMapper.AddRoot(project->Root());
-        Build(moduleMapper, project, config, flags);
+        Build(moduleMapper, project, config, optLevel, flags);
     }
     if ((flags & BuildFlags::verbose) != BuildFlags::none)
     {
@@ -573,14 +584,14 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::
     }
 }
 
-void Build(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, BuildFlags flags)
+void Build(otava::symbols::ModuleMapper& moduleMapper, Project* project, const std::string& config, int optLevel, BuildFlags flags)
 {
-    BuildSequentially(moduleMapper, project, config, flags);
+    BuildSequentially(moduleMapper, project, config, optLevel, flags);
 }
 
-void Build(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, BuildFlags flags)
+void Build(otava::symbols::ModuleMapper& moduleMapper, soul::lexer::FileMap& fileMap, Solution* solution, const std::string& config, int optLevel, BuildFlags flags)
 {
-    BuildSequentially(moduleMapper, fileMap, solution, config, flags);
+    BuildSequentially(moduleMapper, fileMap, solution, config, optLevel, flags);
 }
 
 } // namespace otava::build

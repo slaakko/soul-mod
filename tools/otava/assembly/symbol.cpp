@@ -7,7 +7,7 @@ module otava.assembly.symbol;
 
 namespace otava::assembly {
 
-Symbol::Symbol(const std::string& name_) : Value(name_)
+Symbol::Symbol(const std::string& name_) : Value(ValueKind::symbol, name_)
 {
 }
 

@@ -45,6 +45,7 @@ public:
     void AddInstantiatedVirtualFunctionSpecialization(FunctionSymbol* specialization);
     FunctionSymbol* GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const;
     bool ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const;
+    ClassGroupSymbol* Group() const override { return ClassTemplate()->Group(); }
 private:
     ClassTypeSymbol* classTemplate;
     std::vector<Symbol*> templateArguments;

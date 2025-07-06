@@ -128,7 +128,6 @@ class UnaryExprNode;
 class ExpressionListNode;
 class AssignmentInitNode;
 class YieldExprNode;
-class ThrowExprNode;
 class ConditionalExprNode;
 class AssignNode;
 class PlusAssignNode;
@@ -490,7 +489,6 @@ public:
     virtual void Visit(ExpressionListNode& node) {}
     virtual void Visit(AssignmentInitNode& node) {}
     virtual void Visit(YieldExprNode& node) {}
-    virtual void Visit(ThrowExprNode& node) {}
     virtual void Visit(ConditionalExprNode& node) {}
     virtual void Visit(AssignNode& node) {}
     virtual void Visit(PlusAssignNode& node) {}
@@ -840,7 +838,6 @@ public:
     void Visit(ExpressionListNode& node) override;
     void Visit(AssignmentInitNode& node) override;
     void Visit(YieldExprNode& node) override;
-    void Visit(ThrowExprNode& node) override;
     void Visit(ConditionalExprNode& node) override;
     void Visit(CommaNode& node) override;
     void Visit(AssignNode& node) override;

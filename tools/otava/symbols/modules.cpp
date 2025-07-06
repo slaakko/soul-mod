@@ -6,7 +6,6 @@
 module otava.symbols.modules;
 
 import util;
-// import std.filesystem;
 import otava.symbols.namespaces;
 import otava.symbols.classes;
 import otava.symbols.class_group.symbol;
@@ -24,9 +23,9 @@ import otava.ast.error;
 
 namespace otava::symbols {
 
-std::string MakeModuleFilePath(const std::string& root, const std::string& moduleName)
+std::string MakeModuleFilePath(const std::string& root, const std::string& config, const std::string& moduleName)
 {
-    return util::GetFullPath(util::Path::Combine(root, moduleName + ".module"));
+    return util::GetFullPath(util::Path::Combine(util::Path::Combine(root, config), moduleName + ".module"));
 }
 
 Module::Module(const std::string& name_) : name(name_), symbolTable(), evaluationContext(symbolTable), fileId(-1), index(-1), reading(false)
@@ -53,32 +52,32 @@ void Module::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-void Module::Import(ModuleMapper& moduleMapper)
+void Module::Import(ModuleMapper& moduleMapper, const std::string& config)
 {
     for (const auto& exportedModuleName : exportModuleNames)
     {
-        Module* exportedModule = moduleMapper.GetModule(exportedModuleName);
+        Module* exportedModule = moduleMapper.GetModule(exportedModuleName, config);
         AddExportedModule(exportedModule);
         AddDependsOnModule(exportedModule);
     }
     for (const auto& importedModuleName : importModuleNames)
     {
-        Module* importedModule = moduleMapper.GetModule(importedModuleName);
+        Module* importedModule = moduleMapper.GetModule(importedModuleName, config);
         AddImportedModule(importedModule);
         AddDependsOnModule(importedModule);
     }
     for (auto dependsOnModule : dependsOnModules)
     {
-        Import(dependsOnModule, moduleMapper);
+        Import(dependsOnModule, moduleMapper, config);
     }
 }
 
-void Module::Import(Module* that, ModuleMapper& moduleMapper)
+void Module::Import(Module* that, ModuleMapper& moduleMapper, const std::string& config)
 {
     if (importSet.find(that) == importSet.cend())
     {
         importSet.insert(that);
-        that->Import(moduleMapper);
+        that->Import(moduleMapper, config);
         symbolTable.Import(that->symbolTable, moduleMapper.GetFunctionDefinitionSymbolSet());
         evaluationContext.Init();
     }
@@ -192,9 +191,9 @@ void Module::AddDerivedClasses()
     }
 }
 
-void Module::Write(const std::string& root)
+void Module::Write(const std::string& root, const std::string& config)
 {
-    std::string moduleFilePath = MakeModuleFilePath(root, name);
+    std::string moduleFilePath = MakeModuleFilePath(root, config, name);
     Writer writer(moduleFilePath);
     Write(writer);
 }
@@ -209,11 +208,11 @@ void Module::SetFile(otava::ast::File* astFile_)
     astFile.reset(astFile_);
 }
 
-void Module::LoadImplementationUnits(ModuleMapper& moduleMapper)
+void Module::LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config)
 {
     for (const auto& implementationUnitName : implementationUnitNames)
     {
-        Module* implementationUnit = moduleMapper.GetModule(implementationUnitName);
+        Module* implementationUnit = moduleMapper.GetModule(implementationUnitName, config);
         AddImplementationUnit(implementationUnit);
     }
 }
@@ -321,7 +320,7 @@ void Module::ReadHeader(Reader& reader, ModuleMapper& moduleMapper)
     }
 }
 
-void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper)
+void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config)
 {
     reader.SetSymbolTable(&symbolTable);
     reader.SetSymbolMap(moduleMapper.GetSymbolMap());
@@ -335,13 +334,9 @@ void Module::CompleteRead(Reader& reader, ModuleMapper& moduleMapper)
     astFile.reset(new otava::ast::File());
     astFile->Read(astReader);
     symbolTable.ReadMaps(reader, moduleMapper.GetNodeMap(), moduleMapper.GetSymbolMap());
-    Import(moduleMapper);
+    Import(moduleMapper, config);
     symbolTable.Resolve();
     evaluationContext.Resolve(symbolTable);
-    if (name == "std.stream")
-    {
-        int x = 0;
-    }
     symbolTable.ImportAfterResolve();
     reading = false;
 }
@@ -371,7 +366,7 @@ void ModuleMapper::AddModule(Module* module)
     modules.push_back(std::unique_ptr<Module>(module));
 }
 
-Module* ModuleMapper::GetModule(const std::string& moduleName)
+Module* ModuleMapper::GetModule(const std::string& moduleName, const std::string& config)
 {
     std::lock_guard<std::recursive_mutex> lock(mtx);
     auto it = moduleMap.find(moduleName);
@@ -383,10 +378,10 @@ Module* ModuleMapper::GetModule(const std::string& moduleName)
     {
         for (const auto& root : roots)
         {
-            std::string moduleFilePath = MakeModuleFilePath(root, moduleName);
+            std::string moduleFilePath = MakeModuleFilePath(root, config, moduleName);
             if (std::filesystem::exists(moduleFilePath))
             {
-                return LoadModule(moduleName, moduleFilePath);
+                return LoadModule(moduleName, moduleFilePath, config);
             }
         }
         otava::ast::SetExceptionThrown();
@@ -394,7 +389,7 @@ Module* ModuleMapper::GetModule(const std::string& moduleName)
     }
 }
 
-Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::string& moduleFilePath)
+Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config)
 {
     Reader reader(moduleFilePath);
     std::unique_ptr<Module> module(new Module(moduleName));
@@ -404,11 +399,11 @@ Module* ModuleMapper::LoadModule(const std::string& moduleName, const std::strin
     moduleMap[moduleName] = modulePtr;
     for (const std::string& importedModuleName : module->ImportModuleNames())
     {
-        Module* importedModule = GetModule(importedModuleName);
+        Module* importedModule = GetModule(importedModuleName, config);
         module->AddImportedModule(importedModule);
     }
     SetCurrentModule(module.get());
-    module->CompleteRead(reader, *this);
+    module->CompleteRead(reader, *this, config);
     modules.push_back(std::move(module));
     return modulePtr;
 }

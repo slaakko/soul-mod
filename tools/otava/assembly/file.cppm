@@ -6,27 +6,31 @@
 export module otava.assembly.file;
 
 import std;
-import util.code.formatter;
+import util;
 
 export namespace otava::assembly {
 
+class Data;
 class Declaration;
+class Function;
 class FunctionDeclaration;
-class PublicDataDeclaration;
+class PublicDeclaration;
+class LinkOnceDeclaration;
 class ExternalDataDeclaration;
 
 class DeclarationSection
 {
 public:
     void AddFunctionDeclaration(FunctionDeclaration* declaration);
-    void AddPublicDataDeclaration(PublicDataDeclaration* declaration);
+    void AddPublicDeclaration(PublicDeclaration* declaration);
+    void AddLinkOnceDeclaration(LinkOnceDeclaration* declaration);
     void AddExternalDataDeclaration(ExternalDataDeclaration* declaration);
     void Write(util::CodeFormatter& formatter);
 private:
     std::vector<std::unique_ptr<Declaration>> declarations;
+    std::set<std::string> externalFunctionDeclarations;
+    std::set<std::string> externalDataDeclarations;
 };
-
-class Data;
 
 class DataSection
 {
@@ -36,8 +40,6 @@ public:
 private:
     std::vector<std::unique_ptr<Data>> dataVec;
 };
-
-class Function;
 
 class CodeSection
 {
@@ -57,6 +59,7 @@ public:
     DataSection& GetDataSection() { return dataSection; }
     CodeSection& GetCodeSection() { return codeSection; }
     void Write();
+    const std::string& Id() const { return id; }
 private:
     std::string filePath;
     std::ofstream file;
@@ -64,7 +67,7 @@ private:
     DeclarationSection declarationSection;
     DataSection dataSection;
     CodeSection codeSection;
-    std::vector<std::unique_ptr<Function>> functions;
+    std::string id;
 };
 
-} // namespace otava::assembly
+} // otava::assembly

@@ -3,14 +3,13 @@
 // Distributed under the MIT license
 // =================================
 
-export module otava.intermediate.parser;
+export module otava.intermediate.main.parser;
 
+import otava.intermediate.context;
 import std;
 
 export namespace otava::intermediate {
 
-class Context;
+void Parse(const std::string& filePath, Context& context, bool verbose);
 
-void ParseIntermediateCodeFile(const std::string& filePath, Context& context);
-
-} // namespace otava::intermediate
+} // otava::intermediate

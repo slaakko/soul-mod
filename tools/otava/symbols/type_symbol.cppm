@@ -9,7 +9,7 @@ import std;
 import otava.symbols.container.symbol;
 import otava.symbols.derivations;
 import otava.symbols.template_param_compare;
-import otava.intermediate.type;
+import otava.intermediate.types;
 import util.uuid;
 
 export namespace otava::symbols {
@@ -36,6 +36,8 @@ public:
     virtual bool HasBaseClass(TypeSymbol* baseClass, int& distance) const { return false; }
     virtual bool IsVoidType() const { return false; }
     virtual bool IsBoolType() const { return false; }
+    virtual bool IsDoubleType() const { return false; }
+    virtual bool IsFloatType() const { return false; }
     virtual bool IsNullPtrType() const { return false; }
     virtual bool IsVoidPtrType() const { return false; }
     virtual bool IsIntegralType() const { return false; }

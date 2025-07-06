@@ -1,99 +1,101 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/intermediate/intermediate.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/intermediate/intermediate.parser' using soul parser generator spg version 5.0.0
 
-export module otava.intermediate.code.parser;
+export module otava.intermediate.parser;
 
 import std;
 import soul.lexer;
 import soul.parser;
 import otava.intermediate.context;
+import otava.intermediate.types;
+import otava.intermediate.code;
+import otava.intermediate.metadata;
 
 using namespace otava::intermediate::context;
+using namespace otava::intermediate::types;
+using namespace otava::intermediate::code;
+using namespace otava::intermediate::metadata;
 
-export namespace otava::intermediate::code::parser {
+export namespace otava::intermediate::parser {
 
-template<typename Lexer>
-struct IntermediateCodeParser
+template<typename LexerT>
+struct IntermediateParser
 {
-    static void Parse(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match IntermediateCodeFile(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match CompileUnitHeader(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match CompileUnitId(Lexer& lexer);
-    static soul::parser::Match TypeDeclarations(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match TypeDeclaration(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match TypeId(Lexer& lexer);
-    static soul::parser::Match FundamentalTypeId(Lexer& lexer);
-    static soul::parser::Match TypeRef(Lexer& lexer);
-    static soul::parser::Match StructureType(Lexer& lexer, otava::intermediate::Context* context, std::int32_t typeId);
-    static soul::parser::Match ArrayType(Lexer& lexer, otava::intermediate::Context* context, std::int32_t typeId);
-    static soul::parser::Match FunctionType(Lexer& lexer, otava::intermediate::Context* context, std::int32_t typeId);
-    static soul::parser::Match DataDefinitions(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match DataDefinition(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match Constant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match BoolConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match SByteConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ByteConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ShortConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match UShortConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match IntConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match UIntConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match LongConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ULongConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match FloatConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match DoubleConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match AddressConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ArrayConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match StructureConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match StringConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match StringArrayConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match StringArrayPrefix(Lexer& lexer);
-    static soul::parser::Match ConversionConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ClsIdConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match SymbolConstant(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match Value(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
-    static soul::parser::Match RegValue(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
-    static soul::parser::Match ResultRegValue(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
-    static soul::parser::Match SymbolValue(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
-    static soul::parser::Match LiteralValue(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
-    static soul::parser::Match FunctionDefinitions(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ExternalFunctionDeclaration(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match FunctionDefinition(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match FunctionHeader(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match BasicBlock(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::Function* function);
-    static soul::parser::Match Label(Lexer& lexer);
-    static soul::parser::Match Operand(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match Instructions(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::BasicBlock* basicBlock);
-    static soul::parser::Match Instruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match StoreInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ArgInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match JmpInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match BranchInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ProcedureCallInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match RetInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match SwitchInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match ValueInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match Operation(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match UnaryInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match BinaryInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match ParamInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match LocalInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match LoadInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match ElemAddrInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match PtrOffsetInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match PtrDiffInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match FunctionCallInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match TrapInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match PhiInstruction(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
-    static soul::parser::Match BlockValue(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match NoOperationInstruction(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match Metadata(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match MetadataStruct(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match MetadataField(Lexer& lexer, otava::intermediate::Context* context, otava::intermediate::MetadataStruct* parent);
-    static soul::parser::Match MetadataItem(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match MetadataBool(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match MetadataLong(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match MetadataString(Lexer& lexer, otava::intermediate::Context* context);
-    static soul::parser::Match MetadataRef(Lexer& lexer, otava::intermediate::Context* context);
+    static void Parse(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match IntermediateFile(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match TypeDeclarations(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match TypeDeclaration(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match TypeId(LexerT& lexer);
+    static soul::parser::Match FundamentalTypeId(LexerT& lexer);
+    static soul::parser::Match TypeRef(LexerT& lexer);
+    static soul::parser::Match StructureType(LexerT& lexer, otava::intermediate::Context* context, std::int32_t typeId);
+    static soul::parser::Match ArrayType(LexerT& lexer, otava::intermediate::Context* context, std::int32_t typeId);
+    static soul::parser::Match FunctionType(LexerT& lexer, otava::intermediate::Context* context, std::int32_t typeId);
+    static soul::parser::Match DataDefinitions(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match DataDefinition(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match Constant(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match BoolConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match SByteConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ByteConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ShortConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match UShortConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match IntConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match UIntConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match LongConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ULongConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match FloatConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match DoubleConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match AddressConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ArrayConstant(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match StructureConstant(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match StringConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match StringArrayConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match StringArrayPrefix(LexerT& lexer);
+    static soul::parser::Match ConversionConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ClsIdConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match SymbolConstant(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match Value(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match RegValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match ResultRegValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match SymbolValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match LiteralValue(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Type* type);
+    static soul::parser::Match FunctionDefinitions(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match FunctionDeclaration(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match FunctionDefinition(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match FunctionHeader(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match BasicBlock(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::Function* function);
+    static soul::parser::Match Label(LexerT& lexer);
+    static soul::parser::Match Operand(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match Instructions(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::BasicBlock* basicBlock);
+    static soul::parser::Match Instruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match StoreInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ArgInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match JmpInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match BranchInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ProcedureCallInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match RetInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match SwitchInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match ValueInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match Operation(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match UnaryInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match BinaryInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match ParamInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match LocalInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match LoadInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match ElemAddrInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match PtrOffsetInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match PtrDiffInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match FunctionCallInstruction(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::RegValue* result);
+    static soul::parser::Match BlockValue(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match NoOperationInstruction(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match Metadata(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match MetadataStruct(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match MetadataField(LexerT& lexer, otava::intermediate::Context* context, otava::intermediate::MetadataStruct* parent);
+    static soul::parser::Match MetadataItem(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match MetadataBool(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match MetadataLong(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match MetadataString(LexerT& lexer, otava::intermediate::Context* context);
+    static soul::parser::Match MetadataRef(LexerT& lexer, otava::intermediate::Context* context);
 };
 
-} // namespace otava::intermediate::code::parser
+} // namespace otava::intermediate::parser

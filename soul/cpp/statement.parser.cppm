@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/statement.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/soul/cpp/statement.parser' using soul parser generator spg version 5.0.0
 
 export module soul.cpp.statement.parser;
 
@@ -36,10 +36,6 @@ struct StatementParser
     static soul::parser::Match GotoStatement(LexerT& lexer);
     static soul::parser::Match DeclarationStatement(LexerT& lexer);
     static soul::parser::Match Condition(LexerT& lexer);
-    static soul::parser::Match TryStatement(LexerT& lexer);
-    static soul::parser::Match HandlerSeq(LexerT& lexer, soul::ast::cpp::TryStatementNode* tryStatement);
-    static soul::parser::Match Handler(LexerT& lexer);
-    static soul::parser::Match ExceptionDeclaration(LexerT& lexer);
     static soul::parser::Match ExpressionStatement(LexerT& lexer);
 };
 

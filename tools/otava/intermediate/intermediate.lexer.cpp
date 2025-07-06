@@ -1,4 +1,4 @@
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/intermediate/intermediate.lexer' using soul lexer generator slg version 4.1.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/intermediate/intermediate.lexer' using soul lexer generator slg version 5.0.0
 
 module otava.intermediate.lexer;
 
@@ -12,14 +12,14 @@ soul::ast::slg::TokenCollection* GetTokens()
     if (!tokens.Initialized())
     {
         tokens.SetInitialized();
-        tokens.AddToken(new soul::ast::slg::Token(CU, "CU", "'cu'"));
         tokens.AddToken(new soul::ast::slg::Token(ID, "ID", "identifier"));
         tokens.AddToken(new soul::ast::slg::Token(TYPES, "TYPES", "'types'"));
         tokens.AddToken(new soul::ast::slg::Token(DATA, "DATA", "'data'"));
         tokens.AddToken(new soul::ast::slg::Token(FUNCTION, "FUNCTION", "'function'"));
-        tokens.AddToken(new soul::ast::slg::Token(ONCE, "ONCE", "'once'"));
         tokens.AddToken(new soul::ast::slg::Token(EXTERN, "EXTERN", "'extern'"));
-        tokens.AddToken(new soul::ast::slg::Token(GLOBAL, "GLOBAL", "'global'"));
+        tokens.AddToken(new soul::ast::slg::Token(INLINE, "INLINE", "'inline'"));
+        tokens.AddToken(new soul::ast::slg::Token(LINK_ONCE, "LINK_ONCE", "'link_once'"));
+        tokens.AddToken(new soul::ast::slg::Token(METADATA, "METADATA", "'metadata'"));
         tokens.AddToken(new soul::ast::slg::Token(STORE, "STORE", "'store'"));
         tokens.AddToken(new soul::ast::slg::Token(ARG, "ARG", "'arg'"));
         tokens.AddToken(new soul::ast::slg::Token(JMP, "JMP", "'jmp'"));
@@ -28,11 +28,11 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(RET, "RET", "'ret'"));
         tokens.AddToken(new soul::ast::slg::Token(SWITCH, "SWITCH", "'switch'"));
         tokens.AddToken(new soul::ast::slg::Token(NOP, "NOP", "'nop'"));
-        tokens.AddToken(new soul::ast::slg::Token(SAVE, "SAVE", "'save'"));
         tokens.AddToken(new soul::ast::slg::Token(NOT, "NOT", "'not'"));
         tokens.AddToken(new soul::ast::slg::Token(NEG, "NEG", "'neg'"));
         tokens.AddToken(new soul::ast::slg::Token(SIGNEXTEND, "SIGNEXTEND", "'signextend'"));
         tokens.AddToken(new soul::ast::slg::Token(ZEROEXTEND, "ZEROEXTEND", "'zeroextend'"));
+        tokens.AddToken(new soul::ast::slg::Token(FPEXTEND, "FPEXTEND", "'fpextend'"));
         tokens.AddToken(new soul::ast::slg::Token(TRUNCATE, "TRUNCATE", "'truncate'"));
         tokens.AddToken(new soul::ast::slg::Token(BITCAST, "BITCAST", "'bitcast'"));
         tokens.AddToken(new soul::ast::slg::Token(INTTOFLOAT, "INTTOFLOAT", "'inttofloat'"));
@@ -57,8 +57,6 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(ELEMADDR, "ELEMADDR", "'elemaddr'"));
         tokens.AddToken(new soul::ast::slg::Token(PTROFFSET, "PTROFFSET", "'ptroffset'"));
         tokens.AddToken(new soul::ast::slg::Token(PTRDIFF, "PTRDIFF", "'ptrdiff'"));
-        tokens.AddToken(new soul::ast::slg::Token(TRAP, "TRAP", "'trap'"));
-        tokens.AddToken(new soul::ast::slg::Token(PHI, "PHI", "'phi'"));
         tokens.AddToken(new soul::ast::slg::Token(TYPE, "TYPE", "'type'"));
         tokens.AddToken(new soul::ast::slg::Token(OFFSET, "OFFSET", "'offset'"));
         tokens.AddToken(new soul::ast::slg::Token(SIZE, "SIZE", "'size'"));
@@ -79,7 +77,6 @@ soul::ast::slg::TokenCollection* GetTokens()
         tokens.AddToken(new soul::ast::slg::Token(FALSE, "FALSE", "'false'"));
         tokens.AddToken(new soul::ast::slg::Token(NULL_TOKEN, "NULL_TOKEN", "'null'"));
         tokens.AddToken(new soul::ast::slg::Token(CONV, "CONV", "'conv'"));
-        tokens.AddToken(new soul::ast::slg::Token(METADATA, "METADATA", "'metadata'"));
         tokens.AddToken(new soul::ast::slg::Token(LPAREN, "LPAREN", "'('"));
         tokens.AddToken(new soul::ast::slg::Token(RPAREN, "RPAREN", "')'"));
         tokens.AddToken(new soul::ast::slg::Token(COMMA, "COMMA", "','"));
@@ -103,7 +100,7 @@ soul::ast::slg::TokenCollection* GetTokens()
     return &tokens;
 }
 
-IntermediateCodeLexer_Variables::IntermediateCodeLexer_Variables()
+IntermediateLexer_Variables::IntermediateLexer_Variables()
 {
 }
 
@@ -115,13 +112,13 @@ template<>
 soul::lexer::KeywordMap<char>* GetKeywords<char>()
 {
     static const soul::lexer::Keyword<char> keywords[] = {
-         { "cu", CU },
          { "types", TYPES },
          { "data", DATA },
          { "function", FUNCTION },
-         { "once", ONCE },
          { "extern", EXTERN },
-         { "global", GLOBAL },
+         { "inline", INLINE },
+         { "link_once", LINK_ONCE },
+         { "metadata", METADATA },
          { "store", STORE },
          { "arg", ARG },
          { "jmp", JMP },
@@ -130,11 +127,11 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "ret", RET },
          { "switch", SWITCH },
          { "nop", NOP },
-         { "save", SAVE },
          { "not", NOT },
          { "neg", NEG },
          { "signextend", SIGNEXTEND },
          { "zeroextend", ZEROEXTEND },
+         { "fpextend", FPEXTEND },
          { "truncate", TRUNCATE },
          { "bitcast", BITCAST },
          { "inttofloat", INTTOFLOAT },
@@ -159,8 +156,6 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "elemaddr", ELEMADDR },
          { "ptroffset", PTROFFSET },
          { "ptrdiff", PTRDIFF },
-         { "trap", TRAP },
-         { "phi", PHI },
          { "type", TYPE },
          { "offset", OFFSET },
          { "size", SIZE },
@@ -181,7 +176,6 @@ soul::lexer::KeywordMap<char>* GetKeywords<char>()
          { "false", FALSE },
          { "null", NULL_TOKEN },
          { "conv", CONV },
-         { "metadata", METADATA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char> keywordMap(keywords);
@@ -192,13 +186,13 @@ template<>
 soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
 {
     static const soul::lexer::Keyword<char8_t> keywords[] = {
-         { u8"cu", CU },
          { u8"types", TYPES },
          { u8"data", DATA },
          { u8"function", FUNCTION },
-         { u8"once", ONCE },
          { u8"extern", EXTERN },
-         { u8"global", GLOBAL },
+         { u8"inline", INLINE },
+         { u8"link_once", LINK_ONCE },
+         { u8"metadata", METADATA },
          { u8"store", STORE },
          { u8"arg", ARG },
          { u8"jmp", JMP },
@@ -207,11 +201,11 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"ret", RET },
          { u8"switch", SWITCH },
          { u8"nop", NOP },
-         { u8"save", SAVE },
          { u8"not", NOT },
          { u8"neg", NEG },
          { u8"signextend", SIGNEXTEND },
          { u8"zeroextend", ZEROEXTEND },
+         { u8"fpextend", FPEXTEND },
          { u8"truncate", TRUNCATE },
          { u8"bitcast", BITCAST },
          { u8"inttofloat", INTTOFLOAT },
@@ -236,8 +230,6 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"elemaddr", ELEMADDR },
          { u8"ptroffset", PTROFFSET },
          { u8"ptrdiff", PTRDIFF },
-         { u8"trap", TRAP },
-         { u8"phi", PHI },
          { u8"type", TYPE },
          { u8"offset", OFFSET },
          { u8"size", SIZE },
@@ -258,7 +250,6 @@ soul::lexer::KeywordMap<char8_t>* GetKeywords<char8_t>()
          { u8"false", FALSE },
          { u8"null", NULL_TOKEN },
          { u8"conv", CONV },
-         { u8"metadata", METADATA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char8_t> keywordMap(keywords);
@@ -269,13 +260,13 @@ template<>
 soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
 {
     static const soul::lexer::Keyword<char16_t> keywords[] = {
-         { u"cu", CU },
          { u"types", TYPES },
          { u"data", DATA },
          { u"function", FUNCTION },
-         { u"once", ONCE },
          { u"extern", EXTERN },
-         { u"global", GLOBAL },
+         { u"inline", INLINE },
+         { u"link_once", LINK_ONCE },
+         { u"metadata", METADATA },
          { u"store", STORE },
          { u"arg", ARG },
          { u"jmp", JMP },
@@ -284,11 +275,11 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"ret", RET },
          { u"switch", SWITCH },
          { u"nop", NOP },
-         { u"save", SAVE },
          { u"not", NOT },
          { u"neg", NEG },
          { u"signextend", SIGNEXTEND },
          { u"zeroextend", ZEROEXTEND },
+         { u"fpextend", FPEXTEND },
          { u"truncate", TRUNCATE },
          { u"bitcast", BITCAST },
          { u"inttofloat", INTTOFLOAT },
@@ -313,8 +304,6 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"elemaddr", ELEMADDR },
          { u"ptroffset", PTROFFSET },
          { u"ptrdiff", PTRDIFF },
-         { u"trap", TRAP },
-         { u"phi", PHI },
          { u"type", TYPE },
          { u"offset", OFFSET },
          { u"size", SIZE },
@@ -335,7 +324,6 @@ soul::lexer::KeywordMap<char16_t>* GetKeywords<char16_t>()
          { u"false", FALSE },
          { u"null", NULL_TOKEN },
          { u"conv", CONV },
-         { u"metadata", METADATA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char16_t> keywordMap(keywords);
@@ -346,13 +334,13 @@ template<>
 soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
 {
     static const soul::lexer::Keyword<char32_t> keywords[] = {
-         { U"cu", CU },
          { U"types", TYPES },
          { U"data", DATA },
          { U"function", FUNCTION },
-         { U"once", ONCE },
          { U"extern", EXTERN },
-         { U"global", GLOBAL },
+         { U"inline", INLINE },
+         { U"link_once", LINK_ONCE },
+         { U"metadata", METADATA },
          { U"store", STORE },
          { U"arg", ARG },
          { U"jmp", JMP },
@@ -361,11 +349,11 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"ret", RET },
          { U"switch", SWITCH },
          { U"nop", NOP },
-         { U"save", SAVE },
          { U"not", NOT },
          { U"neg", NEG },
          { U"signextend", SIGNEXTEND },
          { U"zeroextend", ZEROEXTEND },
+         { U"fpextend", FPEXTEND },
          { U"truncate", TRUNCATE },
          { U"bitcast", BITCAST },
          { U"inttofloat", INTTOFLOAT },
@@ -390,8 +378,6 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"elemaddr", ELEMADDR },
          { U"ptroffset", PTROFFSET },
          { U"ptrdiff", PTRDIFF },
-         { U"trap", TRAP },
-         { U"phi", PHI },
          { U"type", TYPE },
          { U"offset", OFFSET },
          { U"size", SIZE },
@@ -412,7 +398,6 @@ soul::lexer::KeywordMap<char32_t>* GetKeywords<char32_t>()
          { U"false", FALSE },
          { U"null", NULL_TOKEN },
          { U"conv", CONV },
-         { U"metadata", METADATA },
          { nullptr, -1 }
     };
     static soul::lexer::KeywordMap<char32_t> keywordMap(keywords);

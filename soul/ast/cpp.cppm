@@ -353,19 +353,6 @@ private:
     std::unique_ptr<Node> elseExpr;
 };
 
-class ThrowExprNode : public Node
-{
-public:
-    ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* exception_);
-    Node* Exception() const { return exception.get(); }
-    Node* Clone() const override;
-    void Accept(Visitor& visitor) override;
-    void Write(CodeFormatter& formatter) override;
-    std::string ToString() const override;
-private:
-    std::unique_ptr<Node> exception;
-};
-
 class NewNode : public Node
 {
 public:
@@ -700,53 +687,6 @@ private:
     std::unique_ptr<Node> declaration;
 };
 
-class ExceptionDeclarationNode : public Node
-{
-public:
-    ExceptionDeclarationNode(const soul::ast::SourcePos& sourcePos_);
-    TypeIdNode* TypeId() const { return typeId.get(); }
-    const std::string& Declarator() const { return declarator; }
-    void SetDeclarator(const std::string& declarator_);
-    bool CatchAll() const { return catchAll; }
-    void SetCatchAll() { catchAll = true; }
-    Node* Clone() const override;
-    void Accept(Visitor& visitor) override;
-    void Write(CodeFormatter& formatter) override;
-private:
-    std::unique_ptr<TypeIdNode> typeId;
-    std::string declarator;
-    bool catchAll;
-};
-
-class HandlerNode : public Node
-{
-public:
-    HandlerNode(const soul::ast::SourcePos& sourcePos_, ExceptionDeclarationNode* exceptionDeclaration_, CompoundStatementNode* handlerBlock_);
-    ExceptionDeclarationNode* ExceptionDeclaration() const { return exceptionDeclaration.get(); }
-    CompoundStatementNode* HandlerBlock() const { return handlerBlock.get(); }
-    Node* Clone() const override;
-    void Accept(Visitor& visitor) override;
-    void Write(CodeFormatter& formatter) override;
-private:
-    std::unique_ptr<ExceptionDeclarationNode> exceptionDeclaration;
-    std::unique_ptr<CompoundStatementNode> handlerBlock;
-};
-
-class TryStatementNode : public StatementNode
-{
-public:
-    TryStatementNode(const soul::ast::SourcePos& sourcePos_, CompoundStatementNode* tryBlock_);
-    CompoundStatementNode* TryBlock() const { return tryBlock.get(); }
-    void AddHandler(HandlerNode* handler);
-    const std::vector<std::unique_ptr<HandlerNode>>& Handlers() const { return handlers; }
-    Node* Clone() const override;
-    void Accept(Visitor& visitor) override;
-    void Write(CodeFormatter& formatter) override;
-private:
-    std::unique_ptr<CompoundStatementNode> tryBlock;
-    std::vector<std::unique_ptr<HandlerNode>> handlers;
-};
-
 class IfdefStatementNode : public StatementNode
 {
 public:
@@ -1021,7 +961,6 @@ public:
     virtual void Visit(CastNode& node) {}
     virtual void Visit(BinaryOpExprNode& node) {}
     virtual void Visit(ConditionalNode& node) {}
-    virtual void Visit(ThrowExprNode& node) {}
     virtual void Visit(NewNode& node) {}
     virtual void Visit(DeleteNode& node) {}
     virtual void Visit(ParenExprNode& node) {}
@@ -1045,9 +984,6 @@ public:
     virtual void Visit(ForRangeDeclarationNode& node) {}
     virtual void Visit(RangeForStatementNode& node) {}
     virtual void Visit(DeclarationStatementNode& node) {}
-    virtual void Visit(ExceptionDeclarationNode& node) {}
-    virtual void Visit(HandlerNode& node) {}
-    virtual void Visit(TryStatementNode& node) {}
     virtual void Visit(IfdefStatementNode& node) {}
     virtual void Visit(EndIfStatementNode& node) {}
     virtual void Visit(AssignInitNode& node) {}
@@ -1087,7 +1023,6 @@ public:
     void Visit(CastNode& node) override;
     void Visit(BinaryOpExprNode& node) override;
     void Visit(ConditionalNode& node) override;
-    void Visit(ThrowExprNode& node) override;
     void Visit(NewNode& node) override;
     void Visit(DeleteNode& node) override;
     void Visit(ParenExprNode& node) override;
@@ -1106,9 +1041,6 @@ public:
     void Visit(ForRangeDeclarationNode& node) override;
     void Visit(RangeForStatementNode& node) override;
     void Visit(DeclarationStatementNode& node) override;
-    void Visit(ExceptionDeclarationNode& node) override;
-    void Visit(HandlerNode& node) override;
-    void Visit(TryStatementNode& node) override;
     void Visit(IfdefStatementNode& node) override;
     void Visit(AssignInitNode& node) override;
     void Visit(InitializerNode& node) override;

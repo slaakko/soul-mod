@@ -5,59 +5,90 @@
 
 export module otava.intermediate.context;
 
+import otava.assembly;
+import otava.intermediate.compile_unit;
+import otava.intermediate.types;
+import otava.intermediate.data;
+import otava.intermediate.code;
+import otava.intermediate.metadata;
+import soul.lexer;
+import soul.ast.span;
+import util;
 import std;
-import soul.ast.source.pos;
-import soul.lexer.base;
-import soul.lexer.file.map;
-import otava.assembly.context;
-import util.uuid;
-
-export namespace otava::intermediate::context {}
 
 export namespace otava::intermediate {
 
-class CompileUnit;
-class Types;
-class Data;
-class Code;
-class Metadata;
-class MetadataRef;
-class Type;
-class TypeRef;
-class Value;
-class Function;
-class StructureType;
-class ArrayType;
-class FunctionType;
-class FwdDeclaredStructureType;
-class MetadataStruct;
-class MetadataBool;
-class MetadataLong;
-class MetadataString;
-class BasicBlock;
-class Instruction;
-class SwitchInstruction;
-class Value;
-class RegValue;
-class GlobalVariable;
+namespace context {}
 
-using SourcePos = soul::ast::SourcePos;
+enum class ContextFlags : int
+{
+    none = 0, debug = 1 << 0
+};
+
+constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
+{
+    return ContextFlags(int(left) | int(right));
+}
+
+constexpr ContextFlags operator&(ContextFlags left, ContextFlags right)
+{
+    return ContextFlags(int(left) & int(right));
+}
+
+constexpr ContextFlags operator~(ContextFlags flags)
+{
+    return ContextFlags(~int(flags));
+}
 
 class Context
 {
 public:
     Context();
-    void WriteFile();
-    CompileUnit& GetCompileUnit() { return *compileUnit; }
-    Types& GetTypes() { return *types; }
-    Data& GetData() { return *data; }
-    Code& GetCode() { return *code; }
-    Metadata& GetMetadata() { return *metadata; }
+    CompileUnit& GetCompileUnit() { return compileUnit; }
+    Types& GetTypes() { return types; }
+    Data& GetData() { return data; }
+    Code& GetCode() { return code; }
+    Metadata& GetMetadata() { return metadata; }
     void SetFilePath(const std::string& filePath_);
     const std::string& FilePath() const;
-    std::string ErrorLines(const SourcePos& sourcePos);
+    void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
+    std::int32_t FileId() const { return fileId; }
+    std::string ErrorLines(const soul::ast::LineColLen& lineColLen);
     void SetCompileUnitInfo(const std::string& compileUnitId, MetadataRef* mdRef);
     void SetCompileUnitInfo(const std::string& compileUnitId_, const std::string& sourceFilePath);
+    void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
+    void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
+    void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    GlobalVariable* AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer);
+    GlobalVariable* GetGlobalVariableForString(otava::intermediate::Value* stringValue);
+    void ResolveTypes();
+    void ResolveData();
+    void ResolveType(TypeRef& typeRef);
+    Value* GetTrueValue();
+    Value* GetFalseValue();
+    Value* GetBooleanLiteral(const soul::ast::Span& span, Type* type, bool value);
+    Value* GetSByteValue(std::int8_t value);
+    Value* GetByteValue(std::uint8_t value);
+    Value* GetShortValue(std::int16_t value);
+    Value* GetUShortValue(std::uint16_t value);
+    Value* GetIntValue(std::int32_t value);
+    Value* GetUIntValue(std::uint32_t value);
+    Value* GetLongValue(std::int64_t value);
+    Value* GetULongValue(std::uint64_t value);
+    Value* GetIntegerValue(Type* type, std::int64_t value);
+    Value* GetFloatValue(float value);
+    Value* GetDoubleValue(double value);
+    Value* GetFloatingValue(Type* type, double value);
+    Value* GetNullValue(const soul::ast::Span& span, Type* type);
+    Value* MakeArrayValue(const soul::ast::Span& span, const std::vector<Value*>& elements, ArrayType* arrayType);
+    Value* MakeStructureValue(const soul::ast::Span& span, const std::vector<Value*>& fieldValues, StructureType* structureType);
+    Value* MakeStringValue(const soul::ast::Span& span, const std::string& value, bool crop);
+    Value* MakeStringArrayValue(const soul::ast::Span& span, char prefix, const std::vector<Value*>& elements);
+    Value* MakeConversionValue(const soul::ast::Span& span, Type* type, Value* from);
+    Value* MakeClsIdValue(const soul::ast::Span& span, Type* type, const std::string& clsIdStr);
+    Value* MakeSymbolValue(const soul::ast::Span& span, Type* type, const std::string& symbol);
+    Value* MakeIntegerLiteral(const soul::ast::Span& span, Type* type, const std::string& strValue);
+    Value* MakeAddressLiteral(const soul::ast::Span& span, Type* type, const std::string& id, bool resolve);
     Type* GetVoidType();
     Type* GetBoolType();
     Type* GetSByteType();
@@ -71,53 +102,24 @@ public:
     Type* GetFloatType();
     Type* GetDoubleType();
     Type* MakePtrType(Type* baseType);
-    StructureType* GetStructureType(const SourcePos& sourcePos, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
-    ArrayType* GetArrayType(const SourcePos& sourcePos, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
-    FunctionType* GetFunctionType(const SourcePos& sourcePos, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
+    StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     FwdDeclaredStructureType* GetFwdDeclaredStructureType(const util::uuid& id);
     FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId);
     void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
     void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
-    GlobalVariable* AddGlobalVariable(const SourcePos& sourcePos, Type* type, Type* globalType, const std::string& variableName, Value* initializer, bool once);
-    GlobalVariable* GetGlobalVariableForString(otava::intermediate::Value* stringValue);
-    void ResolveTypes();
-    void ValidateData();
-    void ResolveType(TypeRef& typeRef);
-    Value* GetTrueValue();
-    Value* GetFalseValue();
-    Value* GetBooleanLiteral(const SourcePos& sourcePos, Type* type, bool value);
-    Value* GetSByteValue(std::int8_t value);
-    Value* GetByteValue(std::uint8_t value);
-    Value* GetShortValue(std::int16_t value);
-    Value* GetUShortValue(std::uint16_t value);
-    Value* GetIntValue(std::int32_t value);
-    Value* GetUIntValue(std::uint32_t value);
-    Value* GetLongValue(std::int64_t value);
-    Value* GetULongValue(std::uint64_t value);
-    Value* GetIntegerValue(Type* type, std::int64_t value);
-    Value* GetFloatValue(float value);
-    Value* GetDoubleValue(double value);
-    Value* GetFloatingValue(Type* type, double value);
-    Value* GetNullValue(const SourcePos& sourcePos, Type* type);
-    Value* MakeArrayValue(const SourcePos& sourcePos, const std::vector<Value*>& elements);
-    Value* MakeStructureValue(const SourcePos& sourcePos, const std::vector<Value*>& fieldValues);
-    Value* MakeStringValue(const SourcePos& sourcePos, const std::string& value);
-    Value* MakeStringArrayValue(const SourcePos& sourcePos, char prefix, const std::vector<Value*>& strings);
-    Value* MakeConversionValue(const SourcePos& sourcePos, Type* type, Value* from);
-    Value* MakeClsIdValue(const SourcePos& sourcePos, Type* type, const std::string& clsIdStr);
-    Value* MakeSymbolValue(const SourcePos& sourcePos, Type* type, const std::string& symbol);
-    Value* MakeNumericLiteral(const SourcePos& sourcePos, Type* type, const std::string& strValue);
-    Value* MakeAddressLiteral(const SourcePos& sourcePos, Type* type, const std::string& id);
+    ArrayType* GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
+    FunctionType* GetFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
     Function* CurrentFunction() const;
     void SetCurrentFunction(Function* function);
     Function* GetOrInsertFunction(const std::string& functionId, FunctionType* functionType);
-    Function* AddFunctionDefinition(const SourcePos& sourcePos, Type* type, const std::string& functionId, bool once, MetadataRef* metadataRef);
-    Function* AddFunctionDeclaration(const SourcePos& sourcePos, Type* type, const std::string& functionId);
-    MetadataStruct* AddMetadataStruct(const SourcePos& sourcePos, std::int32_t id, Context* context);
+    Function* AddFunctionDefinition(const soul::ast::Span& span, Type* type, const std::string& functionId, bool inline_, bool linkOnce,
+        otava::intermediate::MetadataRef* metadataRef);
+    Function* AddFunctionDeclaration(const soul::ast::Span& span, Type* type, const std::string& functionId);
+    MetadataStruct* AddMetadataStruct(const soul::ast::Span& span, std::int32_t id);
     MetadataBool* CreateMetadataBool(bool value);
     MetadataLong* CreateMetadataLong(std::int64_t value);
-    MetadataString* CreateMetadataString(const std::string& value);
-    MetadataRef* CreateMetadataRef(const SourcePos& sourcePos, std::int32_t nodeId);
+    MetadataString* CreateMetadataString(const std::string& value, bool crop);
+    MetadataRef* CreateMetadataRef(const soul::ast::Span& span, std::int32_t nodeId);
     MetadataStruct* CreateMetadataStruct();
     void ResolveMetadataReferences();
     void SetCurrentBasicBlock(BasicBlock* bb);
@@ -139,6 +141,7 @@ public:
     Instruction* CreateLess(Value* left, Value* right);
     Instruction* CreateSignExtend(Value* arg, Type* destType);
     Instruction* CreateZeroExtend(Value* arg, Type* destType);
+    Instruction* CreateFloatingPointExtend(Value* arg, Type* destType);
     Instruction* CreateTruncate(Value* arg, Type* destType);
     Instruction* CreateBitcast(Value* arg, Type* destType);
     Instruction* CreateIntToFloat(Value* arg, Type* destType);
@@ -159,26 +162,42 @@ public:
     Instruction* CreateJump(BasicBlock* dest);
     Instruction* CreateBranch(Value* cond, BasicBlock* trueDest, BasicBlock* falseDest);
     SwitchInstruction* CreateSwitch(Value* cond, BasicBlock* defaultDest);
-    Instruction* CreateTrap(const std::vector<Value*>& args);
     Instruction* CreateNop();
     soul::lexer::FileMap& GetFileMap() { return fileMap; }
     std::int32_t NextTypeId();
     std::string GetNextStringValueId();
+    otava::assembly::Context* AssemblyContext() { return &assemblyContext; }
+    void WriteFile();
+    void SetInlineDepth(int inlineDepth_) { inlineDepth = inlineDepth_; }
+    int InlineDepth() const { return inlineDepth; }
+    void SetMaxArithmeticOptimizationCount(int maxArithmeticOptimizationCount_) { maxArithmeticOptimizationCount = maxArithmeticOptimizationCount_; }
+    int MaxArithmeticOptimizationCount() const { return maxArithmeticOptimizationCount; }
+    void SetContextFlag(ContextFlags flag) { flags = flags | flag; }
+    bool GetContextFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
+    int FunctionsInlined() const { return functionsInlined; }
+    void IncFunctionsInlined() { ++functionsInlined; }
+    int TotalFunctions() const { return totalFunctions; }
+    void IncTotalFunctions() { ++totalFunctions; }
     void AddLineInfo(Instruction* inst);
-    otava::assembly::Context& AssemblyContext() { return assemblyContext; }
 private:
     RegValue* MakeRegValue(Type* type);
-    std::unique_ptr<CompileUnit> compileUnit;
-    std::unique_ptr<Types> types;
-    std::unique_ptr<Data> data;
-    std::unique_ptr<Code> code;
-    std::unique_ptr<Metadata> metadata;
+    CompileUnit compileUnit;
+    Types types;
+    Data data;
+    Code code;
+    Metadata metadata;
     BasicBlock* currentBasicBlock;
     int currentLineNumber;
     std::map<int, MetadataRef*> lineNumberInfoMap;
     soul::lexer::FileMap fileMap;
+    std::int32_t fileId;
     otava::assembly::Context assemblyContext;
+    int inlineDepth;
+    int maxArithmeticOptimizationCount;
+    std::unique_ptr<otava::intermediate::MetadataRef> metadataRef;
+    ContextFlags flags;
+    int functionsInlined;
+    int totalFunctions;
 };
 
 } // otava::intermediate
-

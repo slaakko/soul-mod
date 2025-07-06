@@ -3,7 +3,7 @@ export module std.basic_string;
 import std.type.fundamental;
 import std.utilities.utility;
 import std.type_traits;
-import std.crt;
+import std.rt;
 import std.algorithm;
 
 export namespace std {
@@ -26,167 +26,41 @@ public:
     
     static const size_type npos = -1;
     
-    basic_string() : chars(nullptr), len(0), res(0)
-    {
-    }
-    basic_string(const basic_string& that) : chars(nullptr), len(that.len), res(0)
-    {
-        if (len > 0)
-        {
-            reserve(len);
-            scpy(chars, that.chars);
-        }
-    }
-    basic_string(const basic_string& that, size_type pos)  : chars(nullptr), len(slen(that.chars + pos)), res(0)
-    {
-        if (len > 0)
-        {
-            reserve(len);
-            scpy(chars, that.chars + pos);
-        }
-    }
-    basic_string(const basic_string& that, size_type pos, size_type n) : chars(nullptr), len(0), res(0)
-    {
-        size_type ln = std::min(slen(that.chars + pos), n);
-        if (ln > 0)
-        {
-            reserve(ln);
-            len = slencpy(chars, that.chars + pos, n);
-        }
-    }
-    basic_string(const charT* s, size_type n) : chars(nullptr), len(0), res(0)
-    {
-        if (n > 0)
-        {
-            reserve(n);
-            len = slencpy(chars, s, n);
-        }
-    }
-    basic_string(const charT* s) : chars(nullptr), len(slen(s)), res(0)
-    {
-        if (len > 0)
-        {
-            reserve(len);
-            scpy(chars, s);
-        }
-    }
-    basic_string(const charT* begin, const charT* end) : basic_string(begin, end - begin)
-    {
-    }
-    basic_string(size_type n, charT c) : chars(nullptr), len(n), res(0)
-    {
-        if (n > 0)
-        {
-            reserve(n);
-            for (size_type i = 0; i < n; ++i)
-            {
-                chars[i] = c;
-            }
-            chars[n] = '\0';
-        }
-    }
+    basic_string() : chars(nullptr), len(0), res(0) {}
+    basic_string(const basic_string& that);
+    basic_string(const basic_string& that, size_type pos);
+    basic_string(const basic_string& that, size_type pos, size_type n);
+    basic_string(const charT* s, size_type n);
+    basic_string(const charT* s);
+    basic_string(const charT* begin, const charT* end);
+    basic_string(size_type n, charT c);
     basic_string(basic_string&& that) : chars(that.chars), len(that.len), res(that.res)
     {
         that.chars = nullptr;
         that.len = 0;
         that.res = 0;
     }
-    ~basic_string()
-    {
-        deallocate();
-    }
-    basic_string& operator=(const basic_string& that)
-    {
-        deallocate();
-        reserve(that.len);
-        len = that.len;
-        if (len > 0)
-        {
-            scpy(chars, that.chars);
-        }
-        return *this;
-    }
-    basic_string& operator=(basic_string&& that)
-    {
-        std::swap(chars, that.chars);
-        std::swap(len, that.len);
-        std::swap(res, that.res);
-        return *this;
-    }
-    basic_string& operator=(const charT* s)
-    {
-        deallocate();
-        len = slen(s);
-        reserve(len);
-        scpy(chars, s);
-        return *this;
-    }
-    basic_string& operator=(charT c)
-    {
-        deallocate();
-        reserve(1);
-        chars[0] = c;
-        chars[1] = '\0';
-        return *this;
-    }
+    ~basic_string();
+    basic_string& operator=(const basic_string& that);
+    basic_string& operator=(basic_string&& that);
+    basic_string& operator=(const charT* s);
+    basic_string& operator=(charT c);
     iterator begin() { return chars; }
     const_iterator begin() const { return chars; }
-    iterator end()
-    {
-        if (chars)
-        {
-            return chars + len;
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
-    const_iterator end() const
-    {
-        if (chars)
-        {
-            return chars + len;
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
+    iterator end();
+    const_iterator end() const;
     const_iterator cbegin() const { return chars; }
-    const_iterator cend() const
-    {
-        if (chars)
-        {
-            return chars + len;
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
-    
+    const_iterator cend() const;
     size_type size() const { return len; }
     size_type length() const { return len; }
     size_type max_size() const;
     void resize(size_type n, charT c);
     void resize(size_type n);
     size_type capacity() const { return res; }
-    void reserve(size_type n)
-    {
-        if (n > 0)
-        {
-            size_type min_res = n + 1;
-            if (min_res > res)
-            {
-                grow(min_res);
-            }
-        }
-    }
+    void reserve(size_type n);
     void shrink_to_fit();
     void clear() { deallocate; }
     bool empty() const { return len == 0; }
-    
     const_reference operator[](size_type pos) const 
     {
         return chars[pos];
@@ -213,7 +87,6 @@ public:
     {
         return chars[len - 1];
     }
-    
     basic_string& operator+=(const basic_string& str)
     {
         return append(str);
@@ -239,6 +112,7 @@ public:
     basic_string& append(const basic_string& str, size_type pos, size_type n)
     {
         append_from(str.c_str() + pos, n);
+        return *this;
     }
     basic_string& append(const charT* s, size_type n)
     {
@@ -250,25 +124,13 @@ public:
         append_from(s, slen(s));
         return *this;
     }
-    basic_string& append(size_type n, charT c)
-    {
-        if (n > 0)
-        {
-            reserve(len + n);
-            for (size_type i = 0; i < n; ++i)
-            {
-                chars[len] = c;
-                ++len;
-            }
-            chars[len] = '\0';
-        }
-        return *this;
-    }
+    basic_string& append(size_type n, charT c);
     void push_back(charT c);
     
     basic_string& assign(const basic_string& str);
     basic_string& assign(basic_string&& str);
-    basic_string& assign(const basic_string& str, size_type pos, size_type n = npos);
+    basic_string& assign(const basic_string& str, size_type pos);
+    basic_string& assign(const basic_string& str, size_type pos, size_type n);
     basic_string& assign(const charT* s, size_type n);
     basic_string& assign(const charT* s);
     basic_string& assign(size_type n, charT c);
@@ -304,17 +166,7 @@ public:
         std::swap(len, that.len);
         std::swap(res, that.res);
     }
-    const charT* c_str() const
-    {
-        if (chars)
-        {
-            return chars;
-        }
-        else
-        {
-            return static_cast<const charT*>(static_cast<void*>(&nul));
-        }
-    }
+    const charT* c_str() const;
     const charT* data() const { return chars; }
     charT* data() { return chars; }
     
@@ -322,29 +174,7 @@ public:
     {
         return find(str, 0);
     }
-    size_type find(const basic_string& str, size_type pos) const
-    {
-        if (str.empty()) return pos;
-        size_type p = find(str[0], pos);
-        while (p != npos)
-        {
-            bool found = true;
-            for (size_type i = 1; i < str.length(); ++i)
-            {
-                if (chars[i + p] != str[i])
-                {
-                    found = false;
-                    break;
-                }
-            }
-            if (found)
-            {
-                return p;
-            }
-            p = find(str[0], p + 1);
-        }
-        return npos;
-    }
+    size_type find(const basic_string& str, size_type pos) const;
     size_type find(const charT* s) const
     {
         return find(s, 0);
@@ -353,72 +183,17 @@ public:
     {
         return find(s, slen(s), pos);
     }
-    size_type find(const charT* s, size_type n, size_type pos) const
-    {
-        if (n == 0) return pos;
-        size_type p = find(s[0], pos);
-        while (p != npos)
-        {
-            bool found = true;
-            for (size_type i = 1; i < n; ++i)
-            {
-                if (chars[i + p] != s[i])
-                {
-                    found = false;
-                    break;
-                }
-            }
-            if (found)
-            {
-                return p;
-            }
-            p = find(s[0], p + 1);
-        }
-        return npos;
-    }
+    size_type find(const charT* s, size_type n, size_type pos) const;
     size_type find(charT c) const
     {
         return find(c, 0);
     }
-    size_type find(charT c, size_type pos) const
-    {
-        if (!chars) return npos;
-        for (size_type i = pos; i < len; ++i)
-        {
-            if (chars[i] == c)
-            {
-                return i;
-            }
-        }
-        return npos;
-    }
+    size_type find(charT c, size_type pos) const;
     size_type rfind(const basic_string& str) const
     {
         return rfind(str, npos);
     }
-    size_type rfind(const basic_string& str, size_type pos) const
-    {
-        if (str.empty()) return pos;
-        size_type p = rfind(str[0], pos);
-        while (p != npos)
-        {
-            bool found = true;
-            for (size_type i = 1; i < str.length(); ++i)
-            {
-                if (chars[i + p] != str[i])
-                {
-                    found = false;
-                    break;
-                }
-            }
-            if (found)
-            {
-                return p;
-            }
-            p = rfind(str[0], p - 1);
-        }
-        return npos;
-    }
+    size_type rfind(const basic_string& str, size_type pos) const;
     size_type rfind(const charT* s) const
     {
         return rfind(s, slen(s));
@@ -427,49 +202,12 @@ public:
     {
         return rfind(s, n, npos);
     }
-    size_type rfind(const charT* s, size_type n, size_type pos) const
-    {
-        if (n == 0) return pos;
-        size_type p = rfind(s[0], pos);
-        while (p != npos)
-        {
-            bool found = true;
-            for (size_type i = 1; i < n; ++i)
-            {
-                if (chars[i + p] != s[i])
-                {
-                    found = false;
-                    break;
-                }
-            }
-            if (found)
-            {
-                return p;
-            }
-            p = rfind(s[0], p - 1);
-        }
-        return npos;
-    }
+    size_type rfind(const charT* s, size_type n, size_type pos) const;
     size_type rfind(charT c) const
     {
         return rfind(c, npos);
     }
-    size_type rfind(charT c, size_type pos) const
-    {
-        if (!chars) return npos;
-        if (pos == npos)
-        {
-            pos = len - 1;
-        }
-        for (size_type i = pos; i >= 0; --i)
-        {
-            if (chars[i] == c)
-            {
-                return i;
-            }
-        }
-        return npos;
-    }
+    size_type rfind(charT c, size_type pos) const;
     size_type find_first_of(const basic_string& str, size_type pos = 0) const;
     size_type find_first_of(const charT* s, size_type pos, size_type n) const;
     size_type find_first_of(const charT* s, size_type pos = 0) const;
@@ -490,41 +228,9 @@ public:
     size_type find_last_not_of(const charT* s, size_type pos = npos) const;
     size_type find_last_not_of(charT c, size_type pos = npos) const;
     
-    basic_string substr() const
-    {
-        if (chars)
-        {
-            return std::basic_string<charT>(chars);
-        }
-        else
-        {
-            return std::basic_string<charT>();
-        }
-    }
-
-    basic_string substr(size_type pos) const
-    {
-        if (pos >= 0 && pos < len)
-        {
-            return std::basic_string<charT>(chars + pos);
-        }
-        else
-        {
-            return std::basic_string<charT>();
-        }
-    }
-
-    basic_string substr(size_type pos, size_type n) const
-    {
-        if (pos >= 0 && pos < len)
-        {
-            return std::basic_string<charT>(chars + pos, n);
-        }
-        else
-        {
-            return std::basic_string<charT>();
-        }
-    }
+    basic_string substr() const;
+    basic_string substr(size_type pos) const;
+    basic_string substr(size_type pos, size_type n) const;
     
     int compare(const basic_string& str) const;
     int compare(size_type pos1, size_type n1, const basic_string& str) const;
@@ -538,18 +244,8 @@ public:
         if (empty()) return false;
         return chars[0] == x;
     }
-    bool starts_with(const charT* s) const
-    {
-        size_type n = slen(s);
-        if (len < n) return false;
-        for (size_type i = 0; i < n; ++i)
-        {
-            if (chars[i] != s[i]) return false;
-        }
-        return true;
-
-    }
-    bool starts_with(const std::basic_string<charT>& s) const
+    bool starts_with(const charT* s) const;
+    bool starts_with(const basic_string<charT>& s) const
     {
         return starts_with(s.c_str());
     }
@@ -558,18 +254,8 @@ public:
         if (empty()) return false;
         return chars[len - 1] == x;
     }
-    bool ends_with(const charT* s) const
-    {
-        size_type n = len;
-        size_type m = slen(s);
-        if (n < m) return false;
-        for (size_type i = 0; i < m; ++i)
-        {
-            if (chars[i + n - m] != s[i]) return false;
-        }
-        return true;
-    }
-    bool ends_with(const std::basic_string<charT>& s) const
+    bool ends_with(const charT* s) const;
+    bool ends_with(const basic_string<charT>& s) const
     {
         return ends_with(s.c_str());
     }
@@ -582,42 +268,491 @@ public:
         return find(s) != npos;
     }
 private:
-    void append_from(const charT* s, size_type n)
-    {
-        size_type newlen = len + n;
-        if (newlen > 0)
-        {
-            reserve(newlen);
-            newlen = len + slencpy(chars + len, s, n);
-        }
-        len = newlen;
-    }
-    void grow(size_type min_res)
-    {
-        min_res = std::grow_size(min_res);
-        charT* new_chars = static_cast<charT*>(malloc(min_res * sizeof(charT)));
-        if (chars)
-        {
-            scpy(new_chars, chars);
-            free(chars);
-        }
-        chars = new_chars;
-        res = min_res;
-    }
-    void deallocate()
-    {
-        len = 0;
-        if (res != 0)
-        {
-            free(chars);
-            res = 0;
-        }
-        chars = nullptr;
-    }
+    void append_from(const charT* s, size_type n);
+    void grow(size_type min_res);
+    void deallocate();
     charT* chars;
     size_type len;
     size_type res;
 };
+
+template <typename charT>
+basic_string<charT>::basic_string<charT>(const basic_string<charT>& that) : chars(nullptr), len(that.len), res(0)
+{
+    if (len > 0)
+    {
+        reserve(len);
+        scpy(chars, that.chars);
+    }
+}
+
+template <typename charT>
+basic_string<charT>::basic_string<charT>(const basic_string<charT>& that, basic_string<charT>::size_type pos) : chars(nullptr), len(slen(that.chars + pos)), res(0)
+{
+    if (len > 0)
+    {
+        reserve(len);
+        scpy(chars, that.chars + pos);
+    }
+}
+
+template <typename charT>
+basic_string<charT>::basic_string<charT>(const basic_string<charT>& that, basic_string<charT>::size_type pos, basic_string<charT>::size_type n) : 
+    chars(nullptr), len(0), res(0)
+{
+    size_type ln = min(slen(that.chars + pos), n);
+    if (ln > 0)
+    {
+        reserve(ln);
+        len = slencpy(chars, that.chars + pos, n);
+    }
+}
+
+template <typename charT>
+basic_string<charT>::basic_string<charT>(const charT* s, basic_string<charT>::size_type n) : chars(nullptr), len(0), res(0)
+{
+    if (n > 0)
+    {
+        reserve(n);
+        len = slencpy(chars, s, n);
+    }
+}
+
+template <typename charT>
+basic_string<charT>::basic_string<charT>(const charT* begin, const charT* end) : basic_string<charT>(begin, end - begin)
+{
+}
+
+template <typename charT>
+basic_string<charT>::basic_string<charT>(const charT* s) : chars(nullptr), len(slen(s)), res(0)
+{
+    if (len > 0)
+    {
+        reserve(len);
+        scpy(chars, s);
+    }
+}
+
+template <typename charT>
+basic_string<charT>::basic_string<charT>(basic_string<charT>::size_type n, charT c) : chars(nullptr), len(n), res(0)
+{
+    if (n > 0)
+    {
+        reserve(n);
+        for (size_type i = 0; i < n; ++i)
+        {
+            chars[i] = c;
+        }
+        chars[n] = '\0';
+    }
+}
+
+template <typename charT>
+basic_string<charT>::~basic_string<charT>()
+{
+    deallocate();
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::operator=(const basic_string<charT>& that)
+{
+    deallocate();
+    reserve(that.len);
+    len = that.len;
+    if (len > 0)
+    {
+        scpy(chars, that.chars);
+    }
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::operator=(basic_string<charT>&& that)
+{
+    swap(chars, that.chars);
+    swap(len, that.len);
+    swap(res, that.res);
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::operator=(const charT* s)
+{
+    deallocate();
+    len = slen(s);
+    reserve(len);
+    scpy(chars, s);
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::operator=(charT c)
+{
+    deallocate();
+    reserve(1);
+    chars[0] = c;
+    chars[1] = '\0';
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>::iterator basic_string<charT>::end()
+{
+    if (chars)
+    {
+        return chars + len;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+template <typename charT>
+basic_string<charT>::const_iterator basic_string<charT>::end() const
+{
+    if (chars)
+    {
+        return chars + len;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+template <typename charT>
+basic_string<charT>::const_iterator basic_string<charT>::cend() const
+{
+    if (chars)
+    {
+        return chars + len;
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+template <typename charT>
+void basic_string<charT>::reserve(basic_string<charT>::size_type n)
+{
+    if (n > 0)
+    {
+        size_type min_res = n + 1;
+        if (min_res > res)
+        {
+            grow(min_res);
+        }
+    }
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::append(basic_string<charT>::size_type n, charT c)
+{
+    if (n > 0)
+    {
+        reserve(len + n);
+        for (size_type i = 0; i < n; ++i)
+        {
+            chars[len] = c;
+            ++len;
+        }
+        chars[len] = '\0';
+    }
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::assign(const basic_string<charT>& str)
+{
+    clear();
+    return append(str);
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::assign(basic_string<charT>&& str)
+{
+    swap(std::move(str), *this);
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::assign(const basic_string<charT>& str, basic_string<charT>::size_type pos, basic_string<charT>::size_type n)
+{
+    clear();
+    return append(str, pos, n);
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::assign(const charT* s, basic_string<charT>::size_type n)
+{
+    clear();
+    append_from(s, n);
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::assign(const charT* s)
+{
+    clear();
+    append_from(s, slen(s));
+    return *this;
+}
+
+template <typename charT>
+basic_string<charT>& basic_string<charT>::assign(basic_string<charT>::size_type n, charT c)
+{
+    clear();
+    return append(n, c);
+}
+
+template <typename charT>
+const charT* basic_string<charT>::c_str() const
+{
+    if (chars)
+    {
+        return chars;
+    }
+    else
+    {
+        return static_cast<const charT*>(static_cast<void*>(&nul));
+    }
+}
+
+template <typename charT>
+basic_string<charT>::size_type basic_string<charT>::find(const basic_string<charT>& str, basic_string<charT>::size_type pos) const
+{
+    if (str.empty()) return pos;
+    size_type p = find(str[0], pos);
+    while (p != npos)
+    {
+        bool found = true;
+        for (size_type i = 1; i < str.length(); ++i)
+        {
+            if (chars[i + p] != str[i])
+            {
+                found = false;
+                break;
+            }
+        }
+        if (found)
+        {
+            return p;
+        }
+        p = find(str[0], p + 1);
+    }
+    return npos;
+}
+
+template <typename charT>
+basic_string<charT>::size_type basic_string<charT>::find(const charT* s, basic_string<charT>::size_type n, basic_string<charT>::size_type pos) const
+{
+    if (n == 0) return pos;
+    size_type p = find(s[0], pos);
+    while (p != npos)
+    {
+        bool found = true;
+        for (size_type i = 1; i < n; ++i)
+        {
+            if (chars[i + p] != s[i])
+            {
+                found = false;
+                break;
+            }
+        }
+        if (found)
+        {
+            return p;
+        }
+        p = find(s[0], p + 1);
+    }
+    return npos;
+}
+
+template <typename charT>
+basic_string<charT>::size_type basic_string<charT>::find(charT c, basic_string<charT>::size_type pos) const
+{
+    if (!chars) return npos;
+    for (size_type i = pos; i < len; ++i)
+    {
+        if (chars[i] == c)
+        {
+            return i;
+        }
+    }
+    return npos;
+}
+
+template <typename charT>
+basic_string<charT>::size_type basic_string<charT>::rfind(const basic_string<charT>& str, basic_string<charT>::size_type pos) const
+{
+    if (str.empty()) return pos;
+    size_type p = rfind(str[0], pos);
+    while (p != npos)
+    {
+        bool found = true;
+        for (size_type i = 1; i < str.length(); ++i)
+        {
+            if (chars[i + p] != str[i])
+            {
+                found = false;
+                break;
+            }
+        }
+        if (found)
+        {
+            return p;
+        }
+        p = rfind(str[0], p - 1);
+    }
+    return npos;
+}
+
+template <typename charT>
+basic_string<charT>::size_type basic_string<charT>::rfind(const charT* s, basic_string<charT>::size_type n, basic_string<charT>::size_type pos) const
+{
+    if (n == 0) return pos;
+    size_type p = rfind(s[0], pos);
+    while (p != npos)
+    {
+        bool found = true;
+        for (size_type i = 1; i < n; ++i)
+        {
+            if (chars[i + p] != s[i])
+            {
+                found = false;
+                break;
+            }
+        }
+        if (found)
+        {
+            return p;
+        }
+        p = rfind(s[0], p - 1);
+    }
+    return npos;
+}
+
+template <typename charT>
+basic_string<charT>::size_type basic_string<charT>::rfind(charT c, basic_string<charT>::size_type pos) const
+{
+    if (!chars) return npos;
+    if (pos == npos)
+    {
+        pos = len - 1;
+    }
+    for (size_type i = pos; i >= 0; --i)
+    {
+        if (chars[i] == c)
+        {
+            return i;
+        }
+    }
+    return npos;
+}
+
+template <typename charT>
+basic_string<charT> basic_string<charT>::substr() const
+{
+    if (chars)
+    {
+        return basic_string<charT>(chars);
+    }
+    else
+    {
+        return basic_string<charT>();
+    }
+}
+
+template <typename charT>
+basic_string<charT> basic_string<charT>::substr(basic_string<charT>::size_type pos) const
+{
+    if (pos >= 0 && pos < len)
+    {
+        return basic_string<charT>(chars + pos);
+    }
+    else
+    {
+        return basic_string<charT>();
+    }
+}
+
+template <typename charT>
+basic_string<charT> basic_string<charT>::substr(basic_string<charT>::size_type pos, basic_string<charT>::size_type n) const
+{
+    if (pos >= 0 && pos < len)
+    {
+        return basic_string<charT>(chars + pos, n);
+    }
+    else
+    {
+        return basic_string<charT>();
+    }
+}
+
+template <typename charT>
+bool basic_string<charT>::starts_with(const charT* s) const
+{
+    size_type n = slen(s);
+    if (len < n) return false;
+    for (size_type i = 0; i < n; ++i)
+    {
+        if (chars[i] != s[i]) return false;
+    }
+    return true;
+}
+
+template <typename charT>
+bool basic_string<charT>::ends_with(const charT* s) const
+{
+    size_type n = len;
+    size_type m = slen(s);
+    if (n < m) return false;
+    for (size_type i = 0; i < m; ++i)
+    {
+        if (chars[i + n - m] != s[i]) return false;
+    }
+    return true;
+}
+
+template <typename charT>
+void basic_string<charT>::append_from(const charT* s, basic_string<charT>::size_type n)
+{
+    size_type newlen = len + n;
+    if (newlen > 0)
+    {
+        reserve(newlen);
+        newlen = len + slencpy(chars + len, s, n);
+    }
+    len = newlen;
+}
+
+template <typename charT>
+void basic_string<charT>::grow(basic_string<charT>::size_type min_res)
+{
+    min_res = std::grow_size(min_res);
+    charT* new_chars = static_cast<charT*>(malloc(min_res * sizeof(charT)));
+    if (chars)
+    {
+        scpy(new_chars, chars);
+        free(chars);
+    }
+    chars = new_chars;
+    res = min_res;
+}
+
+template <typename charT>
+void basic_string<charT>::deallocate()
+{
+    len = 0;
+    if (res != 0)
+    {
+        free(chars);
+        res = 0;
+    }
+    chars = nullptr;
+}
 
 template<typename charT>
 basic_string<charT> operator+(const basic_string<charT>& lhs, const basic_string<charT>& rhs)
@@ -721,7 +856,7 @@ string to_string(long long val);
 string to_string(unsigned long long val);
 string to_string(float val);
 string to_string(double val);
-string to_string(long double val);
+// string to_string(long double val);
 
 char hex_char(int nibble);
 
@@ -738,6 +873,7 @@ string to_hex(const T& x)
         x = x >> 8;
     }
     std::reverse(s.begin(), s.end());
+    return s;
 }
 
 string to_hexstring(uint8_t x);

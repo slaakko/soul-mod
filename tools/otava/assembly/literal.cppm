@@ -5,30 +5,51 @@
 
 export module otava.assembly.literal;
 
-import std;
 import otava.assembly.value;
+import std;
 
 export namespace otava::assembly {
 
-class UniqueLiteral;
+const int maxAssemblyLineLength = 128;
 
-class Literal : public Value
+class IntegerLiteral : public Value
 {
 public:
-    Literal(std::int64_t value_, int size_);
+    IntegerLiteral(std::int64_t value_, int size_);
     std::int64_t GetValue() const { return value; }
-    friend class UniqueLiteral;
 private:
     std::int64_t value;
     int size;
 };
 
-class UniqueLiteral : public Literal
+class FloatLiteral : public Value
 {
 public:
-    UniqueLiteral(std::int64_t value_, int size_);
-    void SetValue(std::int64_t value_);
-    std::string ToString() const override;
+    FloatLiteral(float value_);
+    float GetValue() const { return value; }
+private:
+    float value;
+};
+
+class DoubleLiteral : public Value
+{
+public:
+    DoubleLiteral(double value_);
+    double GetValue() const { return value; }
+private:
+    double value;
+};
+
+class StringLiteral : public Value
+{
+public:
+    StringLiteral(const std::string& value_);
+    bool CanSplit() const override { return true; }
+    Value* Split(int length) override;
+    bool IsEmpty() const override { return value.empty(); }
+    const std::string& GetValue() const { return value; }
+private:
+    std::string value;
 };
 
 } // namespace otava::assembly

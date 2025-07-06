@@ -145,42 +145,6 @@ void YieldExprNode::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::throwExprNode, sourcePos_)
-{
-}
-
-ThrowExprNode::ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* exception_) : CompoundNode(NodeKind::throwExprNode, sourcePos_), exception(exception_)
-{
-}
-
-Node* ThrowExprNode::Clone() const
-{
-    Node* clonedException = nullptr;
-    if (exception)
-    {
-        clonedException = exception->Clone();
-    }
-    ThrowExprNode* clone = new ThrowExprNode(GetSourcePos(), clonedException);
-    return clone;
-}
-
-void ThrowExprNode::Accept(Visitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-void ThrowExprNode::Write(Writer& writer)
-{
-    CompoundNode::Write(writer);
-    writer.Write(exception.get());
-}
-
-void ThrowExprNode::Read(Reader& reader)
-{
-    CompoundNode::Read(reader);
-    exception.reset(reader.ReadNode());
-}
-
 ConditionalExprNode::ConditionalExprNode(const soul::ast::SourcePos& sourcePos_) : CompoundNode(NodeKind::conditionalExprNode, sourcePos_)
 {
 }

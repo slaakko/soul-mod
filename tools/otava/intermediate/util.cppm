@@ -6,6 +6,8 @@
 export module otava.intermediate.util;
 
 import std;
+import otava.intermediate.code;
+import otava.intermediate.data;
 
 export namespace otava::intermediate {
 
@@ -40,5 +42,11 @@ inline bool PtrInSet(PtrT* ptr, const std::vector<PtrT*>& set)
 {
     return std::find(set.cbegin(), set.cend(), ptr) != set.cend();
 }
+
+void ReplaceInstructionWithValue(Instruction* inst, Value* value);
+
+void ReplaceInstructionWithInstruction(Instruction* oldInst, Instruction* newInst);
+
+bool IsPowerOfTwo(std::uint64_t n, int& shift);
 
 } // otava::intermediate

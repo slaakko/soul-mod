@@ -20,9 +20,11 @@ import otava.symbols.bound.tree;
 import otava.symbols.classes;
 import otava.symbols.context;
 import otava.symbols.declarator;
+import otava.symbols.declaration;
 import otava.symbols.exception;
 import otava.symbols.expression.binder;
 import otava.symbols.function.symbol;
+import otava.symbols.function_return_path_checker;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol;
 import otava.symbols.symbol.table;
@@ -134,7 +136,6 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
     resolveInitializerArguments(false),
     setVPtrStatementGenerated(false),
     postfix(false),
-    boundTryStatementNode(nullptr),
     globalStaticVariableSymbol(nullptr)
 {
 }
@@ -625,11 +626,14 @@ void StatementBinder::Visit(otava::ast::IfStatementNode& node)
             boundIfStatement->SetInitStatement(boundInitStatement);
         }
     }
+
+    context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition->GetType()->IsBoolType())
     {
         condition = MakeBoundBooleanConversionNode(condition, context);
     }
+    context->PopFlags();
     boundIfStatement->SetCondition(condition);
     BoundStatementNode* boundThenStatement = BindStatement(node.ThenStatement(), functionDefinitionSymbol, context);
     if (boundThenStatement)
@@ -663,8 +667,10 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
         }
     }
     // todo!!!
+    context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     boundSwitchStatement->SetCondition(condition);
+    context->PopFlags();
     context->PushSwitchCondType(condition->GetType());
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     context->PopSwitchCondType();
@@ -678,6 +684,10 @@ void StatementBinder::Visit(otava::ast::SwitchStatementNode& node)
 
 void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
 {
+    if (!TerminatesCaseOrDefault(node.Statement()))
+    {
+        PrintWarning("case statement does not terminate in return, break or continue statement", node.GetSourcePos(), context);
+    }
     BoundExpressionNode* caseExpr = BindExpression(node.CaseExpression(), context);
     TypeSymbol* switchCondType = context->GetSwitchCondType();
     if (!TypesEqual(caseExpr->GetType(), switchCondType))
@@ -714,6 +724,10 @@ void StatementBinder::Visit(otava::ast::CaseStatementNode& node)
 
 void StatementBinder::Visit(otava::ast::DefaultStatementNode& node)
 {
+    if (!TerminatesCaseOrDefault(node.Statement()))
+    {
+        PrintWarning("default statement does not terminate in return, break or continue statement", node.GetSourcePos(), context);
+    }
     BoundDefaultStatementNode* boundDefaultStatement = new BoundDefaultStatementNode(node.GetSourcePos());
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
@@ -729,11 +743,13 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
     if (!block) return;
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
     BoundWhileStatementNode* boundWhileStatement = new BoundWhileStatementNode(node.GetSourcePos());
+    context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Condition(), context);
     if (!condition->GetType()->IsBoolType())
     {
         condition = MakeBoundBooleanConversionNode(condition, context);
     }
+    context->PopFlags();
     boundWhileStatement->SetCondition(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
@@ -747,11 +763,13 @@ void StatementBinder::Visit(otava::ast::WhileStatementNode& node)
 void StatementBinder::Visit(otava::ast::DoStatementNode& node)
 {
     BoundDoStatementNode* boundDoStatement = new BoundDoStatementNode(node.GetSourcePos());
+    context->PushResetFlag(ContextFlags::returnRef);
     BoundExpressionNode* condition = BindExpression(node.Expression(), context);
     if (!condition->GetType()->IsBoolType())
     {
         condition = MakeBoundBooleanConversionNode(condition, context);
     }
+    context->PopFlags();
     boundDoStatement->SetExpr(condition);
     BoundStatementNode* boundStmt = BindStatement(node.Statement(), functionDefinitionSymbol, context);
     if (boundStmt)
@@ -869,11 +887,13 @@ void StatementBinder::Visit(otava::ast::ForStatementNode& node)
     }
     if (node.Condition())
     {
+        context->PushResetFlag(ContextFlags::returnRef);
         BoundExpressionNode* condition = BindExpression(node.Condition(), context);
         if (!condition->GetType()->IsBoolType())
         {
             condition = MakeBoundBooleanConversionNode(condition, context);
         }
+        context->PopFlags();
         boundForStatement->SetCondition(condition);
     }
     if (node.LoopExpr())
@@ -935,9 +955,11 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
         else
         {
             TypeSymbol* returnType = functionDefinitionSymbol->ReturnType()->DirectType(context)->FinalType(node.GetSourcePos(), context);
+            bool flagsPushed = false;
             if (returnType->IsReferenceType())
             {
                 context->PushSetFlag(ContextFlags::returnRef);
+                flagsPushed = true;
             }
             BoundExpressionNode* returnValueExpr = BindExpression(node.ReturnValue(), context);
             if (!TypesEqual(returnValueExpr->GetType(), returnType))
@@ -985,7 +1007,7 @@ void StatementBinder::Visit(otava::ast::ReturnStatementNode& node)
                 }
             }
             boundReturnStatement->SetExpr(returnValueExpr, node.GetSourcePos(), context);
-            if (returnType->IsReferenceType())
+            if (flagsPushed)
             {
                 context->PopFlags();
             }
@@ -1106,124 +1128,6 @@ void StatementBinder::Visit(otava::ast::SimpleDeclarationNode& node)
             SetStatement(boundCompoundStatement);
         }
     }
-    else
-    {
-        int x = 0;
-    }
-}
-
-void StatementBinder::Visit(otava::ast::TryStatementNode& node)
-{
-    BoundStatementNode* tryBlock = BindStatement(node.TryBlock(), functionDefinitionSymbol, context);
-    BoundTryStatementNode* prevTryStatementNode = boundTryStatementNode;
-    boundTryStatementNode = new BoundTryStatementNode(node.GetSourcePos(), static_cast<BoundCompoundStatementNode*>(tryBlock));
-    node.Handlers()->Accept(*this);
-    SetStatement(boundTryStatementNode);
-    boundTryStatementNode = prevTryStatementNode;
-}
-
-class ExceptionExtractor : public otava::ast::DefaultVisitor
-{
-public:
-    ExceptionExtractor(const soul::ast::SourcePos& sourcePos_);
-    otava::ast::Node* GetDeclarator() const { return declarator; }
-    otava::ast::Node* GetDeclSpecifiers() const { return declSpecifiers; }
-    void Visit(otava::ast::ExceptionDeclarationNode& node) override;
-    void Visit(otava::ast::TypeSpecifierSequenceNode& node) override;
-private:
-    soul::ast::SourcePos sourcePos;
-    otava::ast::Node* declarator;
-    otava::ast::Node* declSpecifiers;
-};
-
-ExceptionExtractor::ExceptionExtractor(const soul::ast::SourcePos& sourcePos_) : 
-    sourcePos(sourcePos_), declarator(nullptr), declSpecifiers(new otava::ast::DeclSpecifierSequenceNode(sourcePos))
-{
-}
-
-void ExceptionExtractor::Visit(otava::ast::TypeSpecifierSequenceNode& node)
-{
-    for (auto& n : node.Nodes())
-    {
-        declSpecifiers->AddNode(n->Clone());
-    }
-}
-
-void ExceptionExtractor::Visit(otava::ast::ExceptionDeclarationNode& node)
-{
-    node.TypeSpecifiers()->Accept(*this);
-    declarator = node.Declarator()->Clone();
-}
-
-void StatementBinder::Visit(otava::ast::HandlerNode& node)
-{
-    bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
-    std::u32string exceptionParamName;
-    util::uuid exceptionTypeId;
-    Declaration exceptionDeclaration = ProcessExceptionDeclaration(node.Exception(), context); 
-    if (exceptionDeclaration.type != nullptr)
-    {
-        exceptionTypeId = exceptionDeclaration.type->GetBaseType()->Id();
-    }
-    if (exceptionDeclaration.declarator.get())
-    {
-        exceptionParamName = exceptionDeclaration.declarator->Name();
-    }
-    soul::ast::SourcePos sourcePos = node.GetSourcePos();
-    std::unique_ptr<otava::ast::CompoundStatementNode> handlerCompound(new otava::ast::CompoundStatementNode(sourcePos));
-    if (exceptionDeclaration.type)
-    {
-        otava::ast::DeclSpecifierSequenceNode* exceptionPtrDeclSpecifiers = new otava::ast::DeclSpecifierSequenceNode(sourcePos);
-        exceptionPtrDeclSpecifiers->AddNode(new otava::ast::PlaceholderTypeSpecifierNode(sourcePos));
-        otava::ast::IdentifierNode* exceptionPtrIdentifier = new otava::ast::IdentifierNode(sourcePos, U"@exception_ptr");
-        otava::ast::PtrDeclaratorNode* exceptionPtrDeclarator = new otava::ast::PtrDeclaratorNode(sourcePos);
-        exceptionPtrDeclarator->AddNode(new otava::ast::PtrNode(sourcePos));
-        exceptionPtrDeclarator->AddNode(exceptionPtrIdentifier);
-        otava::ast::InitDeclaratorListNode* exceptionPtrInitDeclaratorList = new otava::ast::InitDeclaratorListNode(sourcePos);
-        otava::ast::IdentifierNode* getExceptionId = new otava::ast::IdentifierNode(sourcePos, U"get_exception");
-        otava::ast::InvokeExprNode* exceptionPtrInvoke = new otava::ast::InvokeExprNode(sourcePos, getExceptionId);
-        otava::ast::PtrDeclaratorNode* exceptionPtrTypeId = new otava::ast::PtrDeclaratorNode(sourcePos);
-        exceptionPtrTypeId->AddNode(new otava::ast::PtrNode(sourcePos));
-        exceptionPtrTypeId->AddNode(MakeTypeNameNodes(sourcePos, exceptionDeclaration.type->GetBaseType()->FullName()));
-        otava::ast::CppCastExprNode* exceptionPtrInitializer = new otava::ast::CppCastExprNode(sourcePos, exceptionPtrTypeId, exceptionPtrInvoke,
-            new otava::ast::StaticCastNode(sourcePos), sourcePos, sourcePos, sourcePos, sourcePos);
-        otava::ast::AssignmentInitNode* exceptionPtrAssignmentInitializer = new otava::ast::AssignmentInitNode(sourcePos, exceptionPtrInitializer);
-        otava::ast::InitDeclaratorNode* exceptionPtrInitDeclarator = new otava::ast::InitDeclaratorNode(sourcePos, exceptionPtrDeclarator, exceptionPtrAssignmentInitializer);
-        exceptionPtrInitDeclaratorList->AddNode(exceptionPtrInitDeclarator);
-        otava::ast::SimpleDeclarationNode* exceptionPtrDeclaration = new otava::ast::SimpleDeclarationNode(sourcePos, exceptionPtrDeclSpecifiers, exceptionPtrInitDeclaratorList,
-            nullptr, nullptr);
-        otava::ast::DeclarationStatementNode* exceptionPtrStmt = new otava::ast::DeclarationStatementNode(sourcePos, exceptionPtrDeclaration);
-        handlerCompound->AddNode(exceptionPtrStmt);
-
-        ExceptionExtractor extractor(node.GetSourcePos());
-        node.Exception()->Accept(extractor);
-        otava::ast::UnaryExprNode* exceptionInitializer = new otava::ast::UnaryExprNode(sourcePos, new otava::ast::DerefNode(sourcePos),
-            new otava::ast::IdentifierNode(sourcePos, U"@exception_ptr"));
-        otava::ast::AssignmentInitNode* exceptionAssignmentInitializer = new otava::ast::AssignmentInitNode(sourcePos, exceptionInitializer);
-        otava::ast::Node* exceptionDeclarator = extractor.GetDeclarator();
-        otava::ast::InitDeclaratorNode* exceptionInitDeclarator = new otava::ast::InitDeclaratorNode(sourcePos, exceptionDeclarator, exceptionAssignmentInitializer);
-        otava::ast::InitDeclaratorListNode* exceptionInitDeclaratorList = new otava::ast::InitDeclaratorListNode(sourcePos);
-        exceptionInitDeclaratorList->AddNode(exceptionInitDeclarator);
-        otava::ast::Node* exceptionDeclSpecifiers = extractor.GetDeclSpecifiers();
-        otava::ast::SimpleDeclarationNode* exceptionDeclaration = new otava::ast::SimpleDeclarationNode(sourcePos, exceptionDeclSpecifiers, exceptionInitDeclaratorList,
-            nullptr, nullptr);
-        otava::ast::DeclarationStatementNode* exceptionStmt = new otava::ast::DeclarationStatementNode(sourcePos, exceptionDeclaration);
-        handlerCompound->AddNode(exceptionStmt);
-    }
-    otava::ast::CompoundStatementNode* catchBlock = static_cast<otava::ast::CompoundStatementNode*>(node.CatchBlock());
-    for (auto& stmtNode : catchBlock->Nodes())
-    {
-        handlerCompound->AddNode(stmtNode->Clone());
-    }
-    InstantiationScope instantiationScope(context->GetSymbolTable()->CurrentScope());
-    Instantiator instantiator(context, &instantiationScope);
-    context->PushSetFlag(ContextFlags::saveDeclarations | ContextFlags::dontBind);
-    handlerCompound->Accept(instantiator);
-    context->PopFlags();
-    BoundStatementNode* handlerBlock = BindStatement(handlerCompound.get(), functionDefinitionSymbol, context);
-    boundTryStatementNode->AddHandler(new BoundHandlerNode(node.GetSourcePos(), static_cast<BoundCompoundStatementNode*>(handlerBlock), exceptionParamName, exceptionTypeId));
-    context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(prevInternallyMapped);
 }
 
 void StatementBinder::SetStatement(BoundStatementNode* statement)
@@ -1541,10 +1445,6 @@ BoundStatementNode* BindStatement(otava::ast::Node* statementNode, FunctionDefin
 
 void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSymbol* functionDefinitionSymbol, Context* context)
 {
-    if (functionDefinitionSymbol->IrName(context) == "function_Size_40225C949E3926B45603C4AFA1E70439CC8751CE")
-    {
-        int x = 0;
-    }
     RemoveTemporaryAliasTypeSymbols(context);
     if (functionDefinitionSymbol->IsBound()) return;
     if (functionDefinitionSymbol->IsTemplate()) return;
@@ -1554,6 +1454,18 @@ void BindFunction(otava::ast::Node* functionDefinitionNode, FunctionDefinitionSy
     functionDefinitionSymbol->SetBound();
     StatementBinder binder(context, functionDefinitionSymbol);
     functionDefinitionNode->Accept(binder);
+    bool hasNoReturnAttribute = false;
+    if (functionDefinitionNode->IsFunctionDefinitionNode())
+    {
+        hasNoReturnAttribute = HasNoreturnAttribute(static_cast<otava::ast::FunctionDefinitionNode*>(functionDefinitionNode)->Attributes());
+    }
+    if (functionDefinitionSymbol->ReturnType() && 
+        !functionDefinitionSymbol->ReturnType()->IsVoidType() && 
+        functionDefinitionSymbol->GroupName() != U"main" && 
+        !hasNoReturnAttribute)
+    {
+        CheckFunctionReturnPaths(functionDefinitionNode, context);
+    }
 }
 
 } // namespace otava::symbols

@@ -24,7 +24,7 @@ import otava.symbols.class_templates;
 import otava.symbols.type.symbol;
 import otava.symbols.namespaces;
 import otava.symbols.fundamental.type.symbol;
-import otava.intermediate.function;
+import otava.intermediate.code;
 import util.unicode;
 
 namespace otava::symbols {
@@ -112,6 +112,10 @@ std::string BoundNodeKindStr(BoundNodeKind nodeKind)
         case BoundNodeKind::boundHandlerNode:
         {
             return "boundHandlerNode";
+        }
+        case BoundNodeKind::boundValueNode:
+        {
+            return "boundValueNode";
         }
         case BoundNodeKind::boundLiteralNode:
         {
@@ -295,6 +299,26 @@ void BoundExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Con
     {
         type = type->FinalType(sourcePos, context)->DirectType(context);
     }
+}
+
+BoundValueExpressionNode::BoundValueExpressionNode(otava::intermediate::Value* value_, TypeSymbol* type) :
+    BoundExpressionNode(BoundNodeKind::boundValueNode, soul::ast::SourcePos(), type), value(value_)
+{
+}
+
+void BoundValueExpressionNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+BoundExpressionNode* BoundValueExpressionNode::Clone() const
+{
+    return new BoundValueExpressionNode(value, GetType());
+}
+
+void BoundValueExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    emitter.Stack().Push(value);
 }
 
 BoundCompileUnitNode::BoundCompileUnitNode() :
@@ -523,6 +547,35 @@ void BoundFunctionNode::SetDtorTerminator(BoundDtorTerminatorNode* dtorTerminato
 BoundStatementNode::BoundStatementNode(BoundNodeKind kind_, const soul::ast::SourcePos& sourcePos_) : 
     BoundNode(kind_, sourcePos_), parent(nullptr), generated(false), postfix(false)
 {
+}
+
+bool BoundStatementNode::IsConditionalStatementInBlock(BoundCompoundStatementNode* block) const
+{
+    if (this == block)
+    {
+        return false;
+    }
+    if (IsIfStatementNode() || IsSwitchStatementNode()) return true;
+    BoundStatementNode* parent = Parent();
+    if (parent)
+    {
+        return parent->IsConditionalStatementInBlock(block);
+    }
+    return false;
+}
+
+BoundCompoundStatementNode* BoundStatementNode::Block()
+{
+    if (IsBoundCompoundStatementNode()) return static_cast<BoundCompoundStatementNode*>(this);
+    BoundStatementNode* parentStatement = Parent();
+    if (parentStatement != nullptr)
+    {
+        return parentStatement->Block();
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 BoundCompoundStatementNode::BoundCompoundStatementNode(const soul::ast::SourcePos& sourcePos_) : 
@@ -813,32 +866,6 @@ BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPt
 }
 
 void BoundSetVPtrStatementNode::Accept(BoundTreeVisitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-BoundTryStatementNode::BoundTryStatementNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* tryBlock_) :
-    BoundStatementNode(BoundNodeKind::boundTryStatementNode, sourcePos_), tryBlock(tryBlock_)
-{
-}
-
-void BoundTryStatementNode::AddHandler(BoundHandlerNode* handler)
-{
-    handlers.push_back(std::unique_ptr<BoundHandlerNode>(handler));
-}
-
-void BoundTryStatementNode::Accept(BoundTreeVisitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-BoundHandlerNode::BoundHandlerNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* catchBlock_, const std::u32string& exceptionParamName_, 
-    const util::uuid& exceptionTypeId_) :
-    BoundStatementNode(BoundNodeKind::boundHandlerNode, sourcePos_), catchBlock(catchBlock_), exceptionParamName(exceptionParamName_), exceptionTypeId(exceptionTypeId_)
-{
-}
-
-void BoundHandlerNode::Accept(BoundTreeVisitor& visitor)
 {
     visitor.Visit(*this);
 }
@@ -1340,10 +1367,6 @@ void BoundFunctionCallNode::AddArgument(BoundExpressionNode* arg)
 
 void BoundFunctionCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    if (emitter.GetCleanupList().IsDirty())
-    {
-        emitter.GetCleanupList().GenerateCleanup(emitter, sourcePos, context);
-    }
     std::vector<BoundExpressionNode*> arguments;
     for (const auto& arg : args)
     {
@@ -2097,53 +2120,6 @@ void BoundConstructExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourc
     constructObjectCall->ModifyTypes(sourcePos, context);
 }
 
-BoundThrowExpressionNode::BoundThrowExpressionNode(BoundExpressionNode* exception_, const soul::ast::SourcePos& sourcePos_) : 
-    BoundExpressionNode(BoundNodeKind::boundThrowExpressionNode, sourcePos_, nullptr), exception(exception_)
-{
-}
-
-void BoundThrowExpressionNode::Accept(BoundTreeVisitor& visitor)
-{
-    visitor.Visit(*this);
-}
-
-BoundExpressionNode* BoundThrowExpressionNode::Clone() const
-{
-    BoundExpressionNode* clonedException = nullptr;
-    if (exception)
-    {
-        clonedException = exception->Clone();
-    }
-    BoundExpressionNode* clone = new BoundThrowExpressionNode(clonedException, GetSourcePos());
-    clone->SetFlags(Flags());
-    return clone;
-}
-
-void BoundThrowExpressionNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
-{
-    if (exception)
-    {
-        exception->Load(emitter, flags, sourcePos, context);
-        otava::intermediate::Value* exceptionValue = emitter.Stack().Pop();
-        std::uint64_t eth = 0;
-        std::uint64_t etl = 0;
-        util::UuidToInts(exception->GetType()->GetBaseType()->Id(), eth, etl);
-        std::vector<otava::intermediate::Value*> setExceptionArgs;
-        setExceptionArgs.push_back(exceptionValue);
-        setExceptionArgs.push_back(emitter.EmitULong(eth));
-        setExceptionArgs.push_back(emitter.EmitULong(etl));
-        emitter.EmitCall(emitter.EhFunctions().SetExceptionFunction(), setExceptionArgs);
-    }
-    emitter.EmitCall(emitter.EhFunctions().ThrowExceptionFunction(), std::vector<otava::intermediate::Value*>());
-    emitter.EmitRet(emitter.RetValue());
-}
-
-void BoundThrowExpressionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
-{
-    BoundExpressionNode::ModifyTypes(sourcePos, context);
-    exception->ModifyTypes(sourcePos, context);
-}
-
 BoundGlobalVariableDefinitionNode::BoundGlobalVariableDefinitionNode(VariableSymbol* globalVariable_, const soul::ast::SourcePos& sourcePos_) : 
     BoundNode(BoundNodeKind::boundGlobalVariableDefinitionNode, sourcePos_), globalVariable(globalVariable_)
 {
@@ -2194,7 +2170,7 @@ BoundExpressionNode* BoundFunctionValueNode::Clone() const
 void BoundFunctionValueNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
 {
     emitter.GetOrInsertFunction(function->IrName(context), static_cast<otava::intermediate::FunctionType*>(function->IrType(emitter, sourcePos, context)));
-    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(function->IrType(emitter, sourcePos, context), "@" + function->IrName(context));
+    otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(function->IrType(emitter, sourcePos, context), function->IrName(context));
     otava::intermediate::Type* voidPtrIrType = emitter.MakePtrType(emitter.GetVoidType());
     otava::intermediate::Value* functionValueAsVoidPtr = emitter.EmitBitcast(functionValue, voidPtrIrType);
     emitter.Stack().Push(functionValueAsVoidPtr);
@@ -2230,6 +2206,18 @@ void BoundVariableAsVoidPtrNode::ModifyTypes(const soul::ast::SourcePos& sourceP
 {
     BoundExpressionNode::ModifyTypes(sourcePos, context);
     addrOfBoundVariable->ModifyTypes(sourcePos, context);
+}
+
+bool InDirectSwitchStatement(BoundStatementNode* statement)
+{
+    BoundStatementNode* parent = statement->Parent();
+    while (parent)
+    {
+        if (parent->IsSwitchStatementNode()) return true;
+        if (parent->IsWhileStatementNode() || parent->IsDoStatementNode() || parent->IsForStatementNode()) return false;
+        parent = parent->Parent();
+    }
+    return false;
 }
 
 } // namespace otava::symbols

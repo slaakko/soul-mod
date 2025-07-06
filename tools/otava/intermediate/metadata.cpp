@@ -5,12 +5,13 @@
 
 module otava.intermediate.metadata;
 
+import otava.intermediate.context;
 import otava.intermediate.error;
-import util.text.util;
 
 namespace otava::intermediate {
 
-MetadataRef::MetadataRef(const SourcePos& sourcePos_, std::int32_t nodeId_) : MetadataItem(MetadataItemKind::metadataRef), sourcePos(sourcePos_), nodeId(nodeId_), metadataStruct(nullptr)
+MetadataRef::MetadataRef(const soul::ast::Span& span_, std::int32_t nodeId_) :
+    MetadataItem(MetadataItemKind::metadataRef), span(span_), nodeId(nodeId_), metadataStruct(nullptr)
 {
 }
 
@@ -63,29 +64,8 @@ void MetadataString::Write(util::CodeFormatter& formatter)
     formatter.Write("\"");
 }
 
-MetadataStruct::MetadataStruct(const SourcePos& sourcePos_, std::int32_t id_) : sourcePos(sourcePos_), id(id_)
+MetadataStruct::MetadataStruct(const soul::ast::Span& span_, std::int32_t id_) : MetadataItem(MetadataItemKind::metadataStruct), span(span_), id(id_)
 {
-}
-
-void MetadataStruct::Write(util::CodeFormatter& formatter)
-{
-    formatter.Write("!" + std::to_string(id) + " = {");
-    bool first = true;
-    for (const auto& item : itemMap)
-    {
-        if (first)
-        {
-            first = false;
-        }
-        else
-        {
-            formatter.Write(", ");
-        }
-        formatter.Write(item.first);
-        formatter.Write(": ");
-        item.second->Write(formatter);
-    }
-    formatter.WriteLine("}");
 }
 
 void MetadataStruct::AddItem(const std::string& fieldName, MetadataItem* item)
@@ -106,23 +86,39 @@ MetadataItem* MetadataStruct::GetItem(const std::string& fieldName) const
     }
 }
 
-Metadata::Metadata() : context(nullptr), trueItem(), falseItem(), nextNodeId()
+void MetadataStruct::Write(util::CodeFormatter& formatter)
+{
+    formatter.Write("!" + std::to_string(id));
+}
+
+void MetadataStruct::WriteDefinition(util::CodeFormatter& formatter)
+{
+    formatter.Write("!" + std::to_string(id) + " = {");
+    bool first = true;
+    for (const auto& item : itemMap)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            formatter.Write(", ");
+        }
+        formatter.Write(item.first);
+        formatter.Write(": ");
+        item.second->Write(formatter);
+    }
+    formatter.WriteLine("}");
+}
+
+Metadata::Metadata() : context(nullptr), trueItem(), falseItem()
 {
 }
 
-void Metadata::Write(util::CodeFormatter& formatter)
+MetadataStruct* Metadata::CreateMetadataStruct()
 {
-    if (metadataNodes.empty()) return;
-    formatter.WriteLine();
-    formatter.WriteLine("metadata");
-    formatter.WriteLine("{");
-    formatter.IncIndent();
-    for (const auto& s : metadataNodes)
-    {
-        s->Write(formatter);
-    }
-    formatter.DecIndent();
-    formatter.WriteLine("}");
+    return AddMetadataStruct(soul::ast::Span(), metadataNodes.size());
 }
 
 MetadataStruct* Metadata::GetMetadataStruct(std::int32_t id) const
@@ -138,22 +134,17 @@ MetadataStruct* Metadata::GetMetadataStruct(std::int32_t id) const
     }
 }
 
-MetadataStruct* Metadata::AddMetadataStruct(const SourcePos& sourcePos, std::int32_t id, Context* context)
+MetadataStruct* Metadata::AddMetadataStruct(const soul::ast::Span& span, std::int32_t id)
 {
     MetadataStruct* prev = GetMetadataStruct(id);
     if (prev)
     {
-        Error("error adding metadata node: node id " + std::to_string(id) + " not unique", sourcePos, context, prev->GetSourcePos());
+        Error("error adding metadata node: node id " + std::to_string(id) + " not unique", span, context, prev->GetSpan());
     }
-    MetadataStruct* metadataStruct = new MetadataStruct(sourcePos, id);
+    MetadataStruct* metadataStruct = new MetadataStruct(span, id);
     metadataNodes.push_back(std::unique_ptr<MetadataStruct>(metadataStruct));
     metadataMap[metadataStruct->Id()] = metadataStruct;
     return metadataStruct;
-}
-
-MetadataStruct* Metadata::CreateMetadataStruct(Context* context)
-{
-    return AddMetadataStruct(SourcePos(), nextNodeId++, context);
 }
 
 MetadataBool* Metadata::CreateMetadataBool(bool value)
@@ -194,23 +185,28 @@ MetadataLong* Metadata::CreateMetadataLong(std::int64_t value)
     }
 }
 
-MetadataString* Metadata::CreateMetadataString(const std::string& value)
+MetadataString* Metadata::CreateMetadataString(const std::string& value, bool crop)
 {
-    auto it = stringItemMap.find(value);
+    std::string val = value;
+    if (crop)
+    {
+        val = value.substr(1, value.length() - 2);
+    }
+    auto it = stringItemMap.find(val);
     if (it != stringItemMap.cend())
     {
         return it->second;
     }
     else
     {
-        MetadataString* metadataString = new MetadataString(value);
+        MetadataString* metadataString = new MetadataString(val);
         metadataItems.push_back(std::unique_ptr<MetadataItem>(metadataString));
-        stringItemMap[value] = metadataString;
+        stringItemMap[val] = metadataString;
         return metadataString;
     }
 }
 
-MetadataRef* Metadata::CreateMetadataRef(const SourcePos& sourcePos, std::int32_t nodeId)
+MetadataRef* Metadata::CreateMetadataRef(const soul::ast::Span& span, std::int32_t nodeId)
 {
     auto it = referenceMap.find(nodeId);
     if (it != referenceMap.cend())
@@ -219,7 +215,7 @@ MetadataRef* Metadata::CreateMetadataRef(const SourcePos& sourcePos, std::int32_
     }
     else
     {
-        MetadataRef* metadataRef = new MetadataRef(sourcePos, nodeId);
+        MetadataRef* metadataRef = new MetadataRef(span, nodeId);
         referenceMap[metadataRef->NodeId()] = metadataRef;
         metadataItems.push_back(std::unique_ptr<MetadataItem>(metadataRef));
         metadataReferences.push_back(metadataRef);
@@ -227,7 +223,7 @@ MetadataRef* Metadata::CreateMetadataRef(const SourcePos& sourcePos, std::int32_
     }
 }
 
-void Metadata::ResolveMetadataReferences(Context* context)
+void Metadata::ResolveMetadataReferences()
 {
     for (MetadataRef* metadataRef : metadataReferences)
     {
@@ -239,9 +235,24 @@ void Metadata::ResolveMetadataReferences(Context* context)
         }
         else
         {
-            Error("error resolving metadata reference: node id " + std::to_string(nodeId) + " not found", metadataRef->GetSourcePos(), context);
+            Error("error resolving metadata reference: node id " + std::to_string(nodeId) + " not found", metadataRef->GetSpan(), context);
         }
     }
+}
+
+void Metadata::Write(util::CodeFormatter& formatter)
+{
+    if (metadataNodes.empty()) return;
+    formatter.WriteLine();
+    formatter.WriteLine("metadata");
+    formatter.WriteLine("{");
+    formatter.IncIndent();
+    for (const auto& node : metadataNodes)
+    {
+        node->WriteDefinition(formatter);
+    }
+    formatter.DecIndent();
+    formatter.WriteLine("}");
 }
 
 } // otava::intermediate

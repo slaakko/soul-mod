@@ -3,9 +3,16 @@
 // Distributed under the MIT license
 // =================================
 
-export module context_stack;
+module ort.init_done;
 
-import std;
+import ort.io;
 
-export extern "C" void* push_context();
-export extern "C" void* pop_context();
+void ort_init()
+{
+    ort_io_init();
+}
+
+void ort_done()
+{
+    ort_io_done();
+}

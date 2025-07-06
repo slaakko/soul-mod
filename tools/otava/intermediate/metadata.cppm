@@ -5,41 +5,37 @@
 
 export module otava.intermediate.metadata;
 
+import otava.intermediate.data;
+import util;
+import soul.ast.span;
 import std;
-import util.code.formatter;
-import soul.ast.source.pos;
-
-export namespace otava::intermediate::metadata {}
 
 export namespace otava::intermediate {
 
-using SourcePos = soul::ast::SourcePos;
+export namespace metadata {}
 
 class MetadataStruct;
 class Context;
 
 enum class MetadataItemKind
 {
-    metadataRef, metadataBool, metadataLong, metadataString
+    metadataRef, metadataBool, metadataLong, metadataString, metadataStruct
 };
 
 const std::int64_t fileInfoNodeType = 0;
-const std::int64_t funcInfoNodeType = 1;
 const std::int64_t lineInfoNodeType = 2;
-const std::int64_t beginTryNodeType = 3;
-const std::int64_t endTryNodeType = 4;
-const std::int64_t catchNodeType = 5;
-const std::int64_t beginCleanupNodeType = 6;
-const std::int64_t endCleanupNodeType = 7;
-
 
 class MetadataItem
 {
 public:
     MetadataItem(MetadataItemKind kind_);
     virtual ~MetadataItem();
-    virtual void Write(util::CodeFormatter& formatter) = 0;
     MetadataItemKind Kind() const { return kind; }
+    bool IsMetadataRef() const { return kind == MetadataItemKind::metadataRef; }
+    bool IsMetadataBool() const { return kind == MetadataItemKind::metadataBool; }
+    bool IsMetadataLong() const { return kind == MetadataItemKind::metadataLong; }
+    bool IsMetadataString() const { return kind == MetadataItemKind::metadataString; }
+    virtual void Write(util::CodeFormatter& formatter) = 0;
 private:
     MetadataItemKind kind;
 };
@@ -47,14 +43,14 @@ private:
 class MetadataRef : public MetadataItem
 {
 public:
-    MetadataRef(const SourcePos& sourcePos_, std::int32_t nodeId_);
-    const SourcePos& GetSourcePos() const { return sourcePos; }
+    MetadataRef(const soul::ast::Span& span_, std::int32_t nodeId_);
+    const soul::ast::Span& GetSpan() const { return span; }
     std::int32_t NodeId() const { return nodeId; }
     MetadataStruct* GetMetadataStruct() const { return metadataStruct; }
     void SetMetadataStruct(MetadataStruct* metadataStruct_) { metadataStruct = metadataStruct_; }
     void Write(util::CodeFormatter& formatter) override;
 private:
-    SourcePos sourcePos;
+    soul::ast::Span span;
     std::int32_t nodeId;
     MetadataStruct* metadataStruct;
 };
@@ -89,19 +85,20 @@ private:
     std::string value;
 };
 
-class MetadataStruct
+class MetadataStruct : public MetadataItem
 {
 public:
-    MetadataStruct(const SourcePos& sourcePos_, std::int32_t id_);
+    MetadataStruct(const soul::ast::Span& span_, std::int32_t id_);
     MetadataStruct(const MetadataStruct&) = delete;
     MetadataStruct& operator=(const MetadataStruct&) = delete;
-    const SourcePos& GetSourcePos() const { return sourcePos; }
+    const soul::ast::Span& GetSpan() const { return span; }
     std::int32_t Id() const { return id; }
     void AddItem(const std::string& fieldName, MetadataItem* item);
     MetadataItem* GetItem(const std::string& fieldName) const;
-    void Write(util::CodeFormatter& formatter);
+    void Write(util::CodeFormatter& formatter) override;
+    void WriteDefinition(util::CodeFormatter& formatter);
 private:
-    SourcePos sourcePos;
+    soul::ast::Span span;
     std::int32_t id;
     std::map<std::string, MetadataItem*> itemMap;
 };
@@ -110,17 +107,19 @@ class Metadata
 {
 public:
     Metadata();
-    void Write(util::CodeFormatter& formatter);
+    Metadata(const Metadata&) = delete;
+    Metadata& operator=(const Metadata&) = delete;
     Context* GetContext() const { return context; }
     void SetContext(Context* context_) { context = context_; }
+    MetadataStruct* CreateMetadataStruct();
     MetadataStruct* GetMetadataStruct(std::int32_t id) const;
-    MetadataStruct* AddMetadataStruct(const SourcePos& sourcePos, std::int32_t id, Context* context);
-    MetadataStruct* CreateMetadataStruct(Context* context);
+    MetadataStruct* AddMetadataStruct(const soul::ast::Span& span, std::int32_t id);
     MetadataBool* CreateMetadataBool(bool value);
     MetadataLong* CreateMetadataLong(std::int64_t value);
-    MetadataString* CreateMetadataString(const std::string& value);
-    MetadataRef* CreateMetadataRef(const SourcePos& sourcePos, std::int32_t nodeId);
-    void ResolveMetadataReferences(Context* context);
+    MetadataString* CreateMetadataString(const std::string& value, bool crop);
+    MetadataRef* CreateMetadataRef(const soul::ast::Span& span, std::int32_t nodeId);
+    void ResolveMetadataReferences();
+    void Write(util::CodeFormatter& formatter);
 private:
     Context* context;
     std::vector<std::unique_ptr<MetadataStruct>> metadataNodes;
@@ -132,7 +131,6 @@ private:
     std::map<std::string, MetadataString*> stringItemMap;
     std::map<std::int32_t, MetadataRef*> referenceMap;
     std::vector<MetadataRef*> metadataReferences;
-    std::int32_t nextNodeId;
 };
 
 } // otava::intermediate

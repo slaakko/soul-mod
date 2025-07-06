@@ -7,24 +7,18 @@ export module otava.symbols.emitter;
 
 import std;
 import otava.symbols.ir_value_stack;
-import otava.symbols.eh;
-import otava.symbols.cleanup_list;
 import otava.intermediate.context;
+import otava.intermediate.code;
+import otava.intermediate.data;
+import otava.intermediate.types;
 import util.uuid;
 
 export namespace otava::symbols {
 
-class CodeGenerator
-{
-public:
-    virtual ~CodeGenerator();
-    virtual void SetNextBlock(otava::intermediate::BasicBlock* nextBlock_) = 0;
-};
-
 class Emitter
 {
 public:
-    Emitter(CodeGenerator* codeGen_);
+    Emitter();
     ~Emitter();
     void SetFilePath(const std::string& filePath);
     const std::string& FilePath() const;
@@ -32,7 +26,7 @@ public:
     otava::intermediate::Context* GetIntermediateContext();
     void ResolveReferences();
     void Emit();
-    void CreateFunction(const std::string& name, otava::intermediate::Type* type, bool once);
+    otava::intermediate::Function* CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once);
     void SetRegNumbers();
     otava::intermediate::Function* GetOrInsertFunction(const std::string& name, otava::intermediate::FunctionType* functionType);
     otava::intermediate::BasicBlock* CreateBasicBlock();
@@ -70,8 +64,8 @@ public:
     otava::intermediate::Value* EmitDouble(double value);
     otava::intermediate::Value* EmitFloatingValue(otava::intermediate::Type* type, double value);
     otava::intermediate::Value* EmitNull(otava::intermediate::Type* type);
-    otava::intermediate::Value* EmitArrayValue(const std::vector<otava::intermediate::Value*>& elements);
-    otava::intermediate::Value* EmitStructureValue(const std::vector<otava::intermediate::Value*>& fieldValues);
+    otava::intermediate::Value* EmitArrayValue(const std::vector<otava::intermediate::Value*>& elements, otava::intermediate::ArrayType* arrayType);
+    otava::intermediate::Value* EmitStructureValue(const std::vector<otava::intermediate::Value*>& fieldValues, otava::intermediate::StructureType* structureType);
     otava::intermediate::Value* EmitStringValue(const std::string& value);
     otava::intermediate::Value* EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from);
     otava::intermediate::Value* EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer);
@@ -92,6 +86,7 @@ public:
     otava::intermediate::Value* EmitLess(otava::intermediate::Value* left, otava::intermediate::Value* right);
     otava::intermediate::Value* EmitSignExtend(otava::intermediate::Value* value, otava::intermediate::Type* destType);
     otava::intermediate::Value* EmitZeroExtend(otava::intermediate::Value* value, otava::intermediate::Type* destType);
+    otava::intermediate::Value* EmitFPExtend(otava::intermediate::Value* value, otava::intermediate::Type* destType);
     otava::intermediate::Value* EmitTruncate(otava::intermediate::Value* value, otava::intermediate::Type* destType);
     otava::intermediate::Value* EmitBitcast(otava::intermediate::Value* value, otava::intermediate::Type* destType);
     otava::intermediate::Value* EmitIntToFloat(otava::intermediate::Value* value, otava::intermediate::Type* destType);
@@ -114,7 +109,6 @@ public:
     void EmitJump(otava::intermediate::BasicBlock* dest);
     void EmitBranch(otava::intermediate::Value* cond, otava::intermediate::BasicBlock* trueDest, otava::intermediate::BasicBlock* falseDest);
     otava::intermediate::SwitchInstruction* EmitSwitch(otava::intermediate::Value* cond, otava::intermediate::BasicBlock* defaultDest);
-    void EmitTrap(const std::vector<otava::intermediate::Value*>& args);
     void EmitNop();
     otava::intermediate::Type* GetType(const util::uuid& id) const;
     void SetType(const util::uuid& id, otava::intermediate::Type* type);
@@ -123,24 +117,15 @@ public:
     otava::intermediate::Value* GetVTabVariable(void* cls) const;
     void SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable);
     IrValueStack& Stack() { return *stack; }
-    otava::intermediate::BasicBlock* NextBlock() const { return nextBlock; }
-    void SetNextBlock(otava::intermediate::BasicBlock* nextBlock_) { nextBlock = nextBlock_; }
     otava::intermediate::Value* RetValue() const { return retValue; }
     void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
-    void SetCodeGenNextBlock(otava::intermediate::BasicBlock* nextBlock_);
-    ExceptionHandlingFunctions& EhFunctions() { return exceptionHandlingFunctions; }
-    CleanupList& GetCleanupList() { return cleanupList; }
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;
     std::map<util::uuid, otava::intermediate::Type*> typeMap;
     std::map<void*, otava::intermediate::Value*> irObjectMap;
     std::map<void*, otava::intermediate::Value*> vtabVariableMap;
-    otava::intermediate::BasicBlock* nextBlock;
     otava::intermediate::Value* retValue;
-    CodeGenerator* codeGen;
-    ExceptionHandlingFunctions exceptionHandlingFunctions;
-    CleanupList cleanupList;
 };
 
 } // namespace otava::symbols

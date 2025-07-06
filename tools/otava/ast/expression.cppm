@@ -73,20 +73,6 @@ public:
     void Accept(Visitor& visitor) override;
 };
 
-class ThrowExprNode : public CompoundNode
-{
-public:
-    ThrowExprNode(const soul::ast::SourcePos& sourcePos_);
-    ThrowExprNode(const soul::ast::SourcePos& sourcePos_, Node* exception_);
-    Node* Clone() const override;
-    void Accept(Visitor& visitor) override;
-    void Write(Writer& writer) override;
-    void Read(Reader& reader) override;
-    Node* Exception() const { return exception.get(); }
-private:
-    std::unique_ptr<Node> exception;
-};
-
 class ConditionalExprNode : public CompoundNode
 {
 public:

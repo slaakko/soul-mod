@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/template.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/template.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.templates;
 
@@ -44,7 +44,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateDeclaration(LexerT& lexer, o
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107585);
@@ -193,7 +193,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateHead(LexerT& lexer, otava::s
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateHead");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateHead");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107586);
@@ -335,7 +335,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateParameterList(LexerT& lexer,
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateParameterList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateParameterList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107587);
@@ -548,7 +548,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateParameter(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateParameter");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateParameter");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107588);
@@ -627,7 +627,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameter(LexerT& lexer, otava::
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TypeParameter");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TypeParameter");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107589);
@@ -1122,7 +1122,7 @@ soul::parser::Match TemplateParser<LexerT>::TypeParameterKey(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TypeParameterKey");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TypeParameterKey");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107590);
@@ -1206,7 +1206,7 @@ soul::parser::Match TemplateParser<LexerT>::Typename(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Typename");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Typename");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107591);
@@ -1254,7 +1254,7 @@ soul::parser::Match TemplateParser<LexerT>::Class(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Class");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Class");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107592);
@@ -1302,7 +1302,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateId(LexerT& lexer, otava::sym
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107593);
@@ -1549,7 +1549,7 @@ soul::parser::Match TemplateParser<LexerT>::SimpleTemplateId(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SimpleTemplateId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SimpleTemplateId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107594);
@@ -1728,7 +1728,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateName(LexerT& lexer, otava::s
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateName");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateName");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107595);
@@ -1773,7 +1773,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateArgumentList(LexerT& lexer, 
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgumentList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgumentList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107596);
@@ -1947,7 +1947,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateArgument(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgument");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgument");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107597);
@@ -2105,7 +2105,7 @@ soul::parser::Match TemplateParser<LexerT>::TemplateArgNext(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgNext");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TemplateArgNext");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107598);
@@ -2199,7 +2199,7 @@ soul::parser::Match TemplateParser<LexerT>::DeductionGuide(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "DeductionGuide");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "DeductionGuide");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107599);
@@ -2435,7 +2435,7 @@ soul::parser::Match TemplateParser<LexerT>::Arrow(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Arrow");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Arrow");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107600);
@@ -2483,7 +2483,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitInstantiation(LexerT& lexer,
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExplicitInstantiation");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExplicitInstantiation");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107601);
@@ -2608,7 +2608,7 @@ soul::parser::Match TemplateParser<LexerT>::ExplicitSpecialization(LexerT& lexer
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExplicitSpecialization");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExplicitSpecialization");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107602);
@@ -2792,7 +2792,7 @@ soul::parser::Match TemplateParser<LexerT>::Extern(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Extern");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Extern");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107603);
@@ -2840,7 +2840,7 @@ soul::parser::Match TemplateParser<LexerT>::Template(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Template");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Template");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 9050966169783107604);

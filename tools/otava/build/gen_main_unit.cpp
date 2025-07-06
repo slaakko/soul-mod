@@ -38,7 +38,6 @@ import otava.ast.expression;
 import otava.ast.literal;
 import otava.ast.punctuation;
 import otava.ast.type;
-// import std.filesystem;
 
 namespace otava::build {
 
@@ -46,26 +45,10 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
 {
 /*  int __main_wrapper(int argc, const char** argv)
 *   {
-*       try
-*       {
 *           __global_init__();
 *           @retval = main(argc, argv);
 *           std::run_at_exits();
 *           return @retval;
-*       }
-*       catch (const std::exception& ex)
-*       {
-*           std::cerr << "unhandled exception escaped from main:";
-*           std::cerr << ex.what();
-*           std::cerr << "\n";
-*           return 1;
-*       }
-*       catch (...)
-*       {
-*           std::cerr << "unhandled unknown exception escaped from main.";
-*           std::cerr << "\n";
-*           return 1;
-*       }
 *   }
 */
     otava::ast::IdentifierNode* mainFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"main");
@@ -88,72 +71,20 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
     otava::ast::DeclSpecifierSequenceNode* declSpecifiers = new otava::ast::DeclSpecifierSequenceNode(soul::ast::SourcePos());
     declSpecifiers->AddNode(new otava::ast::IntNode(soul::ast::SourcePos()));
     otava::ast::CompoundStatementNode* body = new otava::ast::CompoundStatementNode(soul::ast::SourcePos());
-    otava::ast::CompoundStatementNode* tryBlock = new otava::ast::CompoundStatementNode(soul::ast::SourcePos());
     otava::ast::IdentifierNode* globalInitFn = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"__global_init__");
     otava::ast::InvokeExprNode* globalInitFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), globalInitFn);
     otava::ast::ExpressionStatementNode* globalInitStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), globalInitFnCall, nullptr, 
         new otava::ast::SemicolonNode(soul::ast::SourcePos()));
-    tryBlock->AddNode(globalInitStmt);
-    tryBlock->AddNode(retValDeclaration);
+    body->AddNode(globalInitStmt);
+    body->AddNode(retValDeclaration);
     otava::ast::Node* runAtExitsFn = otava::symbols::MakeTypeNameNodes(soul::ast::SourcePos(), U"std::run_at_exits");
     otava::ast::InvokeExprNode* runAtExitsFnCall = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), runAtExitsFn);
     otava::ast::ExpressionStatementNode* runAtExitsStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), runAtExitsFnCall, nullptr,
         new otava::ast::SemicolonNode(soul::ast::SourcePos()));
-    tryBlock->AddNode(runAtExitsStmt);
+    body->AddNode(runAtExitsStmt);
     otava::ast::IdentifierNode* retValVarId = new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"@retval");
     otava::ast::ReturnStatementNode* returnRetValStmt = new otava::ast::ReturnStatementNode(soul::ast::SourcePos(), retValVarId, nullptr, nullptr, soul::ast::SourcePos());
-    tryBlock->AddNode(returnRetValStmt);
-    otava::ast::HandlerSequenceNode* handlers = new otava::ast::HandlerSequenceNode(soul::ast::SourcePos());
-    otava::ast::CompoundStatementNode* catchStdExceptionBlock = new otava::ast::CompoundStatementNode(soul::ast::SourcePos());
-    otava::ast::Node* stdCerr = otava::symbols::MakeTypeNameNodes(soul::ast::SourcePos(), U"std::cerr");
-    otava::ast::BinaryExprNode* printMsg = new otava::ast::BinaryExprNode(soul::ast::SourcePos(), new otava::ast::ShiftLeftNode(soul::ast::SourcePos()), stdCerr->Clone(),
-        new otava::ast::StringLiteralNode(soul::ast::SourcePos(), U"unhandled exception escaped from main: ", otava::ast::EncodingPrefix::none, U"unhandled exception escaped from main: "));
-    otava::ast::ExpressionStatementNode* printMsgStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), printMsg, nullptr, 
-        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
-    catchStdExceptionBlock->AddNode(printMsgStmt);
-    otava::ast::BinaryExprNode* printNl = new otava::ast::BinaryExprNode(soul::ast::SourcePos(), new otava::ast::ShiftLeftNode(soul::ast::SourcePos()), stdCerr->Clone(),
-        new otava::ast::StringLiteralNode(soul::ast::SourcePos(), U"\n", otava::ast::EncodingPrefix::none, U"\\n"));
-    otava::ast::ExpressionStatementNode* printNlStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), printNl, nullptr,
-        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
-    catchStdExceptionBlock->AddNode(printNlStmt);
-    otava::ast::MemberExprNode* exWhat = new otava::ast::MemberExprNode(soul::ast::SourcePos(), new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"ex"),
-        new otava::ast::DotNode(soul::ast::SourcePos()), new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"what"));
-    otava::ast::InvokeExprNode* invokeExWhat = new otava::ast::InvokeExprNode(soul::ast::SourcePos(), exWhat);
-    otava::ast::BinaryExprNode* printExExpr = new otava::ast::BinaryExprNode(soul::ast::SourcePos(), new otava::ast::ShiftLeftNode(soul::ast::SourcePos()), stdCerr, invokeExWhat);
-    otava::ast::ExpressionStatementNode* printExStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), printExExpr, nullptr, 
-        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
-    catchStdExceptionBlock->AddNode(printExStmt);
-    catchStdExceptionBlock->AddNode(printNlStmt->Clone());
-    otava::ast::ReturnStatementNode* returnStmt = new otava::ast::ReturnStatementNode(soul::ast::SourcePos(), new otava::ast::IntegerLiteralNode(soul::ast::SourcePos(), 1, 
-        otava::ast::Suffix::none, otava::ast::Base::decimal, U"1"), nullptr, new otava::ast::SemicolonNode(soul::ast::SourcePos()), soul::ast::SourcePos());
-    catchStdExceptionBlock->AddNode(returnStmt);
-    otava::ast::Node* stdExceptionId = otava::symbols::MakeTypeNameNodes(soul::ast::SourcePos(), U"std::exception");
-    otava::ast::TypeSpecifierSequenceNode* stdExceptionType = new otava::ast::TypeSpecifierSequenceNode(soul::ast::SourcePos());
-    stdExceptionType->AddNode(new otava::ast::ConstNode(soul::ast::SourcePos()));
-    stdExceptionType->AddNode(stdExceptionId);
-    otava::ast::PtrDeclaratorNode* stdExceptionDeclarator = new otava::ast::PtrDeclaratorNode(soul::ast::SourcePos());
-    stdExceptionDeclarator->AddNode(new otava::ast::LvalueRefNode(soul::ast::SourcePos()));
-    stdExceptionDeclarator->AddNode(new otava::ast::IdentifierNode(soul::ast::SourcePos(), U"ex"));
-    otava::ast::ExceptionDeclarationNode* stdExceptionDecl = new otava::ast::ExceptionDeclarationNode(soul::ast::SourcePos(), stdExceptionType,
-        stdExceptionDeclarator, nullptr, nullptr);
-    otava::ast::HandlerNode* stdExceptionHandler = new otava::ast::HandlerNode(soul::ast::SourcePos(), stdExceptionDecl, catchStdExceptionBlock, 
-        soul::ast::SourcePos(), soul::ast::SourcePos());
-    handlers->AddNode(stdExceptionHandler);
-    otava::ast::CompoundStatementNode* catchAllExceptionBlock = new otava::ast::CompoundStatementNode(soul::ast::SourcePos());
-    otava::ast::BinaryExprNode* printAllMsg = new otava::ast::BinaryExprNode(soul::ast::SourcePos(), new otava::ast::ShiftLeftNode(soul::ast::SourcePos()), stdCerr->Clone(),
-        new otava::ast::StringLiteralNode(soul::ast::SourcePos(), U"unhandled unknown exception escaped from main", otava::ast::EncodingPrefix::none, 
-            U"unhandled unknown exception escaped from main"));
-    otava::ast::ExpressionStatementNode* printAllMsgStmt = new otava::ast::ExpressionStatementNode(soul::ast::SourcePos(), printAllMsg, nullptr, 
-        new otava::ast::SemicolonNode(soul::ast::SourcePos()));
-    catchAllExceptionBlock->AddNode(printAllMsgStmt);
-    catchAllExceptionBlock->AddNode(returnStmt->Clone());
-    otava::ast::ExceptionDeclarationNode* allExceptionDecl = new otava::ast::ExceptionDeclarationNode(soul::ast::SourcePos(), nullptr,
-        nullptr, new otava::ast::EllipsisNode(soul::ast::SourcePos()), nullptr);
-    otava::ast::HandlerNode* allHandler = new otava::ast::HandlerNode(soul::ast::SourcePos(), allExceptionDecl, catchAllExceptionBlock,
-        soul::ast::SourcePos(), soul::ast::SourcePos());
-    handlers->AddNode(allHandler);
-    otava::ast::TryStatementNode* tryStmt = new otava::ast::TryStatementNode(soul::ast::SourcePos(), tryBlock, handlers, nullptr, soul::ast::SourcePos());
-    body->AddNode(tryStmt);
+    body->AddNode(returnRetValStmt);
     otava::ast::FunctionBodyNode* functionBody = new otava::ast::FunctionBodyNode(soul::ast::SourcePos(), body);
     otava::ast::ParameterListNode* parameters = new otava::ast::ParameterListNode(soul::ast::SourcePos());
     otava::ast::ParameterNode* argcParam = new otava::ast::ParameterNode(soul::ast::SourcePos());
@@ -202,7 +133,7 @@ std::string GenerateMainWrapper(otava::symbols::Context* context, int numParams)
 std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const std::string& mainFilePath, const std::string& mainFunctionIrName, int numParams, 
     const std::vector<std::string>& compileUnitInitFnNames, const std::string& config)
 {
-    otava::symbols::Module* core = moduleMapper.GetModule("std.core");
+    otava::symbols::Module* core = moduleMapper.GetModule("std.core", config);
     otava::symbols::Module main("main");
     std::unique_ptr<otava::symbols::SymbolTable> symbolTable(new otava::symbols::SymbolTable());
     symbolTable->SetModule(&main);
@@ -234,6 +165,8 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     std::string asmFilename = otava::codegen::GenerateCode(context, config, true, mainWrapperIrName, np, true, compileUnitInitFnNames);
     std::ofstream mainFile(mainFilePath);
     util::CodeFormatter formatter(mainFile);
+    formatter.WriteLine("extern \"C\" void ort_init();");
+    formatter.WriteLine("extern \"C\" void ort_done();");
     formatter.WriteLine("extern \"C\" int " + mainWrapperIrName + "(int argc, const char** argv); ");
     formatter.WriteLine();
     formatter.WriteLine("int main(int argc, const char** argv)");
@@ -241,7 +174,9 @@ std::string GenerateMainUnit(otava::symbols::ModuleMapper& moduleMapper, const s
     formatter.IncIndent();
     if (numParams == 0 || numParams == 2)
     {
+        formatter.WriteLine("ort_init();");
         formatter.WriteLine("int retVal = " + mainWrapperIrName + "(argc, argv);");
+        formatter.WriteLine("ort_done();");
     }
     else
     {

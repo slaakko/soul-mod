@@ -68,6 +68,7 @@ int main(int argc, const char** argv)
         bool debugParse = false;
         bool setSeed = false;
         bool xml = false;
+        int optLevel = -1;
         for (int i = 1; i < argc; ++i)
         {
             std::string arg = argv[i];
@@ -81,6 +82,10 @@ int main(int argc, const char** argv)
                         if (components[0] == "--config")
                         {
                             config = components[1];
+                        }
+                        else if (components[0] == "--opt")
+                        {
+                            optLevel = std::stoi(components[1]);
                         }
                         else
                         {
@@ -135,6 +140,10 @@ int main(int argc, const char** argv)
                         if (components[0] == "-c")
                         {
                             config = components[1];
+                        }
+                        else if (components[0] == "-O")
+                        {
+                            optLevel = std::stoi(components[1]);
                         }
                         else
                         {
@@ -235,7 +244,7 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::xml;
                 }
-                otava::build::Build(moduleMapper, project.get(), config, buildFlags);
+                otava::build::Build(moduleMapper, project.get(), config, optLevel, buildFlags);
             }
             else if (file.ends_with(".solution"))
             {
@@ -253,7 +262,7 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::xml;
                 }
-                otava::build::Build(moduleMapper, fileMap, solution.get(), config, buildFlags);
+                otava::build::Build(moduleMapper, fileMap, solution.get(), config, optLevel, buildFlags);
             }
             else
             {

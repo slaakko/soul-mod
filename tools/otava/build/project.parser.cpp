@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/build/project.parser' using soul parser generator spg version 4.1.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/build/project.parser' using soul parser generator spg version 5.0.0
 
 module otava.project_parser;
 
@@ -65,7 +65,7 @@ soul::parser::Match ProjectParser<LexerT>::ProjectFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ProjectFile");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ProjectFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906433);
@@ -199,7 +199,7 @@ soul::parser::Match ProjectParser<LexerT>::ProjectDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ProjectDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ProjectDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906434);
@@ -289,7 +289,7 @@ soul::parser::Match ProjectParser<LexerT>::Define(LexerT& lexer, otava::build::P
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Define");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Define");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906435);
@@ -466,7 +466,7 @@ soul::parser::Match ProjectParser<LexerT>::TargetDeclaration(LexerT& lexer, otav
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "TargetDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "TargetDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906436);
@@ -571,7 +571,7 @@ soul::parser::Match ProjectParser<LexerT>::Target(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Target");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Target");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906437);
@@ -661,7 +661,7 @@ soul::parser::Match ProjectParser<LexerT>::FilePath(LexerT& lexer, otava::build:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906438);
@@ -782,7 +782,7 @@ soul::parser::Match ProjectParser<LexerT>::InterfaceFilePath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceFilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceFilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906439);
@@ -886,7 +886,7 @@ soul::parser::Match ProjectParser<LexerT>::SourceFilePath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SourceFilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SourceFilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906440);
@@ -990,7 +990,7 @@ soul::parser::Match ProjectParser<LexerT>::ResourceFilePath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ResourceFilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ResourceFilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906441);
@@ -1094,7 +1094,7 @@ soul::parser::Match ProjectParser<LexerT>::ReferenceFilePath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ReferenceFilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ReferenceFilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906442);
@@ -1198,7 +1198,7 @@ soul::parser::Match ProjectParser<LexerT>::QualifiedId(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 3083016289157906443);

@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/expression.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/soul/cpp/expression.parser' using soul parser generator spg version 5.0.0
 
 export module soul.cpp.expression.parser;
 
@@ -20,7 +20,6 @@ struct ExpressionParser
     static soul::parser::Match AssignmentExpression(LexerT& lexer);
     static soul::parser::Match AssignmentOp(LexerT& lexer);
     static soul::parser::Match ConditionalExpression(LexerT& lexer);
-    static soul::parser::Match ThrowExpression(LexerT& lexer);
     static soul::parser::Match LogicalOrExpression(LexerT& lexer);
     static soul::parser::Match LogicalAndExpression(LexerT& lexer);
     static soul::parser::Match InclusiveOrExpression(LexerT& lexer);

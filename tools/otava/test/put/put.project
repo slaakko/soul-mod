@@ -1,0 +1,3 @@
+project put;
+target=program;
+source <put.cpp>;

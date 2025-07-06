@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/identifier.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/soul/cpp/identifier.parser' using soul parser generator spg version 5.0.0
 
 module soul.cpp.identifier.parser;
 
@@ -30,7 +30,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::CppIdentifier(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "CppIdentifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614337);
@@ -78,7 +78,7 @@ soul::parser::Match CppIdentifierParser<LexerT>::QualifiedCppId(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedCppId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2155528619961614338);

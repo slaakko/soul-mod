@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/function.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/function.parser' using soul parser generator spg version 5.0.0
 
 export module otava.parser.function;
 
@@ -33,7 +33,6 @@ struct FunctionParser
     static soul::parser::Match OperatorKw(LexerT& lexer);
     static soul::parser::Match Operator(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match Noexcept(LexerT& lexer);
-    static soul::parser::Match FunctionTryBlock(LexerT& lexer, otava::symbols::Context* context);
 };
 
 } // namespace otava::parser::function

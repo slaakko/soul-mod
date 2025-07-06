@@ -30,8 +30,7 @@ class BoundGotoStatementNode;
 class BoundConstructionStatementNode;
 class BoundExpressionStatementNode;
 class BoundSetVPtrStatementNode;
-class BoundTryStatementNode;
-class BoundHandlerNode;
+class BoundValueExpressionNode;
 class BoundLiteralNode;
 class BoundStringLiteralNode;
 class BoundVariableNode;
@@ -54,7 +53,6 @@ class BoundPtrToRefNode;
 class BoundDefaultInitNode;
 class BoundTemporaryNode;
 class BoundConstructExpressionNode;
-class BoundThrowExpressionNode;
 class BoundConstructTemporaryNode;
 class BoundGlobalVariableDefinitionNode;
 class BoundEmptyDestructorNode;
@@ -86,8 +84,7 @@ public:
     virtual void Visit(BoundConstructionStatementNode& node) {}
     virtual void Visit(BoundExpressionStatementNode& node) {}
     virtual void Visit(BoundSetVPtrStatementNode& node) {}
-    virtual void Visit(BoundTryStatementNode& node) {}
-    virtual void Visit(BoundHandlerNode& node) {}
+    virtual void Visit(BoundValueExpressionNode& node) {}
     virtual void Visit(BoundLiteralNode& node) {}
     virtual void Visit(BoundStringLiteralNode& node) {}
     virtual void Visit(BoundVariableNode& node) {}
@@ -111,7 +108,6 @@ public:
     virtual void Visit(BoundTemporaryNode& node) {}
     virtual void Visit(BoundConstructTemporaryNode& node) {}
     virtual void Visit(BoundConstructExpressionNode& node) {}
-    virtual void Visit(BoundThrowExpressionNode& node) {}
     virtual void Visit(BoundGlobalVariableDefinitionNode& node) {}
     virtual void Visit(BoundEmptyDestructorNode& node) {}
     virtual void Visit(BoundFunctionValueNode& node) {}

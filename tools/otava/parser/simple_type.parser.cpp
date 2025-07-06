@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/simple_type.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/simple_type.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.simple.type;
 
@@ -24,7 +24,7 @@ soul::parser::Match SimpleTypeParser<LexerT>::SimpleType(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SimpleType");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SimpleType");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 695727793635328001);

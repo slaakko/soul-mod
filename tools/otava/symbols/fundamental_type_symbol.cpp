@@ -13,7 +13,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
-import otava.intermediate.type;
+import otava.intermediate.types;
 
 namespace otava::symbols {
 

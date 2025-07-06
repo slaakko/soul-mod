@@ -5,13 +5,15 @@
 
 export module otava.intermediate.visitor;
 
+import std;
+
 export namespace otava::intermediate {
 
 class Context;
 class StructureType;
+class FwdDeclaredStructureType;
 class ArrayType;
 class FunctionType;
-class FwdDeclaredStructureType;
 class GlobalVariable;
 class Function;
 class BasicBlock;
@@ -26,6 +28,7 @@ class NotInstruction;
 class NegInstruction;
 class SignExtendInstruction;
 class ZeroExtendInstruction;
+class FloatingPointExtendInstruction;
 class TruncateInstruction;
 class BitcastInstruction;
 class IntToFloatInstruction;
@@ -51,8 +54,6 @@ class ElemAddrInstruction;
 class PtrOffsetInstruction;
 class PtrDiffInstruction;
 class FunctionCallInstruction;
-class TrapInstruction;
-class PhiInstruction;
 class NoOperationInstruction;
 
 class BoolValue;
@@ -82,9 +83,9 @@ public:
     Visitor(Context* context_);
     Context* GetContext() const { return context; }
     virtual void Visit(StructureType& structureType) {}
+    virtual void Visit(FwdDeclaredStructureType& fwdDeclareStructureType) {}
     virtual void Visit(ArrayType& arrayType) {}
     virtual void Visit(FunctionType& functionType) {}
-    virtual void Visit(FwdDeclaredStructureType& fwdDeclaredStructureType) {}
     virtual void Visit(GlobalVariable& globalVariable) {}
     virtual void Visit(Function& function) {}
     virtual void Visit(BasicBlock& basicBlock) {}
@@ -99,6 +100,7 @@ public:
     virtual void Visit(NegInstruction& inst) {}
     virtual void Visit(SignExtendInstruction& inst) {}
     virtual void Visit(ZeroExtendInstruction& inst) {}
+    virtual void Visit(FloatingPointExtendInstruction& inst) {}
     virtual void Visit(TruncateInstruction& inst) {}
     virtual void Visit(BitcastInstruction& inst) {}
     virtual void Visit(IntToFloatInstruction& inst) {}
@@ -124,8 +126,6 @@ public:
     virtual void Visit(PtrOffsetInstruction& inst) {}
     virtual void Visit(PtrDiffInstruction& inst) {}
     virtual void Visit(FunctionCallInstruction& inst) {}
-    virtual void Visit(TrapInstruction& inst) {}
-    virtual void Visit(PhiInstruction& inst) {}
     virtual void Visit(NoOperationInstruction& inst) {}
     virtual void Visit(BoolValue& value) {}
     virtual void Visit(SByteValue& value) {}

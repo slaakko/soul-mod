@@ -3,15 +3,14 @@
 // Distributed under the MIT license
 // =================================
 
-export module otava.intermediate.compile.unit;
+export module otava.intermediate.compile_unit;
 
 import std;
-import otava.intermediate.metadata;
 
 export namespace otava::intermediate {
 
-class Function;
-class FunctionType;
+class Context;
+class MetadataRef;
 
 class CompileUnit
 {

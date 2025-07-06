@@ -11,7 +11,7 @@ import soul.lexer.file.map;
 import soul.ast.source.pos;
 import otava.ast.node;
 import otava.ast.function;
-import otava.intermediate.value;
+import otava.intermediate.data;
 import otava.symbols.instantiation_queue;
 import otava.symbols.function_definition_symbol_set;
 import otava.symbols.templates;
@@ -55,7 +55,8 @@ enum class ContextFlags : std::int32_t
     reinterpretCast = 1 << 26,
     derefAfterConv = 1 << 27,
     generatingVTab = 1 << 28,
-    resolveNestedTypes = 1 << 29
+    resolveNestedTypes = 1 << 29,
+    release = 1 << 30
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -114,6 +115,10 @@ public:
     void SetFlag(ContextFlags flag) { flags = flags | flag; }
     bool GetFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
     void ResetFlag(ContextFlags flag) { flags = flags & ~flag; }
+    bool ReleaseConfig() const { return GetFlag(ContextFlags::release); }
+    void SetReleaseConfig() { SetFlag(ContextFlags::release); }
+    int OptLevel() const;
+    void SetOptLevel(int optLevel_) { optLevel = optLevel_; }
     bool IsConstructorNameNode(otava::ast::Node* node) const;
     bool EnableNoDeclSpecFunctionDeclaration() const;
     bool EnableNoDeclSpecFunctionDefinition() const;
@@ -159,6 +164,10 @@ public:
     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* TemplateParameterMap() const { return templateParameterMap; }
     void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
     const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    TypeSymbol* ArgType() { return argType; }
+    void SetArgType(TypeSymbol* argType_) { argType = argType_; }
+    TypeSymbol* ParamType() { return paramType; }
+    void SetParamType(TypeSymbol* paramType_) { paramType = paramType_; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -168,6 +177,7 @@ private:
     std::vector<std::unique_ptr<BoundFunctionNode>> boundVTabFunctions;
     ContextFlags flags;
     std::stack<ContextFlags> flagStack;
+    int optLevel;
     std::stack<otava::ast::Node*> nodeStack;
     otava::ast::Node* node;
     std::map<otava::ast::Node*, std::unique_ptr<DeclarationList>> declarationMap;
@@ -190,6 +200,8 @@ private:
     std::stack< std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>*> templateParameterMapStack;
     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParameterMap;
     soul::ast::SourcePos sourcePos;
+    TypeSymbol* argType;
+    TypeSymbol* paramType;
 };
 
 } // namespace otava::symbols

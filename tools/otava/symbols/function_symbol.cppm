@@ -10,7 +10,7 @@ import otava.symbols.symbol;
 import otava.symbols.container.symbol;
 import otava.symbols.bound.tree;
 import otava.ast.node;
-import otava.intermediate.type;
+import otava.intermediate.types;
 
 export namespace otava::symbols {
 
@@ -57,7 +57,7 @@ std::string MakeFunctionQualifierStr(FunctionQualifiers qualifiers);
 
 enum class FunctionSymbolFlags : std::int32_t
 {
-    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3, conversion = 1 << 4, fixedIrName = 1 << 5
+    none = 0, bound = 1 << 0, specialization = 1 << 1, trivialDestructor = 1 << 2, returnsClass = 1 << 3, conversion = 1 << 4, fixedIrName = 1 << 5, inline_ = 1 << 6
 };
 
 constexpr FunctionSymbolFlags operator|(FunctionSymbolFlags left, FunctionSymbolFlags right)
@@ -122,6 +122,8 @@ public:
     void SetFunctionKind(FunctionKind kind_) { kind = kind_; }
     FunctionQualifiers Qualifiers() const { return qualifiers; }
     void SetFunctionQualifiers(FunctionQualifiers qualifiers_) { qualifiers = qualifiers_; }
+    bool IsInline() const { return GetFlag(FunctionSymbolFlags::inline_); }
+    void SetInline() { SetFlag(FunctionSymbolFlags::inline_); }
     bool IsConversion() const { return GetFlag(FunctionSymbolFlags::conversion); }
     void SetConversion() { SetFlag(FunctionSymbolFlags::conversion); }
     bool IsConversionMemFn() const { return GetFunctionKind() == FunctionKind::conversionMemFn; }

@@ -5,39 +5,48 @@
 
 export module otava.assembly.context;
 
-import std;
 import otava.assembly.reg;
-import otava.assembly.value;
+import otava.assembly.expr;
+import std;
 
 export namespace otava::assembly {
 
-enum class Operator;
-class UniqueLiteral;
+class IntegerLiteral;
+class Symbol;
+class Macro;
+class Function;
+class File;
+class Value;
 
 class Context
 {
 public:
     Context();
-    RegisterPool& GetRegisterPool() { return *registerPool; }
+    void SetFile(File* file_) { file = file_; }
+    File* GetFile() const { return file; }
+    RegisterPool* GetRegisterPool() { return registerPool.get(); }
     void ResetRegisterPool();
+    void SetCurrentFunction(Function* function) { currentFunction = function; }
     Register* GetLocalReg(std::int64_t size);
     Register* GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind);
-    Value* MakeLiteral(std::int64_t value, std::int64_t size);
-    UniqueLiteral* MakeUniqueLiteral(std::int64_t value, std::int64_t size);
+    Register* GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind, bool used);
+    IntegerLiteral* MakeIntegerLiteral(std::int64_t value, int size);
+    Value* MakeFloatLiteralSymbol(float value);
+    Value* MakeDoubleLiteralSymbol(double value);
+    Symbol* MakeSymbol(const std::string& symbolName);
+    Macro* MakeMacro(const std::string& name);
     Value* MakeContent(Value* value);
     Value* MakeSizePrefix(std::int64_t size, Value* value);
     Value* MakeBinaryExpr(Value* left, Value* right, Operator op);
-    Value* MakeSymbol(const std::string& name);
+    int GetNextJumpTabLabelId() { return jumpTabLabelCounter++; }
 private:
     Registers registers;
+    File* file;
     std::unique_ptr<RegisterPool> registerPool;
     std::vector<std::unique_ptr<Value>> values;
-    std::map<std::pair<std::int64_t, int>, Value*> literalValueMap;
-    std::map<Value*, Value*> contentValueMap;
-    std::map<std::pair<int, Value*>, Value*> sizePrefixValueMap;
-    std::map<std::pair<std::pair<Value*, Value*>, Operator>, Value*> binaryExprValueMap;
-    std::map<std::string, Value*> symbolValueMap;
+    Function* currentFunction;
+    int floatingLiteralCounter;
+    int jumpTabLabelCounter;
 };
 
-} // namespace otava::assembly
-
+} // otava::assembly

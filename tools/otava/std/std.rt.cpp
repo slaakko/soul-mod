@@ -1,13 +1,13 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
-module std.crt;
+module std.rt;
 
 namespace std {
 
-crt_init::crt_init()
+rt_init::rt_init()
 {
     stdin = static_cast<void*>(&stdin_);
     stdout = static_cast<void*>(&stdout_);

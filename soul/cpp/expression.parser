@@ -50,7 +50,6 @@ parser ExpressionParser
     AssignmentExpression : soul::ast::cpp::Node*
         ::= LogicalOrExpression:left AssignmentOp:op AssignmentExpression:right!{ return new soul::ast::cpp::BinaryOpExprNode(lexer.GetSourcePos(pos), op, left, right); }
         |   ConditionalExpression:conditionalExpr{ return conditionalExpr; }
-        |   ThrowExpression:throwExpr{ return throwExpr; }
         ;
 
     AssignmentOp : soul::ast::cpp::Operator
@@ -76,16 +75,6 @@ parser ExpressionParser
         )
         {
             return expr.release();
-        }
-        ;
-
-    ThrowExpression : soul::ast::cpp::Node*
-        ::= 
-        (
-            THROW AssignmentExpression:exception?
-        )
-        {
-            return new soul::ast::cpp::ThrowExprNode(lexer.GetSourcePos(pos), exception);
         }
         ;
 

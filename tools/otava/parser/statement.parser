@@ -53,7 +53,6 @@ parser StatementParser
         |   SelectionStatement(context):selectionStatement{ return selectionStatement; }
         |   IterationStatement(context):iterationStatement{ return iterationStatement; }
         |   JumpStatement(context):jumpStatement{ return jumpStatement; }
-        |   TryStatement(context):tryStatement{ return tryStatement; }
         |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
         |   DeclarationStatement(context):declarationStatement{ return declarationStatement; }
         ;
@@ -454,61 +453,6 @@ parser StatementParser
         )
         {
             return new otava::ast::GotoStatementNode(sourcePos, target, attributes, semicolon, gotoPos);
-        }
-        ;
-
-    TryStatement(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos tryPos) : otava::ast::Node*
-        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
-        (
-            TRY{ tryPos = lexer.GetSourcePos(pos); if (!sourcePos.IsValid()) sourcePos = tryPos; }
-            CompoundStatement(context):tryBlock 
-            HandlerSeq(context):handlers
-        )
-        {
-            return new otava::ast::TryStatementNode(sourcePos, tryBlock, handlers, attributes, tryPos);
-        }
-        ;
-
-    HandlerSeq(otava::symbols::Context* context, var std::unique_ptr<otava::ast::Node> handlerSequenceNode) : otava::ast::Node*
-        ::= 
-        (
-            Handler(context):first{ handlerSequenceNode.reset(new otava::ast::HandlerSequenceNode(lexer.GetSourcePos(pos))); handlerSequenceNode->AddNode(first); }
-            (
-                Handler(context):next{ handlerSequenceNode->AddNode(next); }
-            )*
-        )
-        {
-            return handlerSequenceNode.release();
-        }
-        ;
-
-    Handler(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var soul::ast::SourcePos lpPos, var soul::ast::SourcePos rpPos) : otava::ast::Node*
-        ::= 
-        (
-            CATCH{ sourcePos = lexer.GetSourcePos(pos); } 
-            LPAREN{ lpPos = lexer.GetSourcePos(pos); } 
-            ExceptionDeclaration(context):exception 
-            RPAREN{ rpPos = lexer.GetSourcePos(pos); } 
-            CompoundStatement(context):catchBlock
-        )
-        {
-            return new otava::ast::HandlerNode(sourcePos, exception, catchBlock, lpPos, rpPos);
-        }
-        ;
-
-    ExceptionDeclaration(otava::symbols::Context* context, var soul::ast::SourcePos sourcePos, var std::unique_ptr<otava::ast::Node> typeSpecifiers, 
-        var std::unique_ptr<otava::ast::Node> declarator) : otava::ast::Node*
-        ::= (AttributeSpecifierSeq(context):attributes{ sourcePos = lexer.GetSourcePos(pos); })?
-        (
-            TypeSpecifierSeq(context):typeSpecifiersSeq{ if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); typeSpecifiers.reset(typeSpecifiersSeq); }
-            (   Declarator(context):declarator1{ declarator.reset(declarator1); } 
-            |   AbstractDeclarator(context):abstractDeclarator{ declarator.reset(abstractDeclarator); }
-            |   empty
-            )
-        |   Ellipsis:ellipsis{  if (!sourcePos.IsValid()) sourcePos = lexer.GetSourcePos(pos); return new otava::ast::ExceptionDeclarationNode(sourcePos, nullptr, nullptr, ellipsis, attributes); }
-        )
-        {
-            return new otava::ast::ExceptionDeclarationNode(sourcePos, typeSpecifiers.release(), declarator.release(), nullptr, attributes);
         }
         ;
 

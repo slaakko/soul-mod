@@ -69,10 +69,11 @@ public:
     basic_ostream<charT>& flush()
     {
         flush_handle(handle);
+        return *this;
     }
     void write(const char* s) override
     {
-        prints(s, handle);
+        ort_io_write(handle, s);
     }
     void write(const string& s) 
     {
@@ -96,39 +97,39 @@ basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int x)
     fmtflags f = s.flags();
     if ((f & fmtflags::dec) != fmtflags::none)
     {
-        string str = std::to_string(x);
+        string str = to_string(x);
         s.write(str);
     }
     else if ((f & fmtflags::oct) != fmtflags::none)
     {
-        string str = std::to_octstring(x);
+        string str = to_octstring(x);
         s.write(str);
     }
     else if ((f & fmtflags::hex) != fmtflags::none)
     {
-        string str = std::to_hexstring(x);
+        string str = to_hexstring(x);
         s.write(str);
     }
     return s;
 }
 
 template<typename charT>
-basic_ostream<charT>& operator<<(basic_ostream<charT>& s, int64_t x)
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, long long x)
 {
     fmtflags f = s.flags();
     if ((f & fmtflags::dec) != fmtflags::none)
     {
-        string str = std::to_string(x);
+        string str = to_string(x);
         s.write(str);
     }
     else if ((f & fmtflags::oct) != fmtflags::none)
     {
-        string str = std::to_octstring(x);
+        string str = to_octstring(x);
         s.write(str);
     }
     else if ((f & fmtflags::hex) != fmtflags::none)
     {
-        string str = std::to_hexstring(x);
+        string str = to_hexstring(x);
         s.write(str);
     }
     return s;
@@ -148,6 +149,189 @@ basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const string& str)
     return s;
 }
 
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, bool x)
+{
+    if (x) return s << "true"; else return s << "false";
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, long x)
+{
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = to_hexstring(x);
+        s.write(str);
+    }
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, unsigned long x)
+{
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = to_hexstring(x);
+        s.write(str);
+    }
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, unsigned long long x)
+{
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = to_hexstring(x);
+        s.write(str);
+    }
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, double x)
+{
+    string str(to_string(x));
+    return s << str;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, const void* x)
+{
+    unsigned long long value = *static_cast<const unsigned long long*>(x);
+    return s << value;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, nullptr_t)
+{
+    return s << "nullptr";
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, short x)
+{
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = to_hexstring(x);
+        s.write(str);
+    }
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>&operator<<(basic_ostream<charT>&s, unsigned short x)
+{
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = to_hexstring(x);
+        s.write(str);
+    }
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, unsigned int x)
+{
+    fmtflags f = s.flags();
+    if ((f & fmtflags::dec) != fmtflags::none)
+    {
+        string str = to_string(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::oct) != fmtflags::none)
+    {
+        string str = to_octstring(x);
+        s.write(str);
+    }
+    else if ((f & fmtflags::hex) != fmtflags::none)
+    {
+        string str = to_hexstring(x);
+        s.write(str);
+    }
+    return s;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, float x)
+{
+    string str(to_string(x));
+    return s << str;
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, ios_base& (*f)(ios_base&))
+{
+    return f(s);
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, basic_ios<charT>& (*f)(basic_ios<charT>&))
+{
+    return f(s);
+}
+
+template<typename charT>
+basic_ostream<charT>& operator<<(basic_ostream<charT>& s, basic_ostream<charT>& (*f)(basic_ostream<charT>&))
+{
+    return f(s);
+}
+
 ios_base& dec(std::ios_base& strm);
 ios_base& hex(std::ios_base& strm);
 ios_base& oct(std::ios_base& strm);
@@ -156,7 +340,7 @@ template<typename charT>
 basic_ostream<charT>& endl(basic_ostream<charT>& strm)
 {
     strm << "\n";
-    strm.flush();
+    return strm.flush();
 }
 
 template<typename charT>
@@ -261,10 +445,8 @@ using wfstream = basic_fstream<wchar_t>;
 using wsyncbuf = basic_syncbuf<wchar_t>;
 using wosyncstream = basic_osyncstream<wchar_t>;
 
-// istream cin;
-ostream cout(1);
-ostream cerr(2);
-// ostream clog;
+extern ostream cout;
+extern ostream cerr;
 
 /*
 template class basic_ostream<char>;

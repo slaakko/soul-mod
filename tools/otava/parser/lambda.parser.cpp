@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/lambda.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/lambda.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.lambda;
 
@@ -44,7 +44,7 @@ soul::parser::Match LambdaParser<LexerT>::LambdaExpression(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "LambdaExpression");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LambdaExpression");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758721);
@@ -169,7 +169,7 @@ soul::parser::Match LambdaParser<LexerT>::LambdaIntroducer(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "LambdaIntroducer");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LambdaIntroducer");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758722);
@@ -296,7 +296,7 @@ soul::parser::Match LambdaParser<LexerT>::LambdaCapture(LexerT& lexer, otava::sy
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "LambdaCapture");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LambdaCapture");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758723);
@@ -460,7 +460,7 @@ soul::parser::Match LambdaParser<LexerT>::CaptureDefault(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "CaptureDefault");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "CaptureDefault");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758724);
@@ -550,7 +550,7 @@ soul::parser::Match LambdaParser<LexerT>::CaptureList(LexerT& lexer, otava::symb
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "CaptureList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "CaptureList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758725);
@@ -668,7 +668,7 @@ soul::parser::Match LambdaParser<LexerT>::Capture(LexerT& lexer, otava::symbols:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Capture");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Capture");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758726);
@@ -747,7 +747,7 @@ soul::parser::Match LambdaParser<LexerT>::InitCapture(LexerT& lexer, otava::symb
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "InitCapture");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "InitCapture");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758727);
@@ -920,7 +920,7 @@ soul::parser::Match LambdaParser<LexerT>::SimpleCapture(LexerT& lexer, otava::sy
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SimpleCapture");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SimpleCapture");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758728);
@@ -1179,7 +1179,7 @@ soul::parser::Match LambdaParser<LexerT>::LambdaDeclarator(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "LambdaDeclarator");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LambdaDeclarator");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758729);
@@ -1370,7 +1370,7 @@ soul::parser::Match LambdaParser<LexerT>::LambdaSpecifiers(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "LambdaSpecifiers");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LambdaSpecifiers");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758730);
@@ -1584,7 +1584,7 @@ soul::parser::Match LambdaParser<LexerT>::LambdaTemplateParams(LexerT& lexer, ot
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "LambdaTemplateParams");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LambdaTemplateParams");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8834454897001758731);

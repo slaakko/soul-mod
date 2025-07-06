@@ -71,7 +71,7 @@ enum class BoundNodeKind
     boundCompoundStatementNode, boundIfStatementNode, boundSwitchStatementNode, boundCaseStatementNode, boundDefaultStatementNode,
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode, boundSetVPtrStatementNode,
-    boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
+    boundValueNode, boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
     boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
@@ -106,6 +106,12 @@ public:
     bool IsBoundConversionNode() const { return kind == BoundNodeKind::boundConversionNode; }
     bool IsBoundFunctionNode() const { return kind == BoundNodeKind::boundFunctionNode; }
     bool IsBoundCompoundStatementNode() const { return kind == BoundNodeKind::boundCompoundStatementNode; }
+    bool IsSwitchStatementNode() const { return kind == BoundNodeKind::boundSwitchStatementNode; }
+    bool IsWhileStatementNode() const { return kind == BoundNodeKind::boundWhileStatementNode; }
+    bool IsDoStatementNode() const { return kind == BoundNodeKind::boundDoStatementNode; }
+    bool IsForStatementNode() const { return kind == BoundNodeKind::boundForStatementNode; }
+    bool IsIfStatementNode() const { return kind == BoundNodeKind::boundIfStatementNode; }
+    bool IsBoundLiteralNode() const { return kind == BoundNodeKind::boundLiteralNode; }
     int Index() const { return index; }
     void SetIndex(int index_) { index = index_; }
 private:
@@ -159,6 +165,18 @@ public:
 private:
     BoundExpressionFlags flags;
     TypeSymbol* type;
+};
+
+class BoundValueExpressionNode : public BoundExpressionNode
+{
+public:
+    BoundValueExpressionNode(otava::intermediate::Value* value_, TypeSymbol* type);
+    bool HasValue() const override { return true; }
+    void Accept(BoundTreeVisitor& visitor) override;
+    BoundExpressionNode* Clone() const override;
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    otava::intermediate::Value* value;
 };
 
 class BoundFunctionNode;
@@ -272,6 +290,8 @@ public:
     void SetGenerated() { generated = true; }
     bool Postfix() const { return postfix; }
     void SetPostfix() { postfix = true; }
+    bool IsConditionalStatementInBlock(BoundCompoundStatementNode* block) const;
+    BoundCompoundStatementNode* Block();
 private:
     BoundStatementNode* parent;
     bool generated;
@@ -488,35 +508,6 @@ public:
 private:
     std::unique_ptr<BoundExpressionNode> thisPtr;
     ClassTypeSymbol* forClass;
-};
-
-class BoundHandlerNode;
-
-class BoundTryStatementNode : public BoundStatementNode
-{
-public:
-    BoundTryStatementNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* tryBlock_);
-    BoundCompoundStatementNode* TryBlock() const { return tryBlock.get(); }
-    void AddHandler(BoundHandlerNode* handler);
-    const std::vector<std::unique_ptr<BoundHandlerNode>>& Handlers() const { return handlers; }
-    void Accept(BoundTreeVisitor& visitor) override;
-private:
-    std::unique_ptr<BoundCompoundStatementNode> tryBlock;
-    std::vector<std::unique_ptr<BoundHandlerNode>> handlers;
-};
-
-class BoundHandlerNode : public BoundStatementNode
-{
-public:
-    BoundHandlerNode(const soul::ast::SourcePos& sourcePos_, BoundCompoundStatementNode* catchBlock_, const std::u32string& exceptionParamName_, const util::uuid& exceptionTypeId_);
-    BoundCompoundStatementNode* CatchBlock() const { return catchBlock.get(); }
-    const std::u32string& ExceptionParamName() const { return exceptionParamName; }
-    const util::uuid& ExceptionTypeId() const { return exceptionTypeId; }
-    void Accept(BoundTreeVisitor& visitor) override;
-private:
-    std::unique_ptr<BoundCompoundStatementNode> catchBlock;
-    std::u32string exceptionParamName;
-    util::uuid exceptionTypeId;
 };
 
 class BoundLiteralNode : public BoundExpressionNode
@@ -871,20 +862,6 @@ private:
     bool hasPlacement;
 };
 
-class BoundThrowExpressionNode : public BoundExpressionNode
-{
-public:
-    BoundThrowExpressionNode(BoundExpressionNode* exception_, const soul::ast::SourcePos& sourcePos_);
-    void Accept(BoundTreeVisitor& visitor) override;
-    BoundExpressionNode* Exception() const { return exception.get(); }
-    BoundExpressionNode* Clone() const override;
-    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool IsBoundThrowExpression() const override { return true; }
-    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
-private:
-    std::unique_ptr<BoundExpressionNode> exception;
-};
-
 class BoundGlobalVariableDefinitionNode : public BoundNode
 {
 public:
@@ -926,5 +903,7 @@ public:
 private:
     std::unique_ptr<BoundExpressionNode> addrOfBoundVariable;
 };
+
+bool InDirectSwitchStatement(BoundStatementNode* statement);
 
 } // namespace otava::symbols

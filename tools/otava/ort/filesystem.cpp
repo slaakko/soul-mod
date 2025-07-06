@@ -5,7 +5,6 @@
 
 module otava.filesystem;
 
-// import std.filesystem;
 import util.text.util;
 
 void* fs_path_default_ctor()

@@ -5,8 +5,8 @@
 
 export module otava.assembly.expr;
 
-import std;
 import otava.assembly.value;
+import std;
 
 export namespace otava::assembly {
 
@@ -18,7 +18,7 @@ enum class Operator
 class UnaryExpr : public Value
 {
 public:
-    UnaryExpr(Value* value_, const std::string& str_);
+    UnaryExpr(ValueKind kind_, Value* value_, const std::string& str_);
     Value* GetValue() const { return value; }
 private:
     Value* value;

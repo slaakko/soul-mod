@@ -220,6 +220,7 @@
     <ClCompile Include="ZLibInterface.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="assert.hpp" />
     <ClInclude Include="ZLibInterface.h" />
   </ItemGroup>
   <ItemGroup>

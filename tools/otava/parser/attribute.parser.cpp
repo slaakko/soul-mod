@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/attribute.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/attribute.parser' using soul parser generator spg version 5.0.0
 
 module otava.parser.attribute;
 
@@ -30,7 +30,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifierSeq(LexerT& lexer
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeSpecifierSeq");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeSpecifierSeq");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710849);
@@ -143,7 +143,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeSpecifier(LexerT& lexer, o
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeSpecifier");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeSpecifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710850);
@@ -396,7 +396,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeList(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeList");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeList");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710851);
@@ -714,7 +714,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeUsingPrefix(LexerT& lexer,
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeUsingPrefix");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeUsingPrefix");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710852);
@@ -826,7 +826,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeNamespace(LexerT& lexer, o
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeNamespace");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeNamespace");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710853);
@@ -871,7 +871,7 @@ soul::parser::Match AttributeParser<LexerT>::Attribute(LexerT& lexer, otava::sym
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Attribute");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Attribute");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710854);
@@ -962,7 +962,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeToken(LexerT& lexer, otava
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeToken");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeToken");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710855);
@@ -1041,7 +1041,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeScopedToken(LexerT& lexer,
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeScopedToken");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeScopedToken");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710856);
@@ -1136,7 +1136,7 @@ soul::parser::Match AttributeParser<LexerT>::AttributeArgumentClause(LexerT& lex
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AttributeArgumentClause");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AttributeArgumentClause");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710857);
@@ -1262,7 +1262,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedTokenSeq(LexerT& lexer, ota
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "BalancedTokenSeq");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "BalancedTokenSeq");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710858);
@@ -1375,7 +1375,7 @@ soul::parser::Match AttributeParser<LexerT>::BalancedToken(LexerT& lexer, otava:
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "BalancedToken");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "BalancedToken");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710859);
@@ -1836,7 +1836,7 @@ soul::parser::Match AttributeParser<LexerT>::AlignmentSpecifier(LexerT& lexer, o
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "AlignmentSpecifier");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "AlignmentSpecifier");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 4789400228853710860);

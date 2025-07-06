@@ -24,7 +24,6 @@ class BoundExpressionNode;
 class BoundFunctionCallNode;
 class BoundStatement;
 class BoundCompoundStatementNode;
-class BoundTryStatementNode;
 
 class StatementBinder : public otava::ast::DefaultVisitor
 {
@@ -55,8 +54,6 @@ public:
     void Visit(otava::ast::DeclarationStatementNode& node) override;
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
     void Visit(otava::ast::AliasDeclarationNode& node) override;
-    void Visit(otava::ast::TryStatementNode& node) override;
-    void Visit(otava::ast::HandlerNode& node) override;
     void Visit(otava::ast::BoundStatementNode& node) override;
 private:
     void SetStatement(BoundStatementNode* statement);
@@ -83,7 +80,6 @@ private:
     ClassTypeSymbol* classTypeSymbol;
     VariableSymbol* memberVariableSymbol;
     std::vector<std::unique_ptr<BoundExpressionNode>> initializerArgs;
-    BoundTryStatementNode* boundTryStatementNode;
     bool resolveClass;
     bool resolveMemberVariable;
     bool resolveInitializerArguments;

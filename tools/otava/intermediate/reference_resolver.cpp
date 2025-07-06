@@ -6,9 +6,6 @@
 module otava.intermediate.reference_resolver;
 
 import otava.intermediate.visitor;
-import otava.intermediate.function;
-import otava.intermediate.basic.block;
-import otava.intermediate.instruction;
 import otava.intermediate.code;
 import otava.intermediate.context;
 import otava.intermediate.error;
@@ -51,7 +48,7 @@ void ResolverVisitor::Visit(JmpInstruction& inst)
     BasicBlock* targetBasicBlock = function->GetBasicBlock(target);
     if (!targetBasicBlock)
     {
-        Error("resolve error: jump target basic block " + std::to_string(target) + " not found from function '" + function->Name() + "'", inst.GetSourcePos(), GetContext());
+        Error("resolve error: jump target basic block " + std::to_string(target) + " not found from function '" + function->Name() + "'", inst.Span(), GetContext());
     }
     inst.SetTargetBasicBlock(targetBasicBlock);
 }
@@ -65,7 +62,7 @@ void ResolverVisitor::Visit(BranchInstruction& inst)
     if (!trueTargetBasicBlock)
     {
         Error("resolve error: branch true target basic block " + std::to_string(trueTarget) + " not found from function '" + trueFunction->Name() + "'",
-            inst.GetSourcePos(), GetContext());
+            inst.Span(), GetContext());
     }
     inst.SetTrueTargetBasicBlock(trueTargetBasicBlock);
     std::int32_t falseTarget = inst.FalseTargetLabelId();
@@ -75,30 +72,30 @@ void ResolverVisitor::Visit(BranchInstruction& inst)
     if (!falseTargetBasicBlock)
     {
         Error("resolve error: branch false target basic block " + std::to_string(falseTarget) + " not found from function '" + falseFunction->Name() + "'",
-            inst.GetSourcePos(), GetContext());
+            inst.Span(), GetContext());
     }
     inst.SetFalseTargetBasicBlock(falseTargetBasicBlock);
 }
 
 void ResolverVisitor::Visit(SwitchInstruction& inst)
 {
-    std::int32_t defaultTarget = inst.DefaultTargetId();
+    std::int32_t defaultTarget = inst.DefaultTargetLabelId();
     BasicBlock* parent = inst.Parent();
     Function* function = parent->Parent();
     BasicBlock* defaultTargetBlock = function->GetBasicBlock(defaultTarget);
     if (!defaultTargetBlock)
     {
         Error("resolve error: switch default target basic block " + std::to_string(defaultTarget) +
-            " not found from function '" + function->Name() + "'", inst.GetSourcePos(), GetContext());
+            " not found from function '" + function->Name() + "'", inst.Span(), GetContext());
     }
     inst.SetDefaultTargetBlock(defaultTargetBlock);
     for (CaseTarget& caseTarget : inst.CaseTargets())
     {
-        BasicBlock* caseTargetBlock = function->GetBasicBlock(caseTarget.targetBlockId);
+        BasicBlock* caseTargetBlock = function->GetBasicBlock(caseTarget.targetLabelId);
         if (!caseTargetBlock)
         {
-            Error("resolve error: switch case target basic block " + std::to_string(caseTarget.targetBlockId) +
-                " not found from function '" + function->Name() + "'", inst.GetSourcePos(), GetContext());
+            Error("resolve error: switch case target basic block " + std::to_string(caseTarget.targetLabelId) +
+                " not found from function '" + function->Name() + "'", inst.Span(), GetContext());
         }
         caseTarget.targetBlock = caseTargetBlock;
     }

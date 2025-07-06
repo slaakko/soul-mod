@@ -15,7 +15,6 @@ import otava.symbols.exception;
 import util.path;
 import util.code.formatter;
 import util.file.stream;
-// import std.filesystem;
 
 namespace otava::build {
 
@@ -42,6 +41,7 @@ void MSBuild(const std::string& projectFilePath, const std::string& config)
         formatter.WriteLine("call \"" + vcvars64Path + "\"");
         formatter.WriteLine("msbuild -verbosity:minimal -t:Rebuild -p:Configuration=\"" + Config + "\" " + "\"" + projectFilePath + "\"" + " > \"" + projectDir + 
             "/build.out.log\" 2> \"" + projectDir + "/build.error.log\"");
+        formatter.WriteLine("exit %ERRORLEVEL%");
     }
     std::string commandLine = "cmd /C \"" + buildBatPath + "\"";
     STARTUPINFOA startupInfo;
@@ -56,6 +56,8 @@ void MSBuild(const std::string& projectFilePath, const std::string& config)
         throw std::runtime_error("could not run build.bat");
     }
     WaitForSingleObject(processInfo.hProcess, INFINITE);
+    DWORD buildExitCode = 0;
+    GetExitCodeProcess(processInfo.hProcess, &buildExitCode);
     CloseHandle(processInfo.hProcess);
     CloseHandle(processInfo.hThread);
     if (std::filesystem::exists(projectDir + "/build.out.log"))
@@ -66,13 +68,15 @@ void MSBuild(const std::string& projectFilePath, const std::string& config)
     if (std::filesystem::exists(projectDir + "/build.error.log"))
     {
         std::string buildErrorLog = util::ReadFile(projectDir + "/build.error.log");
-        if (buildErrorLog.empty())
+        if (!buildErrorLog.empty())
         {
-            return;
+            std::cout << buildErrorLog << std::endl;
         }
-        std::cout << buildErrorLog << std::endl;
+    }
+    if (buildExitCode != 0)
+    {
         otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("build failed");
+        throw std::runtime_error("msbuild failed with exit code " + std::to_string(buildExitCode));
     }
 }
 

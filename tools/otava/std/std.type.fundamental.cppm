@@ -1,5 +1,5 @@
 // =================================
-// Copyright (c) 2022 Seppo Laakko
+// Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
 
@@ -32,5 +32,7 @@ using ::int32_t;
 using ::uint32_t;
 using ::int64_t;
 using ::uint64_t;
+using ::ssize_t;
+using ::time_t;
 
 } // namespace std

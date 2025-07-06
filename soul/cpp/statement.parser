@@ -40,7 +40,6 @@ parser StatementParser
         |   IterationStatement:iterationStatement{ return iterationStatement; }
         |   JumpStatement:jumpStatement{ return jumpStatement; }
         |   DeclarationStatement:declarationStatement{ return declarationStatement; }
-        |   TryStatement:tryStatement{ return tryStatement; }
         |   ExpressionStatement:expressionStatement{ return expressionStatement; }  
         ;
 
@@ -217,48 +216,6 @@ parser StatementParser
             }
         |   Expression:expr{ return expr; }
         )
-        ;
-
-    TryStatement(var std::unique_ptr<soul::ast::cpp::TryStatementNode> tryStatement) : soul::ast::cpp::StatementNode*
-        ::=
-        (   
-            TRY 
-            CompoundStatement:tryBlock{ tryStatement.reset(new soul::ast::cpp::TryStatementNode(lexer.GetSourcePos(pos), tryBlock)); }
-            HandlerSeq(tryStatement.get()):handlerSeq!
-        )
-        {
-            return tryStatement.release();
-        }
-        ;
-
-    HandlerSeq(soul::ast::cpp::TryStatementNode* tryStatement)
-        ::= 
-        (
-            Handler:handler!{ tryStatement->Add(handler); } HandlerSeq(tryStatement):handlerSeq?
-        )
-        ;
-
-    Handler : soul::ast::cpp::HandlerNode*
-        ::= 
-        (
-            CATCH LPAREN! ExceptionDeclaration:exceptionDeclaration! RPAREN! CompoundStatement:catchBlock!
-        )
-        {
-            return new soul::ast::cpp::HandlerNode(lexer.GetSourcePos(pos), exceptionDeclaration, catchBlock);
-        }
-        ;
-
-    ExceptionDeclaration(var std::unique_ptr<soul::ast::cpp::ExceptionDeclarationNode> exceptionDeclaration) : soul::ast::cpp::ExceptionDeclarationNode*
-        ::= empty{ exceptionDeclaration.reset(new soul::ast::cpp::ExceptionDeclarationNode(lexer.GetSourcePos(pos))); }
-        (   TypeSpecifierSeq(exceptionDeclaration->TypeId()):typeSpecifierSeq
-            (   Declarator:declarator{ exceptionDeclaration->TypeId()->SetDeclarator(declarator); }
-            |   AbstractDeclarator:abstractDeclarator{ exceptionDeclaration->TypeId()->SetDeclarator(abstractDeclarator); }
-            )?
-        |   ELLIPSIS{ exceptionDeclaration->SetCatchAll(); }
-        )
-        {
-            return exceptionDeclaration.release();
-        }
         ;
 
     ExpressionStatement : soul::ast::cpp::StatementNode*

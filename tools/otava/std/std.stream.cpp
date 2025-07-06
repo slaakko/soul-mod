@@ -51,4 +51,7 @@ ios_base& oct(std::ios_base& strm)
     return strm;
 }
 
+ostream cout(1);
+ostream cerr(2);
+
 } // namespace std

@@ -10,12 +10,7 @@ import otava.intermediate;
 
 namespace otava::symbols {
 
-CodeGenerator::~CodeGenerator()
-{
-}
-
-Emitter::Emitter(CodeGenerator* codeGen_) : context(new otava::intermediate::Context()), stack(new IrValueStack()), nextBlock(nullptr), retValue(nullptr), codeGen(codeGen_),
-    exceptionHandlingFunctions(*this), cleanupList(*this)
+Emitter::Emitter() : context(new otava::intermediate::Context()), stack(new IrValueStack()), retValue(nullptr)
 {
 }
 
@@ -55,15 +50,16 @@ void Emitter::ResolveReferences()
     otava::intermediate::ResolveReferences(*context);
 }
 
-void Emitter::CreateFunction(const std::string& name, otava::intermediate::Type* type, bool once)
+otava::intermediate::Function* Emitter::CreateFunction(const std::string& name, otava::intermediate::Type* type, bool inline_, bool once)
 {
-    otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::SourcePos(), type, name, once, nullptr);
+    otava::intermediate::Function* function = context->AddFunctionDefinition(soul::ast::Span(), type, name, inline_, once, nullptr);
     context->SetCurrentFunction(function);
+    return function;
 }
 
 void Emitter::SetRegNumbers()
 {
-    context->CurrentFunction()->SetRegNumbers();
+    context->CurrentFunction()->SetNumbers();
 }
 
 otava::intermediate::Function* Emitter::GetOrInsertFunction(const std::string& name, otava::intermediate::FunctionType* functionType)
@@ -88,7 +84,7 @@ otava::intermediate::Type* Emitter::MakeStructureType(const std::vector<otava::i
     {
         fieldTypeRefs.push_back(elementType->GetTypeRef());
     }
-    return context->GetStructureType(soul::ast::SourcePos(), context->NextTypeId(), fieldTypeRefs);
+    return context->GetStructureType(soul::ast::Span(), context->NextTypeId(), fieldTypeRefs);
 }
 
 otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
@@ -99,13 +95,13 @@ otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* 
     {
         paramTypeRefs.push_back(paramType->GetTypeRef());
     }
-    return context->GetFunctionType(soul::ast::SourcePos(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
+    return context->GetFunctionType(soul::ast::Span(), context->NextTypeId(), returnTypeRef, paramTypeRefs);
 }
 
 otava::intermediate::Type* Emitter::MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType)
 {
     otava::intermediate::TypeRef elementTypeRef = elementType->GetTypeRef();
-    return context->GetArrayType(soul::ast::SourcePos(), context->NextTypeId(), size, elementTypeRef);
+    return context->GetArrayType(soul::ast::Span(), context->NextTypeId(), size, elementTypeRef);
 }
 
 otava::intermediate::Type* Emitter::MakeFwdDeclaredStructureType(const util::uuid& id)
@@ -270,39 +266,39 @@ otava::intermediate::Value* Emitter::EmitFloatingValue(otava::intermediate::Type
 
 otava::intermediate::Value* Emitter::EmitNull(otava::intermediate::Type* type)
 {
-    return context->GetNullValue(otava::intermediate::SourcePos(), type);
+    return context->GetNullValue(soul::ast::Span(), type);
 }
 
-otava::intermediate::Value* Emitter::EmitArrayValue(const std::vector<otava::intermediate::Value*>& elements)
+otava::intermediate::Value* Emitter::EmitArrayValue(const std::vector<otava::intermediate::Value*>& elements, otava::intermediate::ArrayType* arrayType)
 {
-    return context->MakeArrayValue(otava::intermediate::SourcePos(), elements);
+    return context->MakeArrayValue(soul::ast::Span(), elements, arrayType);
 }
 
-otava::intermediate::Value* Emitter::EmitStructureValue(const std::vector<otava::intermediate::Value*>& fieldValues)
+otava::intermediate::Value* Emitter::EmitStructureValue(const std::vector<otava::intermediate::Value*>& fieldValues, otava::intermediate::StructureType* structureType)
 {
-    return context->MakeStructureValue(otava::intermediate::SourcePos(), fieldValues);
+    return context->MakeStructureValue(soul::ast::Span(), fieldValues, structureType);
 }
 
 otava::intermediate::Value* Emitter::EmitStringValue(const std::string& value)
 {
-    otava::intermediate::Value* stringValue = context->MakeStringValue(otava::intermediate::SourcePos(), value);
+    otava::intermediate::Value* stringValue = context->MakeStringValue(soul::ast::Span(), value, false);
     otava::intermediate::GlobalVariable* globalVar = context->GetGlobalVariableForString(stringValue);
     return globalVar;
 }
 
 otava::intermediate::Value* Emitter::EmitConversionValue(otava::intermediate::Type* type, otava::intermediate::Value* from)
 {
-    return context->MakeConversionValue(otava::intermediate::SourcePos(), type, from);
+    return context->MakeConversionValue(soul::ast::Span(), type, from);
 }
 
 otava::intermediate::Value* Emitter::EmitGlobalVariable(otava::intermediate::Type* type, const std::string& variableName, otava::intermediate::Value* initializer)
 {
-    return context->AddGlobalVariable(otava::intermediate::SourcePos(), context->MakePtrType(type), type, variableName, initializer, false);
+    return context->AddGlobalVariable(soul::ast::Span(), context->MakePtrType(type), variableName, initializer);
 }
 
 otava::intermediate::Value* Emitter::EmitSymbolValue(otava::intermediate::Type* type, const std::string& symbol)
 {
-    return context->MakeSymbolValue(otava::intermediate::SourcePos(), type, symbol);
+    return context->MakeSymbolValue(soul::ast::Span(), type, symbol);
 }
 
 otava::intermediate::Value* Emitter::EmitNot(otava::intermediate::Value* value)
@@ -383,6 +379,11 @@ otava::intermediate::Value* Emitter::EmitSignExtend(otava::intermediate::Value* 
 otava::intermediate::Value* Emitter::EmitZeroExtend(otava::intermediate::Value* value, otava::intermediate::Type* destType)
 {
     return context->CreateZeroExtend(value, destType);
+}
+
+otava::intermediate::Value* Emitter::EmitFPExtend(otava::intermediate::Value* value, otava::intermediate::Type* destType)
+{
+    return context->CreateFloatingPointExtend(value, destType);
 }
 
 otava::intermediate::Value* Emitter::EmitTruncate(otava::intermediate::Value* value, otava::intermediate::Type* destType)
@@ -501,11 +502,6 @@ otava::intermediate::SwitchInstruction* Emitter::EmitSwitch(otava::intermediate:
     return context->CreateSwitch(cond, defaultDest);
 }
 
-void Emitter::EmitTrap(const std::vector<otava::intermediate::Value*>& args)
-{
-    context->CreateTrap(args);
-}
-
 void Emitter::EmitNop()
 {
     context->CreateNop();
@@ -563,11 +559,6 @@ otava::intermediate::Value* Emitter::GetVTabVariable(void* cls) const
 void Emitter::SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable)
 {
     vtabVariableMap[cls] = vtabVariable;
-}
-
-void Emitter::SetCodeGenNextBlock(otava::intermediate::BasicBlock* nextBlock_)
-{
-    codeGen->SetNextBlock(nextBlock_);
 }
 
 } // namespace otava::symbols

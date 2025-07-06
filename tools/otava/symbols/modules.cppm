@@ -21,7 +21,7 @@ class Reader;
 class Visitor;
 class FunctionDefinitionSymbolSet;
 
-std::string MakeModuleFilePath(const std::string& root, const std::string& moduleName);
+std::string MakeModuleFilePath(const std::string& root, const std::string& config, const std::string& moduleName);
 
 class ModuleMapper;
 
@@ -34,15 +34,15 @@ public:
     const std::string& FilePath() const { return filePath; }
     const std::string& Name() const { return name; }
     void Accept(Visitor& visitor);
-    void Import(ModuleMapper& moduleMapper);
-    void Import(Module* that, ModuleMapper& moduleMapper);
+    void Import(ModuleMapper& moduleMapper, const std::string& config);
+    void Import(Module* that, ModuleMapper& moduleMapper, const std::string& config);
     void ResolveForwardDeclarations();
     void ResolveAllForwardDeclarations();
     void AddDerivedClasses();
-    void Write(const std::string& root);
+    void Write(const std::string& root, const std::string& config);
     void Write(Writer& writer);
     void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
-    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper);
+    void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config);
     void Init();
     std::int32_t FileId() const { return fileId; }
     void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
@@ -67,7 +67,7 @@ public:
     void SetImplementationUnitNames(const std::vector<std::string>& names);
     const std::vector<Module*>& ImplementationUnits() const { return implementationUnits; }
     void AddImplementationUnit(Module* implementationUnit);
-    void LoadImplementationUnits(ModuleMapper& moduleMapper);
+    void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config);
     otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
 private:
     std::int32_t fileId;
@@ -99,8 +99,8 @@ class ModuleMapper
 public:
     ModuleMapper();
     void AddModule(Module* module);
-    Module* GetModule(const std::string& moduleName);
-    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath);
+    Module* GetModule(const std::string& moduleName, const std::string& config);
+    Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config);
     void AddRoot(const std::string& root);
     otava::ast::NodeMap* GetNodeMap() { return &nodeMap; }
     SymbolMap* GetSymbolMap() { return &symbolMap; }

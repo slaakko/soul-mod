@@ -387,6 +387,7 @@ bool Symbol::IsFunctionSymbol() const
         case SymbolKind::fundamentalTypeLess:
         case SymbolKind::fundamentalTypeSignExtension:
         case SymbolKind::fundamentalTypeZeroExtension:
+        case SymbolKind::fundamentalTypeFloatingPointExtension:
         case SymbolKind::fundamentalTypeTruncate:
         case SymbolKind::fundamentalTypeBitcast:
         case SymbolKind::fundamentalTypeIntToFloat:

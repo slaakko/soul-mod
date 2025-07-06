@@ -5,40 +5,28 @@
 
 export module otava.assembly.data;
 
-import std;
-import util.code.formatter;
 import otava.assembly.declaration;
+import util;
+import std;
 
 export namespace otava::assembly {
 
-class Value;
-
-enum class DataInst
-{
-    DB, DW, DD, DQ
-};
-
-std::string DataInstStr(DataInst inst);
+class Instruction;
 
 class Data
 {
 public:
-    Data(const std::string& label_, DataInst commonInst_);
-    void AddItem(DataInst inst, Value* item);
+    Data();
+    void AddInstruction(std::unique_ptr<Instruction>&& instruction);
     void Write(util::CodeFormatter& formatter);
-    void UseCommonInst(bool useCommonInst_) { useCommonInst = useCommonInst_; }
 private:
-    std::string label;
-    bool useCommonInst;
-    DataInst commonInst;
-    std::vector<DataInst> insts;
-    std::vector<Value*> items;
+    std::vector<std::unique_ptr<Instruction>> instructions;
 };
 
-class PublicDataDeclaration : public Declaration
+class PublicDeclaration : public Declaration
 {
 public:
-    PublicDataDeclaration(const std::string& name_);
+    PublicDeclaration(const std::string& name_);
     void Write(util::CodeFormatter& formatter) override;
 };
 
@@ -49,4 +37,4 @@ public:
     void Write(util::CodeFormatter& formatter) override;
 };
 
-} // namespace otava::assembly
+} // otava::assembly

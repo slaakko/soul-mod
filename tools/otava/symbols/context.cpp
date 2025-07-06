@@ -22,6 +22,7 @@ Context::Context() :
     symbolTable(nullptr), 
     lexer(nullptr), 
     flags(ContextFlags::none), 
+    optLevel(-1),
     node(nullptr), 
     boundCompileUnit(new BoundCompileUnitNode()),
     boundFunction(nullptr),
@@ -35,7 +36,9 @@ Context::Context() :
     instantiationQueue(nullptr),
     declaredInitializerType(nullptr),
     functionDefinitionSymbolSet(nullptr),
-    templateParameterMap(nullptr)
+    templateParameterMap(nullptr),
+    argType(nullptr),
+    paramType(nullptr)
 {
 }
 
@@ -126,6 +129,25 @@ void Context::PushResetFlag(ContextFlags flag)
 {
     PushFlags();
     ResetFlag(flag);
+}
+
+int Context::OptLevel() const
+{
+    if (ReleaseConfig())
+    {
+        if (optLevel == -1)
+        {
+            return 2;
+        }
+        else
+        {
+            return optLevel;
+        }
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 bool Context::IsConstructorNameNode(otava::ast::Node* node) const

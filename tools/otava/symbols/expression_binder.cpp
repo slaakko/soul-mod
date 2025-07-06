@@ -315,7 +315,6 @@ public:
     void Visit(otava::ast::PostfixIncExprNode& node) override;
     void Visit(otava::ast::PostfixDecExprNode& node) override;
     void Visit(otava::ast::CppCastExprNode& node) override;
-    void Visit(otava::ast::ThrowExprNode& node) override;
     void Visit(otava::ast::ExpressionListNode& node) override;
     void Visit(otava::ast::SizeOfTypeExprNode& node) override;
     void Visit(otava::ast::SizeOfUnaryExprNode& node) override;
@@ -684,30 +683,6 @@ void NewInitializerMaker::Visit(otava::ast::InvokeExprNode& node)
         otava::ast::Node* arg = node.Items()[i]->Clone();
         newInitializer->AddNode(arg);
     }
-}
-
-otava::ast::NewInitializerNode* MakeNewInitializer(otava::ast::ThrowExprNode& node)
-{
-    NewInitializerMaker maker(node.GetSourcePos());
-    node.Accept(maker);
-    return maker.GetNewInitializer();
-}
-
-void ExpressionBinder::Visit(otava::ast::ThrowExprNode& node)
-{
-    if (node.Exception())
-    {
-        node.Exception()->Accept(*this);
-        otava::ast::NewInitializerNode* initializer = MakeNewInitializer(node);
-        otava::ast::NewExprNode* newNode = new otava::ast::NewExprNode(node.GetSourcePos(), nullptr,
-           MakeTypeNameNodes(node.GetSourcePos(), boundExpression->GetType()->FullName()), initializer, nullptr, node.GetSourcePos());
-        newNode->Accept(*this);
-    }
-    else
-    {
-        boundExpression = nullptr;
-    }
-    boundExpression = new BoundThrowExpressionNode(boundExpression, node.GetSourcePos());
 }
 
 void ExpressionBinder::Visit(otava::ast::IntegerLiteralNode& node) 
@@ -1451,7 +1426,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfTypeExprNode& node)
 {
     TypeSymbol* type = ResolveType(node.Child(), DeclarationFlags::none, context);
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
-    Emitter emitter(nullptr);
+    Emitter emitter;
     otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
     std::int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"ssize_t");
@@ -1469,7 +1444,7 @@ void ExpressionBinder::Visit(otava::ast::SizeOfUnaryExprNode& node)
     boundExpression = BindExpression(node.Child(), context);
     TypeSymbol* type = boundExpression->GetType();
     type = type->DirectType(context)->FinalType(node.GetSourcePos(), context);
-    Emitter emitter(nullptr);
+    Emitter emitter;
     otava::intermediate::Type* irType = type->IrType(emitter, node.GetSourcePos(), context);
     std::int64_t size = irType->Size();
     otava::ast::IdentifierNode size_t_node(node.GetSourcePos(), U"size_t");

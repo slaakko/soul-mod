@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/tools/otava/parser/statement.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/tools/otava/parser/statement.parser' using soul parser generator spg version 5.0.0
 
 export module otava.parser.statement;
 
@@ -38,10 +38,6 @@ struct StatementParser
     static soul::parser::Match ReturnStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match CoroutineReturnStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match GotoStatement(LexerT& lexer, otava::symbols::Context* context);
-    static soul::parser::Match TryStatement(LexerT& lexer, otava::symbols::Context* context);
-    static soul::parser::Match HandlerSeq(LexerT& lexer, otava::symbols::Context* context);
-    static soul::parser::Match Handler(LexerT& lexer, otava::symbols::Context* context);
-    static soul::parser::Match ExceptionDeclaration(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match ExpressionStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match DeclarationStatement(LexerT& lexer, otava::symbols::Context* context);
     static soul::parser::Match InitStatement(LexerT& lexer, otava::symbols::Context* context);

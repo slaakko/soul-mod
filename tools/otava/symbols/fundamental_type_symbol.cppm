@@ -39,6 +39,8 @@ public:
     bool IsVoidType() const override { return fundamentalTypeKind == FundamentalTypeKind::voidType; }
     bool IsBoolType() const override { return fundamentalTypeKind == FundamentalTypeKind::boolType; }
     bool IsNullPtrType() const override { return fundamentalTypeKind == FundamentalTypeKind::nullPtrType; }
+    bool IsDoubleType() const override { return fundamentalTypeKind == FundamentalTypeKind::doubleType; }
+    bool IsFloatType() const override { return fundamentalTypeKind == FundamentalTypeKind::floatType; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::int32_t Score() const { return static_cast<std::int32_t>(fundamentalTypeKind); }
 private:

@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/cpp/declarator.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/soul/cpp/declarator.parser' using soul parser generator spg version 5.0.0
 
 export module soul.cpp.declarator.parser;
 
