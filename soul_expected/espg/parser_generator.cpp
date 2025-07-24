@@ -140,7 +140,8 @@ std::expected<bool, int> GenerateParsers(soul_expected::ast::spg::SpgFile* spgFi
     }
     if (xml)
     {
-        PrintXml(spgFile, verbose, optimize);
+        rv = PrintXml(spgFile, verbose, optimize);
+        if (!rv) return rv;
     }
     rv = GenerateCode(spgFile, verbose, noDebugSupport, version, fileMap);
     if (!rv) return rv;
