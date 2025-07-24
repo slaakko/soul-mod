@@ -171,6 +171,10 @@
       <Project>{c6161157-e06e-4a8f-9fe1-433146b8cf51}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="re.parser.opt.xml" />
+    <Xml Include="re.parser.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

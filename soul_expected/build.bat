@@ -14,9 +14,9 @@ popd
 pushd re_expected
 call build.bat
 popd
-pushd slg_expected
+pushd eslg
 call build.bat
 popd
-pushd spg_expected
+pushd espg
 call build.bat
 popd

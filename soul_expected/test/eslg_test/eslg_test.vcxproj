@@ -188,6 +188,18 @@
       <Project>{4e3b7ae8-4379-4c5b-8294-91313f8874fc}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="expression_file.parser.opt.xml" />
+    <Xml Include="expression_file.parser.xml" />
+    <Xml Include="keyword_file.parser.opt.xml" />
+    <Xml Include="keyword_file.parser.xml" />
+    <Xml Include="lexer_file.parser.opt.xml" />
+    <Xml Include="lexer_file.parser.xml" />
+    <Xml Include="slg_file.parser.opt.xml" />
+    <Xml Include="slg_file.parser.xml" />
+    <Xml Include="token_file.parser.opt.xml" />
+    <Xml Include="token_file.parser.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

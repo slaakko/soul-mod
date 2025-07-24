@@ -397,43 +397,40 @@ std::expected<soul_expected::parser::Match, int> LexerFileParser<LexerT>::LexerC
     {
         soul_expected::parser::Match match(false);
         soul_expected::parser::Match* parentMatch1 = &match;
+        switch (*lexer)
         {
-            std::int64_t save = lexer.GetPos();
-            soul_expected::parser::Match match(false);
-            soul_expected::parser::Match* parentMatch2 = &match;
+            case RULES:
             {
-                std::int64_t save = lexer.GetPos();
                 std::expected<soul_expected::parser::Match, int> m = LexerFileParser<LexerT>::Rules(lexer, context, lxr);
                 if (!m) return std::unexpected<int>(m.error());
                 soul_expected::parser::Match match = *m;
-                *parentMatch2 = match;
-                if (!match.hit)
+                if (match.hit)
                 {
-                    soul_expected::parser::Match match(false);
-                    soul_expected::parser::Match* parentMatch3 = &match;
-                    lexer.SetPos(save);
-                    {
-                        std::expected<soul_expected::parser::Match, int> m = LexerFileParser<LexerT>::Variables(lexer, context, lxr);
-                        if (!m) return std::unexpected<int>(m.error());
-                        soul_expected::parser::Match match = *m;
-                        *parentMatch3 = match;
-                    }
-                    *parentMatch2 = match;
+                    *parentMatch1 = match;
                 }
+                break;
             }
-            *parentMatch1 = match;
-            if (!match.hit)
+            case VARIABLES:
             {
-                soul_expected::parser::Match match(false);
-                soul_expected::parser::Match* parentMatch4 = &match;
-                lexer.SetPos(save);
+                std::expected<soul_expected::parser::Match, int> m = LexerFileParser<LexerT>::Variables(lexer, context, lxr);
+                if (!m) return std::unexpected<int>(m.error());
+                soul_expected::parser::Match match = *m;
+                if (match.hit)
                 {
-                    std::expected<soul_expected::parser::Match, int> m = LexerFileParser<LexerT>::Actions(lexer, context, lxr);
-                    if (!m) return std::unexpected<int>(m.error());
-                    soul_expected::parser::Match match = *m;
-                    *parentMatch4 = match;
+                    *parentMatch1 = match;
                 }
-                *parentMatch1 = match;
+                break;
+            }
+            case ACTIONS:
+            {
+                std::expected<soul_expected::parser::Match, int> m = LexerFileParser<LexerT>::Actions(lexer, context, lxr);
+                if (!m) return std::unexpected<int>(m.error());
+                soul_expected::parser::Match match = *m;
+                if (match.hit)
+                {
+                    *parentMatch1 = match;
+                }
+                break;
             }
         }
         *parentMatch0 = match;

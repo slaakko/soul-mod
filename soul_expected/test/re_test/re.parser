@@ -124,7 +124,7 @@ parser RegExParser
                     Range(lexerContext):r{ cls->AddSymbol(r); }
                 )*
             ) 
-            RBRACKET!
+            RBRACKET
         )
         {
             return cls;

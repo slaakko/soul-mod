@@ -182,6 +182,20 @@
       <Project>{67e5c044-c74e-4985-a976-2b6c91e7c085}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="declaration.parser.opt.xml" />
+    <Xml Include="declaration.parser.xml" />
+    <Xml Include="declarator.parser.opt.xml" />
+    <Xml Include="declarator.parser.xml" />
+    <Xml Include="expression.parser.opt.xml" />
+    <Xml Include="expression.parser.xml" />
+    <Xml Include="identifier.parser.opt.xml" />
+    <Xml Include="identifier.parser.xml" />
+    <Xml Include="literal.parser.opt.xml" />
+    <Xml Include="literal.parser.xml" />
+    <Xml Include="statement.parser.opt.xml" />
+    <Xml Include="statement.parser.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
