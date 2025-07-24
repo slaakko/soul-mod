@@ -24,6 +24,7 @@ interface <std.container.stack.cppm>;
 interface <std.container.vector.cppm>;
 interface <std.container.unordered_map.cppm>;
 interface <std.error.cppm>;
+interface <std.expected.cppm>;
 interface <std.filesystem.cppm>;
 source <std.filesystem.cpp>;
 interface <std.functional.cppm>;

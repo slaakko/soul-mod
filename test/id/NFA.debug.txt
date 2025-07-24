@@ -1,0 +1,26 @@
+0
+    CLASS [4]: [A-Z, a-z, _]
+    -> 1
+1 : prev: 0
+    EPS-> 9
+    EPS-> 6
+2 : prev: 6
+    CLASS [5]: [A-Z, a-z, _]
+    -> 3
+3 : prev: 2
+    EPS-> 7
+4 : prev: 6
+    CLASS [6]: [0-9]
+    -> 5
+5 : prev: 4
+    EPS-> 7
+6 : prev: 7 8 1
+    EPS-> 2
+    EPS-> 4
+7 : prev: 5 3
+    EPS-> 9
+    EPS-> 6
+8
+    EPS-> 9
+    EPS-> 6
+9 : RULE=0 : ACCEPT : prev: 7 8 1

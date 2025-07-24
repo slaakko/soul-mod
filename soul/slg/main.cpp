@@ -42,6 +42,9 @@ void PrintHelp()
     std::cout << "--ppstyle | -p" << std::endl;
     std::cout << "  Generate old preprocessor style code." << std::endl;
     std::cout << std::endl;
+    std::cout << "--debug | -d" << std::endl;
+    std::cout << "  Generate debug files." << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, const char** argv)
@@ -51,6 +54,7 @@ int main(int argc, const char** argv)
         Init();
         bool verbose = false;
         bool ppstyle = false;
+        bool debug = false;
         std::vector<std::string> files;
         for (int i = 1; i < argc; ++i)
         {
@@ -69,6 +73,10 @@ int main(int argc, const char** argv)
                 else if (arg == "--ppstyle")
                 {
                     ppstyle = true;
+                }
+                else if (arg == "--debug")
+                {
+                    debug = true;
                 }
                 else
                 {
@@ -95,6 +103,11 @@ int main(int argc, const char** argv)
                         case 'p':
                         {
                             ppstyle = true;
+                            break;
+                        }
+                        case 'd':
+                        {
+                            debug = true;
                             break;
                         }
                         default:
@@ -128,7 +141,7 @@ int main(int argc, const char** argv)
                     moduleMap.Read(moduleMapFilePath);
                 }
             }
-            soul::slg::GenerateLexer(slgFile.get(), verbose, moduleMap, ppstyle);
+            soul::slg::GenerateLexer(slgFile.get(), verbose, moduleMap, ppstyle, debug);
             if (ppstyle)
             {
                 moduleMap.Write(moduleMapFilePath);

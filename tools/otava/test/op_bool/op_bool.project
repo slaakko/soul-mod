@@ -1,0 +1,3 @@
+project op_bool;
+target=program;
+source <op_bool.cpp>;

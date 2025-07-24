@@ -11,7 +11,7 @@ module;
 module util.binary.resource.ptr;
 
 import util.unicode;
-import util.error;
+import util.win_error;
 
 namespace util {
 

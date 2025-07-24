@@ -42,6 +42,8 @@ public:
     virtual bool IsVoidPtrType() const { return false; }
     virtual bool IsIntegralType() const { return false; }
     virtual bool IsPolymorphic() const { return false; }
+    virtual bool IsFunctionType() const { return false; }
+    bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
     virtual int PointerCount() const { return 0; }
     virtual const Derivations& GetDerivations() const;
     virtual TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context);

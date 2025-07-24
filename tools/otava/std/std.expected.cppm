@@ -1,0 +1,92 @@
+export module std.expected;
+
+import std.type.fundamental;
+
+export namespace std {
+
+template<typename E>
+class unexpected
+{
+public:
+    constexpr unexpected(const unexpected&) = default;
+    constexpr unexpected(unexpected&&) = default;
+    constexpr explicit unexpected(const E& e_) : e(e_) {}
+    constexpr explicit unexpected(E&& e_) : e(move(e_)) {}
+    constexpr const E& error() const noexcept { return e; }
+    constexpr E& error() noexcept { return e; }
+    constexpr void swap(unexpected& other) noexcept;
+private:
+    E e;
+};
+
+template<typename E>
+constexpr void unexpected<E>::swap(unexpected<E>& other)
+{
+    std::swap(e, other.e);
+}
+
+template<typename E>
+constexpr bool operator==(const unexpected<E>& lhs, const unexpected<E>& rhs)
+{
+    return lhs.error() == rhs.error();
+}
+
+template<typename E>
+constexpr void swap(unexpected<E>& lhs, unexpected<E>& rhs)
+{
+    lhs.swap(rhs);
+}
+
+template<typename T, typename E>
+class expected
+{
+public:
+    using value_type = T;
+    using error_type = E;
+    using unexpected_type = unexpected<E>;
+
+    constexpr expected() : has_val(true), val(), unex() {}
+    constexpr expected(const T& val_) : has_val(true), val(val_), unex() {}
+    constexpr expected(const unexpected<E>& e): has_val(false), unex(e.error()) {}
+    constexpr expected(unexpected<E>&& e) : has_val(false), unex(e.error()) {}
+    constexpr expected& operator=(const T& val_) { has_val = true; val = val_; return *this; }
+    constexpr expected& operator=(const unexpected<E>& e) { has_val = false; unex = e.error(); return *this; }
+    constexpr expected& operator=(unexpected<E>&& e) { has_val = false; unex = e.error(); return *this; }
+    constexpr const T* operator->() const noexcept { return addressof(val); }
+    constexpr T* operator->() noexcept { return addressof(val); }
+    constexpr const T& operator*() const noexcept  { return val; }
+    constexpr T& operator*() noexcept  { return val; }
+    constexpr bool has_value() const noexcept { return has_val; }
+    constexpr explicit operator bool() const noexcept { return has_value(); }
+    constexpr T& value() { return val; }
+    constexpr const T& value() const { return val; }
+    constexpr const E& error() const noexcept { return unex; }
+    constexpr E& error() noexcept { return unex; }
+    constexpr void swap(expected& other) noexcept;
+private:
+    bool has_val;
+    T val;
+    E unex;
+};
+
+template<typename T, typename E>
+constexpr void expected<T, E>::swap(expected<T, E>& other) 
+{ 
+    std::swap(has_val, other.has_val); 
+    std::swap(val, other.val);
+    std::swap(unex, other.unex);
+}
+
+template<typename T, typename E>
+constexpr bool operator==(const expected<T, E>& lhs, const expected<T, E>& rhs)
+{
+    return lhs.has_value() == rhs.has_value() && (lhs.has_value() && lhs.value() == rhs.value()) || (!lhs.has_value() && lhs.error() == rhs.error());
+}
+
+template<typename T, typename E>
+constexpr void swap(expected<T, E>& lhs, expected<T, E>& rhs)
+{
+    lhs.swap(rhs);
+}
+
+} // namespace std

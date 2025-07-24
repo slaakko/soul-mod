@@ -11,6 +11,7 @@ import otava.symbols.context;
 import otava.symbols.exception;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.symbol;
+import otava.symbols.function.type.symbol;
 import otava.symbols.type.symbol;
 import otava.symbols.operation.repository;
 import otava.symbols.symbol.table;
@@ -220,11 +221,6 @@ bool BetterFunctionMatch::operator()(const FunctionMatch& left, const FunctionMa
         return false;
     }
     return false;
-}
-
-bool BetterFunctionMatch::operator()(const std::unique_ptr<FunctionMatch>& left, const std::unique_ptr<FunctionMatch>& right) const
-{
-    return operator()(*left, *right);
 }
 
 BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::ast::SourcePos& sourcePos, Context* context)
@@ -1177,7 +1173,21 @@ std::unique_ptr<BoundFunctionCallNode> ResolveIOManipFn(Scope* scope, const std:
             ioManipFnArgs, sourcePos, context, ex, flags);
         if (ioManipFnCall)
         {
-            return ioManipFnCall;
+            FunctionTypeSymbol* functionType = ioManipFnCall->GetFunctionSymbol()->GetFunctionType(context);
+            Derivations derivations;
+            derivations.vec.push_back(Derivation::pointerDerivation);
+            TypeSymbol* functionPtrType = context->GetSymbolTable()->MakeCompoundType(functionType, derivations);
+            std::unique_ptr<BoundExpressionNode> ioManipArg(new BoundAddressOfNode(ioManipFnCall.release(), sourcePos, functionPtrType));
+            std::vector<std::unique_ptr<BoundExpressionNode>> operatorPutOrGetArgs;
+            BoundExpressionNode* arg = args[0]->Clone();
+            operatorPutOrGetArgs.push_back(std::unique_ptr<BoundExpressionNode>(arg));
+            operatorPutOrGetArgs.push_back(std::unique_ptr<BoundExpressionNode>(ioManipArg.release()));
+            std::unique_ptr<BoundFunctionCallNode> operatorPutOrGetCall = ResolveOverload(
+                scope, groupName, templateArgs, operatorPutOrGetArgs, sourcePos, context, ex, flags);
+            if (operatorPutOrGetCall)
+            {
+                return operatorPutOrGetCall;
+            }
         }
     }
     return std::unique_ptr<BoundFunctionCallNode>();
@@ -1196,11 +1206,13 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     OverloadResolutionFlags flags)
 {
     MakeFinalDirectArgs(args, sourcePos, context);
+/*
     std::unique_ptr<BoundFunctionCallNode> ioManipFn = ResolveIOManipFn(scope, groupName, args, sourcePos, context, ex, flags);
     if (ioManipFn)
     {
         return ioManipFn;
     }
+*/
     std::vector<FunctionSymbol*> viableFunctions;
     if (groupName == U"@destructor")
     {

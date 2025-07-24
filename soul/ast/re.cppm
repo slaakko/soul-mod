@@ -186,6 +186,7 @@ public:
     void SetStart(NfaState* start_) { start = start_; }
     NfaState* End() const { return end; }
     void SetEnd(NfaState* end_) { end = end_; }
+    void Print(CodeFormatter& formatter);
 private:
     NfaState* start;
     NfaState* end;
@@ -252,6 +253,8 @@ public:
     ~LexerContext();
     const std::string& FileName() const { return fileName; }
     void SetFileName(const std::string& fileName_);
+    void SetBase(const std::string& dir_);
+    const std::string& Base() const { return dir; }
     NfaState* MakeNfaState();
     NfaState* GetNfaState(int id) const;
     const std::vector<NfaState*>& NfaStates() const { return nfaStates; }
@@ -289,6 +292,11 @@ public:
     void SetMasterNfaIndex(int masterNfaIndex_) { masterNfaIndex = masterNfaIndex_; }
     void SetDfa(Dfa&& dfa_);
     const Dfa& GetDfa() const { return dfa; }
+    Dfa& GetDfa() { return dfa; }
+    bool Verbose() const { return verbose; }
+    void SetVerbose() { verbose = true; }
+    bool Debug() const { return debug; }
+    void SetDebug() { debug = true; }
 private:
     std::string fileName;
     int nextNfaStateId;
@@ -319,6 +327,9 @@ private:
     std::map<int, Nfa*> nfaMap;
     int masterNfaIndex;
     Dfa dfa;
+    bool verbose;
+    bool debug;
+    std::string dir;
 };
 
 class Visitor

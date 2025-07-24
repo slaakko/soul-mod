@@ -1287,6 +1287,11 @@ void BoundFunctionGroupNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
+void BoundFunctionGroupNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    emitter.Stack().Push(nullptr);
+}
+
 BoundExpressionNode* BoundFunctionGroupNode::Clone() const
 {
     BoundFunctionGroupNode* clone = new BoundFunctionGroupNode(functionGroupSymbol, GetSourcePos(), GetType());
@@ -1507,6 +1512,64 @@ BoundExpressionNode* BoundEmptyFunctionCallNode::Clone() const
     BoundExpressionNode* clone = new BoundEmptyFunctionCallNode(GetSourcePos());
     clone->SetFlags(Flags());
     return clone;
+}
+
+BoundFunctionPtrCallNode::BoundFunctionPtrCallNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_) :
+    BoundExpressionNode(BoundNodeKind::boundFunctionPtrCallNode, sourcePos_, type_)
+{
+}
+
+void BoundFunctionPtrCallNode::Accept(BoundTreeVisitor& visitor)
+{
+    visitor.Visit(*this);
+}
+
+void BoundFunctionPtrCallNode::AddArgument(BoundExpressionNode* arg)
+{
+    args.push_back(std::unique_ptr<BoundExpressionNode>(arg));
+}
+
+void BoundFunctionPtrCallNode::Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    otava::intermediate::Value* callee = nullptr;
+    std::vector<otava::intermediate::Value*> irArgs;
+    bool first = true;
+    for (const auto& arg : args)
+    {
+        arg->Load(emitter, OperationFlags::none, sourcePos, context);
+        otava::intermediate::Value* irArg = emitter.Stack().Pop();
+        if (first)
+        {
+            callee = irArg;
+            first = false;
+        }
+        else
+        {
+            irArgs.push_back(irArg);
+        }
+    }
+    otava::intermediate::Value* value = emitter.EmitCall(callee, irArgs);
+    emitter.Stack().Push(value);
+}
+
+BoundExpressionNode* BoundFunctionPtrCallNode::Clone() const
+{
+    BoundFunctionPtrCallNode* clone = new BoundFunctionPtrCallNode(GetSourcePos(), GetType());
+    for (auto& arg : args)
+    {
+        clone->AddArgument(arg->Clone());
+    }
+    clone->SetFlags(Flags());
+    return clone;
+}
+
+void BoundFunctionPtrCallNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context)
+{
+    BoundExpressionNode::ModifyTypes(sourcePos, context);
+    for (auto& arg : args)
+    {
+        arg->ModifyTypes(sourcePos, context);
+    }
 }
 
 BoundExpressionSequenceNode::BoundExpressionSequenceNode(const soul::ast::SourcePos& sourcePos_, BoundExpressionNode* left_, BoundExpressionNode* right_) : 

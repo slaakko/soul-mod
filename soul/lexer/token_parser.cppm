@@ -18,11 +18,7 @@ constexpr std::string ToString(const Char* begin, const Char* end)
 
 constexpr std::string ToString(const char8_t* begin, const char8_t* end)
 {
-#ifdef OTAVA
-    return std::string(static_cast<const char*>(static_cast<void*>(begin)), static_cast<const char*>(static_cast<void*>(end)));
-#else
     return std::string(begin, end);
-#endif
 }
 
 constexpr std::string ToString(const char* begin, const char* end)

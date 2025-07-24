@@ -1,0 +1,12 @@
+export module id;
+
+import id.token;
+import id.expr;
+
+lexer IdLexer
+{
+	rules
+	{
+		"{id}" { return ID; }
+	}
+}

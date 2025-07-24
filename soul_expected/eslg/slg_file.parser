@@ -1,0 +1,97 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.slg.slg.file.parser;
+
+[interface]import soul_expected.ast.slg;
+[implementation]import soul_expected.cpp.token;
+[implementation]import soul_expected.cpp.op.token;
+[implementation]import soul_expected.punctuation.token;
+[implementation]import soul_expected.tool.token;
+[implementation]import soul_expected.common.common.parser;
+[implementation]import soul_expected.lex.slg;
+
+parser SlgFileParser
+{
+    lexer soul_expected::lex::slg::SlgLexer<char32_t>;
+
+    main;
+    using CommonParser.QualifiedId;
+	using CommonParser.FilePath;
+	using CommonParser.LexerKeyword;
+
+    SlgFile(var std::unique_ptr<soul_expected::ast::slg::SlgFile> slgFile) : soul_expected::ast::slg::SlgFile*
+        ::= 
+        (
+            PROJECT 
+            QualifiedId:projectName{ slgFile.reset(new soul_expected::ast::slg::SlgFile(lexer.FileName(), projectName)); } 
+            SEMICOLON
+            (
+                SlgFileDeclaration:declaration{ slgFile->AddDeclaration(declaration); }
+            )*
+        )
+        {
+            return slgFile.release();
+        }
+        ;
+
+	SlgFileDeclaration : soul_expected::ast::slg::SlgFileDeclaration*
+		::= TokenFileDeclaration:tokenFileDeclaration{ return tokenFileDeclaration; }
+		|	KeywordFileDeclaration:keywordFileDeclaration{ return keywordFileDeclaration; }
+		|	ExpressionFileDeclaration:expressionFileDeclaration{ return expressionFileDeclaration; }
+		|	LexerFileDeclaration:lexerFileDeclaration{ return lexerFileDeclaration; }
+		;
+
+	TokenFileDeclaration(var bool external) : soul_expected::ast::slg::SlgFileDeclaration*
+		::= 
+		(
+			(
+                EXTERN{ external = true; } | empty{ external = false; }
+            ) 
+            TOKENS 
+            FilePath:filePath 
+            SEMICOLON
+		)
+		{
+			return new soul_expected::ast::slg::TokenFileDeclaration(filePath, external); 
+		}
+		;
+
+	KeywordFileDeclaration : soul_expected::ast::slg::SlgFileDeclaration*
+		::= 
+		(
+			KEYWORDS 
+            FilePath:filePath 
+            SEMICOLON
+		)
+		{
+			return new soul_expected::ast::slg::KeywordFileDeclaration(filePath); 
+		}
+		;
+
+	ExpressionFileDeclaration : soul_expected::ast::slg::SlgFileDeclaration*
+		::= 
+		(
+			EXPRESSIONS 
+            FilePath:filePath 
+            SEMICOLON
+		)
+		{
+			return new soul_expected::ast::slg::ExpressionFileDeclaration(filePath); 
+		}
+		;
+
+	LexerFileDeclaration : soul_expected::ast::slg::SlgFileDeclaration*
+		::= 
+		(
+			LexerKeyword:lexerKeyword 
+            FilePath:filePath 
+            SEMICOLON
+		)
+		{
+			return new soul_expected::ast::slg::LexerFileDeclaration(filePath); 
+		}
+		;
+}

@@ -560,16 +560,12 @@ std::u32string FormatNumber(int n, int numDigits)
     return s;
 }
 
-#ifndef OTAVA
-
 std::string CurrentThreadIdStr()
 {
     std::stringstream s;
     s << std::this_thread::get_id();
     return s.str();
 }
-
-#endif 
 
 std::string Format(const std::string& s, int width)
 {

@@ -24,9 +24,6 @@ std::string GetCurrentWorkingDirectory()
     char* wd = _getcwd(buf, 4096);
 #elif defined(__linux) || defined(__unix) || defined(__posix)
     char* wd = getcwd(buf, 4096);
-#elif defined(OTAVA)
-    char* wd = std::getcwd(buf, 4096);
-#else
 #error unknown platform
 #endif
     if (wd != nullptr)
@@ -63,8 +60,6 @@ bool FileExists(const std::string& filePath)
     {
         return 0;
     }
-#elif defined(OTAVA)
-    return std::fexists(filePath.c_str());
 #else
 #error unknown platform
 #endif
@@ -94,8 +89,6 @@ bool DirectoryExists(const std::string& directoryPath)
     {
         return false;
     }
-#elif defined(OTAVA)
-    return std::dexists(directoryPath.c_str());
 #else
 #error unknown platform
 #endif
@@ -109,8 +102,6 @@ bool PathExists(const std::string& path)
 #elif defined(__linux) || defined(__unix) || defined(__posix)
     struct stat statBuf;
     return stat(path.c_str(), &statBuf) == 0 ? true : false;
-#elif defined(OTAVA)
-    return std::exists(path.c_str());
 #else
 #error unknown platform
 #endif

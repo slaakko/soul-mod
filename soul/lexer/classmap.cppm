@@ -32,8 +32,6 @@ private:
     std::int32_t upperBound;
 };
 
-#ifndef OTAVA
-
 template<typename Char>
 ClassMap<Char>* MakeClassMap(const std::string& classMapName)
 {
@@ -72,21 +70,5 @@ ClassMap<Char>* MakeClassMap(const std::string& moduleFileName, const std::strin
     ClassMap<Char>* classMap = new ClassMap<Char>(data, size);
     return classMap;
 }
-
-#else
-
-extern "C" std::int32_t* read_lexer_resource(const char* resource_name, std::int32_t& size);
-extern "C" void free_lexer_resource(std::int32_t* lexer_resource);
-
-template<typename Char>
-ClassMap<Char>* MakeClassMap(const std::string& classMapName)
-{
-    std::int32_t size = 0;
-    std::int32_t* data = read_lexer_resource(classMapName.c_str(), size);
-    ClassMap<Char>* cm = new ClassMap<Char>(data, size);
-    return cm;
-}
-
-#endif
 
 } // soul::lexer

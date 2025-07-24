@@ -15,7 +15,7 @@ export namespace soul::spg {
 
 enum class CodeGenerationStage
 {
-    generateInterface, generateImplementation, generateTokenSwitch, beginGenerateTokenSwitch, endGenerateTokenSwitch
+    generateInterface, generateImplementation
 };
 
 class CodeGeneratorVisitor : public soul::ast::spg::DefaultVisitor

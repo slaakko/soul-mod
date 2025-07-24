@@ -34,5 +34,5 @@ export import util.log;
 export import util.log.file.writer;
 export import util.sha1;
 export import util.binary.resource.ptr;
-export import util.error;
+export import util.win_error;
 export import util.system;

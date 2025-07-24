@@ -13,6 +13,7 @@ import otava.symbols.lookup;
 import otava.symbols.specialization.compare;
 import otava.symbols.symbol_map;
 import otava.symbols.array.type.compare;
+import otava.symbols.function.type.compare;
 import util.uuid;
 import class_info_index;
 
@@ -59,6 +60,7 @@ class BoundExpressionNode;
 class ClassTypeSymbol;
 class ConceptSymbol;
 class EnumeratedTypeSymbol;
+class FunctionTypeSymbol;
 class FunctionGroupSymbol;
 class FunctionGroupTypeSymbol;
 class ClassTemplateSpecializationSymbol;
@@ -158,6 +160,7 @@ public:
     TypeSymbol* MakeConstChar16PtrType();
     TypeSymbol* MakeConstChar32PtrType();
     TypeSymbol* MakeConstWCharPtrType();
+    FunctionTypeSymbol* MakeFunctionTypeSymbol(FunctionSymbol* functionSymbol);
     FunctionGroupTypeSymbol* MakeFunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroup);
     ConceptSymbol* AddConcept(const std::u32string& name, otava::ast::Node* node, Context* context);
     ClassTemplateSpecializationSymbol* MakeClassTemplateSpecialization(ClassTypeSymbol* classTemplate, const std::vector<Symbol*>& templateArguments);
@@ -270,6 +273,8 @@ private:
     std::vector<std::unique_ptr<FunctionGroupTypeSymbol>> functionGroupTypes;
     std::map<FunctionGroupSymbol*, FunctionGroupTypeSymbol*> functionGroupTypeMap;
     std::map<std::int32_t, TypeSymbol*> fundamentalTypeMap;
+    std::vector<std::unique_ptr<Symbol>> functionTypes;
+    std::set<FunctionTypeSymbol*, FunctionTypeCompare> functionTypeSet;
     std::vector<Scope*> scopeStack;
     Scope* currentScope;
     std::map<otava::ast::Node*, Symbol*> nodeSymbolMap;

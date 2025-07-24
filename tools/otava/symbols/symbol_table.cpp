@@ -19,6 +19,7 @@ import otava.symbols.class_group.symbol;
 import otava.symbols.class_templates;
 import otava.symbols.function.group.symbol;
 import otava.symbols.variable.group.symbol;
+import otava.symbols.function.type.symbol;
 import otava.symbols.enum_group.symbol;
 import otava.symbols.block;
 import otava.symbols.classes;
@@ -1460,6 +1461,28 @@ TypeSymbol* SymbolTable::MakeConstWCharPtrType()
     derivations.vec.push_back(Derivation::constDerivation);
     derivations.vec.push_back(Derivation::pointerDerivation);
     return MakeCompoundType(GetFundamentalType(FundamentalTypeKind::wcharType), derivations);
+}
+
+FunctionTypeSymbol* SymbolTable::MakeFunctionTypeSymbol(FunctionSymbol* functionSymbol)
+{
+    std::unique_ptr<FunctionTypeSymbol> symbol(new FunctionTypeSymbol());
+    int n = functionSymbol->Parameters().size();
+    for (int i = 0; i < n; ++i)
+    {
+        symbol->AddParameterType(functionSymbol->Parameters()[i]->GetType());
+    }
+    symbol->SetReturnType(functionSymbol->ReturnType());
+    auto it = functionTypeSet.find(symbol.get());
+    if (it != functionTypeSet.cend())
+    {
+        return *it;
+    }
+    FunctionTypeSymbol* sym = symbol.get();
+    sym->MakeName();
+    functionTypeSet.insert(sym);
+    functionTypes.push_back(std::move(symbol));
+    MapType(sym);
+    return sym;
 }
 
 FunctionGroupTypeSymbol* SymbolTable::MakeFunctionGroupTypeSymbol(FunctionGroupSymbol* functionGroup)

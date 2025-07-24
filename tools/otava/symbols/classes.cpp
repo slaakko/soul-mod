@@ -744,6 +744,21 @@ void ClassTypeSymbol::GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Co
     copyCtor = functionCall->GetFunctionSymbol();
 }
 
+std::pair<bool, std::int64_t> ClassTypeSymbol::Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context)
+{
+    if (base == this) return std::make_pair(true, 0);
+    int64_t delta = 0;
+    for (ClassTypeSymbol* bc : BaseClasses())
+    {
+        auto [bcfound, bcdelta] = bc->Delta(base, emitter, context);
+        if (bcfound) return std::make_pair(true, delta + bcdelta);
+        otava::intermediate::Type* bctype = bc->IrType(emitter, soul::ast::SourcePos(), context);
+        int64_t bcsize = bctype->Size();
+        delta += bcsize;
+    }
+    return std::make_pair(false, 0);
+}
+
 ForwardClassDeclarationSymbol::ForwardClassDeclarationSymbol(const std::u32string& name_) : 
     TypeSymbol(SymbolKind::forwardClassDeclarationSymbol, name_), 
     classKind(ClassKind::class_),
@@ -1431,6 +1446,15 @@ void AddClassInfo(ClassTypeSymbol* classTypeSymbol, Context* context)
         info.add_base(std::make_pair(h, l));
     }
     context->GetSymbolTable()->ClassIndex().add_class(info);
+}
+
+std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* left, ClassTypeSymbol* right, Emitter& emitter, Context* context)
+{
+    auto [found, delta] = left->Delta(right, emitter, context);
+    if (found) return std::make_pair(true, delta);
+    auto [rfound, rdelta] = right->Delta(left, emitter, context);
+    if (rfound) return std::make_pair(true, -rdelta);
+    return std::make_pair(false, 0);
 }
 
 } // namespace otava::symbols

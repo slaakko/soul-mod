@@ -955,6 +955,12 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     context->GetBoundCompileUnit()->AddBoundNodeForClass(classType, sourcePos, context);
 }
 
+FunctionTypeSymbol* FunctionSymbol::GetFunctionType(otava::symbols::Context* context)
+{
+    FunctionTypeSymbol* functionType = context->GetSymbolTable()->MakeFunctionTypeSymbol(this);
+    return functionType;
+}
+
 otava::intermediate::Type* FunctionSymbol::IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
     otava::intermediate::Type* type = emitter.GetType(Id());

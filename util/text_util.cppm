@@ -58,9 +58,7 @@ std::int32_t ParseOctal(const std::string& octalDigitStr);
 std::string ToOctalString(std::int32_t value, int numDigits);
 int Log10(int n);
 std::u32string FormatNumber(int n, int numDigits);
-#ifndef OTAVA
 std::string CurrentThreadIdStr();
-#endif 
 std::string Format(const std::string& s, int width);
 std::string Format(const std::string& s, int width, FormatJustify justify);
 std::string Format(const std::string& s, int width, FormatWidth fw);

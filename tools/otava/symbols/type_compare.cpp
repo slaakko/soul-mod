@@ -4,6 +4,7 @@ import otava.symbols.type.symbol;
 import otava.symbols.class_templates;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.classes;
+import otava.symbols.function.type.symbol;
 
 namespace otava::symbols {
 
@@ -59,6 +60,12 @@ bool TypesEqual(TypeSymbol* left, TypeSymbol* right)
         TemplateParameterSymbol* leftTemplateParam = static_cast<TemplateParameterSymbol*>(left);
         TemplateParameterSymbol* rightTemplateParam = static_cast<TemplateParameterSymbol*>(right);
         return leftTemplateParam->Index() == rightTemplateParam->Index();
+    }
+    if (left->IsFunctionType() && right->IsFunctionType())
+    {
+        FunctionTypeSymbol* leftFnType = static_cast<FunctionTypeSymbol*>(left);
+        FunctionTypeSymbol* rightFnType = static_cast<FunctionTypeSymbol*>(right);
+        return FunctionTypesEqual(leftFnType, rightFnType);
     }
     return false;
 }

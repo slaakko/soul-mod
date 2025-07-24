@@ -9,8 +9,6 @@ import util;
 
 namespace soul::slg {
 
-#ifndef OTAVA
-
 void MakeCompressedClassMap(const std::string& root, const std::string& classMapName, bool verbose)
 {
     std::string classMapFileName = util::Path::Combine(root, classMapName);
@@ -47,17 +45,5 @@ void MakeResourceFile(const std::string& root, const std::string& classMapName, 
         std::cout << "==> " << resourceFileName << std::endl;
     }
 }
-
-#else
-
-void MakeCompressedClassMap(const std::string& root, const std::string& classMapName, bool verbose)
-{
-}
-
-void MakeResourceFile(const std::string& root, const std::string& classMapName, bool verbose)
-{
-}
-
-#endif
 
 } // namespace soul::slg

@@ -72,7 +72,7 @@ enum class BoundNodeKind
     boundWhileStatementNode, boundDoStatementNode, boundForStatementNode, boundBreakStatementNode, boundContinueStatementNode, boundReturnStatementNode, boundGotoStatementNode,
     boundConstructionStatementNode, boundExpressionStatementNode, boundSequenceStatementNode, boundSetVPtrStatementNode,
     boundValueNode, boundLiteralNode, boundStringLiteralNode, boundVariableNode, boundParameterNode, boundEnumConstantNode,
-    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
+    boundFunctionGroupNode, boundTypeNode, boundMemberExprNode, boundFunctionCallNode, boundFunctionPtrCallNode, boundEmptyFunctionCallNode, boundExpressionListNode,
     boundConjunctionNode, boundDisjunctionNode, boundExpressionSequenceNode, boundConstructExpressionNode,
     boundConversionNode, boundAddressOfNode, boundDereferenceNode, boundRefToPtrNode, boundPtrToRefNode, boundDefaultInitNode,
     boundTemporaryNode, boundConstructTemporaryNode, boundCtorInitializerNode, boundDtorTerminatorNode, boundEmptyDestructorNode,
@@ -102,6 +102,7 @@ public:
     bool IsBoundVariableNode() const { return kind == BoundNodeKind::boundVariableNode; }
     bool IsBoundEnumConstant() const { return kind == BoundNodeKind::boundEnumConstantNode; }
     bool IsBoundFunctionCallNode() const { return kind == BoundNodeKind::boundFunctionCallNode; }
+    bool IsBoundFunctionPtrCallNode() const { return kind == BoundNodeKind::boundFunctionPtrCallNode; }
     bool IsBoundEmptyDestructorNode() const { return kind == BoundNodeKind::boundEmptyDestructorNode; }
     bool IsBoundConversionNode() const { return kind == BoundNodeKind::boundConversionNode; }
     bool IsBoundFunctionNode() const { return kind == BoundNodeKind::boundFunctionNode; }
@@ -592,6 +593,7 @@ public:
     BoundFunctionGroupNode(FunctionGroupSymbol* functionGroupSymbol_, const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
     void Accept(BoundTreeVisitor& visitor) override;
     FunctionGroupSymbol* GetFunctionGroupSymbol() const { return functionGroupSymbol; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
     void AddTemplateArg(TypeSymbol* templateArg);
     const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
@@ -652,6 +654,21 @@ public:
     void Accept(BoundTreeVisitor& visitor) override;
     void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
     BoundExpressionNode* Clone() const override;
+};
+
+class BoundFunctionPtrCallNode : public BoundExpressionNode
+{
+public:
+    BoundFunctionPtrCallNode(const soul::ast::SourcePos& sourcePos_, TypeSymbol* type_);
+    void Accept(BoundTreeVisitor& visitor) override;
+    bool HasValue() const override { return true; }
+    void AddArgument(BoundExpressionNode* arg);
+    const std::vector<std::unique_ptr<BoundExpressionNode>>& Args() const { return args; }
+    void Load(Emitter& emitter, OperationFlags flags, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    BoundExpressionNode* Clone() const override;
+    void ModifyTypes(const soul::ast::SourcePos& sourcePos, Context* context) override;
+private:
+    std::vector<std::unique_ptr<BoundExpressionNode>> args;
 };
 
 class BoundExpressionSequenceNode : public BoundExpressionNode

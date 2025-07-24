@@ -10,8 +10,6 @@ import util;
 
 namespace soul::slg {
 
-#ifndef OTAVA
-
 void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
 {
     if (tokenFile->IsExternal())
@@ -94,13 +92,5 @@ void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, sou
         std::cout << "==> " << interfaceFilePath << std::endl;
     }
 }
-
-#else
-
-void GenerateTokenModule(soul::ast::slg::TokenFile* tokenFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle)
-{
-}
-
-#endif
 
 } // namespace soul::slg

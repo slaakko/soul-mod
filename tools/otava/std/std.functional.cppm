@@ -193,4 +193,13 @@ struct negate
     }
 };
 
+template<typename T>
+struct addressof
+{
+    constexpr T* operator()(const T& x) const
+    {
+        return &x;
+    }
+};
+
 } // namespace std

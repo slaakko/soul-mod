@@ -23,14 +23,10 @@ void BinaryStreamWriter::Write(std::uint8_t x)
     stream.Write(x);
 }
 
-#ifndef OTAVA
-
 void BinaryStreamWriter::Write(std::int8_t x)
 {
     Write(static_cast<std::uint8_t>(x));
 }
-
-#endif
 
 void BinaryStreamWriter::Write(std::uint16_t x)
 {
@@ -87,8 +83,6 @@ void BinaryStreamWriter::Write(std::int64_t x)
     Write(static_cast<std::uint64_t>(x));
 }
 
-#ifndef OTAVA
-
 void BinaryStreamWriter::Write(float x)
 {
     std::uint32_t* u = reinterpret_cast<std::uint32_t*>(&x);
@@ -105,8 +99,6 @@ void BinaryStreamWriter::Write(char x)
 {
     Write(static_cast<std::uint8_t>(x));
 }
-
-#endif
 
 void BinaryStreamWriter::Write(char8_t x)
 {

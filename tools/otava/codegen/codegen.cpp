@@ -304,6 +304,7 @@ public:
     void Visit(otava::symbols::BoundEnumConstant& node) override;
     void Visit(otava::symbols::BoundMemberExprNode& node) override;
     void Visit(otava::symbols::BoundFunctionCallNode& node) override;
+    void Visit(otava::symbols::BoundFunctionPtrCallNode& node) override;
     void Visit(otava::symbols::BoundExpressionSequenceNode& node) override;
     void Visit(otava::symbols::BoundConversionNode& node) override;
     void Visit(otava::symbols::BoundAddressOfNode& node) override;
@@ -1246,6 +1247,12 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionCallNode& node)
     {
         EmitReturn(node.GetSourcePos());
     }
+    GenJumpingBoolCode();
+}
+
+void CodeGenerator::Visit(otava::symbols::BoundFunctionPtrCallNode& node)
+{
+    node.Load(emitter, otava::symbols::OperationFlags::none, node.GetSourcePos(), &context);
     GenJumpingBoolCode();
 }
 

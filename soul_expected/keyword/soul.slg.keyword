@@ -1,0 +1,11 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+import soul_expected.tool.token;
+
+keywords soul_expected.slg.keyword
+{
+    ("tokens", TOKENS), ("keywords", KEYWORDS), ("expressions", EXPRESSIONS), ("rules", RULES), ("variables", VARIABLES), ("actions", ACTIONS), ("project", PROJECT)
+}

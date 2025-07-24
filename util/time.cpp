@@ -182,19 +182,6 @@ std::string Date::ToString(bool omitDashes) const
     return date;
 }
 
-#if defined(OTAVA)
-
-Date GetCurrentDate()
-{
-    int yyyy = 0;
-    int mm = 0;
-    int dd = 0;
-    current_date(yyyy, mm, dd);
-    return Date(yyyy, static_cast<Month>(static_cast<std::int8_t>(mm)), dd);
-}
-
-#else
-
 Date GetCurrentDate()
 {
     std::time_t currentTime;
@@ -203,8 +190,6 @@ Date GetCurrentDate()
     localTime = std::localtime(&currentTime);
     return Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday));
 }
-
-#endif
 
 bool operator==(const Date& left, const Date& right)
 {
@@ -338,22 +323,6 @@ std::string FormatTimeMs(std::int32_t milliseconds)
     return time;
 }
 
-#ifdef OTAVA
-
-DateTime GetCurrentDateTime()
-{
-    int yyyy = 0;
-    int month = 0;
-    int day = 0;
-    int seconds = 0;
-    current_date_time(yyyy, month, day, seconds);
-    Date date(yyyy, static_cast<Month>(static_cast<std::int8_t>(month)), day);
-    DateTime dt(date, seconds);
-    return dt;
-}
-
-#else
-
 DateTime GetCurrentDateTime()
 {
     std::time_t currentTime;
@@ -362,8 +331,6 @@ DateTime GetCurrentDateTime()
     localTime = std::localtime(&currentTime);
     return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
-
-#endif
 
 bool operator==(const DateTime& left, const DateTime& right)
 {
@@ -426,20 +393,6 @@ DateTime ParseDateTime(const std::string& dateTimeStr)
     return DateTime(date, totalSecs);
 }
 
-#ifdef OTAVA
-
-std::int64_t CurrentMs()
-{
-    return current_ms();
-}
-
-std::int64_t GetCurrentTime()
-{
-    return current_time();
-}
-
-#else
-
 std::int64_t CurrentMs()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - std::chrono::steady_clock::time_point()).count();
@@ -451,8 +404,6 @@ std::int64_t GetCurrentTime()
     std::time(&currentTime);
     return currentTime;
 }
-
-#endif
 
 std::int64_t Hours(std::int64_t nanosecs)
 {
@@ -478,8 +429,6 @@ std::int64_t Microseconds(std::int64_t nanosecs)
 {
     return nanosecs / std::int64_t(1000ll);
 }
-
-#ifndef OTAVA
 
 std::string DurationStr(const std::chrono::nanoseconds& duration)
 {
@@ -508,23 +457,6 @@ std::string DurationStr(const std::chrono::nanoseconds& duration)
     return s;
 }
 
-#endif
-
-#ifdef OTAVA
-
-std::time_t Time()
-{
-    return current_time();
-}
-
-std::time_t MkTime(const DateTime& dt)
-{
-    Date date = dt.GetDate();
-    return make_time(date.Year(), static_cast<std::int8_t>(date.GetMonth()), date.Day(), dt.Seconds());
-}
-
-#else
-
 std::time_t Time()
 {
     std::time_t time = std::time(nullptr);
@@ -546,10 +478,6 @@ std::time_t MkTime(const DateTime& dt)
     return std::mktime(&tm);
 }
 
-#endif
-
-#ifndef OTAVA
-
 std::string TimeToString(std::time_t time)
 {
     std::tm* ptm = std::localtime(&time);
@@ -564,7 +492,5 @@ DateTime ToDateTime(time_t time)
     struct tm* localTime = std::localtime(&time);
     return DateTime(Date(1900 + localTime->tm_year, static_cast<Month>(1 + localTime->tm_mon), static_cast<std::int8_t>(localTime->tm_mday)), localTime->tm_hour * 3600 + localTime->tm_min * 60 + localTime->tm_sec);
 }
-
-#endif
 
 } // namespace util

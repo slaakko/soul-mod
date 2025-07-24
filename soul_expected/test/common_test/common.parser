@@ -1,0 +1,163 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.common.common.parser;
+
+[interface]import soul_expected.ast.common;
+[implementation]import soul_expected.cpp.token;
+[implementation]import soul_expected.cpp.op.token;
+[implementation]import soul_expected.punctuation.token;
+[implementation]import soul_expected.tool.token;
+[implementation]import soul_expected.lex.slg;
+[implementation]import soul_expected.lex.spg;
+[implementation]import soul_expected.common.token.parser;
+
+parser CommonParser
+{
+	lexer soul_expected::lex::slg::SlgLexer<char32_t>;
+	lexer soul_expected::lex::spg::SpgLexer<char32_t>; 
+
+	QualifiedId(var std::string str) : std::string
+		::= (
+                ID
+                {
+                    auto u = lexer.TokenToUtf8(pos);
+                    if (!u) return std::unexpected<int>(u.error());
+                    str.append(*u); 
+                } 
+                (
+                    DOT 
+                    ID
+                    { 
+                        auto u = lexer.TokenToUtf8(pos);
+                        if (!u) return std::unexpected<int>(u.error());
+                        str.append(1, '.').append(*u); 
+                    }
+                )*
+            )
+        { 
+            return str; 
+        }
+		;
+
+	ExportModule(var std::unique_ptr<soul_expected::ast::common::ExportModule> exp) : soul_expected::ast::common::ExportModule*
+		::= 
+		(
+			ExportKeyword:exportKeyword ModuleKeyword:moduleKeyword QualifiedId:moduleName{ exp.reset(new soul_expected::ast::common::ExportModule(moduleName)); } SEMICOLON
+		)
+		{
+			return exp.release();
+		}
+		;
+
+	Import(var std::unique_ptr<soul_expected::ast::common::Import> imp, var soul_expected::ast::common::ImportPrefix prefix) : soul_expected::ast::common::Import*
+		::= 
+		(
+			(ImportPrefix:importPrefix{ prefix = importPrefix; } | empty{ prefix = soul_expected::ast::common::ImportPrefix::interfacePrefix; })
+			ImportKeyword:importKeyword QualifiedId:moduleName{ imp.reset(new soul_expected::ast::common::Import(moduleName, prefix)); } SEMICOLON
+		)
+		{
+			return imp.release();
+		}
+		;
+
+    ImportPrefix : soul_expected::ast::common::ImportPrefix
+        ::= ImplementationPrefix:implementationPrefix{ return implementationPrefix; }
+        |   InterfacePrefix:interfacePrefix{ return interfacePrefix; }
+        ;
+
+	ExprString : std::string
+		::= STRING_LITERAL
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t)  return std::unexpected<int>(t.error());
+                auto u = MakeExprStringValue(lexer.FileName(), *t); 
+                if (!u) return std::unexpected<int>(u.error());
+                return *u;
+            }
+		;
+
+	FilePath : std::string
+		::= FILEPATH
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t)  return std::unexpected<int>(t.error());
+                auto u = MakeFilePath(lexer.FileName(), *t); 
+                if (!u) return std::unexpected<int>(u.error());
+                return *u;
+            }
+		;
+
+	ExportKeyword
+		::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                pass = *u == "export"; 
+            }
+		;
+
+	ModuleKeyword 
+		::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                pass = *u == "module"; 
+            }
+		;
+
+	ImportKeyword
+		::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                pass = *u == "import"; 
+            }
+		;
+
+	ImplementationPrefix : soul_expected::ast::common::ImportPrefix
+		::= LBRACKET ImplementationKeyword:implementationKeyword RBRACKET{ return soul_expected::ast::common::ImportPrefix::implementationPrefix; }
+		;
+
+	InterfacePrefix : soul_expected::ast::common::ImportPrefix
+		::= LBRACKET InterfaceKeyword:interfaceKeyword RBRACKET{ return soul_expected::ast::common::ImportPrefix::interfacePrefix; }
+		;
+
+	ImplementationKeyword 
+		::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                pass = *u == "implementation"; 
+            }
+		;
+
+	InterfaceKeyword 
+		::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                pass = *u == "interface"; 
+            }
+		;
+
+	ParserKeyword
+		::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                pass = *u == "parser"; 
+            }
+		;
+
+	LexerKeyword
+		::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                pass = *u == "lexer"; 
+            }
+		;
+}

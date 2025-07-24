@@ -76,6 +76,7 @@ constexpr FunctionSymbolFlags operator~(FunctionSymbolFlags flags)
 }
 
 class TypeSymbol;
+class FunctionTypeSymbol;
 class Value;
 
 class ParameterSymbol : public Symbol
@@ -170,6 +171,7 @@ public:
     virtual void GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags, 
         const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     void GenerateVirtualFunctionCall(Emitter& emitter, std::vector<BoundExpressionNode*>& args, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
+    FunctionTypeSymbol* GetFunctionType(otava::symbols::Context* context);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context);
     std::string IrName(Context* context) const override;
     const std::vector<VariableSymbol*>& LocalVariables() const { return  localVariables; }

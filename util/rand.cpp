@@ -5,28 +5,7 @@
 
 module util.rand;
 
-#ifdef OTAVA
-
-extern "C" std::uint8_t get_random_byte();
-extern "C" void set_rand_seed(std::uint64_t seed);
-
-#endif
-
 namespace util {
-
-#ifdef OTAVA
-
-std::uint8_t get_random_byte()
-{
-    return ::get_random_byte();
-}
-
-void set_rand_seed(std::uint64_t seed)
-{
-    ::set_rand_seed(seed);
-}
-
-#else
 
 class Rng
 {
@@ -90,7 +69,5 @@ std::uint8_t get_random_byte()
     }
     return rng->Get();
 }
-
-#endif
 
 } // namespace util

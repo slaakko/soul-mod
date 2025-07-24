@@ -34,6 +34,10 @@ void PrintHelp()
     std::cout << "--config=(debug|release) | -c=(debug|release)" << std::endl;
     std::cout << "  Set configuration to build to 'debug' or 'release'." << std::endl;
     std::cout << "  Default configuration is 'debug'." << std::endl;
+    std::cout << "--opt=OPTIMIZATION_LEVEL | -O=OPTIMIZATION_LEVEL" << std::endl;
+    std::cout << "  Set optimization level to OPTIMIZATION_LEVEL (0-3)" << std::endl;
+    std::cout << "--rebuild | -r" << std::endl;
+    std::cout << "  rebuild project" << std::endl;
     std::cout << "--multithreaded | -m" << std::endl;
     std::cout << "  Build using all cores." << std::endl;
     std::cout << "--debug-parse | -d" << std::endl;
@@ -63,6 +67,7 @@ int main(int argc, const char** argv)
         soul::lexer::FileMap fileMap;
         std::vector<std::string> files;
         bool verbose = false;
+        bool rebuild = false;
         std::string config = "debug";
         bool multithreaded = false;
         bool debugParse = false;
@@ -107,6 +112,10 @@ int main(int argc, const char** argv)
                     else if (arg == "--verbose")
                     {
                         verbose = true;
+                    }
+                    else if (arg == "--rebuild")
+                    {
+                        rebuild = true;
                     }
                     else if (arg == "--multithreaded")
                     {
@@ -172,6 +181,11 @@ int main(int argc, const char** argv)
                                 verbose = true;
                                 break;
                             }
+                            case 'r':
+                            {
+                                rebuild = true;
+                                break;
+                            }
                             case 'm':
                             {
                                 multithreaded = true;
@@ -232,6 +246,10 @@ int main(int argc, const char** argv)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::verbose;
                 }
+                if (rebuild)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::rebuild;
+                }
                 if (multithreaded)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::multithreadedBuild;
@@ -253,6 +271,10 @@ int main(int argc, const char** argv)
                 if (verbose)
                 {
                     buildFlags = buildFlags | otava::build::BuildFlags::verbose;
+                }
+                if (rebuild)
+                {
+                    buildFlags = buildFlags | otava::build::BuildFlags::rebuild;
                 }
                 if (multithreaded)
                 {

@@ -658,7 +658,19 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
     context->GetModule()->GetNodeIdFactory()->SetInternallyMapped(true);
     bool prevParseMemberFunction = context->GetFlag(ContextFlags::parseMemberFunction);
     context->ResetFlag(ContextFlags::parseMemberFunction);
-    otava::ast::Node* node = context->GetSymbolTable()->GetNode(memFn)->Clone();
+    otava::ast::Node* node = context->GetSymbolTable()->GetNodeNothrow(memFn);
+    if (node)
+    {
+        node = node->Clone();
+    }
+    else
+    {
+        if (memFn->IsDestructor())
+        {
+            InstantiateDestructor(classTemplateSpecialization, sourcePos, context);
+            return memFn;
+        }
+    }
     if (node->IsFunctionDefinitionNode())
     {
         otava::ast::FunctionDefinitionNode* functionDefinitionNode = static_cast<otava::ast::FunctionDefinitionNode*>(node);

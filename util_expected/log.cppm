@@ -1,0 +1,26 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module util_expected.log;
+
+import std;
+
+export namespace util {
+
+enum class LogMode
+{
+    console, queue
+};
+
+void SetLogMode(LogMode mode);
+void StartLog();
+void EndLog();
+void LogMessage(int logStreamId, const std::string& message);
+void LogMessage(int logStreamId, const std::string& message, int indent);
+int WaitForLogMessage();
+std::expected<int, int> FetchLogMessage(char16_t* buf, int size);
+std::string FetchLogMessage(bool& endOfLog, int timeoutMs, bool& timeout);
+
+} // namespace util

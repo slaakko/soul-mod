@@ -372,6 +372,7 @@ void Class::AddChar(char32_t c)
 
 void Class::Print(CodeFormatter& formatter)
 {
+    formatter.Write("CLASS " + Name() + ": ");
     if (ranges.empty())
     {
         formatter.Write("[");
@@ -379,20 +380,38 @@ void Class::Print(CodeFormatter& formatter)
         {
             formatter.Write("^");
         }
+        bool first = true;
         for (Symbol* symbol : symbols)
         {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                formatter.Write(", ");
+            }
             symbol->Print(formatter);
         }
-        formatter.Write("]");
+        formatter.WriteLine("]");
     }
     else
     {
         formatter.Write("{");
+        bool first = true;
         for (auto& range : ranges)
         {
+            if (first)
+            {
+                first = false;
+            }
+            else
+            {
+                formatter.Write(", ");
+            }
             range.Print(formatter);
         }
-        formatter.Write("}");
+        formatter.WriteLine("}");
     }
 }
 
@@ -600,7 +619,7 @@ NfaEdge::NfaEdge(Symbol* symbol_, NfaState* next_) : symbol(symbol_), next(next_
 void NfaEdge::Print(CodeFormatter& formatter)
 {
     symbol->Print(formatter);
-    formatter.WriteLine(" -> " + std::to_string(next->Id()));
+    formatter.WriteLine("-> " + std::to_string(next->Id()));
 }
 
 NfaState::NfaState(int id_, int ruleIndex_) : id(id_), ruleIndex(ruleIndex_), accept(false)
@@ -675,6 +694,17 @@ Nfa::Nfa() : start(nullptr), end(nullptr)
 
 Nfa::Nfa(NfaState* start_, NfaState* end_) : start(start_), end(end_)
 {
+}
+
+void Nfa::Print(CodeFormatter& formatter)
+{
+    formatter.WriteLine("NFA");
+    formatter.WriteLine("{");
+    formatter.Write("start: ");
+    start->Print(formatter);
+    formatter.Write("end:" );
+    end->Print(formatter);
+    formatter.WriteLine("}");
 }
 
 Nfa MakeNfa(LexerContext& lexerContext, Symbol* symbol)
@@ -815,12 +845,8 @@ void DfaState::Print(LexerContext& context, CodeFormatter& formatter)
     {
         if (next[i])
         {
-            formatter.Write(std::to_string(i));
-            if (context.Partition()[i]->Ranges().size() == 1)
-            {
-                context.Partition()[i]->Print(formatter);
-            }
-            formatter.WriteLine(" -> " + std::to_string(next[i]->Id()));
+            context.Partition()[i]->Print(formatter);
+            formatter.WriteLine("-> " + std::to_string(next[i]->Id()));
         }
     }
     formatter.DecIndent();
@@ -959,7 +985,8 @@ ExprParser::~ExprParser()
 LexerContext::LexerContext() :
     nextNfaStateId(0), nextDfaStateId(0), ruleIndex(-1), classIndex(0), any(), epsilon(eps), 
     asciiIdStart(new Class(classIndex)), asciiIdCont(new Class(classIndex + 1)), unicodeIdStart(new Class(classIndex + 2)), unicodeIdCont(new Class(classIndex + 3)),
-    tokens(nullptr), keywords(nullptr), expressions(nullptr), lexer(nullptr), currentExpression(nullptr), exprParser(nullptr), masterNfaIndex(-1)
+    tokens(nullptr), keywords(nullptr), expressions(nullptr), lexer(nullptr), currentExpression(nullptr), exprParser(nullptr), masterNfaIndex(-1), 
+    verbose(false), debug(false)
 {
     classIndex += 4;
     symbols.push_back(asciiIdStart);
@@ -1813,6 +1840,11 @@ LexerContext::~LexerContext()
 void LexerContext::SetFileName(const std::string& fileName_)
 {
     fileName = fileName_;
+}
+
+void LexerContext::SetBase(const std::string& dir_)
+{
+    dir = dir_;
 }
 
 NfaState* LexerContext::MakeNfaState()

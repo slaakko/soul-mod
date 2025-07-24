@@ -16,7 +16,7 @@ class Solution;
 
 enum class BuildFlags : std::int32_t
 {
-    none = 0, multithreadedBuild = 1 << 0, verbose = 1 << 1, debugParse = 1 << 2, xml = 1 << 3
+    none = 0, multithreadedBuild = 1 << 0, verbose = 1 << 1, debugParse = 1 << 2, xml = 1 << 3, rebuild = 1 << 4
 };
 
 constexpr BuildFlags operator|(BuildFlags left, BuildFlags right)

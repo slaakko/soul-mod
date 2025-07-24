@@ -140,6 +140,7 @@ public:
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
     FunctionSymbol* CopyCtor() const { return copyCtor; }
     void GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
+    std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context);
 private:
     ClassTypeSymbolFlags flags;
     std::vector<ClassTypeSymbol*> baseClasses;
@@ -219,5 +220,7 @@ struct ClassLess
 {
     bool operator()(ClassTypeSymbol* left, ClassTypeSymbol* right) const;
 };
+
+std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* left, ClassTypeSymbol* right, Emitter& emitter, Context* context);
 
 } // namespace otava::symbols

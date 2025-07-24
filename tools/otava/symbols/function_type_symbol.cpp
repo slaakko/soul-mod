@@ -10,6 +10,7 @@ import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;
 import otava.symbols.emitter;
+import otava.symbols.type_compare;
 
 namespace otava::symbols {
 
@@ -98,6 +99,19 @@ otava::intermediate::Type* FunctionTypeSymbol::IrType(Emitter& emitter, const so
         paramTypes.push_back(paramType->IrType(emitter, sourcePos, context));
     }
     return emitter.MakeFunctionType(returnType->IrType(emitter, sourcePos, context), paramTypes);
+}
+
+bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right)
+{
+    int n = left->ParameterTypes().size();
+    if (n != right->ParameterTypes().size()) return false;
+    for (int i = 0; i < n; ++i)
+    {
+        TypeSymbol* leftParamType = left->ParameterTypes()[i];
+        TypeSymbol* rightParamType = right->ParameterTypes()[i];
+        if (!TypesEqual(leftParamType, rightParamType)) return false;
+    }
+    return TypesEqual(left->ReturnType(), right->ReturnType());
 }
 
 } // namespace otava::symbols

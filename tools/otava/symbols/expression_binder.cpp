@@ -906,6 +906,7 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             {
                 FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
                 FunctionGroupTypeSymbol* functionGroupType = context->GetSymbolTable()->MakeFunctionGroupTypeSymbol(functionGroupSymbol);
+                //TypeSymbol* type = context->GetSymbolTable()->MakeCompoundType(context->GetSy)
                 boundExpression = new BoundFunctionGroupNode(functionGroupSymbol, node.GetSourcePos(), functionGroupType);
                 break;
             }
@@ -1136,6 +1137,21 @@ void ExpressionBinder::Visit(otava::ast::InvokeExprNode& node)
         SymbolGroupKind::functionSymbolGroup | SymbolGroupKind::typeSymbolGroup | SymbolGroupKind::variableSymbolGroup, subjectScope));
     if (subject)
     {
+        TypeSymbol* subjectType = subject->GetType();
+        if (subjectType && subjectType->IsFunctionPtrType())
+        {
+            std::unique_ptr<BoundFunctionPtrCallNode> call(new BoundFunctionPtrCallNode(node.GetSourcePos(), subjectType));
+            call->AddArgument(subject.release());
+            int n = node.Items().size();
+            for (int i = 0; i < n; ++i)
+            {
+                otava::ast::Node* item = node.Items()[i];
+                std::unique_ptr<BoundExpressionNode> arg(BindExpression(item, context));
+                call->AddArgument(arg.release());
+            }
+            boundExpression = call.release();
+            return;
+        }
         if (subject->IsBoundEmptyDestructorNode())
         {
             boundExpression = new BoundEmptyFunctionCallNode(node.GetSourcePos());

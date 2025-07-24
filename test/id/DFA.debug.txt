@@ -1,0 +1,28 @@
+DFA:
+0[0, 10]
+    CLASS [2]: {A-Z, a-z}
+    -> 1
+    CLASS [3]: {_-_}
+    -> 1
+1[1, 2, 4, 6, 9] : ACCEPT : RULE=0
+    CLASS [2]: {A-Z, a-z}
+    -> 2
+    CLASS [3]: {_-_}
+    -> 2
+    CLASS [4]: {0-9}
+    -> 3
+3[2, 4, 5, 6, 7, 9] : ACCEPT : RULE=0
+    CLASS [2]: {A-Z, a-z}
+    -> 2
+    CLASS [3]: {_-_}
+    -> 2
+    CLASS [4]: {0-9}
+    -> 3
+2[2, 3, 4, 6, 7, 9] : ACCEPT : RULE=0
+    CLASS [2]: {A-Z, a-z}
+    -> 2
+    CLASS [3]: {_-_}
+    -> 2
+    CLASS [4]: {0-9}
+    -> 3
+

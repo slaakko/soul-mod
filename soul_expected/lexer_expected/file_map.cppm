@@ -1,0 +1,39 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.lexer.file.map;
+
+import soul_expected.lexer.base;
+import soul_expected.lexer.token;
+import util_expected;
+import std;
+
+export namespace soul_expected::lexer {
+
+class FileMap
+{
+public:
+    FileMap();
+    std::int32_t MapFile(const std::string& filePath);
+    void MapFile(const std::string& filePath, std::int32_t fileId);
+    const std::string& GetFilePath(std::int32_t fileId);
+    void AddFileContent(std::int32_t fileId, std::u32string&& fileContent, std::vector<int>&& lineStartIndeces);
+    bool HasFileContent(std::int32_t fileId);
+    std::expected<bool, int> ReadFile(std::int32_t fileId);
+    std::expected<std::pair<std::u32string, std::vector<int>>*, int> GetFileContent(std::int32_t file);
+    std::expected<std::u32string, int> GetFileLine(std::int32_t fileId, int line);
+    std::int32_t NextFileId() const { return nextFileId; }
+    const std::vector<int>* LineStartIndeces(std::int32_t fileId);
+private:
+    std::recursive_mutex mtx;
+    std::int32_t nextFileId;
+    std::map<std::int32_t, std::string> filePathMap;
+    std::map<std::int32_t, std::pair<std::u32string, std::vector<int>>> fileContentsMap;
+};
+
+FileMap* GetGlobalFileMap();
+void SetGlobalFileMap(soul_expected::lexer::FileMap* fileMap_);
+
+} // namespace soul_expected::lexer

@@ -1,0 +1,11 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+expressions id.expr
+{
+	alpha="[A-Za-z_]";
+    digit="[0-9]";
+	id="{alpha}({alpha}|{digit})*";
+}

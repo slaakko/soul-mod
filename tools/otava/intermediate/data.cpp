@@ -828,14 +828,15 @@ GlobalVariable* Data::AddGlobalVariable(const soul::ast::Span& span, Type* type,
 
 GlobalVariable* Data::GetGlobalVariableForString(Value* stringValue)
 {
-    auto it = globalStringVariableMap.find(stringValue);
+    std::string strValue = stringValue->ToString();
+    auto it = globalStringVariableMap.find(strValue);
     if (it != globalStringVariableMap.cend())
     {
         return it->second;
     }
     GlobalVariable* globalVariable = context->AddGlobalVariable(soul::ast::Span(),
         context->MakePtrType(context->GetByteType()), context->GetNextStringValueId(), stringValue);
-    globalStringVariableMap[stringValue] = globalVariable;
+    globalStringVariableMap[strValue] = globalVariable;
     return globalVariable;
 }
 

@@ -102,8 +102,6 @@ public:
     virtual ~Parser();
     virtual Parser* Clone() const = 0;
     virtual void Accept(Visitor& visitor) = 0;
-    virtual bool IsTokenSwitch() const { return false; }
-    virtual bool IsActionToken() const { return false; }
     virtual std::string Name() const = 0;
     virtual void ComputeFirst(bool& changed, std::set<Parser*>& visited) = 0;
     ParserKind Kind() const { return kind; }
@@ -149,7 +147,6 @@ public:
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "choice"; }
-    bool IsTokenSwitch() const override { return Left()->IsActionToken() && Right()->IsActionToken() || Left()->IsTokenSwitch() && Right()->IsActionToken(); }
     void ComputeFirst(bool& changed, std::set<Parser*>& visited) override;
     void SetOptimizationFlag(int& count);
     bool Optimize() const { return optimize; }
@@ -270,7 +267,6 @@ public:
     Parser* Clone() const override;
     void Accept(Visitor& visitor) override;
     std::string Name() const override { return "action"; }
-    bool IsActionToken() const override;
 private:
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> successCode;
     std::unique_ptr<soul::ast::cpp::CompoundStatementNode> failureCode;

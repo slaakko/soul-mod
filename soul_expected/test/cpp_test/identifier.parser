@@ -1,0 +1,55 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.cpp.identifier.parser;
+
+[interface]import soul_expected.ast.cpp;
+[implementation]import soul_expected.cpp.token;
+[implementation]import soul_expected.cpp.op.token;
+[implementation]import soul_expected.tool.token;
+[implementation]import soul_expected.punctuation.token;
+[implementation]import soul_expected.lex.slg;
+[implementation]import soul_expected.lex.spg;
+
+parser CppIdentifierParser
+{
+    lexer soul_expected::lex::slg::SlgLexer<char32_t>;
+    lexer soul_expected::lex::spg::SpgLexer<char32_t>;
+
+    CppIdentifier(soul_expected::ast::cpp::Context* context) : std::string
+        ::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos); 
+                if (!u) return std::unexpected<int>(u.error());
+                return *u;
+            }
+        ;
+
+    QualifiedCppId(soul_expected::ast::cpp::Context* context, var std::string str) : std::string
+        ::= 
+        (
+            (
+                COLON_COLON{ str.append("::"); }
+            )? 
+            ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                str.append(*u);
+            } 
+            (   COLON_COLON 
+                ID
+                { 
+                    auto u = lexer.TokenToUtf8(pos);
+                    if (!u) return std::unexpected<int>(u.error());
+                    str.append("::").append(*u);
+                }
+            )*
+        )
+        {
+            return str;
+        }
+        ;
+}

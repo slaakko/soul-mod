@@ -23,6 +23,7 @@ public:
     void Write(const std::string& s);
     std::ostream& LogFile() { return logFile; }
     bool IsOpen() const { return open; }
+
 private:
     bool open;
     std::string logFilePath;

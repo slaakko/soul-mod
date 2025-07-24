@@ -1,0 +1,71 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.slg.keyword.file.parser;
+
+[interface]import soul_expected.ast.slg;
+[implementation]import soul_expected.cpp.token;
+[implementation]import soul_expected.cpp.op.token;
+[implementation]import soul_expected.punctuation.token;
+[implementation]import soul_expected.tool.token;
+[implementation]import soul_expected.common.common.parser;
+[implementation]import soul_expected.common.token.parser;
+[implementation]import soul_expected.lex.slg;
+
+parser KeywordFileParser
+{
+    lexer soul_expected::lex::slg::SlgLexer<char32_t>;
+
+    main;
+    using CommonParser.QualifiedId;
+    using CommonParser.Import;
+
+    KeywordFile(var std::unique_ptr<soul_expected::ast::slg::KeywordFile> keywordFile, var std::unique_ptr<soul_expected::ast::slg::KeywordCollection> keywordCollection) : soul_expected::ast::slg::KeywordFile*
+        ::= 
+        (
+            empty{ keywordFile.reset(new soul_expected::ast::slg::KeywordFile(lexer.FileName())); }
+            Imports(keywordFile.get()):imports
+            KEYWORDS
+            QualifiedId:keywordCollectionName{ keywordCollection.reset(new soul_expected::ast::slg::KeywordCollection(keywordCollectionName)); }
+            LBRACE
+            (Keyword:keyword{ keywordCollection->AddKeyword(keyword); } % COMMA)?
+            RBRACE
+        )
+        {
+            keywordFile->SetKeywordCollection(keywordCollection.release());
+            return keywordFile.release();
+        }
+        ;
+
+    Imports(soul_expected::ast::slg::KeywordFile* keywordFile)
+        ::= (Import:imp{ keywordFile->AddImport(imp); })*
+        ;
+
+    Keyword(var std::string str, var std::string tokenName) : soul_expected::ast::slg::Keyword*
+        ::= 
+        (   
+            LPAREN 
+            STRING_LITERAL
+            { 
+                auto rv = lexer.TokenToStringLiteral(pos);
+                if (!rv) return std::unexpected<int>(rv.error());
+                auto u = util::ToUtf8(*rv);
+                if (!u) return std::unexpected<int>(u.error());
+                str = *u;
+            } 
+            COMMA 
+            ID
+            { 
+                auto rv = lexer.TokenToUtf8(pos);
+                if (!rv) return std::unexpected<int>(rv.error());
+                tokenName = *rv;
+            }
+            RPAREN
+        )
+        {
+            return new soul_expected::ast::slg::Keyword(str, tokenName);
+        }
+        ;
+}

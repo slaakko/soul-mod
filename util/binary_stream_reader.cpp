@@ -81,8 +81,6 @@ std::int64_t BinaryStreamReader::ReadLong()
     return static_cast<std::int64_t>(x);
 }
 
-#ifndef OTAVA
-
 float BinaryStreamReader::ReadFloat()
 {
     std::uint32_t x = ReadUInt();
@@ -94,8 +92,6 @@ double BinaryStreamReader::ReadDouble()
     std::uint64_t x = ReadULong();
     return *reinterpret_cast<double*>(&x);
 }
-
-#endif
 
 char BinaryStreamReader::ReadChar()
 {

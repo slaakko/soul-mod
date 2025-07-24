@@ -8,6 +8,7 @@ module otava.symbols.operation.repository;
 import otava.symbols.type.symbol;
 import otava.symbols.bound.tree;
 import otava.symbols.bound.tree.visitor;
+import otava.symbols.class_group.symbol;
 import otava.symbols.function.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.context;
@@ -920,7 +921,9 @@ ClassDefaultCtor::ClassDefaultCtor(ClassTypeSymbol* classType_, const soul::ast:
     SetFunctionKind(FunctionKind::constructor);
     SetAccess(Access::public_);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "default_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    std::string digestSource = util::ToUtf8(classType->FullName());
+    digestSource.append(1, '.').append(classType->IrName(context));
+    irName = "default_ctor_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
 
@@ -1064,7 +1067,9 @@ ClassCopyCtor::ClassCopyCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "copy_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    std::string digestSource = util::ToUtf8(classType->FullName());
+    digestSource.append(1, '.').append(classType->IrName(context));
+    irName = "copy_ctor_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
 
@@ -1218,7 +1223,9 @@ ClassMoveCtor::ClassMoveCtor(ClassTypeSymbol* classType_, const soul::ast::Sourc
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType), context);
-    irName = "move_ctor_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    std::string digestSource = util::ToUtf8(classType->FullName());
+    digestSource.append(1, '.').append(classType->IrName(context));
+    irName = "move_ctor_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
 
@@ -1382,7 +1389,9 @@ ClassCopyAssignment::ClassCopyAssignment(ClassTypeSymbol* classType_, const soul
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddConst(context)->AddLValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(classType->AddLValueRef(context), context);
-    irName = "copy_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    std::string digestSource = util::ToUtf8(classType->FullName());
+    digestSource.append(1, '.').append(classType->IrName(context));
+    irName = "copy_assignment_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
 
@@ -1507,7 +1516,9 @@ ClassMoveAssignment::ClassMoveAssignment(ClassTypeSymbol* classType_, const soul
     ParameterSymbol* thatParam = new ParameterSymbol(U"that", classType->AddRValueRef(context));
     AddParameter(thatParam, sourcePos, context);
     SetReturnType(classType->AddLValueRef(context), context);
-    irName = "move_assignment_" + classType->IrName(context) + "_" + util::GetSha1MessageDigest(util::ToUtf8(classType->FullName()));
+    std::string digestSource = util::ToUtf8(classType->FullName());
+    digestSource.append(1, '.').append(classType->IrName(context));
+    irName = "move_assignment_" + util::ToUtf8(classType->Group()->Name()) + "_" + util::GetSha1MessageDigest(digestSource);
     SetFixedIrName(irName);
 }
 

@@ -582,18 +582,6 @@ void ActionParser::Accept(Visitor& visitor)
     visitor.Visit(*this);
 }
 
-bool ActionParser::IsActionToken() const
-{
-    soul::ast::cpp::CodeEvaluationVisitor visitor;
-    if (successCode)
-    {
-        successCode->Accept(visitor);
-        if (!visitor.HasReturn()) return false;
-        if (visitor.HasPass()) return false;
-    }
-    return Child()->IsTokenParser();
-}
-
 NonterminalParser::NonterminalParser(const soul::ast::SourcePos& sourcePos_, const std::string& ruleName_, const std::string& instanceName_, soul::ast::cpp::ExprListNode* args_) :
     Parser(sourcePos_, ParserKind::nonterminalParser), ruleName(ruleName_), instanceName(instanceName_), arguments(args_), rule(nullptr), recursive(false)
 {

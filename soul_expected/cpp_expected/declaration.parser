@@ -1,0 +1,286 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.cpp.declaration.parser;
+
+[interface]import soul_expected.ast.cpp;
+[implementation]import soul_expected.cpp.token;
+[implementation]import soul_expected.cpp.op.token;
+[implementation]import soul_expected.punctuation.token;
+[implementation]import soul_expected.tool.token;
+[implementation]import soul_expected.cpp.expression.parser;
+[implementation]import soul_expected.cpp.identifier.parser;
+[implementation]import soul_expected.cpp.declarator.parser;
+[implementation]import soul_expected.lex.slg;
+[implementation]import soul_expected.lex.spg;
+
+parser DeclarationParser
+{
+    lexer soul_expected::lex::slg::SlgLexer<char32_t>;
+    lexer soul_expected::lex::spg::SpgLexer<char32_t>;
+
+    using CppIdentifierParser.CppIdentifier;
+    using CppIdentifierParser.QualifiedCppId;
+    using DeclaratorParser.InitDeclaratorList;
+    using DeclaratorParser.TypeId;
+    using ExpressionParser.AssignmentExpression;
+
+    BlockDeclaration(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::Node*
+        ::= NamespaceAliasDefinition(context):nsAlias{ return nsAlias; }
+        |   UsingDirective(context):usingDirective{ return usingDirective; }
+        |   UsingDeclaration(context):usingDeclaration{ return usingDeclaration; }
+        |   SimpleDeclaration(context):simpleDeclaration{ return simpleDeclaration; }
+        ;
+
+    SimpleDeclaration(soul_expected::ast::cpp::Context* context, 
+        var std::unique_ptr<soul_expected::ast::cpp::SimpleDeclarationNode> simpleDeclaration) : soul_expected::ast::cpp::SimpleDeclarationNode*
+        ::= empty
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                simpleDeclaration.reset(new soul_expected::ast::cpp::SimpleDeclarationNode(*sp)); 
+            }
+            (DeclSpecifierSeq(context, simpleDeclaration.get()):declSpecifierSeq)?
+            (InitDeclaratorList(context):initDeclaratorList{ simpleDeclaration->SetInitDeclaratorList(initDeclaratorList); })?
+            SEMICOLON
+        {
+            return simpleDeclaration.release();
+        }
+        ;
+
+    DeclSpecifierSeq(soul_expected::ast::cpp::Context* context, soul_expected::ast::cpp::SimpleDeclarationNode* declaration)
+        ::= 
+        (
+            (
+                DeclSpecifier(context):declSpecifier{ declaration->Add(declSpecifier); }
+            )+
+            |   TypeName(context):typeName{ declaration->Add(typeName); }
+        )
+        ;
+
+    DeclSpecifier(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::DeclSpecifierNode*
+        ::= StorageClassSpecifier(context):storateClassSpecifier{ return storateClassSpecifier; }
+        |   TypeSpecifier(context):typeSpecifier{ return typeSpecifier; }
+        |   Typedef(context):tdef{ return tdef; }
+        ;
+
+    StorageClassSpecifier(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StorageClassSpecifierNode*
+        ::= AUTO
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::StorageClassSpecifierNode(*sp, "auto"); 
+            }
+        |   REGISTER
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::StorageClassSpecifierNode(*sp, "register"); 
+            }
+        |   STATIC
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::StorageClassSpecifierNode(*sp, "static"); 
+            }
+        |   EXTERN
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::StorageClassSpecifierNode(*sp, "extern"); 
+            }
+        |   MUTABLE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::StorageClassSpecifierNode(*sp, "mutable"); 
+            }
+        ;
+
+    TypeSpecifier(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::TypeSpecifierNode*
+        ::= SimpleTypeSpecifier(context):simpleTypeSpecifier{ return simpleTypeSpecifier; }
+        |   CVQualifier(context):cvQualifier{ return cvQualifier; }
+        ;
+
+    SimpleTypeSpecifier(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::TypeSpecifierNode*
+        ::= CHAR
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "char"); 
+            }
+        |   CHAR8T
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "char8_t"); 
+            }
+        |   CHAR16T
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "char16_t"); 
+            }
+        |   CHAR32T
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "char32_t"); 
+            }
+        |   WCHART
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "wchar_t"); 
+            }
+        |   BOOL
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "bool"); 
+            }
+        |   SHORT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "short"); 
+            }
+        |   INT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "int"); 
+            }
+        |   LONG
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "long"); 
+            }
+        |   SIGNED
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "signed"); 
+            }
+        |   UNSIGNED
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "unsigned"); 
+            }
+        |   FLOAT
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "float"); 
+            }
+        |   DOUBLE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "double"); 
+            }
+        |   VOID
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypeSpecifierNode(*sp, "void"); 
+            }
+        ;
+
+    TypeName(soul_expected::ast::cpp::Context* context, var std::unique_ptr<soul_expected::ast::cpp::TypeNameNode> typeName) : soul_expected::ast::cpp::TypeNameNode*
+        ::=
+        (
+            QualifiedCppId(context):qid
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                typeName.reset(new soul_expected::ast::cpp::TypeNameNode(*sp, qid)); 
+            }
+            (
+                LANGLE{ ++vars->leftAngleCount; typeName->SetTemplate(); context->BeginParsingTemplateId(); } 
+                TemplateArgumentList(context, typeName.get()):args 
+                RANGLE{ --vars->leftAngleCount; context->EndParsingTemplateId(); }
+            )?
+        )
+        {
+            return typeName.release();
+        }
+        ;
+
+    TemplateArgumentList(soul_expected::ast::cpp::Context* context, soul_expected::ast::cpp::TypeNameNode* typeName)
+        ::= TemplateArgument(context):arg{ typeName->AddTemplateArgument(arg); } % COMMA
+        ;
+
+    TemplateArgument(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::Node*
+        ::= TypeId(context):typeId{ return typeId; }
+        |   AssignmentExpression(context):assignmentExpr{ return assignmentExpr; }
+        ;
+
+    Typedef(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::DeclSpecifierNode*
+        ::= TYPEDEF
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::TypedefNode(*sp); 
+            }
+        ;
+
+    CVQualifier(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::TypeSpecifierNode*
+        ::= CONST
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::ConstNode(*sp); 
+            }
+        |   VOLATILE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::VolatileNode(*sp); 
+            }
+        ;
+
+    NamespaceAliasDefinition(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::UsingObjectNode*
+        ::= (
+                NAMESPACE CppIdentifier(context):id ASSIGN QualifiedCppId(context):qid SEMICOLON
+            )
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::NamespaceAliasNode(*sp, id, qid); 
+            }
+        ;
+
+    UsingDeclaration(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::UsingObjectNode*
+        ::= 
+        (
+            USING 
+            QualifiedCppId(context):qid 
+            SEMICOLON
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::UsingDeclarationNode(*sp, qid); 
+        }
+        ;
+
+    UsingDirective(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::UsingObjectNode*
+        ::= 
+        (
+            USING 
+            NAMESPACE 
+            QualifiedCppId(context):ns 
+            SEMICOLON
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::UsingDirectiveNode(*sp, ns); 
+        }
+        ;
+}

@@ -453,7 +453,7 @@ private:
     std::map<Type*, NullValue*> nullValueMap;
     std::vector<AddressValue*> addressValues;
     std::map<std::string, GlobalVariable*> globalVariableMap;
-    std::map<Value*, GlobalVariable*> globalStringVariableMap;
+    std::map<std::string, GlobalVariable*> globalStringVariableMap;
     std::int32_t nextStringValueId;
 };
 

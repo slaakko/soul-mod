@@ -1,0 +1,308 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.cpp.statement.parser;
+
+[interface]import soul_expected.ast.cpp;
+[implementation]import soul_expected.cpp.token;
+[implementation]import soul_expected.cpp.op.token;
+[implementation]import soul_expected.tool.token;
+[implementation]import soul_expected.punctuation.token;
+[implementation]import soul_expected.cpp.declaration.parser;
+[implementation]import soul_expected.cpp.declarator.parser;
+[implementation]import soul_expected.cpp.expression.parser;
+[implementation]import soul_expected.lex.slg;
+[implementation]import soul_expected.lex.spg;
+
+parser StatementParser
+{
+    lexer soul_expected::lex::slg::SlgLexer<char32_t>;
+    lexer soul_expected::lex::spg::SpgLexer<char32_t>;
+
+    using DeclarationParser.SimpleDeclaration;
+    using DeclarationParser.BlockDeclaration;
+    using DeclarationParser.DeclSpecifierSeq;
+    using DeclaratorParser.TypeId;
+    using DeclaratorParser.TypeSpecifierSeq;
+    using DeclaratorParser.Declarator;
+    using DeclaratorParser.AbstractDeclarator;
+    using ExpressionParser.Expression;
+    using ExpressionParser.ConstantExpression;
+    using ExpressionParser.AssignmentExpression;
+
+    Statement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= LabeledStatement(context):labeledStatement{ return labeledStatement; }
+        |   EmptyStatement(context):emptyStatement{ return emptyStatement; }
+        |   CompoundStatement(context):compoundStatement{ return compoundStatement; }
+        |   SelectionStatement(context):selectionStatement{ return selectionStatement; }
+        |   IterationStatement(context):iterationStatement{ return iterationStatement; }
+        |   JumpStatement(context):jumpStatement{ return jumpStatement; }
+        |   DeclarationStatement(context):declarationStatement{ return declarationStatement; }
+        |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }  
+        ;
+
+    LabeledStatement(soul_expected::ast::cpp::Context* context, var std::string label) : soul_expected::ast::cpp::StatementNode*
+        ::= ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                label = *u; 
+            } 
+            COLON 
+            Statement(context):stmt1
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::LabeledStatementNode(*sp, label, stmt1); 
+            }
+        |   CASE 
+            ConstantExpression(context):caseExpr 
+            COLON 
+            Statement(context):stmt2
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::CaseStatementNode(*sp, caseExpr, stmt2); 
+            }
+        |   DEFAULT 
+            COLON 
+            Statement(context):stmt3
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::DefaultStatementNode(*sp, stmt3); 
+            }
+        ;
+
+    EmptyStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= SEMICOLON
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::EmptyStatementNode(*sp); 
+            }
+        ;
+
+    CompoundStatement(soul_expected::ast::cpp::Context* context, var std::unique_ptr<soul_expected::ast::cpp::CompoundStatementNode> compoundStatement) : 
+        soul_expected::ast::cpp::CompoundStatementNode*
+        ::= 
+        (
+            LBRACE
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                compoundStatement.reset(new soul_expected::ast::cpp::CompoundStatementNode(*sp)); 
+            }
+            (
+                Statement(context):stmt{ compoundStatement->Add(stmt); }
+            )*
+            RBRACE
+        )
+        {
+            return compoundStatement.release();
+        }
+        ;
+
+    SelectionStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= IfStatement(context):ifStatement{ return ifStatement; }
+        |   SwitchStatement(context):switchStatement{ return switchStatement; }
+        ;
+
+    IfStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            IF LPAREN Condition(context):cond RPAREN Statement(context):thenS (ELSE Statement(context):elseS)?
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::IfStatementNode(*sp, cond, thenS, elseS);
+        }
+        ;
+
+    SwitchStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            SWITCH LPAREN Condition(context):cond RPAREN Statement(context):stmt
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::SwitchStatementNode(*sp, cond, stmt);
+        }
+        ;
+
+    IterationStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= WhileStatement(context):whileStatement{ return whileStatement; }
+        |   DoStatement(context):doStatement{ return doStatement; }
+        |   RangeForStatement(context):rangeForStatement{ return rangeForStatement; }
+        |   ForStatement(context):forStatement{ return forStatement; }
+        ;
+
+    WhileStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            WHILE LPAREN Condition(context):cond RPAREN Statement(context):stmt
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::WhileStatementNode(*sp, cond, stmt);
+        }
+        ;
+
+    DoStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::=
+        (
+            DO Statement(context):stmt WHILE LPAREN Expression(context):cond RPAREN SEMICOLON
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::DoStatementNode(*sp, cond, stmt);
+        }
+        ;
+
+    RangeForStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            FOR LPAREN ForRangeDeclaration(context):forRangeDeclaration COLON Expression(context):container RPAREN Statement(context):stmt
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::RangeForStatementNode(*sp, forRangeDeclaration, container, stmt);
+        }
+        ;
+
+    ForRangeDeclaration(soul_expected::ast::cpp::Context* context, var std::unique_ptr<soul_expected::ast::cpp::ForRangeDeclarationNode> forRangeDeclaration) : soul_expected::ast::cpp::ForRangeDeclarationNode*
+        ::= 
+        (
+            empty
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                forRangeDeclaration.reset(new soul_expected::ast::cpp::ForRangeDeclarationNode(*sp)); 
+            }
+            DeclSpecifierSeq(context, forRangeDeclaration->Declaration()):declSpecifierSeq Declarator(context):declarator{ forRangeDeclaration->SetDeclarator(declarator); }
+        )
+        {
+            return forRangeDeclaration.release();
+        }
+        ;
+
+    ForStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= FOR LPAREN ForInitStatement(context):forInitStatement Condition(context):cond? SEMICOLON Expression(context):loopExpr? RPAREN Statement(context):stmt
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::ForStatementNode(*sp, forInitStatement, cond, loopExpr, stmt);
+        }
+        ;
+
+    ForInitStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::Node*
+        ::= EmptyStatement(context):emptyStatement{ return emptyStatement; }
+        |   ExpressionStatement(context):expressionStatement{ return expressionStatement; }
+        |   SimpleDeclaration(context):simpleDeclaration{ return simpleDeclaration; }
+        ;
+
+    JumpStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= BreakStatement(context):breakStatement{ return breakStatement; }
+        |   ContinueStatement(context):continueStatement{ return continueStatement; }
+        |   ReturnStatement(context):returnStatement{ return returnStatement; }
+        |   GotoStatement(context):gotoStatement{ return gotoStatement; }
+        ;
+    
+    BreakStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            BREAK SEMICOLON
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::BreakStatementNode(*sp); 
+        }
+        ;
+
+    ContinueStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            CONTINUE SEMICOLON
+        )
+        {
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::ContinueStatementNode(*sp); 
+        }
+        ;
+
+    ReturnStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            RETURN Expression(context):returnValue? SEMICOLON
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::ReturnStatementNode(*sp, returnValue); 
+        }
+        ;
+
+    GotoStatement(soul_expected::ast::cpp::Context* context, var std::string target) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            GOTO 
+            ID
+            { 
+                auto u = lexer.TokenToUtf8(pos);
+                if (!u) return std::unexpected<int>(u.error());
+                target = *u; 
+            } 
+            SEMICOLON
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::GotoStatementNode(*sp, target); 
+        }
+        ;
+
+    DeclarationStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            BlockDeclaration(context):declaration
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::DeclarationStatementNode(*sp, declaration); 
+        }
+        ;
+
+    Condition(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::Node*
+        ::= 
+        (   TypeId(context):typeId Declarator(context):declarator ASSIGN AssignmentExpression(context):assignmentExpr
+            { 
+                auto sp = lexer.GetSourcePos(pos);
+                if (!sp) return std::unexpected<int>(sp.error());
+                return new soul_expected::ast::cpp::ConditionWithDeclaratorNode(*sp, typeId, declarator, assignmentExpr); 
+            }
+        |   Expression(context):expr{ return expr; }
+        )
+        ;
+
+    ExpressionStatement(soul_expected::ast::cpp::Context* context) : soul_expected::ast::cpp::StatementNode*
+        ::= 
+        (
+            Expression(context):expr SEMICOLON
+        )
+        { 
+            auto sp = lexer.GetSourcePos(pos);
+            if (!sp) return std::unexpected<int>(sp.error());
+            return new soul_expected::ast::cpp::ExpressionStatementNode(*sp, expr); 
+        }
+        ;
+}

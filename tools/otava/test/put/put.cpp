@@ -15,4 +15,7 @@ int main()
     std::cout << nullptr << "\n";
     std::cout << 123 << "\n";
     std::cout << std::endl;
+    std::cout << 31 << "\n";
+    std::cout << std::oct << 31 << "\n";
+    std::cout << std::hex << 31 << "\n";
 }

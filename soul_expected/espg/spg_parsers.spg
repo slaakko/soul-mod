@@ -1,0 +1,10 @@
+project soul_expected.spg.parsers;
+parser <parser_file.parser>;
+parser <spg_file.parser>;
+extern parser <../common_expected/common.parser>;
+extern parser <../cpp_expected/declaration.parser>;
+extern parser <../cpp_expected/declarator.parser>;
+extern parser <../cpp_expected/expression.parser>;
+extern parser <../cpp_expected/identifier.parser>;
+extern parser <../cpp_expected/literal.parser>;
+extern parser <../cpp_expected/statement.parser>;

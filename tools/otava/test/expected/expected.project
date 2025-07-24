@@ -1,0 +1,3 @@
+project expected;
+target=program;
+source <expected.cpp>;

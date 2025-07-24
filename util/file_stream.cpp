@@ -12,7 +12,7 @@ module util.file.stream;
 
 import std;
 import util.text.util;
-import util.error;
+import util.win_error;
 
 namespace util {
 

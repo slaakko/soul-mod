@@ -15,6 +15,7 @@ class FunctionTypeSymbol : public TypeSymbol
 public:
     FunctionTypeSymbol();
     FunctionTypeSymbol(const std::u32string& name_);
+    bool IsFunctionType() const override { return true; }
     void MakeName();
     std::string SymbolKindStr() const override { return "function type symbol"; }
     std::string SymbolDocKindStr() const override { return "function_type"; }
@@ -35,5 +36,7 @@ private:
     std::vector<util::uuid> parameterTypeIds;
     int ptrIndex;
 };
+
+bool FunctionTypesEqual(FunctionTypeSymbol* left, FunctionTypeSymbol* right);
 
 } // namespace otava::symbols

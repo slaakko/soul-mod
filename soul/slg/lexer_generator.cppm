@@ -11,6 +11,6 @@ import soul.common.module_map;
 
 export namespace soul::slg {
 
-void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle);
+void GenerateLexer(soul::ast::slg::SlgFile* slgFile, bool verbose, soul::common::ModuleMap& moduleMap, bool ppstyle, bool debug);
 
 } // namespace soul::slg

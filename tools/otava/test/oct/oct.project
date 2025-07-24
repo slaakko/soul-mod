@@ -1,0 +1,3 @@
+project oct;
+target=program;
+source <oct.cpp>;

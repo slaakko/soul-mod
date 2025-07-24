@@ -24,6 +24,7 @@ export import std.container.stack;
 export import std.container.vector;
 // export import std.container.unordered_map;
 export import std.error;
+export import std.expected;
 export import std.functional;
 export import std.hash;
 // export import std.iterator.reverse;

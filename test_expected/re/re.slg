@@ -1,0 +1,7 @@
+project soul.lex.re;
+tokens <soul.cpp.op.token>;
+tokens <soul.cpp.token>;
+tokens <soul.punctuation.token>;
+tokens <soul.tool.token>;
+expressions <re.expr>;
+lexer <re.lexer>;

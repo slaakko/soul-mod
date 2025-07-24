@@ -311,7 +311,7 @@ void VerifierVisitor::Visit(StoreInstruction& inst)
 
 void VerifierVisitor::Visit(ArgInstruction& inst)
 {
-    CheckArithmeticPointerOrBooleanType(inst.Arg()->GetType(), "type of argument", inst.Span());
+    CheckArithmeticPointerFunctionOrBooleanType(inst.Arg()->GetType(), "type of argument", inst.Span());
     arguments.push_back(inst.Arg());
     inst.AddToUses();
     inst.SetIndex(index++);

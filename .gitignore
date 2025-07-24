@@ -23,6 +23,8 @@ bind
 *.log
 *.ast
 *.classmap
+DFA.debug.txt
+CLASSMAP.debug.txt
 *.org
 *.module
 *.ast.xml

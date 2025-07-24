@@ -1,4 +1,4 @@
-project soul.lex.slg;
+project soul.lex.spg;
 extern tokens <../token/soul.cpp.op.token>;
 extern tokens <../token/soul.cpp.token>;
 extern tokens <../token/soul.punctuation.token>;

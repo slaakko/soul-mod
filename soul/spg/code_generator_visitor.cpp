@@ -20,60 +20,38 @@ CodeGeneratorVisitor::CodeGeneratorVisitor(soul::ast::spg::SpgFile* spgFile_, bo
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::ChoiceParser& parser)
 {
-    if (stage == CodeGenerationStage::generateTokenSwitch)
+    if (stage == CodeGenerationStage::generateImplementation)
     {
+        int prevSetParentMatchNumber0 = setParentMatchNumber;
+        formatter->WriteLine("soul::parser::Match match(false);");
+        setParentMatchNumber = parentMatchNumber;
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
+        formatter->WriteLine("std::int64_t save = lexer.GetPos();");
         parser.Left()->Accept(*this);
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
+        formatter->WriteLine("if (!match.hit)");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
+        int prevSetParentMatchNumber1 = setParentMatchNumber;
+        formatter->WriteLine("soul::parser::Match match(false);");
+        setParentMatchNumber = parentMatchNumber;
+        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("lexer.SetPos(save);");
+        formatter->WriteLine("{");
+        formatter->IncIndent();
         parser.Right()->Accept(*this);
-    }
-    else
-    {
-        if (parser.IsTokenSwitch())
-        {
-            CodeGenerationStage prevStage = stage;
-            stage = CodeGenerationStage::generateTokenSwitch;
-            formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
-            formatter->WriteLine("switch (*lexer)");
-            formatter->WriteLine("{");
-            formatter->IncIndent();
-            parser.Left()->Accept(*this);
-            parser.Right()->Accept(*this);
-            formatter->DecIndent();
-            formatter->WriteLine("}");
-            stage = prevStage;
-        }
-        else if (stage == CodeGenerationStage::generateImplementation)
-        {
-            int prevSetParentMatchNumber0 = setParentMatchNumber;
-            formatter->WriteLine("soul::parser::Match match(false);");
-            setParentMatchNumber = parentMatchNumber;
-            formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-            formatter->WriteLine("{");
-            formatter->IncIndent();
-            formatter->WriteLine("std::int64_t save = lexer.GetPos();");
-            parser.Left()->Accept(*this);
-            formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-            formatter->WriteLine("if (!match.hit)");
-            formatter->WriteLine("{");
-            formatter->IncIndent();
-            int prevSetParentMatchNumber1 = setParentMatchNumber;
-            formatter->WriteLine("soul::parser::Match match(false);");
-            setParentMatchNumber = parentMatchNumber;
-            formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
-            formatter->WriteLine("lexer.SetPos(save);");
-            formatter->WriteLine("{");
-            formatter->IncIndent();
-            parser.Right()->Accept(*this);
-            formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-            formatter->DecIndent();
-            formatter->WriteLine("}");
-            setParentMatchNumber = prevSetParentMatchNumber1;
-            formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-            formatter->DecIndent();
-            formatter->WriteLine("}");
-            formatter->DecIndent();
-            formatter->WriteLine("}");
-            setParentMatchNumber = prevSetParentMatchNumber0;
-        }
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+        setParentMatchNumber = prevSetParentMatchNumber1;
+        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+        formatter->DecIndent();
+        formatter->WriteLine("}");
+        setParentMatchNumber = prevSetParentMatchNumber0;
     }
 }
 
@@ -410,112 +388,69 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::ExpectationParser& parser)
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::ActionParser& parser)
 {
-    if (stage == CodeGenerationStage::generateTokenSwitch)
+    int prevSetParentMatchNumber = setParentMatchNumber;
+    formatter->WriteLine("soul::parser::Match match(false);");
+    setParentMatchNumber = parentMatchNumber;
+    formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+    formatter->WriteLine("{");
+    formatter->IncIndent();
+    formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
+    soul::ast::cpp::CodeEvaluationVisitor codeEvaluationVisitor;
+    parser.SuccessCode()->Accept(codeEvaluationVisitor);
+    if (codeEvaluationVisitor.HasReturn())
     {
-        soul::ast::cpp::CodeEvaluationVisitor codeEvaluationVisitor;
-        parser.SuccessCode()->Accept(codeEvaluationVisitor);
-        bool hasPass = codeEvaluationVisitor.HasPass();
-        if (hasPass)
-        {
-            std::string errorMessage = soul::lexer::MakeMessage("error", "token switch does not support 'pass'", parser.GetSourcePos(), fileMap);
-            throw std::runtime_error(errorMessage);
-        }
-        if (codeEvaluationVisitor.HasReturn())
-        {
-            currentRule->SetHasReturn();
-        }
-        stage = CodeGenerationStage::beginGenerateTokenSwitch;
-        parser.Child()->Accept(*this);
-        bool nonterminalValue = parser.Child()->IsNonterminalParser();
-        bool ptrType = false;
-        if (currentRule->ReturnType() != nullptr)
-        {
-            ptrType = currentRule->ReturnType()->IsPtrType();
-        }
-        std::string nonterminalName;
-        soul::ast::cpp::TypeIdNode* returnType = nullptr;
-        if (!ptrType)
-        {
-            returnType = currentRule->ReturnType();
-        }
-        if (nonterminalValue)
-        {
-            soul::ast::spg::NonterminalParser* nt = static_cast<soul::ast::spg::NonterminalParser*>(parser.Child());
-            nonterminalName = nt->InstanceName();
-        }
-        soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
-        ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
-        parser.SuccessCode()->Write(*formatter);
-        stage = CodeGenerationStage::endGenerateTokenSwitch;
-        parser.Child()->Accept(*this);
-        stage = CodeGenerationStage::generateTokenSwitch;
+        currentRule->SetHasReturn();
     }
-    else
+    bool hasPass = codeEvaluationVisitor.HasPass();
+    bool hasVars = codeEvaluationVisitor.HasVars();
+    if (hasPass)
     {
-        int prevSetParentMatchNumber = setParentMatchNumber;
-        formatter->WriteLine("soul::parser::Match match(false);");
-        setParentMatchNumber = parentMatchNumber;
-        formatter->WriteLine("soul::parser::Match* parentMatch" + std::to_string(parentMatchNumber++) + " = &match;");
+        formatter->WriteLine("bool pass = true;");
+    }
+    if (hasVars)
+    {
+        formatter->WriteLine("auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());");
+    }
+    parser.Child()->Accept(*this);
+    formatter->WriteLine("if (match.hit)");
+    bool nonterminalValue = parser.Child()->IsNonterminalParser();
+    bool ptrType = false;
+    if (currentRule->ReturnType() != nullptr)
+    {
+        ptrType = currentRule->ReturnType()->IsPtrType();
+    }
+    std::string nonterminalName;
+    soul::ast::cpp::TypeIdNode* returnType = nullptr;
+    if (!ptrType)
+    {
+        returnType = currentRule->ReturnType();
+    }
+    if (nonterminalValue)
+    {
+        soul::ast::spg::NonterminalParser* nt = static_cast<soul::ast::spg::NonterminalParser*>(parser.Child());
+        nonterminalName = nt->InstanceName();
+    }
+    soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
+    ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
+    parser.SuccessCode()->Write(*formatter);
+    if (parser.FailureCode())
+    {
+        formatter->WriteLine("else");
+        parser.FailureCode()->Write(*formatter);
+    }
+    if (hasPass)
+    {
+        formatter->WriteLine("if (match.hit && !pass)");
         formatter->WriteLine("{");
         formatter->IncIndent();
-        formatter->WriteLine("std::int64_t pos = lexer.GetPos();");
-        soul::ast::cpp::CodeEvaluationVisitor codeEvaluationVisitor;
-        parser.SuccessCode()->Accept(codeEvaluationVisitor);
-        if (codeEvaluationVisitor.HasReturn())
-        {
-            currentRule->SetHasReturn();
-        }
-        bool hasPass = codeEvaluationVisitor.HasPass();
-        bool hasVars = codeEvaluationVisitor.HasVars();
-        if (hasPass)
-        {
-            formatter->WriteLine("bool pass = true;");
-        }
-        if (hasVars)
-        {
-            formatter->WriteLine("auto vars = static_cast<typename LexerT::VariableClassType*>(lexer.GetVariables());");
-        }
-        parser.Child()->Accept(*this);
-        formatter->WriteLine("if (match.hit)");
-        bool nonterminalValue = parser.Child()->IsNonterminalParser();
-        bool ptrType = false;
-        if (currentRule->ReturnType() != nullptr)
-        {
-            ptrType = currentRule->ReturnType()->IsPtrType();
-        }
-        std::string nonterminalName;
-        soul::ast::cpp::TypeIdNode* returnType = nullptr;
-        if (!ptrType)
-        {
-            returnType = currentRule->ReturnType();
-        }
-        if (nonterminalValue)
-        {
-            soul::ast::spg::NonterminalParser* nt = static_cast<soul::ast::spg::NonterminalParser*>(parser.Child());
-            nonterminalName = nt->InstanceName();
-        }
-        soul::spg::parsing::util::CountNonterminals(parser.SuccessCode(), nonterminalInfos);
-        ModifyCode(parser.SuccessCode(), ptrType, nonterminalName, nonterminalInfos, returnType, noDebugSupport, currentRule->Name(), fileMap);
-        parser.SuccessCode()->Write(*formatter);
-        if (parser.FailureCode())
-        {
-            formatter->WriteLine("else");
-            parser.FailureCode()->Write(*formatter);
-        }
-        if (hasPass)
-        {
-            formatter->WriteLine("if (match.hit && !pass)");
-            formatter->WriteLine("{");
-            formatter->IncIndent();
-            formatter->WriteLine("match = soul::parser::Match(false);");
-            formatter->DecIndent();
-            formatter->WriteLine("}");
-        }
-        formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
-        setParentMatchNumber = prevSetParentMatchNumber;
+        formatter->WriteLine("match = soul::parser::Match(false);");
         formatter->DecIndent();
         formatter->WriteLine("}");
     }
+    formatter->WriteLine("*parentMatch" + std::to_string(setParentMatchNumber) + " = match;");
+    setParentMatchNumber = prevSetParentMatchNumber;
+    formatter->DecIndent();
+    formatter->WriteLine("}");
 }
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::NonterminalParser& parser)
@@ -579,20 +514,7 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::AnyParser& parser)
 
 void CodeGeneratorVisitor::Visit(soul::ast::spg::TokenParser& parser)
 {
-    if (stage == CodeGenerationStage::beginGenerateTokenSwitch)
-    {
-        formatter->WriteLine("case " + parser.TokenName() + ":");
-        formatter->WriteLine("{");
-        formatter->IncIndent();
-        formatter->WriteLine("++lexer;");
-    }
-    else if (stage == CodeGenerationStage::endGenerateTokenSwitch)
-    {
-        formatter->WriteLine("break;");
-        formatter->DecIndent();
-        formatter->WriteLine("}");
-    }
-    else if (stage == CodeGenerationStage::generateImplementation)
+    if (stage == CodeGenerationStage::generateImplementation)
     {
         formatter->WriteLine("soul::parser::Match match(false);");
         formatter->WriteLine("if (*lexer == " + parser.TokenName() + ")");
@@ -811,10 +733,6 @@ void CodeGeneratorVisitor::Visit(soul::ast::spg::RuleParser& parser)
                 }
                 formatter->WriteLine(" " + nonterminal->InstanceName() + ";");
             }
-        }
-        if (parser.Definition()->IsTokenSwitch())
-        {
-            formatter->WriteLine("soul::parser::Match match(false);");
         }
         parser.Definition()->Accept(*this);
         if (!noDebugSupport)

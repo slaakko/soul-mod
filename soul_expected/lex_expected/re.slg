@@ -1,0 +1,7 @@
+project soul_expected.lex.re;
+extern tokens <../token_expected/soul.cpp.op.token>;
+extern tokens <../token_expected/soul.cpp.token>;
+extern tokens <../token_expected/soul.punctuation.token>;
+extern tokens <../token_expected/soul.tool.token>;
+expressions <../expression/re.expr>;
+lexer <re.lexer>;
