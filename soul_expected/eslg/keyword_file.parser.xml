@@ -17,14 +17,10 @@
           <token first="{KEYWORDS}" name="KEYWORDS"/>
          </sequence>
          <action first="{ID}">
-          <expectation first="{ID}">
-           <nonterminal first="{ID}" ruleName="QualifiedId"/>
-          </expectation>
+          <nonterminal first="{ID}" ruleName="QualifiedId"/>
          </action>
         </sequence>
-        <expectation first="{LBRACE}">
-         <token first="{LBRACE}" name="LBRACE"/>
-        </expectation>
+        <token first="{LBRACE}" name="LBRACE"/>
        </sequence>
        <optional first="{#, LPAREN}">
         <group first="{LPAREN}">
@@ -46,9 +42,7 @@
         </group>
        </optional>
       </sequence>
-      <expectation first="{RBRACE}">
-       <token first="{RBRACE}" name="RBRACE"/>
-      </expectation>
+      <token first="{RBRACE}" name="RBRACE"/>
      </sequence>
     </group>
    </action>
@@ -71,24 +65,16 @@
         <sequence first="{LPAREN}">
          <token first="{LPAREN}" name="LPAREN"/>
          <action first="{STRING_LITERAL}">
-          <expectation first="{STRING_LITERAL}">
-           <token first="{STRING_LITERAL}" name="STRING_LITERAL"/>
-          </expectation>
+          <token first="{STRING_LITERAL}" name="STRING_LITERAL"/>
          </action>
         </sequence>
-        <expectation first="{COMMA}">
-         <token first="{COMMA}" name="COMMA"/>
-        </expectation>
+        <token first="{COMMA}" name="COMMA"/>
        </sequence>
        <action first="{ID}">
-        <expectation first="{ID}">
-         <token first="{ID}" name="ID"/>
-        </expectation>
+        <token first="{ID}" name="ID"/>
        </action>
       </sequence>
-      <expectation first="{RPAREN}">
-       <token first="{RPAREN}" name="RPAREN"/>
-      </expectation>
+      <token first="{RPAREN}" name="RPAREN"/>
      </sequence>
     </group>
    </action>

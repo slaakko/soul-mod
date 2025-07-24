@@ -14,14 +14,10 @@
           <token first="{EXPRESSIONS}" name="EXPRESSIONS"/>
          </sequence>
          <action first="{ID}">
-          <expectation first="{ID}">
-           <nonterminal first="{ID}" ruleName="QualifiedId"/>
-          </expectation>
+          <nonterminal first="{ID}" ruleName="QualifiedId"/>
          </action>
         </sequence>
-        <expectation first="{LBRACE}">
-         <token first="{LBRACE}" name="LBRACE"/>
-        </expectation>
+        <token first="{LBRACE}" name="LBRACE"/>
        </sequence>
        <kleene first="{#, ID}">
         <group first="{ID}">
@@ -31,9 +27,7 @@
         </group>
        </kleene>
       </sequence>
-      <expectation first="{RBRACE}">
-       <token first="{RBRACE}" name="RBRACE"/>
-      </expectation>
+      <token first="{RBRACE}" name="RBRACE"/>
      </sequence>
     </group>
    </action>
@@ -47,17 +41,11 @@
         <action first="{ID}">
          <token first="{ID}" name="ID"/>
         </action>
-        <expectation first="{ASSIGN}">
-         <token first="{ASSIGN}" name="ASSIGN"/>
-        </expectation>
+        <token first="{ASSIGN}" name="ASSIGN"/>
        </sequence>
-       <expectation first="{STRING_LITERAL}">
-        <nonterminal first="{STRING_LITERAL}" ruleName="ExprString"/>
-       </expectation>
+       <nonterminal first="{STRING_LITERAL}" ruleName="ExprString"/>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>

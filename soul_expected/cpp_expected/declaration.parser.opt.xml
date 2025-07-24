@@ -294,29 +294,33 @@
    </action>
   </rule>
   <rule first="{USING}" name="UsingDeclaration">
-   <sequence first="{USING}">
-    <sequence first="{USING}">
-     <token first="{USING}" name="USING"/>
-     <nonterminal first="{#, COLON_COLON, ID}" ruleName="QualifiedCppId"/>
-    </sequence>
-    <action first="{SEMICOLON}">
-     <token first="{SEMICOLON}" name="SEMICOLON"/>
-    </action>
-   </sequence>
+   <action first="{USING}">
+    <group first="{USING}">
+     <sequence first="{USING}">
+      <sequence first="{USING}">
+       <token first="{USING}" name="USING"/>
+       <nonterminal first="{#, COLON_COLON, ID}" ruleName="QualifiedCppId"/>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
+     </sequence>
+    </group>
+   </action>
   </rule>
   <rule first="{USING}" name="UsingDirective">
-   <sequence first="{USING}">
-    <sequence first="{USING}">
+   <action first="{USING}">
+    <group first="{USING}">
      <sequence first="{USING}">
-      <token first="{USING}" name="USING"/>
-      <token first="{NAMESPACE}" name="NAMESPACE"/>
+      <sequence first="{USING}">
+       <sequence first="{USING}">
+        <token first="{USING}" name="USING"/>
+        <token first="{NAMESPACE}" name="NAMESPACE"/>
+       </sequence>
+       <nonterminal first="{#, COLON_COLON, ID}" ruleName="QualifiedCppId"/>
+      </sequence>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
-     <nonterminal first="{#, COLON_COLON, ID}" ruleName="QualifiedCppId"/>
-    </sequence>
-    <action first="{SEMICOLON}">
-     <token first="{SEMICOLON}" name="SEMICOLON"/>
-    </action>
-   </sequence>
+    </group>
+   </action>
   </rule>
  </grammar>
 </parserFile>

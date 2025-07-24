@@ -104,8 +104,8 @@
   </rule>
   <rule first="{#, COLON_COLON, ID, LANGLE, OPERATOR}" name="DeclaratorId">
    <choice first="{#, COLON_COLON, ID, LANGLE, OPERATOR}">
-    <action first="{#, COLON_COLON, ID, OPERATOR}">
-     <nonterminal first="{#, COLON_COLON, ID, OPERATOR}" ruleName="IdExpression"/>
+    <action first="{#, COLON_COLON, ID, LANGLE, OPERATOR}">
+     <nonterminal first="{#, COLON_COLON, ID, LANGLE, OPERATOR}" ruleName="IdExpression"/>
     </action>
     <action first="{#, COLON_COLON, ID, LANGLE}">
      <nonterminal first="{#, COLON_COLON, ID, LANGLE}" ruleName="TypeName"/>

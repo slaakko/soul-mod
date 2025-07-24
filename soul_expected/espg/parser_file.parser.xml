@@ -384,9 +384,7 @@
       <token first="{COLON}" name="COLON"/>
      </sequence>
      <action first="{ID}">
-      <expectation first="{ID}">
-       <token first="{ID}" name="ID"/>
-      </expectation>
+      <token first="{ID}" name="ID"/>
      </action>
     </sequence>
    </group>

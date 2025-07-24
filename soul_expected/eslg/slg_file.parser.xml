@@ -8,14 +8,10 @@
        <sequence first="{PROJECT}">
         <token first="{PROJECT}" name="PROJECT"/>
         <action first="{ID}">
-         <expectation first="{ID}">
-          <nonterminal first="{ID}" ruleName="QualifiedId"/>
-         </expectation>
+         <nonterminal first="{ID}" ruleName="QualifiedId"/>
         </action>
        </sequence>
-       <expectation first="{SEMICOLON}">
-        <token first="{SEMICOLON}" name="SEMICOLON"/>
-       </expectation>
+       <token first="{SEMICOLON}" name="SEMICOLON"/>
       </sequence>
       <kleene first="{#, EXPRESSIONS, EXTERN, FILEPATH, ID, KEYWORDS, SEMICOLON, TOKENS}">
        <group first="{#, EXPRESSIONS, EXTERN, FILEPATH, ID, KEYWORDS, SEMICOLON, TOKENS}">
@@ -68,9 +64,7 @@
        </sequence>
        <nonterminal first="{FILEPATH}" ruleName="FilePath"/>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>
@@ -83,9 +77,7 @@
        <token first="{KEYWORDS}" name="KEYWORDS"/>
        <nonterminal first="{FILEPATH}" ruleName="FilePath"/>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>
@@ -98,9 +90,7 @@
        <token first="{EXPRESSIONS}" name="EXPRESSIONS"/>
        <nonterminal first="{FILEPATH}" ruleName="FilePath"/>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>
@@ -113,9 +103,7 @@
        <nonterminal first="{ID}" ruleName="LexerKeyword"/>
        <nonterminal first="{FILEPATH}" ruleName="FilePath"/>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>

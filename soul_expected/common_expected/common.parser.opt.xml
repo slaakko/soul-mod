@@ -34,9 +34,7 @@
         <nonterminal first="{ID}" ruleName="QualifiedId"/>
        </action>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>
@@ -63,9 +61,7 @@
         <nonterminal first="{ID}" ruleName="QualifiedId"/>
        </action>
       </sequence>
-      <expectation first="{SEMICOLON}">
-       <token first="{SEMICOLON}" name="SEMICOLON"/>
-      </expectation>
+      <token first="{SEMICOLON}" name="SEMICOLON"/>
      </sequence>
     </group>
    </action>

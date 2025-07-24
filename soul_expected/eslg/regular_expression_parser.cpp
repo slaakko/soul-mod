@@ -25,7 +25,7 @@ std::expected<soul_expected::ast::re::Nfa, int> RegularExpressionParser::Parse(c
     if (!prv)
     {
         return std::unexpected<int>(util::AllocateError("error parsing regular expression at " + fileName + ":" + std::to_string(line) + ": " +
-            util::GetErrorMessage(rv.error())));
+            util::GetErrorMessage(prv.error())));
     }
     return std::expected<soul_expected::ast::re::Nfa, int>(*prv);
 }
