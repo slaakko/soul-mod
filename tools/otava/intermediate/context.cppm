@@ -64,6 +64,7 @@ public:
     void ResolveTypes();
     void ResolveData();
     void ResolveType(TypeRef& typeRef);
+    Value* GetBoolValue(bool value);
     Value* GetTrueValue();
     Value* GetFalseValue();
     Value* GetBooleanLiteral(const soul::ast::Span& span, Type* type, bool value);

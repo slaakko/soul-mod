@@ -97,6 +97,11 @@ void Context::ResolveType(TypeRef& typeRef)
     types.ResolveType(typeRef, this);
 }
 
+Value* Context::GetBoolValue(bool value)
+{
+    if (value) return GetTrueValue(); else return GetFalseValue();
+}
+
 Value* Context::GetTrueValue()
 {
     return data.GetTrueValue(types);

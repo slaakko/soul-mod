@@ -1,2 +1,2 @@
 @echo off
-spg -v common_parser.spg
+spg -vox common_parser.spg

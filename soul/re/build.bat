@@ -1,2 +1,2 @@
 @echo off
-spg -v re.spg
+spg -vox re.spg

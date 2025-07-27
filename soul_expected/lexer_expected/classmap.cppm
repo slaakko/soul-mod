@@ -69,9 +69,9 @@ std::expected<ClassMap<Char>*, int> MakeClassMap(const std::string& moduleFileNa
     if (!resource) return std::unexpected<int>(resource.Error());
     util::MemoryStream memoryStream(resource.Data(), resource.Size());
     util::BinaryStreamReader rawReader(memoryStream);
-    std::int32_t size = rawReader.ReadInt();
     std::expected<int32_t, int> rv = rawReader.ReadInt();
     if (!rv) return std::unexpected<int>(rv.error());
+    int32_t size = *rv;
     std::int32_t* data = new std::int32_t[size];
     util::DeflateStream compressedStream(util::CompressionMode::decompress, memoryStream);
     if (!compressedStream) return std::unexpected<int>(compressedStream.Error());

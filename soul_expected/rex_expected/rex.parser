@@ -1,0 +1,159 @@
+// =================================
+// Copyright (c) 2025 Seppo Laakko
+// Distributed under the MIT license
+// =================================
+
+export module soul_expected.rex.parser;
+
+[interface]import soul_expected.rex.context;
+[interface]import soul_expected.rex.nfa;
+[implementation]import soul_expected.rex.token;
+[implementation]import soul_expected.rex.lexer;
+[implementation]import soul_expected.rex.token.parser;
+[implementation]import soul_expected.rex.symbol;
+
+parser RexParser
+{
+    lexer soul_expected::rex::lexer::RexLexer<char32_t>;
+    main;
+
+    RegularExpression(soul_expected::rex::context::Context* context) : soul_expected::rex::nfa::Nfa
+        ::= 
+        (
+            Alternative(context):alternative
+        )
+        {
+            return alternative;
+        }
+        ;
+
+    Alternative(soul_expected::rex::context::Context* context, var soul_expected::rex::nfa::Nfa value) : soul_expected::rex::nfa::Nfa
+        ::= 
+        (
+            Catenation(context):left{ value = left; }
+            (
+                ALT Catenation(context):right!{ value = soul_expected::rex::nfa::Alt(*context, value, right); }
+            )*
+        )
+        {
+            return value;
+        }
+        ;
+
+    Catenation(soul_expected::rex::context::Context* context, var soul_expected::rex::nfa::Nfa value) : soul_expected::rex::nfa::Nfa
+        ::=
+        (
+            Repetition(context):left{ value = left; }
+            (
+                Repetition(context):right{ value = soul_expected::rex::nfa::Cat(value, right); }
+            )*
+        )
+        {
+            return value;
+        }
+        ;
+
+    Repetition(soul_expected::rex::context::Context* context, var soul_expected::rex::nfa::Nfa value) : soul_expected::rex::nfa::Nfa
+        ::=
+        (
+            Primary(context):left{ value = left; }
+            (   STAR{ value = soul_expected::rex::nfa::Kleene(*context, value); }
+            |   PLUS{ value = soul_expected::rex::nfa::Pos(*context, value); }
+            |   QUEST{ value = soul_expected::rex::nfa::Opt(*context, value); }
+            )?
+        )
+        {
+            return value;
+        }
+        ;
+
+    Primary(soul_expected::rex::context::Context* context, var soul_expected::rex::nfa::Nfa value) : soul_expected::rex::nfa::Nfa
+        ::= 
+        (   LPAREN Alternative(context):alt!{ value = alt; } RPAREN!
+        |   ESCAPE
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                auto token = *t;
+                auto esc = soul_expected::rex::token::parser::MakeEscapeValue(lexer.FileName(), token);
+                if (!esc) return std::unexpected<int>(esc.error());
+                value = soul_expected::rex::nfa::MakeNfa(*context, context->MakeChar(*esc)); 
+            }
+        |   INVERSE{ value = soul_expected::rex::nfa::MakeNfa(*context, context->MakeChar('^')); }
+        |   MINUS{ value = soul_expected::rex::nfa::MakeNfa(*context, context->MakeChar('-')); }
+        |   CHAR
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                auto token = *t;
+                value = soul_expected::rex::nfa::MakeNfa(*context, context->MakeChar(token->Chr())); 
+            }
+        |   DOT{ value = soul_expected::rex::nfa::MakeNfa(*context, context->MakeAny()); }
+        |   Class(context):cls{ value = soul_expected::rex::nfa::MakeNfa(*context, cls); }
+        )
+        {
+            return value;
+        }
+        ;
+
+    Class(soul_expected::rex::context::Context* context, var soul_expected::rex::symbol::Class* cls) : soul_expected::rex::symbol::Class*
+        ::= 
+        (
+            LBRACKET{ cls = context->MakeClass(); }
+            (
+                (
+                    INVERSE{ cls->SetInverse(); }
+                )?
+                (
+                    Range(context):r{ cls->AddSymbol(r); }
+                )*
+            )
+            RBRACKET!
+        )
+        {
+            return cls;
+        }
+        ;
+
+    Range(soul_expected::rex::context::Context* context, var soul_expected::rex::symbol::Symbol* symbol) : soul_expected::rex::symbol::Symbol*
+        ::= 
+        (
+            Char:s 
+            (   MINUS Char:e{ symbol = context->MakeRange(s, e); } 
+            |   empty{ symbol = context->MakeChar(s); }
+            )
+        )
+        {
+            return symbol;
+        }
+        ;
+
+    Char : char32_t
+        ::= LPAREN{ return '('; }
+        |   RPAREN{ return ')'; }
+        |   LBRACKET{ return '['; }
+        |   ALT{ return '|'; }
+        |   STAR{ return '*'; }
+        |   PLUS{ return '+'; }
+        |   QUEST{ return '?'; }
+        |   DOT{ return '.'; }
+        |   ESCAPE
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                auto token = *t;
+                auto esc = soul_expected::rex::token::parser::MakeEscapeValue(lexer.FileName(), token);
+                if (!esc) return std::unexpected<int>(esc.error());
+                return *esc;
+            }
+        |   INVERSE{ return '^'; }
+        |   MINUS{ return '-'; }
+        |   CHAR
+            { 
+                auto t = lexer.GetToken(pos);
+                if (!t) return std::unexpected<int>(t.error());
+                auto token = *t;
+                return token->Chr(); 
+            }
+        ;
+}

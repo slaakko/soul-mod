@@ -1074,22 +1074,22 @@ std::expected<bool, int> CharacterInfo::Write(BinaryStreamWriter& writer)
 std::expected<bool, int> CharacterInfo::Read(BinaryStreamReader& reader)
 {
     std::expected<std::uint64_t, int> rv = reader.ReadULong();
-    if (*rv) return std::unexpected<int>(rv.error());
+    if (!rv) return std::unexpected<int>(rv.error());
     binaryProperties = *rv;
     std::expected<std::int32_t, int> rvi = reader.ReadInt();
-    if (*rvi) return std::unexpected<int>(rvi.error());
+    if (!rvi) return std::unexpected<int>(rvi.error());
     generalCategory = static_cast<GeneralCategoryId>(*rvi);
     std::expected<char32_t, int> rvu = reader.ReadUChar();
-    if (*rvu) return std::unexpected<int>(rvu.error());
+    if (!rvu) return std::unexpected<int>(rvu.error());
     upper = *rvu;
     std::expected<char32_t, int> rvl = reader.ReadUChar();
-    if (*rvl) return std::unexpected<int>(rvl.error());
+    if (!rvl) return std::unexpected<int>(rvl.error());
     lower = *rvl;
     std::expected<char32_t, int> rvt = reader.ReadUChar();
-    if (*rvt) return std::unexpected<int>(rvt.error());
+    if (!rvt) return std::unexpected<int>(rvt.error());
     title = *rvt;
     std::expected<char32_t, int> rvf = reader.ReadUChar();
-    if (*rvf) return std::unexpected<int>(rvf.error());
+    if (!rvf) return std::unexpected<int>(rvf.error());
     folding = *rvf;
     std::expected<std::uint16_t, int> rvs = reader.ReadUShort();
     if (!rvs) return std::unexpected<int>(rvs.error());

@@ -77,4 +77,30 @@ void Error(const std::string& message, const soul::ast::Span& span, Context* con
     }
 }
 
+void Warning(const std::string& message, const soul::ast::Span& span, Context* context)
+{
+    if (span.IsValid())
+    {
+        soul::ast::LineColLen lineColLen;
+        const std::vector<int>* lineStartIndeces = context->GetFileMap().LineStartIndeces(context->FileId());
+        if (lineStartIndeces)
+        {
+            lineColLen = soul::ast::SpanToLineColLen(span, *lineStartIndeces);
+        }
+        if (lineColLen.IsValid())
+        {
+            std::cout << "warning: " << message << " at\n'" + context->FilePath() << "':" << std::to_string(lineColLen.line) << ":\n" <<
+                context->ErrorLines(lineColLen) << "\n";
+        }
+        else
+        {
+            std::cout << "warning: " << message << "\n";
+        }
+    }
+    else
+    {
+        std::cout << "warning: " << "\n";
+    }
+}
+
 } // otava::intermediate

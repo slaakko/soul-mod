@@ -1,3 +1,3 @@
 @echo off
 slg -v lexer.slg
-spg -v parser.spg
+spg -vox parser.spg

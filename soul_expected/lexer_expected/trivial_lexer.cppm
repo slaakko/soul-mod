@@ -15,18 +15,21 @@ struct TrivialLexer_Variables : public soul_expected::lexer::Variables
 {
 };
 
-template<typename Char>
+template<typename CharT>
 struct TrivialLexer;
 
-template<typename Char>
-soul_expected::lexer::Lexer<TrivialLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName);
+template<typename CharT>
+soul_expected::lexer::Lexer<TrivialLexer<CharT>, CharT> MakeLexer(const CharT* start, const CharT* end, const std::string& fileName);
 
-template<typename Char>
+template<typename CharT>
 struct TrivialLexer
 {
     using Variables = TrivialLexer_Variables;
 
-    static std::int32_t NextState(std::int32_t state, Char chr, soul_expected::lexer::LexerBase<Char>& lexer)
+    TrivialLexer(const CharT* start_, const CharT* end_, const std::string& fileName_) : soul_expected::lexer::Lexer(start_, end_, fileName_)
+    {
+    }
+    static std::int32_t NextState(std::int32_t state, CharT chr, soul_expected::lexer::LexerBase<CharT>& lexer)
     {
         auto& token = lexer.CurrentToken();
         token.match = lexer.CurrentLexeme();
@@ -39,10 +42,10 @@ struct TrivialLexer
     }
 };
 
-template<typename Char>
-soul_expected::lexer::Lexer<TrivialLexer<Char>, Char> MakeLexer(const Char* start, const Char* end, const std::string& fileName)
+template<typename CharT>
+soul_expected::lexer::Lexer<TrivialLexer<CharT>, CharT> MakeLexer(const CharT* start, const CharT* end, const std::string& fileName)
 {
-    auto lexer = soul_expected::lexer::Lexer<TrivialLexer<Char>, Char>(start, end, fileName);
+    auto lexer = soul_expected::lexer::Lexer<TrivialLexer<CharT>, CharT>(start, end, fileName);
     return lexer;
 }
 

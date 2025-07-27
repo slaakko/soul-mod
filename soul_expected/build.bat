@@ -14,6 +14,9 @@ popd
 pushd re_expected
 call build.bat
 popd
+pushd rex_expected
+call build.bat
+popd
 pushd eslg
 call build.bat
 popd

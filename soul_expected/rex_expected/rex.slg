@@ -1,0 +1,4 @@
+project soul_expected.rex.slg;
+tokens <rex.token>;
+expressions <rex.expr>;
+lexer <rex.lexer>;

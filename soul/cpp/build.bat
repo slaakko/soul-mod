@@ -1,2 +1,2 @@
 @echo off
-spg -v cpp_parsers.spg
+spg -vox cpp_parsers.spg

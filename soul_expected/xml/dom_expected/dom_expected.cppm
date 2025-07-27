@@ -5,6 +5,8 @@
 
 export module soul_expected.xml.dom_expected;
 
+export namespace soul_expected::xml::dom_expected {}
+
 export import soul_expected.xml.attribute.node;
 export import soul_expected.xml.axis;
 export import soul_expected.xml.cdata.section;

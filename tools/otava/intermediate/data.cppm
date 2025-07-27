@@ -62,6 +62,15 @@ public:
     bool IsGlobalVariable() const { return kind == ValueKind::globalVariable; }
     bool IsIntegerValue() const;
     bool IsFloatingPointValue() const;
+    bool IsBoolValue() const { return kind == ValueKind::boolValue; }
+    bool IsSByteValue() const { return kind == ValueKind::sbyteValue; }
+    bool IsByteValue() const { return kind == ValueKind::byteValue; }
+    bool IsShortValue() const { return kind == ValueKind::shortValue; }
+    bool IsUShortValue() const { return kind == ValueKind::ushortValue; }
+    bool IsIntValue() const { return kind == ValueKind::intValue; }
+    bool IsUIntValue() const { return kind == ValueKind::uintValue; }
+    bool IsLongValue() const { return kind == ValueKind::longValue; }
+    bool IsULongValue() const { return kind == ValueKind::ulongValue; }
     bool IsFloatValue() const { return kind == ValueKind::floatValue; }
     bool IsDoubleValue() const { return kind == ValueKind::doubleValue; }
     bool IsArrayValue() const { return kind == ValueKind::arrayValue; }
@@ -69,7 +78,6 @@ public:
     bool IsAggregateValue() const { return IsArrayValue() || IsStructureValue(); }
     bool IsStringValue() const { return kind == ValueKind::stringValue; }
     bool IsStringArrayValue() const { return kind == ValueKind::stringArrayValue; }
-    bool IsLongValue() const { return kind == ValueKind::longValue; }
     bool IsTrue() const;
     bool IsFalse() const;
     std::int64_t GetIntegerValue() const;
