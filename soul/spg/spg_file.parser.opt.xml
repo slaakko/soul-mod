@@ -1,0 +1,66 @@
+<parserFile>
+ <grammar name="SpgFileParser">
+  <rule first="{PROJECT}" name="SpgFile">
+   <action first="{PROJECT}">
+    <group first="{PROJECT}">
+     <sequence first="{PROJECT}">
+      <sequence first="{PROJECT}">
+       <sequence first="{PROJECT}">
+        <token first="{PROJECT}" name="PROJECT"/>
+        <action first="{ID}">
+         <expectation first="{ID}">
+          <nonterminal first="{ID}" ruleName="QualifiedId"/>
+         </expectation>
+        </action>
+       </sequence>
+       <expectation first="{SEMICOLON}">
+        <token first="{SEMICOLON}" name="SEMICOLON"/>
+       </expectation>
+      </sequence>
+      <kleene first="{#, EXTERN, FILEPATH, ID, SEMICOLON}">
+       <group first="{#, EXTERN, FILEPATH, ID, SEMICOLON}">
+        <action first="{#, EXTERN, FILEPATH, ID, SEMICOLON}">
+         <nonterminal first="{#, EXTERN, FILEPATH, ID, SEMICOLON}" ruleName="SpgFileDeclaration"/>
+        </action>
+       </group>
+      </kleene>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+  <rule first="{#, EXTERN, FILEPATH, ID, SEMICOLON}" name="SpgFileDeclaration">
+   <action first="{#, EXTERN, FILEPATH, ID, SEMICOLON}">
+    <nonterminal first="{#, EXTERN, FILEPATH, ID, SEMICOLON}" ruleName="ParserFileDeclaration"/>
+   </action>
+  </rule>
+  <rule first="{#, EXTERN, FILEPATH, ID, SEMICOLON}" name="ParserFileDeclaration">
+   <action first="{#, EXTERN, FILEPATH, ID, SEMICOLON}">
+    <group first="{#, EXTERN, FILEPATH, ID, SEMICOLON}">
+     <sequence first="{#, EXTERN, FILEPATH, ID, SEMICOLON}">
+      <sequence first="{#, EXTERN, FILEPATH, ID}">
+       <sequence first="{#, EXTERN, ID}">
+        <group first="{#, EXTERN}">
+         <choice first="{#, EXTERN}">
+          <action first="{EXTERN}">
+           <token first="{EXTERN}" name="EXTERN"/>
+          </action>
+          <action first="{#}">
+           <empty first="{#}"/>
+          </action>
+         </choice>
+        </group>
+        <nonterminal first="{ID}" ruleName="ParserKeyword"/>
+       </sequence>
+       <expectation first="{FILEPATH}">
+        <nonterminal first="{FILEPATH}" ruleName="FilePath"/>
+       </expectation>
+      </sequence>
+      <expectation first="{SEMICOLON}">
+       <token first="{SEMICOLON}" name="SEMICOLON"/>
+      </expectation>
+     </sequence>
+    </group>
+   </action>
+  </rule>
+ </grammar>
+</parserFile>

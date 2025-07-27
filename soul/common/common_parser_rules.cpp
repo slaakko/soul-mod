@@ -4,10 +4,10 @@ namespace common::parser::rules {
 
 std::mutex ruleMtx;
 
-std::map<int64_t, std::string>* GetRuleNameMapPtr()
+std::map<std::int64_t, std::string>* GetRuleNameMapPtr()
 {
     std::lock_guard<std::mutex> lock(ruleMtx);
-    static std::map<int64_t, std::string> ruleNameMap = {
+    static std::map<std::int64_t, std::string> ruleNameMap = {
         { 2231932063773097985, "CommonParser.QualifiedId" },
         { 2231932063773097986, "CommonParser.ExportModule" },
         { 2231932063773097987, "CommonParser.Import" },

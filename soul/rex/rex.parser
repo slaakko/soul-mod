@@ -10,6 +10,7 @@ export module soul.rex.parser;
 [implementation]import soul.rex.token;
 [implementation]import soul.rex.lexer;
 [implementation]import soul.rex.token.parser;
+[implementation]import soul.rex.symbol;
 
 parser RexParser
 {

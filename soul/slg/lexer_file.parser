@@ -6,6 +6,7 @@
 export module soul.slg.lexer.file.parser;
 
 [interface]import soul.ast.slg;
+[implementation]import soul.ast.common;
 [implementation]import soul.cpp.token;
 [implementation]import soul.cpp.op.token;
 [implementation]import soul.punctuation.token;

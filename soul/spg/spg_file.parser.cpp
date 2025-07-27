@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/spg/spg_file.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/soul/spg/spg_file.parser' using soul parser generator spg version 5.0.0
 
 module soul.spg.spg.file.parser;
 
@@ -69,7 +69,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SpgFile");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SpgFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8393744626267193345);
@@ -247,7 +247,7 @@ soul::parser::Match SpgFileParser<LexerT>::SpgFileDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "SpgFileDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "SpgFileDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8393744626267193346);
@@ -292,7 +292,7 @@ soul::parser::Match SpgFileParser<LexerT>::ParserFileDeclaration(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ParserFileDeclaration");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ParserFileDeclaration");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 8393744626267193347);

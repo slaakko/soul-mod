@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/common/common.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/soul/common/common.parser' using soul parser generator spg version 5.0.0
 
 module soul.common.common.parser;
 
@@ -32,7 +32,7 @@ soul::parser::Match CommonParser<LexerT>::QualifiedId(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "QualifiedId");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097985);
@@ -170,7 +170,7 @@ soul::parser::Match CommonParser<LexerT>::ExportModule(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExportModule");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExportModule");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097986);
@@ -294,7 +294,7 @@ soul::parser::Match CommonParser<LexerT>::Import(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Import");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Import");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097987);
@@ -463,7 +463,7 @@ soul::parser::Match CommonParser<LexerT>::ImportPrefix(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ImportPrefix");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ImportPrefix");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097988);
@@ -542,7 +542,7 @@ soul::parser::Match CommonParser<LexerT>::ExprString(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExprString");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExprString");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097989);
@@ -590,7 +590,7 @@ soul::parser::Match CommonParser<LexerT>::FilePath(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "FilePath");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097990);
@@ -638,7 +638,7 @@ soul::parser::Match CommonParser<LexerT>::ExportKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExportKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097991);
@@ -686,7 +686,7 @@ soul::parser::Match CommonParser<LexerT>::ModuleKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ModuleKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097992);
@@ -734,7 +734,7 @@ soul::parser::Match CommonParser<LexerT>::ImportKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ImportKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097993);
@@ -782,7 +782,7 @@ soul::parser::Match CommonParser<LexerT>::ImplementationPrefix(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationPrefix");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationPrefix");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097994);
@@ -865,7 +865,7 @@ soul::parser::Match CommonParser<LexerT>::InterfacePrefix(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "InterfacePrefix");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "InterfacePrefix");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097995);
@@ -948,7 +948,7 @@ soul::parser::Match CommonParser<LexerT>::ImplementationKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ImplementationKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097996);
@@ -996,7 +996,7 @@ soul::parser::Match CommonParser<LexerT>::InterfaceKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "InterfaceKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097997);
@@ -1044,7 +1044,7 @@ soul::parser::Match CommonParser<LexerT>::ParserKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ParserKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ParserKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097998);
@@ -1092,7 +1092,7 @@ soul::parser::Match CommonParser<LexerT>::LexerKeyword(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "LexerKeyword");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "LexerKeyword");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 2231932063773097999);

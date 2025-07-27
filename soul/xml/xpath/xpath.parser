@@ -6,6 +6,7 @@
 export module soul.xml.xpath.parser;
 
 [interface]import soul.xml.xpath.expr;
+[implementation]import soul.xml.dom;
 [implementation]import soul.xml.xpath.lexer;
 [implementation]import soul.xml.xpath.token;
 [implementation]import soul.xml.xpath.token.parser;

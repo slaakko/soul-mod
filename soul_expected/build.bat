@@ -23,3 +23,6 @@ popd
 pushd espg
 call build.bat
 popd
+pushd xml
+call build.bat
+popd xml

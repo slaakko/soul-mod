@@ -1,5 +1,5 @@
 
-// this file has been automatically generated from 'C:/work/soul-mod/soul/slg/expression_file.parser' using soul parser generator spg version 5.0.0
+// this file has been automatically generated from 'D:/work/soul-mod/soul/slg/expression_file.parser' using soul parser generator spg version 5.0.0
 
 module soul.slg.expression.file.parser;
 
@@ -71,7 +71,7 @@ soul::parser::Match ExpressionFileParser<LexerT>::ExpressionFile(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionFile");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "ExpressionFile");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5410810734487535617);
@@ -309,7 +309,7 @@ soul::parser::Match ExpressionFileParser<LexerT>::Expression(LexerT& lexer)
     if (parser_debug_write_to_log)
     {
         parser_debug_match_pos = lexer.GetPos();
-        soul::lexer::WriteBeginRuleToLog(lexer, "Expression");
+        soul::lexer::soul::lexer::WriteBeginRuleToLog(lexer, "Expression");
     }
     #endif
     soul::lexer::RuleGuard<LexerT> ruleGuard(lexer, 5410810734487535618);
