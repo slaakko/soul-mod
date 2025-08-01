@@ -19,10 +19,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ConceptName() const { return conceptName.get(); }
-    Node* Assign() const { return assign.get(); }
-    Node* ConstraintExpression() const { return constraintExpr.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* ConceptName() const { return conceptName.get(); }
+    inline Node* Assign() const { return assign.get(); }
+    inline Node* ConstraintExpression() const { return constraintExpr.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> conceptName;
     std::unique_ptr<Node> assign;
@@ -39,8 +39,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Params() const { return params.get(); }
-    Node* Body() const { return body.get(); }
+    inline Node* Params() const { return params.get(); }
+    inline Node* Body() const { return body.get(); }
 private:
     std::unique_ptr<Node> params;
     std::unique_ptr<Node> body;
@@ -56,8 +56,8 @@ public:
     void Read(Reader& reader) override;
     void SetLBracePos(const soul::ast::SourcePos& lbPos_);
     void SetRBracePos(const soul::ast::SourcePos& rbPos_);
-    const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
 private:
     soul::ast::SourcePos lbPos;
     soul::ast::SourcePos rbPos;
@@ -81,9 +81,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* NestedNameSpecifier() const { return nns.get(); }
-    Node* TypeName() const { return typeName.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* NestedNameSpecifier() const { return nns.get(); }
+    inline Node* TypeName() const { return typeName.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> nns;
     std::unique_ptr<Node> typeName;
@@ -99,12 +99,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Expr() const { return expr.get(); }
-    Node* NoExcept() const { return noexceptNode.get(); }
-    Node* ReturnTypeRequirement() const { return returnTypeRequirement.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
-    const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    inline Node* Expr() const { return expr.get(); }
+    inline Node* NoExcept() const { return noexceptNode.get(); }
+    inline Node* ReturnTypeRequirement() const { return returnTypeRequirement.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
+    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
 private:
     std::unique_ptr<Node> expr;
     std::unique_ptr<Node> noexceptNode;
@@ -141,13 +141,13 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetHasTemplateArgumentList() { hasTemplateArgumentList = true; }
-    bool HasTemplateArgumentList() const { return hasTemplateArgumentList; }
-    Node* ConceptName() const { return conceptName.get(); }
+    inline void SetHasTemplateArgumentList() { hasTemplateArgumentList = true; }
+    inline bool HasTemplateArgumentList() const { return hasTemplateArgumentList; }
+    inline Node* ConceptName() const { return conceptName.get(); }
     void SetLAnglePos(const soul::ast::SourcePos& laPos_);
     void SetRAnglePos(const soul::ast::SourcePos& raPos_);
-    const soul::ast::SourcePos& LAnglePos() const { return laPos; }
-    const soul::ast::SourcePos& RAnglePos() const { return laPos; }
+    inline const soul::ast::SourcePos& LAnglePos() const { return laPos; }
+    inline const soul::ast::SourcePos& RAnglePos() const { return laPos; }
 private:
     std::unique_ptr<Node> conceptName;
     bool hasTemplateArgumentList;

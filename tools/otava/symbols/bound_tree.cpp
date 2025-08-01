@@ -1,5 +1,4 @@
 // =================================
-// =================================
 // Copyright (c) 2025 Seppo Laakko
 // Distributed under the MIT license
 // =================================
@@ -20,6 +19,7 @@ import otava.symbols.operation.repository;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.bound.tree.visitor;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.class_templates;
 import otava.symbols.type.symbol;
 import otava.symbols.namespaces;
@@ -327,6 +327,7 @@ BoundCompileUnitNode::BoundCompileUnitNode() :
     argumentConversionTable(new ArgumentConversionTable()),
     functionTemplateRepository(new FunctionTemplateRepository()),
     classTemplateRepository(new ClassTemplateRepository()),
+    inlineFunctionRepository(new InlineFunctionRepository()),
     id()
 {
 }
@@ -1808,6 +1809,7 @@ void BoundDisjunctionNode::ModifyTypes(const soul::ast::SourcePos& sourcePos, Co
 BoundConversionNode::BoundConversionNode(BoundExpressionNode* subject_, FunctionSymbol* conversionFunction_, const soul::ast::SourcePos& sourcePos_) :
     BoundExpressionNode(BoundNodeKind::boundConversionNode, sourcePos_, conversionFunction_->ReturnType()), subject(subject_), conversionFunction(conversionFunction_)
 {
+    int x = 0;
 }
 
 void BoundConversionNode::Accept(BoundTreeVisitor& visitor)

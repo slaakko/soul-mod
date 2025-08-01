@@ -7,6 +7,7 @@ module otava.symbols.class_group.symbol;
 
 import otava.symbols.classes;
 import otava.symbols.class_templates;
+import otava.symbols.inline_functions;
 import otava.symbols.reader;
 import otava.symbols.writer;
 import otava.symbols.visitor;

@@ -40,7 +40,7 @@ public:
     explicit FileStream(int handle);
     FileStream(const std::string& filePath_, OpenMode openMode);
     ~FileStream() override;
-    const std::string& FilePath() const { return filePath; }
+    inline const std::string& FilePath() const { return filePath; }
     int ReadByte() override;
     std::int64_t Read(std::uint8_t* buf, std::int64_t count) override;
     void Write(std::uint8_t x) override;

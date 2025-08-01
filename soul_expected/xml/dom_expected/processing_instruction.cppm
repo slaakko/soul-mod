@@ -15,8 +15,8 @@ class ProcessingInstruction : public Node
 public:
     ProcessingInstruction(const soul_expected::ast::SourcePos& sourcePos_);
     ProcessingInstruction(const soul_expected::ast::SourcePos& sourcePos_, const std::string& target_, const std::string& data_);
-    const std::string& Target() const { return target; }
-    const std::string& Data() const { return data; }
+    inline const std::string& Target() const { return target; }
+    inline const std::string& Data() const { return data; }
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(util::CodeFormatter& formatter) override;
 private:

@@ -27,9 +27,9 @@ class Declarator
 public:
     Declarator(DeclaratorKind kind_, const std::u32string& name_, otava::ast::Node* node_);
     virtual ~Declarator();
-    bool IsSimpleDeclarator() const { return kind == DeclaratorKind::simpleDeclarator; }
-    bool IsFunctionDeclarator() const { return kind == DeclaratorKind::functionDeclarator;  }
-    bool IsArrayDeclarator() const { return kind == DeclaratorKind::arrayDeclarator; }
+    inline bool IsSimpleDeclarator() const { return kind == DeclaratorKind::simpleDeclarator; }
+    inline bool IsFunctionDeclarator() const { return kind == DeclaratorKind::functionDeclarator;  }
+    inline bool IsArrayDeclarator() const { return kind == DeclaratorKind::arrayDeclarator; }
     DeclaratorKind Kind() const { return kind; }
     const std::u32string& Name() const { return name; }
     otava::ast::Node* Node() const { return node; }
@@ -66,14 +66,14 @@ class FunctionDeclarator : public Declarator
 {
 public:
     FunctionDeclarator(const std::u32string& name_, otava::ast::Node* node_, FunctionKind kind_, FunctionQualifiers qualifiers_, Scope* scope_);
-    FunctionKind GetFunctionKind() const { return kind; }
-    FunctionQualifiers GetFunctionQualifiers() const { return qualifiers; }
+    inline FunctionKind GetFunctionKind() const { return kind; }
+    inline FunctionQualifiers GetFunctionQualifiers() const { return qualifiers; }
     void AddQualifier(FunctionQualifiers qualifier);
     void AddParameterDeclaration(Declaration&& parameterDeclaration);
-    const std::vector<Declaration>& ParameterDeclarations() const { return parameterDeclarations; }
-    Scope* GetScope() const { return scope; }
+    inline const std::vector<Declaration>& ParameterDeclarations() const { return parameterDeclarations; }
+    inline Scope* GetScope() const { return scope; }
     void SetTemplateArgs(const std::vector<TypeSymbol*>& templateArgs_);
-    const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
+    inline const std::vector<TypeSymbol*>& TemplateArgs() const { return templateArgs; }
 private:
     FunctionKind kind;
     FunctionQualifiers qualifiers;
@@ -86,7 +86,7 @@ class ArrayDeclarator : public Declarator
 {
 public:
     ArrayDeclarator(const std::u32string& name_, otava::ast::Node* node_, std::int64_t size_);
-    std::int64_t Size() const { return size; }
+    inline std::int64_t Size() const { return size; }
 private:
     std::int64_t size;
 };

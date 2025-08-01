@@ -20,11 +20,11 @@ class Entity
 public:
     Entity(EntityKind kind_, const std::string& name_);
     virtual ~Entity();
-    EntityKind Kind() const { return kind; }
-    const std::string& Name() const { return name; }
+    inline EntityKind Kind() const { return kind; }
+    inline const std::string& Name() const { return name; }
     virtual const std::u32string& Value() const = 0;
-    bool IsInternal() const { return kind == EntityKind::internalEntity; }
-    bool IsExternal() const { return kind == EntityKind::externalEntity; }
+    inline bool IsInternal() const { return kind == EntityKind::internalEntity; }
+    inline bool IsExternal() const { return kind == EntityKind::externalEntity; }
 private:
     EntityKind kind;
     std::string name;

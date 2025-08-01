@@ -15,10 +15,10 @@ class IntrusiveListNode
 public:
     using NodePtr = IntrusiveListNode<T>*;
     IntrusiveListNode(T* ptr_) : ptr(ptr_), parent(nullptr), nextSibling(nullptr), prevSibling(nullptr), firstChild(nullptr), lastChild(nullptr) {}
-    T* NextSibling() const { if (nextSibling) return nextSibling->Get(); else return nullptr; }
-    void SetNextSibling(NodePtr nextSibling_) { nextSibling = nextSibling_; }
-    T* PrevSibling() const { if (prevSibling) return prevSibling->Get(); else return nullptr; }
-    void SetPrevSibling(NodePtr prevSibling_) { prevSibling = prevSibling_; }
+    inline T* NextSibling() const { if (nextSibling) return nextSibling->Get(); else return nullptr; }
+    inline void SetNextSibling(NodePtr nextSibling_) { nextSibling = nextSibling_; }
+    inline T* PrevSibling() const { if (prevSibling) return prevSibling->Get(); else return nullptr; }
+    inline void SetPrevSibling(NodePtr prevSibling_) { prevSibling = prevSibling_; }
     void LinkBefore(NodePtr node)
     {
         if (prevSibling)
@@ -50,10 +50,10 @@ public:
             nextSibling->prevSibling = prevSibling;
         }
     }
-    T* Parent() const { if (parent) return parent->Get(); else return nullptr; }
-    void SetParent(NodePtr parent_) { parent = parent_; }
-    T* FirstChild() const { if (firstChild) return firstChild->Get(); else return nullptr; }
-    T* LastChild() const { if (lastChild) return lastChild->Get(); else return nullptr; }
+    inline T* Parent() const { if (parent) return parent->Get(); else return nullptr; }
+    inline void SetParent(NodePtr parent_) { parent = parent_; }
+    inline T* FirstChild() const { if (firstChild) return firstChild->Get(); else return nullptr; }
+    inline T* LastChild() const { if (lastChild) return lastChild->Get(); else return nullptr; }
     void AddChild(NodePtr child)
     {
         if (lastChild)
@@ -115,7 +115,7 @@ public:
             }
         }
     }
-    T* Get() const
+    inline T* Get() const
     {
         return ptr;
     }

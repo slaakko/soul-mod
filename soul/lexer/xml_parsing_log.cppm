@@ -25,7 +25,7 @@ public:
     void WriteFail() override;
     void WriteElement(const std::string& elementName, const std::string& elementContent);
     void Write(const std::string& s);
-    util::CodeFormatter& Formatter() { return formatter; }
+    inline util::CodeFormatter& Formatter() { return formatter; }
 private:
     util::CodeFormatter formatter;
 };

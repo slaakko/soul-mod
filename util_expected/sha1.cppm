@@ -14,20 +14,20 @@ class Sha1
 public:
     Sha1();
     void Reset();
-    void Process(std::uint8_t x)
+    inline void Process(std::uint8_t x)
     {
         ProcessByte(x);
         bitCount = bitCount + 8u;
     }
     void Process(void* begin, void* end);
-    void Process(void* buf, int count)
+    inline void Process(void* buf, int count)
     {
         std::uint8_t* b = static_cast<std::uint8_t*>(buf);
         Process(b, b + count);
     }
     std::string GetDigest();
 private:
-    void ProcessByte(std::uint8_t x)
+    inline void ProcessByte(std::uint8_t x)
     {
         block[byteIndex++] = x;
         if (byteIndex == 64u)

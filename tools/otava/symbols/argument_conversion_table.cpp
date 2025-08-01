@@ -14,6 +14,7 @@ import otava.symbols.function.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
 import otava.symbols.type_compare;
 import otava.symbols.fundamental.type.conversion;

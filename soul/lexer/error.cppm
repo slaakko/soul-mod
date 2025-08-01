@@ -15,11 +15,11 @@ class ParsingException : public std::runtime_error
 {
 public:
     ParsingException(const std::string& message_, const std::string& fileName_, const soul::ast::SourcePos& sourcePos_);
-    const std::string& Project() const { return project; }
+    inline const std::string& Project() const { return project; }
     void SetProject(const std::string& project_);
-    const std::string& Message() const { return message; }
-    const std::string& FileName() const { return fileName; }
-    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline const std::string& Message() const { return message; }
+    inline const std::string& FileName() const { return fileName; }
+    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
 private:
     std::string project;
     std::string message;

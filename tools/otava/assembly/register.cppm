@@ -33,10 +33,10 @@ class Register : public Value
 public:
     Register();
     Register(RegisterKind kind_, RegisterGroupKind group_, int size_);
-    RegisterKind RegKind() const { return kind; }
-    RegisterGroupKind Group() const { return group; }
-    int Size() const { return size; }
-    bool IsFloatingPointReg() const { return group >= RegisterGroupKind::xmm0 && group <= RegisterGroupKind::xmm15; }
+    inline RegisterKind RegKind() const { return kind; }
+    inline RegisterGroupKind Group() const { return group; }
+    inline int Size() const { return size; }
+    inline bool IsFloatingPointReg() const { return group >= RegisterGroupKind::xmm0 && group <= RegisterGroupKind::xmm15; }
 private:
     RegisterKind kind;
     RegisterGroupKind group;
@@ -50,15 +50,15 @@ class RegisterGroup
 public:
     RegisterGroup();
     RegisterGroup(RegisterGroupKind kind_);
-    RegisterGroupKind Kind() const { return kind; }
+    inline RegisterGroupKind Kind() const { return kind; }
     const Register* GetReg(std::int64_t size) const;
     Register* GetReg(std::int64_t size);
     void SetReg(std::int64_t size, const Register& reg);
     bool IsLocal() const;
-    bool IsFloatingPointReg() const { return kind >= RegisterGroupKind::xmm0 && kind <= RegisterGroupKind::xmm15; }
-    bool IsVolatile() const { return !nonvolatile; }
-    bool IsNonvolatile() const { return nonvolatile; }
-    void SetNonvolatile(bool nonvolatile_) { nonvolatile = nonvolatile_; }
+    inline bool IsFloatingPointReg() const { return kind >= RegisterGroupKind::xmm0 && kind <= RegisterGroupKind::xmm15; }
+    inline bool IsVolatile() const { return !nonvolatile; }
+    inline bool IsNonvolatile() const { return nonvolatile; }
+    inline void SetNonvolatile(bool nonvolatile_) { nonvolatile = nonvolatile_; }
 private:
     RegisterGroupKind kind;
     Register regs[16];
@@ -69,8 +69,8 @@ class Registers
 {
 public:
     Registers();
-    const RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) const { return regGroups[int(kind)].get(); }
-    RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) { return regGroups[int(kind)].get(); }
+    inline const RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) const { return regGroups[int(kind)].get(); }
+    inline RegisterGroup* GetRegisterGroup(RegisterGroupKind kind) { return regGroups[int(kind)].get(); }
 private:
     std::vector<std::unique_ptr<RegisterGroup>> regGroups;
 };
@@ -89,14 +89,14 @@ public:
     RegisterGroup* GetLocalRegisterGroup();
     RegisterGroup* GetLocalXMMRegisterGroup();
     RegisterGroup* GetRegisterGroup(RegisterGroupKind regGroupKind, bool used);
-    int LocalRegisterCount() const { return localRegisterCount; }
-    int LocalXMMRegisterCount() const { return localXMMRegisterCount; }
-    int NumFreeLocalRegisters() const { return localRegisterPool.size(); }
-    int NumFreeLocalXMMRegisters() const { return localXMMRegisterPool.size(); }
-    const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalRegs() const { return usedLocalRegs; }
-    const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileRegs() const { return usedNonvolatileRegs; }
-    const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalXMMRegs() const { return usedLocalXMMRegs; }
-    const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileXMMRegs() const { return usedNonvolatileXMMRegs; }
+    inline int LocalRegisterCount() const { return localRegisterCount; }
+    inline int LocalXMMRegisterCount() const { return localXMMRegisterCount; }
+    inline int NumFreeLocalRegisters() const { return localRegisterPool.size(); }
+    inline int NumFreeLocalXMMRegisters() const { return localXMMRegisterPool.size(); }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalRegs() const { return usedLocalRegs; }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileRegs() const { return usedNonvolatileRegs; }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedLocalXMMRegs() const { return usedLocalXMMRegs; }
+    inline const std::set<RegisterGroup*, RegisterGroupLess>& UsedNonvolatileXMMRegs() const { return usedNonvolatileXMMRegs; }
 private:
     Registers& registers;
     int localRegisterCount;

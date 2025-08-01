@@ -10,12 +10,12 @@ import util_expected;
 
 export namespace soul_expected::lexer {
 
-template<typename Char>
+template<typename CharT>
 class ClassMap
 {
 public:
     ClassMap(const std::int32_t* data_, std::int32_t upperBound_) : data(data_), upperBound(upperBound_) {}
-    std::int32_t GetClass(Char c) const
+    inline std::int32_t GetClass(CharT c) const
     {
         std::int32_t i = static_cast<std::int32_t>(c);
         if (i < upperBound)
@@ -32,8 +32,8 @@ private:
     std::int32_t upperBound;
 };
 
-template<typename Char>
-std::expected<ClassMap<Char>*, int> MakeClassMap(const std::string& classMapName)
+template<typename CharT>
+std::expected<ClassMap<CharT>*, int> MakeClassMap(const std::string& classMapName)
 {
     auto p = util::GetPathToExecutable();
     if (!p) return std::unexpected<int>(p.error());
@@ -58,12 +58,12 @@ std::expected<ClassMap<Char>*, int> MakeClassMap(const std::string& classMapName
         std::int32_t x = *rv;
         data[i] = x;
     }
-    ClassMap<Char>* classMap = new ClassMap<Char>(data, size);
-    return std::expected<ClassMap<Char>*, int>(classMap);
+    ClassMap<CharT>* classMap = new ClassMap<CharT>(data, size);
+    return std::expected<ClassMap<CharT>*, int>(classMap);
 }
 
-template<typename Char>
-std::expected<ClassMap<Char>*, int> MakeClassMap(const std::string& moduleFileName, const std::string& classMapName, util::ResourceFlags resourceFlags)
+template<typename CharT>
+std::expected<ClassMap<CharT>*, int> MakeClassMap(const std::string& moduleFileName, const std::string& classMapName, util::ResourceFlags resourceFlags)
 {
     util::BinaryResourcePtr resource(moduleFileName, classMapName, resourceFlags);
     if (!resource) return std::unexpected<int>(resource.Error());
@@ -83,8 +83,8 @@ std::expected<ClassMap<Char>*, int> MakeClassMap(const std::string& moduleFileNa
         std::int32_t x = *rv;
         data[i] = x;
     }
-    ClassMap<Char>* classMap = new ClassMap<Char>(data, size);
-    return std::expected<ClassMap<Char>*, int>(classMap);
+    ClassMap<CharT>* classMap = new ClassMap<CharT>(data, size);
+    return std::expected<ClassMap<CharT>*, int>(classMap);
 }
 
 } // soul_expected::lexer

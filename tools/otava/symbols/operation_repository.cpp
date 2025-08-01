@@ -22,6 +22,7 @@ import otava.symbols.exception;
 import otava.symbols.expression.binder;
 import otava.symbols.type_compare;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.ast.expression;
 import util.unicode;
 import util.sha1;

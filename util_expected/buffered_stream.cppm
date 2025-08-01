@@ -23,7 +23,7 @@ public:
     std::expected<bool, int> Flush() override;
     std::expected<bool, int> Seek(std::int64_t pos, Origin origin) override;
     std::expected<std::int64_t, int> Tell() override;
-    Stream& BaseStream() { return baseStream; }
+    inline Stream& BaseStream() { return baseStream; }
 private:
     std::expected<bool, int> FillBuf();
     Stream& baseStream;

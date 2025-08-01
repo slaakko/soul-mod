@@ -19,11 +19,11 @@ public:
     void MakeName();
     std::string SymbolKindStr() const override { return "function type symbol"; }
     std::string SymbolDocKindStr() const override { return "function_type"; }
-    TypeSymbol* ReturnType() const { return returnType; }
-    void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
-    const std::vector<TypeSymbol*>& ParameterTypes() const { return parameterTypes; }
+    inline TypeSymbol* ReturnType() const { return returnType; }
+    inline void SetReturnType(TypeSymbol* returnType_) { returnType = returnType_; }
+    inline const std::vector<TypeSymbol*>& ParameterTypes() const { return parameterTypes; }
     void AddParameterType(TypeSymbol* parameterType);
-    int PtrIndex() const override { return ptrIndex; }
+    inline int PtrIndex() const override { return ptrIndex; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

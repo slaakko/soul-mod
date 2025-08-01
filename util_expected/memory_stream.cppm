@@ -21,10 +21,10 @@ public:
     std::expected<bool, int> Write(std::uint8_t* buf, std::int64_t count) override;
     std::expected<bool, int> Seek(std::int64_t pos, Origin origin) override;
     std::expected<std::int64_t, int> Tell() override;
-    std::uint8_t* Data() { return data; }
-    std::int64_t Size() const { return size; }
-    std::int64_t ReadPos() const { return readPos; }
-    const std::vector<std::uint8_t>& Content() const { return content; }
+    inline std::uint8_t* Data() { return data; }
+    inline std::int64_t Size() const { return size; }
+    inline std::int64_t ReadPos() const { return readPos; }
+    inline const std::vector<std::uint8_t>& Content() const { return content; }
     void SetFromContent();
 private:
     std::uint8_t* data;

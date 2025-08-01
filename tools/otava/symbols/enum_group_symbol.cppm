@@ -20,10 +20,10 @@ public:
     std::string SymbolDocKindStr() const override { return "enum_group"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
     Symbol* GetSingleSymbol() override;
-    EnumeratedTypeSymbol* GetEnumType() const { return enumType; }
-    void SetEnumType(EnumeratedTypeSymbol* enumType_) { enumType = enumType_; }
-    ForwardEnumDeclarationSymbol* GetForwardDeclaration() const { return forwardDeclaration; }
-    void SetForwardDeclaration(ForwardEnumDeclarationSymbol* forwardDeclaration_) { forwardDeclaration = forwardDeclaration_; }
+    inline EnumeratedTypeSymbol* GetEnumType() const { return enumType; }
+    inline void SetEnumType(EnumeratedTypeSymbol* enumType_) { enumType = enumType_; }
+    inline ForwardEnumDeclarationSymbol* GetForwardDeclaration() const { return forwardDeclaration; }
+    inline void SetForwardDeclaration(ForwardEnumDeclarationSymbol* forwardDeclaration_) { forwardDeclaration = forwardDeclaration_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

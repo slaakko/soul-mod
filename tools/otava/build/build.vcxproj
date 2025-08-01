@@ -214,6 +214,9 @@
     <ProjectReference Include="..\lexer\lexer.vcxproj">
       <Project>{7d0afedf-e9e8-425a-a9db-d5ab1ceb543a}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\optimizer\optimizer.vcxproj">
+      <Project>{17086e7b-97f7-410c-b277-37cbbc58627f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\ort\ort.vcxproj">
       <Project>{04fc18fe-00b6-4b0c-9898-7db04c5b54a8}</Project>
     </ProjectReference>

@@ -7,21 +7,21 @@ import std.utilities.pair;
 export namespace std {
 
 template<typename T>
-const T& min(const T& left, const T& right)
+inline const T& min(const T& left, const T& right)
 {
     if (left <= right) return left;
     else return right;
 }
 
 template<typename T>
-const T& max(const T& left, const T& right)
+inline const T& max(const T& left, const T& right)
 {
     if (left >= right) return left;
     else return right;
 }
 
 template<typename T>
-void swap(T& left, T& right)
+inline void swap(T& left, T& right)
 {
     T temp(move(left));
     left = move(right);

@@ -19,7 +19,7 @@ class ConstraintExprSymbol : public Symbol
 public:
     ConstraintExprSymbol();
     ConstraintExprSymbol(otava::ast::Node* constraintExprNode_);
-    otava::ast::Node* GetConstraintExprNode() const { return constraintExprNode; }
+    inline otava::ast::Node* GetConstraintExprNode() const { return constraintExprNode; }
     std::string SymbolKindStr() const override { return "concept expression symbol"; }
     std::string SymbolDocKindStr() const override { return "concept_expr"; }
     void Accept(Visitor& visitor) override;
@@ -45,7 +45,7 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void SetConstraintExpr(ConstraintExprSymbol* constraintExpr_);
-    ConstraintExprSymbol* GetConstraintExpr() const { return constraintExpr.get(); }
+    inline ConstraintExprSymbol* GetConstraintExpr() const { return constraintExpr.get(); }
 private:
     std::unique_ptr<ConstraintExprSymbol> constraintExpr;
 };

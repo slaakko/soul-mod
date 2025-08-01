@@ -1,0 +1,4 @@
+project inlinefn;
+target=program;
+interface <bar.cppm>;
+source <inlinefn.cpp>;

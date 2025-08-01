@@ -13,8 +13,8 @@ class WindowsException : public std::runtime_error
 {
 public:
     WindowsException(std::uint64_t errorCode_);
-    std::uint64_t ErrorCode() const { return errorCode; }
-    std::string ErrorMessage() const { return what(); }
+    inline std::uint64_t ErrorCode() const { return errorCode; }
+    inline std::string ErrorMessage() const { return what(); }
 private:
     std::uint64_t errorCode;
 };

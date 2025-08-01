@@ -49,14 +49,14 @@ public:
     JsonValue& operator=(const JsonValue&) = delete;
     virtual ~JsonValue();
     virtual JsonValue* Clone() const = 0;
-    JsonValueType Type() const { return type; }
-    bool IsObject() const { return type == JsonValueType::object; }
-    bool IsArray() const { return type == JsonValueType::array; }
-    bool IsStructuredValue() const { return IsObject() || IsArray(); }
-    bool IsString() const { return type == JsonValueType::string; }
-    bool IsNumber() const { return type == JsonValueType::number; }
-    bool IsBoolean() const { return type == JsonValueType::boolean; }
-    bool IsNull() const { return type == JsonValueType::null; }
+    inline JsonValueType Type() const { return type; }
+    inline bool IsObject() const { return type == JsonValueType::object; }
+    inline bool IsArray() const { return type == JsonValueType::array; }
+    inline bool IsStructuredValue() const { return IsObject() || IsArray(); }
+    inline bool IsString() const { return type == JsonValueType::string; }
+    inline bool IsNumber() const { return type == JsonValueType::number; }
+    inline bool IsBoolean() const { return type == JsonValueType::boolean; }
+    inline bool IsNull() const { return type == JsonValueType::null; }
     virtual std::expected<std::string, int> ToString() const = 0;
     virtual std::expected<bool, int> Write(CodeFormatter& formatter);
 private:
@@ -70,7 +70,7 @@ public:
     JsonString(const std::u32string& value_);
     void Append(char32_t c);
     JsonValue* Clone() const override;
-    const std::u32string& Value() const { return value; }
+    inline const std::u32string& Value() const { return value; }
     void SetValue(const std::u32string& value_);
     std::expected<std::u16string, int> JsonCharStr(char32_t c) const;
     std::expected<std::string, int> ToString() const override;
@@ -84,7 +84,7 @@ public:
     JsonNumber();
     JsonNumber(double value_);
     JsonValue* Clone() const override;
-    double Value() const { return value; }
+    inline double Value() const { return value; }
     std::expected<std::string, int> ToString() const override;
 private:
     double value;
@@ -96,7 +96,7 @@ public:
     JsonBool();
     JsonBool(bool value_);
     JsonValue* Clone() const override;
-    bool Value() const { return value; }
+    inline bool Value() const { return value; }
     std::expected<std::string, int> ToString() const override;
 private:
     bool value;
@@ -109,7 +109,7 @@ class JsonObject : public JsonValue
 public:
     JsonObject();
     void AddField(const std::u32string& fieldName, std::unique_ptr<JsonValue>&& fieldValue);
-    int FieldCount() const { return static_cast<int>(fieldValues.size()); }
+    inline int FieldCount() const { return static_cast<int>(fieldValues.size()); }
     JsonValue* GetField(const std::u32string& fieldName) const;
     bool HasField(const std::u32string& fieldName) const;
     std::expected<JsonString*, int> GetStringField(const std::u32string& fieldName) const;
@@ -130,7 +130,7 @@ class JsonArray : public JsonValue
 public:
     JsonArray();
     void AddItem(std::unique_ptr<JsonValue>&& item);
-    int Count() const { return static_cast<int>(items.size()); }
+    inline int Count() const { return static_cast<int>(items.size()); }
     std::expected<JsonValue*, bool> GetItem(int index) const;
     std::expected<JsonValue*, bool> operator[](int index) const;
     JsonValue* Clone() const override;

@@ -18,7 +18,7 @@ public:
     Scope* GetScope() override { return &scope; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     std::unique_ptr<Symbol> RemoveSymbol(Symbol* symbol) override;
-    const std::vector<std::unique_ptr<Symbol>>& Symbols() const { return symbols; }
+    inline const std::vector<std::unique_ptr<Symbol>>& Symbols() const { return symbols; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

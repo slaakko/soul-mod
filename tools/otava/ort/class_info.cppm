@@ -23,11 +23,11 @@ class class_info
 public:
     class_info();
     class_info(class_id id_, class_key key_, const std::string& name_);
-    const class_id& get_id() const { return id; }
-    class_key get_key() const { return key; }
-    const std::string& get_name() const { return name; }
+    inline const class_id& get_id() const { return id; }
+    inline class_key get_key() const { return key; }
+    inline const std::string& get_name() const { return name; }
     void add_base(const class_id& id);
-    const std::vector<class_id>& base_class_ids() const { return bases; }
+    inline const std::vector<class_id>& base_class_ids() const { return bases; }
     void read(util::BinaryStreamReader& reader);
     void write(util::BinaryStreamWriter& writer);
 private:
@@ -45,8 +45,8 @@ public:
     void add_class(const class_info& info);
     void map_class(const class_info& info);
     const class_info* get_class_info(const class_id& id) const;
-    const std::vector<class_info>& get_infos() const { return infos; }
-    const std::map<class_id, class_info>& get_map() const { return map; }
+    inline const std::vector<class_info>& get_infos() const { return infos; }
+    inline const std::map<class_id, class_info>& get_map() const { return map; }
     void read(util::BinaryStreamReader& reader);
     void write(util::BinaryStreamWriter& writer);
     void write(util::BinaryStreamWriter& writer, bool write_mapped);

@@ -21,7 +21,7 @@ class ScopeResolver : public otava::ast::DefaultVisitor
 {
 public:
     ScopeResolver(Context* context_);
-    Scope* GetScope() const { return currentScope; }
+    inline Scope* GetScope() const { return currentScope; }
     void Visit(otava::ast::NestedNameSpecifierNode& node) override;
     void Visit(otava::ast::ColonColonNode& node) override;
     void Visit(otava::ast::IdentifierNode& node) override;

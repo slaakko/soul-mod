@@ -16,14 +16,14 @@ class Document : public ParentNode
 public:
     Document();
     Document(const soul::ast::SourcePos& sourcePos_);
-    Element* DocumentElement() const { return documentElement; }
-    bool XmlStandalone() const { return xmlStandalone; }
-    void SetXmlStandalone(bool xmlStandalone_) { xmlStandalone = xmlStandalone_; }
-    const std::string& XmlVersion() const { return xmlVersion; }
-    void SetXmlVersion(const std::string& xmlVersion_) { xmlVersion = xmlVersion_; }
-    const std::string& XmlEncoding() const { return xmlEncoding; }
-    void SetXmlEncoding(const std::string& xmlEncoding_) { xmlEncoding = xmlEncoding_; }
-    std::map<std::string, Element*>& Index() { return index; }
+    inline Element* DocumentElement() const { return documentElement; }
+    inline bool XmlStandalone() const { return xmlStandalone; }
+    inline void SetXmlStandalone(bool xmlStandalone_) { xmlStandalone = xmlStandalone_; }
+    inline const std::string& XmlVersion() const { return xmlVersion; }
+    inline void SetXmlVersion(const std::string& xmlVersion_) { xmlVersion = xmlVersion_; }
+    inline const std::string& XmlEncoding() const { return xmlEncoding; }
+    inline void SetXmlEncoding(const std::string& xmlEncoding_) { xmlEncoding = xmlEncoding_; }
+    inline std::map<std::string, Element*>& Index() { return index; }
     Element* GetElementById(const std::string& elementId);
     void AppendChild(Node* child) override;
     void InsertBefore(Node* newChild, Node* refChild) override;

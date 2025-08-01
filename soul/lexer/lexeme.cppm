@@ -12,10 +12,10 @@ export namespace soul::lexer {
 template<typename Char>
 struct Lexeme
 {
-    Lexeme() : begin(nullptr), end(nullptr) {}
-    Lexeme(const Char* begin_, const Char* end_) : begin(begin_), end(end_) {}
-    std::basic_string<Char> ToString() const { return std::basic_string<Char>(begin, end); }
-    int Length() const { return static_cast<int>(end - begin); }
+    inline Lexeme() : begin(nullptr), end(nullptr) {}
+    inline Lexeme(const Char* begin_, const Char* end_) : begin(begin_), end(end_) {}
+    inline std::basic_string<Char> ToString() const { return std::basic_string<Char>(begin, end); }
+    inline int Length() const { return static_cast<int>(end - begin); }
     const Char* begin;
     const Char* end;
 };
@@ -54,7 +54,7 @@ inline bool operator<(const Lexeme<Char>& left, const Lexeme<Char>& right)
 template<typename Char>
 struct LexemeCompare
 {
-    bool operator()(const Lexeme<Char>& left, const Lexeme<Char>& right) const
+    inline bool operator()(const Lexeme<Char>& left, const Lexeme<Char>& right) const
     {
         return left < right;
     }

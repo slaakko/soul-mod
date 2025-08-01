@@ -94,9 +94,9 @@ class SymbolTable
 {
 public:
     SymbolTable();
-    void SetModule(Module* module_) { module = module_; }
-    Module* GetModule() const { return module; }
-    NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
+    inline void SetModule(Module* module_) { module = module_; }
+    inline Module* GetModule() const { return module; }
+    inline NamespaceSymbol* GlobalNs() const { return globalNs.get(); }
     void Init();
     void Import(const SymbolTable& that, FunctionDefinitionSymbolSet* functionDefinitionSymbolSet);
     void Write(Writer& writer);
@@ -106,11 +106,11 @@ public:
     void WriteMaps(Writer& writer);
     void ReadMaps(Reader& reader, otava::ast::NodeMap* nodeMap, SymbolMap* symbolMap);
     TypeSymbol* GetFundamentalTypeSymbol(FundamentalTypeKind kind);
-    Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
-    void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
-    TypeSymbol* GetErrorTypeSymbol() { return errorTypeSymbol; }
-    void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) { errorTypeSymbol = errorTypeSymbol_; }
-    Scope* CurrentScope() const { return currentScope; }
+    inline Symbol* GetTypenameConstraintSymbol() { return typenameConstraintSymbol; }
+    inline void SetTypenameConstraintSymbol(Symbol* typenameConstraintSymbol_) { typenameConstraintSymbol = typenameConstraintSymbol_; }
+    inline TypeSymbol* GetErrorTypeSymbol() { return errorTypeSymbol; }
+    inline void SetErrorTypeSymbol(TypeSymbol* errorTypeSymbol_) { errorTypeSymbol = errorTypeSymbol_; }
+    inline Scope* CurrentScope() const { return currentScope; }
     void SetCurrentScope(Scope* scope);
     Scope* GetNamespaceScope(const std::u32string& nsName, const soul::ast::SourcePos& sourcePos, Context* context);
     void PushScope();
@@ -202,27 +202,27 @@ public:
     Symbol* GetConstraint(const util::uuid& id) const;
     FunctionGroupSymbol* GetFunctionGroup(const util::uuid& id) const;
     TypeSymbol* GetFundamentalType(FundamentalTypeKind kind) const;
-    void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
-    bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
+    inline void SetAddToRecomputeNameSet(bool addToRecomputeNameSet_) { addToRecomputeNameSet = addToRecomputeNameSet_; }
+    inline bool AddToRecomputeNameSet() const { return addToRecomputeNameSet; }
     void AddToRecomputeNameSet(CompoundTypeSymbol* compoundTypeSymbol);
     void RecomputeNames();
-    const std::set<Symbol*>& ForwardDeclarations() const { return forwardDeclarations; }
-    const std::set<Symbol*>& AllForwardDeclarations() const { return allForwardDeclarations; }
-    std::set<Symbol*>& ForwardDeclarations() { return forwardDeclarations; }
-    std::set<Symbol*>& AllForwardDeclarations() { return allForwardDeclarations; }
-    Access CurrentAccess() const { return currentAccess; }
+    inline const std::set<Symbol*>& ForwardDeclarations() const { return forwardDeclarations; }
+    inline const std::set<Symbol*>& AllForwardDeclarations() const { return allForwardDeclarations; }
+    inline std::set<Symbol*>& ForwardDeclarations() { return forwardDeclarations; }
+    inline std::set<Symbol*>& AllForwardDeclarations() { return allForwardDeclarations; }
+    inline Access CurrentAccess() const { return currentAccess; }
     void SetCurrentAccess(Access access);
     void PushAccess(Access access);
     void PopAccess();
     void AddClass(ClassTypeSymbol* cls);
-    const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
-    void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
-    otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
-    void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
-    SymbolMap* GetSymbolMap() { return symbolMap; }
-    ConversionTable& GetConversionTable() { return *conversionTable; }
-    const ConversionTable& GetConversionTable() const { return *conversionTable; }
-    Linkage CurrentLinkage() const { return currentLinkage; }
+    inline const std::set<ClassTypeSymbol*>& Classes() const { return allClasses; }
+    inline void SetNodeMap(otava::ast::NodeMap* nodeMap_) { nodeMap = nodeMap_; }
+    inline otava::ast::NodeMap* GetNodeMap() { return nodeMap; }
+    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    inline SymbolMap* GetSymbolMap() { return symbolMap; }
+    inline ConversionTable& GetConversionTable() { return *conversionTable; }
+    inline const ConversionTable& GetConversionTable() const { return *conversionTable; }
+    inline Linkage CurrentLinkage() const { return currentLinkage; }
     void PushLinkage(Linkage linkage_);
     void PopLinkage();
     ExplicitInstantiationSymbol* GetExplicitInstantiation(ClassTemplateSpecializationSymbol* classTemplateSpecialization) const;

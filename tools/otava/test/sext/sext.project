@@ -1,0 +1,3 @@
+project sext;
+target=library;
+interface <sext.cppm>;

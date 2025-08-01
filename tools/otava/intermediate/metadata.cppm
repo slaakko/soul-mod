@@ -30,11 +30,11 @@ class MetadataItem
 public:
     MetadataItem(MetadataItemKind kind_);
     virtual ~MetadataItem();
-    MetadataItemKind Kind() const { return kind; }
-    bool IsMetadataRef() const { return kind == MetadataItemKind::metadataRef; }
-    bool IsMetadataBool() const { return kind == MetadataItemKind::metadataBool; }
-    bool IsMetadataLong() const { return kind == MetadataItemKind::metadataLong; }
-    bool IsMetadataString() const { return kind == MetadataItemKind::metadataString; }
+    inline MetadataItemKind Kind() const { return kind; }
+    inline bool IsMetadataRef() const { return kind == MetadataItemKind::metadataRef; }
+    inline bool IsMetadataBool() const { return kind == MetadataItemKind::metadataBool; }
+    inline bool IsMetadataLong() const { return kind == MetadataItemKind::metadataLong; }
+    inline bool IsMetadataString() const { return kind == MetadataItemKind::metadataString; }
     virtual void Write(util::CodeFormatter& formatter) = 0;
 private:
     MetadataItemKind kind;
@@ -44,10 +44,10 @@ class MetadataRef : public MetadataItem
 {
 public:
     MetadataRef(const soul::ast::Span& span_, std::int32_t nodeId_);
-    const soul::ast::Span& GetSpan() const { return span; }
-    std::int32_t NodeId() const { return nodeId; }
-    MetadataStruct* GetMetadataStruct() const { return metadataStruct; }
-    void SetMetadataStruct(MetadataStruct* metadataStruct_) { metadataStruct = metadataStruct_; }
+    inline const soul::ast::Span& GetSpan() const { return span; }
+    inline std::int32_t NodeId() const { return nodeId; }
+    inline MetadataStruct* GetMetadataStruct() const { return metadataStruct; }
+    inline void SetMetadataStruct(MetadataStruct* metadataStruct_) { metadataStruct = metadataStruct_; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     soul::ast::Span span;
@@ -59,7 +59,7 @@ class MetadataBool : public MetadataItem
 {
 public:
     MetadataBool(bool value_);
-    bool Value() const { return value; }
+    inline bool Value() const { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     bool value;
@@ -69,7 +69,7 @@ class MetadataLong : public MetadataItem
 {
 public:
     MetadataLong(std::int64_t value_);
-    std::int64_t Value() const { return value; }
+    inline std::int64_t Value() const { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     std::int64_t value;
@@ -79,7 +79,7 @@ class MetadataString : public MetadataItem
 {
 public:
     MetadataString(const std::string& value_);
-    const std::string& Value() const { return value; }
+    inline const std::string& Value() const { return value; }
     void Write(util::CodeFormatter& formatter) override;
 private:
     std::string value;
@@ -91,8 +91,8 @@ public:
     MetadataStruct(const soul::ast::Span& span_, std::int32_t id_);
     MetadataStruct(const MetadataStruct&) = delete;
     MetadataStruct& operator=(const MetadataStruct&) = delete;
-    const soul::ast::Span& GetSpan() const { return span; }
-    std::int32_t Id() const { return id; }
+    inline const soul::ast::Span& GetSpan() const { return span; }
+    inline std::int32_t Id() const { return id; }
     void AddItem(const std::string& fieldName, MetadataItem* item);
     MetadataItem* GetItem(const std::string& fieldName) const;
     void Write(util::CodeFormatter& formatter) override;
@@ -109,8 +109,8 @@ public:
     Metadata();
     Metadata(const Metadata&) = delete;
     Metadata& operator=(const Metadata&) = delete;
-    Context* GetContext() const { return context; }
-    void SetContext(Context* context_) { context = context_; }
+    inline Context* GetContext() const { return context; }
+    inline void SetContext(Context* context_) { context = context_; }
     MetadataStruct* CreateMetadataStruct();
     MetadataStruct* GetMetadataStruct(std::int32_t id) const;
     MetadataStruct* AddMetadataStruct(const soul::ast::Span& span, std::int32_t id);

@@ -20,15 +20,15 @@ class ClassTemplateSpecializationSymbol : public ClassTypeSymbol
 {
 public:
     ClassTemplateSpecializationSymbol(const std::u32string& name_);
-    bool Instantiated() const { return instantiated; }
-    void SetInstantiated() { instantiated = true; }
+    inline bool Instantiated() const { return instantiated; }
+    inline void SetInstantiated() { instantiated = true; }
     std::string SymbolKindStr() const override { return "specialization symbol"; }
     std::string SymbolDocKindStr() const override { return "specialization"; }
-    ClassTypeSymbol* ClassTemplate() const { return classTemplate; }
+    inline ClassTypeSymbol* ClassTemplate() const { return classTemplate; }
     void SetClassTemplate(ClassTypeSymbol* classTemplate_);
     const std::u32string& SimpleName() const override { return ClassTemplate()->SimpleName(); }
     std::string IrName(Context* context) const override;
-    const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
+    inline const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
     void AddTemplateArgument(Symbol* templateArgument);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
@@ -36,12 +36,12 @@ public:
     void Accept(Visitor& visitor) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
-    FunctionSymbol* Destructor() const { return destructor; }
-    void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
+    inline FunctionSymbol* Destructor() const { return destructor; }
+    inline void SetDestructor(FunctionSymbol* destructor_) { destructor = destructor_; }
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
-    bool InstantiatingDestructor() const { return instantiatingDestructor; }
-    void SetInstantiatingDestructor(bool instantiating) { instantiatingDestructor = instantiating; }
+    inline bool InstantiatingDestructor() const { return instantiatingDestructor; }
+    inline void SetInstantiatingDestructor(bool instantiating) { instantiatingDestructor = instantiating; }
     void AddInstantiatedVirtualFunctionSpecialization(FunctionSymbol* specialization);
     FunctionSymbol* GetMatchingVirtualFunctionSpecialization(FunctionSymbol* newcomer, Context* context) const;
     bool ContainsVirtualFunctionSpecialization(FunctionSymbol* specialization) const;

@@ -14,7 +14,7 @@ class BinaryStreamWriter
 {
 public:
     BinaryStreamWriter(Stream& stream_);
-    Stream& GetStream() { return stream; }
+    inline Stream& GetStream() { return stream; }
     void Write(bool x);
     void Write(std::uint8_t x);
     void Write(std::int8_t x);
@@ -40,7 +40,7 @@ public:
     void WriteSLEB128Long(std::int64_t x);
     void Write(const uuid& uuid);
     void WriteTime(std::time_t time);
-    std::int64_t Position() const { return stream.Position(); }
+    inline std::int64_t Position() const { return stream.Position(); }
 private:
     Stream& stream;
 };

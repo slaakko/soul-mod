@@ -60,7 +60,7 @@ class Optimizer
 public:
     static Optimizer& Instance();
     void SetOptimizations(const std::string& optLevel);
-    const std::string& OptLevel() const { return optLevel; }
+    inline const std::string& OptLevel() const { return optLevel; }
 private:
     Optimizer();
     std::map<std::string, Optimizations> optMap;

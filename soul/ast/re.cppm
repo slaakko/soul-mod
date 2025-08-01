@@ -29,15 +29,15 @@ class Symbol
 public:
     Symbol(SymbolKind kind_);
     virtual ~Symbol();
-    SymbolKind Kind() const { return kind; }
+    inline SymbolKind Kind() const { return kind; }
     virtual bool Match(char32_t c) = 0;
     virtual void Accept(Visitor& visitor) = 0;
     virtual void Print(CodeFormatter& formatter) = 0;
     void SetName(const std::string& name_);
-    const std::string& Name() const { return name; }
-    bool Contained() const { return contained; }
-    void SetContained() { if (!dontSetContained) contained = true; }
-    void DontSetContained() { dontSetContained = true; }
+    inline const std::string& Name() const { return name; }
+    inline bool Contained() const { return contained; }
+    inline void SetContained() { if (!dontSetContained) contained = true; }
+    inline void DontSetContained() { dontSetContained = true; }
 private:
     SymbolKind kind;
     std::string name;
@@ -52,7 +52,7 @@ public:
     bool Match(char32_t c) override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
-    char32_t Chr() const { return chr; }
+    inline char32_t Chr() const { return chr; }
 private:
     char32_t chr;
 };
@@ -74,9 +74,9 @@ public:
     bool Match(char32_t c) override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
-    bool IsEmpty() const { return start > end; }
-    char32_t Start() const { return start; }
-    char32_t End() const { return end; }
+    inline bool IsEmpty() const { return start > end; }
+    inline char32_t Start() const { return start; }
+    inline char32_t End() const { return end; }
 private:
     char32_t start;
     char32_t end;
@@ -109,21 +109,21 @@ public:
     bool Match(char32_t c) override;
     void Accept(Visitor& visitor) override;
     void Print(CodeFormatter& formatter) override;
-    bool Inverse() const { return inverse; }
-    void SetInverse() { inverse = true; }
-    const std::vector<Symbol*>& Symbols() const { return symbols; }
+    inline bool Inverse() const { return inverse; }
+    inline void SetInverse() { inverse = true; }
+    inline const std::vector<Symbol*>& Symbols() const { return symbols; }
     void AddSymbol(Symbol* symbol);
     void AddChar(char32_t c);
-    int Index() const { return index; }
+    inline int Index() const { return index; }
     void SetIndex(int index_);
-    const std::vector<char32_t>& Chars() const { return chars; }
+    inline const std::vector<char32_t>& Chars() const { return chars; }
     Class* MakeCanonical(LexerContext& lexerContext);
     void MakeMinimal(LexerContext& lexerContext);
     void MakeInverse(LexerContext& lexerContext);
     Class* Clone();
-    bool IsEmpty() const { return symbols.empty(); }
-    const std::list<Range>& Ranges() const { return ranges; }
-    std::list<Range>& Ranges() { return ranges; }
+    inline bool IsEmpty() const { return symbols.empty(); }
+    inline const std::list<Range>& Ranges() const { return ranges; }
+    inline std::list<Range>& Ranges() { return ranges; }
 private:
     int index;
     bool inverse;
@@ -146,8 +146,8 @@ class NfaEdge
 {
 public:
     NfaEdge(Symbol* symbol_, NfaState* next_);
-    Symbol* GetSymbol() const { return symbol; }
-    NfaState* Next() const { return next; }
+    inline Symbol* GetSymbol() const { return symbol; }
+    inline NfaState* Next() const { return next; }
     void Print(CodeFormatter& formatter);
 private:
     Symbol* symbol;
@@ -158,12 +158,12 @@ class NfaState
 {
 public:
     NfaState(int id_, int ruleIndex_);
-    int Id() const { return id; }
-    int RuleIndex() const { return ruleIndex; }
-    void SetRuleIndex(int ruleIndex_) { ruleIndex = ruleIndex_; }
-    bool Accept() const { return accept; }
-    void SetAccept(bool accept_) { accept = accept_; }
-    const std::vector<NfaEdge>& Edges() const { return edges; }
+    inline int Id() const { return id; }
+    inline int RuleIndex() const { return ruleIndex; }
+    inline void SetRuleIndex(int ruleIndex_) { ruleIndex = ruleIndex_; }
+    inline bool Accept() const { return accept; }
+    inline void SetAccept(bool accept_) { accept = accept_; }
+    inline const std::vector<NfaEdge>& Edges() const { return edges; }
     void SetEdges(const std::vector<NfaEdge>& edges_);
     void AddEdge(const NfaEdge& edge);
     void AddPrev(NfaState* prev_);
@@ -182,10 +182,10 @@ class Nfa
 public:
     Nfa();
     Nfa(NfaState* start_, NfaState* end_);
-    NfaState* Start() const { return start; }
-    void SetStart(NfaState* start_) { start = start_; }
-    NfaState* End() const { return end; }
-    void SetEnd(NfaState* end_) { end = end_; }
+    inline NfaState* Start() const { return start; }
+    inline void SetStart(NfaState* start_) { start = start_; }
+    inline NfaState* End() const { return end; }
+    inline void SetEnd(NfaState* end_) { end = end_; }
     void Print(CodeFormatter& formatter);
 private:
     NfaState* start;
@@ -203,14 +203,14 @@ class DfaState
 {
 public:
     DfaState(int id_, const std::vector<int>& nfaStateIds_);
-    int Id() const { return id; }
-    bool IsMarked() const { return marked; }
-    void Mark() { marked = true; }
-    bool Accept() const { return accept; }
-    void SetAccept(bool accept_) { accept = accept_; }
-    int RuleIndex() const { return ruleIndex; }
-    void SetRuleIndex(int index) { ruleIndex = index; }
-    const std::vector<int>& NfaStateIds() const { return nfaStateIds; }
+    inline int Id() const { return id; }
+    inline bool IsMarked() const { return marked; }
+    inline void Mark() { marked = true; }
+    inline bool Accept() const { return accept; }
+    inline void SetAccept(bool accept_) { accept = accept_; }
+    inline int RuleIndex() const { return ruleIndex; }
+    inline void SetRuleIndex(int index) { ruleIndex = index; }
+    inline const std::vector<int>& NfaStateIds() const { return nfaStateIds; }
     void AddNext(DfaState* next);
     DfaState* Next(int i) const;
     void Print(LexerContext& context, CodeFormatter& formatter);
@@ -227,7 +227,7 @@ class Dfa
 {
 public:
     void AddState(DfaState* state);
-    const std::vector<DfaState*>& States() const { return states; }
+    inline const std::vector<DfaState*>& States() const { return states; }
     void Finalize(LexerContext& lexerContext);
     void Print(LexerContext& lexerContext, CodeFormatter& formatter);
 private:
@@ -251,52 +251,52 @@ class LexerContext
 public:
     LexerContext();
     ~LexerContext();
-    const std::string& FileName() const { return fileName; }
+    inline const std::string& FileName() const { return fileName; }
     void SetFileName(const std::string& fileName_);
     void SetBase(const std::string& dir_);
-    const std::string& Base() const { return dir; }
+    inline const std::string& Base() const { return dir; }
     NfaState* MakeNfaState();
     NfaState* GetNfaState(int id) const;
-    const std::vector<NfaState*>& NfaStates() const { return nfaStates; }
+    inline const std::vector<NfaState*>& NfaStates() const { return nfaStates; }
     DfaState* MakeDfaState(const std::vector<int>& nfaStates);
     Symbol* MakeChar(char32_t c);
-    Symbol* MakeAny() { return &any; }
-    Symbol* MakeEpsilon() { return &epsilon; }
+    inline Symbol* MakeAny() { return &any; }
+    inline Symbol* MakeEpsilon() { return &epsilon; }
     Symbol* MakeRange(char32_t start, char32_t end);
-    Class* MakeAsciiIdStart() { return asciiIdStart; }
-    Class* MakeAsciiIdCont() { return asciiIdCont; }
-    Class* MakeUnicodeIdStart() { return unicodeIdStart; }
-    Class* MakeUnicodeIdCont() { return unicodeIdCont; }
+    inline Class* MakeAsciiIdStart() { return asciiIdStart; }
+    inline Class* MakeAsciiIdCont() { return asciiIdCont; }
+    inline Class* MakeUnicodeIdStart() { return unicodeIdStart; }
+    inline Class* MakeUnicodeIdCont() { return unicodeIdCont; }
     void AddToSymbols(Symbol* symbol);
-    const std::vector<soul::ast::re::Symbol*>& Symbols() const { return symbols; }
+    inline const std::vector<soul::ast::re::Symbol*>& Symbols() const { return symbols; }
     Class* MakeClass();
     void AddCanonicalClass(Class* cls);
-    const std::vector<Class*>& CanonicalClasses() const { return canonicalClasses; }
+    inline const std::vector<Class*>& CanonicalClasses() const { return canonicalClasses; }
     void AddToPartition(Class* cls);
-    const std::vector<Class*>& Partition() const { return partition; }
-    void SetCurrentExpression(soul::ast::slg::Expression* currentExpression_) { currentExpression = currentExpression_; }
-    void SetExprParser(ExprParser* exprParser_) { exprParser = exprParser_; }
-    ExprParser* GetExprParser() const { return exprParser; }
+    inline const std::vector<Class*>& Partition() const { return partition; }
+    inline void SetCurrentExpression(soul::ast::slg::Expression* currentExpression_) { currentExpression = currentExpression_; }
+    inline void SetExprParser(ExprParser* exprParser_) { exprParser = exprParser_; }
+    inline ExprParser* GetExprParser() const { return exprParser; }
     Nfa MakeExpr(const std::string& id);
-    soul::ast::slg::Tokens* GetTokens() const { return tokens; }
-    void SetTokens(soul::ast::slg::Tokens* tokens_) { tokens = tokens_; }
-    soul::ast::slg::Keywords* GetKeywords() const { return keywords; }
-    void SetKeywords(soul::ast::slg::Keywords* keywords_) { keywords = keywords_; }
-    soul::ast::slg::Expressions* GetExpressions() const { return expressions; }
-    void SetExpressions(soul::ast::slg::Expressions* expressions_) { expressions = expressions_; }
-    soul::ast::slg::Lexer* GetLexer() const { return lexer; }
-    void SetLexer(soul::ast::slg::Lexer* lexer_) { lexer = lexer_; }
+    inline soul::ast::slg::Tokens* GetTokens() const { return tokens; }
+    inline void SetTokens(soul::ast::slg::Tokens* tokens_) { tokens = tokens_; }
+    inline soul::ast::slg::Keywords* GetKeywords() const { return keywords; }
+    inline void SetKeywords(soul::ast::slg::Keywords* keywords_) { keywords = keywords_; }
+    inline soul::ast::slg::Expressions* GetExpressions() const { return expressions; }
+    inline void SetExpressions(soul::ast::slg::Expressions* expressions_) { expressions = expressions_; }
+    inline soul::ast::slg::Lexer* GetLexer() const { return lexer; }
+    inline void SetLexer(soul::ast::slg::Lexer* lexer_) { lexer = lexer_; }
     int AddNfa(Nfa* nfa);
     Nfa* GetNfa(int index) const;
-    int MasterNfaIndex() const { return masterNfaIndex; }
-    void SetMasterNfaIndex(int masterNfaIndex_) { masterNfaIndex = masterNfaIndex_; }
+    inline int MasterNfaIndex() const { return masterNfaIndex; }
+    inline void SetMasterNfaIndex(int masterNfaIndex_) { masterNfaIndex = masterNfaIndex_; }
     void SetDfa(Dfa&& dfa_);
-    const Dfa& GetDfa() const { return dfa; }
-    Dfa& GetDfa() { return dfa; }
-    bool Verbose() const { return verbose; }
-    void SetVerbose() { verbose = true; }
-    bool Debug() const { return debug; }
-    void SetDebug() { debug = true; }
+    inline const Dfa& GetDfa() const { return dfa; }
+    inline Dfa& GetDfa() { return dfa; }
+    inline bool Verbose() const { return verbose; }
+    inline void SetVerbose() { verbose = true; }
+    inline bool Debug() const { return debug; }
+    inline void SetDebug() { debug = true; }
 private:
     std::string fileName;
     int nextNfaStateId;

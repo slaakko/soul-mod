@@ -27,9 +27,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* NestedNameSpecifier() const { return nns.get(); }
-    Node* Id() const { return id.get(); }
-    Node* TemplateNode() const { return templateNode.get(); }
+    inline Node* NestedNameSpecifier() const { return nns.get(); }
+    inline Node* Id() const { return id.get(); }
+    inline Node* TemplateNode() const { return templateNode.get(); }
 private:
     std::unique_ptr<Node> nns;
     std::unique_ptr<Node> id;
@@ -45,8 +45,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TypeSpecifiers() const { return typeSpecifiers.get(); }
-    Node* Declarator() const { return declarator.get(); }
+    inline Node* TypeSpecifiers() const { return typeSpecifiers.get(); }
+    inline Node* Declarator() const { return declarator.get(); }
 private:
     std::unique_ptr<Node> typeSpecifiers;
     std::unique_ptr<Node> declarator;
@@ -61,8 +61,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* DefiningTypeSpecifiers() const { return definingTypeSpecifiers.get(); }
-    Node* AbstractDeclarator() const { return abstractDeclarator.get(); }
+    inline Node* DefiningTypeSpecifiers() const { return definingTypeSpecifiers.get(); }
+    inline Node* AbstractDeclarator() const { return abstractDeclarator.get(); }
 private:
     std::unique_ptr<Node> definingTypeSpecifiers;
     std::unique_ptr<Node> abstractDeclarator;
@@ -94,9 +94,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ClassKey() const { return classKey.get(); }
-    Node* Id() const { return id.get(); }
-    Node* Attributes() const { return attributes.get(); }
+    inline Node* ClassKey() const { return classKey.get(); }
+    inline Node* Id() const { return id.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
 private:
     std::unique_ptr<Node> classKey;
     std::unique_ptr<Node> id;
@@ -112,9 +112,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Expression() const { return expr.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* Expression() const { return expr.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> expr;
     soul::ast::SourcePos lpPos;
@@ -130,12 +130,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TypeConstraint() const { return typeConstraint.get(); }
-    const soul::ast::SourcePos& DeclTypePos() const { return dtPos; }
-    const soul::ast::SourcePos& AutoPos() const { return autoPos; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
-    bool IsDeclType() const { return dtPos.IsValid(); };
+    inline Node* TypeConstraint() const { return typeConstraint.get(); }
+    inline const soul::ast::SourcePos& DeclTypePos() const { return dtPos; }
+    inline const soul::ast::SourcePos& AutoPos() const { return autoPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline bool IsDeclType() const { return dtPos.IsValid(); };
 private:
     std::unique_ptr<Node> typeConstraint;
     soul::ast::SourcePos dtPos;

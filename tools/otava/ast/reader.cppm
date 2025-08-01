@@ -19,14 +19,14 @@ class Reader
 public:
     Reader(const std::string& fileName);
     Reader(util::BinaryStreamReader* readerPtr_);
-    util::BinaryStreamReader& GetBinaryStreamReader() { return *readerPtr; }
+    inline util::BinaryStreamReader& GetBinaryStreamReader() { return *readerPtr; }
     soul::ast::SourcePos ReadSourcePos();
     NodeKind ReadNodeKind();
     std::u32string ReadStr();
     bool ReadBool();
     Node* ReadNode();
-    void SetNodeMap(NodeMap* nodeMap_) { nodeMap = nodeMap_; }
-    NodeMap* GetNodeMap() const { return nodeMap; }
+    inline void SetNodeMap(NodeMap* nodeMap_) { nodeMap = nodeMap_; }
+    inline NodeMap* GetNodeMap() const { return nodeMap; }
 private:
     std::unique_ptr<util::FileStream> fileStream;
     std::unique_ptr<util::BufferedStream> bufferedStream;

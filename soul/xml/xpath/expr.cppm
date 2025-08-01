@@ -33,8 +33,8 @@ class Expr
 public:
     Expr(ExprKind kind_);
     virtual ~Expr();
-    ExprKind Kind() const { return kind; }
-    const std::string& Str() const { return str; }
+    inline ExprKind Kind() const { return kind; }
+    inline const std::string& Str() const { return str; }
     void SetStr(const std::string& str_);
     virtual std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const = 0;
     virtual soul::xml::Element* ToXmlElement() const;
@@ -47,8 +47,8 @@ class UnaryExpr : public Expr
 {
 public:
     UnaryExpr(Operator op_, Expr* operand_);
-    Operator Op() const { return op; }
-    Expr* Operand() const { return operand.get(); }
+    inline Operator Op() const { return op; }
+    inline Expr* Operand() const { return operand.get(); }
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -60,9 +60,9 @@ class BinaryExpr : public Expr
 {
 public:
     BinaryExpr(Operator op_, Expr* left_, Expr* right_);
-    Operator Op() const { return op; }
-    Expr* Left() const { return left.get(); }
-    Expr* Right() const { return right.get(); }
+    inline Operator Op() const { return op; }
+    inline Expr* Left() const { return left.get(); }
+    inline Expr* Right() const { return right.get(); }
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -82,8 +82,8 @@ class FilterExpr : public Expr
 {
 public:
     FilterExpr(Expr* subject_, Expr* predicate_);
-    Expr* Subject() const { return subject.get(); }
-    Expr* Predicate() const { return predicate.get(); }
+    inline Expr* Subject() const { return subject.get(); }
+    inline Expr* Predicate() const { return predicate.get(); }
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -103,7 +103,7 @@ class NodeTest
 public:
     NodeTest(NodeTestKind kind_);
     virtual ~NodeTest();
-    NodeTestKind Kind() const { return kind; }
+    inline NodeTestKind Kind() const { return kind; }
     virtual bool Select(soul::xml::Node* node, soul::xml::Axis axis) const;
     virtual soul::xml::Element* ToXmlElement() const;
 private:
@@ -116,7 +116,7 @@ class PILiteralNodeTest : public NodeTest
 {
 public:
     PILiteralNodeTest(Literal* literal_);
-    Literal* Lit() const { return literal.get(); }
+    inline Literal* Lit() const { return literal.get(); }
     bool Select(soul::xml::Node* node, soul::xml::Axis axis) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -127,7 +127,7 @@ class PrefixNodeTest : public NodeTest
 {
 public:
     PrefixNodeTest(const std::string& prefix_);
-    const std::string& Prefix() const { return prefix; }
+    inline const std::string& Prefix() const { return prefix; }
     bool Select(soul::xml::Node* node, soul::xml::Axis axis) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -138,7 +138,7 @@ class NameNodeTest : public NodeTest
 {
 public:
     NameNodeTest(const std::string& name_);
-    const std::string& Name() const { return name; }
+    inline const std::string& Name() const { return name; }
     bool Select(soul::xml::Node* node, soul::xml::Axis axis) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -149,9 +149,9 @@ class LocationStepExpr : public Expr
 {
 public:
     LocationStepExpr(soul::xml::Axis axis_, NodeTest* nodeTest_);
-    NodeTest* GetNodeTest() const { return nodeTest.get(); }
+    inline NodeTest* GetNodeTest() const { return nodeTest.get(); }
     void AddPredicate(Expr* predicate);
-    const std::vector<std::unique_ptr<Expr>>& Predicates() const { return predicates; }
+    inline const std::vector<std::unique_ptr<Expr>>& Predicates() const { return predicates; }
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -164,7 +164,7 @@ class VariableReference : public Expr
 {
 public:
     VariableReference(const std::string& variableName_);
-    const std::string& VariableName() const { return variableName; }
+    inline const std::string& VariableName() const { return variableName; }
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -175,7 +175,7 @@ class Literal : public Expr
 {
 public:
     Literal(const std::string& value_);
-    const std::string& Value() const { return value; }
+    inline const std::string& Value() const { return value; }
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -186,7 +186,7 @@ class NumberExpr : public Expr
 {
 public:
     NumberExpr(double value_);
-    double Value() const { return value; }
+    inline double Value() const { return value; }
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;
 private:
@@ -197,7 +197,7 @@ class FunctionCall : public Expr
 {
 public:
     FunctionCall(const std::string& functionName_);
-    const std::string& FunctionName() const { return functionName; }
+    inline const std::string& FunctionName() const { return functionName; }
     void AddArgument(Expr* argument);
     std::unique_ptr<soul::xml::xpath::Object> Evaluate(Context& context) const override;
     soul::xml::Element* ToXmlElement() const override;

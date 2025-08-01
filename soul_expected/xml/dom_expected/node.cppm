@@ -31,21 +31,21 @@ public:
     Node(NodeKind kind_, const soul_expected::ast::SourcePos& sourcePos_, const std::string& name_);
     virtual ~Node();
     NodeKind Kind() const { return kind; }
-    const soul_expected::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    const std::string& Name() const { return name; }
-    const std::string& NamespaceUri() const { return namespaceUri; }
+    inline const soul_expected::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline const std::string& Name() const { return name; }
+    inline const std::string& NamespaceUri() const { return namespaceUri; }
     void SetNamespaceUri(const std::string& namespaceUri_);
-    bool IsAttributeNode() const { return kind == NodeKind::attributeNode; }
-    bool IsDocumentFragmentNode() const { return kind == NodeKind::documentFragmentNode; }
-    bool IsDocumentNode() const { return kind == NodeKind::documentNode; }
-    bool IsElementNode() const { return kind == NodeKind::elementNode; }
-    bool IsEntityNode() const { return kind == NodeKind::entityNode; }
-    bool IsEntityReferenceNode() const { return kind == NodeKind::entityReferenceNode; }
-    bool IsNotationNode() const { return kind == NodeKind::notationNode; }
-    bool IsProcessingInstructionNode() const { return kind == NodeKind::processingInstructionNode; }
-    bool IsTextNode() const { return kind == NodeKind::textNode; }
-    bool IsCDataSectionNode() const { return kind == NodeKind::cdataSectionNode; }
-    bool IsCommentNode() const { return kind == NodeKind::commentNode; }
+    inline bool IsAttributeNode() const { return kind == NodeKind::attributeNode; }
+    inline bool IsDocumentFragmentNode() const { return kind == NodeKind::documentFragmentNode; }
+    inline bool IsDocumentNode() const { return kind == NodeKind::documentNode; }
+    inline bool IsElementNode() const { return kind == NodeKind::elementNode; }
+    inline bool IsEntityNode() const { return kind == NodeKind::entityNode; }
+    inline bool IsEntityReferenceNode() const { return kind == NodeKind::entityReferenceNode; }
+    inline bool IsNotationNode() const { return kind == NodeKind::notationNode; }
+    inline bool IsProcessingInstructionNode() const { return kind == NodeKind::processingInstructionNode; }
+    inline bool IsTextNode() const { return kind == NodeKind::textNode; }
+    inline bool IsCDataSectionNode() const { return kind == NodeKind::cdataSectionNode; }
+    inline bool IsCommentNode() const { return kind == NodeKind::commentNode; }
     void Walk(NodeOperation& operation, Axis axis);
     virtual void WalkChildren(NodeOperation& operation);
     virtual void WalkDescendant(NodeOperation& operation);
@@ -59,11 +59,11 @@ public:
     void WalkFollowingSibling(NodeOperation& operation);
     void WalkPrecedingSibling(NodeOperation& operation);
     virtual void WalkAttribute(NodeOperation& operation);
-    ParentNode* Parent() const { return parent; }
-    Node* Prev() const { return prev; }
-    Node* Next() const { return next; }
-    Document* OwnerDocument() const { return ownerDocument; }
-    void SetOwnerDocument(Document* ownerDocumnent_) { ownerDocument = ownerDocumnent_; }
+    inline ParentNode* Parent() const { return parent; }
+    inline Node* Prev() const { return prev; }
+    inline Node* Next() const { return next; }
+    inline Document* OwnerDocument() const { return ownerDocument; }
+    inline void SetOwnerDocument(Document* ownerDocumnent_) { ownerDocument = ownerDocumnent_; }
     std::string Prefix() const;
     std::expected<bool, int> SetPrefix(const std::string& prefix);
     std::string LocalName() const;
@@ -74,9 +74,9 @@ public:
     virtual std::expected<bool, int> Write(util::CodeFormatter& formatter) = 0;
 private:
     friend class ParentNode;
-    void SetParent(ParentNode* parent_) { parent = parent_; }
-    void SetPrev(Node* prev_) { prev = prev_; }
-    void SetNext(Node* next_) { next = next_; }
+    inline void SetParent(ParentNode* parent_) { parent = parent_; }
+    inline void SetPrev(Node* prev_) { prev = prev_; }
+    inline void SetNext(Node* next_) { next = next_; }
     void LinkBefore(Node* node);
     void LinkAfter(Node* node);
     void Unlink();

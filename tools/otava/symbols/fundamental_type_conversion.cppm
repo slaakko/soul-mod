@@ -25,7 +25,10 @@ enum class ConversionKind : std::int32_t
 
 struct FundamentalTypeIdentity
 {
-    static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context) { return value; }
+    inline static otava::intermediate::Value* Generate(Emitter& emitter, otava::intermediate::Value* value, otava::intermediate::Type* destType, Context* context) 
+    { 
+        return value; 
+    }
 };
 
 struct FundamentalTypeSignExtension

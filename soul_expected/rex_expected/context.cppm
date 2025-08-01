@@ -19,8 +19,8 @@ public:
     soul_expected::rex::nfa::NfaState* MakeNfaState();
     soul_expected::rex::symbol::Symbol* MakeChar(char32_t c);
     soul_expected::rex::symbol::Symbol* MakeRange(char32_t start, char32_t end);
-    soul_expected::rex::symbol::Symbol* MakeAny() { return &any; }
-    soul_expected::rex::symbol::Symbol* MakeEpsilon() { return &epsilon; }
+    inline soul_expected::rex::symbol::Symbol* MakeAny() { return &any; }
+    inline soul_expected::rex::symbol::Symbol* MakeEpsilon() { return &epsilon; }
     soul_expected::rex::symbol::Class* MakeClass();
 private:
     std::vector<soul_expected::rex::nfa::NfaState*> nfaStates;

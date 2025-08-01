@@ -40,6 +40,7 @@ import otava.symbols.conversion.table;
 import otava.symbols.type_compare;
 import otava.symbols.alias.type.symbol;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
 import util.sha1;
 import util.unicode;

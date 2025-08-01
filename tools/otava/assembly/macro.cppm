@@ -15,7 +15,7 @@ class Macro : public Value
 public:
     Macro(const std::string& name_);
     void SetValue(Value* value_);
-    Value* GetValue() const { return value; }
+    inline Value* GetValue() const { return value; }
     std::string ToString() const override;
 private:
     Value* value;

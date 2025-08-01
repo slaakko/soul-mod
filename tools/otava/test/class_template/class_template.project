@@ -1,0 +1,6 @@
+project class_template;
+target=program;
+source <main.cpp>;
+interface <foo.cppm>;
+interface <bar.cppm>;
+interface <class_template.cppm>;

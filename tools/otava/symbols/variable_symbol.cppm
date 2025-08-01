@@ -18,7 +18,7 @@ class VariableSymbol : public Symbol
 {
 public:
     VariableSymbol(const std::u32string& name_);
-    int Arity() const { return 0; }
+    inline int Arity() const { return 0; }
     std::string SymbolKindStr() const override { return "variable symbol"; }
     std::string SymbolDocKindStr() const override { return "variable"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
@@ -28,8 +28,8 @@ public:
     void SetInitializerType(TypeSymbol* initializerType_);
     TypeSymbol* GetType() const;
     TypeSymbol* GetReferredType() const;
-    Value* GetValue() const { return value; }
-    void SetValue(Value* value_) { value = value_; }
+    inline Value* GetValue() const { return value; }
+    inline void SetValue(Value* value_) { value = value_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -38,13 +38,13 @@ public:
     bool IsMemberVariable() const;
     bool IsGlobalVariable() const;
     bool IsStatic() const;
-    std::int32_t LayoutIndex() const { return layoutIndex; }
-    void SetLayoutIndex(std::int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
+    inline std::int32_t LayoutIndex() const { return layoutIndex; }
+    inline void SetLayoutIndex(std::int32_t layoutIndex_) { layoutIndex = layoutIndex_; }
     std::string IrName(Context* context) const;
-    std::int32_t Index() const { return index; }
-    void SetIndex(std::int32_t index_) { index = index_; }
-    VariableSymbol* Final() { if (global) return global; else return this; }
-    void SetGlobal(VariableSymbol* global_) { global = global_; }
+    inline std::int32_t Index() const { return index; }
+    inline void SetIndex(std::int32_t index_) { index = index_; }
+    inline VariableSymbol* Final() { if (global) return global; else return this; }
+    inline void SetGlobal(VariableSymbol* global_) { global = global_; }
 private:
     TypeSymbol* declaredType;
     util::uuid declaredTypeId;

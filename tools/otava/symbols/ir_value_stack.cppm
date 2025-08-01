@@ -13,30 +13,30 @@ export namespace otava::symbols {
 class IrValueStack
 {
 public:
-    void Push(otava::intermediate::Value* value)
+    inline void Push(otava::intermediate::Value* value)
     {
         s.push_back(value);
     }
-    otava::intermediate::Value* Pop()
+    inline otava::intermediate::Value* Pop()
     {
         otava::intermediate::Value* top = s.back();
         s.pop_back();
         return top;
     }
-    void Dup()
+    inline void Dup()
     {
         s.push_back(s.back());
     }
-    void Swap()
+    inline void Swap()
     {
         std::swap(s.back(), s[s.size() - 2]);
     }
-    void Rotate()
+    inline void Rotate()
     {
         std::swap(s[s.size() - 3], s[s.size() - 2]);
         std::swap(s.back(), s[s.size() - 2]);
     }
-    bool IsEmpty() const
+    inline bool IsEmpty() const
     {
         return s.empty();
     }

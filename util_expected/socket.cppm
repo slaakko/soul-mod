@@ -45,9 +45,9 @@ public:
     std::expected<bool, int> Shutdown(ShutdownMode mode);
     std::expected<bool, int> Send(const std::uint8_t* buffer, int count);
     std::expected<int, int> Receive(std::uint8_t* buffer, int count);
-    bool Valid() const { return error == 0; }
-    explicit operator bool() const { return Valid(); }
-    int Error() const { return error; }
+    inline bool Valid() const { return error == 0; }
+    inline explicit operator bool() const { return Valid(); }
+    inline int Error() const { return error; }
 private:
     std::int64_t handle;
     bool connected;

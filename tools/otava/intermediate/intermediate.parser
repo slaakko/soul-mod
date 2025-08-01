@@ -334,7 +334,7 @@ parser IntermediateParser
             MetadataRef(context):mdRef?
         )
         {
-            return context->AddFunctionDefinition(span, functionTypeRef.GetType(), functionId, inline_, linkOnce, mdRef);
+            return context->AddFunctionDefinition(span, functionTypeRef.GetType(), functionId, inline_, linkOnce, false, mdRef);
         }
         ;
 

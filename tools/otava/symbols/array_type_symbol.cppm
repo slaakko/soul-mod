@@ -23,12 +23,12 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
-    TypeSymbol* ElementType() const { return elementType; }
-    std::int64_t Size() const { return size; }
-    void SetSize(std::int64_t size_) { size = size_; }
+    inline TypeSymbol* ElementType() const { return elementType; }
+    inline std::int64_t Size() const { return size; }
+    inline void SetSize(std::int64_t size_) { size = size_; }
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool IsBound() const { return bound; }
-    void SetBound() { bound = true; }
+    inline bool IsBound() const { return bound; }
+    inline void SetBound() { bound = true; }
     void Bind(const soul::ast::SourcePos& sourcePos, Context* context);
 private:
     bool bound;

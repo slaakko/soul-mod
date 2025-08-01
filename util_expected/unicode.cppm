@@ -36,8 +36,8 @@ class Utf8ToUtf32Engine
 public:
     Utf8ToUtf32Engine();
     std::expected<bool, int> Put(std::uint8_t x);
-    bool ResultReady() const { return resultReady; }
-    char32_t Result() const { return result; }
+    inline bool ResultReady() const { return resultReady; }
+    inline char32_t Result() const { return result; }
 private:
     int state;
     bool resultReady;

@@ -264,10 +264,10 @@ void MakeProjectFile(Project* project, const std::string& projectFilePath, const
         soul::xml::Text* debugDependenciesText = soul::xml::MakeText("std.lib;ortd.lib;utild.lib" + references);
         debugDependencies->AppendChild(debugDependenciesText);
         debugLink->AppendChild(debugDependencies);
-        soul::xml::Text* multipleDefinedSymbols = soul::xml::MakeText("MultiplyDefinedSymbolOnly");
-        soul::xml::Element* forceFileOutput = soul::xml::MakeElement("ForceFileOutput");
-        forceFileOutput->AppendChild(multipleDefinedSymbols);
-        debugLink->AppendChild(forceFileOutput);
+        //soul::xml::Text* multipleDefinedSymbols = soul::xml::MakeText("MultiplyDefinedSymbolOnly");
+        //soul::xml::Element* forceFileOutput = soul::xml::MakeElement("ForceFileOutput");
+        //forceFileOutput->AppendChild(multipleDefinedSymbols);
+        //debugLink->AppendChild(forceFileOutput);
     }
     debugItemDefinitionGroup->AppendChild(debugLink);
 
@@ -331,10 +331,10 @@ void MakeProjectFile(Project* project, const std::string& projectFilePath, const
         soul::xml::Text* releaseDepenciesText = soul::xml::MakeText("std.lib;ort.lib;util.lib" + references);
         releaseDependencies->AppendChild(releaseDepenciesText);
         releaseLink->AppendChild(releaseDependencies);
-        soul::xml::Text* multipleDefinedSymbols = soul::xml::MakeText("MultiplyDefinedSymbolOnly");
-        soul::xml::Element* forceFileOutput = soul::xml::MakeElement("ForceFileOutput");
-        forceFileOutput->AppendChild(multipleDefinedSymbols);
-        releaseLink->AppendChild(forceFileOutput);
+        //soul::xml::Text* multipleDefinedSymbols = soul::xml::MakeText("MultiplyDefinedSymbolOnly");
+        //soul::xml::Element* forceFileOutput = soul::xml::MakeElement("ForceFileOutput");
+        //forceFileOutput->AppendChild(multipleDefinedSymbols);
+        //releaseLink->AppendChild(forceFileOutput);
     }
     releaseItemDefinitionGroup->AppendChild(releaseLink);
 

@@ -102,14 +102,14 @@ class Symbol
 public:
     Symbol(SymbolKind kind_, const std::u32string& name_);
     virtual ~Symbol();
-    SymbolKind Kind() const { return kind; }
-    const util::uuid& Id() const { return id; }
-    const std::u32string& Name() const { return name; }
+    inline SymbolKind Kind() const { return kind; }
+    inline const util::uuid& Id() const { return id; }
+    inline const std::u32string& Name() const { return name; }
     void SetName(const std::u32string& name_);
-    Access GetAccess() const { return access; }
-    void SetAccess(Access access_) { access = access_; }
-    void SetDeclarationFlags(DeclarationFlags declarationFlags_) { declarationFlags = declarationFlags_; }
-    DeclarationFlags GetDeclarationFlags() const { return declarationFlags; }
+    inline Access GetAccess() const { return access; }
+    inline void SetAccess(Access access_) { access = access_; }
+    inline void SetDeclarationFlags(DeclarationFlags declarationFlags_) { declarationFlags = declarationFlags_; }
+    inline DeclarationFlags GetDeclarationFlags() const { return declarationFlags; }
     virtual const std::u32string& SimpleName() const { return Name(); }
     virtual int PtrIndex() const { return -1; }
     virtual Scope* GetScope() { return nullptr; }
@@ -127,60 +127,60 @@ public:
     virtual void Accept(Visitor& visitor) = 0;
     virtual Symbol* GetSingleSymbol() { return this; }
     virtual std::string SymbolDocKindStr() const = 0;
-    Symbol* Parent() { return parent; }
-    const Symbol* Parent() const { return parent; }
-    void SetParent(Symbol* parent_) { parent = parent_; }
+    inline Symbol* Parent() { return parent; }
+    inline const Symbol* Parent() const { return parent; }
+    inline void SetParent(Symbol* parent_) { parent = parent_; }
     FunctionSymbol* ParentFunction() const;
     virtual ClassTypeSymbol* ParentClassType() const;
     NamespaceSymbol* ParentNamespace() const;
     std::string DocName() const;
     bool CanInstall() const;
     bool IsTypeSymbol() const;
-    bool IsNamespaceSymbol() const { return kind == SymbolKind::namespaceSymbol; }
-    bool IsGlobalNamespace() const { return kind == SymbolKind::namespaceSymbol && parent == nullptr; }
-    bool IsClassTemplateSpecializationSymbol() const { return kind == SymbolKind::classTemplateSpecializationSymbol;  }
-    bool IsAliasTypeTemplateSpecializationSymbol() const { return kind == SymbolKind::aliasTypeTemplateSpecializationSymbol; }
-    bool IsArrayTypeSymbol() const { return kind == SymbolKind::arrayTypeSymbol; }
-    bool IsCompoundTypeSymbol() const { return kind == SymbolKind::compoundTypeSymbol; }
-    bool IsExplicitInstantiationSymbol() const { return kind == SymbolKind::explicitInstantiationSymbol; }
-    bool IsIntegerValueSymbol() const { return kind == SymbolKind::integerValueSymbol; }
-    bool IsFloatingValueSymbol() const { return kind == SymbolKind::floatingValueSymbol; }
-    bool IsStringValueSymbol() const { return kind == SymbolKind::stringValueSymbol; }
-    bool IsCharValueSymbol() const { return kind == SymbolKind::charValueSymbol; }
-    bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol || IsAliasTypeTemplateSpecializationSymbol(); }
-    bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
-    bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
-    bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol || IsClassTemplateSpecializationSymbol(); }
-    bool IsForwardClassDeclarationSymbol() const { return kind == SymbolKind::forwardClassDeclarationSymbol; }
-    bool IsConceptGroupSymbol() const { return kind == SymbolKind::conceptGroupSymbol; }
-    bool IsConceptSymbol() const { return kind == SymbolKind::conceptSymbol; }
-    bool IsEnumGroupSymbol() const { return kind == SymbolKind::enumGroupSymbol; }
-    bool IsEnumeratedTypeSymbol() const { return kind == SymbolKind::enumTypeSymbol; }
-    bool IsForwardEnumDeclarationSymbol() const { return kind == SymbolKind::forwardEnumDeclarationSymbol; }
-    bool IsEnumConstantSymbol() const { return kind == SymbolKind::enumConstantSymbol; }
-    bool IsFunctionGroupSymbol() const { return kind == SymbolKind::functionGroupSymbol; }
+    inline bool IsNamespaceSymbol() const { return kind == SymbolKind::namespaceSymbol; }
+    inline bool IsGlobalNamespace() const { return kind == SymbolKind::namespaceSymbol && parent == nullptr; }
+    inline bool IsClassTemplateSpecializationSymbol() const { return kind == SymbolKind::classTemplateSpecializationSymbol;  }
+    inline bool IsAliasTypeTemplateSpecializationSymbol() const { return kind == SymbolKind::aliasTypeTemplateSpecializationSymbol; }
+    inline bool IsArrayTypeSymbol() const { return kind == SymbolKind::arrayTypeSymbol; }
+    inline bool IsCompoundTypeSymbol() const { return kind == SymbolKind::compoundTypeSymbol; }
+    inline bool IsExplicitInstantiationSymbol() const { return kind == SymbolKind::explicitInstantiationSymbol; }
+    inline bool IsIntegerValueSymbol() const { return kind == SymbolKind::integerValueSymbol; }
+    inline bool IsFloatingValueSymbol() const { return kind == SymbolKind::floatingValueSymbol; }
+    inline bool IsStringValueSymbol() const { return kind == SymbolKind::stringValueSymbol; }
+    inline bool IsCharValueSymbol() const { return kind == SymbolKind::charValueSymbol; }
+    inline bool IsAliasTypeSymbol() const { return kind == SymbolKind::aliasTypeSymbol || IsAliasTypeTemplateSpecializationSymbol(); }
+    inline bool IsAliasGroupSymbol() const { return kind == SymbolKind::aliasGroupSymbol; }
+    inline bool IsClassGroupSymbol() const { return kind == SymbolKind::classGroupSymbol; }
+    inline bool IsClassTypeSymbol() const { return kind == SymbolKind::classTypeSymbol || IsClassTemplateSpecializationSymbol(); }
+    inline bool IsForwardClassDeclarationSymbol() const { return kind == SymbolKind::forwardClassDeclarationSymbol; }
+    inline bool IsConceptGroupSymbol() const { return kind == SymbolKind::conceptGroupSymbol; }
+    inline bool IsConceptSymbol() const { return kind == SymbolKind::conceptSymbol; }
+    inline bool IsEnumGroupSymbol() const { return kind == SymbolKind::enumGroupSymbol; }
+    inline bool IsEnumeratedTypeSymbol() const { return kind == SymbolKind::enumTypeSymbol; }
+    inline bool IsForwardEnumDeclarationSymbol() const { return kind == SymbolKind::forwardEnumDeclarationSymbol; }
+    inline bool IsEnumConstantSymbol() const { return kind == SymbolKind::enumConstantSymbol; }
+    inline bool IsFunctionGroupSymbol() const { return kind == SymbolKind::functionGroupSymbol; }
     bool IsFunctionSymbol() const;
-    bool IsFunctionTypeSymbol() const { return kind == SymbolKind::functionTypeSymbol; }
-    bool IsFunctionDefinitionSymbol() const { return kind == SymbolKind::functionDefinitionSymbol; }
-    bool IsExplicitlyInstantiatedFunctionDefinitionSymbol() const { return kind == SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol;  }
-    bool IsBlockSymbol() const { return kind == SymbolKind::blockSymbol; }
-    bool IsFundamentalTypeSymbol() const { return kind == SymbolKind::fundamentalTypeSymbol; }
-    bool IsParameterSymbol() const { return kind == SymbolKind::parameterSymbol; }
+    inline bool IsFunctionTypeSymbol() const { return kind == SymbolKind::functionTypeSymbol; }
+    inline bool IsFunctionDefinitionSymbol() const { return kind == SymbolKind::functionDefinitionSymbol; }
+    inline bool IsExplicitlyInstantiatedFunctionDefinitionSymbol() const { return kind == SymbolKind::explicitlyInstantiatedFunctionDefinitionSymbol;  }
+    inline bool IsBlockSymbol() const { return kind == SymbolKind::blockSymbol; }
+    inline bool IsFundamentalTypeSymbol() const { return kind == SymbolKind::fundamentalTypeSymbol; }
+    inline bool IsParameterSymbol() const { return kind == SymbolKind::parameterSymbol; }
     bool IsLocalVariableSymbol() const;
     bool IsMemberVariableSymbol() const;
     bool IsGlobalVariableSymbol() const;
-    bool IsTemplateParameterSymbol() const { return kind == SymbolKind::templateParameterSymbol; }
-    bool IsBoundTemplateParameterSymbol() const { return kind == SymbolKind::boundTemplateParameterSymbol; }
-    bool IsTemplateDeclarationSymbol() const { return kind == SymbolKind::templateDeclarationSymbol; }
-    bool IsTypenameConstraintSymbol() const { return kind == SymbolKind::typenameConstraintSymbol; }
-    bool IsVariableGroupSymbol() const { return kind == SymbolKind::variableGroupSymbol; }
-    bool IsVariableSymbol() const { return kind == SymbolKind::variableSymbol; }
-    bool IsErrorTypeSymbol() const { return kind == SymbolKind::errorSymbol; }
-    bool IsConstraintExprSymbol() const { return kind == SymbolKind::constraintExprSymbol; }
+    inline bool IsTemplateParameterSymbol() const { return kind == SymbolKind::templateParameterSymbol; }
+    inline bool IsBoundTemplateParameterSymbol() const { return kind == SymbolKind::boundTemplateParameterSymbol; }
+    inline bool IsTemplateDeclarationSymbol() const { return kind == SymbolKind::templateDeclarationSymbol; }
+    inline bool IsTypenameConstraintSymbol() const { return kind == SymbolKind::typenameConstraintSymbol; }
+    inline bool IsVariableGroupSymbol() const { return kind == SymbolKind::variableGroupSymbol; }
+    inline bool IsVariableSymbol() const { return kind == SymbolKind::variableSymbol; }
+    inline bool IsErrorTypeSymbol() const { return kind == SymbolKind::errorSymbol; }
+    inline bool IsConstraintExprSymbol() const { return kind == SymbolKind::constraintExprSymbol; }
     bool IsValueSymbol() const;
-    bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
-    bool IsFunctionGroupTypeSymbol() const { return kind == SymbolKind::functionGroupTypeSymbol; }
-    bool IsNestedTypeSymbol() const { return kind == SymbolKind::nestedTypeSymbol; }
+    inline bool IsForwardDeclarationSymbol() const { return IsForwardClassDeclarationSymbol() || IsForwardEnumDeclarationSymbol(); }
+    inline bool IsFunctionGroupTypeSymbol() const { return kind == SymbolKind::functionGroupTypeSymbol; }
+    inline bool IsNestedTypeSymbol() const { return kind == SymbolKind::nestedTypeSymbol; }
     bool IsDefaultCtor() const;
     bool IsCopyCtor() const;
     bool IsMoveCtor() const;

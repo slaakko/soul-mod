@@ -2186,6 +2186,7 @@ void BasicBlock::InsertFront(Instruction* instruction)
 BasicBlock* BasicBlock::SplitAfter(Instruction* instruction)
 {
     Function* fn = Parent();
+    Context* context = fn->Parent()->GetContext();
     std::unique_ptr<BasicBlock> newBB(new BasicBlock(Span(), fn->GetNextBasicBlockNumber()));
     BasicBlock* nbb = newBB.get();
     fn->InsertBasicBlockAfter(newBB.release(), instruction->Parent());
@@ -2204,6 +2205,12 @@ BasicBlock* BasicBlock::SplitAfter(Instruction* instruction)
         nbb->AddInstruction(removedInst.release(), false);
         instruction = next;
     }
+/*
+    if (!LastInstruction()->IsTerminator())
+    {
+        AddInstruction(context->CreateJump(nbb));
+    }
+*/
     return nbb;
 }
 
@@ -2293,22 +2300,15 @@ void BasicBlock::Write(util::CodeFormatter& formatter)
     }
 }
 
-Function::Function(const soul::ast::Span& span_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, MetadataRef* metadataRef_, Context* context) :
+Function::Function(const soul::ast::Span& span_, FunctionType* type_, const std::string& name_, bool once_, bool definition_, bool createEntry, 
+    MetadataRef* metadataRef_, Context* context) :
     Value(span_, ValueKind::function, type_), 
     flags(FunctionFlags::none), span(span_), type(type_), name(name_), metadataRef(metadataRef_), basicBlocks(this), nextRegNumber(0), nextBBNumber(0), mdId(-1)
 {
     SetContainer(context->GetCode().Functions());
-    entryBlock.reset(new BasicBlock(span_, nextBBNumber++));
-    entryBlock->SetContainer(&basicBlocks);
-    std::int32_t n = type->ParamTypeRefs().size();
-    for (std::int32_t index = 0; index < n; ++index)
+    if (createEntry)
     {
-        const TypeRef& paramTypeRef = type->ParamTypeRefs()[index];
-        RegValue* regValue = new RegValue(span_, paramTypeRef.GetType(), nextRegNumber++);
-        Instruction* paramInst = new ParamInstruction(span_, regValue);
-        context->AddLineInfo(paramInst);
-        entryBlock->AddInstruction(paramInst);
-        params.push_back(paramInst);
+        CreateEntry(context);
     }
     if (once_)
     {
@@ -2317,6 +2317,23 @@ Function::Function(const soul::ast::Span& span_, FunctionType* type_, const std:
     if (definition_)
     {
         SetFlag(FunctionFlags::defined);
+    }
+}
+
+void Function::CreateEntry(Context* context)
+{
+    if (entryBlock) return;
+    entryBlock.reset(new BasicBlock(Span(), nextBBNumber++));
+    entryBlock->SetContainer(&basicBlocks);
+    std::int32_t n = type->ParamTypeRefs().size();
+    for (std::int32_t index = 0; index < n; ++index)
+    {
+        const TypeRef& paramTypeRef = type->ParamTypeRefs()[index];
+        RegValue* regValue = new RegValue(Span(), paramTypeRef.GetType(), nextRegNumber++);
+        Instruction* paramInst = new ParamInstruction(Span(), regValue);
+        context->AddLineInfo(paramInst);
+        entryBlock->AddInstruction(paramInst);
+        params.push_back(paramInst);
     }
 }
 
@@ -2338,7 +2355,7 @@ void Function::Accept(Visitor& visitor)
 Function* Function::Clone() const
 {
     Code* code = Parent();
-    Function* clone = new Function(Span(), type, name, IsLinkOnce(), IsDefined(), metadataRef, Parent()->GetContext());
+    Function* clone = new Function(Span(), type, name, IsLinkOnce(), IsDefined(), false, metadataRef, Parent()->GetContext());
     clone->SetMdId(mdId);
     std::string fullName = ResolveFullName();
     if (!fullName.empty())
@@ -2516,11 +2533,13 @@ RegValue* Function::GetRegRef(const soul::ast::Span& span, Type* type, std::int3
 
 RegValue* Function::MakeRegValue(const soul::ast::Span& span, Type* type, std::int32_t reg, Context* context)
 {
+/*
     RegValue* prev = GetRegValue(reg);
     if (prev)
     {
         Error("error adding register " + std::to_string(reg) + ": register not unique", span, context, prev->Span());
     }
+*/
     RegValue* regValue = new RegValue(span, type, reg);
     regValues.push_back(std::unique_ptr<RegValue>(regValue));
     regValueMap[reg] = regValue;
@@ -2728,6 +2747,10 @@ std::string Function::ResolveFullName() const
 
 void Function::Write(util::CodeFormatter& formatter)
 {
+    if (Name() == "mfn_basic_string_deallocate_4BFCA6BF0956D5D9C80C36890B3085D81FB91CC3")
+    {
+        int x = 0;
+    }
     if (metadataRef)
     {
         SetComment(ResolveFullName());
@@ -2835,7 +2858,7 @@ Function* Code::GetFunction(const std::string& functionId) const
     }
 }
 
-Function* Code::AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, bool inline_, bool linkOnce,
+Function* Code::AddFunctionDefinition(const soul::ast::Span& span, FunctionType* functionType, const std::string& functionId, bool inline_, bool linkOnce, bool createEntry,
     MetadataRef* metadataRef)
 {
     Function* prev = GetFunction(functionId);
@@ -2852,14 +2875,11 @@ Function* Code::AddFunctionDefinition(const soul::ast::Span& span, FunctionType*
                 Error("error adding function '" + functionId + "': type '" + functionType->Name() + "' conflicts with earlier declaration", span, context, prev->Span());
             }
             prev->SetDefined();
-            if (inline_)
-            {
-                prev->SetInline();
-            }
+            prev->CreateEntry(context);
             return prev;
         }
     }
-    Function* function = new Function(span, functionType, functionId, linkOnce, true, metadataRef, GetContext());
+    Function* function = new Function(span, functionType, functionId, linkOnce, true, createEntry,  metadataRef, GetContext());
     if (inline_)
     {
         function->SetInline();
@@ -2884,7 +2904,7 @@ Function* Code::AddFunctionDeclaration(const soul::ast::Span& span, FunctionType
         }
         return prev;
     }
-    Function* function = new Function(span, functionType, functionId, false, false, nullptr, GetContext());
+    Function* function = new Function(span, functionType, functionId, false, false, false, nullptr, GetContext());
     functions.AddChild(function);
     functionMap[function->Name()] = function;
     return function;

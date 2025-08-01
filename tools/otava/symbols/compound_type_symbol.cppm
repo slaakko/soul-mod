@@ -23,8 +23,8 @@ public:
     TypeSymbol* PlainType(Context* context) override;
     bool IsVoidPtrType() const override { return baseType->IsVoidType(); }
     int PointerCount() const override;
-    TypeSymbol* BaseType() const { return baseType; }
-    const Derivations& GetDerivations() const override { return derivations; }
+    inline TypeSymbol* BaseType() const { return baseType; }
+    inline const Derivations& GetDerivations() const override { return derivations; }
     TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context) override;
     TypeSymbol* Unify(TypeSymbol* argType, Context* context) override;
     TypeSymbol* UnifyTemplateArgumentType(const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap, Context* context) override;

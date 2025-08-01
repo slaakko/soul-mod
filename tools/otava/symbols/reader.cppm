@@ -20,13 +20,13 @@ class Reader
 {
 public:
     Reader(const std::string& fileName);
-    util::BinaryStreamReader& GetBinaryStreamReader() { return binaryStreamReader; }
+    inline util::BinaryStreamReader& GetBinaryStreamReader() { return binaryStreamReader; }
     Symbol* ReadSymbol();
-    Context* GetContext() { return context; }
-    void SetContext(Context* context_) { context = context_; }
-    void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
-    SymbolTable* GetSymbolTable() const { return symbolTable; }
-    void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
+    inline Context* GetContext() { return context; }
+    inline void SetContext(Context* context_) { context = context_; }
+    inline void SetSymbolTable(SymbolTable* symbolTable_) { symbolTable = symbolTable_; }
+    inline SymbolTable* GetSymbolTable() const { return symbolTable; }
+    inline void SetSymbolMap(SymbolMap* symbolMap_) { symbolMap = symbolMap_; }
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
 private:

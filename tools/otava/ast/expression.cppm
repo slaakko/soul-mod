@@ -19,7 +19,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Op() const { return op.get(); }
+    inline Node* Op() const { return op.get(); }
 private:
     std::unique_ptr<Node> op;
 };
@@ -33,7 +33,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Op() const { return op.get(); }
+    inline Node* Op() const { return op.get(); }
 private:
     std::unique_ptr<Node> op;
 };
@@ -46,10 +46,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
-    void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
+    inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -82,11 +82,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Condition() const { return condition.get(); }
-    Node* Quest() const { return quest.get(); }
-    Node* ThenExpr() const { return thenExpr.get(); }
-    Node* Colon() const { return colon.get(); }
-    Node* ElseExpr() const { return elseExpr.get(); }
+    inline Node* Condition() const { return condition.get(); }
+    inline Node* Quest() const { return quest.get(); }
+    inline Node* ThenExpr() const { return thenExpr.get(); }
+    inline Node* Colon() const { return colon.get(); }
+    inline Node* ElseExpr() const { return elseExpr.get(); }
 private:
     std::unique_ptr<Node> condition;
     std::unique_ptr<Node> quest;
@@ -356,13 +356,13 @@ class CastExprNode : public UnaryNode
 public:
     CastExprNode(const soul::ast::SourcePos& sourcePos_);
     CastExprNode(const soul::ast::SourcePos& sourcePos_, Node* typeId_, Node* child_, const soul::ast::SourcePos& lpPos_, const soul::ast::SourcePos& rpPos_);
-    Node* TypeId() const { return typeId.get(); }
+    inline Node* TypeId() const { return typeId.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> typeId;
     soul::ast::SourcePos lpPos;
@@ -435,8 +435,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -452,9 +452,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& EllipsisPos() const { return ellipsisPos; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& EllipsisPos() const { return ellipsisPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos ellipsisPos;
     soul::ast::SourcePos lpPos;
@@ -479,8 +479,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -495,8 +495,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -511,10 +511,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ColonColonHead() const { return colonColonHead.get(); }
-    Node* Placement() const { return placement.get(); }
-    Node* Initializer() const { return initializer.get(); }
-    const soul::ast::SourcePos& NewPos() const { return newPos; }
+    inline Node* ColonColonHead() const { return colonColonHead.get(); }
+    inline Node* Placement() const { return placement.get(); }
+    inline Node* Initializer() const { return initializer.get(); }
+    inline const soul::ast::SourcePos& NewPos() const { return newPos; }
 private:
     std::unique_ptr<Node> colonColonHead;
     std::unique_ptr<Node> placement;
@@ -530,10 +530,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
-    void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
+    inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -548,8 +548,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -564,8 +564,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TypeSpecifierSeq() const { return typeSpecifierSeq.get(); }
-    Node* NewDeclarator() const { return newDeclarator.get(); }
+    inline Node* TypeSpecifierSeq() const { return typeSpecifierSeq.get(); }
+    inline Node* NewDeclarator() const { return newDeclarator.get(); }
 private:
     std::unique_ptr<Node> typeSpecifierSeq;
     std::unique_ptr<Node> newDeclarator;
@@ -581,10 +581,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ColonColonHead() const { return colonColonHead.get(); }
-    const soul::ast::SourcePos& DeletePos() const { return deletePos; }
-    const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
+    inline Node* ColonColonHead() const { return colonColonHead.get(); }
+    inline const soul::ast::SourcePos& DeletePos() const { return deletePos; }
+    inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
 private:
     std::unique_ptr<Node> colonColonHead;
     soul::ast::SourcePos deletePos;
@@ -601,8 +601,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ColonColonHead() const { return colonColonHead.get(); }
-    const soul::ast::SourcePos& DeletePos() const { return deletePos; }
+    inline Node* ColonColonHead() const { return colonColonHead.get(); }
+    inline const soul::ast::SourcePos& DeletePos() const { return deletePos; }
 private:
     std::unique_ptr<Node> colonColonHead;
     soul::ast::SourcePos deletePos;
@@ -617,9 +617,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Index() const { return index.get(); }
-    const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
+    inline Node* Index() const { return index.get(); }
+    inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
 private:
     std::unique_ptr<Node> index;
     soul::ast::SourcePos lbPos;
@@ -635,11 +635,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Subject() const { return subject.get(); }
-    void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
-    void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* Subject() const { return subject.get(); }
+    inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
+    inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> subject;
     soul::ast::SourcePos lpPos;
@@ -680,8 +680,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Op() const { return op.get(); }
-    Node* Id() const { return id.get(); }
+    inline Node* Op() const { return op.get(); }
+    inline Node* Id() const { return id.get(); }
 private:
     std::unique_ptr<Node> op;
     std::unique_ptr<Node> id;
@@ -696,7 +696,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& OpPos() const { return opPos; }
+    inline const soul::ast::SourcePos& OpPos() const { return opPos; }
 private:
     soul::ast::SourcePos opPos;
 };
@@ -710,7 +710,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& OpPos() const { return opPos; }
+    inline const soul::ast::SourcePos& OpPos() const { return opPos; }
 private:
     soul::ast::SourcePos opPos;
 };
@@ -724,8 +724,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -773,12 +773,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TypeId() const { return typeId.get(); }
-    Node* Op() const { return op.get(); }
-    const soul::ast::SourcePos& LAnglePos() const { return laPos; }
-    const soul::ast::SourcePos& RAnglePos() const { return raPos; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* TypeId() const { return typeId.get(); }
+    inline Node* Op() const { return op.get(); }
+    inline const soul::ast::SourcePos& LAnglePos() const { return laPos; }
+    inline const soul::ast::SourcePos& RAnglePos() const { return raPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> typeId;
     std::unique_ptr<Node> op;
@@ -805,8 +805,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -820,10 +820,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
-    void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
+    inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;
@@ -853,10 +853,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
-    void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline void SetLParenPos(const soul::ast::SourcePos& lpPos_) { lpPos = lpPos_; }
+    inline void SetRParenPos(const soul::ast::SourcePos& rpPos_) { rpPos = rpPos_; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;

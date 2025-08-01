@@ -22,7 +22,7 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddVariable(VariableSymbol* variableSymbol);
     VariableSymbol* GetVariable(int arity) const;
-    const std::vector<VariableSymbol*>& Variables() const { return variables; }
+    inline const std::vector<VariableSymbol*>& Variables() const { return variables; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;

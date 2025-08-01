@@ -21,7 +21,7 @@ public:
     AliasTypeSymbol(const std::u32string& name_, TypeSymbol* referredType_);
     TemplateDeclarationSymbol* ParentTemplateDeclaration();
     int Arity();
-    void SetReferredType(TypeSymbol* referredType_) { referredType = referredType_; }
+    inline void SetReferredType(TypeSymbol* referredType_) { referredType = referredType_; }
     TypeSymbol* ReferredType() const { return referredType; }
     TypeSymbol* DirectType(Context* context) override;
     std::string SymbolKindStr() const override { return "alias type symbol"; }
@@ -31,8 +31,8 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    AliasGroupSymbol* Group() const { return group; }
-    void SetGroup(AliasGroupSymbol* group_) { group = group_; }
+    inline AliasGroupSymbol* Group() const { return group; }
+    inline void SetGroup(AliasGroupSymbol* group_) { group = group_; }
 private:
     TypeSymbol* referredType;
     util::uuid referredTypeId;

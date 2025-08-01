@@ -27,10 +27,10 @@ public:
     Function(FunctionKind kind_);
     Function(FunctionKind kind_, int minArity_, int maxArity_);
     virtual ~Function();
-    FunctionKind Kind() const { return kind; }
-    const std::string& Name() const { return name; }
-    int MinArity() const { return minArity; }
-    int MaxArity() const { return maxArity; }
+    inline FunctionKind Kind() const { return kind; }
+    inline const std::string& Name() const { return name; }
+    inline int MinArity() const { return minArity; }
+    inline int MaxArity() const { return maxArity; }
     std::unique_ptr<Object> Evaluate(Context& context, const std::vector<Object*>& arguments);
     std::string ArityStr() const;
 protected:

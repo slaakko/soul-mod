@@ -5,8 +5,11 @@
 
 module otava.optimizer;
 
+import otava.optimizer.arithmetics;
 import otava.optimizer.dead_code_elimination;
 import otava.optimizer.identity_calls;
+import otava.optimizer.inliner;
+import otava.optimizer.locals;
 
 namespace otava::optimizer {
 
@@ -55,6 +58,22 @@ void Optimize(otava::intermediate::Context* context)
             if (HasOptimization(Optimizations::identity))
             {
                 OptimizeIdentityCalls(fn, context);
+            }
+            if (HasOptimization(Optimizations::inlining))
+            {
+                Inline(fn, context);
+            }
+            if (HasOptimization(Optimizations::moveLocalsToEntryBlock))
+            {
+                MoveLocalsToEntryBlock(fn);
+            }
+            if (HasOptimization(Optimizations::arithmetic))
+            {
+                OptimizeArithmetics(fn, context);
+            }
+            if (HasOptimization(Optimizations::deadCodeElimination))
+            {
+                DeadCodeElimination(fn);
             }
         }
         fn = next;

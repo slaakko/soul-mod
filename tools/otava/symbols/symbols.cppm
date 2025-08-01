@@ -40,3 +40,5 @@ export import otava.symbols.using_directive;
 export import otava.symbols.value;
 export import otava.symbols.variable.symbol;
 export import otava.symbols.visitor;
+export import otava.symbols.inline_functions;
+

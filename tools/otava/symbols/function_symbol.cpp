@@ -25,6 +25,7 @@ import otava.symbols.fundamental.type.conversion;
 import otava.symbols.bound.tree;
 import otava.symbols.context;
 import otava.symbols.class_templates;
+import otava.symbols.inline_functions;
 import otava.symbols.function.group.symbol;
 import otava.symbols.namespaces;
 import otava.symbols.function.templates;
@@ -1006,6 +1007,11 @@ void FunctionSymbol::SetFixedIrName(const std::string& fixedIrName_)
     SetFlag(FunctionSymbolFlags::fixedIrName);
 }
 
+void FunctionSymbol::SetCompileUnitId(const std::string& compileUnitId_)
+{
+    compileUnitId = compileUnitId_;
+}
+
 std::string FunctionSymbol::IrName(Context* context) const
 {
     if (GetFlag(FunctionSymbolFlags::fixedIrName) && !fixedIrName.empty())
@@ -1071,6 +1077,7 @@ std::string FunctionSymbol::IrName(Context* context) const
             }
         }
         digestSource.append(fullName);
+        digestSource.append(compileUnitId);
         irName.append("_").append(util::GetSha1MessageDigest(digestSource));
         if (GetFlag(FunctionSymbolFlags::fixedIrName))
         {

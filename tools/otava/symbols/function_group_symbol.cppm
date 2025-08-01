@@ -27,8 +27,8 @@ public:
     Symbol* GetSingleSymbol() override;
     FunctionDefinitionSymbol* GetSingleDefinition();
     void AddFunction(FunctionSymbol* function);
-    const std::vector<FunctionSymbol*>& Functions() const { return functions; }
-    const std::vector<FunctionDefinitionSymbol*>& Definitions() const { return definitions; }
+    inline const std::vector<FunctionSymbol*>& Functions() const { return functions; }
+    inline const std::vector<FunctionDefinitionSymbol*>& Definitions() const { return definitions; }
     FunctionSymbol* ResolveFunction(const std::vector<TypeSymbol*>& parameterTypes, FunctionQualifiers qualifiers, const std::vector<TypeSymbol*>& specialization,
         TemplateDeclarationSymbol* templateDeclaration, bool isSpecialization) const;
     void Write(Writer& writer) override;

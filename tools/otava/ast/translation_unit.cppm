@@ -19,7 +19,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Unit() const { return unit.get(); }
+    inline Node* Unit() const { return unit.get(); }
 private:
     std::unique_ptr<Node> unit;
 };
@@ -33,10 +33,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* GlobalModuleFragment() const { return globalModuleFragment.get(); }
-    Node* ModuleDeclaration() const { return moduleDeclaration.get(); }
-    Node* Declarations() const { return declarations.get(); }
-    Node* PrivateModuleFragment() const { return privateModuleFragment.get(); }
+    inline Node* GlobalModuleFragment() const { return globalModuleFragment.get(); }
+    inline Node* ModuleDeclaration() const { return moduleDeclaration.get(); }
+    inline Node* Declarations() const { return declarations.get(); }
+    inline Node* PrivateModuleFragment() const { return privateModuleFragment.get(); }
 private:
     std::unique_ptr<Node> globalModuleFragment;
     std::unique_ptr<Node> moduleDeclaration;

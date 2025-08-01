@@ -28,9 +28,9 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void SetTemplateParameterList(Node* templateParamList_);
-    Node* TemplateParamList() const { return templateParamList.get(); }
+    inline Node* TemplateParamList() const { return templateParamList.get(); }
     void SetRequiresClause(Node* requiresClause_);
-    Node* RequiresClause() const { return requiresClause.get(); }
+    inline Node* RequiresClause() const { return requiresClause.get(); }
 private:
     std::unique_ptr<Node> templateParamList;
     std::unique_ptr<Node> requiresClause;
@@ -44,10 +44,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetLAnglePos(const soul::ast::SourcePos& laPos_) { laPos = laPos_; }
-    void SetRAnglePos(const soul::ast::SourcePos& raPos_) { raPos = raPos_; }
-    const soul::ast::SourcePos& LAnglePos() const { return laPos; }
-    const soul::ast::SourcePos& RAnglePos() const { return raPos; }
+    inline void SetLAnglePos(const soul::ast::SourcePos& laPos_) { laPos = laPos_; }
+    inline void SetRAnglePos(const soul::ast::SourcePos& raPos_) { raPos = raPos_; }
+    inline const soul::ast::SourcePos& LAnglePos() const { return laPos; }
+    inline const soul::ast::SourcePos& RAnglePos() const { return raPos; }
 private:
     soul::ast::SourcePos laPos;
     soul::ast::SourcePos raPos;
@@ -62,12 +62,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TypeConstraint() const { return typeConstraint.get(); }
-    Node* Identifier() const { return identifier.get(); }
-    Node* Assign() const { return assign.get(); }
-    Node* TypeId() const { return typeId.get(); }
-    Node* Ellipsis() const { return ellipsis.get(); }
-    Node* TemplateHead() const { return templateHead.get(); }
+    inline Node* TypeConstraint() const { return typeConstraint.get(); }
+    inline Node* Identifier() const { return identifier.get(); }
+    inline Node* Assign() const { return assign.get(); }
+    inline Node* TypeId() const { return typeId.get(); }
+    inline Node* Ellipsis() const { return ellipsis.get(); }
+    inline Node* TemplateHead() const { return templateHead.get(); }
 private:
     std::unique_ptr<Node> typeConstraint;
     std::unique_ptr<Node> identifier;
@@ -86,12 +86,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TemplateName() const { return templateName.get(); }
-    void SetLAnglePos(const soul::ast::SourcePos& laPos_) { laPos = laPos_; }
-    void SetRAnglePos(const soul::ast::SourcePos& raPos_) { raPos = raPos_; }
-    const soul::ast::SourcePos& LAnglePos() const { return laPos; }
-    const soul::ast::SourcePos& RAnglePos() const { return raPos; }
-    const std::vector<bool>& TemplateArgKinds() const { return templateArgKinds; }
+    inline Node* TemplateName() const { return templateName.get(); }
+    inline void SetLAnglePos(const soul::ast::SourcePos& laPos_) { laPos = laPos_; }
+    inline void SetRAnglePos(const soul::ast::SourcePos& raPos_) { raPos = raPos_; }
+    inline const soul::ast::SourcePos& LAnglePos() const { return laPos; }
+    inline const soul::ast::SourcePos& RAnglePos() const { return raPos; }
+    inline const std::vector<bool>& TemplateArgKinds() const { return templateArgKinds; }
     void SetTemplateArgKinds(const std::vector<bool>& templateArgKinds_);
 private:
     std::unique_ptr<Node> templateName;
@@ -118,14 +118,14 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TemplateName() const { return templateName.get(); }
-    Node* Parameters() const { return params.get(); }
-    Node* Arrow() const { return arrow.get(); }
-    Node* TemplateId() const { return templateId.get(); }
-    Node* ExplicitSpecifier() const { return explicitSpecifier.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* TemplateName() const { return templateName.get(); }
+    inline Node* Parameters() const { return params.get(); }
+    inline Node* Arrow() const { return arrow.get(); }
+    inline Node* TemplateId() const { return templateId.get(); }
+    inline Node* ExplicitSpecifier() const { return explicitSpecifier.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> templateName;
     std::unique_ptr<Node> params;
@@ -146,9 +146,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Extern() const { return extrn.get(); }
-    Node* Template() const { return tmp.get(); }
-    Node* Declaration() const { return declaration.get(); }
+    inline Node* Extern() const { return extrn.get(); }
+    inline Node* Template() const { return tmp.get(); }
+    inline Node* Declaration() const { return declaration.get(); }
 private:
     std::unique_ptr<Node> extrn;
     std::unique_ptr<Node> tmp;
@@ -173,10 +173,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Template() const { return tmp.get(); }
-    Node* Declaration() const { return declaration.get(); }
-    const soul::ast::SourcePos& LAnglePos() const { return laPos; }
-    const soul::ast::SourcePos& RAnglePos() const { return raPos; }
+    inline Node* Template() const { return tmp.get(); }
+    inline Node* Declaration() const { return declaration.get(); }
+    inline const soul::ast::SourcePos& LAnglePos() const { return laPos; }
+    inline const soul::ast::SourcePos& RAnglePos() const { return raPos; }
 private:
     std::unique_ptr<Node> tmp;
     std::unique_ptr<Node> templateHeadNode;

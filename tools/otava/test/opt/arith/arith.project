@@ -1,0 +1,4 @@
+project arith;
+target=program;
+source <main.cpp>;
+interface <arith.cppm>;

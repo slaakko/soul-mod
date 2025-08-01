@@ -19,9 +19,9 @@ public:
     virtual std::expected<bool, int> InsertBefore(Node* newChild, Node* refChild);
     virtual std::expected<std::unique_ptr<Node>, int> RemoveChild(Node* child);
     virtual std::expected<std::unique_ptr<Node>, int> ReplaceChild(Node* newChild, Node* oldChild);
-    bool HasChildNodes() const final { return firstChild != nullptr; }
-    Node* FirstChild() const { return firstChild; }
-    Node* LastChild() const { return lastChild; }
+    inline bool HasChildNodes() const final { return firstChild != nullptr; }
+    inline Node* FirstChild() const { return firstChild; }
+    inline Node* LastChild() const { return lastChild; }
     void Accept(Visitor& visitor) override;
     std::expected<bool, int> Write(util::CodeFormatter& formatter) override;
     void WalkChildren(NodeOperation& operation) override;

@@ -76,10 +76,10 @@ public:
     ClassTypeSymbol(const std::u32string& name_);
     ClassTypeSymbol(SymbolKind kind_, const std::u32string& name_);
     int Arity();
-    ClassKind GetClassKind() const { return classKind; }
-    void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
-    TypeSymbol* Specialization() const { return specialization; }
-    void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
+    inline ClassKind GetClassKind() const { return classKind; }
+    inline void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
+    inline TypeSymbol* Specialization() const { return specialization; }
+    inline void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
     std::string SymbolKindStr() const override { return "class type symbol"; }
     std::string SymbolDocKindStr() const override { return "class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
@@ -87,18 +87,18 @@ public:
     bool IsTemplate() const;
     void MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos);
     void InitVTab(std::vector<FunctionSymbol*>& vtab, Context* context, const soul::ast::SourcePos& sourcePos);
-    const std::vector<FunctionSymbol*>& VTab() const { return vtab; }
+    inline const std::vector<FunctionSymbol*>& VTab() const { return vtab; }
     std::string IrName(Context* context) const override;
-    const std::string& VTabName(Context* context) const { return vtabName; }
+    inline const std::string& VTabName(Context* context) const { return vtabName; }
     void ComputeVTabName(Context* context);
-    std::int32_t VPtrIndex() const { return vptrIndex; }
-    void SetVPtrIndex(std::int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
+    inline std::int32_t VPtrIndex() const { return vptrIndex; }
+    inline void SetVPtrIndex(std::int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
     otava::intermediate::Type* VPtrType(Emitter& emitter) const;
     otava::intermediate::Value* GetVTabVariable(Emitter& emitter, Context* context);
     ClassTypeSymbol* VPtrHolderClass() const;
-    const std::vector<ClassTypeSymbol*>& BaseClasses() const { return baseClasses; }
+    inline const std::vector<ClassTypeSymbol*>& BaseClasses() const { return baseClasses; }
     void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
-    const std::vector<ClassTypeSymbol*>& DerivedClasses() const { return derivedClasses; }
+    inline const std::vector<ClassTypeSymbol*>& DerivedClasses() const { return derivedClasses; }
     void AddDerivedClass(ClassTypeSymbol* derivedClass);
     bool HasBaseClass(TypeSymbol* baseClass, int& distance) const override;
     bool HasPolymorphicBaseClass() const;
@@ -107,38 +107,38 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
-    int Level() const { return level; }
-    void SetLevel(int level_) { level = level_; }
+    inline int Level() const { return level; }
+    inline void SetLevel(int level_) { level = level_; }
     bool IsPolymorphic() const override;
-    const std::vector<VariableSymbol*>& MemberVariables() const { return memberVariables; }
-    const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
-    std::vector<FunctionDefinitionSymbol*> MemFunDefSymbols() const { return memFunDefSymbols; }
+    inline const std::vector<VariableSymbol*>& MemberVariables() const { return memberVariables; }
+    inline const std::vector<FunctionSymbol*>& MemberFunctions() const { return memberFunctions; }
+    inline std::vector<FunctionDefinitionSymbol*> MemFunDefSymbols() const { return memFunDefSymbols; }
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void AddMemFunDefSymbol(FunctionDefinitionSymbol* memFunDefSymbol);
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
+    inline const std::vector<TypeSymbol*>& ObjectLayout() const { return objectLayout; }
     void MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Context* context);
     void MapFunction(FunctionSymbol* function);
     FunctionSymbol* GetFunction(std::int32_t functionIndex) const;
     std::int32_t NextFunctionIndex();
-    bool GetFlag(ClassTypeSymbolFlags flag) const { return (flags & flag) != ClassTypeSymbolFlags::none; }
-    void SetFlag(ClassTypeSymbolFlags flag) { flags = flags | flag; }
-    void ResetFlag(ClassTypeSymbolFlags flag) { flags = flags & ~flag; }
-    bool ObjectLayoutComputed() const { return GetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
-    void SetObjectLayoutComputed() { SetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
-    void ResetObjectLayoutComputed() { ResetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
-    bool HasUserDefinedDestructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
-    void SetHasUserDefinedDestructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
-    bool HasUserDefinedConstructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
-    void SetHasUserDefinedConstructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
-    bool VTabInitialized() const { return GetFlag(ClassTypeSymbolFlags::vtabInitialized); }
-    void SetVTabInitialized() { SetFlag(ClassTypeSymbolFlags::vtabInitialized); }
-    const std::vector<FunctionSymbol*>& ConversionFunctions() const { return conversionFunctions; }
+    inline bool GetFlag(ClassTypeSymbolFlags flag) const { return (flags & flag) != ClassTypeSymbolFlags::none; }
+    inline void SetFlag(ClassTypeSymbolFlags flag) { flags = flags | flag; }
+    inline void ResetFlag(ClassTypeSymbolFlags flag) { flags = flags & ~flag; }
+    inline bool ObjectLayoutComputed() const { return GetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
+    inline void SetObjectLayoutComputed() { SetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
+    inline void ResetObjectLayoutComputed() { ResetFlag(ClassTypeSymbolFlags::objectLayoutComputed); }
+    inline bool HasUserDefinedDestructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
+    inline void SetHasUserDefinedDestructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedDestructor); }
+    inline bool HasUserDefinedConstructor() const { return GetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
+    inline void SetHasUserDefinedConstructor() { SetFlag(ClassTypeSymbolFlags::hasUserDefinedConstructor); }
+    inline bool VTabInitialized() const { return GetFlag(ClassTypeSymbolFlags::vtabInitialized); }
+    inline void SetVTabInitialized() { SetFlag(ClassTypeSymbolFlags::vtabInitialized); }
+    inline const std::vector<FunctionSymbol*>& ConversionFunctions() const { return conversionFunctions; }
     FunctionSymbol* GetConversionFunction(TypeSymbol* type) const;
     virtual ClassGroupSymbol* Group() const { return group; }
-    void SetGroup(ClassGroupSymbol* group_) { group = group_; }
+    inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
-    FunctionSymbol* CopyCtor() const { return copyCtor; }
+    inline FunctionSymbol* CopyCtor() const { return copyCtor; }
     void GenerateCopyCtor(const soul::ast::SourcePos& sourcePos, Context* context);
     std::pair<bool, std::int64_t> Delta(ClassTypeSymbol* base, Emitter& emitter, Context* context);
 private:
@@ -176,12 +176,12 @@ class ForwardClassDeclarationSymbol : public TypeSymbol
 public:
     ForwardClassDeclarationSymbol(const std::u32string& name_);
     int Arity();
-    ClassKind GetClassKind() const { return classKind; }
-    void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
-    TypeSymbol* Specialization() const { return specialization; }
-    void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
-    void SetClassTypeSymbol(ClassTypeSymbol* classTypeSymbol_) { classTypeSymbol = classTypeSymbol_; }
-    ClassTypeSymbol* GetClassTypeSymbol() const { return classTypeSymbol; }
+    inline ClassKind GetClassKind() const { return classKind; }
+    inline void SetClassKind(ClassKind classKind_) { classKind = classKind_; }
+    inline TypeSymbol* Specialization() const { return specialization; }
+    inline void SetSpecialization(TypeSymbol* specialization_) { specialization = specialization_; }
+    inline void SetClassTypeSymbol(ClassTypeSymbol* classTypeSymbol_) { classTypeSymbol = classTypeSymbol_; }
+    inline ClassTypeSymbol* GetClassTypeSymbol() const { return classTypeSymbol; }
     std::string SymbolKindStr() const override { return "forward class declaration symbol"; }
     std::string SymbolDocKindStr() const override { return "forward_class"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
@@ -193,8 +193,8 @@ public:
     TypeSymbol* FinalType(const soul::ast::SourcePos& sourcePos, Context* context) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
     bool IsComplete(std::set<const TypeSymbol*>& visited) const override;
-    ClassGroupSymbol* Group() const { return group; }
-    void SetGroup(ClassGroupSymbol* group_) { group = group_; }
+    inline ClassGroupSymbol* Group() const { return group; }
+    inline void SetGroup(ClassGroupSymbol* group_) { group = group_; }
 private:
     ClassKind classKind;
     TypeSymbol* specialization;

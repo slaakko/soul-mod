@@ -23,7 +23,7 @@ class Char : public Symbol
 public:
     Char(char32_t chr_);
     bool Match(char32_t c) override;
-    char32_t Chr() const { return chr; }
+    inline char32_t Chr() const { return chr; }
 private:
     char32_t chr;
 };
@@ -39,8 +39,8 @@ class Range : public Symbol
 public:
     Range(char32_t start_, char32_t end_);
     bool Match(char32_t c) override;
-    char32_t Start() const { return start; }
-    char32_t End() const { return end; }
+    inline char32_t Start() const { return start; }
+    inline char32_t End() const { return end; }
 private:
     char32_t start;
     char32_t end;
@@ -63,7 +63,7 @@ class Class : public Symbol
 public:
     Class();
     bool Match(char32_t c) override;
-    void SetInverse() { inverse = true; }
+    inline void SetInverse() { inverse = true; }
     void AddSymbol(Symbol* symbol);
 private:
     bool inverse;

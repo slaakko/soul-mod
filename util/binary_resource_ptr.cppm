@@ -36,9 +36,9 @@ class BinaryResourcePtr
 public:
     BinaryResourcePtr(const std::string& moduleName, const std::string& resourceName_);
     BinaryResourcePtr(const std::string& moduleName, const std::string& resourceName_, ResourceFlags flags);
-    const std::string& ResourceName() const { return resourceName; }
-    std::uint8_t* Data() const { return data; }
-    std::int64_t Size() const { return size; }
+    inline const std::string& ResourceName() const { return resourceName; }
+    inline std::uint8_t* Data() const { return data; }
+    inline std::int64_t Size() const { return size; }
 private:
     std::string resourceName;
     std::uint8_t* data;

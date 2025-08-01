@@ -16,8 +16,8 @@ class XmlContentHandler
 {
 public:
     XmlContentHandler();
-    soul_expected::lexer::LexerBase<char32_t>* GetLexer() { return lexer; }
-    void SetLexer(soul_expected::lexer::LexerBase<char32_t>* lexer_) { lexer = lexer_; }
+    inline soul_expected::lexer::LexerBase<char32_t>* GetLexer() { return lexer; }
+    inline void SetLexer(soul_expected::lexer::LexerBase<char32_t>* lexer_) { lexer = lexer_; }
     virtual ~XmlContentHandler();
     virtual std::expected<bool, int> StartDocument(const soul_expected::ast::SourcePos& sourcePos);
     virtual std::expected<bool, int> EndDocument();

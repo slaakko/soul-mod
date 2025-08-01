@@ -15,7 +15,7 @@ class BinaryStreamReader
 {
 public:
     BinaryStreamReader(Stream& stream_);
-    Stream& GetStream() { return stream; }
+    inline Stream& GetStream() { return stream; }
     std::expected<bool, int> ReadBool();
     std::expected<std::uint8_t, int> ReadByte();
     std::expected<std::int8_t, int> ReadSByte();
@@ -40,7 +40,7 @@ public:
     std::expected<std::int64_t, int> ReadSLEB128Long();
     std::expected<bool, int> ReadUuid(uuid& uuid);
     std::expected<std::time_t, int> ReadTime();
-    std::int64_t Position() const { return stream.Position(); }
+    inline std::int64_t Position() const { return stream.Position(); }
 private:
     Stream& stream;
 };

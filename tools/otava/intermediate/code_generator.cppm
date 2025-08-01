@@ -20,10 +20,10 @@ class CodeGenerator : public Visitor
 {
 public:
     CodeGenerator(Context* context_, const std::string& assemblyFilePath_);
-    Context* Ctx() const { return context; }
-    RegisterAllocator* RegAllocator() const { return registerAllocator; }
-    otava::assembly::Function* AssemblyFunction() const { return assemblyFunction; }
-    Function* CurrentFunction() const { return currentFunction; }
+    inline Context* Ctx() const { return context; }
+    inline RegisterAllocator* RegAllocator() const { return registerAllocator; }
+    inline otava::assembly::Function* AssemblyFunction() const { return assemblyFunction; }
+    inline Function* CurrentFunction() const { return currentFunction; }
     const soul::ast::Span& Span() const;
     virtual void Emit(otava::assembly::Instruction* assemblyInstruction);
     void EmitDataValue(std::unique_ptr<otava::assembly::Value>&& dataValue, otava::assembly::OpCode dataOpCode);
@@ -88,7 +88,7 @@ public:
     void Visit(SymbolValue& value) override;
     void Error(const std::string& message);
     void WriteOutputFile(bool verbose);
-    void ResetLeader() { leader = false; }
+    inline void ResetLeader() { leader = false; }
     virtual int ExitLabelId() const;
     virtual void EmitJumpToExit(RetInstruction& retInst);
     virtual void EmitBranchJumps(BranchInstruction& branchInst);

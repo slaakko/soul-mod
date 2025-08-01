@@ -24,14 +24,14 @@ class CloneContext
 {
 public:
     CloneContext();
-    void SetContext(Context* context_) { context = context_; }
-    Context* GetContext() const { return context; }
-    void SetCurrentFunction(Function* currentFunction_) { currentFunction = currentFunction_; }
-    Function* CurrentFunction() const { return currentFunction; }
+    inline void SetContext(Context* context_) { context = context_; }
+    inline Context* GetContext() const { return context; }
+    inline void SetCurrentFunction(Function* currentFunction_) { currentFunction = currentFunction_; }
+    inline Function* CurrentFunction() const { return currentFunction; }
     void MapInstruction(Instruction* inst, Instruction* clone);
     Instruction* GetMappedInstruction(Instruction* inst) const;
     void AddUnmappedInstruction(Instruction* inst, RegValue* regValue);
-    const std::set<std::pair<Instruction*, RegValue*>>& UnmappedInstructions() const { return unmappedInstructions; }
+    inline const std::set<std::pair<Instruction*, RegValue*>>& UnmappedInstructions() const { return unmappedInstructions; }
     BasicBlock* GetMappedBasicBlock(BasicBlock* bb) const;
     void MapBasicBlock(BasicBlock* bb, BasicBlock* clone);
 private:
@@ -55,37 +55,37 @@ public:
     virtual ~Value();
     virtual Value* Clone(CloneContext& cloneContext) const { return const_cast<Value*>(this); }
     virtual void Accept(Visitor& visitor);
-    bool IsRegValue() const { return kind == ValueKind::regValue; }
-    bool IsInstruction() const { return kind == ValueKind::instruction; }
-    bool IsSymbolValue() const { return kind == ValueKind::symbolValue; }
-    bool IsAddressValue() const { return kind == ValueKind::addressValue; }
-    bool IsGlobalVariable() const { return kind == ValueKind::globalVariable; }
+    inline bool IsRegValue() const { return kind == ValueKind::regValue; }
+    inline bool IsInstruction() const { return kind == ValueKind::instruction; }
+    inline bool IsSymbolValue() const { return kind == ValueKind::symbolValue; }
+    inline bool IsAddressValue() const { return kind == ValueKind::addressValue; }
+    inline bool IsGlobalVariable() const { return kind == ValueKind::globalVariable; }
     bool IsIntegerValue() const;
     bool IsFloatingPointValue() const;
-    bool IsBoolValue() const { return kind == ValueKind::boolValue; }
-    bool IsSByteValue() const { return kind == ValueKind::sbyteValue; }
-    bool IsByteValue() const { return kind == ValueKind::byteValue; }
-    bool IsShortValue() const { return kind == ValueKind::shortValue; }
-    bool IsUShortValue() const { return kind == ValueKind::ushortValue; }
-    bool IsIntValue() const { return kind == ValueKind::intValue; }
-    bool IsUIntValue() const { return kind == ValueKind::uintValue; }
-    bool IsLongValue() const { return kind == ValueKind::longValue; }
-    bool IsULongValue() const { return kind == ValueKind::ulongValue; }
-    bool IsFloatValue() const { return kind == ValueKind::floatValue; }
-    bool IsDoubleValue() const { return kind == ValueKind::doubleValue; }
-    bool IsArrayValue() const { return kind == ValueKind::arrayValue; }
-    bool IsStructureValue() const { return kind == ValueKind::structureValue; }
-    bool IsAggregateValue() const { return IsArrayValue() || IsStructureValue(); }
-    bool IsStringValue() const { return kind == ValueKind::stringValue; }
-    bool IsStringArrayValue() const { return kind == ValueKind::stringArrayValue; }
+    inline bool IsBoolValue() const { return kind == ValueKind::boolValue; }
+    inline bool IsSByteValue() const { return kind == ValueKind::sbyteValue; }
+    inline bool IsByteValue() const { return kind == ValueKind::byteValue; }
+    inline bool IsShortValue() const { return kind == ValueKind::shortValue; }
+    inline bool IsUShortValue() const { return kind == ValueKind::ushortValue; }
+    inline bool IsIntValue() const { return kind == ValueKind::intValue; }
+    inline bool IsUIntValue() const { return kind == ValueKind::uintValue; }
+    inline bool IsLongValue() const { return kind == ValueKind::longValue; }
+    inline bool IsULongValue() const { return kind == ValueKind::ulongValue; }
+    inline bool IsFloatValue() const { return kind == ValueKind::floatValue; }
+    inline bool IsDoubleValue() const { return kind == ValueKind::doubleValue; }
+    inline bool IsArrayValue() const { return kind == ValueKind::arrayValue; }
+    inline bool IsStructureValue() const { return kind == ValueKind::structureValue; }
+    inline bool IsAggregateValue() const { return IsArrayValue() || IsStructureValue(); }
+    inline bool IsStringValue() const { return kind == ValueKind::stringValue; }
+    inline bool IsStringArrayValue() const { return kind == ValueKind::stringArrayValue; }
     bool IsTrue() const;
     bool IsFalse() const;
     std::int64_t GetIntegerValue() const;
-    const soul::ast::Span& Span() const { return span; }
-    ValueKind Kind() const { return kind; }
+    inline const soul::ast::Span& Span() const { return span; }
+    inline ValueKind Kind() const { return kind; }
     std::string KindStr() const;
-    Type* GetType() const { return type; }
-    void SetType(Type* type_) { type = type_; }
+    inline Type* GetType() const { return type; }
+    inline void SetType(Type* type_) { type = type_; }
     virtual std::string ToString() const { return std::string(); }
     Instruction* GetInstruction() const;
     virtual bool IsZero() const { return false; }
@@ -103,9 +103,9 @@ class BoolValue : public Value
 {
 public:
     BoolValue(bool value_, Type* type_);
-    bool GetValue() const { return value; }
+    inline bool GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
-    std::int64_t ToInteger() const { return value ? 1 : 0; }
+    inline std::int64_t ToInteger() const { return value ? 1 : 0; }
     std::string ToString() const override;
 private:
     bool value;
@@ -115,7 +115,7 @@ class SByteValue : public Value
 {
 public:
     SByteValue(std::int8_t value_, Type* type_);
-    std::int8_t GetValue() const { return value; }
+    inline std::int8_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -131,7 +131,7 @@ class ByteValue : public Value
 {
 public:
     ByteValue(std::uint8_t value_, Type* type_);
-    std::uint8_t GetValue() const { return value; }
+    inline std::uint8_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -147,7 +147,7 @@ class ShortValue : public Value
 {
 public:
     ShortValue(std::int16_t value_, Type* type_);
-    std::int16_t GetValue() const { return value; }
+    inline std::int16_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -163,7 +163,7 @@ class UShortValue : public Value
 {
 public:
     UShortValue(std::uint16_t value_, Type* type_);
-    std::uint16_t GetValue() const { return value; }
+    inline std::uint16_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -179,7 +179,7 @@ class IntValue : public Value
 {
 public:
     IntValue(std::int32_t value_, Type* type_);
-    std::int32_t GetValue() const { return value; }
+    inline std::int32_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -195,7 +195,7 @@ class UIntValue : public Value
 {
 public:
     UIntValue(std::uint32_t value_, Type* type_);
-    std::uint32_t GetValue() const { return value; }
+    inline std::uint32_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -211,7 +211,7 @@ class LongValue : public Value
 {
 public:
     LongValue(std::int64_t value_, Type* type_);
-    std::int64_t GetValue() const { return value; }
+    inline std::int64_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -227,7 +227,7 @@ class ULongValue : public Value
 {
 public:
     ULongValue(std::uint64_t value_, Type* type_);
-    std::uint64_t GetValue() const { return value; }
+    inline std::uint64_t GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
     bool IsZero() const override { return value == 0; }
@@ -243,7 +243,7 @@ class FloatValue : public Value
 {
 public:
     FloatValue(float value_, Type* type_);
-    float GetValue() const { return value; }
+    inline float GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -254,7 +254,7 @@ class DoubleValue : public Value
 {
 public:
     DoubleValue(double value_, Type* type_);
-    double GetValue() const { return value; }
+    inline double GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -273,9 +273,9 @@ class AddressValue : public Value
 {
 public:
     AddressValue(const soul::ast::Span& span_, const std::string& id_, Type* type);
-    const std::string& Id() const { return id; }
-    GlobalVariable* GetValue() const { return globalVariable; }
-    void SetValue(GlobalVariable* globalVariable_) { globalVariable = globalVariable_; }
+    inline const std::string& Id() const { return id; }
+    inline GlobalVariable* GetValue() const { return globalVariable; }
+    inline void SetValue(GlobalVariable* globalVariable_) { globalVariable = globalVariable_; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -287,7 +287,7 @@ class ArrayValue : public Value
 {
 public:
     ArrayValue(const soul::ast::Span& span_, const std::vector<Value*>& elements_, ArrayType* type_);
-    const std::vector<Value*>& Elements() const { return elements; }
+    inline const std::vector<Value*>& Elements() const { return elements; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -298,7 +298,7 @@ class StructureValue : public Value
 {
 public:
     StructureValue(const soul::ast::Span& span_, const std::vector<Value*>& fieldValues_, StructureType* type_);
-    const std::vector<Value*>& FieldValues() const { return fieldValues; }
+    inline const std::vector<Value*>& FieldValues() const { return fieldValues; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -309,7 +309,7 @@ class StringValue : public Value
 {
 public:
     StringValue(const soul::ast::Span& span_, const std::string& value_);
-    const std::string& GetValue() const { return value; }
+    inline const std::string& GetValue() const { return value; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -320,8 +320,8 @@ class StringArrayValue : public Value
 {
 public:
     StringArrayValue(const soul::ast::Span& span_, char prefix_, const std::vector<Value*>& elements_);
-    char Prefix() const { return prefix; }
-    const std::vector<Value*>& Elements() const { return elements; }
+    inline char Prefix() const { return prefix; }
+    inline const std::vector<Value*>& Elements() const { return elements; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -333,7 +333,7 @@ class ConversionValue : public Value
 {
 public:
     ConversionValue(const soul::ast::Span& span_, Type* type_, Value* from_);
-    Value* From() const { return from; }
+    inline Value* From() const { return from; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -344,7 +344,7 @@ class ClsIdValue : public Value
 {
 public:
     ClsIdValue(const soul::ast::Span& span_, Type* type_, const std::string& typeId_);
-    const std::string& TypeId() const { return typeId; }
+    inline const std::string& TypeId() const { return typeId; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -356,10 +356,10 @@ class SymbolValue : public Value
 public:
     SymbolValue(const soul::ast::Span& span_, Type* type_, const std::string& symbol_);
     const std::string& Symbol() const { return symbol; }
-    Function* GetFunction() const { return function; }
-    void SetFunction(Function* function_) { function = function_; }
-    GlobalVariable* GetGlobalVariable() const { return globalVariable; }
-    void SetGlobalVariable(GlobalVariable* globalVariable_) { globalVariable = globalVariable_; }
+    inline Function* GetFunction() const { return function; }
+    inline void SetFunction(Function* function_) { function = function_; }
+    inline GlobalVariable* GetGlobalVariable() const { return globalVariable; }
+    inline void SetGlobalVariable(GlobalVariable* globalVariable_) { globalVariable = globalVariable_; }
     void Accept(Visitor& visitor) override;
     std::string ToString() const override;
 private:
@@ -373,8 +373,8 @@ class GlobalVariable : public Value
 public:
     GlobalVariable(const soul::ast::Span& span_, Type* type_, const std::string& name_, Value* initializer_);
     virtual void Accept(Visitor& visitor);
-    const std::string& Name() const { return name; }
-    Value* Initializer() const { return initializer; }
+    inline const std::string& Name() const { return name; }
+    inline Value* Initializer() const { return initializer; }
     void Write(util::CodeFormatter& formatter);
     std::string ToString() const override;
 private:
@@ -398,8 +398,8 @@ public:
     Data();
     Data(const Data&) = delete;
     Data& operator=(const Data&) = delete;
-    Context* GetContext() const { return context; }
-    void SetContext(Context* context_) { context = context_; }
+    inline Context* GetContext() const { return context; }
+    inline void SetContext(Context* context_) { context = context_; }
     GlobalVariable* AddGlobalVariable(const soul::ast::Span& span, Type* type, const std::string& variableName, Value* initializer, Context* context);
     GlobalVariable* GetGlobalVariableForString(Value* stringValue);
     Value* GetBoolValue(bool value, const Types& types);

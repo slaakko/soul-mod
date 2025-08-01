@@ -20,7 +20,7 @@ class DocumentHandler : public soul::xml::XmlContentHandler
 {
 public:
     DocumentHandler(soul::xml::ParsingFlags flags_);
-    std::unique_ptr<soul::xml::Document> GetDocument() { return std::move(document); };
+    inline std::unique_ptr<soul::xml::Document> GetDocument() { return std::move(document); };
     void StartDocument(const soul::ast::SourcePos& sourcePos) override;
     void XmlVersion(const std::string& xmlVersion) override;
     void XmlEncoding(const std::string& xmlEncoding) override;

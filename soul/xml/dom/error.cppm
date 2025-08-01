@@ -15,7 +15,7 @@ class XmlException : public std::runtime_error
 {
 public:
     XmlException(const std::string& errorMessage_, const soul::ast::SourcePos& sourcePos_);
-    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
 private:
     soul::ast::SourcePos sourcePos;
 };

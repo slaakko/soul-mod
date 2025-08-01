@@ -29,7 +29,7 @@ class StatementBinder : public otava::ast::DefaultVisitor
 {
 public:
     StatementBinder(Context* context_, FunctionDefinitionSymbol* functionDefinitionSymbol_);
-    BoundStatementNode* GetBoundStatement() const { return boundStatement; }
+    inline BoundStatementNode* GetBoundStatement() const { return boundStatement; }
     void Visit(otava::ast::FunctionDefinitionNode& node) override;
     void Visit(otava::ast::ConstructorNode& node) override;
     void Visit(otava::ast::ConstructorInitializerNode& node) override;

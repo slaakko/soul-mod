@@ -24,8 +24,10 @@ import otava.symbols.namespaces;
 import otava.symbols.function.group.symbol;
 import otava.symbols.class_group.symbol;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
+import otava.opt;
 import otava.ast;
 import util.unicode;
 import util.sha1;
@@ -642,16 +644,20 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
     ExplicitInstantiationSymbol* explicitInstantiation = context->GetSymbolTable()->GetExplicitInstantiation(classTemplateSpecialization);
     if (explicitInstantiation)
     {
-        if (memFn->IsFunctionDefinitionSymbol())
+        bool isInline = memFn->IsInline() && context->ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining);
+        if (!isInline)
         {
-            FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
-            FunctionDefinitionSymbol* functionDefinitionSymbol = explicitInstantiation->GetFunctionDefinitionSymbol(memFnDefSymbol->DefIndex());
-            functionDefinitionSymbol->SetDestructor(explicitInstantiation->Destructor());
-            return functionDefinitionSymbol;
-        }
-        else 
-        { 
-            ThrowException(util::ToUtf8(memFn->Name())  + ": otava.symbols.class_templates: function definition symbol expected", sourcePos, context);
+            if (memFn->IsFunctionDefinitionSymbol())
+            {
+                FunctionDefinitionSymbol* memFnDefSymbol = static_cast<FunctionDefinitionSymbol*>(memFn);
+                FunctionDefinitionSymbol* functionDefinitionSymbol = explicitInstantiation->GetFunctionDefinitionSymbol(memFnDefSymbol->DefIndex());
+                functionDefinitionSymbol->SetDestructor(explicitInstantiation->Destructor());
+                return functionDefinitionSymbol;
+            }
+            else
+            {
+                ThrowException(util::ToUtf8(memFn->Name()) + ": otava.symbols.class_templates: function definition symbol expected", sourcePos, context);
+            }
         }
     }
     bool prevInternallyMapped = context->GetModule()->GetNodeIdFactory()->IsInternallyMapped();
@@ -754,6 +760,9 @@ FunctionSymbol* InstantiateMemFnOfClassTemplate(FunctionSymbol* memFn, ClassTemp
                         }
                         specializationName = util::ToUtf8(specialization->Name());
                         FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(specialization);
+                        functionDefinition->SetFlag(FunctionSymbolFlags::fixedIrName);
+                        functionDefinition->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
+                        std::string irName = functionDefinition->IrName(context);
                         classTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);
                         context->PushBoundFunction(new BoundFunctionNode(functionDefinition, sourcePos));
                         Scope* nsScope = classTemplateSpecialization->ClassTemplate()->GetScope()->GetNamespaceScope();

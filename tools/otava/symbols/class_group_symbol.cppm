@@ -22,8 +22,8 @@ enum class TemplateMatchKind
 
 struct TemplateMatchInfo
 {
-    TemplateMatchInfo() : kind(TemplateMatchKind::straight), matchValue(0) {}
-    TemplateMatchInfo(TemplateMatchKind kind_, int matchValue_) : kind(kind_), matchValue(matchValue_) {}
+    inline TemplateMatchInfo() : kind(TemplateMatchKind::straight), matchValue(0) {}
+    inline TemplateMatchInfo(TemplateMatchKind kind_, int matchValue_) : kind(kind_), matchValue(matchValue_) {}
     TemplateMatchKind kind;
     int matchValue;
     std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess> templateParameterMap;
@@ -40,10 +40,10 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddClass(ClassTypeSymbol* classTypeSymbol);
     ClassTypeSymbol* GetClass(int arity) const;
-    const std::vector<ClassTypeSymbol*>& Classes() const { return classes; }
+    inline const std::vector<ClassTypeSymbol*>& Classes() const { return classes; }
     void AddForwardDeclaration(ForwardClassDeclarationSymbol* forwardDeclaration);
     ForwardClassDeclarationSymbol* GetForwardDeclaration(int arity) const;
-    const std::vector<ForwardClassDeclarationSymbol*>& ForwardDeclarations() const { return forwardDeclarations; }
+    inline const std::vector<ForwardClassDeclarationSymbol*>& ForwardDeclarations() const { return forwardDeclarations; }
     ClassTypeSymbol* GetBestMatchingClass(const std::vector<Symbol*>& templateArgs, TemplateMatchInfo& matchInfo, Context* context) const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

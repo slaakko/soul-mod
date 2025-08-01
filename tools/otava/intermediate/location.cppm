@@ -35,7 +35,7 @@ struct FrameLocation
     FrameLocation() : reg(otava::assembly::RegisterGroupKind::rbp), index(-1), offset(0), size(0), macro(nullptr) {}
     FrameLocation(otava::assembly::RegisterGroupKind reg_, int index_, std::int64_t offset_, std::int64_t size_) : reg(reg_), index(index_), offset(offset_), size(size_), macro(nullptr) {}
     void Dump();
-    bool Valid() const { return index != -1; }
+    inline bool Valid() const { return index != -1; }
     otava::assembly::RegisterGroupKind reg;
     int index;
     std::int64_t offset;
@@ -58,15 +58,15 @@ public:
     Frame();
     FrameLocation GetParamLocation(std::int64_t size, otava::assembly::Context* assemblyContext);
     FrameLocation GetFrameLocation(std::int64_t size);
-    void SetRbxPushed() { rbxPushed = true; }
-    bool RbxPushed() const { return rbxPushed; }
+    inline void SetRbxPushed() { rbxPushed = true; }
+    inline bool RbxPushed() const { return rbxPushed; }
     std::int64_t Size() const;
-    std::int64_t CalleeParamAreaSize() const { return calleeParamAreaSize; }
-    std::int64_t XMMSaveRegSize() const { return 16 * numUsedXMMRegs; }
-    void SetCalleeParamAreaSize(std::int64_t calleeParamAreaSize_) { calleeParamAreaSize = calleeParamAreaSize_; }
+    inline std::int64_t CalleeParamAreaSize() const { return calleeParamAreaSize; }
+    inline std::int64_t XMMSaveRegSize() const { return 16 * numUsedXMMRegs; }
+    inline void SetCalleeParamAreaSize(std::int64_t calleeParamAreaSize_) { calleeParamAreaSize = calleeParamAreaSize_; }
     void SetMacroValues(otava::assembly::Context* assemblyContext);
-    void SetNumUsedXMMRegs(int numUsedXMMRegs_) { numUsedXMMRegs = numUsedXMMRegs_; }
-    int GetNumUsedXMMRegs() const { return numUsedXMMRegs; }
+    inline void SetNumUsedXMMRegs(int numUsedXMMRegs_) { numUsedXMMRegs = numUsedXMMRegs_; }
+    inline int GetNumUsedXMMRegs() const { return numUsedXMMRegs; }
     void Dump();
 private:
     std::vector<FrameLocation> paramLocations;

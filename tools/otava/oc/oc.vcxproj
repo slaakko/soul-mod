@@ -157,6 +157,9 @@
     <ProjectReference Include="..\build\build.vcxproj">
       <Project>{633d5849-cd60-4c05-805c-d6b7e5fef3a7}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\optimizer\optimizer.vcxproj">
+      <Project>{17086e7b-97f7-410c-b277-37cbbc58627f}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\parser\parser.vcxproj">
       <Project>{213b329d-1699-400f-9d94-90af03657db4}</Project>
     </ProjectReference>

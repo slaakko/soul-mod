@@ -28,11 +28,13 @@ import otava.symbols.function.symbol;
 import otava.symbols.classes;
 import otava.symbols.function_definition_symbol_set;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
 import otava.pp;
 import otava.pp.state;
 import otava.codegen;
+import otava.opt;
 import soul.lexer.xml.parsing.log;
 import class_info_index;
 import util;
@@ -257,6 +259,10 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     std::vector<std::string> resourceFileNames;
     std::vector<std::string> compileUnitInitFunctionNames;
     std::vector<std::string> allCompileUnitInitFunctionNames;
+    bool inliningEnabled = false;
+    int totalFunctionsCompiled = 0;
+    int functionsInlined = 0;
+    int functionCallsInlined = 0;
     moduleMapper.SetFunctionDefinitionSymbolSet(project->GetFunctionDefinitionSymbolSet());
     std::string libraryDirs;
     std::string mainFunctionIrName;
@@ -332,7 +338,7 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     for (std::int32_t file : topologicalOrder)
     {
         const std::string& filePath = project->GetFileMap().GetFilePath(file);
-        if (filePath.find("std.expected.cppm") != std::string::npos)
+        if (filePath.find("std.basic_string.cppm") != std::string::npos)
         {
             int x = 0;
         }
@@ -401,6 +407,13 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         {
             compileUnitInitFunctionNames.push_back(initFn->GetFunctionDefinitionSymbol()->IrName(&context));
         }
+        totalFunctionsCompiled += context.TotalFunctionsCompiled();
+        if (context.ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
+        {
+            inliningEnabled = true;
+            functionsInlined += context.FunctionsInlined();
+            functionCallsInlined += context.FunctionCallsInlined();
+        }
     }
     for (std::int32_t file : project->SourceFiles())
     {
@@ -467,6 +480,13 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
         {
             compileUnitInitFunctionNames.push_back(initFn->GetFunctionDefinitionSymbol()->IrName(&context));
         }
+        totalFunctionsCompiled += context.TotalFunctionsCompiled();
+        if (context.ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
+        {
+            inliningEnabled = true;
+            functionsInlined += context.FunctionsInlined();
+            functionCallsInlined += context.FunctionCallsInlined();
+        }
     }
     projectModule.AddDerivedClasses();
     ProjectTarget projectTarget = ProjectTarget::library;
@@ -505,6 +525,14 @@ void BuildSequentially(otava::symbols::ModuleMapper& moduleMapper, Project* proj
     {
         std::string absoluteRCFilePath = util::GetFullPath(util::Path::Combine(project->Root(), resourceFilePath));
         resourceFileNames.push_back(absoluteRCFilePath);
+    }
+    if ((flags & BuildFlags::verbose) != BuildFlags::none)
+    {
+        std::cout << totalFunctionsCompiled << " functions compiled\n";
+        if (inliningEnabled)
+        {
+            std::cout << functionCallsInlined << " function calls inlined in " << functionsInlined << " functions\n";
+        }
     }
     MakeProjectFile(project, projectFilePath, asmFileNames, cppFileNames, resourceFileNames,
         libraryDirs, references, config, classIndexFilePath, projectTarget, (flags& BuildFlags::verbose) != BuildFlags::none);

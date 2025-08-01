@@ -28,6 +28,8 @@ import otava.symbols.expression.binder;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.variable.symbol;
 import otava.symbols.type_compare;
+import otava.symbols.inline_functions;
+import otava.opt;
 import util.unicode;
 
 namespace otava::symbols {
@@ -1206,6 +1208,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
     OverloadResolutionFlags flags)
 {
     MakeFinalDirectArgs(args, sourcePos, context);
+    BoundFunctionNode* fn = context->GetBoundFunction();
 /*
     std::unique_ptr<BoundFunctionCallNode> ioManipFn = ResolveIOManipFn(scope, groupName, args, sourcePos, context, ex, flags);
     if (ioManipFn)
@@ -1297,6 +1300,10 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
                 }
             }
             bestMatch->function = InstantiateMemFnOfClassTemplate(bestMatch->function, classTemplateSpecialization, bestMatch->templateParameterMap, sourcePos, context);
+        }
+        else if (bestMatch->function->IsInline() && context->ReleaseConfig() && otava::optimizer::HasOptimization(otava::optimizer::Optimizations::inlining))
+        {
+            bestMatch->function = InstantiateInlineFunction(bestMatch->function, sourcePos, context);
         }
     }
     std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(*bestMatch, args, sourcePos, context);

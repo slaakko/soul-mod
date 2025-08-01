@@ -40,7 +40,7 @@ public:
     explicit FileStream(int handle);
     FileStream(const std::string& filePath_, OpenMode openMode);
     ~FileStream() override;
-    const std::string& FilePath() const { return filePath; }
+    inline const std::string& FilePath() const { return filePath; }
     std::expected<int, int> ReadByte() override;
     std::expected<std::int64_t, int> Read(std::uint8_t* buf, std::int64_t count) override;
     std::expected<bool, int> Write(std::uint8_t x) override;
@@ -49,9 +49,9 @@ public:
     std::expected<bool, int> Seek(std::int64_t pos, Origin origin) override;
     std::expected<std::int64_t, int> Tell() override;
     std::int64_t Size() const;
-    bool Valid() const { return error == 0; }
-    explicit operator bool() const { return Valid(); }
-    int Error() const { return error; }
+    inline bool Valid() const { return error == 0; }
+    inline explicit operator bool() const { return Valid(); }
+    inline int Error() const { return error; }
 private:
     std::string filePath;
     std::FILE* file;

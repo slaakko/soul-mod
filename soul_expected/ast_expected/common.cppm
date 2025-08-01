@@ -15,7 +15,7 @@ class ExportModule
 {
 public:
     ExportModule(const std::string& moduleName_);
-    const std::string& ModuleName() const { return moduleName; }
+    inline const std::string& ModuleName() const { return moduleName; }
 private:
     std::string moduleName;
 };
@@ -29,8 +29,8 @@ class Import
 {
 public:
     Import(const std::string& moduleName_, ImportPrefix prefix_);
-    const std::string& ModuleName() const { return moduleName; }
-    ImportPrefix Prefix() const { return prefix; }
+    inline const std::string& ModuleName() const { return moduleName; }
+    inline ImportPrefix Prefix() const { return prefix; }
 private:
     std::string moduleName;
     ImportPrefix prefix;

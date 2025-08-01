@@ -27,6 +27,7 @@ import otava.symbols.class_templates;
 import otava.symbols.fundamental.type.operation;
 import otava.symbols.function.group.symbol;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
 import otava.symbols.declaration;
 import otava.symbols.type_compare;
@@ -1181,10 +1182,6 @@ void InlineMemberFunctionParserVisitor::Visit(otava::ast::FunctionDefinitionNode
 
 void ParseInlineMemberFunctions(otava::ast::Node* classSpecifierNode, ClassTypeSymbol* classTypeSymbol, otava::symbols::Context* context)
 {
-    if (classTypeSymbol->Name() == U"ChoiceParser")
-    {
-        int x = 0;
-    }
     context->GetSymbolTable()->BeginScope(classTypeSymbol->GetScope());
     InlineMemberFunctionParserVisitor visitor(context);
     classSpecifierNode->Accept(visitor);

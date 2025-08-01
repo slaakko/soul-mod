@@ -16,7 +16,7 @@ class Writer
 {
 public:
     Writer(const std::string& fileName);
-    util::BinaryStreamWriter& GetBinaryStreamWriter() { return binaryStreamWriter; }
+    inline util::BinaryStreamWriter& GetBinaryStreamWriter() { return binaryStreamWriter; }
     void Write(Symbol* symbol);
 private:
     util::FileStream fileStream;

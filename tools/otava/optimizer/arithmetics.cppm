@@ -10,6 +10,6 @@ import otava.intermediate;
 
 export namespace otava::optimizer {
 
-bool OptimizeArithmetics(otava::intermediate::Function* fn);
+bool OptimizeArithmetics(otava::intermediate::Function* fn, otava::intermediate::Context* context);
 
 } // otava::optimizer

@@ -15,8 +15,8 @@ class SocketStream : public Stream
 {
 public:
     SocketStream(TcpSocket&& socket_);
-    const TcpSocket& Socket() const { return socket; }
-    TcpSocket& Socket() { return socket; }
+    inline const TcpSocket& Socket() const { return socket; }
+    inline TcpSocket& Socket() { return socket; }
     std::expected<int, int> ReadByte() override;
     std::expected<std::int64_t, int> Read(std::uint8_t* buf, std::int64_t count) override;
     std::expected<bool, int> Write(std::uint8_t x) override;

@@ -54,12 +54,12 @@ class File
 {
 public:
     File(const std::string& filePath_);
-    const std::string& FilePath() const { return filePath; }
-    DeclarationSection& GetDeclarationSection() { return declarationSection; }
-    DataSection& GetDataSection() { return dataSection; }
-    CodeSection& GetCodeSection() { return codeSection; }
+    inline const std::string& FilePath() const { return filePath; }
+    inline DeclarationSection& GetDeclarationSection() { return declarationSection; }
+    inline DataSection& GetDataSection() { return dataSection; }
+    inline CodeSection& GetCodeSection() { return codeSection; }
     void Write();
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
 private:
     std::string filePath;
     std::ofstream file;

@@ -59,7 +59,7 @@ public:
     void Add(Stream* stream);
     Stream* Get(int index) const;
     std::expected<Stream*, int> Back() const;
-    int Count() const { return static_cast<int>(streams.size()); }
+    inline int Count() const { return static_cast<int>(streams.size()); }
 private:
     std::vector<std::unique_ptr<Stream>> streams;
 };

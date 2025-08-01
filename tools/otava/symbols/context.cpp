@@ -13,6 +13,7 @@ import otava.symbols.symbol;
 import otava.symbols.bound.tree;
 import otava.symbols.function.symbol;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
 
@@ -38,7 +39,10 @@ Context::Context() :
     functionDefinitionSymbolSet(nullptr),
     templateParameterMap(nullptr),
     argType(nullptr),
-    paramType(nullptr)
+    paramType(nullptr),
+    totalFunctionsCompiled(0),
+    functionCallsInlined(0),
+    functionsInlined(0)
 {
 }
 
@@ -328,7 +332,6 @@ void Context::RemoveClassTemplateSpecialization(otava::ast::Node* functionNode)
 {
     classTemplateSpecializationMap.erase(functionNode);
 }
-
 
 void Context::SetInstantiationIrName(const std::string& instantiationIrName_)
 {

@@ -28,6 +28,7 @@ import otava.symbols.concept_group.symbol;
 import otava.symbols.context;
 import otava.symbols.compound.type.symbol;
 import otava.symbols.declarator;
+import otava.symbols.declaration;
 import otava.symbols.enums;
 import otava.symbols.modules;
 import otava.symbols.namespaces;
@@ -46,6 +47,7 @@ import otava.symbols.symbol_map;
 import otava.symbols.conversion.table;
 import otava.symbols.friends;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
 
@@ -137,7 +139,9 @@ void SymbolTable::EndScope()
 
 void SymbolTable::BeginScopeGeneric(Scope* scope, Context* context)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
+        context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
+        context->GetFlag(ContextFlags::instantiateInlineFunction))
     {
         CurrentScope()->PushParentScope(scope);
     }
@@ -149,7 +153,9 @@ void SymbolTable::BeginScopeGeneric(Scope* scope, Context* context)
 
 void SymbolTable::EndScopeGeneric(Context* context)
 {
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
+        context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) ||
+        context->GetFlag(ContextFlags::instantiateInlineFunction))
     {
         CurrentScope()->PopParentScope();
     }
@@ -1297,6 +1303,10 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::
     functionSymbol->SetFunctionQualifiers(qualifiers);
     functionSymbol->SetLinkage(currentLinkage);
     functionSymbol->SetDeclarationFlags(flags);
+    if ((flags & DeclarationFlags::inlineFlag) != DeclarationFlags::none)
+    {
+        functionSymbol->SetInline();
+    }
     functionSymbol->SetSpecialization(specialization);
     currentScope->SymbolScope()->AddSymbol(functionSymbol, node->GetSourcePos(), context);
     functionGroup->AddFunction(functionSymbol);
@@ -1335,9 +1345,15 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     std::unique_ptr<FunctionDefinitionSymbol> functionDefinition(new FunctionDefinitionSymbol(name));
     functionDefinition->SetGroup(functionGroup);
     functionDefinition->SetDeclarationFlags(declarationFlags);
-    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
+    if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
+        context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
+        context->GetFlag(ContextFlags::instantiateInlineFunction))
     {
         functionDefinition->SetSpecialization();
+    }
+    if ((declarationFlags & DeclarationFlags::inlineFlag) != DeclarationFlags::none)
+    {
+        functionDefinition->SetInline();
     }
     functionDefinition->SetLinkage(currentLinkage);
     functionDefinition->SetFunctionKind(kind);

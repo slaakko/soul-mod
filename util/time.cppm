@@ -19,21 +19,21 @@ int GetMonthDays(Month month, int year);
 class Date
 {
 public:
-    Date() : year(0), month(Month::january), day(1)
+    inline Date() : year(0), month(Month::january), day(1)
     {
     }
-    Date(short year_, Month month_, std::int8_t day_) : year(year_), month(month_), day(day_)
+    inline Date(short year_, Month month_, std::int8_t day_) : year(year_), month(month_), day(day_)
     {
     }
-    std::int16_t Year() const
+    inline std::int16_t Year() const
     {
         return year;
     }
-    Month GetMonth() const
+    inline Month GetMonth() const
     {
         return month;
     }
-    std::int8_t Day() const
+    inline std::int8_t Day() const
     {
         return day;
     }
@@ -79,28 +79,28 @@ Date ParseDate(const std::string& dateStr);
 class DateTime
 {
 public:
-    DateTime() : date(), secs(0)
+    inline DateTime() : date(), secs(0)
     {
     }
-    DateTime(const Date& date_) : date(date_), secs(0)
+    inline DateTime(const Date& date_) : date(date_), secs(0)
     {
     }
-    DateTime(const Date& date_, std::int32_t secs_) : date(date_), secs(secs_)
+    inline DateTime(const Date& date_, std::int32_t secs_) : date(date_), secs(secs_)
     {
     }
-    Date GetDate() const
+    inline Date GetDate() const
     {
         return date;
     }
-    std::int32_t Hours() const
+    inline std::int32_t Hours() const
     {
         return secs / 3600;
     }
-    std::int32_t Minutes() const
+    inline std::int32_t Minutes() const
     {
         return secs / 60;
     }
-    std::int32_t Seconds() const
+    inline std::int32_t Seconds() const
     {
         return secs;
     }

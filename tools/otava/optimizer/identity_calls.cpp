@@ -9,6 +9,10 @@ namespace otava::optimizer {
 
 bool IsIdentityFunction(otava::intermediate::Function* fn)
 {
+    if (fn->Name().find("move") != std::string::npos)
+    {
+        int x = 0;
+    }
     otava::intermediate::FunctionType* fnType = fn->GetType();
     if (fnType->IsUnaryOperationType())
     {
@@ -30,7 +34,7 @@ bool IsIdentityFunction(otava::intermediate::Function* fn)
                             otava::intermediate::Instruction* inst4 = inst3->Next();
                             if (inst4 && inst4->IsRetInstruction())
                             {
-                                if (!inst4)
+                                if (!inst4->Next())
                                 {
                                     otava::intermediate::Type* paramType = fnType->ParamType(0);
                                     otava::intermediate::ParamInstruction* paramInst = static_cast<otava::intermediate::ParamInstruction*>(inst0);

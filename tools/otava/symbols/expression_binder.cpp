@@ -36,6 +36,7 @@ import otava.symbols.value;
 import otava.symbols.namespaces;
 import otava.symbols.array.type.symbol;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.operation.repository;
 import otava.ast.identifier;
 import otava.ast.punctuation;
@@ -137,7 +138,7 @@ class GroupNameResolver : public DefaultBoundTreeVisitor
 {
 public:
     GroupNameResolver();
-    const std::u32string& GetGroupName() const { return groupName; }
+    inline const std::u32string& GetGroupName() const { return groupName; }
     void Visit(BoundFunctionGroupNode& node) override;
     void Visit(BoundVariableNode& node) override;
     void Visit(BoundParameterNode& node) override;
@@ -187,7 +188,7 @@ public:
     void Visit(BoundFunctionCallNode& node) override;
     void Visit(BoundConstructTemporaryNode& node) override;
     void Visit(BoundPtrToRefNode& node) override;
-    BoundExpressionNode* GetFirstArg() const { return firstArg; }
+    inline BoundExpressionNode* GetFirstArg() const { return firstArg; }
 private:
     Context* context;
     BoundExpressionNode* firstArg;
@@ -280,8 +281,8 @@ class ExpressionBinder : public otava::ast::DefaultVisitor
 {
 public:    
     ExpressionBinder(Context* context_, SymbolGroupKind symbolGroups_);
-    BoundExpressionNode* GetBoundExpression() const { return boundExpression; }
-    Scope* GetScope() const { return scope; }
+    inline BoundExpressionNode* GetBoundExpression() const { return boundExpression; }
+    inline Scope* GetScope() const { return scope; }
     void Visit(otava::ast::IntegerLiteralNode& node) override;
     void Visit(otava::ast::FloatingLiteralNode& node) override;
     void Visit(otava::ast::CharacterLiteralNode& node) override;

@@ -32,9 +32,9 @@ public:
     std::expected<std::int64_t, int> Read(std::uint8_t* buf, std::int64_t count) override;
     std::expected<bool, int> Write(std::uint8_t x) override;
     std::expected<bool, int> Write(std::uint8_t* buf, std::int64_t count) override;
-    bool Valid() const { return error == 0; }
-    explicit operator bool() const { return Valid(); }
-    int Error() const { return error; }
+    inline bool Valid() const { return error == 0; }
+    inline explicit operator bool() const { return Valid(); }
+    inline int Error() const { return error; }
 private:
     std::expected<bool, int> Finish();
     CompressionMode mode;

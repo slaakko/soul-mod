@@ -16,13 +16,13 @@ class CompileUnit
 {
 public:
     CompileUnit();
-    Context* GetContext() const { return context; }
-    void SetContext(Context* context_) { context = context_; }
-    const std::string& FilePath() const { return filePath; }
+    inline Context* GetContext() const { return context; }
+    inline void SetContext(Context* context_) { context = context_; }
+    inline const std::string& FilePath() const { return filePath; }
     void SetFilePath(const std::string& filePath_);
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
     void SetInfo(const std::string& id_, MetadataRef* metadataRef_);
-    MetadataRef* GetMetadataRef() const { return metadataRef; }
+    inline MetadataRef* GetMetadataRef() const { return metadataRef; }
     void Write();
 private:
     Context* context;

@@ -27,17 +27,17 @@ public:
     std::string SymbolKindStr() const override { return "enumerated type symbol"; }
     std::string SymbolDocKindStr() const override { return "enum_type"; }
     bool IsValidDeclarationScope(ScopeKind scopeKind) const override;
-    EnumTypeKind GetEnumTypeKind() const { return kind; }
-    void SetEnumTypeKind(EnumTypeKind kind_) { kind = kind_; }
-    TypeSymbol* UnderlyingType() const { return underlyingType; }
-    void SetUnderlyingType(TypeSymbol* underlyingType_) { underlyingType = underlyingType_; }
+    inline EnumTypeKind GetEnumTypeKind() const { return kind; }
+    inline void SetEnumTypeKind(EnumTypeKind kind_) { kind = kind_; }
+    inline TypeSymbol* UnderlyingType() const { return underlyingType; }
+    inline void SetUnderlyingType(TypeSymbol* underlyingType_) { underlyingType = underlyingType_; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Type* IrType(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    bool IsBound() const { return bound; }
-    void SetBound() { bound = true; }
+    inline bool IsBound() const { return bound; }
+    inline void SetBound() { bound = true; }
 private:
     bool bound;
     EnumTypeKind kind;

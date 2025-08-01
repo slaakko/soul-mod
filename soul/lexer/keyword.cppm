@@ -24,8 +24,8 @@ constexpr const Char* StrEnd(const Char* s)
 template<typename Char>
 struct Keyword
 {
-    Keyword() : str(nullptr), tokenID(INVALID_TOKEN) {}
-    Keyword(const Char* str_, std::int64_t tokenID_) : str(str_), tokenID(tokenID_) { }
+    inline Keyword() : str(nullptr), tokenID(INVALID_TOKEN) {}
+    inline Keyword(const Char* str_, std::int64_t tokenID_) : str(str_), tokenID(tokenID_) { }
     const Char* str;
     std::int64_t tokenID;
 };

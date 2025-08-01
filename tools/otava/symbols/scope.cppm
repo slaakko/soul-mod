@@ -40,16 +40,16 @@ class Scope
 public:
     Scope();
     virtual ~Scope();
-    ScopeKind Kind() const { return kind; }
-    void SetKind(ScopeKind kind_) { kind = kind_; }
+    inline ScopeKind Kind() const { return kind; }
+    inline void SetKind(ScopeKind kind_) { kind = kind_; }
     void Install(Symbol* symbol);
     void Install(Symbol* symbol, Symbol* from);
     void Uninstall(Symbol* symbol);
     Symbol* Lookup(const std::u32string& id, SymbolGroupKind symbolGroupKind, ScopeLookup scopeLookup, const soul::ast::SourcePos& sourcePos, Context* context, LookupFlags flags) const;
-    bool IsBlockScope() const { return kind == ScopeKind::blockScope; }
-    bool IsClassScope() const { return kind == ScopeKind::classScope; }
-    bool IsNamespaceScope() const { return kind == ScopeKind::namespaceScope;  }
-    bool IsTemplateDeclarationScope() const { return kind == ScopeKind::templateDeclarationScope; }
+    inline bool IsBlockScope() const { return kind == ScopeKind::blockScope; }
+    inline bool IsClassScope() const { return kind == ScopeKind::classScope; }
+    inline bool IsNamespaceScope() const { return kind == ScopeKind::namespaceScope;  }
+    inline bool IsTemplateDeclarationScope() const { return kind == ScopeKind::templateDeclarationScope; }
     virtual Scope* GroupScope();
     virtual Scope* SymbolScope();
     virtual std::string FullName() const = 0;
@@ -87,7 +87,7 @@ class ContainerScope : public Scope
 public:
     ContainerScope();
     void Import(Scope* that) override;
-    std::vector<Scope*> ParentScopes() const override { return parentScopes; }
+    inline std::vector<Scope*> ParentScopes() const override { return parentScopes; }
     void AddParentScope(Scope* parentScope) override;
     void PushParentScope(Scope* parentScope) override;
     void PopParentScope() override;
@@ -98,7 +98,7 @@ public:
     void AddBaseScope(Scope* baseScope, const soul::ast::SourcePos& sourcePos, Context* context) override;
     Symbol* GetSymbol() override;
     ClassTemplateSpecializationSymbol* GetClassTemplateSpecialization() const override;
-    ContainerSymbol* GetContainerSymbol() const { return containerSymbol; }
+    inline ContainerSymbol* GetContainerSymbol() const { return containerSymbol; }
     void SetContainerSymbol(ContainerSymbol* containerSymbol_) { containerSymbol = containerSymbol_; }
     void AddUsingDeclaration(Symbol* usingDeclaration, const soul::ast::SourcePos& sourcePos, Context* context) override;
     void AddUsingDirective(NamespaceSymbol* ns, const soul::ast::SourcePos& sourcePos, Context* context) override;

@@ -35,10 +35,10 @@ public:
     std::string SymbolKindStr() const override { return "template parameter symbol"; }
     std::string SymbolDocKindStr() const override { return "template_paremeter"; }
     bool IsTemplateParameterInstantiation(Context* context, std::set<const Symbol*>& visited) const override;
-    Symbol* Constraint() const { return constraint; }
-    otava::ast::Node* DefaultTemplateArg() const { return defaultTemplateArgNode; }
-    int Index() const { return index; }
-    ParameterSymbol* GetParameterSymbol() const { return parameterSymbol; }
+    inline Symbol* Constraint() const { return constraint; }
+    inline otava::ast::Node* DefaultTemplateArg() const { return defaultTemplateArgNode; }
+    inline int Index() const { return index; }
+    inline ParameterSymbol* GetParameterSymbol() const { return parameterSymbol; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
@@ -62,8 +62,8 @@ public:
     std::string SymbolDocKindStr() const override { return "bound_template_paremeter"; }
     TemplateParameterSymbol* GetTemplateParameterSymbol() const { return templateParameterSymbol; }
     void SetTemplateParameterSymbol(TemplateParameterSymbol* templateParameterSymbol_) { templateParameterSymbol = templateParameterSymbol_; }
-    Symbol* BoundSymbol() const { return boundSymbol; }
-    void SetBoundSymbol(Symbol* symbol) { boundSymbol = symbol; }
+    inline Symbol* BoundSymbol() const { return boundSymbol; }
+    inline void SetBoundSymbol(Symbol* symbol) { boundSymbol = symbol; }
     void Accept(Visitor& visitor) override;
 private:
     TemplateParameterSymbol* templateParameterSymbol;
@@ -75,10 +75,10 @@ class TemplateDeclarationSymbol : public ContainerSymbol
 public:
     TemplateDeclarationSymbol();
     void AddSymbol(Symbol* symbol, const soul::ast::SourcePos& sourcePos, Context* context) override;
-    int Arity() const { return templateParameters.size(); }
+    inline int Arity() const { return templateParameters.size(); }
     std::string SymbolKindStr() const override { return "template declaration symbol"; }
     std::string SymbolDocKindStr() const override { return "template_declaration"; }
-    const std::vector<TemplateParameterSymbol*>& TemplateParameters() const { return templateParameters; }
+    inline const std::vector<TemplateParameterSymbol*>& TemplateParameters() const { return templateParameters; }
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
@@ -91,7 +91,7 @@ class ExplicitInstantiationSymbol : public Symbol
 public:
     ExplicitInstantiationSymbol();
     ExplicitInstantiationSymbol(ClassTemplateSpecializationSymbol* specialization_);
-    ClassTemplateSpecializationSymbol* Specialization() const { return specialization; }
+    inline ClassTemplateSpecializationSymbol* Specialization() const { return specialization; }
     void AddFunctionDefinitionSymbol(FunctionDefinitionSymbol* functionDefinitionSymbol, const soul::ast::SourcePos& sourcePos, Context* context);
     FunctionDefinitionSymbol* GetFunctionDefinitionSymbol(int index)  const;
     FunctionDefinitionSymbol* Destructor() const;

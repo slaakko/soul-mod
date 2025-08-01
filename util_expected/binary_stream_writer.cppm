@@ -15,7 +15,7 @@ class BinaryStreamWriter
 {
 public:
     BinaryStreamWriter(Stream& stream_);
-    Stream& GetStream() { return stream; }
+    inline Stream& GetStream() { return stream; }
     std::expected<bool, int> Write(bool x);
     std::expected<bool, int> Write(std::uint8_t x);
     std::expected<bool, int> Write(std::int8_t x);
@@ -41,7 +41,7 @@ public:
     std::expected<bool, int> WriteSLEB128Long(std::int64_t x);
     std::expected<bool, int> Write(const uuid& uuid);
     std::expected<bool, int> WriteTime(std::time_t time);
-    std::int64_t Position() const { return stream.Position(); }
+    inline std::int64_t Position() const { return stream.Position(); }
 private:
     Stream& stream;
 };

@@ -37,15 +37,15 @@ class Function
 {
 public:
     Function(const std::string& name_);
-    const std::string& Name() const { return name; }
-    int Index() const { return body.size(); }
+    inline const std::string& Name() const { return name; }
+    inline int Index() const { return body.size(); }
     void SetActiveFunctionPart(FunctionPart activeFunctionPart_);
     void AddInstruction(Instruction* inst);
     void InsertInstruction(int index, Instruction* inst);
     void Write(util::CodeFormatter& formatter);
     void AddMacro(Macro* macro);
     Macro* GetMacro(const std::string& name) const;
-    const std::string& Comment() const { return comment; }
+    inline const std::string& Comment() const { return comment; }
     void SetComment(const std::string& comment_);
 private:
     std::string name;

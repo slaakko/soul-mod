@@ -23,6 +23,7 @@ import otava.symbols.alias.type.symbol;
 import otava.symbols.templates;
 import otava.symbols.variable.symbol;
 import otava.symbols.class_templates;
+import otava.symbols.inline_functions;
 import otava.symbols.array.type.symbol;
 import otava.symbols.overload.resolution;
 import otava.symbols.modules;
@@ -32,6 +33,7 @@ import otava.symbols.type_compare;
 import otava.symbols.type.symbol;
 import otava.symbols.value;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
 import otava.ast.error;
@@ -47,7 +49,7 @@ public:
     NoreturnAttributeMatcher();
     void Visit(otava::ast::AttributeNode& node);
     void Visit(otava::ast::IdentifierNode& node);
-    bool Value() const { return value; }
+    inline bool Value() const { return value; }
 private:
     bool matchId;
     bool value;
@@ -187,7 +189,7 @@ class FunctionQualifierExtractor : public otava::ast::DefaultVisitor
 {
 public:
     FunctionQualifierExtractor();
-    FunctionQualifiers Qualifiers() const { return qualifiers; }
+    inline FunctionQualifiers Qualifiers() const { return qualifiers; }
     void Visit(otava::ast::VirtSpecifierSequenceNode& node) override;
     void Visit(otava::ast::OverrideNode& node) override;
     void Visit(otava::ast::FinalNode& node) override;
@@ -231,8 +233,8 @@ class DeclarationProcessor : public otava::ast::DefaultVisitor
 {
 public:
     DeclarationProcessor(Context* context_);
-    std::unique_ptr<DeclarationList> GetDeclarations();
-    TypeSymbol* GetType() const { return type; }
+    inline std::unique_ptr<DeclarationList> GetDeclarations();
+    inline TypeSymbol* GetType() const { return type; }
     void BeginProcessFunctionDefinition(otava::ast::Node* declSpecifierSeq, otava::ast::Node* declarator, otava::ast::Node* specifierNode);
     void Visit(otava::ast::SimpleDeclarationNode& node) override;
     void Visit(otava::ast::MemberDeclarationNode& node) override;
@@ -860,13 +862,11 @@ bool IsTokenSwitchDeclarator(otava::ast::Node* declarator)
 int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast::Node* declarator, otava::ast::Node* functionNode, otava::ast::Node* specifierNode, bool& get, 
     Context* context)
 {   
-    if (IsTokenSwitchDeclarator(declarator))
-    {
-        int x = 0;
-    }
     get = false;
     int scopes = 0;
-    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
+    if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && 
+        !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) && 
+        !context->GetFlag(ContextFlags::instantiateInlineFunction))
     {
         context->GetSymbolTable()->CurrentScope()->PopParentScope();
     }
@@ -888,8 +888,17 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
             }
             FunctionDefinitionSymbol* definition = context->GetSymbolTable()->AddOrGetFunctionDefinition(functionDeclarator->GetScope(), functionDeclarator->Name(),
                 functionDeclarator->TemplateArgs(), parameterTypes, qualifiers, kind, declaration.flags, declarator, functionNode, get, context);
+            FunctionSymbol* fnDeclaration = definition->Declaration();
+            if (fnDeclaration)
+            {
+                if (fnDeclaration->IsInline())
+                {
+                    definition->SetInline();
+                }
+            }
             if (context->GetFlag(ContextFlags::instantiateFunctionTemplate) || 
                 context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) || 
+                context->GetFlag(ContextFlags::instantiateInlineFunction) ||
                 context->GetFlag(ContextFlags::generateMainWrapper))
             {
                 context->SetSpecialization(definition, functionNode);
@@ -935,7 +944,9 @@ int BeginFunctionDefinition(otava::ast::Node* declSpecifierSequence, otava::ast:
             TypeSymbol* returnType = MapType(definition, declaration.type, context);
             definition->SetReturnType(returnType, context);
             context->GetSymbolTable()->BeginScopeGeneric(definition->GetScope(), context);
-            if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate))
+            if (!context->GetFlag(ContextFlags::instantiateFunctionTemplate) && 
+                !context->GetFlag(ContextFlags::instantiateMemFnOfClassTemplate) && 
+                !context->GetFlag(ContextFlags::instantiateInlineFunction))
             {
                 definition->GetScope()->AddParentScope(functionDeclarator->GetScope());
             }

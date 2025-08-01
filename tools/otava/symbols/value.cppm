@@ -27,15 +27,15 @@ class Value : public Symbol
 {
 public:
     Value(SymbolKind symbolKind_, const std::u32string& rep_, TypeSymbol* type_);
-    bool IsBoolValue() const { return GetValueKind() == ValueKind::boolValue; }
-    bool IsIntegerValue() const { return GetValueKind() == ValueKind::integerValue; }
-    bool IsFloatingValue() const { return GetValueKind() == ValueKind::floatingValue; }
-    bool IsStringValue() const { return GetValueKind() == ValueKind::stringValue; }
-    bool IsCharValue() const { return GetValueKind() == ValueKind::charValue; }
-    bool IsNullPtrValue() const { return GetValueKind() == ValueKind::nullPtrValue; }
-    bool IsSymbolValue() const { return GetValueKind() == ValueKind::symbolValue; }
-    bool IsInvokeValue() const { return GetValueKind() == ValueKind::invokeValue; }
-    bool IsArrayValue() const { return GetValueKind() == ValueKind::arrayValue; }
+    inline bool IsBoolValue() const { return GetValueKind() == ValueKind::boolValue; }
+    inline bool IsIntegerValue() const { return GetValueKind() == ValueKind::integerValue; }
+    inline bool IsFloatingValue() const { return GetValueKind() == ValueKind::floatingValue; }
+    inline bool IsStringValue() const { return GetValueKind() == ValueKind::stringValue; }
+    inline bool IsCharValue() const { return GetValueKind() == ValueKind::charValue; }
+    inline bool IsNullPtrValue() const { return GetValueKind() == ValueKind::nullPtrValue; }
+    inline bool IsSymbolValue() const { return GetValueKind() == ValueKind::symbolValue; }
+    inline bool IsInvokeValue() const { return GetValueKind() == ValueKind::invokeValue; }
+    inline bool IsArrayValue() const { return GetValueKind() == ValueKind::arrayValue; }
     virtual BoolValue* ToBoolValue(EvaluationContext& context) = 0;
     virtual Value* Convert(ValueKind kind, EvaluationContext& context) = 0;
     virtual otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context);
@@ -46,11 +46,21 @@ public:
     void Read(Reader& reader) override;
     void Resolve(SymbolTable& symbolTable) override;
     TypeSymbol* GetType() const { return type; }
-    void SetType(TypeSymbol* type_) { type = type_; }
+    virtual Value* Clone() const = 0;
 private:
     TypeSymbol* type;
     util::uuid typeId;
+    friend class EvaluationContext;
+    friend std::unique_ptr<Value> CloneAndSetType(Value* value, TypeSymbol* type);
+    void SetType(TypeSymbol* type_) { type = type_; }
 };
+
+std::unique_ptr<Value> CloneAndSetType(Value* value, TypeSymbol* type)
+{
+    std::unique_ptr<Value> clone(value->Clone());
+    clone->SetType(type);
+    return clone;
+}
 
 class BoolValue : public Value
 {
@@ -60,13 +70,14 @@ public:
     BoolValue(bool value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "bool value"; }
     std::string SymbolDocKindStr() const override { return "bool_value"; }
-    bool GetValue() const { return value; }
+    inline bool GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override { return this; }
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override { return new BoolValue(value, Rep(), GetType()); }
 private:
     bool value;
 };
@@ -86,6 +97,7 @@ public:
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override { return new IntegerValue(value, Rep(), GetType()); }
 private:
     std::int64_t value;
 };
@@ -98,13 +110,14 @@ public:
     FloatingValue(double value_, const std::u32string& rep_, TypeSymbol* type_);
     std::string SymbolKindStr() const override { return "floating value"; }
     std::string SymbolDocKindStr() const override { return "floating_value"; }
-    double GetValue() const { return value; }
+    inline double GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override { return new FloatingValue(value, Rep(), GetType()); }
 private:
     double value;
 };
@@ -121,6 +134,7 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
+    Value* Clone() const override { return new NullPtrValue(GetType()); }
 };
 
 class StringValue : public Value
@@ -128,7 +142,7 @@ class StringValue : public Value
 public:
     StringValue(TypeSymbol* type_);
     StringValue(const std::string& value_, TypeSymbol* type_);
-    const std::string & GetValue() const { return value; }
+    inline const std::string & GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     std::string SymbolKindStr() const override { return "string value"; }
@@ -137,6 +151,7 @@ public:
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override { return new StringValue(value, GetType()); }
 private:
     std::string value;
 };
@@ -146,7 +161,7 @@ class CharValue : public Value
 public:
     CharValue(TypeSymbol* type_);
     CharValue(char32_t value_, TypeSymbol* type_);
-    char32_t GetValue() const { return value; }
+    inline char32_t GetValue() const { return value; }
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     std::string SymbolKindStr() const override { return "char value"; }
@@ -155,6 +170,7 @@ public:
     void Read(Reader& reader) override;
     void Accept(Visitor& visitor) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override { return new CharValue(value, GetType()); }
 private:
     char32_t value;
 };
@@ -164,7 +180,7 @@ class SymbolValue : public Value
 public:
     SymbolValue();
     SymbolValue(Symbol* symbol_);
-    Symbol* GetSymbol() const { return symbol; }
+    inline Symbol* GetSymbol() const { return symbol; }
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     std::string SymbolKindStr() const override { return "symbol value"; }
     std::string SymbolDocKindStr() const override { return "symbol_value"; }
@@ -175,6 +191,7 @@ public:
     void Resolve(SymbolTable& symbolTable) override;
     std::u32string ToString() const override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override { return new SymbolValue(symbol); }
 private:
     Symbol* symbol;
     util::uuid symbolId;
@@ -185,7 +202,7 @@ class InvokeValue : public Value
 public:
     InvokeValue();
     InvokeValue(Value* subject_);
-    Value* Subject() const { return subject; }
+    inline Value* Subject() const { return subject; }
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     std::string SymbolKindStr() const override { return "invoke value"; }
     std::string SymbolDocKindStr() const override { return "invoke_value"; }
@@ -195,6 +212,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Resolve(SymbolTable& symbolTable) override;
     std::u32string ToString() const override;
+    Value* Clone() const override { return new InvokeValue(subject->Clone()); }
 private:
     Value* subject;
     util::uuid subjectId;
@@ -213,6 +231,7 @@ public:
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override;
 private:
     std::vector<Value*> elementValues;
 };
@@ -230,6 +249,7 @@ public:
     BoolValue* ToBoolValue(EvaluationContext& context) override;
     Value* Convert(ValueKind kind, EvaluationContext& context) override;
     otava::intermediate::Value* IrValue(Emitter& emitter, const soul::ast::SourcePos& sourcePos, Context* context) override;
+    Value* Clone() const override;
 private:
     std::vector<Value*> fieldValues;
 };

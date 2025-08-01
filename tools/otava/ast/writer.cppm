@@ -17,7 +17,7 @@ class Writer
 public:
     Writer(const std::string& fileName);
     Writer(util::BinaryStreamWriter* writerPtr_);
-    util::BinaryStreamWriter& GetBinaryStreamWriter() { return *writerPtr; }
+    inline util::BinaryStreamWriter& GetBinaryStreamWriter() { return *writerPtr; }
     void Write(const soul::ast::SourcePos& sourcePos);
     void Write(NodeKind nodeKind);
     void Write(const std::u32string& str);

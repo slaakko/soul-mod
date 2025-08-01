@@ -14,7 +14,7 @@ export namespace otava::ast {
 class XmlGeneratorVisitor : public DefaultVisitor
 {
 public:
-    std::unique_ptr<soul::xml::Element> GetElement() { return std::move(element); }
+    inline std::unique_ptr<soul::xml::Element> GetElement() { return std::move(element); }
     void BeginVisit(Node& node) override;
     void EndVisit(Node& node) override;
     void VisitIdentifier(const std::u32string& id, const soul::ast::SourcePos& sourcePos) override;

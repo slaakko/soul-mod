@@ -45,9 +45,9 @@ public:
     virtual std::expected<bool, int> EntityRef(const soul_expected::ast::SourcePos& sourcePos, const std::string& entityName);
     virtual std::expected<bool, int> Text(const soul_expected::ast::SourcePos& sourcePos, const std::string& text);
     virtual std::expected<bool, int> CDataSection(const soul_expected::ast::SourcePos& sourcePos, const std::string& cdata);
-    bool Valid() const { return error == 0; }
-    int Error() const { return error; }
-    explicit operator bool() const { return Valid(); }
+    inline bool Valid() const { return error == 0; }
+    inline int Error() const { return error; }
+    inline explicit operator bool() const { return Valid(); }
 private:
     std::expected<bool, int> ParseQualifiedName(const soul_expected::ast::SourcePos& sourcePos, const std::string& qualifiedName, std::string& localName, std::string& prefix) const;
     std::expected<std::string, int> GetNamespaceUri(const std::string& namespacePrefix, const soul_expected::ast::SourcePos& sourcePos) const;

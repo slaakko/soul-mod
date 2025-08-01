@@ -19,8 +19,8 @@ public:
     soul::rex::nfa::NfaState* MakeNfaState();
     soul::rex::symbol::Symbol* MakeChar(char32_t c);
     soul::rex::symbol::Symbol* MakeRange(char32_t start, char32_t end);
-    soul::rex::symbol::Symbol* MakeAny() { return &any; }
-    soul::rex::symbol::Symbol* MakeEpsilon() { return &epsilon; }
+    inline soul::rex::symbol::Symbol* MakeAny() { return &any; }
+    inline soul::rex::symbol::Symbol* MakeEpsilon() { return &epsilon; }
     soul::rex::symbol::Class* MakeClass();
 private:
     std::vector<soul::rex::nfa::NfaState*> nfaStates;

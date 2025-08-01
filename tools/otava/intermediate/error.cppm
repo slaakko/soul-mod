@@ -16,7 +16,7 @@ class IntermediateError : public std::runtime_error
 {
 public:
     IntermediateError(const std::string& message_);
-    const std::string& Message() const { return message; }
+    inline const std::string& Message() const { return message; }
 private:
     std::string message;
 };

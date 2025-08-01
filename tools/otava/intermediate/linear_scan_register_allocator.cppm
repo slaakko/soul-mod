@@ -16,9 +16,9 @@ class Instruction;
 
 struct LiveRange
 {
-    LiveRange() : start(-1), end(-1) {}
-    LiveRange(int start_, int end_) : start(start_), end(end_) {}
-    bool Valid() const { return start != -1 && end != -1; }
+    inline LiveRange() : start(-1), end(-1) {}
+    inline LiveRange(int start_, int end_) : start(start_), end(end_) {}
+    inline bool Valid() const { return start != -1 && end != -1; }
     int start;
     int end;
 };
@@ -32,7 +32,7 @@ inline bool operator<(const LiveRange& left, const LiveRange& right)
 
 struct LiveRangeByStart
 {
-    bool operator()(const LiveRange& left, const LiveRange& right) const
+    inline bool operator()(const LiveRange& left, const LiveRange& right) const
     {
         if (left.start < right.start) return true;
         if (left.start > right.start) return false;
@@ -42,7 +42,7 @@ struct LiveRangeByStart
 
 struct LiveRangeByEnd
 {
-    bool operator()(const LiveRange& left, const LiveRange& right) const
+    inline bool operator()(const LiveRange& left, const LiveRange& right) const
     {
         if (left.end < right.end) return true;
         if (left.end > right.end) return false;
@@ -60,9 +60,9 @@ public:
     void AddFreeRegGroupToPool(Instruction* inst);
     void RemoveFromActive(const LiveRange& range, bool integer);
     bool NoFreeRegs(bool floatingPoint) const;
-    const std::set<LiveRange, LiveRangeByStart>& LiveRanges() const { return liveRanges; }
-    const std::set<LiveRange, LiveRangeByEnd>& ActiveInteger() const { return activeInteger; }
-    const std::set<LiveRange, LiveRangeByEnd>& ActiveFP() const { return activeFP; }
+    inline const std::set<LiveRange, LiveRangeByStart>& LiveRanges() const { return liveRanges; }
+    inline const std::set<LiveRange, LiveRangeByEnd>& ActiveInteger() const { return activeInteger; }
+    inline const std::set<LiveRange, LiveRangeByEnd>& ActiveFP() const { return activeFP; }
     FrameLocation GetFrameLocation(Instruction* inst) const override;
     otava::assembly::RegisterGroup* GetRegisterGroup(Instruction* inst) const override;
     void RemoveRegisterGroup(Instruction* inst);

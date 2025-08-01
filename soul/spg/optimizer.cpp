@@ -35,8 +35,8 @@ class Optimizer : public soul::ast::spg::DefaultVisitor
 {
 public:
     Optimizer(soul::ast::spg::SwitchParser* switchParser_);
-    soul::ast::spg::Parser* GetOptimizedParser() { return optimizedParser; }
-    soul::ast::spg::SpgFile* GetOptimizedSpgFile() const { return optimizedSpgFile; }
+    inline soul::ast::spg::Parser* GetOptimizedParser() { return optimizedParser; }
+    inline soul::ast::spg::SpgFile* GetOptimizedSpgFile() const { return optimizedSpgFile; }
     void Visit(soul::ast::spg::ChoiceParser& parser) override;
     void Visit(soul::ast::spg::SequenceParser& parser) override;
     void Visit(soul::ast::spg::DifferenceParser& parser) override;

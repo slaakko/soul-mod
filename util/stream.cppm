@@ -30,7 +30,7 @@ public:
     virtual std::int64_t Tell();
     void CopyTo(Stream& destination);
     void CopyTo(Stream& destination, std::int64_t bufferSize);
-    std::int64_t Position() const { return position; }
+    inline std::int64_t Position() const { return position; }
     void SetPosition(std::int64_t position_);
     void AddObserver(StreamObserver* observer);
     void RemoveObserver(StreamObserver* observer);
@@ -59,7 +59,7 @@ public:
     void Add(Stream* stream);
     Stream* Get(int index) const;
     Stream& Back() const;
-    int Count() const { return static_cast<int>(streams.size()); }
+    inline int Count() const { return static_cast<int>(streams.size()); }
 private:
     std::vector<std::unique_ptr<Stream>> streams;
 };

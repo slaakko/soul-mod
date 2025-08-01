@@ -17,12 +17,12 @@ class Solution
 {
 public:
     Solution(const std::string& filePath_, const std::string& name_);
-    const std::string& FilePath() const { return filePath; }
-    const std::string& Name() const { return name; }
+    inline const std::string& FilePath() const { return filePath; }
+    inline const std::string& Name() const { return name; }
     void AddProjectFilePath(const std::string& projectFilePath);
-    const std::vector<std::string>& ProjectFilePaths() const { return projectFilePaths; }
+    inline const std::vector<std::string>& ProjectFilePaths() const { return projectFilePaths; }
     void AddProject(Project* project);
-    const std::vector<std::unique_ptr<Project>>& Projects() const { return projects; }
+    inline const std::vector<std::unique_ptr<Project>>& Projects() const { return projects; }
     Project* GetProject(const std::string& projectFilePath) const;
 private:
     std::string filePath;

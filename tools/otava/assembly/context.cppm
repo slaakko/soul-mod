@@ -22,11 +22,11 @@ class Context
 {
 public:
     Context();
-    void SetFile(File* file_) { file = file_; }
-    File* GetFile() const { return file; }
-    RegisterPool* GetRegisterPool() { return registerPool.get(); }
+    inline void SetFile(File* file_) { file = file_; }
+    inline File* GetFile() const { return file; }
+    inline RegisterPool* GetRegisterPool() { return registerPool.get(); }
     void ResetRegisterPool();
-    void SetCurrentFunction(Function* function) { currentFunction = function; }
+    inline void SetCurrentFunction(Function* function) { currentFunction = function; }
     Register* GetLocalReg(std::int64_t size);
     Register* GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind);
     Register* GetGlobalReg(std::int64_t size, RegisterGroupKind regGroupKind, bool used);
@@ -38,7 +38,7 @@ public:
     Value* MakeContent(Value* value);
     Value* MakeSizePrefix(std::int64_t size, Value* value);
     Value* MakeBinaryExpr(Value* left, Value* right, Operator op);
-    int GetNextJumpTabLabelId() { return jumpTabLabelCounter++; }
+    inline int GetNextJumpTabLabelId() { return jumpTabLabelCounter++; }
 private:
     Registers registers;
     File* file;

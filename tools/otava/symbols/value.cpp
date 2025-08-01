@@ -653,6 +653,16 @@ otava::intermediate::Value* ArrayValue::IrValue(Emitter& emitter, const soul::as
     return emitter.EmitArrayValue(elements, arrayType);
 }
 
+Value* ArrayValue::Clone() const
+{
+    ArrayValue* clone = new ArrayValue(GetType());
+    for (Value* elementValue : elementValues)
+    {
+        clone->AddElementValue(elementValue->Clone());
+    }
+    return clone;
+}
+
 StructureValue::StructureValue(TypeSymbol* type_) : Value(SymbolKind::structureValueSymbol, std::u32string(), type_)
 {
 }
@@ -711,6 +721,16 @@ otava::intermediate::Value* StructureValue::IrValue(Emitter& emitter, const soul
         fields.push_back(fieldValue->IrValue(emitter, sourcePos, context));
     }
     return emitter.EmitStructureValue(fields, structureType);
+}
+
+Value* StructureValue::Clone() const
+{
+    StructureValue* clone = new StructureValue(GetType());
+    for (Value* fieldValue : fieldValues)
+    {
+        clone->AddFieldValue(fieldValue->Clone());
+    }
+    return clone;
 }
 
 EvaluationContext::EvaluationContext(SymbolTable& symbolTable_) : 

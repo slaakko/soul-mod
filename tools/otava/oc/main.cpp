@@ -15,6 +15,7 @@ import otava.symbols.compound.type.symbol;
 import otava.symbols.conversion.table;
 import otava.symbols.type.symbol;
 import otava.parser.recorded.parse;
+import otava.opt;
 import soul.lexer.file.map;
 import util.init.done;
 import util.unicode;
@@ -230,6 +231,10 @@ int main(int argc, const char** argv)
         if (setSeed)
         {
             util::set_rand_seed(0);
+        }
+        if (optLevel != -1)
+        {
+            otava::optimizer::Optimizer::Instance().SetOptimizations(std::to_string(optLevel));
         }
         for (const auto& file : files)
         {

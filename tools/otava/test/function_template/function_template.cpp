@@ -1,4 +1,7 @@
-import std.core;
+import std;
+import foo;
+import bar;
+import bazz;
 
 template<class T>
 const T& min(const T& x, const T& y)
@@ -10,5 +13,7 @@ const T& min(const T& x, const T& y)
 int main()
 {
     int r = min(1, 2);
+    bar();
+    bazz();
 	return 0;
 }

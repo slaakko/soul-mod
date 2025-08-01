@@ -16,7 +16,7 @@ class ExportModule
 {
 public:
     ExportModule(const std::string& moduleName_);
-    const std::string& ModuleName() const { return moduleName; }
+    inline const std::string& ModuleName() const { return moduleName; }
 private:
     std::string moduleName;
 };
@@ -30,8 +30,8 @@ class Import
 {
 public:
     Import(const std::string& moduleName_, ImportPrefix prefix_);
-    const std::string& ModuleName() const { return moduleName; }
-    ImportPrefix Prefix() const { return prefix; }
+    inline const std::string& ModuleName() const { return moduleName; }
+    inline ImportPrefix Prefix() const { return prefix; }
 private:
     std::string moduleName;
     ImportPrefix prefix;
@@ -50,12 +50,12 @@ class Node
 public:
     Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
     virtual ~Node();
-    NodeKind Kind() const { return kind; }
-    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    Node* Parent() const { return parent; }
-    void SetParent(Node* parent_) { parent = parent_; }
-    bool IsMemberVariableNode() const { return kind == NodeKind::memberVariableNode; }
-    bool IsNamespaceNode() const { return kind == NodeKind::namespaceNode; }
+    inline NodeKind Kind() const { return kind; }
+    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline Node* Parent() const { return parent; }
+    inline void SetParent(Node* parent_) { parent = parent_; }
+    inline bool IsMemberVariableNode() const { return kind == NodeKind::memberVariableNode; }
+    inline bool IsNamespaceNode() const { return kind == NodeKind::namespaceNode; }
     bool IsGlobalNamespace() const;
     virtual void Accept(Visitor& visitor) = 0;
 private:
@@ -68,7 +68,7 @@ class ForwardClassDeclarationNode : public Node
 {
 public:
     ForwardClassDeclarationNode(const soul::ast::SourcePos& sourcePos_, const std::string& classId_);
-    const std::string& ClassId() const { return classId; }
+    inline const std::string& ClassId() const { return classId; }
     void Accept(Visitor& visitor) override;
 private:
     std::string classId;
@@ -78,8 +78,8 @@ class UsingAliasNode : public Node
 {
 public:
     UsingAliasNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_, const std::string& qualifiedCppId_);
-    const std::string& Id() const { return id; }
-    const std::string& QualifiedCppId() const { return qualifiedCppId; }
+    inline const std::string& Id() const { return id; }
+    inline const std::string& QualifiedCppId() const { return qualifiedCppId; }
     void Accept(Visitor& visitor) override;
 private:
     std::string id;
@@ -250,7 +250,7 @@ class EnumConstantNode : public Node
 {
 public:
     EnumConstantNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_);
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
     void Accept(Visitor& visitor) override;
 private:
     std::string id;
@@ -260,9 +260,9 @@ class EnumTypeNode : public TypeNode
 {
 public:
     EnumTypeNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_);
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
     void AddEnumConstant(EnumConstantNode* enumConstant);
-    const std::vector<std::unique_ptr<EnumConstantNode>>& EnumConstants() const { return enumConstants; }
+    inline const std::vector<std::unique_ptr<EnumConstantNode>>& EnumConstants() const { return enumConstants; }
     void Accept(Visitor& visitor) override;
 private:
     std::string id;
@@ -273,7 +273,7 @@ class ClassIdNode : public TypeNode
 {
 public:
     ClassIdNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_);
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
     void Accept(Visitor& visitor) override;
 private:
     std::string id;
@@ -283,7 +283,7 @@ class PointerTypeNode : public TypeNode
 {
 public:
     PointerTypeNode(const soul::ast::SourcePos& sourcePos_, TypeNode* pointedToType_);
-    TypeNode* PointedToType() const { return pointedToType.get(); }
+    inline TypeNode* PointedToType() const { return pointedToType.get(); }
     void Accept(Visitor& visitor) override;
 private:
     std::unique_ptr<TypeNode> pointedToType;
@@ -293,7 +293,7 @@ class ArrayTypeNode : public TypeNode
 {
 public:
     ArrayTypeNode(const soul::ast::SourcePos& sourcePos_, TypeNode* elementType_);
-    TypeNode* ElementType() const { return elementType.get(); }
+    inline TypeNode* ElementType() const { return elementType.get(); }
     void Accept(Visitor& visitor) override;
 private:
     std::unique_ptr<TypeNode> elementType;
@@ -303,8 +303,8 @@ class MemberVariableNode : public Node
 {
 public:
     MemberVariableNode(const soul::ast::SourcePos& sourcePos_, TypeNode* type_, const std::string& id_);
-    TypeNode* Type() const { return type.get(); }
-    const std::string& Id() const { return id; }
+    inline TypeNode* Type() const { return type.get(); }
+    inline const std::string& Id() const { return id; }
     void Accept(Visitor& visitor) override;
 private:
     std::unique_ptr<TypeNode> type;
@@ -315,9 +315,9 @@ class CppBlockNode : public Node
 {
 public:
     CppBlockNode(const soul::ast::SourcePos& sourcePos_, const std::string& cppText_);
-    const std::string& CppText() const { return cppText; }
-    bool Implementation() const { return implementation; }
-    void SetImplementation() { implementation = true; }
+    inline const std::string& CppText() const { return cppText; }
+    inline bool Implementation() const { return implementation; }
+    inline void SetImplementation() { implementation = true; }
     void Accept(Visitor& visitor) override;
 private:
     std::string cppText;
@@ -328,11 +328,11 @@ class ClassNode : public Node
 {
 public:
     ClassNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_);
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
     void AddNode(Node* node);
-    const std::vector<std::unique_ptr<Node>>& Nodes() const { return nodes; }
+    inline const std::vector<std::unique_ptr<Node>>& Nodes() const { return nodes; }
     void SetBaseClass(const std::string& baseClassId_);
-    const std::string& BaseClassId() const { return baseClassId; }
+    inline const std::string& BaseClassId() const { return baseClassId; }
     std::string FullClassName() const;
     void Accept(Visitor& visitor) override;
 private:
@@ -345,10 +345,10 @@ class NamespaceNode : public Node
 {
 public:
     NamespaceNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_);
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
     void AddNode(Node* node);
-    const std::vector<std::unique_ptr<Node>>& Nodes() const { return nodes; }
-    bool IsGlobal() const { return id.empty(); }
+    inline const std::vector<std::unique_ptr<Node>>& Nodes() const { return nodes; }
+    inline bool IsGlobal() const { return id.empty(); }
     void Accept(Visitor& visitor) override;
 private:
     std::string id;
@@ -360,10 +360,10 @@ class SourceFileNode : public Node
 public:
     SourceFileNode(const soul::ast::SourcePos& sourcePos_);
     void SetModule(ExportModule* module_);
-    ExportModule* Module() const { return module.get(); }
+    inline ExportModule* Module() const { return module.get(); }
     void AddImport(Import* import);
-    const std::vector<std::unique_ptr<Import>>& Imports() const { return imports; }
-    NamespaceNode* GlobalNs() { return &globalNs; }
+    inline const std::vector<std::unique_ptr<Import>>& Imports() const { return imports; }
+    inline NamespaceNode* GlobalNs() { return &globalNs; }
     void Accept(Visitor& visitor) override;
 private:
     std::unique_ptr<ExportModule> module;

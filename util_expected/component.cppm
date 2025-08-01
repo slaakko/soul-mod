@@ -16,12 +16,12 @@ class Component
 public:
     Component();
     virtual ~Component();
-    Container* GetContainer() const { return container; }
-    void SetContainer(Container* container_) { container = container_; }
-    Component* NextSibling() const { return nextSibling; }
-    void SetNextSibling(Component* nextSibling_) { nextSibling = nextSibling_; }
-    Component* PrevSibling() const { return prevSibling; }
-    void SetPrevSibling(Component* prevSibling_) { prevSibling = prevSibling_; }
+    inline Container* GetContainer() const { return container; }
+    inline void SetContainer(Container* container_) { container = container_; }
+    inline Component* NextSibling() const { return nextSibling; }
+    inline void SetNextSibling(Component* nextSibling_) { nextSibling = nextSibling_; }
+    inline Component* PrevSibling() const { return prevSibling; }
+    inline void SetPrevSibling(Component* prevSibling_) { prevSibling = prevSibling_; }
     void LinkBefore(Component* component)
     {
         if (prevSibling)
@@ -64,10 +64,10 @@ class Container
 public:
     Container(Component* parent_);
     virtual ~Container();
-    bool IsEmpty() const { return firstChild == nullptr; }
-    Component* Parent() const { return parent; }
-    Component* FirstChild() const { return firstChild; }
-    Component* LastChild() const { return lastChild; }
+    inline bool IsEmpty() const { return firstChild == nullptr; }
+    inline Component* Parent() const { return parent; }
+    inline Component* FirstChild() const { return firstChild; }
+    inline Component* LastChild() const { return lastChild; }
     void AddChild(Component* child);
     std::unique_ptr<Component> RemoveChild(Component* child);
     void InsertBefore(Component* child, Component* before);

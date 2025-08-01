@@ -26,13 +26,13 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    void SetUsingPrefix(Node* usingPrefix_) { usingPrefix.reset(usingPrefix_); }
-    Node* UsingPrefix() const { return usingPrefix.get(); }
+    inline void SetUsingPrefix(Node* usingPrefix_) { usingPrefix.reset(usingPrefix_); }
+    inline Node* UsingPrefix() const { return usingPrefix.get(); }
     void SetBracketPositions(const soul::ast::SourcePos& lbPos1_, const soul::ast::SourcePos& lbPos2_, const soul::ast::SourcePos& rbPos1_, const soul::ast::SourcePos& rbPos2_);
-    const soul::ast::SourcePos& LBracketPos1() const { return lbPos1; }
-    const soul::ast::SourcePos& LBracketPos2() const { return lbPos2; }
-    const soul::ast::SourcePos& RBracketPos1() const { return rbPos1; }
-    const soul::ast::SourcePos& RBracketPos2() const { return rbPos2; }
+    inline const soul::ast::SourcePos& LBracketPos1() const { return lbPos1; }
+    inline const soul::ast::SourcePos& LBracketPos2() const { return lbPos2; }
+    inline const soul::ast::SourcePos& RBracketPos1() const { return rbPos1; }
+    inline const soul::ast::SourcePos& RBracketPos2() const { return rbPos2; }
 private:
     std::unique_ptr<Node> usingPrefix;
     soul::ast::SourcePos lbPos1;
@@ -50,7 +50,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& ColonPos() const { return colonPos; }
+    inline const soul::ast::SourcePos& ColonPos() const { return colonPos; }
 private:
     soul::ast::SourcePos colonPos;
 };
@@ -64,8 +64,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* AttributeToken() const { return attributeToken.get(); }
-    Node* AttributeArgs() const { return attributeArgs.get(); }
+    inline Node* AttributeToken() const { return attributeToken.get(); }
+    inline Node* AttributeArgs() const { return attributeArgs.get(); }
 private:
     std::unique_ptr<Node> attributeToken;
     std::unique_ptr<Node> attributeArgs;
@@ -80,9 +80,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Ns() const { return ns.get(); }
-    Node* ColonColon() const { return colonColon.get(); }
-    Node* Identifier() const { return identifier.get(); }
+    inline Node* Ns() const { return ns.get(); }
+    inline Node* ColonColon() const { return colonColon.get(); }
+    inline Node* Identifier() const { return identifier.get(); }
 private:
     std::unique_ptr<Node> ns;
     std::unique_ptr<Node> colonColon;
@@ -98,9 +98,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* BalancedTokenSequence() const { return balancedTokenSequence.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* BalancedTokenSequence() const { return balancedTokenSequence.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> balancedTokenSequence;
     soul::ast::SourcePos lpPos;
@@ -124,7 +124,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    std::u32string Str() const override { return str; }
+    inline std::u32string Str() const override { return str; }
 private:
     std::u32string str;
 };
@@ -138,10 +138,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Alignment() const { return alignment.get(); }
-    Node* Ellipsis() const { return ellipsis.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* Alignment() const { return alignment.get(); }
+    inline Node* Ellipsis() const { return ellipsis.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> alignment;
     std::unique_ptr<Node> ellipsis;

@@ -2643,6 +2643,7 @@ void CodeGenerator::Visit(GlobalVariable& globalVariable)
 
 void CodeGenerator::Visit(Function& function)
 {
+    context->IncTotalFunctions();
     if (!function.IsDefined())
     {
         file.GetDeclarationSection().AddFunctionDeclaration(new otava::assembly::FunctionDeclaration(function.Name()));

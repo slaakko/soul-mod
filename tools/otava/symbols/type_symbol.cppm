@@ -22,7 +22,7 @@ class TypeSymbol : public ContainerSymbol
 public:
     TypeSymbol(SymbolKind kind_, const std::u32string& name_);
     virtual TypeSymbol* GetBaseType() { return this; }
-    bool IsCompoundType() const { return Kind() == SymbolKind::compoundTypeSymbol; }
+    inline bool IsCompoundType() const { return Kind() == SymbolKind::compoundTypeSymbol; }
     bool IsAutoTypeSymbol() const;
     bool IsPointerType() const;
     bool IsArrayType() const;
@@ -43,7 +43,7 @@ public:
     virtual bool IsIntegralType() const { return false; }
     virtual bool IsPolymorphic() const { return false; }
     virtual bool IsFunctionType() const { return false; }
-    bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
+    inline bool IsFunctionPtrType() { return IsPointerType() && PointerCount() == 1 && GetBaseType()->IsFunctionType(); }
     virtual int PointerCount() const { return 0; }
     virtual const Derivations& GetDerivations() const;
     virtual TypeSymbol* RemoveDerivations(const Derivations& sourceDerivations, Context* context);

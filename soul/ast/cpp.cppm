@@ -41,10 +41,10 @@ class Node
 {
 public:
     Node(NodeKind kind_, const soul::ast::SourcePos& sourcePos_);
-    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    NodeKind Kind() const { return kind; }
-    Node* Parent() const { return parent; }
-    void SetParent(Node* parent_) { parent = parent_; }
+    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline NodeKind Kind() const { return kind; }
+    inline Node* Parent() const { return parent; }
+    inline void SetParent(Node* parent_) { parent = parent_; }
     virtual ~Node();
     virtual Node* Clone() const = 0;
     virtual void Accept(Visitor& visitor) = 0;
@@ -62,7 +62,7 @@ class UnaryNode : public Node
 {
 public:
     UnaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* child_);
-    Node* Child() const { return child.get(); }
+    inline Node* Child() const { return child.get(); }
     void Replace(Node* node, Node* replacement) override;
 private:
     std::unique_ptr<Node> child;
@@ -72,8 +72,8 @@ class BinaryNode : public Node
 {
 public:
     BinaryNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, Node* left_, Node* right_);
-    Node* Left() const { return left.get(); }
-    Node* Right() const { return right.get(); }
+    inline Node* Left() const { return left.get(); }
+    inline Node* Right() const { return right.get(); }
     void Replace(Node* node, Node* replacement) override;
 private:
     std::unique_ptr<Node> left;
@@ -90,8 +90,8 @@ public:
     std::string ToString() const override;
     void Add(Node* node) override;
     void Replace(Node* node, Node* replacement) override;
-    const std::vector<std::unique_ptr<Node>>& Exprs() const { return exprs; }
-    int Count() const { return exprs.size(); }
+    inline const std::vector<std::unique_ptr<Node>>& Exprs() const { return exprs; }
+    inline int Count() const { return exprs.size(); }
 private:
     std::vector<std::unique_ptr<Node>> exprs;
 };
@@ -110,12 +110,12 @@ class IdExprNode : public Node
 {
 public:
     IdExprNode(const soul::ast::SourcePos& sourcePos_, const std::string& id_);
-    const std::string& Id() const { return id; }
+    inline const std::string& Id() const { return id; }
     void SetId(const std::string& id_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
-    std::string ToString() const override { return id; }
+    inline std::string ToString() const override { return id; }
 private:
     std::string id;
 };
@@ -124,7 +124,7 @@ class IndexExprNode : public UnaryNode
 {
 public:
     IndexExprNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* index_);
-    Node* Index() const { return index.get(); }
+    inline Node* Index() const { return index.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -142,7 +142,7 @@ public:
     void Write(CodeFormatter& formatter) override;
     void Add(Node* node) override;
     void Replace(Node* node, Node* replacement) override;
-    const std::vector<std::unique_ptr<Node>>& Args() const { return args; }
+    inline const std::vector<std::unique_ptr<Node>>& Args() const { return args; }
     std::string ToString() const override;
 private:
     std::vector<std::unique_ptr<Node>> args;
@@ -152,7 +152,7 @@ class MemberAccessNode : public UnaryNode
 {
 public:
     MemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_);
-    Node* Member() const { return member.get(); }
+    inline Node* Member() const { return member.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -165,7 +165,7 @@ class PtrMemberAccessNode : public UnaryNode
 {
 public:
     PtrMemberAccessNode(const soul::ast::SourcePos& sourcePos_, Node* child_, Node* member_);
-    Node* Member() const { return member.get(); }
+    inline Node* Member() const { return member.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -244,7 +244,7 @@ class PostCastNode : public UnaryNode
 {
 public:
     PostCastNode(const soul::ast::SourcePos& sourcePos_, CppCastNode* cppCastNode_, Node* type_, Node* child_);
-    CppCastNode* GetCppCastNode() const { return cppCastNode.get(); }
+    inline CppCastNode* GetCppCastNode() const { return cppCastNode.get(); }
     Node* Type() const { return type.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -289,7 +289,7 @@ class UnaryOpExprNode : public UnaryNode
 {
 public:
     UnaryOpExprNode(const soul::ast::SourcePos& sourcePos_, Operator op_, Node* child_);
-    Operator Op() const { return op; }
+    inline Operator Op() const { return op; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -314,7 +314,7 @@ class CastNode : public UnaryNode
 {
 public:
     CastNode(const soul::ast::SourcePos& sourcePos_, Node* type_, Node* child_);
-    Node* Type() const { return type.get(); }
+    inline Node* Type() const { return type.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -327,7 +327,7 @@ class BinaryOpExprNode : public BinaryNode
 {
 public:
     BinaryOpExprNode(const soul::ast::SourcePos& sourcePos_, Operator op_, Node* left_, Node* right_);
-    Operator Op() const { return op; }
+    inline Operator Op() const { return op; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -343,9 +343,9 @@ public:
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
-    Node* Condition() const { return condition.get(); }
-    Node* ThenExpr() const { return thenExpr.get(); }
-    Node* ElseExpr() const { return elseExpr.get(); }
+    inline Node* Condition() const { return condition.get(); }
+    inline Node* ThenExpr() const { return thenExpr.get(); }
+    inline Node* ElseExpr() const { return elseExpr.get(); }
     std::string ToString() const override;
 private:
     std::unique_ptr<Node> condition;
@@ -357,18 +357,18 @@ class NewNode : public Node
 {
 public:
     NewNode(const soul::ast::SourcePos& sourcePos_, bool global_);
-    bool Global() const { return global; }
-    bool Parens() const { return parens; }
-    void SetParens(bool parens_) { parens = parens_; }
-    void BeginAddToPlacement() { addToPlacement = true; }
-    void EndAddToPlacement() { addToPlacement = false; }
-    void BeginAddToInitializer() { addToInitializer = true; }
-    void EndAddToInitializer() { addToPlacement = false; }
+    inline bool Global() const { return global; }
+    inline bool Parens() const { return parens; }
+    inline void SetParens(bool parens_) { parens = parens_; }
+    inline void BeginAddToPlacement() { addToPlacement = true; }
+    inline void EndAddToPlacement() { addToPlacement = false; }
+    inline void BeginAddToInitializer() { addToInitializer = true; }
+    inline void EndAddToInitializer() { addToPlacement = false; }
     void Add(Node* node) override;
     void SetTypeId(Node* typeId_);
-    Node* TypeId() const { return typeId.get(); }
-    const std::vector<std::unique_ptr<Node>>& Placement() const { return placement; }
-    const std::vector<std::unique_ptr<Node>>& Initializer() const { return initializer; }
+    inline Node* TypeId() const { return typeId.get(); }
+    inline const std::vector<std::unique_ptr<Node>>& Placement() const { return placement; }
+    inline const std::vector<std::unique_ptr<Node>>& Initializer() const { return initializer; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -387,8 +387,8 @@ class DeleteNode : public UnaryNode
 {
 public:
     DeleteNode(const soul::ast::SourcePos& sourcePos_, bool global_, bool isArray_, Node* child_);
-    bool Global() const { return global; }
-    bool IsArray() const { return isArray; }
+    inline bool Global() const { return global; }
+    inline bool IsArray() const { return isArray; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -412,7 +412,7 @@ class LiteralNode : public Node
 {
 public:
     LiteralNode(const soul::ast::SourcePos& sourcePos_, const std::string& rep_);
-    const std::string& Rep() const { return rep; }
+    inline const std::string& Rep() const { return rep; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -432,8 +432,8 @@ class LabeledStatementNode : public StatementNode
 {
 public:
     LabeledStatementNode(const soul::ast::SourcePos& sourcePos_, const std::string& label_, StatementNode* stmt_);
-    const std::string& Label() const { return label; }
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline const std::string& Label() const { return label; }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -446,8 +446,8 @@ class CaseStatementNode : public StatementNode
 {
 public:
     CaseStatementNode(const soul::ast::SourcePos& sourcePos_, Node* caseExpr_, StatementNode* stmt_);
-    Node* CaseExpr() const { return caseExpr.get(); }
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline Node* CaseExpr() const { return caseExpr.get(); }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -460,7 +460,7 @@ class DefaultStatementNode : public StatementNode
 {
 public:
     DefaultStatementNode(const soul::ast::SourcePos& sourcePos_, StatementNode* stmt_);
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -481,7 +481,7 @@ class ExpressionStatementNode : public StatementNode
 {
 public:
     ExpressionStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_);
-    Node* Expr() const { return expr.get(); }
+    inline Node* Expr() const { return expr.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -496,7 +496,7 @@ public:
     void InsertFront(StatementNode* stmt);
     void Add(StatementNode* stmt);
     void Replace(Node* node, Node* replacement) override;
-    const std::vector<std::unique_ptr<StatementNode>>& Statements() const { return statements; };
+    inline const std::vector<std::unique_ptr<StatementNode>>& Statements() const { return statements; };
     bool IsCompoundStatementNode() const override { return true; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -509,9 +509,9 @@ class IfStatementNode : public StatementNode
 {
 public:
     IfStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* thenStmt_, StatementNode* elseStmt_);
-    Node* Cond() const { return cond.get(); }
-    StatementNode* ThenStmt() const { return thenStmt.get(); }
-    StatementNode* ElseStmt() const { return elseStmt.get(); }
+    inline Node* Cond() const { return cond.get(); }
+    inline StatementNode* ThenStmt() const { return thenStmt.get(); }
+    inline StatementNode* ElseStmt() const { return elseStmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -525,8 +525,8 @@ class SwitchStatementNode : public StatementNode
 {
 public:
     SwitchStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_);
-    Node* Cond() const { return cond.get(); }
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline Node* Cond() const { return cond.get(); }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -539,8 +539,8 @@ class WhileStatementNode : public StatementNode
 {
 public:
     WhileStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_);
-    Node* Cond() const { return cond.get(); }
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline Node* Cond() const { return cond.get(); }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -553,8 +553,8 @@ class DoStatementNode : public StatementNode
 {
 public:
     DoStatementNode(const soul::ast::SourcePos& sourcePos_, Node* cond_, StatementNode* stmt_);
-    Node* Cond() const { return cond.get(); }
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline Node* Cond() const { return cond.get(); }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -567,10 +567,10 @@ class ForStatementNode : public StatementNode
 {
 public:
     ForStatementNode(const soul::ast::SourcePos& sourcePos_, Node* init_, Node* cond_, Node* iter_, StatementNode* stmt_);
-    Node* Init() const { return init.get(); }
-    Node* Cond() const { return cond.get(); }
-    Node* Iter() const { return iter.get(); }
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline Node* Init() const { return init.get(); }
+    inline Node* Cond() const { return cond.get(); }
+    inline Node* Iter() const { return iter.get(); }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -603,7 +603,7 @@ class GotoStatementNode : public StatementNode
 {
 public:
     GotoStatementNode(const soul::ast::SourcePos& sourcePos_, const std::string& target_);
-    const std::string& Target() const { return target; }
+    inline const std::string& Target() const { return target; }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -615,7 +615,7 @@ class ReturnStatementNode : public StatementNode
 {
 public:
     ReturnStatementNode(const soul::ast::SourcePos& sourcePos_, Node* expr_);
-    Node* Expr() const { return expr.get(); }
+    inline Node* Expr() const { return expr.get(); }
     void SetExpr(Node* expr_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -633,9 +633,9 @@ public:
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
-    TypeIdNode* Type() const { return type.get(); }
-    const std::string& Declarator() const { return declarator; }
-    Node* Expression() const { return expression.get(); }
+    inline TypeIdNode* Type() const { return type.get(); }
+    inline const std::string& Declarator() const { return declarator; }
+    inline Node* Expression() const { return expression.get(); }
 private:
     std::unique_ptr<TypeIdNode> type;
     std::string declarator;
@@ -648,8 +648,8 @@ class ForRangeDeclarationNode : public Node
 {
 public:
     ForRangeDeclarationNode(const soul::ast::SourcePos& sourcePos_);
-    SimpleDeclarationNode* Declaration() const { return declaration.get(); }
-    const std::string& Declarator() const { return declarator; }
+    inline SimpleDeclarationNode* Declaration() const { return declaration.get(); }
+    inline const std::string& Declarator() const { return declarator; }
     void SetDeclarator(const std::string& declarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -663,9 +663,9 @@ class RangeForStatementNode : public StatementNode
 {
 public:
     RangeForStatementNode(const soul::ast::SourcePos& sourcePos_, ForRangeDeclarationNode* declaration_, Node* container_, StatementNode* stmt_);
-    ForRangeDeclarationNode* Declaration() const { return declaration.get(); }
-    Node* Container() const { return container.get(); }
-    StatementNode* Stmt() const { return stmt.get(); }
+    inline ForRangeDeclarationNode* Declaration() const { return declaration.get(); }
+    inline Node* Container() const { return container.get(); }
+    inline StatementNode* Stmt() const { return stmt.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -679,7 +679,7 @@ class DeclarationStatementNode : public StatementNode
 {
 public:
     DeclarationStatementNode(const soul::ast::SourcePos& sourcePos_, Node* declaration_);
-    Node* Declaration() const { return declaration.get(); }
+    inline Node* Declaration() const { return declaration.get(); }
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
@@ -694,7 +694,7 @@ public:
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void Write(CodeFormatter& formatter) override;
-    Node* Symbol() const { return symbol.get(); }
+    inline Node* Symbol() const { return symbol.get(); }
 private:
     std::unique_ptr<Node> symbol;
 };
@@ -712,8 +712,8 @@ class AssignInitNode : public Node
 {
 public:
     AssignInitNode(const soul::ast::SourcePos& sourcePos_, Node* assignmentExpr_);
-    Node* AssignmentExpr() const { return assignmentExpr.get(); }
-    const std::vector<std::unique_ptr<AssignInitNode>>& SubInits() const { return subInits; }
+    inline Node* AssignmentExpr() const { return assignmentExpr.get(); }
+    inline const std::vector<std::unique_ptr<AssignInitNode>>& SubInits() const { return subInits; }
     void Add(AssignInitNode* subInit);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -728,8 +728,8 @@ class InitializerNode : public Node
 {
 public:
     InitializerNode(const soul::ast::SourcePos& sourcePos_, AssignInitNode* assignInit_);
-    AssignInitNode* GetAssignInit() const { return assignInit.get(); }
-    const std::vector<std::unique_ptr<Node>>& GetExpressionList() const { return expressionList; }
+    inline AssignInitNode* GetAssignInit() const { return assignInit.get(); }
+    inline const std::vector<std::unique_ptr<Node>>& GetExpressionList() const { return expressionList; }
     void Add(Node* expr) override;
     void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
@@ -744,8 +744,8 @@ class InitDeclaratorNode : public Node
 {
 public:
     InitDeclaratorNode(const soul::ast::SourcePos& sourcePos_, const std::string& declarator_, InitializerNode* initializer_);
-    const std::string& Declarator() const { return declarator; }
-    InitializerNode* GetInitializer() const { return initializer.get(); }
+    inline const std::string& Declarator() const { return declarator; }
+    inline InitializerNode* GetInitializer() const { return initializer.get(); }
     void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
     Node* Clone() const override;
@@ -759,7 +759,7 @@ class InitDeclaratorListNode : public Node
 {
 public:
     InitDeclaratorListNode(const soul::ast::SourcePos& sourcePos_);
-    const std::vector<std::unique_ptr<InitDeclaratorNode>>& InitDeclarators() const { return initDeclarators; }
+    inline const std::vector<std::unique_ptr<InitDeclaratorNode>>& InitDeclarators() const { return initDeclarators; }
     void Add(InitDeclaratorNode* initDeclarator);
     void Write(CodeFormatter& formatter) override;
     std::string ToString() const override;
@@ -773,7 +773,7 @@ class DeclSpecifierNode : public Node
 {
 public:
     DeclSpecifierNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_);
-    const std::string& Name() const { return name; }
+    inline const std::string& Name() const { return name; }
 private:
     std::string name;
 };
@@ -820,9 +820,9 @@ class TypeNameNode : public TypeSpecifierNode
 public:
     TypeNameNode(const soul::ast::SourcePos& sourcePos_, const std::string& name_);
     void AddTemplateArgument(Node* templateArgument);
-    const std::vector<std::unique_ptr<Node>>& TemplateArgs() const { return templateArguments; }
-    bool IsTemplate() const { return isTemplate; }
-    void SetTemplate() { isTemplate = true; }
+    inline const std::vector<std::unique_ptr<Node>>& TemplateArgs() const { return templateArguments; }
+    inline bool IsTemplate() const { return isTemplate; }
+    inline void SetTemplate() { isTemplate = true; }
     std::string ToString() const override;
     void Write(CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
@@ -837,7 +837,7 @@ class TypeNode : public Node
 public:
     TypeNode(const soul::ast::SourcePos& sourcePos_);
     void Add(TypeSpecifierNode* typeSpecifier);
-    const std::vector<std::unique_ptr<TypeSpecifierNode>>& TypeSpecifiers() const { return typeSpecifiers; }
+    inline const std::vector<std::unique_ptr<TypeSpecifierNode>>& TypeSpecifiers() const { return typeSpecifiers; }
     std::string ToString() const override;
     void Write(CodeFormatter& formatter) override;
     Node* Clone() const override;
@@ -861,8 +861,8 @@ class TypeIdNode : public Node
 public:
     TypeIdNode(const soul::ast::SourcePos& sourcePos_);
     void Add(TypeSpecifierNode* typeSpecifier);
-    const std::vector<std::unique_ptr<TypeSpecifierNode>>& TypeSpecifiers() const { return typeSpecifiers; }
-    const std::string& Declarator() const { return declarator; }
+    inline const std::vector<std::unique_ptr<TypeSpecifierNode>>& TypeSpecifiers() const { return typeSpecifiers; }
+    inline const std::string& Declarator() const { return declarator; }
     void SetDeclarator(const std::string& declarator_);
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -880,9 +880,9 @@ class SimpleDeclarationNode : public Node
 public:
     SimpleDeclarationNode(const soul::ast::SourcePos& sourcePos_);
     void Add(DeclSpecifierNode* declSpecifier);
-    const std::vector<std::unique_ptr<DeclSpecifierNode>>& DeclSpecifiers() const { return declSpecifiers; }
+    inline const std::vector<std::unique_ptr<DeclSpecifierNode>>& DeclSpecifiers() const { return declSpecifiers; }
     void SetInitDeclaratorList(InitDeclaratorListNode* initDeclaratorList_);
-    InitDeclaratorListNode* GetInitDeclaratorList() const { return initDeclaratorList.get(); }
+    inline InitDeclaratorListNode* GetInitDeclaratorList() const { return initDeclaratorList.get(); }
     void Write(CodeFormatter& formatter) override;
     void Accept(Visitor& visitor) override;
     Node* Clone() const override;
@@ -895,7 +895,7 @@ class UsingObjectNode : public Node
 {
 public:
     UsingObjectNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_);
-    const std::string& Name() const { return name; }
+    inline const std::string& Name() const { return name; }
 private:
     std::string name;
 };
@@ -916,7 +916,7 @@ class UsingDeclarationNode : public UsingObjectNode
 {
 public:
     UsingDeclarationNode(const soul::ast::SourcePos& sourcePos_, const std::string& usingId_);
-    const std::string& UsingId() const { return usingId; }
+    inline const std::string& UsingId() const { return usingId; }
     void Write(CodeFormatter& formatter) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -928,7 +928,7 @@ class UsingDirectiveNode : public UsingObjectNode
 {
 public:
     UsingDirectiveNode(const soul::ast::SourcePos& sourcePos_, const std::string& usingNs_);
-    const std::string& UsingNs() const { return usingNs; }
+    inline const std::string& UsingNs() const { return usingNs; }
     void Write(CodeFormatter& formatter) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
@@ -1056,9 +1056,9 @@ class CodeEvaluationVisitor : public DefaultVisitor
 {
 public:
     CodeEvaluationVisitor();
-    bool HasReturn() const { return hasReturn; }
-    bool HasPass() const { return hasPass; }
-    bool HasVars() const { return hasVars; }
+    inline bool HasReturn() const { return hasReturn; }
+    inline bool HasPass() const { return hasPass; }
+    inline bool HasVars() const { return hasVars; }
     void Visit(ReturnStatementNode& node) override;
     void Visit(IdExprNode& node) override;
 private:

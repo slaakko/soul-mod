@@ -16,12 +16,12 @@ class Component
 public:
     Component();
     virtual ~Component();
-    Container* GetContainer() const { return container; }
-    void SetContainer(Container* container_) { container = container_; }
-    Component* NextSibling() const { return nextSibling; }
-    void SetNextSibling(Component* nextSibling_) { nextSibling = nextSibling_; }
-    Component* PrevSibling() const { return prevSibling; }
-    void SetPrevSibling(Component* prevSibling_) { prevSibling = prevSibling_; }
+    inline Container* GetContainer() const { return container; }
+    inline void SetContainer(Container* container_) { container = container_; }
+    inline Component* NextSibling() const { return nextSibling; }
+    inline void SetNextSibling(Component* nextSibling_) { nextSibling = nextSibling_; }
+    inline Component* PrevSibling() const { return prevSibling; }
+    inline void SetPrevSibling(Component* prevSibling_) { prevSibling = prevSibling_; }
     void LinkBefore(Component* component)
     {
         if (prevSibling)

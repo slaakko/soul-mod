@@ -92,41 +92,41 @@ public:
     virtual std::int64_t Size() const = 0;
     virtual std::int64_t Alignment() const = 0;
     virtual otava::assembly::OpCode DataOpCode() const { return otava::assembly::OpCode::DB; }
-    TypeKind Kind() const { return kind; }
-    bool IsFundamentalType() const { return kind == TypeKind::fundamentalType; }
-    bool IsVoidType() const { return id == voidTypeId; }
-    bool IsBooleanType() const { return id == boolTypeId; }
-    bool IsLongType() const { return id == longTypeId; }
-    bool IsCompoundType() const { return !IsFundamentalType(); }
-    bool IsArithmeticType() const { return IsIntegerType() || IsFloatingPointType(); }
+    inline TypeKind Kind() const { return kind; }
+    inline bool IsFundamentalType() const { return kind == TypeKind::fundamentalType; }
+    inline bool IsVoidType() const { return id == voidTypeId; }
+    inline bool IsBooleanType() const { return id == boolTypeId; }
+    inline bool IsLongType() const { return id == longTypeId; }
+    inline bool IsCompoundType() const { return !IsFundamentalType(); }
+    inline bool IsArithmeticType() const { return IsIntegerType() || IsFloatingPointType(); }
     bool IsIntegerType() const;
     bool IsUnsignedType() const;
     bool IsSignedType() const;
     bool IsFloatingPointType() const;
-    bool IsFloatType() const { return id == floatTypeId; }
-    bool IsDoubleType() const { return id == doubleTypeId; }
-    bool IsPointerType() const { return kind == TypeKind::pointerType; }
+    inline bool IsFloatType() const { return id == floatTypeId; }
+    inline bool IsDoubleType() const { return id == doubleTypeId; }
+    inline bool IsPointerType() const { return kind == TypeKind::pointerType; }
     Type* AddPointer(Context* context) const;
     Type* RemovePointer(const soul::ast::Span& span, Context* context) const;
-    bool IsFwdDeclaredStructureType() const { return kind == TypeKind::fwdDeclaredStructureType; }
+    inline bool IsFwdDeclaredStructureType() const { return kind == TypeKind::fwdDeclaredStructureType; }
     virtual void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context);
-    std::int32_t NextTypeId() { return nextTypeId++; }
+    inline std::int32_t NextTypeId() { return nextTypeId++; }
     virtual std::string Name() const = 0;
-    bool IsStructureType() const { return kind == TypeKind::structureType; }
+    inline bool IsStructureType() const { return kind == TypeKind::structureType; }
     StructureType* GetStructurePointeeType(const soul::ast::Span& span, Context* context) const;
     ArrayType* GetArrayPointeeType(const soul::ast::Span& span, Context* context) const;
-    bool IsArrayType() const { return kind == TypeKind::arrayType; }
-    bool IsFunctionType() const { return kind == TypeKind::functionType; }
+    inline bool IsArrayType() const { return kind == TypeKind::arrayType; }
+    inline bool IsFunctionType() const { return kind == TypeKind::functionType; }
     bool IsFunctionPtrType() const;
     virtual bool IsWeakType() const { return true; }
     virtual void Add(Types* types, Context* context);
     virtual void Resolve(Types* types, Context* context);
-    const soul::ast::Span& Span() const { return span; }
-    std::int32_t Id() const { return id; }
+    inline const soul::ast::Span& Span() const { return span; }
+    inline std::int32_t Id() const { return id; }
     void Write(util::CodeFormatter& formatter);
     virtual void WriteDeclaration(util::CodeFormatter& formatter);
-    Value* DefaultValue() { return defaultValue; }
-    void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
+    inline Value* DefaultValue() { return defaultValue; }
+    inline void SetDefaultValue(Value* defaultValue_) { defaultValue = defaultValue_; }
     virtual Value* MakeDefaultValue(Context& context) const { return nullptr; }
     TypeRef GetTypeRef();
     virtual Type* BaseType() const { return const_cast<Type*>(this); }
@@ -270,10 +270,10 @@ class TypeRef
 public:
     TypeRef();
     TypeRef(const soul::ast::Span& span_, std::int32_t id_);
-    const soul::ast::Span& Span() const { return span; }
-    std::int32_t Id() const { return id; }
-    void SetType(Type* type_) { type = type_; }
-    Type* GetType() const { return type; }
+    inline const soul::ast::Span& Span() const { return span; }
+    inline std::int32_t Id() const { return id; }
+    inline void SetType(Type* type_) { type = type_; }
+    inline Type* GetType() const { return type; }
 private:
     soul::ast::Span span;
     std::int32_t id;
@@ -296,9 +296,9 @@ public:
     std::int64_t Alignment() const override { return 8; }
     std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
     bool IsWeakType() const override;
-    int FieldCount() const { return fieldTypeRefs.size(); }
-    const std::vector<TypeRef>& FieldTypeRefs() const { return fieldTypeRefs; }
-    Type* FieldType(int i) const { return fieldTypeRefs[i].GetType(); }
+    inline int FieldCount() const { return fieldTypeRefs.size(); }
+    inline const std::vector<TypeRef>& FieldTypeRefs() const { return fieldTypeRefs; }
+    inline Type* FieldType(int i) const { return fieldTypeRefs[i].GetType(); }
     std::int64_t GetFieldOffset(std::int64_t index) const;
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
@@ -319,7 +319,7 @@ public:
     std::int64_t Size() const override { return -1; }
     std::int64_t Alignment() const override { return -1; }
     std::string Name() const override { return "FWD_DECLARED_STRUCTURE_TYPE"; }
-    const util::uuid& Id() const { return id; }
+    inline const util::uuid& Id() const { return id; }
 private:
     util::uuid id;
 };
@@ -335,9 +335,9 @@ public:
     std::int64_t Alignment() const override { return 8; }
     std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
     bool IsWeakType() const override;
-    std::int64_t ElementCount() const { return elementCount; }
-    const TypeRef& ElementTypeRef() const { return elementTypeRef; }
-    Type* ElementType() const { return elementTypeRef.GetType(); }
+    inline std::int64_t ElementCount() const { return elementCount; }
+    inline const TypeRef& ElementTypeRef() const { return elementTypeRef; }
+    inline Type* ElementType() const { return elementTypeRef.GetType(); }
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     Value* MakeDefaultValue(Context& context) const override;
 private:
@@ -353,14 +353,14 @@ public:
     void Add(Types* types, Context* context) override;
     void Resolve(Types* types, Context* context) override;
     bool IsWeakType() const override;
-    int Arity() const { return paramTypeRefs.size(); }
+    inline int Arity() const { return paramTypeRefs.size(); }
     std::int64_t Size() const override { return 8; }
     std::int64_t Alignment() const override { return 8; }
     std::string Name() const override { return "$T" + std::to_string(Id() - userTypeId); }
-    const TypeRef& ReturnTypeRef() const { return returnTypeRef; }
-    Type* ReturnType() const { return returnTypeRef.GetType(); }
-    const std::vector<TypeRef>& ParamTypeRefs() const { return paramTypeRefs; }
-    Type* ParamType(int index) const { return paramTypeRefs[index].GetType(); }
+    inline const TypeRef& ReturnTypeRef() const { return returnTypeRef; }
+    inline Type* ReturnType() const { return returnTypeRef.GetType(); }
+    inline const std::vector<TypeRef>& ParamTypeRefs() const { return paramTypeRefs; }
+    inline Type* ParamType(int index) const { return paramTypeRefs[index].GetType(); }
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     bool IsUnaryOperationType() const;
 private:
@@ -375,10 +375,10 @@ public:
     std::string Name() const override;
     std::int64_t Size() const override { return 8; }
     std::int64_t Alignment() const override { return 8; }
-    std::int8_t PointerCount() const { return pointerCount; }
-    const TypeRef& BaseTypeRef() const { return baseTypeRef; }
-    TypeRef& BaseTypeRef() { return baseTypeRef; }
-    Type* BaseType() const override { return baseTypeRef.GetType(); }
+    inline std::int8_t PointerCount() const { return pointerCount; }
+    inline const TypeRef& BaseTypeRef() const { return baseTypeRef; }
+    inline TypeRef& BaseTypeRef() { return baseTypeRef; }
+    inline Type* BaseType() const override { return baseTypeRef.GetType(); }
     Value* MakeDefaultValue(Context& context) const override;
 private:
     std::int8_t pointerCount;
@@ -394,8 +394,8 @@ public:
     Types(const Types&) = delete;
     void Init();
     Types& operator=(const Types&) = delete;
-    Context* GetContext() const { return context; }
-    void SetContext(Context* context_) { context = context_; }
+    inline Context* GetContext() const { return context; }
+    inline void SetContext(Context* context_) { context = context_; }
     void AddStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     void AddArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
     void AddFunctionType(const soul::ast::Span& span, std::int32_t typeId, const TypeRef& returnTypeRef, const std::vector<TypeRef>& paramTypeRefs);
@@ -405,18 +405,18 @@ public:
     Type* Get(std::int32_t id) const;
     void Map(Type* type);
     void VisitTypeDeclarations(Visitor& visitor);
-    VoidType* GetVoidType() const { return const_cast<VoidType*>(&voidType); }
-    BoolType* GetBoolType() const { return const_cast<BoolType*>(&boolType); }
-    SByteType* GetSByteType() const { return const_cast<SByteType*>(&sbyteType); }
-    ByteType* GetByteType() const { return const_cast<ByteType*>(&byteType); }
-    ShortType* GetShortType() const { return const_cast<ShortType*>(&shortType); }
-    UShortType* GetUShortType() const { return const_cast<UShortType*>(&ushortType); }
-    IntType* GetIntType() const { return const_cast<IntType*>(&intType); }
-    UIntType* GetUIntType() const { return const_cast<UIntType*>(&uintType); }
-    LongType* GetLongType() const { return const_cast<LongType*>(&longType); }
-    ULongType* GetULongType() const { return const_cast<ULongType*>(&ulongType); }
-    FloatType* GetFloatType() const { return const_cast<FloatType*>(&floatType); }
-    DoubleType* GetDoubleType() const { return const_cast<DoubleType*>(&doubleType); }
+    inline VoidType* GetVoidType() const { return const_cast<VoidType*>(&voidType); }
+    inline BoolType* GetBoolType() const { return const_cast<BoolType*>(&boolType); }
+    inline SByteType* GetSByteType() const { return const_cast<SByteType*>(&sbyteType); }
+    inline ByteType* GetByteType() const { return const_cast<ByteType*>(&byteType); }
+    inline ShortType* GetShortType() const { return const_cast<ShortType*>(&shortType); }
+    inline UShortType* GetUShortType() const { return const_cast<UShortType*>(&ushortType); }
+    inline IntType* GetIntType() const { return const_cast<IntType*>(&intType); }
+    inline UIntType* GetUIntType() const { return const_cast<UIntType*>(&uintType); }
+    inline LongType* GetLongType() const { return const_cast<LongType*>(&longType); }
+    inline ULongType* GetULongType() const { return const_cast<ULongType*>(&ulongType); }
+    inline FloatType* GetFloatType() const { return const_cast<FloatType*>(&floatType); }
+    inline DoubleType* GetDoubleType() const { return const_cast<DoubleType*>(&doubleType); }
     PointerType* MakePointerType(const soul::ast::Span& span, std::int32_t baseTypeId, std::int8_t pointerCount, Context* context);
     StructureType* GetStructureType(const soul::ast::Span& span, std::int32_t typeId, const std::vector<TypeRef>& fieldTypeRefs);
     ArrayType* GetArrayType(const soul::ast::Span& span, std::int32_t typeId, std::int64_t size, const TypeRef& elementTypeRef);
@@ -425,7 +425,7 @@ public:
     FwdDeclaredStructureType* MakeFwdDeclaredStructureType(const util::uuid& id, std::int32_t typeId);
     void AddFwdDependentType(FwdDeclaredStructureType* fwdType, Type* type);
     void ResolveForwardReferences(const util::uuid& id, StructureType* structureType);
-    std::int32_t NextTypeId() { return nextTypeId++; }
+    inline std::int32_t NextTypeId() { return nextTypeId++; }
     void Write(util::CodeFormatter& formatter);
 private:
     Type* GetFundamentalType(std::int32_t id) const;

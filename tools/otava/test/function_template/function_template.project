@@ -1,3 +1,6 @@
 project function_template;
 target=program;
+interface <foo.cppm>;
+interface <bar.cppm>;
+interface <bazz.cppm>;
 source <function_template.cpp>;

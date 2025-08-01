@@ -25,7 +25,7 @@ public:
     std::expected<bool, int> WriteFail() override;
     std::expected<bool, int> WriteElement(const std::string& elementName, const std::string& elementContent);
     std::expected<bool, int> Write(const std::string& s);
-    util::CodeFormatter& Formatter() { return formatter; }
+    inline util::CodeFormatter& Formatter() { return formatter; }
 private:
     util::CodeFormatter formatter;
 };

@@ -11,8 +11,8 @@ export namespace soul::parser {
 
 struct Match
 {
-    Match(bool hit_) : hit(hit_), value(nullptr) {}
-    Match(bool hit_, void* value_) : hit(hit_), value(value_) {}
+    inline Match(bool hit_) : hit(hit_), value(nullptr) {}
+    inline Match(bool hit_, void* value_) : hit(hit_), value(value_) {}
     bool hit;
     void* value;
 };

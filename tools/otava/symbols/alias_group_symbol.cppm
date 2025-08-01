@@ -22,7 +22,7 @@ public:
     Symbol* GetSingleSymbol() override;
     void AddAliasTypeSymbol(AliasTypeSymbol* aliasTypeSymbol);
     AliasTypeSymbol* GetAliasTypeSymbol(int arity) const;
-    const std::vector<AliasTypeSymbol*>& AliasTypeSymbols() const { return aliasTypeSymbols; }
+    inline const std::vector<AliasTypeSymbol*>& AliasTypeSymbols() const { return aliasTypeSymbols; }
     AliasTypeSymbol* GetBestMatchingAliasType(const std::vector<Symbol*>& templateArgs) const;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

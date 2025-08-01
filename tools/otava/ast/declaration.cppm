@@ -27,10 +27,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* DeclarationSpecifiers() const { return declarationSpecifiers.get(); }
-    Node* InitDeclaratorList() const { return initDeclaratorList.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* DeclarationSpecifiers() const { return declarationSpecifiers.get(); }
+    inline Node* InitDeclaratorList() const { return initDeclaratorList.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> declarationSpecifiers;
     std::unique_ptr<Node> initDeclaratorList;
@@ -47,12 +47,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Asm() const { return asm_.get(); }
-    Node* AsmText() const { return asmText.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* Asm() const { return asm_.get(); }
+    inline Node* AsmText() const { return asmText.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> asm_;
     std::unique_ptr<Node> asmText;
@@ -79,11 +79,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Extern() const { return extrn.get(); }
-    Node* Linkage() const { return linkage.get(); }
-    Node* Declarations() const { return declarations.get(); }
-    const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    inline Node* Extern() const { return extrn.get(); }
+    inline Node* Linkage() const { return linkage.get(); }
+    inline Node* Declarations() const { return declarations.get(); }
+    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
 private:
     std::unique_ptr<Node> extrn;
     std::unique_ptr<Node> linkage;
@@ -101,13 +101,13 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Namespace() const { return nskw.get(); }
-    Node* NamespaceName() const { return nsName.get(); }
-    Node* NamespaceBody() const { return nsBody.get(); }
-    Node* Inline() const { return inln.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    inline Node* Namespace() const { return nskw.get(); }
+    inline Node* NamespaceName() const { return nsName.get(); }
+    inline Node* NamespaceBody() const { return nsBody.get(); }
+    inline Node* Inline() const { return inln.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
 private:
     std::unique_ptr<Node> nskw;
     std::unique_ptr<Node> nsName;
@@ -127,7 +127,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Declarations() const { return declarations.get(); }
+    inline Node* Declarations() const { return declarations.get(); }
 private:
     std::unique_ptr<Node> declarations;
 };
@@ -141,10 +141,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Id() const { return id.get(); }
-    Node* Assign() const { return assign.get(); }
-    Node* QualifiedNamespaceSpecifier() const { return qns.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Id() const { return id.get(); }
+    inline Node* Assign() const { return assign.get(); }
+    inline Node* QualifiedNamespaceSpecifier() const { return qns.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> id;
     std::unique_ptr<Node> assign;
@@ -161,9 +161,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Using() const { return usng.get(); }
-    Node* Declarators() const { return declarators.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Using() const { return usng.get(); }
+    inline Node* Declarators() const { return declarators.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> usng;
     std::unique_ptr<Node> declarators;
@@ -195,9 +195,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Using() const { return usng.get(); }
-    Node* ElaboratedEnumSpecifier() const { return ees.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Using() const { return usng.get(); }
+    inline Node* ElaboratedEnumSpecifier() const { return ees.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> usng;
     std::unique_ptr<Node> ees;
@@ -213,11 +213,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Using() const { return usng.get(); }
-    Node* Namespace() const { return nskw.get(); }
-    Node* Id() const { return id.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
-    Node* Attributes() const { return attributes.get(); }
+    inline Node* Using() const { return usng.get(); }
+    inline Node* Namespace() const { return nskw.get(); }
+    inline Node* Id() const { return id.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
 private:
     std::unique_ptr<Node> usng;
     std::unique_ptr<Node> nskw;
@@ -244,13 +244,13 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* StaticAssert() const { return staticAssert.get(); }
-    Node* ConstantExpr() const { return constantExpr.get(); }
-    Node* Comma() const { return comma.get(); }
-    Node* StringLiteral() const { return stringLiteral.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* StaticAssert() const { return staticAssert.get(); }
+    inline Node* ConstantExpr() const { return constantExpr.get(); }
+    inline Node* Comma() const { return comma.get(); }
+    inline Node* StringLiteral() const { return stringLiteral.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> staticAssert;
     std::unique_ptr<Node> constantExpr;
@@ -278,12 +278,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Using() const { return usng.get(); }
-    Node* Identifier() const { return identifier.get(); }
-    Node* Assign() const { return assign.get(); }
-    Node* DefiningTypeId() const { return definingTypeId.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Using() const { return usng.get(); }
+    inline Node* Identifier() const { return identifier.get(); }
+    inline Node* Assign() const { return assign.get(); }
+    inline Node* DefiningTypeId() const { return definingTypeId.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> usng;
     std::unique_ptr<Node> identifier;
@@ -336,9 +336,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Declarator() const { return declarator.get(); }
-    Node* Parameters() const { return params.get(); }
-    Node* TrailingReturnType() const { return trailingReturnType.get(); }
+    inline Node* Declarator() const { return declarator.get(); }
+    inline Node* Parameters() const { return params.get(); }
+    inline Node* TrailingReturnType() const { return trailingReturnType.get(); }
 private:
     std::unique_ptr<Node> declarator;
     std::unique_ptr<Node> params;
@@ -354,9 +354,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Declarator() const { return declarator.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* Declarator() const { return declarator.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> declarator;
     soul::ast::SourcePos lpPos;
@@ -476,9 +476,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Condition() const { return cond.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* Condition() const { return cond.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> cond;
     soul::ast::SourcePos lpPos;
@@ -529,9 +529,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Dimension() const { return dimension.get(); }
-    const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
+    inline Node* Dimension() const { return dimension.get(); }
+    inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
 private:
     std::unique_ptr<Node> dimension;
     soul::ast::SourcePos lbPos;
@@ -547,7 +547,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Params() const { return params.get(); }
+    inline Node* Params() const { return params.get(); }
 private:
     std::unique_ptr<Node> params;
 };
@@ -570,8 +570,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Subject() const { return subject.get(); }
-    Node* ReleaseSubject() { return subject.release(); }
+    inline Node* Subject() const { return subject.get(); }
+    inline Node* ReleaseSubject() { return subject.release(); }
 private:
     std::unique_ptr<Node> subject;
 };
@@ -594,9 +594,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ConstantExpr() const { return constantExpr.get(); }
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline Node* ConstantExpr() const { return constantExpr.get(); }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     std::unique_ptr<Node> constantExpr;
     soul::ast::SourcePos lpPos;
@@ -612,8 +612,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& LParenPos() const { return lpPos; }
-    const soul::ast::SourcePos& RParenPos() const { return rpPos; }
+    inline const soul::ast::SourcePos& LParenPos() const { return lpPos; }
+    inline const soul::ast::SourcePos& RParenPos() const { return rpPos; }
 private:
     soul::ast::SourcePos lpPos;
     soul::ast::SourcePos rpPos;

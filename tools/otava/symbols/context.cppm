@@ -42,21 +42,22 @@ enum class ContextFlags : std::int32_t
     instantiateFunctionTemplate = 1 << 13,
     instantiateAliasTypeTemplate = 1 << 14,
     instantiateMemFnOfClassTemplate = 1 << 15,
-    dontBind = 1 << 16,
-    parseSavedCtorInitializer = 1 << 17,
-    skipFunctionDefinitions = 1 << 18,
-    returnRef = 1 << 19,
-    virtualSeen = 1 << 20,
-    ignoreClassTemplateSpecializations = 1 << 21,
-    generateMainWrapper = 1 << 22,
-    noDynamicInit = 1 << 23,
-    requireForwardResolved = 1 << 24,
-    noPtrOps = 1 << 25,
-    reinterpretCast = 1 << 26,
-    derefAfterConv = 1 << 27,
-    generatingVTab = 1 << 28,
-    resolveNestedTypes = 1 << 29,
-    release = 1 << 30
+    instantiateInlineFunction = 1 << 16,
+    dontBind = 1 << 17,
+    parseSavedCtorInitializer = 1 << 18,
+    skipFunctionDefinitions = 1 << 19,
+    returnRef = 1 << 20,
+    virtualSeen = 1 << 21,
+    ignoreClassTemplateSpecializations = 1 << 22,
+    generateMainWrapper = 1 << 23,
+    noDynamicInit = 1 << 24,
+    requireForwardResolved = 1 << 25,
+    noPtrOps = 1 << 26,
+    reinterpretCast = 1 << 27,
+    derefAfterConv = 1 << 28,
+    generatingVTab = 1 << 29,
+    resolveNestedTypes = 1 << 30,
+    release = 1 << 31
 };
 
 constexpr ContextFlags operator|(ContextFlags left, ContextFlags right)
@@ -91,17 +92,17 @@ class Context
 {
 public:
     Context();
-    Lexer* GetLexer() { return lexer; }
+    inline Lexer* GetLexer() { return lexer; }
     void SetLexer(Lexer* lexer_);
-    SymbolTable* GetSymbolTable() { return symbolTable; }
+    inline SymbolTable* GetSymbolTable() { return symbolTable; }
     void SetSymbolTable(SymbolTable* symbolTable_);
     Module* GetModule();
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
-    BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit.get(); }
+    inline BoundCompileUnitNode* GetBoundCompileUnit() const { return boundCompileUnit.get(); }
     OperationRepository* GetOperationRepository() const;
-    BoundFunctionNode* GetBoundFunction() const { return boundFunction.get(); }
-    BoundFunctionNode* ReleaseBoundFunction() { return boundFunction.release(); }
+    inline BoundFunctionNode* GetBoundFunction() const { return boundFunction.get(); }
+    inline BoundFunctionNode* ReleaseBoundFunction() { return boundFunction.release(); }
     void PushBoundFunction(BoundFunctionNode* boundFunction_);
     void PopBoundFunction();
     BoundExpressionNode* GetThisPtr(const soul::ast::SourcePos& sourcePos);
@@ -112,42 +113,42 @@ public:
     void PopFlags();
     void PushSetFlag(ContextFlags flag);
     void PushResetFlag(ContextFlags flag);
-    void SetFlag(ContextFlags flag) { flags = flags | flag; }
-    bool GetFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
-    void ResetFlag(ContextFlags flag) { flags = flags & ~flag; }
-    bool ReleaseConfig() const { return GetFlag(ContextFlags::release); }
-    void SetReleaseConfig() { SetFlag(ContextFlags::release); }
+    inline void SetFlag(ContextFlags flag) { flags = flags | flag; }
+    inline bool GetFlag(ContextFlags flag) const { return (flags & flag) != ContextFlags::none; }
+    inline void ResetFlag(ContextFlags flag) { flags = flags & ~flag; }
+    inline bool ReleaseConfig() const { return GetFlag(ContextFlags::release); }
+    inline void SetReleaseConfig() { SetFlag(ContextFlags::release); }
     int OptLevel() const;
-    void SetOptLevel(int optLevel_) { optLevel = optLevel_; }
+    inline void SetOptLevel(int optLevel_) { optLevel = optLevel_; }
     bool IsConstructorNameNode(otava::ast::Node* node) const;
     bool EnableNoDeclSpecFunctionDeclaration() const;
     bool EnableNoDeclSpecFunctionDefinition() const;
     void PushNode(otava::ast::Node* node_);
     void PopNode();
-    otava::ast::Node* GetNode() const { return node; }
+    inline otava::ast::Node* GetNode() const { return node; }
     void SetDeclarationList(otava::ast::Node* node, DeclarationList* declarations);
     std::unique_ptr<DeclarationList> ReleaseDeclarationList(otava::ast::Node* node);
-    soul::lexer::FileMap* GetFileMap() const { return fileMap; }
-    void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
-    void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }
-    AliasTypeSymbol* GetAliasType() const { return aliasType; }
-    void SetPtr(otava::intermediate::Value* ptr_) { ptr = ptr_; }
-    otava::intermediate::Value* Ptr() const { return ptr; }
-    int MemFunDefSymbolIndex() const { return memFunDefSymbolIndex; }
-    void SetMemFunDefSymbolIndex(int index) { memFunDefSymbolIndex = index; }
-    void ResetRejectTemplateId() { rejectTemplateId = false; }
-    void SetRejectTemplateId() { rejectTemplateId = true; }
-    bool RejectTemplateId() const { return rejectTemplateId; }
+    inline soul::lexer::FileMap* GetFileMap() const { return fileMap; }
+    inline void SetFileMap(soul::lexer::FileMap* fileMap_) { fileMap = fileMap_; }
+    inline void SetAliasType(AliasTypeSymbol* aliasType_) { aliasType = aliasType_; }
+    inline AliasTypeSymbol* GetAliasType() const { return aliasType; }
+    inline void SetPtr(otava::intermediate::Value* ptr_) { ptr = ptr_; }
+    inline otava::intermediate::Value* Ptr() const { return ptr; }
+    inline int MemFunDefSymbolIndex() const { return memFunDefSymbolIndex; }
+    inline void SetMemFunDefSymbolIndex(int index) { memFunDefSymbolIndex = index; }
+    inline void ResetRejectTemplateId() { rejectTemplateId = false; }
+    inline void SetRejectTemplateId() { rejectTemplateId = true; }
+    inline bool RejectTemplateId() const { return rejectTemplateId; }
     void PushSwitchCondType(TypeSymbol* switchCondType_);
     void PopSwitchCondType();
-    TypeSymbol* GetSwitchCondType() const { return switchCondType; }
+    inline TypeSymbol* GetSwitchCondType() const { return switchCondType; }
     void SetInstantiationQueue(InstantiationQueue* instantiationQueue_);
-    InstantiationQueue* GetInstantiationQueue() { return instantiationQueue; }
+    inline InstantiationQueue* GetInstantiationQueue() { return instantiationQueue; }
     void AddTemporaryAliasType(AliasTypeSymbol* temporaryAliasType);
-    const std::vector<AliasTypeSymbol*>& TemporaryAliasTypes() const { return temporaryAliasTypes; }
+    inline const std::vector<AliasTypeSymbol*>& TemporaryAliasTypes() const { return temporaryAliasTypes; }
     void ClearTemporaryAliasTypes();
-    void SetDeclaredInitializerType(TypeSymbol* type) { declaredInitializerType = type; }
-    TypeSymbol* DeclaredInitializerType() const { return declaredInitializerType; }
+    inline void SetDeclaredInitializerType(TypeSymbol* type) { declaredInitializerType = type; }
+    inline TypeSymbol* DeclaredInitializerType() const { return declaredInitializerType; }
     FunctionSymbol* GetSpecialization(otava::ast::Node* functionNode) const;
     void SetSpecialization(FunctionSymbol* specialization, otava::ast::Node* functionNode);
     void RemoveSpecialization(otava::ast::Node* functionNode);
@@ -155,19 +156,25 @@ public:
     void SetClassTemplateSpecialization(otava::ast::Node* functionNode, ClassTemplateSpecializationSymbol* sp);
     void RemoveClassTemplateSpecialization(otava::ast::Node* functionNode);
     void SetInstantiationIrName(const std::string& instantiationIrName_);
-    const std::string& InstantiationIrName() const { return instantiationIrName; }
+    inline const std::string& InstantiationIrName() const { return instantiationIrName; }
     void AddBoundVTabFunction(BoundFunctionNode* node);
-    const std::vector<std::unique_ptr<BoundFunctionNode>>& BoundVTabFunctions() const { return boundVTabFunctions; }
+    inline const std::vector<std::unique_ptr<BoundFunctionNode>>& BoundVTabFunctions() const { return boundVTabFunctions; }
     void ClearBoundVTabFunctions();
     void PushTemplateParameterMap(std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* templateParamMap);
     void PopTemplateParameterMap();
-    std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* TemplateParameterMap() const { return templateParameterMap; }
-    void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
-    const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
-    TypeSymbol* ArgType() { return argType; }
-    void SetArgType(TypeSymbol* argType_) { argType = argType_; }
-    TypeSymbol* ParamType() { return paramType; }
-    void SetParamType(TypeSymbol* paramType_) { paramType = paramType_; }
+    inline std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>* TemplateParameterMap() const { return templateParameterMap; }
+    inline void SetSourcePos(const soul::ast::SourcePos& sourcePos_) { sourcePos = sourcePos_; }
+    inline const soul::ast::SourcePos& GetSourcePos() const { return sourcePos; }
+    inline TypeSymbol* ArgType() { return argType; }
+    inline void SetArgType(TypeSymbol* argType_) { argType = argType_; }
+    inline TypeSymbol* ParamType() { return paramType; }
+    inline void SetParamType(TypeSymbol* paramType_) { paramType = paramType_; }
+    inline int TotalFunctionsCompiled() const { return totalFunctionsCompiled; }
+    inline int FunctionCallsInlined() const { return functionCallsInlined; }
+    inline int FunctionsInlined() const { return functionsInlined; }
+    inline void SetTotalFunctionsCompiled(int totalFunctionsCompiled_) { totalFunctionsCompiled = totalFunctionsCompiled_; }
+    inline void SetFunctionCallsInlined(int functionCallsInlined_) { functionCallsInlined = functionCallsInlined_; }
+    inline void SetFunctionsInlined(int functionsInlined_) { functionsInlined = functionsInlined_; }
 private:
     Lexer* lexer;
     SymbolTable* symbolTable;
@@ -202,6 +209,9 @@ private:
     soul::ast::SourcePos sourcePos;
     TypeSymbol* argType;
     TypeSymbol* paramType;
+    int totalFunctionsCompiled;
+    int functionCallsInlined;
+    int functionsInlined;
 };
 
 } // namespace otava::symbols

@@ -19,7 +19,7 @@ class UnaryExpr : public Value
 {
 public:
     UnaryExpr(ValueKind kind_, Value* value_, const std::string& str_);
-    Value* GetValue() const { return value; }
+    inline Value* GetValue() const { return value; }
 private:
     Value* value;
 };
@@ -28,9 +28,9 @@ class BinaryExpr : public Value
 {
 public:
     BinaryExpr(Value* left_, Value* right_, Operator op_);
-    Value* Left() { return left; }
-    Value* Right() { return right; }
-    Operator Op() const { return op; }
+    inline Value* Left() { return left; }
+    inline Value* Right() { return right; }
+    inline Operator Op() const { return op; }
     std::string ToString() const override;
 private:
     Value* left;
@@ -49,7 +49,7 @@ class SizePrefix : public UnaryExpr
 {
 public:
     SizePrefix(int size_, Value* value_);
-    int Size() const { return size; }
+    inline int Size() const { return size; }
     std::string ToString() const override;
 private:
     int size;

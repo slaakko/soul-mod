@@ -15,7 +15,7 @@ class OptimizationFlagsSetter : public soul_expected::ast::spg::DefaultVisitor
 {
 public:
     OptimizationFlagsSetter();
-    int Count() const { return count; }
+    inline int Count() const { return count; }
     void Visit(soul_expected::ast::spg::ChoiceParser& parser) override;
 private:
     int count;
@@ -35,8 +35,8 @@ class Optimizer : public soul_expected::ast::spg::DefaultVisitor
 {
 public:
     Optimizer(soul_expected::ast::spg::SwitchParser* switchParser_);
-    soul_expected::ast::spg::Parser* GetOptimizedParser() { return optimizedParser; }
-    soul_expected::ast::spg::SpgFile* GetOptimizedSpgFile() const { return optimizedSpgFile; }
+    inline soul_expected::ast::spg::Parser* GetOptimizedParser() { return optimizedParser; }
+    inline soul_expected::ast::spg::SpgFile* GetOptimizedSpgFile() const { return optimizedSpgFile; }
     void Visit(soul_expected::ast::spg::ChoiceParser& parser) override;
     void Visit(soul_expected::ast::spg::SequenceParser& parser) override;
     void Visit(soul_expected::ast::spg::DifferenceParser& parser) override;

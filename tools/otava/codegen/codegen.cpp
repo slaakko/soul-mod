@@ -19,6 +19,7 @@ import otava.intermediate.main.parser;
 import otava.symbols.type.resolver;
 import otava.symbols.class_templates;
 import otava.symbols.function.templates;
+import otava.symbols.inline_functions;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
 import otava.assembly;
@@ -33,6 +34,7 @@ import otava.symbols.modules;
 import otava.symbols.overload.resolution;
 import otava.symbols.symbol.table;
 import otava.symbols.enums;
+import otava.opt;
 import std;
 import util;
 
@@ -324,6 +326,7 @@ private:
     void EmitReturn(const soul::ast::SourcePos& sourcePos);
     void ExitBlocks(int sourceBlockId, int targetBlockId, const soul::ast::SourcePos& sourcePos);
     void GenerateGlobalInitializationFunction();
+    std::string optimizedIntermediateFilePath;
     otava::symbols::Context& context;
     std::string config;
     bool verbose;
@@ -369,6 +372,9 @@ CodeGenerator::CodeGenerator(otava::symbols::Context& context_, const std::strin
             util::Path::GetFileName(context.FileName()) + ".i"));
     emitter.SetFilePath(intermediateCodeFilePath);
     std::filesystem::create_directories(util::Path::GetDirectoryName(intermediateCodeFilePath));
+    optimizedIntermediateFilePath = util::GetFullPath(
+        util::Path::Combine(util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
+            util::Path::GetFileName(context.FileName()) + ".opt.i"));
 }
 
 void CodeGenerator::Reset()
@@ -623,16 +629,38 @@ void CodeGenerator::Visit(otava::symbols::BoundCompileUnitNode& node)
     emitter.ResolveReferences();
     emitter.Emit();
     otava::intermediate::Context intermediateContext;
+    otava::intermediate::Context optimizationContext;
+    otava::intermediate::Context* finalContext = &intermediateContext;
     otava::intermediate::Parse(emitter.FilePath(), intermediateContext, verbose);
     otava::intermediate::Verify(intermediateContext);
     std::string assemblyFilePath = util::GetFullPath(
         util::Path::Combine(
             util::Path::Combine(util::Path::GetDirectoryName(context.FileName()), config),
             util::Path::GetFileName(context.FileName()) + ".asm"));
-    otava::intermediate::CodeGenerator assemblyCodeGenerator(&intermediateContext, assemblyFilePath);
-    otava::intermediate::GenerateCode(intermediateContext, assemblyCodeGenerator, verbose);
+    std::unique_ptr<otava::intermediate::CodeGenerator> codeGenerator;
+    if (context.ReleaseConfig())
+    {
+        intermediateContext.SetFilePath(optimizedIntermediateFilePath);
+        otava::optimizer::Optimize(&intermediateContext);
+        intermediateContext.WriteFile();
+        otava::intermediate::Parse(optimizedIntermediateFilePath, optimizationContext, verbose);
+        otava::intermediate::Verify(optimizationContext);
+        finalContext = &optimizationContext;
+        codeGenerator.reset(new otava::optimizer::OptimizingCodeGenerator(finalContext, assemblyFilePath));
+    }
+    else
+    {
+        codeGenerator.reset(new otava::intermediate::CodeGenerator(finalContext, assemblyFilePath));
+    }
+    otava::intermediate::GenerateCode(*finalContext, *codeGenerator, verbose);
     asmFileName = util::Path::GetFileName(context.FileName()) + ".asm";
     context.PopFlags();
+    context.SetTotalFunctionsCompiled(context.TotalFunctionsCompiled() + intermediateContext.TotalFunctions());
+    context.SetTotalFunctionsCompiled(context.TotalFunctionsCompiled() + optimizationContext.TotalFunctions());
+    context.SetFunctionsInlined(context.FunctionsInlined() + intermediateContext.FunctionsInlined());
+    context.SetFunctionsInlined(context.FunctionsInlined() + optimizationContext.FunctionsInlined());
+    context.SetFunctionCallsInlined(context.FunctionCallsInlined() + intermediateContext.InlinedFunctionCalls());
+    context.SetFunctionCallsInlined(context.FunctionCallsInlined() + optimizationContext.InlinedFunctionCalls());
 }
 
 void CodeGenerator::Visit(otava::symbols::BoundClassNode& node)
@@ -665,6 +693,10 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     bool once = false;
     bool inline_ = context.ReleaseConfig() && functionDefinition->IsInline();
     otava::intermediate::Function* function = emitter.CreateFunction(functionDefinition->IrName(&context), functionType, inline_, once);
+    if (function->Name() == "mfn_basic_string_deallocate_4BFCA6BF0956D5D9C80C36890B3085D81FB91CC3")
+    {
+        int x = 0;
+    }
     function->SetComment(util::ToUtf8(functionDefinition->FullName()));
     entryBlock = emitter.CreateBasicBlock();
     emitter.SetCurrentBasicBlock(entryBlock);
@@ -1356,8 +1388,8 @@ void CodeGenerator::Visit(otava::symbols::BoundGlobalVariableDefinitionNode& nod
     otava::intermediate::Type* irType = variable->GetType()->IrType(emitter, node.GetSourcePos(), &context);
     if (variable->GetValue() && !variable->GetType()->IsClassTypeSymbol())
     {
-        variable->GetValue()->SetType(variable->GetType());
-        initializer = variable->GetValue()->IrValue(emitter, node.GetSourcePos(), &context);
+        std::unique_ptr<otava::symbols::Value> clonedVariableValue = otava::symbols::CloneAndSetType(variable->GetValue(), variable->GetType());
+        initializer = clonedVariableValue->IrValue(emitter, node.GetSourcePos(), &context);
     }
     else
     {

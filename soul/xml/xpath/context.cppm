@@ -14,9 +14,9 @@ class Context
 {
 public:
     Context(soul::xml::Node* node_, int pos_, int size_);
-    soul::xml::Node* Node() const { return node; }
-    int Pos() const { return pos; }
-    int Size() const { return size; }
+    inline soul::xml::Node* Node() const { return node; }
+    inline int Pos() const { return pos; }
+    inline int Size() const { return size; }
 private:
     soul::xml::Node* node;
     int pos;

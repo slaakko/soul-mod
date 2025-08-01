@@ -51,15 +51,15 @@ public:
     Instruction(OpCode opCode_);
     Instruction* Clone() const;
     void SetLabel(const std::string& label_);
-    const std::string& Label() const { return label; }
-    void SetNoColon() { nocolon = true; }
+    inline const std::string& Label() const { return label; }
+    inline void SetNoColon() { nocolon = true; }
     void AddOperand(Value* operand);
-    bool HasOperands() const { return !operands.empty(); }
-    OpCode GetOpCode() const { return opCode; }
-    const std::vector<Value*>& Operands() const { return operands; }
+    inline bool HasOperands() const { return !operands.empty(); }
+    inline     OpCode GetOpCode() const { return opCode; }
+    inline const std::vector<Value*>& Operands() const { return operands; }
     void Write(util::CodeFormatter& formatter);
     int Length() const;
-    void SetWriteln() { writeln = true; }
+    inline void SetWriteln() { writeln = true; }
 private:
     std::string label;
     bool nocolon;

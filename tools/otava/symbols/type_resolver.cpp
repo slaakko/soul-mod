@@ -23,6 +23,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.scope.resolver;
 import otava.symbols.templates;
 import otava.symbols.class_templates;
+import otava.symbols.inline_functions;
 import otava.symbols.value;
 import otava.symbols.expression.binder;
 import otava.symbols.bound.tree;

@@ -138,7 +138,7 @@ public:
     {
         ComputeLineStarts();
     }
-    std::int64_t operator*() const
+    inline std::int64_t operator*() const
     {
         return current->id;
     }
@@ -182,21 +182,21 @@ public:
             }
         }
     }
-    std::int64_t GetPos() const override
+    inline std::int64_t GetPos() const override
     {
         std::int32_t p = static_cast<std::int32_t>(current - tokens.begin());
         return (static_cast<std::int64_t>(line) << 32) | static_cast<std::int64_t>(p);
     }
-    void SetPos(std::int64_t pos)
+    inline void SetPos(std::int64_t pos)
     {
         current = tokens.begin() + static_cast<std::int32_t>(pos);
         line = static_cast<std::int32_t>(pos >> 32);
     }
-    soul::ast::Span GetSpan() const override
+    inline soul::ast::Span GetSpan() const override
     {
         return GetSpan(GetPos());
     }
-    soul::ast::Span GetSpan(std::int64_t pos) const override
+    inline soul::ast::Span GetSpan(std::int64_t pos) const override
     {
         const auto& token = GetToken(pos);
         return soul::ast::Span(static_cast<int>(token.match.begin - start), token.match.Length());
@@ -213,71 +213,71 @@ public:
             throw std::runtime_error("invalid token index");
         }
     }
-    const std::string& FileName() const override
+    inline const std::string& FileName() const override
     {
         return fileName;
     }
-    int File() const override
+    inline int File() const override
     {
         return file;
     }
-    void SetFile(int file_)
+    inline void SetFile(int file_)
     {
         file = file_;
     }
-    int Line() const override
+    inline int Line() const override
     {
         return line;
     }
-    void SetLine(std::int32_t line_) override
+    inline void SetLine(std::int32_t line_) override
     {
         line = line_;
     }
-    soul::lexer::ClassMap<Char>* GetClassMap() const override
+    inline soul::lexer::ClassMap<Char>* GetClassMap() const override
     {
         return classMap;
     }
-    void SetClassMap(soul::lexer::ClassMap<Char>* classMap_) override
+    inline void SetClassMap(soul::lexer::ClassMap<Char>* classMap_) override
     {
         classMap = classMap_;
     }
-    soul::ast::slg::TokenCollection* GetTokenCollection() const override
+    inline soul::ast::slg::TokenCollection* GetTokenCollection() const override
     {
         return tokenCollection;
     }
-    void SetTokenCollection(soul::ast::slg::TokenCollection* tokenCollection_) override
+    inline void SetTokenCollection(soul::ast::slg::TokenCollection* tokenCollection_) override
     {
         tokenCollection = tokenCollection_;
     }
-    KeywordMap<Char>* GetKeywordMap() const override
+    inline KeywordMap<Char>* GetKeywordMap() const override
     {
         return keywordMap;
     }
-    void SetKeywordMap(KeywordMap<Char>* keywordMap_) override
+    inline void SetKeywordMap(KeywordMap<Char>* keywordMap_) override
     {
         keywordMap = keywordMap_;
     }
-    std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const override
+    inline std::map<std::int64_t, std::string>* GetRuleNameMapPtr() const override
     {
         return ruleNameMapPtr;
     }
-    void SetRuleNameMapPtr(std::map<std::int64_t, std::string>* ruleNameMapPtr_) override
+    inline void SetRuleNameMapPtr(std::map<std::int64_t, std::string>* ruleNameMapPtr_) override
     {
         ruleNameMapPtr = ruleNameMapPtr_;
     }
-    LexerFlags Flags() const { return flags; }
-    bool GetFlag(LexerFlags flag) const { return (flags & flag) != LexerFlags::none; }
-    void SetFlag(LexerFlags flag) { flags = flags | flag; }
-    void ResetFlag(LexerFlags flag) { flags = flags & ~flag; }
-    void PushRule(std::int64_t ruleId)
+    inline LexerFlags Flags() const { return flags; }
+    inline bool GetFlag(LexerFlags flag) const { return (flags & flag) != LexerFlags::none; }
+    inline void SetFlag(LexerFlags flag) { flags = flags | flag; }
+    inline void ResetFlag(LexerFlags flag) { flags = flags & ~flag; }
+    inline void PushRule(std::int64_t ruleId)
     {
         ruleContext.push_back(ruleId);
     }
-    void PopRule()
+    inline void PopRule()
     {
         ruleContext.pop_back();
     }
-    std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const override
+    inline std::int64_t GetKeywordToken(const Lexeme<Char>& lexeme) const override
     {
         if (keywordMap)
         {
@@ -288,11 +288,11 @@ public:
             return soul::lexer::INVALID_TOKEN;
         }
     }
-    void Retract() override
+    inline void Retract() override
     {
         token.match.end = pos;
     }
-    soul::lexer::Token<Char, LexerBase<Char>>& CurrentToken() override
+    inline soul::lexer::Token<Char, LexerBase<Char>>& CurrentToken() override
     {
         return token;
     }
@@ -300,11 +300,11 @@ public:
     {
         tokens.erase(current + 1, tokens.end());
     }
-    const Lexeme<Char>& CurrentLexeme() const override
+    inline const Lexeme<Char>& CurrentLexeme() const override
     {
         return lexeme;
     }
-    Lexeme<Char>& CurrentLexeme() override
+    inline Lexeme<Char>& CurrentLexeme() override
     {
         return lexeme;
     }
@@ -416,11 +416,11 @@ public:
         parsing_error_thrown = true;
         throw ParsingException(GetError(farthestPos), fileName, sourcePos);
     }
-    void SetLog(ParsingLog* log_)
+    inline void SetLog(ParsingLog* log_)
     {
         log = log_;
     }
-    ParsingLog* Log() const
+    inline ParsingLog* Log() const
     {
         return log;
     }
@@ -446,35 +446,35 @@ public:
     {
         return const_cast<soul::lexer::Variables*>(static_cast<const soul::lexer::Variables*>(&vars));
     }
-    const Char* Start() const
+    inline const Char* Start() const
     {
         return start;
     }
-    const Char* Pos() const
+    inline const Char* Pos() const
     {
         return pos;
     }
-    void SetPos(const Char* pos_) override
+    inline void SetPos(const Char* pos_) override
     {
         pos = pos_;
     }
-    const Char* End() const override
+    inline const Char* End() const override
     {
         return end;
     }
-    const std::vector<soul::lexer::Token<Char, LexerBase<Char>>>& Tokens() const
+    inline const std::vector<soul::lexer::Token<Char, LexerBase<Char>>>& Tokens() const
     {
         return tokens;
     }
-    std::vector<soul::lexer::Token<Char, LexerBase<Char>>> ReleaseTokens()
+    inline std::vector<soul::lexer::Token<Char, LexerBase<Char>>> ReleaseTokens()
     {
         return std::move(tokens);
     }
-    void SetCurrentMatchEnd(const Char* end) override
+    inline void SetCurrentMatchEnd(const Char* end) override
     {
         current->match.end = end;
     }
-    void Increment() override
+    inline void Increment() override
     {
         ++*this;
     }
@@ -500,11 +500,11 @@ public:
         SetPos(recordedPosPair.start);
         SetFlag(LexerFlags::recordedParse);
     }
-    void EndRecordedParse() override
+    inline void EndRecordedParse() override
     {
         PopState();
     }
-    void SetPPHook(PPHook ppHook_)
+    inline void SetPPHook(PPHook ppHook_)
     {
         ppHook = ppHook_;
     }
@@ -515,11 +515,11 @@ public:
             ppHook(*this, token); 
         }
     }
-    void PushState()
+    inline void PushState()
     {
         stateStack.push(GetState());
     }
-    void PopState()
+    inline void PopState()
     {
         SetState(stateStack.top());
         stateStack.pop();
@@ -554,24 +554,24 @@ public:
         farthestRuleContext = state.farthestRuleContext;
         SetPos(state.currentPos);
     }
-    void Skip(bool skip_) 
+    inline void Skip(bool skip_)
     {
         skip = skip_;
         current = tokens.end();
     }
-    bool Skipping() const
+    inline bool Skipping() const
     {
         return skip;
     }
-    void SetCommentTokenId(std::int64_t commentTokenId_)
+    inline void SetCommentTokenId(std::int64_t commentTokenId_)
     {
         commentTokenId = commentTokenId_;
     }
-    void SetBlockCommentStates(const std::set<int>& blockCommentStates_)
+    inline void SetBlockCommentStates(const std::set<int>& blockCommentStates_)
     {
         blockCommentStates = blockCommentStates_;
     }
-    const std::set<int>& BlockCommentStates() const
+    inline const std::set<int>& BlockCommentStates() const
     {
         return blockCommentStates;
     }

@@ -19,6 +19,7 @@ import otava.symbols.statement.binder;
 import otava.symbols.modules;
 import otava.symbols.argument.conversion.table;
 import otava.symbols.operation.repository;
+import otava.symbols.inline_functions;
 import otava.ast.function;
 import util.unicode;
 
@@ -62,8 +63,6 @@ void FunctionTemplateRepository::AddFunctionDefinition(const FunctionTemplateKey
 FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, const std::map<TemplateParameterSymbol*, TypeSymbol*, TemplateParamLess>& templateParameterMap,
     const soul::ast::SourcePos& sourcePos, Context* context)
 {
-    std::string instantiationIrName = context->InstantiationIrName();
-    context->SetInstantiationIrName(std::string());
     FunctionTemplateRepository* functionTemplateRepository = context->GetBoundCompileUnit()->GetFunctionTemplateRepository();
     std::vector<TypeSymbol*> templateArgumentTypes;
     TemplateDeclarationSymbol* templateDeclaration = functionTemplate->ParentTemplateDeclaration();
@@ -148,9 +147,13 @@ FunctionSymbol* InstantiateFunctionTemplate(FunctionSymbol* functionTemplate, co
                 specialization->SetSpecialization();
                 FunctionDefinitionSymbol* functionDefinition = static_cast<FunctionDefinitionSymbol*>(specialization);
                 functionDefinition->SetFlag(FunctionSymbolFlags::fixedIrName);
-                if (!instantiationIrName.empty())
+                if (!context->InstantiationIrName().empty())
                 {
-                    functionDefinition->SetFixedIrName(instantiationIrName);
+                    functionDefinition->SetFixedIrName(context->InstantiationIrName());
+                }
+                else
+                {
+                    functionDefinition->SetCompileUnitId(context->GetBoundCompileUnit()->Id());
                 }
                 std::string irName = functionDefinition->IrName(context);
                 functionTemplateRepository->AddFunctionDefinition(key, functionDefinition, node);

@@ -19,10 +19,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Introducer() const { return introducer.get(); }
-    Node* TemplateParams() const { return templateParams.get(); }
-    Node* Declarator() const { return declarator.get(); }
-    Node* Body() const { return body.get(); }
+    inline Node* Introducer() const { return introducer.get(); }
+    inline Node* TemplateParams() const { return templateParams.get(); }
+    inline Node* Declarator() const { return declarator.get(); }
+    inline Node* Body() const { return body.get(); }
 private:
     std::unique_ptr<Node> introducer;
     std::unique_ptr<Node> templateParams;
@@ -39,9 +39,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Capture() const { return capture.get(); }
-    const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
+    inline Node* Capture() const { return capture.get(); }
+    inline const soul::ast::SourcePos& LBracketPos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracketPos() const { return rbPos; }
 private:
     std::unique_ptr<Node> capture;
     soul::ast::SourcePos lbPos;
@@ -89,9 +89,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Identifier() const { return identifier.get(); }
-    Node* ByRefCapture() const { return byRefCapture.get(); }
-    Node* Ellipsis() const { return ellipsis.get(); }
+    inline Node* Identifier() const { return identifier.get(); }
+    inline Node* ByRefCapture() const { return byRefCapture.get(); }
+    inline Node* Ellipsis() const { return ellipsis.get(); }
 private:
     std::unique_ptr<Node> identifier;
     std::unique_ptr<Node> byRefCapture;
@@ -107,7 +107,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& ThisPos() const { return thisPos; }
+    inline const soul::ast::SourcePos& ThisPos() const { return thisPos; }
 private:
     soul::ast::SourcePos thisPos;
 };
@@ -121,7 +121,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& ThisPos() const { return thisPos; }
+    inline const soul::ast::SourcePos& ThisPos() const { return thisPos; }
 private:
     soul::ast::SourcePos thisPos;
 };
@@ -135,10 +135,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Identifier() const { return identifier.get(); }
-    Node* Initializer() const { return initializer.get(); }
-    Node* ByRefCapture() const { return byRefCapture.get(); }
-    Node* Ellipsis() const { return ellipsis.get(); }
+    inline Node* Identifier() const { return identifier.get(); }
+    inline Node* Initializer() const { return initializer.get(); }
+    inline Node* ByRefCapture() const { return byRefCapture.get(); }
+    inline Node* Ellipsis() const { return ellipsis.get(); }
 private:
     std::unique_ptr<Node> identifier;
     std::unique_ptr<Node> initializer;
@@ -155,9 +155,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ParameterList() const { return parameterList.get(); }
-    Node* Specifiers() const { return specifiers.get(); }
-    Node* RequiresClause() const { return requiresClause.get(); }
+    inline Node* ParameterList() const { return parameterList.get(); }
+    inline Node* Specifiers() const { return specifiers.get(); }
+    inline Node* RequiresClause() const { return requiresClause.get(); }
 private:
     std::unique_ptr<Node> parameterList;
     std::unique_ptr<Node> specifiers;
@@ -174,10 +174,10 @@ public:
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     bool IsEmpty() const;
-    Node* DeclSpecifiers() const { return declSpecifiers.get(); }
-    Node* NoexceptionSpecifier() const { return noexceptSpecifier.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    Node* TrailingReturnType() const { return trailingReturnType.get(); }
+    inline Node* DeclSpecifiers() const { return declSpecifiers.get(); }
+    inline Node* NoexceptionSpecifier() const { return noexceptSpecifier.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* TrailingReturnType() const { return trailingReturnType.get(); }
 private:
     std::unique_ptr<Node> declSpecifiers;
     std::unique_ptr<Node> noexceptSpecifier;
@@ -194,8 +194,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* TemplateParams() const { return templateParams.get(); }
-    Node* RequiresClause() const { return requiresClause.get(); }
+    inline Node* TemplateParams() const { return templateParams.get(); }
+    inline Node* RequiresClause() const { return requiresClause.get(); }
 private:
     std::unique_ptr<Node> templateParams;
     std::unique_ptr<Node> requiresClause;

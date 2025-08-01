@@ -12,7 +12,7 @@ import soul.lexer.base;
 export namespace soul::lexer {
 
 template<typename Char>
-bool NoWhiteSpaceBetweenTokens(const soul::lexer::Token<Char, LexerBase<Char>>& left, const soul::lexer::Token<Char, LexerBase<Char>>& right)
+inline bool NoWhiteSpaceBetweenTokens(const soul::lexer::Token<Char, LexerBase<Char>>& left, const soul::lexer::Token<Char, LexerBase<Char>>& right)
 {
     if (left.match.end == right.match.begin) return true;
     return false;

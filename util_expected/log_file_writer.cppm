@@ -21,8 +21,8 @@ public:
     void WriteLine();
     void WriteLine(const std::string& line);
     void Write(const std::string& s);
-    std::ostream& LogFile() { return logFile; }
-    bool IsOpen() const { return open; }
+    inline std::ostream& LogFile() { return logFile; }
+    inline bool IsOpen() const { return open; }
 private:
     bool open;
     std::string logFilePath;

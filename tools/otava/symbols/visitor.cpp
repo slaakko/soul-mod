@@ -16,6 +16,7 @@ import otava.symbols.container.symbol;
 import otava.symbols.class_group.symbol;
 import otava.symbols.classes;
 import otava.symbols.class_templates;
+import otava.symbols.inline_functions;
 import otava.symbols.enums;
 import otava.symbols.fundamental.type.symbol;
 import otava.symbols.function.group.symbol;

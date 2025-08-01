@@ -17,8 +17,8 @@ class CharacterData : public Node
 public:
     CharacterData(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_);
     CharacterData(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::string& name_, const std::string& data_);
-    const std::string& Data() const { return data; }
-    std::string& Data() { return data; }
+    inline const std::string& Data() const { return data; }
+    inline std::string& Data() { return data; }
     void Write(util::CodeFormatter& formatter) override;
     bool ValueContainsNewLine() const final;
 private:

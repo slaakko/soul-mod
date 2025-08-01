@@ -19,11 +19,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* EnumHead() const { return enumHead.get(); }
-    void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
-    void SetRBracePos(const soul::ast::SourcePos& rbPos_) { rbPos = rbPos_; }
-    const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    inline Node* EnumHead() const { return enumHead.get(); }
+    inline void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
+    inline void SetRBracePos(const soul::ast::SourcePos& rbPos_) { rbPos = rbPos_; }
+    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
 private:
     std::unique_ptr<Node> enumHead;
     soul::ast::SourcePos lbPos;
@@ -39,10 +39,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* EnumKey() const { return enumKey.get(); }
-    Node* EnumHeadName() const { return enumHeadName.get(); }
-    Node* EnumBase() const { return enumBase.get(); }
-    Node* Attributes() const { return attributes.get(); }
+    inline Node* EnumKey() const { return enumKey.get(); }
+    inline Node* EnumHeadName() const { return enumHeadName.get(); }
+    inline Node* EnumBase() const { return enumBase.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
 private:
     std::unique_ptr<Node> enumKey;
     std::unique_ptr<Node> enumHeadName;
@@ -68,7 +68,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& ClassPos() const { return classPos; }
+    inline const soul::ast::SourcePos& ClassPos() const { return classPos; }
 private:
     soul::ast::SourcePos classPos;
 };
@@ -82,7 +82,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& StructPos() const { return structPos; }
+    inline const soul::ast::SourcePos& StructPos() const { return structPos; }
 private:
     soul::ast::SourcePos structPos;
 };
@@ -104,9 +104,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Enumerator() const { return enumerator.get(); }
-    Node* Value() const { return value.get(); }
-    const soul::ast::SourcePos& AssignPos() const { return assignPos; }
+    inline Node* Enumerator() const { return enumerator.get(); }
+    inline Node* Value() const { return value.get(); }
+    inline const soul::ast::SourcePos& AssignPos() const { return assignPos; }
 private:
     std::unique_ptr<Node> enumerator;
     std::unique_ptr<Node> value;
@@ -122,8 +122,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Identifier() const { return identifier.get(); }
-    Node* Attributes() const { return attributes.get(); }
+    inline Node* Identifier() const { return identifier.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
 private:
     std::unique_ptr<Node> identifier;
     std::unique_ptr<Node> attributes;
@@ -147,11 +147,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* EnumKey() const { return enumKey.get(); }
-    Node* EnumHeadName() const { return enumHeadName.get(); }
-    Node* EnumBase() const { return enumBase.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* EnumKey() const { return enumKey.get(); }
+    inline Node* EnumHeadName() const { return enumHeadName.get(); }
+    inline Node* EnumBase() const { return enumBase.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> enumKey;
     std::unique_ptr<Node> enumHeadName;

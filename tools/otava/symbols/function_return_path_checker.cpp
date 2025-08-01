@@ -23,7 +23,7 @@ public:
     void Visit(otava::ast::BreakStatementNode& node) override;
     void Visit(otava::ast::ContinueStatementNode& node) override;
     void Visit(otava::ast::IfStatementNode& node) override;
-    bool Terminates() const { return terminates; }
+    inline bool Terminates() const { return terminates; }
 private:
     bool terminates;
 };
@@ -98,7 +98,7 @@ public:
     void Visit(otava::ast::DoStatementNode& node) override;
     void Visit(otava::ast::ForStatementNode& node) override;
     void Visit(otava::ast::ReturnStatementNode& node) override;
-    bool Terminates() const { return terminates; }
+    inline bool Terminates() const { return terminates; }
 private:
     Context* context;
     bool inForEverLoop;

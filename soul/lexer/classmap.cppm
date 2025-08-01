@@ -15,7 +15,7 @@ class ClassMap
 {
 public:
     ClassMap(const std::int32_t* data_, std::int32_t upperBound_) : data(data_), upperBound(upperBound_) { }
-    std::int32_t GetClass(Char c) const
+    inline std::int32_t GetClass(Char c) const
     {
         std::int32_t i = static_cast<std::int32_t>(c);
         if (i < upperBound)

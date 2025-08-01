@@ -20,24 +20,24 @@ struct Token
 {
     using CharType = Char;
 
-    Token(LexerBaseT* lexer_) : match(), lexer(lexer_), id(INVALID_TOKEN), line(1) {}
-    Token(std::int64_t id_, LexerBaseT* lexer_) : match(), lexer(lexer_), id(id_), line(1) {}
-    Token(std::int64_t id_, const Lexeme<Char>& match_, LexerBaseT* lexer_, int line_) : match(match_), lexer(lexer_), id(id_), line(line_) {}
-    std::basic_string<Char> ToString() const { return match.ToString(); }
-    Char Chr() const { return *match.begin; }
-    std::int8_t ToSByte() const { return ParseSByte(match.begin, match.end, lexer, line); }
-    std::uint8_t ToByte() const { return ParseByte(match.begin, match.end, lexer, line); }
-    std::int16_t ToShort() const { return ParseShort(match.begin, match.end, lexer, line); }
-    std::uint16_t ToUShort() const { return ParseUShort(match.begin, match.end, lexer, line); }
-    std::int32_t ToInt() const { return ParseInt(match.begin, match.end, lexer, line); }
-    std::uint32_t ToUInt() const { return ParseUInt(match.begin, match.end, lexer, line); }
-    std::int64_t ToLong() const { return ParseLong(match.begin, match.end, lexer, line); }
-    std::uint64_t ToULong() const { return ParseULong(match.begin, match.end, lexer, line); }
-    std::uint64_t ToHexULong() const { return ParseHexULong(match.begin, match.end, lexer, line); }
-    std::uint64_t ToOctalULong() const { return ParseOctalULong(match.begin, match.end, lexer, line); }
-    float ToFloat() const { return ParseFloat(match.begin, match.end, lexer, line); }
-    double ToDouble() const { return ParseDouble(match.begin, match.end, lexer, line); }
-    bool ToBool() const { return ParseBool(match.begin, match.end, lexer, line); }
+    inline Token(LexerBaseT* lexer_) : match(), lexer(lexer_), id(INVALID_TOKEN), line(1) {}
+    inline Token(std::int64_t id_, LexerBaseT* lexer_) : match(), lexer(lexer_), id(id_), line(1) {}
+    inline Token(std::int64_t id_, const Lexeme<Char>& match_, LexerBaseT* lexer_, int line_) : match(match_), lexer(lexer_), id(id_), line(line_) {}
+    inline std::basic_string<Char> ToString() const { return match.ToString(); }
+    inline Char Chr() const { return *match.begin; }
+    inline std::int8_t ToSByte() const { return ParseSByte(match.begin, match.end, lexer, line); }
+    inline std::uint8_t ToByte() const { return ParseByte(match.begin, match.end, lexer, line); }
+    inline std::int16_t ToShort() const { return ParseShort(match.begin, match.end, lexer, line); }
+    inline std::uint16_t ToUShort() const { return ParseUShort(match.begin, match.end, lexer, line); }
+    inline std::int32_t ToInt() const { return ParseInt(match.begin, match.end, lexer, line); }
+    inline std::uint32_t ToUInt() const { return ParseUInt(match.begin, match.end, lexer, line); }
+    inline std::int64_t ToLong() const { return ParseLong(match.begin, match.end, lexer, line); }
+    inline std::uint64_t ToULong() const { return ParseULong(match.begin, match.end, lexer, line); }
+    inline std::uint64_t ToHexULong() const { return ParseHexULong(match.begin, match.end, lexer, line); }
+    inline std::uint64_t ToOctalULong() const { return ParseOctalULong(match.begin, match.end, lexer, line); }
+    inline float ToFloat() const { return ParseFloat(match.begin, match.end, lexer, line); }
+    inline double ToDouble() const { return ParseDouble(match.begin, match.end, lexer, line); }
+    inline bool ToBool() const { return ParseBool(match.begin, match.end, lexer, line); }
     Lexeme<Char> match;
     LexerBaseT* lexer;
     std::int64_t id;

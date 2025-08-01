@@ -15,7 +15,7 @@ class Declaration
 public:
     Declaration(const std::string& name_);
     virtual ~Declaration();
-    const std::string& Name() const { return name; }
+    inline const std::string& Name() const { return name; }
     virtual void Write(util::CodeFormatter& formatter) = 0;
 private:
     std::string name;

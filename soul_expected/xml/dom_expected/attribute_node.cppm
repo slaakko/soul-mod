@@ -17,7 +17,7 @@ class AttributeNode : public Node
 {
 public:
     AttributeNode(const soul_expected::ast::SourcePos& sourcePos_, const std::string& name_, const std::string& value_);
-    const std::string& Value() const { return value; }
+    inline const std::string& Value() const { return value; }
     void SetValue(const std::string& value_);
     std::expected<bool, int> Write(util::CodeFormatter& formatter) override;
 private:

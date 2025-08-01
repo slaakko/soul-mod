@@ -20,13 +20,13 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ClassHead() const { return classHead.get(); }
-    void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
-    void SetRBracePos(const soul::ast::SourcePos& rbPos_) { rbPos = rbPos_; }
-    const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracePos() const { return rbPos; }
-    bool Complete() const { return complete; }
-    void SetComplete() { complete = true; }
+    inline Node* ClassHead() const { return classHead.get(); }
+    inline void SetLBracePos(const soul::ast::SourcePos& lbPos_) { lbPos = lbPos_; }
+    inline void SetRBracePos(const soul::ast::SourcePos& rbPos_) { rbPos = rbPos_; }
+    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    inline bool Complete() const { return complete; }
+    inline void SetComplete() { complete = true; }
 private:
     std::unique_ptr<Node> classHead;
     soul::ast::SourcePos lbPos;
@@ -43,11 +43,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ClassKey() const { return classKey.get(); }
-    Node* ClassHeadName() const { return classHeadName.get(); }
-    Node* ClassVirtSpecifier() const { return classVirtSpecifier.get(); }
-    Node* BaseClause() const { return baseClause.get(); }
-    Node* Attibutes() const { return attributes.get(); }
+    inline Node* ClassKey() const { return classKey.get(); }
+    inline Node* ClassHeadName() const { return classHeadName.get(); }
+    inline Node* ClassVirtSpecifier() const { return classVirtSpecifier.get(); }
+    inline Node* BaseClause() const { return baseClause.get(); }
+    inline Node* Attibutes() const { return attributes.get(); }
 private:
     std::unique_ptr<Node> classKey;
     std::unique_ptr<Node> classHeadName;
@@ -82,11 +82,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* ClassOrDeclType() const { return classOrDeclType.get(); }
-    Node* AccessSpecifier() const { return accessSpecifier.get(); }
-    Node* VirtualSpecifier() const { return virtualSpecifier.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    bool VirtualFirst() const { return virtualFirst; }
+    inline Node* ClassOrDeclType() const { return classOrDeclType.get(); }
+    inline Node* AccessSpecifier() const { return accessSpecifier.get(); }
+    inline Node* VirtualSpecifier() const { return virtualSpecifier.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline bool VirtualFirst() const { return virtualFirst; }
 private:
     std::unique_ptr<Node> classOrDeclType;
     std::unique_ptr<Node> accessSpecifier;
@@ -104,7 +104,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& ColonPos() const { return colonPos; }
+    inline const soul::ast::SourcePos& ColonPos() const { return colonPos; }
 private:
     soul::ast::SourcePos colonPos;
 };
@@ -118,10 +118,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Attributes() const { return attributes.get(); }
-    Node* DeclSpecifiers() const { return declSpecifiers.get(); }
-    Node* MemberDeclarators() const { return memberDeclarators.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* DeclSpecifiers() const { return declSpecifiers.get(); }
+    inline Node* MemberDeclarators() const { return memberDeclarators.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> attributes;
     std::unique_ptr<Node> declSpecifiers;
@@ -151,16 +151,16 @@ class ConstructorInitializerNode : public CompoundNode
 public:
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_);
     ConstructorInitializerNode(const soul::ast::SourcePos& sourcePos_, Node* memberInitializerList_);
-    Node* MemberInitializerListNode() const { return memberInitializerListNode.get(); }
+    inline Node* MemberInitializerListNode() const { return memberInitializerListNode.get(); }
     void SetMemberInitializerListNode(Node* memberInitializerListNode_);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
     Node* Clone() const override;
     void Accept(Visitor& visitor) override;
     void SetLexerPosPair(const soul::ast::lexer::pos::pair::LexerPosPair& lexerPosPair_);
-    const soul::ast::lexer::pos::pair::LexerPosPair& GetLexerPosPair() const { return lexerPosPair; }
-    void* FunctionScope() const { return functionScope; }
-    void SetFunctionScope(void* functionScope_) { functionScope = functionScope_; }
+    inline const soul::ast::lexer::pos::pair::LexerPosPair& GetLexerPosPair() const { return lexerPosPair; }
+    inline void* FunctionScope() const { return functionScope; }
+    inline void SetFunctionScope(void* functionScope_) { functionScope = functionScope_; }
 private:
     std::unique_ptr<Node> memberInitializerListNode;
     soul::ast::lexer::pos::pair::LexerPosPair lexerPosPair;
@@ -273,7 +273,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& ZeroPos() const { return zeroPos; }
+    inline const soul::ast::SourcePos& ZeroPos() const { return zeroPos; }
 private:
     soul::ast::SourcePos zeroPos;
 };

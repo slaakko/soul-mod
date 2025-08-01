@@ -19,12 +19,12 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Export() const { return exprt.get(); }
-    Node* Module() const { return modle.get(); }
-    Node* ModuleName() const { return moduleName.get(); }
-    Node* ModulePartition() const { return modulePartition.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Export() const { return exprt.get(); }
+    inline Node* Module() const { return modle.get(); }
+    inline Node* ModuleName() const { return moduleName.get(); }
+    inline Node* ModulePartition() const { return modulePartition.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> exprt;
     std::unique_ptr<Node> modle;
@@ -43,10 +43,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Export() const { return exprt.get(); }
-    Node* Subject() const { return subject.get(); }
-    const soul::ast::SourcePos& LBracePos() const { return lbPos; }
-    const soul::ast::SourcePos& RBracePos() const { return rbPos; }
+    inline Node* Export() const { return exprt.get(); }
+    inline Node* Subject() const { return subject.get(); }
+    inline const soul::ast::SourcePos& LBracePos() const { return lbPos; }
+    inline const soul::ast::SourcePos& RBracePos() const { return rbPos; }
 private:
     std::unique_ptr<Node> exprt;
     std::unique_ptr<Node> subject;
@@ -79,10 +79,10 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Import() const { return imprt.get(); }
-    Node* Subject() const { return subject.get(); }
-    Node* Attributes() const { return attributes.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Import() const { return imprt.get(); }
+    inline Node* Subject() const { return subject.get(); }
+    inline Node* Attributes() const { return attributes.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
 private:
     std::unique_ptr<Node> imprt;
     std::unique_ptr<Node> subject;
@@ -116,9 +116,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Module() const { return modle.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
-    Node* Declarations() const { return declarations.get(); }
+    inline Node* Module() const { return modle.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Declarations() const { return declarations.get(); }
 private:
     std::unique_ptr<Node> modle;
     std::unique_ptr<Node> semicolon;
@@ -134,11 +134,11 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    Node* Module() const { return modle.get(); }
-    Node* Colon() const { return colon.get(); }
-    Node* Private() const { return privat.get(); }
-    Node* Semicolon() const { return semicolon.get(); }
-    Node* Declarations() const { return declarations.get(); }
+    inline Node* Module() const { return modle.get(); }
+    inline Node* Colon() const { return colon.get(); }
+    inline Node* Private() const { return privat.get(); }
+    inline Node* Semicolon() const { return semicolon.get(); }
+    inline Node* Declarations() const { return declarations.get(); }
 private:
     std::unique_ptr<Node> modle;
     std::unique_ptr<Node> colon;
@@ -156,7 +156,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const std::u32string& Rep() const { return rep; }
+    inline const std::u32string& Rep() const { return rep; }
 private:
     std::u32string rep;
 };
@@ -170,7 +170,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const std::u32string& Rep() const { return rep; }
+    inline const std::u32string& Rep() const { return rep; }
 private:
     std::u32string rep;
 };

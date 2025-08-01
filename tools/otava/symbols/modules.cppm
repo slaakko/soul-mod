@@ -31,8 +31,8 @@ public:
     Module(const std::string& name_);
     ~Module();
     void SetFilePath(const std::string& filePath_);
-    const std::string& FilePath() const { return filePath; }
-    const std::string& Name() const { return name; }
+    inline const std::string& FilePath() const { return filePath; }
+    inline const std::string& Name() const { return name; }
     void Accept(Visitor& visitor);
     void Import(ModuleMapper& moduleMapper, const std::string& config);
     void Import(Module* that, ModuleMapper& moduleMapper, const std::string& config);
@@ -44,31 +44,31 @@ public:
     void ReadHeader(Reader& reader, ModuleMapper& moduleMapper);
     void CompleteRead(Reader& reader, ModuleMapper& moduleMapper, const std::string& config);
     void Init();
-    std::int32_t FileId() const { return fileId; }
-    void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
+    inline std::int32_t FileId() const { return fileId; }
+    inline void SetFileId(std::int32_t fileId_) { fileId = fileId_; }
     std::int32_t Id() const;
-    std::int32_t Index() const { return index; }
-    void SetIndex(std::int32_t index_) { index = index_; }
-    SymbolTable* GetSymbolTable() { return &symbolTable; }
-    EvaluationContext* GetEvaluationContext() { return &evaluationContext; }
+    inline std::int32_t Index() const { return index; }
+    inline void SetIndex(std::int32_t index_) { index = index_; }
+    inline SymbolTable* GetSymbolTable() { return &symbolTable; }
+    inline EvaluationContext* GetEvaluationContext() { return &evaluationContext; }
     void AddExportModuleName(const std::string& exportModuleName);
-    const std::vector<std::string>& ExportModuleNames() const { return exportModuleNames; }
+    inline const std::vector<std::string>& ExportModuleNames() const { return exportModuleNames; }
     void AddExportedModule(Module* exportedModule);
-    const std::vector<Module*>& ExportedModules() const { return exportedModules; }
+    inline const std::vector<Module*>& ExportedModules() const { return exportedModules; }
     void AddImportModuleName(const std::string& importModuleName);
-    const std::vector<std::string>& ImportModuleNames() const { return importModuleNames; }
+    inline const std::vector<std::string>& ImportModuleNames() const { return importModuleNames; }
     void AddImportedModule(Module* importedModule);
-    const std::vector<Module*>& ImportedModules() const { return importedModules; }
+    inline const std::vector<Module*>& ImportedModules() const { return importedModules; }
     void AddDependsOnModule(Module* dependsOnModule);
-    const std::vector<Module*>& DependsOnModules() const { return dependsOnModules; }
+    inline const std::vector<Module*>& DependsOnModules() const { return dependsOnModules; }
     void SetFile(otava::ast::File* astFile_);
     otava::ast::File* GetFile() { return astFile.get(); }
-    const std::vector<std::string>& ImplementationUnitNames() const { return implementationUnitNames; }
+    inline const std::vector<std::string>& ImplementationUnitNames() const { return implementationUnitNames; }
     void SetImplementationUnitNames(const std::vector<std::string>& names);
-    const std::vector<Module*>& ImplementationUnits() const { return implementationUnits; }
+    inline const std::vector<Module*>& ImplementationUnits() const { return implementationUnits; }
     void AddImplementationUnit(Module* implementationUnit);
     void LoadImplementationUnits(ModuleMapper& moduleMapper, const std::string& config);
-    otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
+    inline otava::ast::NodeIdFactory* GetNodeIdFactory() { return &nodeIdFactory; }
 private:
     std::int32_t fileId;
     std::int32_t index;
@@ -102,8 +102,8 @@ public:
     Module* GetModule(const std::string& moduleName, const std::string& config);
     Module* LoadModule(const std::string& moduleName, const std::string& moduleFilePath, const std::string& config);
     void AddRoot(const std::string& root);
-    otava::ast::NodeMap* GetNodeMap() { return &nodeMap; }
-    SymbolMap* GetSymbolMap() { return &symbolMap; }
+    inline otava::ast::NodeMap* GetNodeMap() { return &nodeMap; }
+    inline SymbolMap* GetSymbolMap() { return &symbolMap; }
     void SetFunctionDefinitionSymbolSet(FunctionDefinitionSymbolSet* functionDefinitionSymbolSet_);
     FunctionDefinitionSymbolSet* GetFunctionDefinitionSymbolSet() const;
 private:

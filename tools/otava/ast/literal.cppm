@@ -52,7 +52,7 @@ public:
     LiteralNode(NodeKind kind_, const soul::ast::SourcePos& sourcePos_, const std::u32string& rep_);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const std::u32string& Rep() const { return rep; }
+    inline const std::u32string& Rep() const { return rep; }
 private:
     std::u32string rep;
 };
@@ -66,9 +66,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    std::uint64_t Value() const { return value; }
-    Suffix GetSuffix() const { return suffix; }
-    Base GetBase() const { return base; }
+    inline std::uint64_t Value() const { return value; }
+    inline Suffix GetSuffix() const { return suffix; }
+    inline Base GetBase() const { return base; }
 private:
     std::uint64_t value;
     Suffix suffix;
@@ -84,9 +84,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    double Value() const { return value; }
-    Suffix GetSuffix() const { return suffix; }
-    Base GetBase() const { return base; }
+    inline double Value() const { return value; }
+    inline Suffix GetSuffix() const { return suffix; }
+    inline Base GetBase() const { return base; }
 private:
     double value;
     Suffix suffix;
@@ -102,9 +102,9 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    char32_t Value() const { return value; }
-    EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
-    bool HasMultipleCharacters() const { return hasMultipleCharacters; }
+    inline char32_t Value() const { return value; }
+    inline EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
+    inline bool HasMultipleCharacters() const { return hasMultipleCharacters; }
 private:
     char32_t value;
     EncodingPrefix encodingPrefix;
@@ -122,8 +122,8 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const std::u32string& Value() const { return value; }
-    EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
+    inline const std::u32string& Value() const { return value; }
+    inline EncodingPrefix GetEncodingPrefix() const { return encodingPrefix; }
 private:
     std::u32string value;
     EncodingPrefix encodingPrefix;
@@ -138,7 +138,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const std::u32string& DelimSequence() const { return delimSequence; }
+    inline const std::u32string& DelimSequence() const { return delimSequence; }
 private:
     std::u32string delimSequence;
 };
@@ -152,7 +152,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    bool Value() const { return value; }
+    inline bool Value() const { return value; }
 private:
     bool value;
 };
@@ -184,7 +184,7 @@ public:
     void Accept(Visitor& visitor) override;
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;
-    const soul::ast::SourcePos& StringLitPos() const { return stringLitPos; }
+    inline const soul::ast::SourcePos& StringLitPos() const { return stringLitPos; }
 private:
     soul::ast::SourcePos stringLitPos;
 };

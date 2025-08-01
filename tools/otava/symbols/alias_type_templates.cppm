@@ -15,13 +15,13 @@ class AliasTypeTemplateSpecializationSymbol : public AliasTypeSymbol
 {
 public:
     AliasTypeTemplateSpecializationSymbol(const std::u32string& name_);
-    bool Instantiated() const { return instantiated; }
-    void SetInstantiated() { instantiated = true; }
+    inline bool Instantiated() const { return instantiated; }
+    inline void SetInstantiated() { instantiated = true; }
     std::string SymbolKindStr() const override { return "alias type specialization symbol"; }
     std::string SymbolDocKindStr() const override { return "alias_type_specialization"; }
-    TypeSymbol* AliasTypeTemplate() const { return aliasTypeTemplate; }
+    inline TypeSymbol* AliasTypeTemplate() const { return aliasTypeTemplate; }
     void SetAliasTypeTemplate(TypeSymbol* aliasTypeTemplate_);
-    const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
+    inline const std::vector<Symbol*>& TemplateArguments() const { return templateArguments; }
     void AddTemplateArgument(Symbol* templateArgument);
     void Write(Writer& writer) override;
     void Read(Reader& reader) override;

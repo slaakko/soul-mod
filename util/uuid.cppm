@@ -19,10 +19,10 @@ struct uuid
     uuid& operator=(uuid&& that);
     static uuid random();
     static constexpr int static_size() { return 16; }
-    const std::uint8_t* begin() const { return &data[0]; }
-    const std::uint8_t* end() const { return &data[static_size()]; }
-    std::uint8_t* begin() { return &data[0]; }
-    std::uint8_t* end() { return &data[static_size()]; }
+    inline const std::uint8_t* begin() const { return &data[0]; }
+    inline const std::uint8_t* end() const { return &data[static_size()]; }
+    inline std::uint8_t* begin() { return &data[0]; }
+    inline std::uint8_t* end() { return &data[static_size()]; }
     bool is_nil() const;
     std::uint8_t data[16];
 };
