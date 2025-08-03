@@ -14,16 +14,13 @@ public:
     constexpr explicit unexpected(E&& e_) : e(move(e_)) {}
     constexpr const E& error() const noexcept { return e; }
     constexpr E& error() noexcept { return e; }
-    constexpr void swap(unexpected& other) noexcept;
+    constexpr void swap(unexpected& other) noexcept
+    {
+        std::swap(e, other.e);
+    }
 private:
     E e;
 };
-
-template<typename E>
-constexpr void unexpected<E>::swap(unexpected<E>& other)
-{
-    std::swap(e, other.e);
-}
 
 template<typename E>
 constexpr bool operator==(const unexpected<E>& lhs, const unexpected<E>& rhs)
@@ -62,20 +59,17 @@ public:
     constexpr const T& value() const { return val; }
     constexpr const E& error() const noexcept { return unex; }
     constexpr E& error() noexcept { return unex; }
-    constexpr void swap(expected& other) noexcept;
+    constexpr void swap(expected& other) noexcept
+    {
+        std::swap(has_val, other.has_val);
+        std::swap(val, other.val);
+        std::swap(unex, other.unex);
+    }
 private:
     bool has_val;
     T val;
     E unex;
 };
-
-template<typename T, typename E>
-constexpr void expected<T, E>::swap(expected<T, E>& other) 
-{ 
-    std::swap(has_val, other.has_val); 
-    std::swap(val, other.val);
-    std::swap(unex, other.unex);
-}
 
 template<typename T, typename E>
 constexpr bool operator==(const expected<T, E>& lhs, const expected<T, E>& rhs)

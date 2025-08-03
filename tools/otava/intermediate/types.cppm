@@ -303,12 +303,15 @@ public:
     void WriteDeclaration(util::CodeFormatter& formatter) override;
     void ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context) override;
     Value* MakeDefaultValue(Context& context) const override;
+    inline const std::string& Comment() const { return comment; }
+    void SetComment(const std::string& comment_);
 private:
     void ComputeSizeAndOffsets() const;
     std::vector<TypeRef> fieldTypeRefs;
     mutable bool sizeAndOffsetsComputed;
     mutable std::int64_t size;
     mutable std::vector<std::int64_t> fieldOffsets;
+    std::string comment;
 };
 
 class FwdDeclaredStructureType : public Type

@@ -907,7 +907,6 @@ void ExpressionBinder::Visit(otava::ast::IdentifierNode& node)
             {
                 FunctionGroupSymbol* functionGroupSymbol = static_cast<FunctionGroupSymbol*>(symbol);
                 FunctionGroupTypeSymbol* functionGroupType = context->GetSymbolTable()->MakeFunctionGroupTypeSymbol(functionGroupSymbol);
-                //TypeSymbol* type = context->GetSymbolTable()->MakeCompoundType(context->GetSy)
                 boundExpression = new BoundFunctionGroupNode(functionGroupSymbol, node.GetSourcePos(), functionGroupType);
                 break;
             }

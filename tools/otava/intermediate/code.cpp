@@ -2747,10 +2747,6 @@ std::string Function::ResolveFullName() const
 
 void Function::Write(util::CodeFormatter& formatter)
 {
-    if (Name() == "mfn_basic_string_deallocate_4BFCA6BF0956D5D9C80C36890B3085D81FB91CC3")
-    {
-        int x = 0;
-    }
     if (metadataRef)
     {
         SetComment(ResolveFullName());

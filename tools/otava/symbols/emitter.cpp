@@ -47,14 +47,16 @@ void Emitter::SetRegNumbers()
     context->CurrentFunction()->SetNumbers();
 }
 
-otava::intermediate::Type* Emitter::MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes)
+otava::intermediate::Type* Emitter::MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment)
 {
     std::vector< otava::intermediate::TypeRef> fieldTypeRefs;
     for (const auto& elementType : elementTypes)
     {
         fieldTypeRefs.push_back(elementType->GetTypeRef());
     }
-    return context->GetStructureType(soul::ast::Span(), context->NextTypeId(), fieldTypeRefs);
+    otava::intermediate::StructureType* structureType = context->GetStructureType(soul::ast::Span(), context->NextTypeId(), fieldTypeRefs);
+    structureType->SetComment(comment);
+    return structureType;
 }
 
 otava::intermediate::Type* Emitter::MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes)
@@ -174,6 +176,15 @@ otava::intermediate::Value* Emitter::GetVTabVariable(void* cls) const
 void Emitter::SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable)
 {
     vtabVariableMap[cls] = vtabVariable;
+}
+
+otava::intermediate::Value* Emitter::EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType)
+{
+    if (delta->IsZero()) return EmitBitcast(classPtr, destType);
+    otava::intermediate::Type* bytePtrType = MakePtrType(GetByteType());
+    otava::intermediate::Value* adjustableClassPtr = EmitBitcast(classPtr, bytePtrType);
+    otava::intermediate::Value* adjustedClassPtr = EmitPtrOffset(adjustableClassPtr, delta);
+    return EmitBitcast(adjustedClassPtr, destType);
 }
 
 } // namespace otava::symbols

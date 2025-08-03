@@ -451,9 +451,9 @@ void BoundCtorInitializerNode::AddBaseInitializer(BoundFunctionCallNode* baseIni
     baseInitializers.push_back(std::unique_ptr<BoundFunctionCallNode>(baseInitializer));
 }
 
-void BoundCtorInitializerNode::SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_)
+void BoundCtorInitializerNode::AddSetVPtrStatement(BoundStatementNode* setVPtrStatement)
 {
-    setVPtrStatement.reset(setVPtrStatement_);
+    setVPtrStatements.push_back(std::unique_ptr<BoundStatementNode>(setVPtrStatement));
 }
 
 void BoundCtorInitializerNode::AddMemberInitializer(BoundFunctionCallNode* memberInitializer)
@@ -467,7 +467,7 @@ void BoundCtorInitializerNode::GenerateCode(BoundTreeVisitor& visitor, Emitter& 
     {
         baseInitializer->Load(emitter, OperationFlags::defaultInit, GetSourcePos(), context);
     }
-    if (setVPtrStatement)
+    for (const auto& setVPtrStatement : setVPtrStatements)
     {
         setVPtrStatement->Accept(visitor);
     }
@@ -491,9 +491,9 @@ void BoundDtorTerminatorNode::Accept(BoundTreeVisitor& visitor)
     visitor.Visit(*this);
 }
 
-void BoundDtorTerminatorNode::SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_)
+void BoundDtorTerminatorNode::AddSetVPtrStatement(BoundStatementNode* setVPtrStatement)
 {
-    setVPtrStatement.reset(setVPtrStatement_);
+    setVPtrStatements.push_back(std::unique_ptr<BoundStatementNode>(setVPtrStatement));
 }
 
 void BoundDtorTerminatorNode::AddMemberTerminator(BoundFunctionCallNode* memberTerminator)
@@ -861,8 +861,9 @@ bool BoundExpressionStatementNode::IsTerminator() const
     return expr && (expr->IsNoreturnFunctionCall() || expr->IsBoundThrowExpression());
 }
 
-BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, const soul::ast::SourcePos& sourcePos_) :
-    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, sourcePos_), thisPtr(thisPtr_), forClass(forClass_)
+BoundSetVPtrStatementNode::BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, ClassTypeSymbol* vptrHolderClass_, 
+    const soul::ast::SourcePos& sourcePos_) :
+    BoundStatementNode(BoundNodeKind::boundSetVPtrStatementNode, sourcePos_), thisPtr(thisPtr_), forClass(forClass_), vptrHolderClass(vptrHolderClass_)
 {
 }
 

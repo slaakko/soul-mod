@@ -1303,7 +1303,7 @@ FunctionSymbol* SymbolTable::AddFunction(const std::u32string& name, const std::
     functionSymbol->SetFunctionQualifiers(qualifiers);
     functionSymbol->SetLinkage(currentLinkage);
     functionSymbol->SetDeclarationFlags(flags);
-    if ((flags & DeclarationFlags::inlineFlag) != DeclarationFlags::none)
+    if ((flags & (DeclarationFlags::inlineFlag | DeclarationFlags::constExprFlag)) != DeclarationFlags::none)
     {
         functionSymbol->SetInline();
     }
@@ -1351,7 +1351,7 @@ FunctionDefinitionSymbol* SymbolTable::AddOrGetFunctionDefinition(Scope* scope, 
     {
         functionDefinition->SetSpecialization();
     }
-    if ((declarationFlags & DeclarationFlags::inlineFlag) != DeclarationFlags::none)
+    if ((declarationFlags & (DeclarationFlags::inlineFlag | DeclarationFlags::constExprFlag)) != DeclarationFlags::none)
     {
         functionDefinition->SetInline();
     }

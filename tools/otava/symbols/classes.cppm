@@ -93,9 +93,11 @@ public:
     void ComputeVTabName(Context* context);
     inline std::int32_t VPtrIndex() const { return vptrIndex; }
     inline void SetVPtrIndex(std::int32_t vptrIndex_) { vptrIndex = vptrIndex_; }
+    inline std::int32_t DeltaIndex() const { return deltaIndex; }
+    inline void SetDeltaIndex(std::int32_t deltaIndex_) { deltaIndex = deltaIndex_; }
     otava::intermediate::Type* VPtrType(Emitter& emitter) const;
     otava::intermediate::Value* GetVTabVariable(Emitter& emitter, Context* context);
-    ClassTypeSymbol* VPtrHolderClass() const;
+    std::vector<ClassTypeSymbol*> VPtrHolderClasses() const;
     inline const std::vector<ClassTypeSymbol*>& BaseClasses() const { return baseClasses; }
     void AddBaseClass(ClassTypeSymbol* baseClass, const soul::ast::SourcePos& sourcePos, Context* context);
     inline const std::vector<ClassTypeSymbol*>& DerivedClasses() const { return derivedClasses; }
@@ -163,6 +165,7 @@ private:
     std::vector<FunctionSymbol*> vtab;
     std::int32_t vtabSize;
     std::int32_t vptrIndex;
+    std::int32_t deltaIndex;
     std::vector<FunctionSymbol*> conversionFunctions;
     ClassGroupSymbol* group;
     util::uuid groupId;

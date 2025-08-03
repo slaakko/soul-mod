@@ -227,12 +227,12 @@ public:
     BoundCtorInitializerNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     void AddBaseInitializer(BoundFunctionCallNode* baseInitializer);
-    void SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_);
+    void AddSetVPtrStatement(BoundStatementNode* setVPtrStatement);
     void AddMemberInitializer(BoundFunctionCallNode* memberInitializer);
     void GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context);
 private:
     std::vector<std::unique_ptr<BoundFunctionCallNode>> baseInitializers;
-    std::unique_ptr<BoundStatementNode> setVPtrStatement;
+    std::vector<std::unique_ptr<BoundStatementNode>> setVPtrStatements;
     std::vector<std::unique_ptr<BoundFunctionCallNode>> memberInitializers;
 };
 
@@ -241,12 +241,12 @@ class BoundDtorTerminatorNode : public BoundNode
 public:
     BoundDtorTerminatorNode(const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
-    void SetSetVPtrStatement(BoundStatementNode* setVPtrStatement_);
-    BoundStatementNode* GetSetVPtrStatement() const { return setVPtrStatement.get(); }
+    void AddSetVPtrStatement(BoundStatementNode* setVPtrStatement);
     void AddMemberTerminator(BoundFunctionCallNode* memberTerminator);
     void GenerateCode(BoundTreeVisitor& visitor, Emitter& emitter, Context* context);
+    const std::vector<std::unique_ptr<BoundStatementNode>>& SetVPtrStatements() const { return setVPtrStatements; }
 private:
-    std::unique_ptr<BoundStatementNode> setVPtrStatement;
+    std::vector<std::unique_ptr<BoundStatementNode>> setVPtrStatements;
     std::vector<std::unique_ptr<BoundFunctionCallNode>> memberTerminators;
 };
 
@@ -506,13 +506,15 @@ private:
 class BoundSetVPtrStatementNode : public BoundStatementNode
 {
 public:
-    BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, const soul::ast::SourcePos& sourcePos_);
+    BoundSetVPtrStatementNode(BoundExpressionNode* thisPtr_, ClassTypeSymbol* forClass_, ClassTypeSymbol* vptrHolderClass_, const soul::ast::SourcePos& sourcePos_);
     void Accept(BoundTreeVisitor& visitor) override;
     inline BoundExpressionNode* ThisPtr() const { return thisPtr.get(); }
     inline ClassTypeSymbol* GetClass() const { return forClass; }
+    inline ClassTypeSymbol* GetVPtrHolderClass() const { return vptrHolderClass; }
 private:
     std::unique_ptr<BoundExpressionNode> thisPtr;
     ClassTypeSymbol* forClass;
+    ClassTypeSymbol* vptrHolderClass;
 };
 
 class BoundLiteralNode : public BoundExpressionNode

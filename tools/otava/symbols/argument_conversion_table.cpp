@@ -10,6 +10,7 @@ import otava.symbols.symbol.table;
 import otava.symbols.classes;
 import otava.symbols.class_templates;
 import otava.symbols.conversion.table;
+import otava.symbols.exception;
 import otava.symbols.function.symbol;
 import otava.symbols.function.type.symbol;
 import otava.symbols.function.group.symbol;
@@ -85,7 +86,7 @@ public:
     bool IsDerivedToBaseConversion() const override { return true; }    
     TypeSymbol* ConversionParamType() const override { return baseTypePtr; }
     TypeSymbol* ConversionArgType() const override { return derivedTypePtr; }
-    ConversionKind GetConversionKind() const override { return ConversionKind::explicitConversion; }
+    ConversionKind GetConversionKind() const override { return ConversionKind::implicitConversion; }
     std::int32_t ConversionDistance() const override { return distance; }
 private:
     TypeSymbol* derivedTypePtr;
@@ -106,8 +107,25 @@ DerivedToBaseConversion::DerivedToBaseConversion(TypeSymbol* derivedTypePtr_, Ty
 void DerivedToBaseConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, baseTypePtr->IrType(emitter, sourcePos, context)));
+    ClassTypeSymbol* derivedClassType = nullptr;
+    ClassTypeSymbol* baseClassType = nullptr;
+    if (derivedTypePtr->GetBaseType()->IsClassTypeSymbol()  && baseTypePtr->GetBaseType()->IsClassTypeSymbol())
+    {
+        derivedClassType = static_cast<ClassTypeSymbol*>(derivedTypePtr->GetBaseType());
+        baseClassType = static_cast<ClassTypeSymbol*>(baseTypePtr->GetBaseType());
+    }
+    else
+    {
+        ThrowException("class pointer types expected", sourcePos, context);
+    }
+    auto [success, delta] = Delta(derivedClassType, baseClassType, emitter, context);
+    if (!success)
+    {
+        ThrowException("classes have no inheritance relationship", sourcePos, context);
+    }
+    otava::intermediate::Value* classPtr = emitter.Stack().Pop();
+    otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
+    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, baseTypePtr->IrType(emitter, sourcePos, context)));
 }
 
 class DerivedToBaseArgumentConversion : public ArgumentConversion
@@ -156,6 +174,7 @@ BaseToDerivedConversion::BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeS
     FunctionSymbol(U"@conversion"), baseTypePtr(baseTypePtr_), derivedTypePtr(derivedTypePtr_), distance(distance_)
 {
     SetConversion();
+    SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", baseTypePtr);
     AddParameter(arg, soul::ast::SourcePos(), context);
@@ -165,8 +184,25 @@ BaseToDerivedConversion::BaseToDerivedConversion(TypeSymbol* baseTypePtr_, TypeS
 void BaseToDerivedConversion::GenerateCode(Emitter& emitter, std::vector<BoundExpressionNode*>& args, OperationFlags flags,
     const soul::ast::SourcePos& sourcePos, otava::symbols::Context* context)
 {
-    otava::intermediate::Value* value = emitter.Stack().Pop();
-    emitter.Stack().Push(emitter.EmitBitcast(value, derivedTypePtr->IrType(emitter, sourcePos, context)));
+    ClassTypeSymbol* baseClassType = nullptr;
+    ClassTypeSymbol* derivedClassType = nullptr;
+    if (baseTypePtr->GetBaseType()->IsClassTypeSymbol() && derivedTypePtr->GetBaseType()->IsClassTypeSymbol())
+    {
+        baseClassType = static_cast<ClassTypeSymbol*>(baseTypePtr->GetBaseType());
+        derivedClassType = static_cast<ClassTypeSymbol*>(derivedTypePtr->GetBaseType());
+    }
+    else
+    {
+        ThrowException("class pointer types expected", sourcePos, context);
+    }
+    auto [success, delta] = Delta(baseClassType, derivedClassType, emitter, context);
+    if (!success)
+    {
+        ThrowException("classes have no inheritance relationship", sourcePos, context);
+    }
+    otava::intermediate::Value* classPtr = emitter.Stack().Pop();
+    otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
+    emitter.Stack().Push(emitter.EmitClassPtrConversion(classPtr, deltaValue, derivedTypePtr->IrType(emitter, sourcePos, context)));
 }
 
 class BaseToDerivedArgumentConversion : public ArgumentConversion
@@ -256,6 +292,7 @@ VoidPtrToPtrConversion::VoidPtrToPtrConversion(TypeSymbol* voidPtrType_, TypeSym
     FunctionSymbol(U"@conversion"), voidPtrType(voidPtrType_), targetPointerType(targetPointerType_)
 {
     SetConversion();
+    SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", voidPtrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
@@ -354,6 +391,7 @@ PtrToPtrConversion::PtrToPtrConversion(TypeSymbol* sourcePtrType_, TypeSymbol* t
     FunctionSymbol(U"@conversion"), sourcePtrType(sourcePtrType_), targetPtrType(targetPtrType_)
 {
     SetConversion();
+    SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", sourcePtrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
@@ -406,6 +444,7 @@ VoidPtrToUInt64Conversion::VoidPtrToUInt64Conversion(TypeSymbol* ptrType_, TypeS
     FunctionSymbol(U"@conversion"), ptrType(ptrType_), uint64Type(uint64Type_)
 {
     SetConversion();
+    SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", ptrType);
     AddParameter(arg, soul::ast::SourcePos(), context);
@@ -456,6 +495,7 @@ UInt64ToVoidPtrConversion::UInt64ToVoidPtrConversion(TypeSymbol* uint64Type_, Ty
     FunctionSymbol(U"@conversion"), uint64Type(uint64Type), ptrType(ptrType_)
 {
     SetConversion();
+    SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", uint64Type);
     AddParameter(arg, soul::ast::SourcePos(), nullptr);
@@ -717,6 +757,7 @@ UnderlyingTypeToEnumTypeConversion::UnderlyingTypeToEnumTypeConversion(Enumerate
     FunctionSymbol(U"@conversion"), enumType(enumType_), underlyingType(underlyingType_)
 {
     SetConversion();
+    SetConversionKind(ConversionKind::explicitConversion);
     SetAccess(Access::public_);
     ParameterSymbol* arg = new ParameterSymbol(U"arg", underlyingType);
     AddParameter(arg, soul::ast::SourcePos(), context);

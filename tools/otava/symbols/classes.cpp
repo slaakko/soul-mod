@@ -108,6 +108,7 @@ ClassTypeSymbol::ClassTypeSymbol(const std::u32string& name_) :
     specializationId(),
     vtabSize(0),
     vptrIndex(-1),
+    deltaIndex(-1),
     group(nullptr),
     copyCtor(nullptr)
 {
@@ -371,6 +372,8 @@ void ClassTypeSymbol::MakeObjectLayout(const soul::ast::SourcePos& sourcePos, Co
         {
             SetVPtrIndex(objectLayout.size());
             objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::voidType)->AddPointer(context));
+            SetDeltaIndex(objectLayout.size());
+            objectLayout.push_back(context->GetSymbolTable()->GetFundamentalType(FundamentalTypeKind::longLongIntType));
         }
         else if (memberVariables.empty())
         {
@@ -407,11 +410,6 @@ bool ClassTypeSymbol::IsTemplate() const
 
 void ClassTypeSymbol::MakeVTab(Context* context, const soul::ast::SourcePos& sourcePos)
 {
-    if (baseClasses.size() > 1)
-    {
-        otava::symbols::SetExceptionThrown();
-        throw std::runtime_error("multiple inheritance not supported yet, class is '" + util::ToUtf8(Name()) + "'");
-    }
     InitVTab(vtab, context, sourcePos);
     vtabSize = vtab.size();
 }
@@ -441,8 +439,10 @@ void ClassTypeSymbol::InitVTab(std::vector<FunctionSymbol*>& vtab, Context* cont
     if (!IsPolymorphic()) return;
     if (!baseClasses.empty())
     {
-        ClassTypeSymbol* baseClass = baseClasses[0];
-        baseClass->InitVTab(vtab, context, sourcePos);
+        for (ClassTypeSymbol* baseClass : baseClasses)
+        {
+            baseClass->InitVTab(vtab, context, sourcePos);
+        }
     }
     std::vector<FunctionSymbol*> virtualFunctions;
     for (const auto& function : memberFunctions)
@@ -554,24 +554,28 @@ otava::intermediate::Value* ClassTypeSymbol::GetVTabVariable(Emitter& emitter, C
     return vtabVariable;
 }
 
-ClassTypeSymbol* ClassTypeSymbol::VPtrHolderClass() const
+std::vector<ClassTypeSymbol*> ClassTypeSymbol::VPtrHolderClasses() const
 {
+    std::vector<ClassTypeSymbol*> vptrHolderClasses;
     if (vptrIndex != -1)
     {
-        return const_cast<ClassTypeSymbol*>(this);
+        vptrHolderClasses.push_back(const_cast<ClassTypeSymbol*>(this));
     }
     else
     {
         for (const auto& baseClass : baseClasses)
         {
-            ClassTypeSymbol* vptrHolderBaseClass = baseClass->VPtrHolderClass();
-            if (vptrHolderBaseClass)
+            std::vector<ClassTypeSymbol*> vptrHolderBaseClasses = baseClass->VPtrHolderClasses();
+            for (ClassTypeSymbol* vptrHolderClass : vptrHolderBaseClasses)
             {
-                return vptrHolderBaseClass;
+                if (std::find(vptrHolderClasses.begin(), vptrHolderClasses.end(), vptrHolderClass) == vptrHolderClasses.end())
+                {
+                    vptrHolderClasses.push_back(vptrHolderClass);
+                }
             }
         }
     }
-    return nullptr;
+    return vptrHolderClasses;
 }
 
 int ClassTypeSymbol::Arity() 
@@ -665,7 +669,7 @@ otava::intermediate::Type* ClassTypeSymbol::IrType(Emitter& emitter, const soul:
             TypeSymbol* type = objectLayout[i];
             elementTypes.push_back(type->IrType(emitter, sourcePos, context));
         }
-        otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes);
+        otava::intermediate::Type* type = emitter.MakeStructureType(elementTypes, util::ToUtf8(FullName()));
         otava::intermediate::StructureType* structureType = static_cast<otava::intermediate::StructureType*>(type);
         irType = type;
         emitter.SetType(Id(), irType);
@@ -1373,31 +1377,35 @@ Symbol* GenerateDestructor(ClassTypeSymbol* classTypeSymbol, const soul::ast::So
         {
             classTypeSymbol->MakeObjectLayout(sourcePos, context);
         }
-        BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
-        ClassTypeSymbol* vptrHolderClass = classTypeSymbol->VPtrHolderClass();
-        if (!vptrHolderClass)
+        std::vector<ClassTypeSymbol*> vptrHolderClasses = classTypeSymbol->VPtrHolderClasses();
+        if (vptrHolderClasses.empty())
         {
-            ThrowException("vptr holder class not found", sourcePos, context);
+            ThrowException("no vptr holder classes for the class '" + util::ToUtf8(classTypeSymbol->FullName()) + "'", sourcePos, context);
         }
-        if (vptrHolderClass != classTypeSymbol)
+        for (ClassTypeSymbol* vptrHolderClass : vptrHolderClasses)
         {
-            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-                vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
-            if (conversion)
+            if (vptrHolderClass != classTypeSymbol)
             {
-                BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
-                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classTypeSymbol, sourcePos);
-                body->AddStatement(setVPtrStatement);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
+                FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                    vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+                if (conversion)
+                {
+                    BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
+                    BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtrConverted, classTypeSymbol, vptrHolderClass, sourcePos);
+                    body->AddStatement(setVPtrStatement);
+                }
+                else
+                {
+                    ThrowException("vptr holder class conversion not found", sourcePos, context);
+                }
             }
             else
             {
-                ThrowException("vptr holder class conversion not found", sourcePos, context);
+                BoundExpressionNode* thisPtr = new BoundParameterNode(destructor->ThisParam(context), sourcePos, destructor->ThisParam(context)->GetReferredType(context));
+                BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classTypeSymbol, classTypeSymbol, sourcePos);
+                body->AddStatement(setVPtrStatement);
             }
-        }
-        else
-        {
-            BoundSetVPtrStatementNode* setVPtrStatement = new BoundSetVPtrStatementNode(thisPtr, classTypeSymbol, sourcePos);
-            body->AddStatement(setVPtrStatement);
         }
     }
     boundDestructor->SetBody(body);

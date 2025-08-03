@@ -135,7 +135,7 @@ StatementBinder::StatementBinder(Context* context_, FunctionDefinitionSymbol* fu
     resolveClass(false),
     resolveMemberVariable(false),
     resolveInitializerArguments(false),
-    setVPtrStatementGenerated(false),
+    setVPtrStatementsGenerated(false),
     postfix(false),
     globalStaticVariableSymbol(nullptr)
 {
@@ -220,11 +220,12 @@ void StatementBinder::GenerateDefaultCtorInitializer(const soul::ast::SourcePos&
     {
         ctorInitializer->AddBaseInitializer(initializer.second.release());
     }
-    GenerateSetVPtrStatement(sourcePos);
-    if (setVPtrStatement)
+    GenerateSetVPtrStatements(sourcePos);
+    for (auto& setVPtrStatement : setVPtrStatements)
     {
-        ctorInitializer->SetSetVPtrStatement(setVPtrStatement.release());
+        ctorInitializer->AddSetVPtrStatement(setVPtrStatement.release());
     }
+    setVPtrStatements.clear();
     CompleteMemberInitializers(sourcePos);
     std::sort(memberInitializers.begin(), memberInitializers.end(), InitializerLess());
     for (auto& initializer : memberInitializers)
@@ -237,11 +238,12 @@ void StatementBinder::GenerateDefaultCtorInitializer(const soul::ast::SourcePos&
 void StatementBinder::GenerateDestructorTerminator(const soul::ast::SourcePos& sourcePos)
 {
     dtorTerminator = new BoundDtorTerminatorNode(sourcePos);
-    GenerateSetVPtrStatement(sourcePos);
-    if (setVPtrStatement)
+    GenerateSetVPtrStatements(sourcePos);
+    for (auto& setVPtrStatement : setVPtrStatements)
     {
-        dtorTerminator->SetSetVPtrStatement(setVPtrStatement.release());
+        dtorTerminator->AddSetVPtrStatement(setVPtrStatement.release());
     }
+    setVPtrStatements.clear();
     GenerateBaseTerminators(sourcePos);
     GenerateMemberTerminators(sourcePos);
     std::sort(memberTerminators.begin(), memberTerminators.end(), TerminatorGreater());
@@ -315,39 +317,43 @@ void StatementBinder::AddMemberTerminator(VariableSymbol* memberVar, const soul:
     }
 }
 
-void StatementBinder::GenerateSetVPtrStatement(const soul::ast::SourcePos& sourcePos)
+void StatementBinder::GenerateSetVPtrStatements(const soul::ast::SourcePos& sourcePos)
 {
-    if (!currentClass || !currentClass->IsPolymorphic() || setVPtrStatementGenerated) return;
+    if (!currentClass || !currentClass->IsPolymorphic() || setVPtrStatementsGenerated) return;
     if (HasThisInitializer()) return;
     context->GetBoundCompileUnit()->AddBoundNodeForClass(currentClass, sourcePos, context);
-    setVPtrStatementGenerated = true;
+    setVPtrStatementsGenerated = true;
     if (!currentClass->ObjectLayoutComputed())
     {
         currentClass->MakeObjectLayout(sourcePos, context);
     }
     BoundExpressionNode* thisPtr = context->GetThisPtr(sourcePos);
-    ClassTypeSymbol* vptrHolderClass = currentClass->VPtrHolderClass();
-    if (!vptrHolderClass)
+    std::vector<ClassTypeSymbol*> vptrHolderClasses = currentClass->VPtrHolderClasses();
+    if (vptrHolderClasses.empty())
     {
-        ThrowException("vptr holder class not found", sourcePos, context);
+        ThrowException("no vptr holder classes for the class '" + util::ToUtf8(currentClass->FullName()) + "'", sourcePos, context);
     }
-    if (vptrHolderClass != currentClass)
+    for (ClassTypeSymbol* vptrHolderClass : vptrHolderClasses)
     {
-        FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
-            vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
-        if (conversion)
+        if (vptrHolderClass != currentClass)
         {
-            BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr, conversion, sourcePos);
-            setVPtrStatement.reset(new BoundSetVPtrStatementNode(thisPtrConverted, currentClass, sourcePos));
+            FunctionSymbol* conversion = context->GetBoundCompileUnit()->GetArgumentConversionTable()->GetArgumentConversion(
+                vptrHolderClass->AddPointer(context), thisPtr->GetType(), sourcePos, context);
+            if (conversion)
+            {
+                BoundExpressionNode* thisPtrConverted = new BoundConversionNode(thisPtr->Clone(), conversion, sourcePos);
+                setVPtrStatements.push_back(std::unique_ptr<BoundSetVPtrStatementNode>(
+                    new BoundSetVPtrStatementNode(thisPtrConverted, currentClass, vptrHolderClass, sourcePos)));
+            }
+            else
+            {
+                ThrowException("vptr holder class conversion not found", sourcePos, context);
+            }
         }
         else
         {
-            ThrowException("vptr holder class conversion not found", sourcePos, context);
+            setVPtrStatements.push_back(std::unique_ptr<BoundSetVPtrStatementNode>(new BoundSetVPtrStatementNode(thisPtr->Clone(), currentClass, currentClass, sourcePos)));
         }
-    }
-    else
-    {
-        setVPtrStatement.reset(new BoundSetVPtrStatementNode(thisPtr, currentClass, sourcePos));
     }
 }
 
@@ -365,11 +371,12 @@ void StatementBinder::Visit(otava::ast::MemberInitializerListNode& node)
     {
         ctorInitializer->AddBaseInitializer(initializer.second.release());
     }
-    GenerateSetVPtrStatement(node.GetSourcePos());
-    if (setVPtrStatement)
+    GenerateSetVPtrStatements(node.GetSourcePos());
+    for (auto& setVPtrStatement : setVPtrStatements)
     {
-        ctorInitializer->SetSetVPtrStatement(setVPtrStatement.release());
+        ctorInitializer->AddSetVPtrStatement(setVPtrStatement.release());
     }
+    setVPtrStatements.clear();
     CompleteMemberInitializers(node.GetSourcePos());
     std::sort(memberInitializers.begin(), memberInitializers.end(), InitializerLess());
     for (auto& initializer : memberInitializers)
@@ -578,13 +585,14 @@ void StatementBinder::Visit(otava::ast::CompoundStatementNode& node)
     if (!block) return;
     BoundCompoundStatementNode* currentCompoundStatement = new BoundCompoundStatementNode(node.GetSourcePos());
     context->GetSymbolTable()->BeginScopeGeneric(block->GetScope(), context);
-    if (functionDefinitionSymbol->GetFunctionKind() == FunctionKind::constructor && !setVPtrStatementGenerated)
+    if (functionDefinitionSymbol->GetFunctionKind() == FunctionKind::constructor && !setVPtrStatementsGenerated)
     {
-        GenerateSetVPtrStatement(node.GetSourcePos());
-        if (setVPtrStatement)
+        GenerateSetVPtrStatements(node.GetSourcePos());
+        for (auto& setVPtrStatement : setVPtrStatements)
         {
             currentCompoundStatement->AddStatement(setVPtrStatement.release());
         }
+        setVPtrStatements.clear();
     }
     int n = node.Count();
     for (int i = 0; i < n; ++i)

@@ -912,7 +912,12 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
     {
         ThrowException("class type expected", sourcePos, context);
     }
-    ClassTypeSymbol* vptrHolderClass = classType->VPtrHolderClass();
+    std::vector<ClassTypeSymbol*> vptrHolderClasses = classType->VPtrHolderClasses();
+    if (vptrHolderClasses.empty())
+    {
+        ThrowException("no vptr holder classes for the class '" + util::ToUtf8(classType->FullName()) + "'", sourcePos, context);
+    }
+    ClassTypeSymbol* vptrHolderClass = vptrHolderClasses.front();
     int na = args.size();
     otava::intermediate::Value* callee = nullptr;
     for (int i = 0; i < na; ++i)
@@ -920,7 +925,6 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
         args[i]->Load(emitter, OperationFlags::none, sourcePos, context);
         if (i == 0)
         {
-            emitter.Stack().Dup();
             otava::intermediate::Value* thisPtr = emitter.Stack().Pop();
             if (classType != vptrHolderClass)
             {
@@ -929,6 +933,11 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
             otava::intermediate::Value* vptrPtr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->VPtrIndex()));
             otava::intermediate::Value* voidVPtr = emitter.EmitLoad(vptrPtr);
             otava::intermediate::Value* vptr = emitter.EmitBitcast(voidVPtr, classType->VPtrType(emitter));
+            otava::intermediate::Value* objectDeltaPtrElem = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrHolderClass->DeltaIndex()));
+            otava::intermediate::Type* deltaPtrType = emitter.MakePtrType(emitter.GetLongType());
+            otava::intermediate::Value* objectDeltaPtr = emitter.EmitBitcast(objectDeltaPtrElem, deltaPtrType);
+            otava::intermediate::Value* objectDelta = emitter.EmitLoad(objectDeltaPtr);
+            otava::intermediate::Value* adjustedObjectPtr = emitter.EmitClassPtrConversion(thisPtr, objectDelta, thisPtr->GetType());
             if (VTabIndex() == -1)
             {
                 ThrowException("invalid vtab index", sourcePos, context);
@@ -936,6 +945,11 @@ void FunctionSymbol::GenerateVirtualFunctionCall(Emitter& emitter, std::vector<B
             otava::intermediate::Value* functionPtrPtr = emitter.EmitElemAddr(vptr, emitter.EmitLong(vtabClassIdElementCount + 2 * VTabIndex()));
             otava::intermediate::Value* voidFunctionPtr = emitter.EmitLoad(functionPtrPtr);
             callee = emitter.EmitBitcast(voidFunctionPtr, emitter.MakePtrType(functionType));
+            otava::intermediate::Value* deltaPtrElem = emitter.EmitElemAddr(vptr, emitter.EmitLong(vtabClassIdElementCount + 2 * VTabIndex() + 1));
+            otava::intermediate::Value* deltaPtr = emitter.EmitBitcast(deltaPtrElem, deltaPtrType);
+            otava::intermediate::Value* delta = emitter.EmitLoad(deltaPtr);
+            otava::intermediate::Value* adjustedThisPtr = emitter.EmitClassPtrConversion(adjustedObjectPtr, delta, thisPtr->GetType());
+            emitter.Stack().Push(adjustedThisPtr);
         }
     }
     std::vector<otava::intermediate::Value*> arguments;

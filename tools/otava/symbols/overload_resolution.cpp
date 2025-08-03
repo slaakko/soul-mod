@@ -237,7 +237,7 @@ BoundExpressionNode* MakeLvalueExpression(BoundExpressionNode* arg, const soul::
 }
 
 std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& functionMatch, std::vector<std::unique_ptr<BoundExpressionNode>>& args, 
-    const soul::ast::SourcePos& sourcePos, Context* context)
+    const soul::ast::SourcePos& sourcePos, Exception& ex, Context* context)
 {
     TypeSymbol* type = functionMatch.function->ReturnType();
     if (type)
@@ -282,6 +282,12 @@ std::unique_ptr<BoundFunctionCallNode> CreateBoundFunctionCall(FunctionMatch& fu
         {
             TypeSymbol* argType = arg->GetType();
             FunctionSymbol* conversionFun = argumentMatch.conversionFun;
+            if (conversionFun->GetConversionKind() == ConversionKind::explicitConversion)
+            {
+                ex = Exception("cannot convert from '" + util::ToUtf8(conversionFun->ConversionArgType()->FullName()) + "' to '" +
+                    util::ToUtf8(conversionFun->ConversionParamType()->FullName()) + "' without a cast", sourcePos, context);
+                return std::unique_ptr<BoundFunctionCallNode>();
+            }
             if (conversionFun->GetFunctionKind() == FunctionKind::conversionMemFn && argType->PlainType(context)->IsClassTypeSymbol())
             {
                 if (argType->IsReferenceType())
@@ -1306,7 +1312,7 @@ std::unique_ptr<BoundFunctionCallNode> ResolveOverload(Scope* scope, const std::
             bestMatch->function = InstantiateInlineFunction(bestMatch->function, sourcePos, context);
         }
     }
-    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(*bestMatch, args, sourcePos, context);
+    std::unique_ptr<BoundFunctionCallNode> boundFunctionCall = CreateBoundFunctionCall(*bestMatch, args, sourcePos, ex, context);
     return boundFunctionCall;
 }
 

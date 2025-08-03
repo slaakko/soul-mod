@@ -34,7 +34,7 @@ public:
     }
     inline otava::intermediate::BasicBlock* CreateBasicBlock() { return context->CurrentFunction()->CreateBasicBlock(); }
     inline void SetCurrentBasicBlock(otava::intermediate::BasicBlock* bb) { context->SetCurrentBasicBlock(bb); }
-    otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes);
+    otava::intermediate::Type* MakeStructureType(const std::vector<otava::intermediate::Type*>& elementTypes, const std::string& comment);
     otava::intermediate::Type* MakeFunctionType(otava::intermediate::Type* returnType, const std::vector<otava::intermediate::Type*>& paramTypes);
     otava::intermediate::Type* MakeArrayType(std::int64_t size, otava::intermediate::Type* elementType);
     inline otava::intermediate::Type* MakeFwdDeclaredStructureType(const util::uuid& id) { return context->MakeFwdDeclaredStructureType(id, context->NextTypeId()); }
@@ -171,8 +171,9 @@ public:
     otava::intermediate::Value* GetVTabVariable(void* cls) const;
     void SetVTabVariable(void* cls, otava::intermediate::Value* vtabVariable);
     IrValueStack& Stack() { return *stack; }
-    otava::intermediate::Value* RetValue() const { return retValue; }
-    void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
+    inline otava::intermediate::Value* RetValue() const { return retValue; }
+    inline void SetRetValue(otava::intermediate::Value* retValue_) { retValue = retValue_; }
+    otava::intermediate::Value* EmitClassPtrConversion(otava::intermediate::Value* classPtr, otava::intermediate::Value* delta, otava::intermediate::Type* destType);
 private:
     otava::intermediate::Context* context;
     IrValueStack* stack;

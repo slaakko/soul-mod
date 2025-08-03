@@ -1,0 +1,3 @@
+project multiple_inheritance;
+target=program;
+source <multiple_inheritance.cpp>;

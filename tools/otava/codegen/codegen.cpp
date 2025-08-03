@@ -465,7 +465,13 @@ void CodeGenerator::GenerateVTab(otava::symbols::ClassTypeSymbol* cls, const sou
                     otava::intermediate::FunctionType* functionType = static_cast<otava::intermediate::FunctionType*>(irType);
                     emitter.GetOrInsertFunction(functionSymbol->IrName(&context), functionType);
                     otava::intermediate::Value* functionValue = emitter.EmitSymbolValue(functionType, functionSymbol->IrName(&context));
-                    otava::intermediate::Value* deltaValue = emitter.EmitLong(0);
+                    auto [succeeded, delta] = otava::symbols::Delta(cls, functionSymbol->ParentClassType(), emitter, &context);
+                    if (!succeeded)
+                    {
+                        otava::symbols::ThrowException("could not resolve delta for classes '" + util::ToUtf8(cls->FullName()) + "' and '" + 
+                            util::ToUtf8(functionSymbol->ParentClassType()->FullName()), sourcePos, &context);
+                    }
+                    otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
                     otava::intermediate::Value* element1Value = emitter.EmitConversionValue(voidPtrIrType, functionValue);
                     elements.push_back(element1Value);
                     otava::intermediate::Value* element2Value = emitter.EmitConversionValue(voidPtrIrType, deltaValue);
@@ -513,7 +519,7 @@ void CodeGenerator::ExitBlocks(int sourceBlockId, int targetBlockId, const soul:
     }
     if (lastStatement && currentBlockLastStatement && lastStatement == currentBlockLastStatement && currentBlockLastStatement->IsReturnStatementNode())
     {
-        createBasicBlock = true;
+        createBasicBlock = true; 
     }
     if (targetBlockId == -1)
     {
@@ -693,10 +699,6 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     bool once = false;
     bool inline_ = context.ReleaseConfig() && functionDefinition->IsInline();
     otava::intermediate::Function* function = emitter.CreateFunction(functionDefinition->IrName(&context), functionType, inline_, once);
-    if (function->Name() == "mfn_basic_string_deallocate_4BFCA6BF0956D5D9C80C36890B3085D81FB91CC3")
-    {
-        int x = 0;
-    }
     function->SetComment(util::ToUtf8(functionDefinition->FullName()));
     entryBlock = emitter.CreateBasicBlock();
     emitter.SetCurrentBasicBlock(entryBlock);
@@ -786,8 +788,7 @@ void CodeGenerator::Visit(otava::symbols::BoundFunctionNode& node)
     otava::symbols::BoundDtorTerminatorNode* dtorTerminator = node.DtorTerminator();
     if (dtorTerminator)
     {
-        otava::symbols::BoundStatementNode* setVPtrStatement = dtorTerminator->GetSetVPtrStatement();
-        if (setVPtrStatement)
+        for (const auto& setVPtrStatement : dtorTerminator->SetVPtrStatements())
         {
             setVPtrStatement->Accept(*this);
         }
@@ -1233,6 +1234,22 @@ void CodeGenerator::Visit(otava::symbols::BoundSetVPtrStatementNode& node)
         otava::intermediate::Value* ptr = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(vptrIndex));
         otava::intermediate::Value* vptr = emitter.EmitBitcast(forClass->GetVTabVariable(emitter, &context), emitter.MakePtrType(emitter.GetVoidType()));
         emitter.EmitStore(vptr, ptr);
+        otava::symbols::ClassTypeSymbol* vptrHolderClass = node.GetVPtrHolderClass();
+        auto [succeeded, delta] = otava::symbols::Delta(vptrHolderClass, forClass, emitter, &context);
+        if (!succeeded)
+        {
+            otava::symbols::ThrowException("classes '" + util::ToUtf8(forClass->FullName()) + "' and '" + util::ToUtf8(vptrHolderClass->FullName()) +
+                "' have no inheritance relationship", node.GetSourcePos(), &context);
+        }
+        std::int32_t deltaIndex = classType->DeltaIndex();
+        otava::intermediate::Value* deltaPtrElem = emitter.EmitElemAddr(thisPtr, emitter.EmitLong(deltaIndex));
+        otava::intermediate::Value* deltaPtr = emitter.EmitBitcast(deltaPtrElem, emitter.MakePtrType(emitter.GetLongType()));
+        otava::intermediate::Value* deltaValue = emitter.EmitLong(delta);
+        emitter.EmitStore(deltaValue, deltaPtr);
+    }
+    else
+    {
+        otava::symbols::ThrowException("class type symbol expected", node.GetSourcePos(), &context);
     }
 }
 

@@ -414,6 +414,10 @@ void StructureType::WriteDeclaration(util::CodeFormatter& formatter)
         fieldType->Write(formatter);
     }
     formatter.Write(" }");
+    if (!comment.empty())
+    {
+        formatter.Write(" // " + comment);
+    }
 }
 
 void StructureType::ReplaceForwardReference(FwdDeclaredStructureType* fwdDeclaredType, StructureType* structureType, Context* context)
@@ -446,6 +450,11 @@ Value* StructureType::MakeDefaultValue(Context& context) const
         fieldValues.push_back(type->MakeDefaultValue(context));
     }
     return context.MakeStructureValue(soul::ast::Span(), fieldValues, const_cast<StructureType*>(this));
+}
+
+void StructureType::SetComment(const std::string& comment_)
+{
+    comment = comment_;
 }
 
 FwdDeclaredStructureType::FwdDeclaredStructureType(const util::uuid& id_, std::int32_t typeId_) : 

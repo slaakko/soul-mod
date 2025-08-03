@@ -69,7 +69,7 @@ private:
     void AddBaseTerminator(TypeSymbol* baseClass, int index, const soul::ast::SourcePos& sourcePos);
     void GenerateMemberTerminators(const soul::ast::SourcePos& sourcePos);
     void AddMemberTerminator(VariableSymbol* memberVar, const soul::ast::SourcePos& sourcePos);
-    void GenerateSetVPtrStatement(const soul::ast::SourcePos& sourcePos);
+    void GenerateSetVPtrStatements(const soul::ast::SourcePos& sourcePos);
     void BindStaticLocalVariable(VariableSymbol* variable, otava::ast::Node* initializer, otava::ast::SimpleDeclarationNode* declarationNode);
     Context* context;
     ClassTypeSymbol* currentClass; 
@@ -83,10 +83,10 @@ private:
     bool resolveClass;
     bool resolveMemberVariable;
     bool resolveInitializerArguments;
-    bool setVPtrStatementGenerated;
+    bool setVPtrStatementsGenerated;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> baseInitializers;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberInitializers;
-    std::unique_ptr<BoundStatementNode> setVPtrStatement;
+    std::vector<std::unique_ptr<BoundStatementNode>> setVPtrStatements;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> memberTerminators;
     std::vector<std::pair<int, std::unique_ptr<BoundFunctionCallNode>>> baseTerminators;
     bool postfix;

@@ -7,28 +7,26 @@ import std.utilities.pair;
 export namespace std {
 
 template<typename T>
-inline const T& min(const T& left, const T& right)
+constexpr const T& min(const T& left, const T& right)
 {
     if (left <= right) return left;
     else return right;
 }
 
 template<typename T>
-inline const T& max(const T& left, const T& right)
+constexpr const T& max(const T& left, const T& right)
 {
     if (left >= right) return left;
     else return right;
 }
 
 template<typename T>
-inline void swap(T& left, T& right)
+constexpr void swap(T& left, T& right)
 {
     T temp(move(left));
     left = move(right);
     right = move(temp);
 }
-
-// reverse for random access iterators:
 
 template<typename I> 
 void reverse(I begin, I end)
@@ -39,6 +37,52 @@ void reverse(I begin, I end)
         swap(*begin, *end);
         ++begin;
     }
+}
+
+template<typename I>
+pair<I, I> reverse_until(I first, I middle, I last)
+{
+    while (first != middle && middle != last)
+    {
+        --last;
+        swap(*first, *last);
+        ++first;
+    }
+    return make_pair(first, last);
+}
+
+template<typename I>
+I rotate(I first, I middle, I last)
+{
+    reverse(first, middle);
+    reverse(middle, last);
+    pair<I, I> p = reverse_until(first, middle, last);
+    if (middle == p.first) return p.second;
+    return p.first;
+}
+
+template<typename I, typename O>
+O copy(I begin, I end, O to)
+{
+    while (begin != end)
+    {
+        *to = *begin;
+        ++begin;
+        ++to;
+    }
+    return to;
+}
+
+template<typename I, typename O>
+O copy_backward(I begin, I end, O to)
+{
+    while (begin != end)
+    {
+        --to;
+        --end;
+        *to = *end;
+    }
+    return to;
 }
 
 template<typename I, typename T>
@@ -66,6 +110,20 @@ I find_if(I begin, I end, P p)
         }
         ++begin;
     }
+}
+
+template<typename I, typename P>
+I find_if_not(I begin, I end, P p)
+{
+    while (begin != end)
+    {
+        if (!p(*begin))
+        {
+            return begin;
+        }
+        ++begin;
+    }
+    return end;
 }
 
 template<typename I, typename O, typename T>
@@ -99,183 +157,112 @@ I remove(I begin, I end, const T& value)
     }
 }
 
-template<typename T, typename R>
-inline const T& select_0_2(const T& a, const T& b, R r)
-{
-    if (r(b, a)) return b;
-    return a;
-}
-
-template<typename T, typename R>
-inline const T& select_1_2(const T& a, const T& b, R r)
-{
-    if (r(b, a)) return a;
-    return b;
-}
-
-template<typename T, typename R>
-inline const T& select_0_3(const T& a, const T& b, const T& c, R r)
-{
-    return select_0_2(select_0_2(a, b, r), c, r);
-}
-
-template<typename T, typename R>
-inline const T& select_2_3(const T& a, const T& b, const T& c, R r)
-{
-    return select_1_2(select_1_2(a, b, r), c, r);
-}
-
-template<typename T, typename R>
-inline const T& select_1_3_ab(const T& a, const T& b, const T& c, R r)
-{
-    if (!r(c, b)) return b;
-    return select_1_2(a, c, r);
-}
-
-template<typename T, typename R>
-inline const T& select_1_3(const T& a, const T& b, const T& c, R r)
-{
-    if (r(b, a)) return select_1_3_ab(b, a, c, r);
-    return select_1_3_ab(a, b, c, r);
-}
-
-template<typename T, typename R>
-inline const T& median(const T& a, const T& b, const T& c, R r)
-{
-    return select_1_3(a, b, c, r);
-}
-
-template<typename T>
-inline const T& median(const T& a, const T& b, const T& c)
-{
-    return median(a, b, c, less<T>());
-}
-
-template<typename I, typename T, typename R>
-I unguarded_partition(I begin, I end, const T& pivot, R r)
-{
-    while (true)
-    {
-        while (r(*begin, pivot))
-        {
-            ++begin;
-        }
-        --end;
-        while (r(pivot, *end))
-        {
-            --end;
-        }
-        if (begin >= end)
-        {
-            return begin;
-        }
-        swap(*begin, *end);
-        ++begin;
-    }
-}
-
-template<typename I, typename T, typename R>
-void unguarded_linear_insert(I last, const T& val, R r)
-{
-    I next = last;
-    --next;
-    while (r(val, *next))
-    {
-        *last = *next;
-        last = next;
-        --next;
-    }
-    *last = val;
-}
-
-template<typename I, typename T, typename R>
-void unguarded_linear_insert(I last, T&& val, R r)
-{
-    I next = last;
-    --next;
-    while (r(val, *next))
-    {
-        *last = std::move(*next);
-        last = next;
-        --next;
-    }
-    *last = std::move(val);
-}
-
-template<typename I, typename O>
-O copy_backward(I begin, I end, O to)
-{
-    while (begin != end)
-    {
-        --to;
-        --end;
-        *to = *end;
-    }
-    return to;
-}
-
-template<typename I, typename R>
-void linear_insert(I first, I last, R r)
-{
-    iter_value_t<I> val = *last;
-    if (r(val, *first))
-    {
-        copy_backward(first, last, last + 1);
-        *first = val;
-    }
-    else
-    {
-        unguarded_linear_insert(last, val, r);
-    }
-}
-
 template<typename I, typename R>
 void insertion_sort(I begin, I end, R r)
 {
-    if (begin == end)
+    I i = begin;
+    while (i < end)
     {
-        return;
-    }
-    for (I i = begin + 1; i != end; ++i)
-    {
-        linear_insert(begin, i, r);
+        I j = i;
+        while (j > begin && r(*j, *(j - 1)))
+        {
+            swap(*j, *(j - 1));
+            --j;
+        }
+        ++i;
     }
 }
 
 template<typename I>
-void insertion_sort(I begin, I end)
+constexpr void insertion_sort(I begin, I end)
 {
     insertion_sort(begin, end, less<iter_value_t<I>>());
 }
 
-const int64_t insertion_sort_threshold = 16;
+template<typename I>
+constexpr I next(I i, ssize_t n)
+{
+    return i + n;
+}
+
+template<typename I>
+constexpr ssize_t distance(I first, I last)
+{
+    return last - first;
+}
+
+template<typename I, typename P>
+void partition(I begin, I end, P p)
+{
+    begin = find_if_not(begin, end, p);
+    if (begin == end)
+    {
+        return begin;
+    }
+    for (auto i = next(begin, 1); i != end; ++i)
+    {
+        if (p(*i))
+        {
+            swap(*i, *begin);
+            ++begin;
+        }
+    }
+    return begin;
+}
+
+template<typename T, typename R>
+class operand_rel_x
+{
+public:
+    operand_rel_x(const T& x_, R r_) : x(x_), r(r_) {}
+    inline bool operator()(const T& a) const
+    {
+        return r(a, x);
+    }
+private:
+    T x;
+    R r;
+};
+
+template<typename T, typename R>
+class not_x_rel_operand
+{
+public:
+    not_x_rel_operand(const T& x_, R r_) : x(x_), r(r_) {}
+    inline bool operator()(const T& a) const
+    {
+        return !r(x, a);
+    }
+private:
+    T x;
+    R r;
+};
 
 template<typename I, typename R>
-void partial_quick_sort(I begin, I end, R r)
+void quick_sort(I begin, I end, R r)
 {
-    while (end - begin > insertion_sort_threshold)
-    {
-        iter_value_t<I> pivot = median(*begin, *(begin + (end - begin) / 2), *(end - 1), r);
-        I cut = unguarded_partition(begin, end, pivot, r);
-        partial_quick_sort(cut, end, r);
-        end = cut;
-    }
+    if (begin == end) return;
+    auto pivot = *next(begin, distance(begin, end) / 2);
+    auto mid1 = partition(begin, end, operand_rel_x<iter_value_t<I>, r>(pivot, r));
+    auto mid2 = partition(mid1, end, not_x_rel_operand<iter_value_t<I>, r>(pivot, r));
+    quick_sort(begin, mid1, r);
+    quick_sort(mid2, end, r);
 }
+
+const ssize_t insertion_sort_threshold = 16;
 
 template<typename I, typename R>
 void sort(I begin, I end, R r)
 {
-    if (begin != end)
+    if (begin == end) return;
+    if (end - begin <= insertion_sort_threshold)
     {
-        partial_quick_sort(begin, end, r);
         insertion_sort(begin, end, r);
     }
-}
-
-template<typename I>
-void sort(I begin, I end)
-{
-    sort(begin, end, less<iter_value_t<I>>());
+    else
+    {
+        quick_sort(begin, end, r);
+    }
 }
 
 template<typename I, typename R>
